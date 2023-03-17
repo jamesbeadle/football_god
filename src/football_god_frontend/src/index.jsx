@@ -1,6 +1,10 @@
 import * as React from "react";
 import { render } from "react-dom";
 import { football_god_backend } from "../../declarations/football_god_backend";
+import 'bootstrap/dist/css/bootstrap.min.css';
+import MyNavbar from './components/navbar';
+import MyFooter from './components/footer';
+import { Container } from 'react-bootstrap';
 
 const MyHello = () => {
   const [name, setName] = React.useState('');
@@ -12,28 +16,12 @@ const MyHello = () => {
   }
 
   return (
-    <div style={{ "fontFamily": "sans-serif" }}>
-    <div style={{ "fontSize": "30px" }}>
-      <p>Greetings, from DFINITY!</p>
-      <p>
-        {" "}
-        Type your message in the Name input field, then click{" "}
-        <b> Get Greeting</b> to display the result.
-      </p>
-    </div>
-    <div style={{ margin: "30px" }}>
-      <input
-        id="name"
-        placeholder="Type text here"
-        value={name}
-        onChange={(ev) => setName(ev.target.value)}
-      ></input>
-      <button onClick={doGreet}>Get Greeting!</button>
-    </div>
-    <div>
-      Greeting is: "
-      <span style={{ color: "green" }}>{message}</span>"
-    </div>
+    <div className="d-flex flex-column min-vh-100">
+    <MyNavbar />
+    <Container className="flex-grow-1">
+      <p>Content here</p>
+    </Container>
+    <MyFooter />
   </div>
   );
 };
