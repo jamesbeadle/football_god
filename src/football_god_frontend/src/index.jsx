@@ -1,12 +1,28 @@
 import * as React from "react";
 import { createRoot } from 'react-dom/client';
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+
+import { defaultProviders } from "@connect2ic/core/providers"
+import { createClient } from "@connect2ic/core"
+import { ConnectButton, ConnectDialog, Connect2ICProvider, useConnect } from "@connect2ic/react"
+
+import style from "@connect2ic/core/style.css";
+console.log(style);
+
 import { football_god_backend } from "../../declarations/football_god_backend";
 import 'bootstrap/dist/css/bootstrap.min.css';
-import MyNavbar from './components/navbar';
-import MyFooter from './components/footer';
-import { Container } from 'react-bootstrap';
+import MyNavbar from './components/shared/navbar';
+import MyFooter from './components/shared/footer';
+import Home from "./components/home";
+import Rules from "./components/rules";
 
-const MyHello = () => {
+
+const client = createClient({
+  canisters: {  },
+  providers: defaultProviders
+})
+
+const App = () => {
   const [name, setName] = React.useState('');
   const [message, setMessage] = React.useState('');
 
@@ -16,15 +32,22 @@ const MyHello = () => {
   }
 
   return (
-    <div className="d-flex flex-column min-vh-100">
-    <MyNavbar />
-    <Container className="flex-grow-1">
-      <p>Content here</p>
-    </Container>
-    <MyFooter />
-  </div>
+      <Router>
+        <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}>
+          <MyNavbar />
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/game-rules" element={<Rules />} />
+          </Routes>
+          <MyFooter />
+        </div>
+      </Router>   
   );
 };
 
 const root = document.getElementById("app");
-createRoot(root).render(<MyHello />);
+createRoot(root).render(
+  <Connect2ICProvider client={client}>
+    <ConnectDialog />
+    <App />
+  </Connect2ICProvider>  );

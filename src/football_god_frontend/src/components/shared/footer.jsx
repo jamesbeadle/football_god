@@ -6,11 +6,8 @@ const MyFooter = () => {
     <footer className="footer mt-auto py-3 bg-light">
       <Container>
         <Row>
-          <Col>
-            <a href="/terms">Terms</a>
-          </Col>
-          <Col className="text-right">
-            <a href="/privacy">Privacy</a>
+          <Col className="text-center">
+            <a href="/game-rules">Game Rules</a>
           </Col>
         </Row>
       </Container>
