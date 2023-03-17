@@ -1,5 +1,5 @@
 import * as React from "react";
-import { render } from "react-dom";
+import { createRoot } from 'react-dom/client';
 import { football_god_backend } from "../../declarations/football_god_backend";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import MyNavbar from './components/navbar';
@@ -26,4 +26,5 @@ const MyHello = () => {
   );
 };
 
-render(<MyHello />, document.getElementById("app"));
+const root = document.getElementById("app");
+createRoot(root).render(<MyHello />);
