@@ -3,6 +3,7 @@ const webpack = require("webpack");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const TerserPlugin = require("terser-webpack-plugin");
 const CopyPlugin = require("copy-webpack-plugin");
+require('dotenv').config();
 
 function initCanisterEnv() {
   let localCanisters, prodCanisters;
@@ -105,6 +106,7 @@ module.exports = {
     }),
     new webpack.EnvironmentPlugin({
       NODE_ENV: "development",
+      REACT_APP_ADMIN_PRINCIPAL: process.env.REACT_APP_ADMIN_PRINCIPAL,
       ...canisterEnvVariables,
     }),
     new webpack.ProvidePlugin({

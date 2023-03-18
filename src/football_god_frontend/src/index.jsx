@@ -20,6 +20,7 @@ import MyNavbar from './components/shared/navbar';
 import MyFooter from './components/shared/footer';
 import Home from "./components/home";
 import Rules from "./components/rules";
+import Admin from "./components/admin/admin";
 
 
 const client = createClient({
@@ -42,6 +43,7 @@ const App = () => {
           <MyNavbar />
           <Routes>
             <Route path="/" element={<Home />} />
+            <Route path="/admin" element={<Admin />} />
             <Route path="/game-rules" element={<Rules />} />
           </Routes>
           <MyFooter />
