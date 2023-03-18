@@ -1,8 +1,6 @@
 import React, { useState } from 'react';
 import { Navbar, Nav, Button, NavDropdown } from 'react-bootstrap';
 import { ConnectButton, ConnectDialog, Connect2ICProvider, useConnect } from "@connect2ic/react"
-import style from "@connect2ic/core/style.css"
-console.log(style);
 const MyNavbar = () => {
 
   const { isConnected, principal, activeProvider } = useConnect({

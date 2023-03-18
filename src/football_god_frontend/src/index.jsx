@@ -9,6 +9,11 @@ import { ConnectButton, ConnectDialog, Connect2ICProvider, useConnect } from "@c
 import style from "@connect2ic/core/style.css";
 console.log(style);
 
+/* Not working:
+import "@connect2ic/core/style.css"
+*/
+
+
 import { football_god_backend } from "../../declarations/football_god_backend";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import MyNavbar from './components/shared/navbar';
