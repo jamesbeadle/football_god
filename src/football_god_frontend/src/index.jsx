@@ -4,7 +4,7 @@ import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 
 import { defaultProviders } from "@connect2ic/core/providers"
 import { createClient } from "@connect2ic/core"
-import { ConnectButton, ConnectDialog, Connect2ICProvider, useConnect } from "@connect2ic/react"
+import { ConnectDialog, Connect2ICProvider } from "@connect2ic/react"
 
 import style from "@connect2ic/core/style.css";
 console.log(style);

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Navbar, Nav, Button, NavDropdown } from 'react-bootstrap';
-import { ConnectButton, ConnectDialog, Connect2ICProvider, useConnect } from "@connect2ic/react"
+import { ConnectButton, useConnect } from "@connect2ic/react"
 const MyNavbar = () => {
 
   const { isConnected, principal, activeProvider } = useConnect({
@@ -13,18 +13,6 @@ const MyNavbar = () => {
       console.log("signed out");
     }
   })
-
-  const handleConnect = () => {
-    // Implement your connection logic here
-    // After a successful connection, set isConnected to true
-    setIsConnected(true);
-  };
-
-  const handleDisconnect = () => {
-    // Implement your disconnection logic here
-    // After a successful disconnection, set isConnected to false
-    setIsConnected(false);
-  };
 
   return (
     <Navbar bg="primary" variant="dark" expand="lg">
