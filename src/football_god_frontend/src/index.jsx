@@ -2,19 +2,6 @@ import * as React from "react";
 import { createRoot } from 'react-dom/client';
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 
-import { defaultProviders } from "@connect2ic/core/providers"
-import { createClient } from "@connect2ic/core"
-import { ConnectDialog, Connect2ICProvider } from "@connect2ic/react"
-
-import style from "@connect2ic/core/style.css";
-console.log(style);
-
-/* Not working:
-import "@connect2ic/core/style.css"
-*/
-
-
-import { football_god_backend } from "../../declarations/football_god_backend";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import MyNavbar from './components/shared/navbar';
 import MyFooter from './components/shared/footer';
@@ -27,21 +14,8 @@ import Gameweeks from "./components/admin/gameweeks";
 import Fixtures from "./components/admin/fixtures";
 import SystemState from "./components/admin/system-state";
 
-
-const client = createClient({
-  canisters: {  },
-  providers: defaultProviders
-})
-
 const App = () => {
-  const [name, setName] = React.useState('');
-  const [message, setMessage] = React.useState('');
-
-  async function doGreet() {
-    const greeting = await football_god_backend.greet(name);
-    setMessage(greeting);
-  }
-
+ 
   return (
       <Router>
         <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}>
@@ -63,8 +37,4 @@ const App = () => {
 };
 
 const root = document.getElementById("app");
-createRoot(root).render(
-  <Connect2ICProvider client={client}>
-    <ConnectDialog />
-    <App />
-  </Connect2ICProvider>  );
+createRoot(root).render(<App />);
