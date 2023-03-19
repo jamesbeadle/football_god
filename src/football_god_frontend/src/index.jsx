@@ -14,6 +14,8 @@ import Gameweeks from "./components/admin/gameweeks";
 import Fixtures from "./components/admin/fixtures";
 import SystemState from "./components/admin/system-state";
 
+import { AuthProvider } from "./contexts/AuthContext";
+
 const App = () => {
  
   return (
@@ -37,4 +39,7 @@ const App = () => {
 };
 
 const root = document.getElementById("app");
-createRoot(root).render(<App />);
+createRoot(root).render(
+  <AuthProvider>
+    <App />
+  </AuthProvider>);
