@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { AuthClient } from "@dfinity/auth-client";
+import { LocalStorage, AuthClient } from "@dfinity/auth-client";
 import { Actor } from "@dfinity/agent";
 import { football_god_backend as football_god_backend_actor } from '../../../declarations/football_god_backend';
 
@@ -13,9 +13,9 @@ export const AuthProvider = ({ children }) => {
  
   useEffect(() => {
     const initAuthClient = async () => {
-      const authClient = await AuthClient.create();
-
       const storedIdentityStr = localStorage.getItem('identity');
+      const authClient = await AuthClient.create(JSON.parse(storedIdentityStr));
+
       if (storedIdentityStr) {
         setIsAuthenticated(true);
       }

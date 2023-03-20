@@ -10,14 +10,17 @@ actor {
   let admins : [Principal] = [
     Principal.fromText("zzlzc-qp3hr-or44h-2ur67-umtpf-66ybr-megk3-qpqq3-icp2x-5c3vd-zqe")
   ];
-  
-  public shared query ({caller}) func isAdmin(): async Bool {
-     Debug.print(debug_show(caller));
-  
+
+  private func isAdminForCaller(caller: Principal): Bool {
+    Debug.print(debug_show(caller));
     switch (Array.find<Principal>(admins, func (admin) { admin == caller })) {
       case null { false };
       case _ { true };
     };
+  };
+  
+  public shared query ({caller}) func isAdmin(): async Bool {
+    return isAdminForCaller(caller);
   };
 
   type Error = {
@@ -38,7 +41,7 @@ actor {
 
   public shared ({caller}) func createSeason(name : Text, year : Nat) : async Result.Result<(), Error> {
     
-    let isCallerAdmin = await isAdmin();
+    let isCallerAdmin = isAdminForCaller(caller);
     if(isCallerAdmin == false){
       return #err(#NotAuthorized);
     };

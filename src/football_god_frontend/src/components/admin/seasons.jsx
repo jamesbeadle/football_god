@@ -1,13 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { Container, Row, Col, Card, Button, Table, Modal, Form } from 'react-bootstrap';
-import { Actor, HttpAgent } from '@dfinity/agent';
 import { football_god_backend as football_god_backend_actor } from '../../../../declarations/football_god_backend';
+import { Actor } from "@dfinity/agent";
+import { AuthContext } from "../../contexts/AuthContext";
 
 const Seasons = () => {
   
-  const agent = new HttpAgent({ principal });
-  const football_god_backend = Actor.createActor(football_god_backend_idl, { agent, canisterId: football_god_backend_actor });
-
   const [showModal, setShowModal] = useState(false);
 
   const handleClose = () => setShowModal(false);
@@ -17,11 +15,17 @@ const Seasons = () => {
   const [seasonYear, setSeasonYear] = useState('');
   const [seasonsData, setSeasonsData] = useState([]);
 
+  const { authClient } = useContext(AuthContext);
+
   const handleSubmit = async (event) => {
     event.preventDefault();
+    console.log(identity);
+    const identity = authClient.getIdentity();
+    Actor.agentOf(football_god_backend_actor).replaceIdentity(identity);
     
     const parsedYear = parseInt(seasonYear, 10);
-    await football_god_backend.createSeason(seasonName, parsedYear);
+    await football_god_backend_actor.createSeason(seasonName, parsedYear);
+    
     fetchSeasons();
     setSeasonName('');
     setSeasonYear('');
@@ -29,7 +33,7 @@ const Seasons = () => {
   };
 
   const fetchSeasons = async () => {
-    const seasons = await football_god_backend.getSeasons();
+    const seasons = await football_god_backend_actor.getSeasons();
     setSeasonsData(seasons);
     console.log(seasons);
   };
