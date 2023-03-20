@@ -19,7 +19,7 @@ const Seasons = () => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    console.log(identity);
+    
     const identity = authClient.getIdentity();
     Actor.agentOf(football_god_backend_actor).replaceIdentity(identity);
     
