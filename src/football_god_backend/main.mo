@@ -13,7 +13,7 @@ actor {
   ];
 
   private func isAdminForCaller(caller: Principal): Bool {
-    Debug.print(debug_show(caller));
+    //Debug.print(debug_show(caller));
     switch (Array.find<Principal>(admins, func (admin) { admin == caller })) {
       case null { false };
       case _ { true };

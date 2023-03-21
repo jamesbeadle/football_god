@@ -226,7 +226,6 @@ const Seasons = () => {
         </Modal.Footer>
       </Modal>
 
-
     </Container>
   );
 };
