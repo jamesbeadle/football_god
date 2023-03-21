@@ -1,10 +1,17 @@
 import React, { useState, useContext, useEffect  } from "react";
 import { AuthContext } from "../../contexts/AuthContext";
 import { Navbar, Nav, NavDropdown, Button } from "react-bootstrap";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const MyNavbar = () => {
   const { isAdmin, isAuthenticated, login, logout } = useContext(AuthContext);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      navigate("/");
+    }
+  }, [isAuthenticated]);
 
   return (
     <Navbar bg="primary" variant="dark" expand="lg">

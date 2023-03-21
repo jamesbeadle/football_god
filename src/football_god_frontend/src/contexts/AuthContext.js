@@ -47,8 +47,7 @@ export const AuthProvider = ({ children }) => {
     if (isLoggedIn && isTokenValid()) {
       setIsAuthenticated(true);
     } else {
-      authClient.logout();
-      setIsAuthenticated(false);
+      logout();
     }
   };
 
