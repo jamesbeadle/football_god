@@ -9,79 +9,76 @@ export const AuthProvider = ({ children }) => {
   const [authClient, setAuthClient] = useState(null);
   const [isAdmin, setIsAdmin] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [expiryTime, setExpiryTime] = useState(null);
  
   useEffect(() => {
     const initAuthClient = async () => {
-      const storedIdentityStr = localStorage.getItem('identity');
+      
       const authClient = await AuthClient.create();
-
-      if (storedIdentityStr) {
-        setIsAuthenticated(true);
-      }
-
-      const storedIsAdmin = localStorage.getItem('isAdmin');
-      if (storedIsAdmin !== null) {
-        setIsAdmin(storedIsAdmin === 'true');
-      }
-
+      const isLoggedIn = await authClient.isAuthenticated();
+      
+      setIsAuthenticated(isLoggedIn);
       setAuthClient(authClient);
-
-      const storedExpiryTime = localStorage.getItem('expiryTime');
-      if (storedExpiryTime) {
-        setExpiryTime(Number(storedExpiryTime));
+      
+      if(isLoggedIn){
+        const identity = authClient.getIdentity();
+        Actor.agentOf(football_god_backend_actor).replaceIdentity(identity);
+        const userIsAdmin = await football_god_backend_actor.isAdmin();
+        setIsAdmin(userIsAdmin);
       }
     };
     initAuthClient();
   }, []);
 
   useEffect(() => {
-    if (expiryTime) {
-      const timer = setTimeout(() => {
-        logout();
-      }, expiryTime - Date.now());
-
-      return () => clearTimeout(timer);
-    }
-  }, [expiryTime]);
-
-  useEffect(() => {
-    const checkExpiry = () => {
-      const expiryTime = localStorage.getItem('expiryTime');
-      if (expiryTime && Date.now() > Number(expiryTime)) {
-        setIsAuthenticated(false);
-        setIsAdmin(false);
-        localStorage.removeItem('identity');
-        localStorage.removeItem('isAdmin');
-        localStorage.removeItem('expiryTime');
-        authClient.logout();
-      }
-    };
+    if (!authClient) return;
   
-    const intervalId = setInterval(checkExpiry, 60 * 1000); // Check every minute
+    const interval = setInterval(() => {
+      checkLoginStatus();
+    }, 60000);
   
     return () => {
-      clearInterval(intervalId);
+      clearInterval(interval);
     };
   }, [authClient]);
+  
+
+  const checkLoginStatus = async () => {
+    const isLoggedIn = await authClient.isAuthenticated();
+    if (isLoggedIn && isTokenValid()) {
+      setIsAuthenticated(true);
+    } else {
+      authClient.logout();
+      setIsAuthenticated(false);
+    }
+  };
+
+  const isTokenValid = () => {
+    try {
+      const identity = authClient.getIdentity();
+      if (!identity || !identity._delegation || !identity._delegation.delegations) return false;
+  
+      const delegation = identity._delegation.delegations[0];
+      if (!delegation) return false;
+  
+      const expiration = BigInt(delegation.delegation.expiration);
+      const currentTime = BigInt(Date.now() * 1000000); 
+      return currentTime < expiration;
+    } catch (error) {
+      return false;
+    }
+  };
+  
 
   const login = async () => {
     await authClient.login({
       identityProvider: process.env.II_URL,
+      maxTimeToLive: BigInt(7 * 24 * 60 * 60 * 1000 * 1000 * 1000),
       onSuccess: async () => {
         const identity = authClient.getIdentity();
         Actor.agentOf(football_god_backend_actor).replaceIdentity(identity);
         const userIsAdmin = await football_god_backend_actor.isAdmin();
         setIsAdmin(userIsAdmin);
         setIsAuthenticated(true);
-        localStorage.setItem('identity', JSON.stringify(identity));
-        localStorage.setItem('isAdmin', userIsAdmin);
-
-        const oneDayInMilliseconds = 24 * 60 * 60 * 1000;
-        const expirationTime = Date.now() + oneDayInMilliseconds;
-        localStorage.setItem('expiryTime', expirationTime);
-        setExpiryTime(expirationTime);
-
       }
     });
   };
@@ -90,10 +87,6 @@ export const AuthProvider = ({ children }) => {
     setIsAuthenticated(false);
     setIsAdmin(false);
     authClient.logout();
-    localStorage.removeItem('identity');
-    localStorage.removeItem('isAdmin');
-    localStorage.removeItem('expiryTime');
-    setExpiryTime(null);
   };
 
 
