@@ -1,12 +1,14 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { Container, Row, Col, Card, Button, Table, Modal, Form } from 'react-bootstrap';
+import { Container, Row, Col, Card, Button, Table, Modal, Form, Spinner, Dropdown  } from 'react-bootstrap';
 import { football_god_backend as football_god_backend_actor } from '../../../../declarations/football_god_backend';
 import { Actor } from "@dfinity/agent";
 import { AuthContext } from "../../contexts/AuthContext";
+import "../../../assets/main.css"; 
 
 const Seasons = () => {
   
   const [showModal, setShowModal] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleClose = () => setShowModal(false);
   const handleShow = () => setShowModal(true);
@@ -17,8 +19,19 @@ const Seasons = () => {
 
   const { authClient } = useContext(AuthContext);
 
+
+  const deleteSeason = async (seasonId) => {
+    setIsLoading(true);
+    const identity = authClient.getIdentity();
+    Actor.agentOf(football_god_backend_actor).replaceIdentity(identity);
+    await football_god_backend_actor.deleteSeason(seasonId);
+    fetchSeasons();
+    setIsLoading(false);
+  };
+
   const handleSubmit = async (event) => {
     event.preventDefault();
+    setIsLoading(true);
     
     const identity = authClient.getIdentity();
     Actor.agentOf(football_god_backend_actor).replaceIdentity(identity);
@@ -30,12 +43,12 @@ const Seasons = () => {
     setSeasonName('');
     setSeasonYear('');
     handleClose();
+    setIsLoading(false);
   };
 
   const fetchSeasons = async () => {
     const seasons = await football_god_backend_actor.getSeasons();
     setSeasonsData(seasons);
-    console.log(seasons);
   };
 
   useEffect(() => {
@@ -44,6 +57,11 @@ const Seasons = () => {
 
   return (
     <Container>
+      {isLoading && (
+        <div className="seasonOverlay">
+          <Spinner animation="border" />
+        </div>
+      )}
       <Row className="justify-content-md-center">
         <Col md={12}>
           <Card className="mt-4">
@@ -54,6 +72,7 @@ const Seasons = () => {
               <Button variant="primary" className="mb-3" onClick={handleShow}>
                 Create New Season
               </Button>
+              <div className="table-responsive">
               <Table striped bordered hover>
                 <thead>
                   <tr>
@@ -72,12 +91,24 @@ const Seasons = () => {
                       <td>{season.year}</td>
                       <td>{season.status}</td>
                       <td>
-                        <Button variant="warning">Edit</Button>
+                        <Dropdown alignRight>
+                          <Dropdown.Toggle variant="secondary" id="dropdown-basic">
+                            Options
+                          </Dropdown.Toggle>
+                          <Dropdown.Menu>
+                            <Dropdown.Item href="#" onClick={() => {}}>Edit</Dropdown.Item>
+                            <Dropdown.Item href="#" onClick={() => deleteSeason(season.id)}>
+                              Delete
+                            </Dropdown.Item>
+                          </Dropdown.Menu>
+                        </Dropdown>
                       </td>
                     </tr>
                   ))}
                 </tbody>
               </Table>
+
+              </div>
             </Card.Body>
           </Card>
         </Col>
