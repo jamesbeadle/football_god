@@ -11,3 +11,11 @@
     align-items: center;
     z-index: 9999;
 }
+
+.season-dropdown {
+    position: static;
+}
+  
+.season-dropdown .dropdown-menu {
+    position: absolute;
+}

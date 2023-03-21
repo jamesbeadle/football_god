@@ -62,7 +62,7 @@ actor {
     return #ok(());
   };
 
-   public shared ({caller}) func updateSeason(id : Nat32, newName : Text, newYear : Nat32, newStatus : Text) : async Result.Result<(), Error> {
+   public shared ({caller}) func updateSeason(id : Nat32, newName : Text, newYear : Nat32) : async Result.Result<(), Error> {
     let isCallerAdmin = isAdminForCaller(caller);
     if(isCallerAdmin == false){
       return #err(#NotAuthorized);
@@ -71,7 +71,7 @@ actor {
     seasons := List.map<Season, Season>(seasons,
       func (season: Season): Season {
         if (season.id == id) {
-          { id = season.id; name = newName; year = newYear; status = newStatus }
+          { id = season.id; name = newName; year = newYear; status = season.status }
         } 
         else { season }
       });

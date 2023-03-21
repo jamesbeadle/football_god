@@ -9,6 +9,8 @@ const Seasons = () => {
   
   const [showModal, setShowModal] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [editedSeason, setEditedSeason] = useState(null);
+  const [showEditModal, setShowEditModal] = useState(false);
 
   const handleClose = () => setShowModal(false);
   const handleShow = () => setShowModal(true);
@@ -19,6 +21,12 @@ const Seasons = () => {
 
   const { authClient } = useContext(AuthContext);
 
+  const editSeason = async (season) => {
+    setEditedSeason(season);
+    setSeasonName(season.name);
+    setSeasonYear(season.year);
+    setShowEditModal(true);
+  };
 
   const deleteSeason = async (seasonId) => {
     setIsLoading(true);
@@ -37,12 +45,19 @@ const Seasons = () => {
     Actor.agentOf(football_god_backend_actor).replaceIdentity(identity);
     
     const parsedYear = parseInt(seasonYear, 10);
-    await football_god_backend_actor.createSeason(seasonName, parsedYear);
+
+    if (editedSeason) {
+      await football_god_backend_actor.updateSeason(editedSeason.id, seasonName, parsedYear);
+    } else {
+      await football_god_backend_actor.createSeason(seasonName, parsedYear);
+    }
     
     fetchSeasons();
     setSeasonName('');
     setSeasonYear('');
+    setEditedSeason(null);
     handleClose();
+    setShowEditModal(false);
     setIsLoading(false);
   };
 
@@ -92,12 +107,12 @@ const Seasons = () => {
                       <td>{season.year}</td>
                       <td>{season.status}</td>
                       <td>
-                        <Dropdown alignRight>
+                        <Dropdown alignRight className="season-dropdown">
                           <Dropdown.Toggle variant="secondary" id="dropdown-basic">
                             Options
                           </Dropdown.Toggle>
                           <Dropdown.Menu>
-                            <Dropdown.Item href="#" onClick={() => {}}>Edit</Dropdown.Item>
+                            <Dropdown.Item href="#" onClick={() => editSeason(season)}>Edit</Dropdown.Item>
                             <Dropdown.Item href="#" onClick={() => deleteSeason(season.id)}>
                               Delete
                             </Dropdown.Item>
@@ -151,6 +166,44 @@ const Seasons = () => {
           </Button>
         </Modal.Footer>
       </Modal>
+
+      <Modal show={showEditModal} onHide={() => { setEditedSeason(null); setShowEditModal(false); }}>
+        <Modal.Header closeButton>
+          <Modal.Title>Edit Season</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form onSubmit={handleSubmit}>
+            <Form.Group controlId="seasonName">
+              <Form.Label>Name</Form.Label>
+              <Form.Control
+                type="text"
+                placeholder="Enter season name"
+                value={seasonName}
+                onChange={(e) => setSeasonName(e.target.value)}
+              />
+            </Form.Group>
+
+            <Form.Group controlId="seasonYear">
+              <Form.Label>Year</Form.Label>
+              <Form.Control
+                type="number"
+                placeholder="Enter season year"
+                value={seasonYear}
+                onChange={(e) => setSeasonYear(e.target.value)}
+              />
+            </Form.Group>
+          </Form>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => { setEditedSeason(null); setShowEditModal(false); }}>
+            Cancel
+          </Button>
+          <Button variant="primary" onClick={handleSubmit}>
+            Save
+          </Button>
+        </Modal.Footer>
+      </Modal>         
+
     </Container>
   );
 };
