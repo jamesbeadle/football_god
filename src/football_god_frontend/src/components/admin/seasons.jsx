@@ -49,6 +49,7 @@ const Seasons = () => {
   const fetchSeasons = async () => {
     const seasons = await football_god_backend_actor.getSeasons();
     setSeasonsData(seasons);
+    console.log(seasons);
   };
 
   useEffect(() => {

@@ -1,3 +1,4 @@
+import List "mo:base/List";
 import Array "mo:base/Array";
 import Nat "mo:base/Nat";
 import Principal "mo:base/Principal";
@@ -30,16 +31,17 @@ actor {
   };
 
   type Season = {
-    id : Nat;
+    id : Nat32;
     name : Text;
-    year : Nat;
+    year : Nat32;
     status : Text;
   };
 
-  var seasons : [Season] = [];
-  var nextId : Nat = 1;
+  private var seasons = List.nil<Season>();
 
-  public shared ({caller}) func createSeason(name : Text, year : Nat) : async Result.Result<(), Error> {
+  var nextId : Nat32 = 1;
+
+  public shared ({caller}) func createSeason(name : Text, year : Nat32) : async Result.Result<(), Error> {
     
     let isCallerAdmin = isAdminForCaller(caller);
     if(isCallerAdmin == false){
@@ -54,40 +56,43 @@ actor {
       status = "inactive";
     };
     
-    Debug.print("Adding season");
+    seasons := List.push(newSeason, seasons);
      
-    let buffer = Buffer.fromArray<Season>(seasons);
-    buffer.add(newSeason);
-    seasons := Buffer.toArray(buffer);
-
     nextId := nextId + 1;
-    Debug.print("Next id");
+    return #ok(());
+  };
+
+   public shared ({caller}) func updateSeason(id : Nat32, newName : Text, newYear : Nat32, newStatus : Text) : async Result.Result<(), Error> {
+    let isCallerAdmin = isAdminForCaller(caller);
+    if(isCallerAdmin == false){
+      return #err(#NotAuthorized);
+    };
+
+    seasons := List.map<Season, Season>(seasons,
+      func (season: Season): Season {
+        if (season.id == id) {
+          { id = season.id; name = newName; year = newYear; status = newStatus }
+        } 
+        else { season }
+      });
+
+    return #ok(());
+    
+  };
+
+  public shared ({caller}) func deleteSeason(id : Nat32) : async Result.Result<(), Error> {
+    let isCallerAdmin = isAdminForCaller(caller);
+    if(isCallerAdmin == false){
+      return #err(#NotAuthorized);
+    };
+
+    seasons := List.filter(seasons, func(season: Season): Bool { season.id != id });
+    
     return #ok(());
   };
 
   public query func getSeasons() : async [Season] {
-    return seasons;
+    return List.toArray(seasons);
   };
   
-  /*
-  public query func getSeasons() : async [Season] {
-    let fakeSeasons : [Season] = [
-      {
-        id = 1;
-        name = "Fake Season 1";
-        year = 2023;
-        status = "active";
-      },
-      {
-        id = 2;
-        name = "Fake Season 2";
-        year = 2024;
-        status = "inactive";
-      }
-    ];
-    return fakeSeasons;
-  };
-  */
-
-
 }
