@@ -6,17 +6,21 @@ import { AuthContext } from "../../contexts/AuthContext";
 import "../../../assets/main.css"; 
 
 const Seasons = () => {
+
+  const { authClient } = useContext(AuthContext);
+  const [isLoading, setIsLoading] = useState(false);
+  const [seasonName, setSeasonName] = useState('');
+  const [seasonYear, setSeasonYear] = useState('');
+  const [seasonsData, setSeasonsData] = useState([]);
   
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [showDeleteConfirmModal, setShowDeleteConfirmModal] = useState(false);
 
-
-  const [isLoading, setIsLoading] = useState(false);
   const [editedSeason, setEditedSeason] = useState(null);
   const [seasonToDelete, setSeasonToDelete] = useState(null);
   
-  const handleShowCreate = () => setShowCreateModal(true);
+  const createSeason = () => setShowCreateModal(true);
 
   const editSeason = async (season) => {
     setEditedSeason(season);
@@ -28,25 +32,8 @@ const Seasons = () => {
   const deleteSeason = async (seasonId) => {
     setSeasonToDelete(seasonId);
     setShowDeleteConfirmModal(true);
-  };
+  };  
   
-
-  const [seasonName, setSeasonName] = useState('');
-  const [seasonYear, setSeasonYear] = useState('');
-  const [seasonsData, setSeasonsData] = useState([]);
-
-  const { authClient } = useContext(AuthContext);
-
-  const handleDeleteConfirmed = async () => {
-    setIsLoading(true);
-    const identity = authClient.getIdentity();
-    Actor.agentOf(football_god_backend_actor).replaceIdentity(identity);
-    await football_god_backend_actor.deleteSeason(seasonToDelete);
-    fetchSeasons();
-    setIsLoading(false);
-    setShowDeleteConfirmModal(false);
-  };
-
   const handleSubmitSeason = async (event) => {
     event.preventDefault();
     setIsLoading(true);
@@ -68,6 +55,16 @@ const Seasons = () => {
     setEditedSeason(null);
     setShowCreateModal(false);
     setShowEditModal(false);
+    setIsLoading(false);
+  };
+
+  const handleDeleteConfirmed = async () => {
+    setIsLoading(true);
+    const identity = authClient.getIdentity();
+    Actor.agentOf(football_god_backend_actor).replaceIdentity(identity);
+    await football_god_backend_actor.deleteSeason(seasonToDelete);
+    fetchSeasons();
+    setShowDeleteConfirmModal(false);
     setIsLoading(false);
   };
 
@@ -95,45 +92,40 @@ const Seasons = () => {
               <h2>Seasons</h2>
             </Card.Header>
             <Card.Body>
-              <Button variant="primary" className="mb-3" onClick={handleShowCreate}>
+              <Button variant="primary" className="mb-3" onClick={createSeason}>
                 Create New Season
               </Button>
               <div className="table-responsive">
-              <Table striped bordered hover>
-                <thead>
-                  <tr>
-                    <th>ID</th>
-                    <th>Name</th>
-                    <th>Year</th>
-                    <th>Status</th>
-                    <th>Edit</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {seasonsData.map((season) => (
-                    <tr key={season.id}>
-                      <td>{season.id}</td>
-                      <td>{season.name}</td>
-                      <td>{season.year}</td>
-                      <td>{season.status}</td>
-                      <td>
-                        <Dropdown alignRight className="season-dropdown">
-                          <Dropdown.Toggle variant="secondary" id="dropdown-basic">
-                            Options
-                          </Dropdown.Toggle>
-                          <Dropdown.Menu>
-                            <Dropdown.Item href="#" onClick={() => editSeason(season)}>Edit</Dropdown.Item>
-                            <Dropdown.Item href="#" onClick={() => deleteSeason(season.id)}>
-                              Delete
-                            </Dropdown.Item>
-                          </Dropdown.Menu>
-                        </Dropdown>
-                      </td>
+                <Table striped bordered hover>
+                  <thead>
+                    <tr>
+                      <th>ID</th>
+                      <th>Name</th>
+                      <th>Year</th>
+                      <th>Status</th>
+                      <th>Edit</th>
                     </tr>
-                  ))}
-                </tbody>
-              </Table>
-
+                  </thead>
+                  <tbody>
+                    {seasonsData.map((season) => (
+                      <tr key={season.id}>
+                        <td>{season.id}</td>
+                        <td>{season.name}</td>
+                        <td>{season.year}</td>
+                        <td>{season.status}</td>
+                        <td>
+                          <Dropdown alignRight className="season-dropdown">
+                            <Dropdown.Toggle variant="secondary" id="dropdown-basic">Options</Dropdown.Toggle>
+                            <Dropdown.Menu>
+                              <Dropdown.Item href="#" onClick={() => editSeason(season)}>Edit</Dropdown.Item>
+                              <Dropdown.Item href="#" onClick={() => deleteSeason(season.id)}>Delete</Dropdown.Item>
+                            </Dropdown.Menu>
+                          </Dropdown>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </Table>
               </div>
             </Card.Body>
           </Card>
