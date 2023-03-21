@@ -7,13 +7,19 @@ import "../../../assets/main.css";
 
 const Seasons = () => {
   
-  const [showModal, setShowModal] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const [editedSeason, setEditedSeason] = useState(null);
+  const [showCreateModal, setShowCreateModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
 
-  const handleClose = () => setShowModal(false);
-  const handleShow = () => setShowModal(true);
+  const [isLoading, setIsLoading] = useState(false);
+  const [editedSeason, setEditedSeason] = useState(null);
+  
+  const handleShowCreate = () => setShowCreateModal(true);
+  const editSeason = async (season) => {
+    setEditedSeason(season);
+    setSeasonName(season.name);
+    setSeasonYear(season.year);
+    setShowEditModal(true);
+  };
 
   const [seasonName, setSeasonName] = useState('');
   const [seasonYear, setSeasonYear] = useState('');
@@ -21,12 +27,6 @@ const Seasons = () => {
 
   const { authClient } = useContext(AuthContext);
 
-  const editSeason = async (season) => {
-    setEditedSeason(season);
-    setSeasonName(season.name);
-    setSeasonYear(season.year);
-    setShowEditModal(true);
-  };
 
   const deleteSeason = async (seasonId) => {
     setIsLoading(true);
@@ -37,7 +37,7 @@ const Seasons = () => {
     setIsLoading(false);
   };
 
-  const handleSubmit = async (event) => {
+  const handleSubmitSeason = async (event) => {
     event.preventDefault();
     setIsLoading(true);
     
@@ -56,7 +56,7 @@ const Seasons = () => {
     setSeasonName('');
     setSeasonYear('');
     setEditedSeason(null);
-    handleClose();
+    setShowCreateModal(false);
     setShowEditModal(false);
     setIsLoading(false);
   };
@@ -85,7 +85,7 @@ const Seasons = () => {
               <h2>Seasons</h2>
             </Card.Header>
             <Card.Body>
-              <Button variant="primary" className="mb-3" onClick={handleShow}>
+              <Button variant="primary" className="mb-3" onClick={handleShowCreate}>
                 Create New Season
               </Button>
               <div className="table-responsive">
@@ -130,12 +130,12 @@ const Seasons = () => {
         </Col>
       </Row>
 
-      <Modal show={showModal} onHide={handleClose}>
+      <Modal show={showCreateModal} onHide={() => { setShowCreateModal(false); }}>
         <Modal.Header closeButton>
           <Modal.Title>Create New Season</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-        <Form onSubmit={handleSubmit}>
+        <Form onSubmit={handleSubmitSeason}>
           <Form.Group controlId="seasonName">
             <Form.Label>Name</Form.Label>
             <Form.Control
@@ -158,10 +158,10 @@ const Seasons = () => {
         </Form>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={handleClose}>
+          <Button variant="secondary" onClick={() => { setShowCreateModal(false); }}>
             Cancel
           </Button>
-          <Button variant="primary" onClick={handleSubmit}>
+          <Button variant="primary" onClick={handleSubmitSeason}>
             Save
           </Button>
         </Modal.Footer>
@@ -172,7 +172,7 @@ const Seasons = () => {
           <Modal.Title>Edit Season</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <Form onSubmit={handleSubmit}>
+          <Form onSubmit={handleSubmitSeason}>
             <Form.Group controlId="seasonName">
               <Form.Label>Name</Form.Label>
               <Form.Control
@@ -198,7 +198,7 @@ const Seasons = () => {
           <Button variant="secondary" onClick={() => { setEditedSeason(null); setShowEditModal(false); }}>
             Cancel
           </Button>
-          <Button variant="primary" onClick={handleSubmit}>
+          <Button variant="primary" onClick={handleSubmitSeason}>
             Save
           </Button>
         </Modal.Footer>
