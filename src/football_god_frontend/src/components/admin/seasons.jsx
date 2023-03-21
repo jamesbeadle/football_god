@@ -9,11 +9,15 @@ const Seasons = () => {
   
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
+  const [showDeleteConfirmModal, setShowDeleteConfirmModal] = useState(false);
+
 
   const [isLoading, setIsLoading] = useState(false);
   const [editedSeason, setEditedSeason] = useState(null);
+  const [seasonToDelete, setSeasonToDelete] = useState(null);
   
   const handleShowCreate = () => setShowCreateModal(true);
+
   const editSeason = async (season) => {
     setEditedSeason(season);
     setSeasonName(season.name);
@@ -21,20 +25,26 @@ const Seasons = () => {
     setShowEditModal(true);
   };
 
+  const deleteSeason = async (seasonId) => {
+    setSeasonToDelete(seasonId);
+    setShowDeleteConfirmModal(true);
+  };
+  
+
   const [seasonName, setSeasonName] = useState('');
   const [seasonYear, setSeasonYear] = useState('');
   const [seasonsData, setSeasonsData] = useState([]);
 
   const { authClient } = useContext(AuthContext);
 
-
-  const deleteSeason = async (seasonId) => {
+  const handleDeleteConfirmed = async () => {
     setIsLoading(true);
     const identity = authClient.getIdentity();
     Actor.agentOf(football_god_backend_actor).replaceIdentity(identity);
-    await football_god_backend_actor.deleteSeason(seasonId);
+    await football_god_backend_actor.deleteSeason(seasonToDelete);
     fetchSeasons();
     setIsLoading(false);
+    setShowDeleteConfirmModal(false);
   };
 
   const handleSubmitSeason = async (event) => {
@@ -203,6 +213,27 @@ const Seasons = () => {
           </Button>
         </Modal.Footer>
       </Modal>         
+
+      <Modal show={showDeleteConfirmModal} onHide={() => { setShowDeleteConfirmModal(false); }}>
+        <Modal.Header closeButton>
+          <Modal.Title>Delete Season</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>Are you sure you want to delete this season?</Modal.Body>
+        <Modal.Footer>
+          <Button
+            variant="secondary"
+            onClick={() => {
+              setShowDeleteConfirmModal(false);
+            }}
+          >
+            Cancel
+          </Button>
+          <Button variant="danger" onClick={handleDeleteConfirmed}>
+            Delete
+          </Button>
+        </Modal.Footer>
+      </Modal>
+
 
     </Container>
   );
