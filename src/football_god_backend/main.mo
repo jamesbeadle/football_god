@@ -5,6 +5,7 @@ import Principal "mo:base/Principal";
 import Result "mo:base/Result";
 import Buffer "mo:base/Buffer";
 import Debug "mo:base/Debug";
+import Types "types";
 
 actor {
 
@@ -23,25 +24,12 @@ actor {
   public shared query ({caller}) func isAdmin(): async Bool {
     return isAdminForCaller(caller);
   };
+  
+  private var seasons = List.nil<Types.Season>();
 
-  type Error = {
-      #NotFound;
-      #AlreadyExists;
-      #NotAuthorized;
-  };
+  var nextId : Nat16 = 1;
 
-  type Season = {
-    id : Nat32;
-    name : Text;
-    year : Nat32;
-    status : Text;
-  };
-
-  private var seasons = List.nil<Season>();
-
-  var nextId : Nat32 = 1;
-
-  public shared ({caller}) func createSeason(name : Text, year : Nat32) : async Result.Result<(), Error> {
+  public shared ({caller}) func createSeason(name : Text, year : Nat16) : async Result.Result<(), Types.Error> {
     
     let isCallerAdmin = isAdminForCaller(caller);
     if(isCallerAdmin == false){
@@ -49,11 +37,11 @@ actor {
     };
 
     let id = nextId;
-    let newSeason : Season = {
+    let newSeason : Types.Season = {
       id = id;
       name = name;
       year = year;
-      status = "inactive";
+      active = false;
     };
     
     seasons := List.push(newSeason, seasons);
@@ -62,16 +50,16 @@ actor {
     return #ok(());
   };
 
-   public shared ({caller}) func updateSeason(id : Nat32, newName : Text, newYear : Nat32) : async Result.Result<(), Error> {
+   public shared ({caller}) func updateSeason(id : Nat16, newName : Text, newYear : Nat16) : async Result.Result<(), Types.Error> {
     let isCallerAdmin = isAdminForCaller(caller);
     if(isCallerAdmin == false){
       return #err(#NotAuthorized);
     };
 
-    seasons := List.map<Season, Season>(seasons,
-      func (season: Season): Season {
+    seasons := List.map<Types.Season, Types.Season>(seasons,
+      func (season: Types.Season): Types.Season {
         if (season.id == id) {
-          { id = season.id; name = newName; year = newYear; status = season.status }
+          { id = season.id; name = newName; year = newYear; active = season.active }
         } 
         else { season }
       });
@@ -80,18 +68,18 @@ actor {
     
   };
 
-  public shared ({caller}) func deleteSeason(id : Nat32) : async Result.Result<(), Error> {
+  public shared ({caller}) func deleteSeason(id : Nat16) : async Result.Result<(), Types.Error> {
     let isCallerAdmin = isAdminForCaller(caller);
     if(isCallerAdmin == false){
       return #err(#NotAuthorized);
     };
 
-    seasons := List.filter(seasons, func(season: Season): Bool { season.id != id });
+    seasons := List.filter(seasons, func(season: Types.Season): Bool { season.id != id });
     
     return #ok(());
   };
 
-  public query func getSeasons() : async [Season] {
+  public query func getSeasons() : async [Types.Season] {
     return List.toArray(seasons);
   };
   
