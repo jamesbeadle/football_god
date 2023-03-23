@@ -4,7 +4,7 @@ import ICPImage from '../../assets/gold.png'; // Replace this with the actual pa
 
 const Home = () => {
   // Replace this with actual data
-  const totalICP = 1989;
+  const totalICP = 15000;
   const fixtures = [
     { home: 'Arsenal', away: 'Wolves' },
     { home: 'Aston Villa', away: 'Brighton' },

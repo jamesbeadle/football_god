@@ -45,11 +45,6 @@ const Admin = () => {
               </Row>
               <Row>
                 <Col xs={12} md={6} className="mb-3">
-                  <LinkContainer to="/gameweeks">
-                    <Button variant="success" className="w-100">Manage Gameweeks</Button>
-                  </LinkContainer>
-                </Col>
-                <Col xs={12} md={6} className="mb-3">
                   <LinkContainer to="/fixtures">
                     <Button variant="success" className="w-100">Manage Fixtures</Button>
                   </LinkContainer>

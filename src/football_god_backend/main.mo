@@ -73,7 +73,7 @@ actor {
     return teamInstance.createTeam(name);
   };
 
-   public shared ({caller}) func updateTeam(id : Nat16, newName : Text) : async Result.Result<(), Types.Error> {
+  public shared ({caller}) func updateTeam(id : Nat16, newName : Text) : async Result.Result<(), Types.Error> {
     let isCallerAdmin = isAdminForCaller(caller);
     if(isCallerAdmin == false){
       return #err(#NotAuthorized);
@@ -93,6 +93,20 @@ actor {
 
   public query func getTeams() : async [Types.Team] {
     return teamInstance.getTeams();
+  };
+
+  public shared ({caller}) func addFixtureToGameweek(seasonId: Nat16, gameweekId: Nat8, homeTeamId: Nat16, awayTeamId: Nat16) : async Result.Result<(), Types.Error> {
+    
+    let isCallerAdmin = isAdminForCaller(caller);
+    if(isCallerAdmin == false){
+      return #err(#NotAuthorized);
+    };
+
+    return seasonInstance.addFixtureToGameweek(seasonId, gameweekId, homeTeamId, awayTeamId);
+  };
+
+  public query func getFixtures(seasonId: Nat16, gameweekId: Nat8) : async [Types.Fixture] {
+    return seasonInstance.getFixtures(seasonId, gameweekId);
   };
   
 }
