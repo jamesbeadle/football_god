@@ -118,6 +118,54 @@ module {
       }
     };
 
+    
+    public func updateFixture(seasonId: Nat16, gameweekId: Nat8, fixtureId: Nat32, homeTeamId: Nat16, awayTeamId: Nat16) : Result.Result<(), Types.Error>{
+        
+        var seasonFound = false;
+        var gameweekFound = false;
+        var fixtureFound = false;
+
+        seasons := List.map<Types.Season, Types.Season>(seasons, func (season: Types.Season): Types.Season {
+          if (season.id == seasonId) {
+            seasonFound := true;
+            return {
+                id = season.id;
+                name = season.name;
+                year = season.year;
+                active = season.active;
+                gameweeks = List.map<Types.Gameweek, Types.Gameweek>(season.gameweeks, func (gameweek: Types.Gameweek): Types.Gameweek {
+                    if (gameweek.id == gameweekId) {
+                        gameweekFound := true;
+                        return {
+                            id = gameweek.id;
+                            number = gameweek.number;
+                            status = gameweek.status;
+                            userPredictions = gameweek.userPredictions;
+                            fixtures = List.map<Types.Fixture, Types.Fixture>(gameweek.fixtures, func (fixture: Types.Fixture): Types.Fixture {
+                              if (fixture.id == fixtureId) {
+                                fixtureFound := true;
+                                { id = fixture.id; seasonId = seasonId; gameweekId = gameweekId; homeTeamId = homeTeamId; awayTeamId = awayTeamId; status = 0; homeGoals = 0; awayGoals = 0; }
+                              } 
+                              else { fixture }
+                            });
+                        };
+                    } else { return gameweek; }
+                });
+            };
+        } else { return season; }
+      });
+
+      if (not seasonFound) {
+          return #err(#NotFound);
+      } else if (not gameweekFound) {
+          return #err(#NotFound);
+      } else if (not fixtureFound) {
+          return #err(#NotFound);
+      } else {
+          return #ok(());
+      }
+    };
+
     public func getFixtures(seasonId: Nat16, gameweekId: Nat8) : [Types.Fixture] {
       let foundSeason = List.find<Types.Season>(seasons, func (season: Types.Season): Bool {
           return season.id == seasonId;
