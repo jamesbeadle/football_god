@@ -33,7 +33,6 @@ module {
           id = id;
           name = name;
           year = year;
-          active = false;
           gameweeks = initGameweeks;
         };
         
@@ -48,7 +47,7 @@ module {
         seasons := List.map<Types.Season, Types.Season>(seasons,
         func (season: Types.Season): Types.Season {
             if (season.id == id) {
-            { id = season.id; name = newName; year = newYear; active = season.active; gameweeks = season.gameweeks; }
+            { id = season.id; name = newName; year = newYear; gameweeks = season.gameweeks; }
             } 
             else { season }
         });
@@ -64,6 +63,14 @@ module {
 
     public func getSeasons() : [Types.Season] {
         return List.toArray(seasons);
+    };
+    
+    public func getSeason(seasonId: Nat16) : ?Types.Season {
+        let foundSeason = List.find<Types.Season>(seasons, func (season: Types.Season): Bool {
+            return season.id == seasonId;
+        });
+
+        return foundSeason;
     };
 
     public func addFixtureToGameweek(seasonId: Nat16, gameweekId: Nat8, homeTeamId: Nat16, awayTeamId: Nat16) : Result.Result<(), Types.Error>{
@@ -90,7 +97,6 @@ module {
                 id = season.id;
                 name = season.name;
                 year = season.year;
-                active = season.active;
                 gameweeks = List.map<Types.Gameweek, Types.Gameweek>(season.gameweeks, func (gameweek: Types.Gameweek): Types.Gameweek {
                     if (gameweek.id == gameweekId) {
                         gameweekFound := true;
@@ -99,7 +105,6 @@ module {
                             number = gameweek.number;
                             status = gameweek.status;
                             fixtures = List.push<Types.Fixture>(newFixture, gameweek.fixtures);
-                            userPredictions = gameweek.userPredictions;
                         };
                     } else { return gameweek; }
                 });
@@ -132,7 +137,6 @@ module {
                 id = season.id;
                 name = season.name;
                 year = season.year;
-                active = season.active;
                 gameweeks = List.map<Types.Gameweek, Types.Gameweek>(season.gameweeks, func (gameweek: Types.Gameweek): Types.Gameweek {
                     if (gameweek.id == gameweekId) {
                         gameweekFound := true;
@@ -140,7 +144,6 @@ module {
                             id = gameweek.id;
                             number = gameweek.number;
                             status = gameweek.status;
-                            userPredictions = gameweek.userPredictions;
                             fixtures = List.map<Types.Fixture, Types.Fixture>(gameweek.fixtures, func (fixture: Types.Fixture): Types.Fixture {
                               if (fixture.id == fixtureId) {
                                 fixtureFound := true;
@@ -184,6 +187,25 @@ module {
                       return List.toArray(gameweek.fixtures);
                   };
               };
+          };
+      };    
+    };
+
+    
+    
+    public func getGameweek(seasonId: Nat16, gameweekId: Nat8) : ?Types.Gameweek {
+        let foundSeason = List.find<Types.Season>(seasons, func (season: Types.Season): Bool {
+          return season.id == seasonId;
+      });
+
+      switch (foundSeason) {
+          case (null) { return null; };
+          case (?season) {
+              let foundGameweek = List.find<Types.Gameweek>(season.gameweeks, func (gameweek: Types.Gameweek): Bool {
+                  return gameweek.id == gameweekId;
+              });
+              
+              return foundGameweek;
           };
       };    
     };

@@ -14,7 +14,6 @@ module Types {
         id : Nat16;
         name : Text;
         year : Nat16;
-        active : Bool;
         gameweeks: List.List<Types.Gameweek>;
     };
 
@@ -28,7 +27,6 @@ module Types {
         number: Nat8;
         status: Nat8; // 0 = Unopened, 1 = Open, 2 = Closed, 3 = Finalised
         fixtures: List.List<Types.Fixture>;
-        userPredictions: List.List<Types.UserPredictions>; //principal name, predictions
     };
 
     public type Fixture = {

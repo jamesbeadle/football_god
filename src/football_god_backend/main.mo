@@ -9,12 +9,50 @@ import Seasons "seasons";
 import Teams "teams";
 
 actor {
-  let seasonInstance = Seasons.Seasons();
-  let teamInstance = Teams.Teams();
-
+  
   let admins : [Principal] = [
     Principal.fromText("zzlzc-qp3hr-or44h-2ur67-umtpf-66ybr-megk3-qpqq3-icp2x-5c3vd-zqe")
   ];
+
+  let seasonInstance = Seasons.Seasons();
+  let teamInstance = Teams.Teams();
+  
+  var currentSeason : Nat16 = 0;
+  var currentGameweek : Nat8 = 0;
+
+  //system state functions
+
+  public shared ({caller}) func setCurrentSeason(seasonId : Nat16) : async Result.Result<(), Types.Error> {
+    
+    let isCallerAdmin = isAdminForCaller(caller);
+    if(isCallerAdmin == false){
+      return #err(#NotAuthorized);
+    };
+
+    currentSeason := seasonId;
+    return #ok(());
+  };
+
+  public shared ({caller}) func setCurrentGameweek(gameweekId : Nat8) : async Result.Result<(), Types.Error> {
+    
+    let isCallerAdmin = isAdminForCaller(caller);
+    if(isCallerAdmin == false){
+      return #err(#NotAuthorized);
+    };
+
+    currentGameweek := gameweekId;
+    return #ok(());
+  };
+
+  public query func getCurrentSeason() : async ?Types.Season {
+    return seasonInstance.getSeason(currentSeason);
+  };
+
+  public query func getCurrentGameweek() : async ?Types.Gameweek {
+    return seasonInstance.getGameweek(currentSeason, currentGameweek);
+  };
+
+  //admin functions
 
   private func isAdminForCaller(caller: Principal): Bool {
     //Debug.print(debug_show(caller));
@@ -29,6 +67,7 @@ actor {
   };
 
   //season functions
+  
   public shared ({caller}) func createSeason(name : Text, year : Nat16) : async Result.Result<(), Types.Error> {
     
     let isCallerAdmin = isAdminForCaller(caller);
@@ -63,6 +102,7 @@ actor {
 
   
   //team functions
+
   public shared ({caller}) func createTeam(name : Text) : async Result.Result<(), Types.Error> {
     
     let isCallerAdmin = isAdminForCaller(caller);
@@ -94,6 +134,8 @@ actor {
   public query func getTeams() : async [Types.Team] {
     return teamInstance.getTeams();
   };
+
+  //fixture functions
 
   public shared ({caller}) func addFixtureToGameweek(seasonId: Nat16, gameweekId: Nat8, homeTeamId: Nat16, awayTeamId: Nat16) : async Result.Result<(), Types.Error> {
     
