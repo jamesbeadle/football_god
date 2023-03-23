@@ -3,11 +3,14 @@ import Array "mo:base/Array";
 import Nat "mo:base/Nat";
 import Principal "mo:base/Principal";
 import Result "mo:base/Result";
-import Buffer "mo:base/Buffer";
 import Debug "mo:base/Debug";
 import Types "types";
+import Seasons "seasons";
+import Teams "teams";
 
 actor {
+  let seasonInstance = Seasons.Seasons();
+  let teamInstance = Teams.Teams();
 
   let admins : [Principal] = [
     Principal.fromText("zzlzc-qp3hr-or44h-2ur67-umtpf-66ybr-megk3-qpqq3-icp2x-5c3vd-zqe")
@@ -24,11 +27,8 @@ actor {
   public shared query ({caller}) func isAdmin(): async Bool {
     return isAdminForCaller(caller);
   };
-  
-  private var seasons = List.nil<Types.Season>();
 
-  var nextId : Nat16 = 1;
-
+  //season functions
   public shared ({caller}) func createSeason(name : Text, year : Nat16) : async Result.Result<(), Types.Error> {
     
     let isCallerAdmin = isAdminForCaller(caller);
@@ -36,18 +36,7 @@ actor {
       return #err(#NotAuthorized);
     };
 
-    let id = nextId;
-    let newSeason : Types.Season = {
-      id = id;
-      name = name;
-      year = year;
-      active = false;
-    };
-    
-    seasons := List.push(newSeason, seasons);
-     
-    nextId := nextId + 1;
-    return #ok(());
+    return seasonInstance.createSeason(name, year);
   };
 
    public shared ({caller}) func updateSeason(id : Nat16, newName : Text, newYear : Nat16) : async Result.Result<(), Types.Error> {
@@ -56,16 +45,7 @@ actor {
       return #err(#NotAuthorized);
     };
 
-    seasons := List.map<Types.Season, Types.Season>(seasons,
-      func (season: Types.Season): Types.Season {
-        if (season.id == id) {
-          { id = season.id; name = newName; year = newYear; active = season.active }
-        } 
-        else { season }
-      });
-
-    return #ok(());
-    
+    return seasonInstance.updateSeason(id, newName, newYear);
   };
 
   public shared ({caller}) func deleteSeason(id : Nat16) : async Result.Result<(), Types.Error> {
@@ -74,13 +54,45 @@ actor {
       return #err(#NotAuthorized);
     };
 
-    seasons := List.filter(seasons, func(season: Types.Season): Bool { season.id != id });
-    
-    return #ok(());
+    return seasonInstance.deleteSeason(id);
   };
 
   public query func getSeasons() : async [Types.Season] {
-    return List.toArray(seasons);
+    return seasonInstance.getSeasons();
+  };
+
+  
+  //team functions
+  public shared ({caller}) func createTeam(name : Text) : async Result.Result<(), Types.Error> {
+    
+    let isCallerAdmin = isAdminForCaller(caller);
+    if(isCallerAdmin == false){
+      return #err(#NotAuthorized);
+    };
+
+    return teamInstance.createTeam(name);
+  };
+
+   public shared ({caller}) func updateTeam(id : Nat16, newName : Text) : async Result.Result<(), Types.Error> {
+    let isCallerAdmin = isAdminForCaller(caller);
+    if(isCallerAdmin == false){
+      return #err(#NotAuthorized);
+    };
+
+    return teamInstance.updateTeam(id, newName);
+  };
+
+  public shared ({caller}) func deleteTeam(id : Nat16) : async Result.Result<(), Types.Error> {
+    let isCallerAdmin = isAdminForCaller(caller);
+    if(isCallerAdmin == false){
+      return #err(#NotAuthorized);
+    };
+
+    return teamInstance.deleteTeam(id);
+  };
+
+  public query func getTeams() : async [Types.Team] {
+    return teamInstance.getTeams();
   };
   
 }

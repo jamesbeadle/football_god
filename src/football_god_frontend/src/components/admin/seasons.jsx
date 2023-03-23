@@ -71,7 +71,6 @@ const Seasons = () => {
   const fetchSeasons = async () => {
     const seasons = await football_god_backend_actor.getSeasons();
     setSeasonsData(seasons);
-    console.log(seasons);
   };
 
   useEffect(() => {
@@ -81,7 +80,7 @@ const Seasons = () => {
   return (
     <Container>
       {isLoading && (
-        <div className="seasonOverlay">
+        <div className="customOverlay">
           <Spinner animation="border" />
         </div>
       )}
@@ -103,7 +102,7 @@ const Seasons = () => {
                       <th>Name</th>
                       <th>Year</th>
                       <th>Status</th>
-                      <th>Edit</th>
+                      <th>Options</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -114,7 +113,7 @@ const Seasons = () => {
                         <td>{season.year}</td>
                         <td>{season.status}</td>
                         <td>
-                          <Dropdown alignRight className="season-dropdown">
+                          <Dropdown alignRight className="custom-dropdown">
                             <Dropdown.Toggle variant="secondary" id="dropdown-basic">Options</Dropdown.Toggle>
                             <Dropdown.Menu>
                               <Dropdown.Item href="#" onClick={() => editSeason(season)}>Edit</Dropdown.Item>

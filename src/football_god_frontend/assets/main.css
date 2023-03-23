@@ -1,5 +1,5 @@
 
-.seasonOverlay {
+.customOverlay {
     position: fixed;
     top: 0;
     left: 0;
@@ -12,10 +12,10 @@
     z-index: 9999;
 }
 
-.season-dropdown {
+.custom-dropdown {
     position: static;
 }
   
-.season-dropdown .dropdown-menu {
+.custom-dropdown .dropdown-menu {
     position: absolute;
 }
