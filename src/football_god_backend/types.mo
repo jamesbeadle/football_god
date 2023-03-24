@@ -8,6 +8,7 @@ module Types {
         #NotFound;
         #AlreadyExists;
         #NotAuthorized;
+        #NotAllowed;
     };
 
     public type Season = {
@@ -47,6 +48,8 @@ module Types {
 
     public type Prediction = {
         id: Nat32;
+        seasonId: Nat16;
+        gameWeekId: Nat8;
         fixtureId: Nat16;
         homeGoals: Nat8;
         awayGoals: Nat8;

@@ -8,6 +8,7 @@ import Debug "mo:base/Debug";
 import Types "types";
 import Seasons "seasons";
 import Teams "teams";
+import Predictions "predictions";
 
 actor {
   
@@ -17,6 +18,7 @@ actor {
 
   let seasonInstance = Seasons.Seasons();
   let teamInstance = Teams.Teams();
+  let predictionsInstance = Predictions.Predictions();
   
   var currentSeason : Nat16 = 0;
   var currentGameweek : Nat8 = 0;
@@ -169,6 +171,35 @@ actor {
 
     let totalICP : Nat32 = 0;
     return totalICP;
+  };
+
+  public shared ({caller}) func submitPredictions(seasonId: Nat16, gameweekId: Nat8, predictions: [Types.Prediction]) : async Result.Result<(), Types.Error> {
+    assert not Principal.isAnonymous(caller);
+
+    let currentSeason = switch (await getCurrentSeason()) {  
+        case null { return #err(#NotAllowed) };
+        case (?season) { season }
+    };
+
+    let currentGameweek = switch (await getCurrentGameweek()) {  
+        case null { return #err(#NotAllowed) };
+        case (?gameweek) { gameweek }
+    };
+
+    if(seasonId != currentSeason.id){
+      return #err(#NotAllowed);
+    };
+
+    if(gameweekId != currentGameweek.id){
+      return #err(#NotAllowed);
+    };
+
+    if(currentGameweek.status != 1){
+      return #err(#NotAllowed);
+    };
+
+    let principalName = Principal.toText(caller); 
+    return predictionsInstance.submitPredictions(principalName, seasonId, gameweekId, predictions);
   };
   
 }

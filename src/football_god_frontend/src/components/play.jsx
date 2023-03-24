@@ -1,8 +1,46 @@
 import React, { useState } from 'react';
 import { Container, Row, Col, Card, Form, Button } from 'react-bootstrap';
+import { football_god_backend as football_god_backend_actor } from '../../../declarations/football_god_backend';
+import { Actor } from "@dfinity/agent";
+import { AuthContext } from "../../contexts/AuthContext";
 
 const Play = () => {
+  
+  const { authClient } = useContext(AuthContext);
+  const [isLoading, setIsLoading] = useState(false);
   const [scores, setScores] = useState({});
+  const [fixtures, setFixtures] = useState([]);
+  const [currentSeason, setCurrentSeason] = useState(null);
+  const [currentGameweek, setCurrentGameweek] = useState(null);
+  const [teamsData, setTeamsData] = useState([]);
+
+  const fetchCurrentSeason = async () => {
+    const season = await football_god_backend_actor.getCurrentSeason();
+    setCurrentSeason(season[0]);
+  };
+
+  const fetchCurrentGameweek = async () => {
+    const gameweek = await football_god_backend_actor.getCurrentGameweek();
+    setCurrentGameweek(gameweek[0]);
+  };
+
+  const fetchFixtures = async () => {
+    if (currentSeason && currentGameweek) {
+      const fetchedFixtures = await football_god_backend_actor.getFixtures(currentSeason.id, currentGameweek.id);
+      setFixtures(fetchedFixtures);
+    }
+  };
+  
+  const fetchTeams = async () => {
+    const teams = await football_god_backend_actor.getTeams();
+    setTeamsData(teams);
+  };
+
+  const getTeamNameById = (teamId) => {
+    const team = teamsData.find((team) => team.id === teamId);
+    return team ? team.name : '';
+  };
+  
 
   const handleChange = (event, fixtureId, team) => {
     const updatedScores = { ...scores };
@@ -15,13 +53,27 @@ const Play = () => {
 
   const handleSubmit = (event) => {
     event.preventDefault();
+    setIsLoading(true);
+    const identity = authClient.getIdentity();
+    Actor.agentOf(football_god_backend_actor).replaceIdentity(identity);
+
+    
     console.log(scores);
   };
 
-  const fixtures = [
-    { id: 1, home: 'Team A', away: 'Team B' },
-    { id: 2, home: 'Team C', away: 'Team D' },
-  ];
+  useEffect(() => {
+    const fetchData = async () => {
+      await fetchCurrentSeason();
+      await fetchCurrentGameweek();
+    };
+    fetchData();
+  }, []);
+
+  useEffect(() => {
+    fetchTeams();
+    fetchFixtures();
+  }, [currentSeason, currentGameweek]);
+
 
   return (
     <Container>
@@ -41,7 +93,7 @@ const Play = () => {
                         type="number"
                         min="0"
                         placeholder="Home"
-                        value={scores[fixture.id]?.home || ''}
+                        value={getTeamNameById(scores[fixture.id]?.homeTeamId) || ''}
                         onChange={(event) => handleChange(event, fixture.id, 'home')}
                       />
                     </Col>
@@ -54,7 +106,7 @@ const Play = () => {
                         type="number"
                         min="0"
                         placeholder="Away"
-                        value={scores[fixture.id]?.away || ''}
+                        value={getTeamNameById(scores[fixture.id]?.awayTeamId) || ''}
                         onChange={(event) => handleChange(event, fixture.id, 'away')}
                       />
                     </Col>

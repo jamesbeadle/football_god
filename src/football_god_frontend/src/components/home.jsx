@@ -39,6 +39,11 @@ const Home = () => {
     setTeamsData(teams);
   };
 
+  const getTeamNameById = (teamId) => {
+    const team = teamsData.find((team) => team.id === teamId);
+    return team ? team.name : '';
+  };
+  
   useEffect(() => {
     const fetchData = async () => {
       await fetchTotalICP();
@@ -53,12 +58,6 @@ const Home = () => {
     fetchFixtures();
   }, [currentSeason, currentGameweek]);
 
-  
-
-  const getTeamNameById = (teamId) => {
-    const team = teamsData.find((team) => team.id === teamId);
-    return team ? team.name : '';
-  };
 
 
   return (
