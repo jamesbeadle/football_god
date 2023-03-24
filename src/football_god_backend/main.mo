@@ -36,14 +36,14 @@ actor {
     return #ok(());
   };
 
-  public shared ({caller}) func setCurrentGameweek(gameweekId : Nat8) : async Result.Result<(), Types.Error> {
+  public shared ({caller}) func setCurrentGameweek(gameweekNumber : Nat8) : async Result.Result<(), Types.Error> {
     
     let isCallerAdmin = isAdminForCaller(caller);
     if(isCallerAdmin == false){
       return #err(#NotAuthorized);
     };
 
-    currentGameweek := gameweekId;
+    currentGameweek := gameweekNumber;
     return #ok(());
   };
 
@@ -140,24 +140,24 @@ actor {
 
   //fixture functions
 
-  public shared ({caller}) func addFixtureToGameweek(seasonId: Nat16, gameweekId: Nat8, homeTeamId: Nat16, awayTeamId: Nat16) : async Result.Result<(), Types.Error> {
+  public shared ({caller}) func addFixtureToGameweek(seasonId: Nat16, gameweekNumber: Nat8, homeTeamId: Nat16, awayTeamId: Nat16) : async Result.Result<(), Types.Error> {
     
     let isCallerAdmin = isAdminForCaller(caller);
     if(isCallerAdmin == false){
       return #err(#NotAuthorized);
     };
 
-    return seasonInstance.addFixtureToGameweek(seasonId, gameweekId, homeTeamId, awayTeamId);
+    return seasonInstance.addFixtureToGameweek(seasonId, gameweekNumber, homeTeamId, awayTeamId);
   };
 
-  public shared ({caller}) func updateFixture(seasonId: Nat16, gameweekId: Nat8, fixtureId: Nat32, homeTeamId: Nat16, awayTeamId: Nat16) : async Result.Result<(), Types.Error> {
+  public shared ({caller}) func updateFixture(seasonId: Nat16, gameweekNumber: Nat8, fixtureId: Nat32, homeTeamId: Nat16, awayTeamId: Nat16) : async Result.Result<(), Types.Error> {
     
     let isCallerAdmin = isAdminForCaller(caller);
     if(isCallerAdmin == false){
       return #err(#NotAuthorized);
     };
 
-    return seasonInstance.updateFixture(seasonId, gameweekId, fixtureId, homeTeamId, awayTeamId);
+    return seasonInstance.updateFixture(seasonId, gameweekNumber, fixtureId, homeTeamId, awayTeamId);
   };
 
   public query func getFixtures(seasonId: Nat16, gameweekId: Nat8) : async [Types.Fixture] {
@@ -173,7 +173,7 @@ actor {
     return totalICP;
   };
 
-  public shared ({caller}) func submitPredictions(seasonId: Nat16, gameweekId: Nat8, predictions: [Types.Prediction]) : async Result.Result<(), Types.Error> {
+  public shared ({caller}) func submitPredictions(seasonId: Nat16, gameweekNumber: Nat8, predictions: [Types.Prediction]) : async Result.Result<(), Types.Error> {
     assert not Principal.isAnonymous(caller);
 
     let currentSeason = switch (await getCurrentSeason()) {  
@@ -190,7 +190,7 @@ actor {
       return #err(#NotAllowed);
     };
 
-    if(gameweekId != currentGameweek.id){
+    if(gameweekNumber != currentGameweek.number){
       return #err(#NotAllowed);
     };
 
@@ -199,7 +199,7 @@ actor {
     };
 
     let principalName = Principal.toText(caller); 
-    return predictionsInstance.submitPredictions(principalName, seasonId, gameweekId, predictions);
+    return predictionsInstance.submitPredictions(principalName, seasonId, gameweekNumber, predictions);
   };
   
 }

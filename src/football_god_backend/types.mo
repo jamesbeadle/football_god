@@ -24,7 +24,6 @@ module Types {
     };
 
     public type Gameweek = {
-        id: Nat8;
         number: Nat8;
         status: Nat8; // 0 = Unopened, 1 = Open, 2 = Closed, 3 = Finalised
         fixtures: List.List<Types.Fixture>;
@@ -33,17 +32,12 @@ module Types {
     public type Fixture = {
         id: Nat32;
         seasonId: Nat16;
-        gameweekId: Nat8;
+        gameweekNumber: Nat8;
         homeTeamId: Nat16;
         awayTeamId: Nat16;
         homeGoals: Nat8;
         awayGoals: Nat8;
         status: Nat8; // 0 = Unplayed, 1 = Active, 2 = Finished
-    };
-
-    public type UserPredictions = {
-        userId: Principal;
-        predictions: List.List<Prediction>;
     };
 
     public type Prediction = {

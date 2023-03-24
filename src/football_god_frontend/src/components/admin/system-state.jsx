@@ -49,7 +49,7 @@ const SystemState = () => {
   const updateSystemState = async () => {
     if (currentSeason && currentGameweek) {
       await updateCurrentSeason(currentSeason.id);
-      await updateCurrentGameweek(currentGameweek.id);
+      await updateCurrentGameweek(currentGameweek.number);
     }
   };
 
@@ -95,7 +95,7 @@ const SystemState = () => {
               <Col xs={12} md={6} className="mb-3">
                 <Dropdown className="dropdown-full-width" >
                   <Dropdown.Toggle variant="primary">
-                    {currentGameweek ? `Current Gameweek: ${currentGameweek.id}` : 'Select Gameweek'}
+                    {currentGameweek ? `Current Gameweek: ${currentGameweek.number}` : 'Select Gameweek'}
                   </Dropdown.Toggle>
                   <Dropdown.Menu>
                       {Array.from({ length: 38 }, (_, i) => i + 1).map((number) => (

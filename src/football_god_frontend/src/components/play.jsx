@@ -26,7 +26,7 @@ const Play = () => {
 
   const fetchFixtures = async () => {
     if (currentSeason && currentGameweek) {
-      const fetchedFixtures = await football_god_backend_actor.getFixtures(currentSeason.id, currentGameweek.id);
+      const fetchedFixtures = await football_god_backend_actor.getFixtures(currentSeason.id, currentGameweek.number);
       setFixtures(fetchedFixtures);
     }
   };
