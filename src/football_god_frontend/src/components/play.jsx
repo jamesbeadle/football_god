@@ -51,14 +51,37 @@ const Play = () => {
     setScores(updatedScores);
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
     setIsLoading(true);
     const identity = authClient.getIdentity();
     Actor.agentOf(football_god_backend_actor).replaceIdentity(identity);
 
+    // Convert scores to an array of Prediction objects
+    const predictions = Object.entries(scores).map(([fixtureId, score]) => ({
+      fixtureId: parseInt(fixtureId),
+      homeGoals: score.home,
+      awayGoals: score.away
+    }));
+
+    try {
     
-    console.log(scores);
+      const result = await football_god_backend_actor.submitPredictions(
+        currentSeason.id,
+        currentGameweek.number,
+        predictions
+      );
+
+      if (result.ok) {
+        console.log('Predictions submitted successfully');
+      } else {
+        console.error('Error submitting predictions:', result.err);
+      }
+    } catch (error) {
+      console.error('Error:', error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   useEffect(() => {
