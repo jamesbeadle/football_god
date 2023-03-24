@@ -14,6 +14,7 @@ import Fixtures from "./components/admin/fixtures";
 import SystemState from "./components/admin/system-state";
 
 import { AuthProvider } from "./contexts/AuthContext";
+import Play from "./components/play";
 
 const App = () => {
  
@@ -28,6 +29,7 @@ const App = () => {
             <Route path="/teams" element={<Teams />} />
             <Route path="/fixtures" element={<Fixtures />} />
             <Route path="/system-state" element={<SystemState />} />
+            <Route path="/play" element={<Play />} />
             <Route path="/game-rules" element={<Rules />} />
           </Routes>
           <MyFooter />

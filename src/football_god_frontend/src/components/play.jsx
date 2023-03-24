@@ -2,21 +2,22 @@ import React, { useState } from 'react';
 import { Container, Row, Col, Card, Form, Button } from 'react-bootstrap';
 
 const Play = () => {
-  const [scores, setScores] = useState({}); // Store scores in an object
+  const [scores, setScores] = useState({});
 
-  const handleChange = (event, fixtureId) => {
+  const handleChange = (event, fixtureId, team) => {
     const updatedScores = { ...scores };
-    updatedScores[fixtureId] = event.target.value;
+    if (!updatedScores[fixtureId]) {
+      updatedScores[fixtureId] = {};
+    }
+    updatedScores[fixtureId][team] = parseInt(event.target.value);
     setScores(updatedScores);
   };
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    // Save the scores here
     console.log(scores);
   };
 
-  // Dummy fixtures data
   const fixtures = [
     { id: 1, home: 'Team A', away: 'Team B' },
     { id: 2, home: 'Team C', away: 'Team D' },
@@ -34,16 +35,27 @@ const Play = () => {
               <Form onSubmit={handleSubmit}>
                 {fixtures.map((fixture) => (
                   <Form.Group key={fixture.id} as={Row} className="mb-3">
-                    <Form.Label column sm={4} className="text-right">
-                      {fixture.home} vs {fixture.away}
-                    </Form.Label>
-                    <Col sm={4}>
+                    <Col xs={3}>
                       <Form.Control
+                        className="w-100"
                         type="number"
                         min="0"
-                        placeholder="Enter score"
-                        value={scores[fixture.id] || ''}
-                        onChange={(event) => handleChange(event, fixture.id)}
+                        placeholder="Home"
+                        value={scores[fixture.id]?.home || ''}
+                        onChange={(event) => handleChange(event, fixture.id, 'home')}
+                      />
+                    </Col>
+                    <Col xs={6} className="text-center">
+                      {fixture.home} vs {fixture.away}
+                    </Col>
+                    <Col xs={3}>
+                      <Form.Control 
+                        className="w-100"
+                        type="number"
+                        min="0"
+                        placeholder="Away"
+                        value={scores[fixture.id]?.away || ''}
+                        onChange={(event) => handleChange(event, fixture.id, 'away')}
                       />
                     </Col>
                   </Form.Group>
