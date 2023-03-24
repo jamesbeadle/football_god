@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { Container, Row, Col, Button, Card, ListGroup } from 'react-bootstrap';
+import { LinkContainer } from 'react-router-bootstrap';
 import ICPImage from '../../assets/gold.png';
 import { football_god_backend as football_god_backend_actor } from '../../../declarations/football_god_backend';
 
@@ -74,7 +75,9 @@ const Home = () => {
             </div>
             <h2 className="mb-3 text-center">{totalICP} ICP</h2>
             <h2 className="mb-3 text-center">Total Pot</h2>
-            <Button variant="primary" size="lg" block>Play</Button>
+            <LinkContainer to="/play">
+              <Button variant="primary" className="w-100" size="lg">Play</Button>
+            </LinkContainer>
             <br />
           </Col>
           <Col sm={12} md={8}>
