@@ -3,7 +3,6 @@ import Result "mo:base/Result";
 import Map "mo:base/HashMap";
 import Text "mo:base/Text";
 import List "mo:base/List";
-import Nat "mo:base/Nat";
 import Hash "mo:base/Hash";
 import Prim "mo:prim";
 
@@ -18,7 +17,6 @@ module {
     let nat8Hash: (Nat8) -> Hash.Hash = func(x) { Prim.natToNat32(Prim.nat8ToNat(x)) };
     let nat8Eq: (Nat8, Nat8) -> Bool = func(x, y) { x == y };
    
-    //private var userPredictions = Map.HashMap<PrincipalName, List.List<Types.Prediction>>(0, Text.equal, Text.hash);
     private var userPredictions = Map.HashMap<Nat16, Map.HashMap<Nat8, Map.HashMap<PrincipalName, List.List<Types.Prediction>>>>(0, nat16Eq, nat16Hash);
    
     public func submitPredictions(principalName: Text, seasonId: Nat16, gameweekId: Nat8, predictions: [Types.Prediction]) : Result.Result<(), Types.Error> {
