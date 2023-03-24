@@ -1,6 +1,7 @@
 import List "mo:base/List";
 import Array "mo:base/Array";
 import Nat "mo:base/Nat";
+import Nat32 "mo:base/Nat32";
 import Principal "mo:base/Principal";
 import Result "mo:base/Result";
 import Debug "mo:base/Debug";
@@ -159,6 +160,15 @@ actor {
 
   public query func getFixtures(seasonId: Nat16, gameweekId: Nat8) : async [Types.Fixture] {
     return seasonInstance.getFixtures(seasonId, gameweekId);
+  };
+
+  // ICP pot functions
+  public query func getGameweekPot() : async Nat32 {
+
+    //use the current week and season variable to get the pot
+
+    let totalICP : Nat32 = 0;
+    return totalICP;
   };
   
 }

@@ -241,7 +241,7 @@ const Fixtures = () => {
           <Modal.Title>Edit Fixture</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <Form onSubmit={handleSubmitFixture}>
+          <Form onSubmit={handleSubmitFixture} >
             <Form.Group controlId="homeTeam">
               <Form.Label>Home Team</Form.Label>
               <Form.Control as="select" value={homeTeam} onChange={(e) => setHomeTeam(e.target.value)}>

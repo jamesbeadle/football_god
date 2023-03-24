@@ -20,12 +20,12 @@ const SystemState = () => {
 
   const fetchCurrentSeason = async () => {
     const season = await football_god_backend_actor.getCurrentSeason();
-    setCurrentSeason(season);
+    setCurrentSeason(season[0]);
   };
 
   const fetchCurrentGameweek = async () => {
     const gameweek = await football_god_backend_actor.getCurrentGameweek();
-    setCurrentGameweek(gameweek);
+    setCurrentGameweek(gameweek[0]);
   };
 
   const updateCurrentSeason = async (seasonId) => {
@@ -54,9 +54,12 @@ const SystemState = () => {
   };
 
   useEffect(() => {
-    fetchSeasons();
-    fetchCurrentSeason();
-    fetchCurrentGameweek();
+    const fetchData = async () => {
+      await fetchSeasons();
+      await fetchCurrentSeason();
+      await fetchCurrentGameweek();
+    };
+    fetchData();
   }, []);
 
   return (
@@ -73,36 +76,44 @@ const SystemState = () => {
               <h2>System State</h2>
             </Card.Header>
             <Card.Body>
-              <Dropdown onSelect={(selectedKey) => setCurrentSeason(selectedKey)}>
-                <Dropdown.Toggle variant="primary">
-                  {currentSeason ? `Current Season: ${currentSeason.name}` : 'Select Season'}
-                </Dropdown.Toggle>
-                <Dropdown.Menu>
-                  {seasons.map((season) => (
-                    <Dropdown.Item key={season.id} eventKey={season.id}>
-                      {season.name}
-                    </Dropdown.Item>
-                  ))}
-                </Dropdown.Menu>
-              </Dropdown>
 
-              <Dropdown onSelect={(selectedKey) => setCurrentGameweek(selectedKey)}>
-                <Dropdown.Toggle variant="primary" className="ml-3">
-                  {currentGameweek ? `Current Gameweek: ${currentGameweek.id}` : 'Select Gameweek'}
-                </Dropdown.Toggle>
-                <Dropdown.Menu>
-                    {Array.from({ length: 38 }, (_, i) => i + 1).map((number) => (
-                      <Dropdown.Item key={number} eventKey={number}>
-                        {`Gameweek ${number}`}
+            <Row className="mt-3">
+              <Col xs={12} md={6} className="mb-3">
+                <Dropdown className="dropdown-full-width" >
+                  <Dropdown.Toggle variant="primary">
+                    {currentSeason ? `Current Season: ${currentSeason.name}` : 'Select Season'}
+                  </Dropdown.Toggle>
+                  <Dropdown.Menu>
+                    {seasons.map((season) => (
+                      <Dropdown.Item key={season.id} onClick={() => setCurrentSeason(season)}>
+                        {season.name}
                       </Dropdown.Item>
-                  ))}
-                </Dropdown.Menu>
-              </Dropdown>
-
-              <Button className="mt-3" variant="primary" onClick={updateSystemState} disabled={!currentSeason || !currentGameweek}>
-                Update System State
-              </Button>
-
+                    ))}
+                  </Dropdown.Menu>
+                </Dropdown>
+              </Col>
+              <Col xs={12} md={6} className="mb-3">
+                <Dropdown className="dropdown-full-width" >
+                  <Dropdown.Toggle variant="primary">
+                    {currentGameweek ? `Current Gameweek: ${currentGameweek.id}` : 'Select Gameweek'}
+                  </Dropdown.Toggle>
+                  <Dropdown.Menu>
+                      {Array.from({ length: 38 }, (_, i) => i + 1).map((number) => (
+                        <Dropdown.Item key={number} onClick={() => setCurrentGameweek({ id: number })}>
+                          {`Gameweek ${number}`}
+                        </Dropdown.Item>
+                    ))}
+                  </Dropdown.Menu>
+                </Dropdown>
+              </Col>
+            </Row>
+            <Row>
+              <Col xs={12} md={6} className="mb-3">
+                <Button className="mt-3" variant="primary" onClick={updateSystemState} disabled={!currentSeason || !currentGameweek}>
+                  Update System State
+                </Button>
+              </Col>
+            </Row>
             </Card.Body>
           </Card>
         </Col>
