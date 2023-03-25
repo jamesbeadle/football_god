@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { Container, Row, Col, Card, Form, Button } from 'react-bootstrap';
 import { football_god_backend as football_god_backend_actor } from '../../../declarations/football_god_backend';
 import { Actor } from "@dfinity/agent";
-import { AuthContext } from "../../contexts/AuthContext";
+import { AuthContext } from "../contexts/AuthContext";
 
 const Play = () => {
   
@@ -63,7 +63,8 @@ const Play = () => {
       homeGoals: score.home,
       awayGoals: score.away
     }));
-
+    console.log(currentSeason.id);
+    console.log(currentGameweek.number);
     try {
     
       const result = await football_god_backend_actor.submitPredictions(
@@ -116,7 +117,7 @@ const Play = () => {
                         type="number"
                         min="0"
                         placeholder="Home"
-                        value={getTeamNameById(scores[fixture.id]?.homeTeamId) || ''}
+                        value={scores[fixture.id]?.homeGoals}
                         onChange={(event) => handleChange(event, fixture.id, 'home')}
                       />
                     </Col>
@@ -129,7 +130,7 @@ const Play = () => {
                         type="number"
                         min="0"
                         placeholder="Away"
-                        value={getTeamNameById(scores[fixture.id]?.awayTeamId) || ''}
+                        value={scores[fixture.id]?.awayGoals}
                         onChange={(event) => handleChange(event, fixture.id, 'away')}
                       />
                     </Col>

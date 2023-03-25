@@ -5,7 +5,7 @@ import { Actor } from "@dfinity/agent";
 import { AuthContext } from "../../contexts/AuthContext";
 import "../../../assets/main.css";
 
-const SystemState = () => {
+const Gameweeks = () => {
 
   const { authClient } = useContext(AuthContext);
   const [isLoading, setIsLoading] = useState(false);
@@ -18,47 +18,19 @@ const SystemState = () => {
     setSeasons(seasonList);
   };
 
-  const fetchCurrentSeason = async () => {
-    const season = await football_god_backend_actor.getCurrentSeason();
-    setCurrentSeason(season[0]);
-  };
-
-  const fetchCurrentGameweek = async () => {
-    const gameweek = await football_god_backend_actor.getCurrentGameweek();
-    setCurrentGameweek(gameweek[0]);
-  };
-
-  const updateCurrentSeason = async (seasonId) => {
-    setIsLoading(true);
-    const identity = authClient.getIdentity();
-    Actor.agentOf(football_god_backend_actor).replaceIdentity(identity);
-    await football_god_backend_actor.setCurrentSeason(seasonId);
-    fetchCurrentSeason();
-    setIsLoading(false);
-  };
-
-  const updateCurrentGameweek = async (gameweekNumber) => {
-    setIsLoading(true);
-    const identity = authClient.getIdentity();
-    Actor.agentOf(football_god_backend_actor).replaceIdentity(identity);
-    console.log(gameweekNumber)
-    await football_god_backend_actor.setCurrentGameweek(gameweekNumber);
-    fetchCurrentGameweek();
-    setIsLoading(false);
-  };
-
-  const updateSystemState = async () => {
+  const updateGameweekStatus = async () => {
     if (currentSeason && currentGameweek) {
-      await updateCurrentSeason(currentSeason.id);
-      await updateCurrentGameweek(currentGameweek.number);
+        setIsLoading(true);
+        const identity = authClient.getIdentity();
+        Actor.agentOf(football_god_backend_actor).replaceIdentity(identity);
+        await football_god_backend_actor.updateGameweekStatus(currentSeason.id, currentGameweek.number, newStatus);
+        setIsLoading(false);
     }
   };
 
   useEffect(() => {
     const fetchData = async () => {
       await fetchSeasons();
-      await fetchCurrentSeason();
-      await fetchCurrentGameweek();
     };
     fetchData();
   }, []);
@@ -74,7 +46,7 @@ const SystemState = () => {
         <Col md={12}>
           <Card className="mt-4">
             <Card.Header className="text-center">
-              <h2>System State</h2>
+              <h2>Manage Gameweeks</h2>
             </Card.Header>
             <Card.Body>
 
@@ -107,11 +79,25 @@ const SystemState = () => {
                   </Dropdown.Menu>
                 </Dropdown>
               </Col>
+              <Col xs={12} md={6} className="mb-3">
+                <Dropdown className="dropdown-full-width" >
+                  <Dropdown.Toggle variant="primary">
+                    {currentGameweek ? `Current Gameweek: ${currentGameweek.number}` : 'Select Gameweek'}
+                  </Dropdown.Toggle>
+                  <Dropdown.Menu>
+                      {Array.from({ length: 38 }, (_, i) => i + 1).map((number) => (
+                        <Dropdown.Item key={number} onClick={() => setCurrentGameweek({ number: number })}>
+                          {`Gameweek ${number}`}
+                        </Dropdown.Item>
+                    ))}
+                  </Dropdown.Menu>
+                </Dropdown>
+              </Col>
             </Row>
             <Row>
               <Col xs={12} md={6} className="mb-3">
-                <Button className="mt-3" variant="primary" onClick={updateSystemState} disabled={!currentSeason || !currentGameweek}>
-                  Update System State
+                <Button className="mt-3" variant="primary" onClick={updateGameweekStatus} disabled={!currentSeason || !currentGameweek}>
+                  Update Gameweek Status
                 </Button>
               </Col>
             </Row>
@@ -123,4 +109,4 @@ const SystemState = () => {
   );
 };
 
-export default SystemState;
+export default Gameweeks;

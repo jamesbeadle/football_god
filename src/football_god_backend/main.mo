@@ -37,7 +37,7 @@ actor {
   };
 
   public shared ({caller}) func setCurrentGameweek(gameweekNumber : Nat8) : async Result.Result<(), Types.Error> {
-    
+    Debug.print(debug_show(gameweekNumber));
     let isCallerAdmin = isAdminForCaller(caller);
     if(isCallerAdmin == false){
       return #err(#NotAuthorized);

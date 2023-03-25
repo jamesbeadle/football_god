@@ -31,8 +31,6 @@ module Types {
 
     public type Fixture = {
         id: Nat32;
-        seasonId: Nat16;
-        gameweekNumber: Nat8;
         homeTeamId: Nat16;
         awayTeamId: Nat16;
         homeGoals: Nat8;

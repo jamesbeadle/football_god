@@ -175,7 +175,7 @@ module {
           case (null) { return []; };
           case (?season) {
               let foundGameweek = List.find<Types.Gameweek>(season.gameweeks, func (gameweek: Types.Gameweek): Bool {
-                  return gameweekNumber == gameweekNumber;
+                  return gameweek.number == gameweekNumber;
               });
 
               switch (foundGameweek) {
@@ -199,7 +199,7 @@ module {
           case (null) { return null; };
           case (?season) {
               let foundGameweek = List.find<Types.Gameweek>(season.gameweeks, func (gameweek: Types.Gameweek): Bool {
-                  return gameweekNumber == gameweekNumber;
+                  return gameweek.number == gameweekNumber;
               });
               
               return foundGameweek;
