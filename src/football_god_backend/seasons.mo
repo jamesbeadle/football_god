@@ -42,24 +42,24 @@ module {
         };
     };
 
-    public func getGameweeksInfo(seasonId: Nat16) : List.List<Types.Gameweek> {
+    public func getGameweeksInfo(seasonId: Nat16) : [Types.Gameweek] {
         let foundSeason = List.find<Types.Season>(seasons, func (season: Types.Season): Bool {
             return season.id == seasonId;
         });
 
         switch (foundSeason) {
             case (null) {
-                return List.nil<Types.Gameweek>();
+                return [];
             };
             case (?season) {
-                return List.map<Types.Gameweek, Types.Gameweek>(season.gameweeks, func (gameweek: Types.Gameweek): Types.Gameweek {
+                return List.toArray(List.map<Types.Gameweek, Types.Gameweek>(season.gameweeks, func (gameweek: Types.Gameweek): Types.Gameweek {
                     return {
                         number = gameweek.number;
                         status = gameweek.status;
                         fixtureCount = Nat8.fromNat(List.size<Types.Fixture>(gameweek.fixtures));
                         fixtures = List.nil<Types.Fixture>();
                     };
-                });
+                }));
             };
         };
     };
@@ -93,33 +93,6 @@ module {
         };    
     };
 
-
-    public func getSeasonWithGameweeksInfo(seasonId: Nat16) : ?Types.Season {
-        let foundSeason = List.find<Types.Season>(seasons, func (season: Types.Season): Bool {
-            return season.id == seasonId;
-        });
-
-        switch (foundSeason) {
-            case (null) { return null; };
-            case (?season) {
-                let seasonInfo = {
-                    id = season.id;
-                    name = season.name;
-                    year = season.year;
-                    gameweeks = List.map<Types.Gameweek, Types.Gameweek>(season.gameweeks, func (gameweek: Types.Gameweek): Types.Gameweek {
-                        return {
-                            number = gameweek.number;
-                            status = gameweek.status;
-                            fixtureCount = Nat8.fromNat(List.size<Types.Fixture>(gameweek.fixtures));
-                            fixtures = List.nil<Types.Fixture>();
-                        };
-                    });
-                };
-                return ?seasonInfo;
-            };
-        };
-    };
-
     public func createSeason(name : Text, year : Nat16) : Result.Result<(), Types.Error> {
         
         var initGameweeks = List.nil<Types.Gameweek>();
@@ -141,7 +114,7 @@ module {
           id = id;
           name = name;
           year = year;
-          gameweeks = initGameweeks;
+          gameweeks = List.reverse(initGameweeks);
         };
         
         seasons := List.push(newSeason, seasons);

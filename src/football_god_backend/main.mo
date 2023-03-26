@@ -78,10 +78,6 @@ actor {
   public query func getSeasonInfo(seasonId : Nat16) : async ?Types.Season {
     return seasonInstance.getSeasonInfo(seasonId);
   };
-
-  public query func getSeasonWithGameweeksInfo(seasonId : Nat16) : async ?Types.Season {
-    return seasonInstance.getSeasonWithGameweeksInfo(seasonId);
-  };
   
   public shared ({caller}) func createSeason(name : Text, year : Nat16) : async Result.Result<(), Types.Error> {
     
@@ -112,6 +108,10 @@ actor {
   };
 
   //gameweek functions
+
+  public query func getGameweeksInfo(seasonId : Nat16) : async [Types.Gameweek] {
+    return seasonInstance.getGameweeksInfo(seasonId);
+  };
   
   public shared ({caller}) func updateGameweekStatus(seasonId : Nat16, gameweekNumber : Nat8, status: Nat8) : async Result.Result<(), Types.Error> {
     

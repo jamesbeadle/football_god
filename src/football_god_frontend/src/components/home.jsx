@@ -18,12 +18,12 @@ const Home = () => {
   };
 
   const fetchActiveSeason = async () => {
-    const season = await football_god_backend_actor.getActiveSeason();
+    const season = await football_god_backend_actor.getActiveSeasonInfo();
     setActiveSeason(season[0]);
   };
 
   const fetchActiveGameweek = async () => {
-    const gameweek = await football_god_backend_actor.getActiveGameweek();
+    const gameweek = await football_god_backend_actor.getActiveGameweekInfo();
     setActiveGameweek(gameweek[0]);
   };
 

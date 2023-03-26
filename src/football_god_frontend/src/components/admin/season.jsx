@@ -1,16 +1,20 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Container, Row, Col, Card, Button, Table, Dropdown, Modal, Spinner, Form } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
 import { getGameweekStatus } from '../helpers';
 import { football_god_backend as football_god_backend_actor } from '../../../../declarations/football_god_backend';
+import { AuthContext } from "../../contexts/AuthContext";
+import { Actor } from "@dfinity/agent";
 
 const Season = () => {
   
   const { authClient } = useContext(AuthContext);
+  const navigate = useNavigate();
   const { seasonId } = useParams();
   const [isLoading, setIsLoading] = useState(false);
   const [season, setSeasonData] = useState([]);
+  const [gameweeks, setGameweeksData] = useState([]);
   const [showGameweekStatusModal, setShowGameweekStatusModal] = useState(false);
   const [showUpdateSeasonModal, setShowUpdateSeasonModal] = useState(false);
   const [showDeleteConfirmModal, setShowDeleteConfirmModal] = useState(false);
@@ -20,8 +24,13 @@ const Season = () => {
   const [seasonYear, setSeasonYear] = useState('');
 
   const fetchSeason = async () => {
-    const seasonData = await football_god_backend_actor.getSeasonWithGameweeksInfo(seasonId);
+    const seasonData = await football_god_backend_actor.getSeasonInfo(Number(seasonId));
     setSeasonData(seasonData);
+  };
+
+  const fetchGameweeks = async () => {
+    const gameweeksData = await football_god_backend_actor.getGameweeksInfo(Number(seasonId));
+    setGameweeksData(gameweeksData);
   };
 
   const updateStatus = async (gameweekNumber) => {
@@ -37,7 +46,7 @@ const Season = () => {
     const identity = authClient.getIdentity();
     Actor.agentOf(football_god_backend_actor).replaceIdentity(identity);
 
-    await football_god_backend_actor.updateSeason(seasonId, seasonName, seasonYear);
+    await football_god_backend_actor.updateSeason(Number(seasonId), seasonName, Number(seasonYear));
 
     fetchSeason();
     setShowUpdateSeasonModal(false);
@@ -52,7 +61,7 @@ const Season = () => {
     const identity = authClient.getIdentity();
     Actor.agentOf(football_god_backend_actor).replaceIdentity(identity);
     
-    await football_god_backend_actor.updateGameweekStatus(seasonId, updatedGameweek, selectedStatus);
+    await football_god_backend_actor.updateGameweekStatus(Number(seasonId), Number(updatedGameweek), Number(selectedStatus));
     
     fetchSeason();
     setSelectedStatus('');
@@ -73,6 +82,7 @@ const Season = () => {
   useEffect(() => {
     const fetchData = async () => {
       await fetchSeason();
+      await fetchGameweeks();
     };
     fetchData();
   }, []);
@@ -109,7 +119,7 @@ const Season = () => {
                             </tr>
                           </thead>
                           <tbody>
-                            {season.gameweeks.map((gameweek) => (
+                            {gameweeks.map((gameweek) => (
                               <tr key={gameweek.number}>
                                 <td>{gameweek.number}</td>
                                 <td>{getGameweekStatus(gameweek.status)}</td>
@@ -212,13 +222,13 @@ const Season = () => {
             <Form onSubmit={submitUpdateGameweekStatus}>
                 <Form.Group controlId="status">
                     <Form.Label>Status</Form.Label>
-                    <Form.Select value={selectedStatus} onChange={(e) => setSelectedStatus(e.target.value)}>
-                        <option value="">Select status</option>
-                        <option value="0">Unopened</option>
-                        <option value="1">Open</option>
-                        <option value="2">Closed</option>
-                        <option value="3">Finalised</option>
-                    </Form.Select>
+                    <Form.Control as="select" value={selectedStatus} onChange={(e) => setSelectedStatus(e.target.value)}>
+                      <option value="">Select status</option>
+                      <option value="0">Unopened</option>
+                      <option value="1">Open</option>
+                      <option value="2">Closed</option>
+                      <option value="3">Finalised</option>
+                  </Form.Control>
                 </Form.Group>
             </Form>
         </Modal.Body>

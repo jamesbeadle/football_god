@@ -30,7 +30,6 @@ const App = () => {
             <Route path="/fixtures/:seasonId/:gameweekNumber" element={<Fixtures />} />
             <Route path="/season/:seasonId" element={<Season />} />
             <Route path="/update-fixture/:seasonId/:gameweekNumber/:fixtureId" element={<UpdateFixture />} />
-            <Route path="/system-state" element={<SystemState />} />
             <Route path="/play" element={<Play />} />
           </Routes>
           <MyFooter />

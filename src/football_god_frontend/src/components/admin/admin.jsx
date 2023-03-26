@@ -1,7 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { Container, Row, Col, Card, Button, Spinner, Table, Form, Modal } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
 import { getGameweekStatus } from '../helpers';
+import { AuthContext } from "../../contexts/AuthContext";
+import { football_god_backend as football_god_backend_actor } from '../../../../declarations/football_god_backend';
+import { Actor } from "@dfinity/agent";
 
 const Admin = () => {
   
@@ -12,6 +15,8 @@ const Admin = () => {
   const [seasonsData, setSeasonsData] = useState([]);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showSetActiveModal, setShowActiveModal] = useState(false);
+  const [seasonName, setSeasonName] = useState('');
+  const [seasonYear, setSeasonYear] = useState('');
   
   const createSeason = () => setShowCreateModal(true);
 
@@ -71,13 +76,13 @@ const Admin = () => {
             </Card.Header>
             <Card.Body>
               <p className="mt-3">
-                <strong>Active Season:</strong> {activeSeason.name}
+                <strong>Active Season:</strong> {activeSeason ? activeSeason.name : 'Not set'}
               </p>
               <p>
-                <strong>Active Gameweek:</strong> {activeGameweek.number}
+                <strong>Active Gameweek:</strong> {activeGameweek ? activeGameweek.number : 'Not set'}
               </p>
               <p>
-                <strong>Gameweek Status:</strong> {getGameweekStatus(activeGameweek.status)}
+                <strong>Gameweek Status:</strong> {activeGameweek ? getGameweekStatus(activeGameweek.status) : 'Not set'}
               </p>
               <Row>
                 <LinkContainer to="/teams">
