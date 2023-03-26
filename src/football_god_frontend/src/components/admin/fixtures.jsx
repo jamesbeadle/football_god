@@ -60,7 +60,7 @@ const EditFixtures = () => {
   }, []);
 
   const getTeamNameById = (teamId) => {
-    const team = teamsData.find((team) => team.id === teamId);
+    const team = teams.find((team) => team.id === teamId);
     return team ? team.name : '';
   };
 

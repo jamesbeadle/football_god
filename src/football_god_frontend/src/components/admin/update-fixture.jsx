@@ -16,11 +16,11 @@ const UpdateFixture = () => {
   const [fixture, setFixtureData] = useState([]);
   const [showDeleteConfirmModal, setShowDeleteConfirmModal] = useState(false);
 
-  const [homeTeam, setHomeTeam] = useState('');
-  const [awayTeam, setAwayTeam] = useState('');
-  const [fixtureStatus, setFixtureStatus] = useState('');
-  const [homeGoals, setHomeGoals] = useState('');
-  const [awayGoals, setAwayGoals] = useState('');
+  const [homeTeam, setHomeTeam] = useState(null);
+  const [awayTeam, setAwayTeam] = useState(null);
+  const [fixtureStatus, setFixtureStatus] = useState(null);
+  const [homeGoals, setHomeGoals] = useState(0);
+  const [awayGoals, setAwayGoals] = useState(0);
   
   const handleSubmitFixture = async (event) => {
     event.preventDefault();
@@ -31,11 +31,6 @@ const UpdateFixture = () => {
 
     await football_god_backend_actor.updateFixture(Number(fixtureId), Number(homeTeam), Number(awayTeam), Number(fixtureStatus), Number(homeGoals), Number(awayGoals));
 
-    setHomeTeam('');
-    setAwayTeam('');
-    setFixtureStatus('');
-    setHomeGoals('');
-    setAwayGoals('');
     setIsLoading(false);
   };
 
@@ -50,8 +45,8 @@ const UpdateFixture = () => {
   };
   
   const fetchFixture = async () => {
-    const fixture = await football_god_backend_actor.getFixture(Number(seasonId), Number(gameweekNumber), Number(fixtureId));
-    setFixtureData(fixture);
+    const fixtureData = await football_god_backend_actor.getFixture(Number(seasonId), Number(gameweekNumber), Number(fixtureId));
+    setFixtureData(fixtureData[0]);
   };
   
   const fetchTeams = async () => {
@@ -60,9 +55,23 @@ const UpdateFixture = () => {
   };
 
   useEffect(() => {
-    fetchFixture();
-    fetchTeams();
+    const fetchData = async () => {
+      await fetchFixture();
+      await fetchTeams();
+    };
+    fetchData();
   }, []);
+
+  useEffect(() => {
+    if (fixture && Object.keys(fixture).length > 0) {
+      console.log(fixture);
+      setHomeTeam(fixture.homeTeamId);
+      setAwayTeam(fixture.awayTeamId);
+      setFixtureStatus(fixture.status);
+      setHomeGoals(fixture.homeGoals);
+      setAwayGoals(fixture.awayGoals);
+    }
+  }, [fixture]);
 
   return (
     <Container>
@@ -82,7 +91,7 @@ const UpdateFixture = () => {
                 <Form onSubmit={handleSubmitFixture} >
                     <Form.Group controlId="homeTeam">
                         <Form.Label>Home Team</Form.Label>
-                        <Form.Control as="select" value={homeTeam} onChange={(e) => setHomeTeam(e.target.value)}>
+                        <Form.Control as="select" value={homeTeam || ''} onChange={(e) => setHomeTeam(e.target.value)}>
                             <option value="">Select Home Team</option>
                             {teams.map((team) => (
                             <option key={team.id} value={team.id}>
@@ -93,7 +102,7 @@ const UpdateFixture = () => {
                     </Form.Group>
                     <Form.Group controlId="awayTeam">
                         <Form.Label>Away Team</Form.Label>
-                        <Form.Control as="select" value={awayTeam} onChange={(e) => setAwayTeam(e.target.value)}>
+                        <Form.Control as="select" value={awayTeam || ''} onChange={(e) => setAwayTeam(e.target.value)}>
                             <option value="">Select Away Team</option>
                             {teams.map((team) => (
                             <option key={team.id} value={team.id}>
@@ -104,39 +113,39 @@ const UpdateFixture = () => {
                     </Form.Group>
                     <Form.Group controlId="fixtureStatus">
                         <Form.Label>Status</Form.Label>
-                        <Form.Select value={fixtureStatus} onChange={(e) => setFixtureStatus(e.target.value)}>
+                        <Form.Control as="select" value={fixtureStatus === null ? '' : fixtureStatus} onChange={(e) => setFixtureStatus(e.target.value)}>
                             <option value="">Select status</option>
-                            <option value="0">Unplayed</option>
-                            <option value="1">Active</option>
-                            <option value="2">Finished</option>
-                        </Form.Select>
+                            <option key="0" value="0">Unplayed</option>
+                            <option key="1" value="1">Active</option>
+                            <option key="2" value="2">Finished</option>
+                        </Form.Control>
                     </Form.Group>
-                    <Form.Group controlId="homeScore">
+                    <Form.Group controlId="homeGoals">
                       <Form.Label>Home Score</Form.Label>
                       <Form.Control
                           className="w-100"
                           type="number"
                           min="0"
                           placeholder="Home Score"
-                          value={homeGoals}
+                          value={homeGoals === null ? '' : homeGoals}
                           onChange={(event) => setHomeGoals(event.target.value)}
                         />
                     </Form.Group>
                     
-                    <Form.Group controlId="awayScore">
+                    <Form.Group controlId="awayGoals">
                       <Form.Label>Away Score</Form.Label>
                       <Form.Control
                           className="w-100"
                           type="number"
                           min="0"
                           placeholder="Away Score"
-                          value={awayGoals}
+                          value={awayGoals === null ? '' : awayGoals}
                           onChange={(event) => setAwayGoals(event.target.value)}
                         />
                     </Form.Group>
                 </Form>
               </Row>
-              <Button variant="primary" className="mb-3" onClick={() => onClick={handleSubmitFixture}}>
+              <Button variant="primary" className="mb-3" onClick={() => {handleSubmitFixture }}>
                 Save Fixture
               </Button>
               <Button variant="primary" className="mb-3" onClick={() => { setShowDeleteConfirmModal(true); }}>

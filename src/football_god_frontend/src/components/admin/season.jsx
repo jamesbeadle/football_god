@@ -19,7 +19,7 @@ const Season = () => {
   const [showUpdateSeasonModal, setShowUpdateSeasonModal] = useState(false);
   const [showDeleteConfirmModal, setShowDeleteConfirmModal] = useState(false);
   const [updatedGameweek, setGameweekToUpdate] = useState(null);
-  const [selectedStatus, setSelectedStatus] = useState(null);
+  const [selectedStatus, setSelectedStatus] = useState('');
   const [seasonName, setSeasonName] = useState('');
   const [seasonYear, setSeasonYear] = useState('');
 
@@ -33,8 +33,9 @@ const Season = () => {
     setGameweeksData(gameweeksData);
   };
 
-  const updateStatus = async (gameweekNumber) => {
-    setGameweekToUpdate(gameweekNumber);
+  const updateStatus = async (gameweek) => {
+    setGameweekToUpdate(gameweek.number);
+    setSelectedStatus(gameweek.status);
     setShowGameweekStatusModal(true);
   };  
 
@@ -64,8 +65,9 @@ const Season = () => {
     await football_god_backend_actor.updateGameweekStatus(Number(seasonId), Number(updatedGameweek), Number(selectedStatus));
     
     fetchSeason();
+    fetchGameweeks();
     setSelectedStatus('');
-    showGameweekStatusModal(false);
+    setShowGameweekStatusModal(false);
     setIsLoading(false);
   };
 
@@ -128,7 +130,7 @@ const Season = () => {
                                 <Dropdown alignRight className="custom-dropdown">
                                     <Dropdown.Toggle variant="secondary" id="dropdown-basic">Options</Dropdown.Toggle>
                                     <Dropdown.Menu>
-                                        <Dropdown.Item href="#" onClick={() => updateStatus(gameweek.number)}>Update Status</Dropdown.Item>
+                                        <Dropdown.Item href="#" onClick={() => updateStatus(gameweek)}>Update Status</Dropdown.Item>
                                         <LinkContainer to={`/fixtures/${seasonId}/${gameweek.number}`}>
                                             <Dropdown.Item>Fixtures</Dropdown.Item>
                                         </LinkContainer>
