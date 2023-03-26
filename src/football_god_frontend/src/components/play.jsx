@@ -10,23 +10,23 @@ const Play = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [scores, setScores] = useState({});
   const [fixtures, setFixtures] = useState([]);
-  const [currentSeason, setCurrentSeason] = useState(null);
-  const [currentGameweek, setCurrentGameweek] = useState(null);
+  const [activeSeason, setActiveSeason] = useState(null);
+  const [activeGameweek, setActiveGameweek] = useState(null);
   const [teamsData, setTeamsData] = useState([]);
 
-  const fetchCurrentSeason = async () => {
-    const season = await football_god_backend_actor.getCurrentSeason();
-    setCurrentSeason(season[0]);
+  const fetchActiveSeason = async () => {
+    const season = await football_god_backend_actor.getActiveSeason();
+    setActiveSeason(season[0]);
   };
 
-  const fetchCurrentGameweek = async () => {
-    const gameweek = await football_god_backend_actor.getCurrentGameweek();
-    setCurrentGameweek(gameweek[0]);
+  const fetchActiveGameweek = async () => {
+    const gameweek = await football_god_backend_actor.getActiveGameweek();
+    setActiveGameweek(gameweek[0]);
   };
 
   const fetchFixtures = async () => {
-    if (currentSeason && currentGameweek) {
-      const fetchedFixtures = await football_god_backend_actor.getFixtures(currentSeason.id, currentGameweek.number);
+    if (activeSeason && activeGameweek) {
+      const fetchedFixtures = await football_god_backend_actor.getFixtures(activeSeason.id, activeGameweek.number);
       setFixtures(fetchedFixtures);
     }
   };
@@ -63,13 +63,12 @@ const Play = () => {
       homeGoals: score.home,
       awayGoals: score.away
     }));
-    console.log(currentSeason.id);
-    console.log(currentGameweek.number);
+    
     try {
     
       const result = await football_god_backend_actor.submitPredictions(
-        currentSeason.id,
-        currentGameweek.number,
+        activeSeason.id,
+        activeGameweek.number,
         predictions
       );
 
@@ -87,8 +86,8 @@ const Play = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      await fetchCurrentSeason();
-      await fetchCurrentGameweek();
+      await fetchActiveSeason();
+      await fetchActiveGameweek();
     };
     fetchData();
   }, []);
@@ -96,7 +95,7 @@ const Play = () => {
   useEffect(() => {
     fetchTeams();
     fetchFixtures();
-  }, [currentSeason, currentGameweek]);
+  }, [activeSeason, activeGameweek]);
 
 
   return (

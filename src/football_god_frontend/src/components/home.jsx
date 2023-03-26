@@ -8,8 +8,8 @@ const Home = () => {
   // Replace this with actual data
   const [totalICP, setTotalICP] = useState(0);
   const [fixtures, setFixtures] = useState([]);
-  const [currentSeason, setCurrentSeason] = useState(null);
-  const [currentGameweek, setCurrentGameweek] = useState(null);
+  const [activeSeason, setActiveSeason] = useState(null);
+  const [activeGameweek, setActiveGameweek] = useState(null);
   const [teamsData, setTeamsData] = useState([]);
 
   const fetchTotalICP = async () => {
@@ -17,19 +17,19 @@ const Home = () => {
     setTotalICP(icp);
   };
 
-  const fetchCurrentSeason = async () => {
-    const season = await football_god_backend_actor.getCurrentSeason();
-    setCurrentSeason(season[0]);
+  const fetchActiveSeason = async () => {
+    const season = await football_god_backend_actor.getActiveSeason();
+    setActiveSeason(season[0]);
   };
 
-  const fetchCurrentGameweek = async () => {
-    const gameweek = await football_god_backend_actor.getCurrentGameweek();
-    setCurrentGameweek(gameweek[0]);
+  const fetchActiveGameweek = async () => {
+    const gameweek = await football_god_backend_actor.getActiveGameweek();
+    setActiveGameweek(gameweek[0]);
   };
 
   const fetchFixtures = async () => {
-    if (currentSeason && currentGameweek) {
-      const fetchedFixtures = await football_god_backend_actor.getFixtures(currentSeason.id, currentGameweek.number);
+    if (activeSeason && activeGameweek) {
+      const fetchedFixtures = await football_god_backend_actor.getFixtures(activeSeason.id, activeGameweek.number);
       setFixtures(fetchedFixtures);
     }
   };
@@ -47,8 +47,8 @@ const Home = () => {
   useEffect(() => {
     const fetchData = async () => {
       await fetchTotalICP();
-      await fetchCurrentSeason();
-      await fetchCurrentGameweek();
+      await fetchActiveSeason();
+      await fetchActiveGameweek();
     };
     fetchData();
   }, []);
@@ -56,18 +56,18 @@ const Home = () => {
   useEffect(() => {
     fetchTeams();
     fetchFixtures();
-  }, [currentSeason, currentGameweek]);
+  }, [activeSeason, activeGameweek]);
 
 
 
   return (
-    currentSeason && currentGameweek ? (
+    activeSeason && activeGameweek ? (
       <Container className="flex-grow-1">
         <br />
         <Row>
           <Col sm={12} md={4} className="mb-3">
-            <h5 className="text-center mb-1">{currentSeason.name} Season</h5>
-            <h5 className="text-center mb-3">Gameweek {currentGameweek.number}</h5>
+            <h5 className="text-center mb-1">{activeSeason.name} Season</h5>
+            <h5 className="text-center mb-3">Gameweek {activeGameweek.number}</h5>
             <br />
             <div className="d-flex justify-content-center mb-3">
               <img src={ICPImage} alt="ICP" style={{ maxWidth: '100px', maxHeight: '50px' }} />

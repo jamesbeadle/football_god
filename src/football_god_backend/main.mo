@@ -20,8 +20,8 @@ actor {
   let teamInstance = Teams.Teams();
   let predictionsInstance = Predictions.Predictions();
   
-  var homepageSeason : Nat16 = 0;
-  var homepageGameweek : Nat8 = 0;
+  var activeSeason : Nat16 = 0;
+  var activeGameweek : Nat8 = 0;
 
 
   //admin functions
@@ -40,33 +40,33 @@ actor {
 
   //system state functions
 
-  public shared ({caller}) func setHomepageSeason(seasonId : Nat16) : async Result.Result<(), Types.Error> {
+  public shared ({caller}) func setActiveSeason(seasonId : Nat16) : async Result.Result<(), Types.Error> {
     
     let isCallerAdmin = isAdminForCaller(caller);
     if(isCallerAdmin == false){
       return #err(#NotAuthorized);
     };
 
-    homepageSeason := seasonId;
+    activeSeason := seasonId;
     return #ok(());
   };
 
-  public shared ({caller}) func setHomepageGameweek(gameweekNumber : Nat8) : async Result.Result<(), Types.Error> {
+  public shared ({caller}) func setActiveGameweek(gameweekNumber : Nat8) : async Result.Result<(), Types.Error> {
     let isCallerAdmin = isAdminForCaller(caller);
     if(isCallerAdmin == false){
       return #err(#NotAuthorized);
     };
 
-    homepageGameweek := gameweekNumber;
+    activeGameweek := gameweekNumber;
     return #ok(());
   };
 
-  public query func getHomepageSeasonInfo() : async ?Types.Season {
-    return seasonInstance.getSeasonInfo(homepageSeason);
+  public query func getActiveSeasonInfo() : async ?Types.Season {
+    return seasonInstance.getSeasonInfo(activeSeason);
   };
 
-  public query func getHomepageGameweekInfo() : async ?Types.Gameweek {
-    return seasonInstance.getGameweekInfo(homepageSeason, homepageGameweek);
+  public query func getActiveGameweekInfo() : async ?Types.Gameweek {
+    return seasonInstance.getGameweekInfo(activeSeason, activeGameweek);
   };
 
   //season functions
@@ -208,12 +208,12 @@ actor {
   public shared ({caller}) func submitPredictions(seasonId: Nat16, gameweekNumber: Nat8, predictions: [Types.Prediction]) : async Result.Result<(), Types.Error> {
     assert not Principal.isAnonymous(caller);
 
-    let currentSeason = switch (await getHomepageSeasonInfo()) {  
+    let currentSeason = switch (await getActiveSeasonInfo()) {  
         case null { return #err(#NotAllowed) };
         case (?season) { season }
     };
 
-    let currentGameweek = switch (await getHomepageGameweekInfo()) {  
+    let currentGameweek = switch (await getActiveGameweekInfo()) {  
         case null { return #err(#NotAllowed) };
         case (?gameweek) { gameweek }
     };

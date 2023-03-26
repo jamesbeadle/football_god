@@ -7,22 +7,22 @@ const Admin = () => {
   
   const { authClient } = useContext(AuthContext);
   const [isLoading, setIsLoading] = useState(false);
-  const [homepageSeason, setHomepageSeason] = useState(null);
-  const [homepageGameweek, setHomepageGameweek] = useState(null);
+  const [activeSeason, setActiveSeason] = useState(null);
+  const [activeGameweek, setActiveGameweek] = useState(null);
   const [seasonsData, setSeasonsData] = useState([]);
   const [showCreateModal, setShowCreateModal] = useState(false);
-  const [showSetHomepageModal, setShowHomepageModal] = useState(false);
+  const [showSetActiveModal, setShowActiveModal] = useState(false);
   
   const createSeason = () => setShowCreateModal(true);
 
-  const fetchHomepageSeason = async () => {
-    const season = await football_god_backend_actor.getHomepageSeasonInfo();
-    setHomepageSeason(season[0]);
+  const fetchActiveSeason = async () => {
+    const season = await football_god_backend_actor.getActiveSeasonInfo();
+    setActiveSeason(season[0]);
   };
 
-  const fetchHomepageGameweek = async () => {
-    const gameweek = await football_god_backend_actor.getHomepageGameweekInfo();
-    setHomepageGameweek(gameweek[0]);
+  const fetchActiveGameweek = async () => {
+    const gameweek = await football_god_backend_actor.getActiveGameweekInfo();
+    setActiveGameweek(gameweek[0]);
   };
 
   const fetchSeasons = async () => {
@@ -49,8 +49,8 @@ const Admin = () => {
   
   useEffect(() => {
     const fetchData = async () => {
-      await fetchHomepageSeason();
-      await fetchHomepageGameweek();
+      await fetchActiveSeason();
+      await fetchActiveGameweek();
       await fetchSeasons();
     };
     fetchData();
@@ -71,18 +71,18 @@ const Admin = () => {
             </Card.Header>
             <Card.Body>
               <p className="mt-3">
-                <strong>Homepage Season:</strong> {homepageSeason.name}
+                <strong>Active Season:</strong> {activeSeason.name}
               </p>
               <p>
-                <strong>Homepage Gameweek:</strong> {homepageGameweek.number}
+                <strong>Active Gameweek:</strong> {activeGameweek.number}
               </p>
               <p>
-                <strong>Gameweek Status:</strong> {getGameweekStatus(homepageGameweek.status)}
+                <strong>Gameweek Status:</strong> {getGameweekStatus(activeGameweek.status)}
               </p>
               <Row>
                 <LinkContainer to="/teams">
                   <Button variant="primary" className="mb-4 w-100">
-                    Set Homepage
+                    Set Active State
                   </Button>
                 </LinkContainer>
               </Row>
@@ -179,16 +179,16 @@ const Admin = () => {
       </Modal>
 
       
-      <Modal show={showSetHomepageModal} onHide={() => { setSetHomepageModal(false); }}>
+      <Modal show={showSetActiveModal} onHide={() => { setSetActiveModal(false); }}>
         <Modal.Header closeButton>
-          <Modal.Title>Set Homepage</Modal.Title>
+          <Modal.Title>Set Active State</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Form onSubmit={submitCreateSeason}>
             <Form.Group controlId="seasonName">
-              <Form.Label>Homepage Season</Form.Label>
-              <Form.Control as="select" value={homepageSeason} onChange={(e) => setHomepageSeason(e.target.value)}>
-                <option value="">Select Homepage Season</option>
+              <Form.Label>Active Season</Form.Label>
+              <Form.Control as="select" value={activeSeason} onChange={(e) => setActiveSeason(e.target.value)}>
+                <option value="">Select Active Season</option>
                 {seasonsData.map((season) => (
                   <option key={season.id} value={season.id}>
                     {season.name}
@@ -198,8 +198,8 @@ const Admin = () => {
             </Form.Group>
 
             <Form.Group controlId="seasonYear">
-              <Form.Label>Homepage Gameweek</Form.Label>
-              <Form.Control as="select" value={homepageGameweek} onChange={(e) => setHomepageGameweek(e.target.value)}>
+              <Form.Label>Active Gameweek</Form.Label>
+              <Form.Control as="select" value={activeGameweek} onChange={(e) => setActiveGameweek(e.target.value)}>
                 <option value="">Select Gameweek</option>
                 {Array.from({ length: 38 }, (_, i) => i + 1).map((number) => (
                   <option key={number} value={number}>
@@ -211,7 +211,7 @@ const Admin = () => {
           </Form>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={() => { setShowHomepageModal(false); }}>
+          <Button variant="secondary" onClick={() => { setShowActiveModal(false); }}>
             Cancel
           </Button>
           <Button variant="primary" onClick={submitCreateSeason}>
