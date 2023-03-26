@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Container, Row, Col, Card, Button, Spinner, Table, Form, Modal } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
-import { getGameweekStatus } from '../utils/helpers';
+import { getGameweekStatus } from '../helpers';
 
 const Admin = () => {
   

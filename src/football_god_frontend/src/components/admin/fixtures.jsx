@@ -6,7 +6,7 @@ import { AuthContext } from "../../contexts/AuthContext";
 import "../../../assets/main.css";
 import { useParams } from 'react-router-dom';
 import { LinkContainer } from 'react-router-bootstrap';
-import { getFixtureStatus } from '../utils/helpers';
+import { getFixtureStatus } from '../helpers';
 
 const EditFixtures = () => {
   const { seasonId, gameweekNumber } = useParams();

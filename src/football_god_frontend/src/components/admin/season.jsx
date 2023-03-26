@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Container, Row, Col, Card, Button, Table, Dropdown, Modal, Spinner, Form } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
-import { getGameweekStatus } from '../utils/helpers';
-import { football_god_backend_actor } from 'path/to/your/football_god_backend_actor';
+import { getGameweekStatus } from '../helpers';
+import { football_god_backend as football_god_backend_actor } from '../../../../declarations/football_god_backend';
 
 const Season = () => {
   

@@ -8,13 +8,13 @@ import MyFooter from './components/shared/footer';
 import Home from "./components/home";
 import Rules from "./components/rules";
 import Admin from "./components/admin/admin";
-import Seasons from "./components/admin/seasons - delete";
 import Teams from "./components/admin/teams";
-import Fixtures from "./components/admin/fixtures - delete";
-import SystemState from "./components/admin/system-state";
+import Fixtures from "./components/admin/fixtures";
+import Season from "./components/admin/season";
+import UpdateFixture from "./components/admin/update-fixture";
+import Play from "./components/play";
 
 import { AuthProvider } from "./contexts/AuthContext";
-import Play from "./components/play";
 
 const App = () => {
  
@@ -25,12 +25,13 @@ const App = () => {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/admin" element={<Admin />} />
-            <Route path="/seasons" element={<Seasons />} />
             <Route path="/teams" element={<Teams />} />
-            <Route path="/fixtures" element={<Fixtures />} />
+            <Route path="/game-rules" element={<Rules />} />
+            <Route path="/fixtures/:seasonId/:gameweekNumber" element={<Fixtures />} />
+            <Route path="/season/:seasonId" element={<Season />} />
+            <Route path="/update-fixture/:seasonId/:gameweekNumber/:fixtureId" element={<UpdateFixture />} />
             <Route path="/system-state" element={<SystemState />} />
             <Route path="/play" element={<Play />} />
-            <Route path="/game-rules" element={<Rules />} />
           </Routes>
           <MyFooter />
         </div>
