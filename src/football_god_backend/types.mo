@@ -1,9 +1,10 @@
 import List "mo:base/List";
 import Map "mo:base/HashMap";
 import Principal "mo:base/Principal";
+import Hash "mo:base/Hash";
 
 module Types {
-    
+   
     public type Error = {
         #NotFound;
         #AlreadyExists;
@@ -27,6 +28,7 @@ module Types {
         number: Nat8;
         status: Nat8; // 0 = Unopened, 1 = Open, 2 = Closed, 3 = Finalised
         fixtures: List.List<Types.Fixture>;
+        fixtureCount : Nat8;
     };
 
     public type Fixture = {

@@ -1,15 +1,68 @@
-import React from 'react';
-import { Container, Row, Col, Card, Button } from 'react-bootstrap';
+import React, { useState, useEffect } from 'react';
+import { Container, Row, Col, Card, Button, Spinner, Table, Form, Modal } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
+import { getGameweekStatus } from '../utils/helpers';
 
 const Admin = () => {
-  // Replace these values with the actual data from your canister
-  const currentSeason = '2023';
-  const currentGameweek = '12';
-  const currentState = 'Open';
+  
+  const { authClient } = useContext(AuthContext);
+  const [isLoading, setIsLoading] = useState(false);
+  const [homepageSeason, setHomepageSeason] = useState(null);
+  const [homepageGameweek, setHomepageGameweek] = useState(null);
+  const [seasonsData, setSeasonsData] = useState([]);
+  const [showCreateModal, setShowCreateModal] = useState(false);
+  const [showSetHomepageModal, setShowHomepageModal] = useState(false);
+  
+  const createSeason = () => setShowCreateModal(true);
+
+  const fetchHomepageSeason = async () => {
+    const season = await football_god_backend_actor.getHomepageSeasonInfo();
+    setHomepageSeason(season[0]);
+  };
+
+  const fetchHomepageGameweek = async () => {
+    const gameweek = await football_god_backend_actor.getHomepageGameweekInfo();
+    setHomepageGameweek(gameweek[0]);
+  };
+
+  const fetchSeasons = async () => {
+    const seasons = await football_god_backend_actor.getSeasonsInfo();
+    setSeasonsData(seasons);
+  };
+
+  const submitCreateSeason = async (event) => {
+    event.preventDefault();
+    setIsLoading(true);
+    
+    const identity = authClient.getIdentity();
+    Actor.agentOf(football_god_backend_actor).replaceIdentity(identity);
+    
+    const parsedYear = parseInt(seasonYear, 10);
+    await football_god_backend_actor.createSeason(seasonName, parsedYear);
+    
+    fetchSeasons();
+    setSeasonName('');
+    setSeasonYear('');
+    setShowCreateModal(false);
+    setIsLoading(false);
+  };
+  
+  useEffect(() => {
+    const fetchData = async () => {
+      await fetchHomepageSeason();
+      await fetchHomepageGameweek();
+      await fetchSeasons();
+    };
+    fetchData();
+  }, []);
 
   return (
     <Container>
+      {isLoading && (
+        <div className="customOverlay">
+          <Spinner animation="border" />
+        </div>
+      )}
       <Row className="justify-content-md-center">
         <Col md={8}>
           <Card className="mt-4">
@@ -18,47 +71,155 @@ const Admin = () => {
             </Card.Header>
             <Card.Body>
               <p className="mt-3">
-                <strong>Current Season:</strong> {currentSeason}
+                <strong>Homepage Season:</strong> {homepageSeason.name}
               </p>
               <p>
-                <strong>Current Gameweek:</strong> {currentGameweek}
+                <strong>Homepage Gameweek:</strong> {homepageGameweek.number}
               </p>
               <p>
-                <strong>Gameweek State:</strong> {currentState}
+                <strong>Gameweek Status:</strong> {getGameweekStatus(homepageGameweek.status)}
               </p>
-              <LinkContainer to="/system-state">
-                <Button variant="primary" className="mb-4 w-100">
-                  Set System State
-                </Button>
-              </LinkContainer>
-              <Row className="mt-3">
-                <Col xs={12} md={6} className="mb-3">
-                  <LinkContainer to="/seasons">
-                    <Button variant="success" className="w-100">Manage Seasons</Button>
-                  </LinkContainer>
-                </Col>
-                <Col xs={12} md={6} className="mb-3">
-                  <LinkContainer to="/gameweeks">
-                    <Button variant="success" className="w-100">Manage Gameweeks</Button>
-                  </LinkContainer>
-                </Col>
-                <Col xs={12} md={6} className="mb-3">
-                  <LinkContainer to="/teams">
-                    <Button variant="success" className="w-100">Manage Teams</Button>
-                  </LinkContainer>
-                </Col>
+              <Row>
+                <LinkContainer to="/teams">
+                  <Button variant="primary" className="mb-4 w-100">
+                    Set Homepage
+                  </Button>
+                </LinkContainer>
               </Row>
               <Row>
-                <Col xs={12} md={6} className="mb-3">
-                  <LinkContainer to="/fixtures">
-                    <Button variant="success" className="w-100">Manage Fixtures</Button>
-                  </LinkContainer>
+                <LinkContainer to="/teams">
+                  <Button variant="primary" className="mb-4 w-100">
+                    Manage Teams
+                  </Button>
+                </LinkContainer>
+              </Row>
+              <Row className="justify-content-md-center">
+                <Col md={12}>
+                  <Card className="mt-4">
+                    <Card.Header className="text-center">
+                      <h2>Seasons</h2>
+                    </Card.Header>
+                    <Card.Body>
+                      <Button variant="primary" className="mb-3" onClick={createSeason}>
+                        Create New Season
+                      </Button>
+                      <div className="table-responsive">
+                        <Table striped bordered hover>
+                          <thead>
+                            <tr>
+                              <th>ID</th>
+                              <th>Name</th>
+                              <th>Year</th>
+                              <th>Options</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {seasonsData.map((season) => (
+                              <tr key={season.id}>
+                                <td>{season.id}</td>
+                                <td>{season.name}</td>
+                                <td>{season.year}</td>
+                                <td>
+                                  <LinkContainer to={`/season/${season.id}`}>
+                                    <Button variant="primary" className="mb-4 w-100">
+                                      View
+                                    </Button>
+                                  </LinkContainer>
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </Table>
+                      </div>
+                    </Card.Body>
+                  </Card>
                 </Col>
               </Row>
             </Card.Body>
           </Card>
         </Col>
       </Row>
+
+
+      <Modal show={showCreateModal} onHide={() => { setShowCreateModal(false); }}>
+        <Modal.Header closeButton>
+          <Modal.Title>Create New Season</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form onSubmit={submitCreateSeason}>
+            <Form.Group controlId="seasonName">
+              <Form.Label>Name</Form.Label>
+              <Form.Control
+                type="text"
+                placeholder="Enter season name"
+                value={seasonName}
+                onChange={(e) => setSeasonName(e.target.value)}
+              />
+            </Form.Group>
+
+            <Form.Group controlId="seasonYear">
+              <Form.Label>Year</Form.Label>
+              <Form.Control
+                type="number"
+                placeholder="Enter season year"
+                value={seasonYear}
+                onChange={(e) => setSeasonYear(e.target.value)}
+              />
+            </Form.Group>
+          </Form>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => { setShowCreateModal(false); }}>
+            Cancel
+          </Button>
+          <Button variant="primary" onClick={submitCreateSeason}>
+            Save
+          </Button>
+        </Modal.Footer>
+      </Modal>
+
+      
+      <Modal show={showSetHomepageModal} onHide={() => { setSetHomepageModal(false); }}>
+        <Modal.Header closeButton>
+          <Modal.Title>Set Homepage</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form onSubmit={submitCreateSeason}>
+            <Form.Group controlId="seasonName">
+              <Form.Label>Homepage Season</Form.Label>
+              <Form.Control as="select" value={homepageSeason} onChange={(e) => setHomepageSeason(e.target.value)}>
+                <option value="">Select Homepage Season</option>
+                {seasonsData.map((season) => (
+                  <option key={season.id} value={season.id}>
+                    {season.name}
+                  </option>
+                ))}
+              </Form.Control>
+            </Form.Group>
+
+            <Form.Group controlId="seasonYear">
+              <Form.Label>Homepage Gameweek</Form.Label>
+              <Form.Control as="select" value={homepageGameweek} onChange={(e) => setHomepageGameweek(e.target.value)}>
+                <option value="">Select Gameweek</option>
+                {Array.from({ length: 38 }, (_, i) => i + 1).map((number) => (
+                  <option key={number} value={number}>
+                    {number}
+                  </option>
+                ))}
+              </Form.Control>
+            </Form.Group>
+          </Form>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => { setShowHomepageModal(false); }}>
+            Cancel
+          </Button>
+          <Button variant="primary" onClick={submitCreateSeason}>
+            Save
+          </Button>
+        </Modal.Footer>
+      </Modal>
+
     </Container>
   );
 };

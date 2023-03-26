@@ -20,40 +20,9 @@ actor {
   let teamInstance = Teams.Teams();
   let predictionsInstance = Predictions.Predictions();
   
-  var currentSeason : Nat16 = 0;
-  var currentGameweek : Nat8 = 0;
+  var homepageSeason : Nat16 = 0;
+  var homepageGameweek : Nat8 = 0;
 
-  //system state functions
-
-  public shared ({caller}) func setCurrentSeason(seasonId : Nat16) : async Result.Result<(), Types.Error> {
-    
-    let isCallerAdmin = isAdminForCaller(caller);
-    if(isCallerAdmin == false){
-      return #err(#NotAuthorized);
-    };
-
-    currentSeason := seasonId;
-    return #ok(());
-  };
-
-  public shared ({caller}) func setCurrentGameweek(gameweekNumber : Nat8) : async Result.Result<(), Types.Error> {
-    Debug.print(debug_show(gameweekNumber));
-    let isCallerAdmin = isAdminForCaller(caller);
-    if(isCallerAdmin == false){
-      return #err(#NotAuthorized);
-    };
-
-    currentGameweek := gameweekNumber;
-    return #ok(());
-  };
-
-  public query func getCurrentSeason() : async ?Types.Season {
-    return seasonInstance.getSeason(currentSeason);
-  };
-
-  public query func getCurrentGameweek() : async ?Types.Gameweek {
-    return seasonInstance.getGameweek(currentSeason, currentGameweek);
-  };
 
   //admin functions
 
@@ -69,7 +38,50 @@ actor {
     return isAdminForCaller(caller);
   };
 
+  //system state functions
+
+  public shared ({caller}) func setHomepageSeason(seasonId : Nat16) : async Result.Result<(), Types.Error> {
+    
+    let isCallerAdmin = isAdminForCaller(caller);
+    if(isCallerAdmin == false){
+      return #err(#NotAuthorized);
+    };
+
+    homepageSeason := seasonId;
+    return #ok(());
+  };
+
+  public shared ({caller}) func setHomepageGameweek(gameweekNumber : Nat8) : async Result.Result<(), Types.Error> {
+    let isCallerAdmin = isAdminForCaller(caller);
+    if(isCallerAdmin == false){
+      return #err(#NotAuthorized);
+    };
+
+    homepageGameweek := gameweekNumber;
+    return #ok(());
+  };
+
+  public query func getHomepageSeasonInfo() : async ?Types.Season {
+    return seasonInstance.getSeasonInfo(homepageSeason);
+  };
+
+  public query func getHomepageGameweekInfo() : async ?Types.Gameweek {
+    return seasonInstance.getGameweekInfo(homepageSeason, homepageGameweek);
+  };
+
   //season functions
+
+  public query func getSeasonsInfo() : async [Types.Season] {
+    return seasonInstance.getSeasonsInfo();
+  };
+
+  public query func getSeasonInfo(seasonId : Nat16) : async ?Types.Season {
+    return seasonInstance.getSeasonInfo(seasonId);
+  };
+
+  public query func getSeasonWithGameweeksInfo(seasonId : Nat16) : async ?Types.Season {
+    return seasonInstance.getSeasonWithGameweeksInfo(seasonId);
+  };
   
   public shared ({caller}) func createSeason(name : Text, year : Nat16) : async Result.Result<(), Types.Error> {
     
@@ -81,7 +93,7 @@ actor {
     return seasonInstance.createSeason(name, year);
   };
 
-   public shared ({caller}) func updateSeason(id : Nat16, newName : Text, newYear : Nat16) : async Result.Result<(), Types.Error> {
+  public shared ({caller}) func updateSeason(id : Nat16, newName : Text, newYear : Nat16) : async Result.Result<(), Types.Error> {
     let isCallerAdmin = isAdminForCaller(caller);
     if(isCallerAdmin == false){
       return #err(#NotAuthorized);
@@ -99,12 +111,62 @@ actor {
     return seasonInstance.deleteSeason(id);
   };
 
-  public query func getSeasons() : async [Types.Season] {
-    return seasonInstance.getSeasons();
+  //gameweek functions
+  
+  public shared ({caller}) func updateGameweekStatus(seasonId : Nat16, gameweekNumber : Nat8, status: Nat8) : async Result.Result<(), Types.Error> {
+    
+    let isCallerAdmin = isAdminForCaller(caller);
+    if(isCallerAdmin == false){
+      return #err(#NotAuthorized);
+    };
+
+    return seasonInstance.updateGameweekStatus(seasonId, gameweekNumber, status);
   };
 
-  
+  //fixture functions
+
+  public query func getFixtures(seasonId: Nat16, gameweekNumber: Nat8) : async [Types.Fixture] {
+    return seasonInstance.getFixtures(seasonId, gameweekNumber);
+  };
+
+  public query func getFixture(seasonId : Nat16, gameweekNumber: Nat8, fixtureId: Nat32) : async ?Types.Fixture {
+    return seasonInstance.getFixture(seasonId, gameweekNumber, fixtureId);
+  };
+
+  public shared ({caller}) func addFixtureToGameweek(seasonId: Nat16, gameweekNumber: Nat8, homeTeamId: Nat16, awayTeamId: Nat16) : async Result.Result<(), Types.Error> {
+    
+    let isCallerAdmin = isAdminForCaller(caller);
+    if(isCallerAdmin == false){
+      return #err(#NotAuthorized);
+    };
+
+    return seasonInstance.addFixtureToGameweek(seasonId, gameweekNumber, homeTeamId, awayTeamId);
+  };
+
+  public shared ({caller}) func updateFixture(seasonId: Nat16, gameweekNumber: Nat8, fixtureId: Nat32, homeTeamId: Nat16, awayTeamId: Nat16) : async Result.Result<(), Types.Error> {
+    
+    let isCallerAdmin = isAdminForCaller(caller);
+    if(isCallerAdmin == false){
+      return #err(#NotAuthorized);
+    };
+
+    return seasonInstance.updateFixture(seasonId, gameweekNumber, fixtureId, homeTeamId, awayTeamId);
+  };
+
+  public shared ({caller}) func deleteFixture(seasonId : Nat16, gameweekNumber: Nat8, fixtureId: Nat32) : async Result.Result<(), Types.Error> {
+    let isCallerAdmin = isAdminForCaller(caller);
+    if(isCallerAdmin == false){
+      return #err(#NotAuthorized);
+    };
+
+    return seasonInstance.deleteFixture(seasonId, gameweekNumber, fixtureId);
+  };
+
   //team functions
+
+  public query func getTeams() : async [Types.Team] {
+    return teamInstance.getTeams();
+  };
 
   public shared ({caller}) func createTeam(name : Text) : async Result.Result<(), Types.Error> {
     
@@ -134,36 +196,6 @@ actor {
     return teamInstance.deleteTeam(id);
   };
 
-  public query func getTeams() : async [Types.Team] {
-    return teamInstance.getTeams();
-  };
-
-  //fixture functions
-
-  public shared ({caller}) func addFixtureToGameweek(seasonId: Nat16, gameweekNumber: Nat8, homeTeamId: Nat16, awayTeamId: Nat16) : async Result.Result<(), Types.Error> {
-    
-    let isCallerAdmin = isAdminForCaller(caller);
-    if(isCallerAdmin == false){
-      return #err(#NotAuthorized);
-    };
-
-    return seasonInstance.addFixtureToGameweek(seasonId, gameweekNumber, homeTeamId, awayTeamId);
-  };
-
-  public shared ({caller}) func updateFixture(seasonId: Nat16, gameweekNumber: Nat8, fixtureId: Nat32, homeTeamId: Nat16, awayTeamId: Nat16) : async Result.Result<(), Types.Error> {
-    
-    let isCallerAdmin = isAdminForCaller(caller);
-    if(isCallerAdmin == false){
-      return #err(#NotAuthorized);
-    };
-
-    return seasonInstance.updateFixture(seasonId, gameweekNumber, fixtureId, homeTeamId, awayTeamId);
-  };
-
-  public query func getFixtures(seasonId: Nat16, gameweekId: Nat8) : async [Types.Fixture] {
-    return seasonInstance.getFixtures(seasonId, gameweekId);
-  };
-
   // ICP pot functions
   public query func getGameweekPot() : async Nat32 {
 
@@ -176,12 +208,12 @@ actor {
   public shared ({caller}) func submitPredictions(seasonId: Nat16, gameweekNumber: Nat8, predictions: [Types.Prediction]) : async Result.Result<(), Types.Error> {
     assert not Principal.isAnonymous(caller);
 
-    let currentSeason = switch (await getCurrentSeason()) {  
+    let currentSeason = switch (await getHomepageSeasonInfo()) {  
         case null { return #err(#NotAllowed) };
         case (?season) { season }
     };
 
-    let currentGameweek = switch (await getCurrentGameweek()) {  
+    let currentGameweek = switch (await getHomepageGameweekInfo()) {  
         case null { return #err(#NotAllowed) };
         case (?gameweek) { gameweek }
     };
