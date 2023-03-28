@@ -29,8 +29,9 @@ const UpdateFixture = () => {
     const identity = authClient.getIdentity();
     Actor.agentOf(football_god_backend_actor).replaceIdentity(identity);
 
-    await football_god_backend_actor.updateFixture(Number(fixtureId), Number(homeTeam), Number(awayTeam), Number(fixtureStatus), Number(homeGoals), Number(awayGoals));
+    await football_god_backend_actor.updateFixture(Number(seasonId), Number(gameweekNumber), Number(fixtureId), Number(homeTeam), Number(awayTeam), Number(fixtureStatus), Number(homeGoals), Number(awayGoals));
 
+    navigate(`/fixtures/${seasonId}/${gameweekNumber}`);
     setIsLoading(false);
   };
 
@@ -145,7 +146,7 @@ const UpdateFixture = () => {
                     </Form.Group>
                 </Form>
               </Row>
-              <Button variant="primary" className="mb-3" onClick={() => {handleSubmitFixture }}>
+              <Button variant="primary" className="mb-3" onClick={ handleSubmitFixture }>
                 Save Fixture
               </Button>
               <Button variant="primary" className="mb-3" onClick={() => { setShowDeleteConfirmModal(true); }}>

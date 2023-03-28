@@ -143,14 +143,14 @@ actor {
     return seasonInstance.addFixtureToGameweek(seasonId, gameweekNumber, homeTeamId, awayTeamId);
   };
 
-  public shared ({caller}) func updateFixture(seasonId: Nat16, gameweekNumber: Nat8, fixtureId: Nat32, homeTeamId: Nat16, awayTeamId: Nat16) : async Result.Result<(), Types.Error> {
+  public shared ({caller}) func updateFixture(seasonId: Nat16, gameweekNumber: Nat8, fixtureId: Nat32, homeTeamId: Nat16, awayTeamId: Nat16, fixtureStatus: Nat8, homeGoals: Nat8, awayGoals: Nat8) : async Result.Result<(), Types.Error> {
     
     let isCallerAdmin = isAdminForCaller(caller);
     if(isCallerAdmin == false){
       return #err(#NotAuthorized);
     };
 
-    return seasonInstance.updateFixture(seasonId, gameweekNumber, fixtureId, homeTeamId, awayTeamId);
+    return seasonInstance.updateFixture(seasonId, gameweekNumber, fixtureId, homeTeamId, awayTeamId, fixtureStatus, homeGoals, awayGoals);
   };
 
   public shared ({caller}) func deleteFixture(seasonId : Nat16, gameweekNumber: Nat8, fixtureId: Nat32) : async Result.Result<(), Types.Error> {

@@ -278,7 +278,7 @@ module {
     };
 
     
-    public func updateFixture(seasonId: Nat16, gameweekNumber: Nat8, fixtureId: Nat32, homeTeamId: Nat16, awayTeamId: Nat16) : Result.Result<(), Types.Error>{
+    public func updateFixture(seasonId: Nat16, gameweekNumber: Nat8, fixtureId: Nat32, homeTeamId: Nat16, awayTeamId: Nat16, fixtureStatus: Nat8, homeGoals: Nat8, awayGoals: Nat8) : Result.Result<(), Types.Error>{
         
         var seasonFound = false;
         var gameweekFound = false;
@@ -301,7 +301,16 @@ module {
                             fixtures = List.map<Types.Fixture, Types.Fixture>(gameweek.fixtures, func (fixture: Types.Fixture): Types.Fixture {
                               if (fixture.id == fixtureId) {
                                 fixtureFound := true;
-                                { id = fixture.id; seasonId = seasonId; gameweekNumber = gameweekNumber; homeTeamId = homeTeamId; awayTeamId = awayTeamId; status = 0; homeGoals = 0; awayGoals = 0; }
+                                { 
+                                    id = fixture.id; 
+                                    seasonId = seasonId; 
+                                    gameweekNumber = gameweekNumber; 
+                                    homeTeamId = homeTeamId; 
+                                    awayTeamId = awayTeamId; 
+                                    status = fixtureStatus; 
+                                    homeGoals = homeGoals; 
+                                    awayGoals = awayGoals; 
+                                }
                               } 
                               else { fixture }
                             });
