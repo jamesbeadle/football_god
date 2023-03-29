@@ -116,8 +116,11 @@ module {
           year = year;
           gameweeks = List.reverse(initGameweeks);
         };
-        
-        seasons := List.push(newSeason, seasons);
+
+        var newSeasonList = List.nil<Types.Season>();
+        newSeasonList := List.push(newSeason, newSeasonList);
+
+        seasons := List.append(seasons, newSeasonList);
         
         nextSeasonId := nextSeasonId + 1;
         return #ok(());
@@ -254,10 +257,14 @@ module {
                 gameweeks = List.map<Types.Gameweek, Types.Gameweek>(season.gameweeks, func (gameweek: Types.Gameweek): Types.Gameweek {
                     if (gameweek.number == gameweekNumber) {
                         gameweekFound := true;
+
+                        var newFixturesList = List.nil<Types.Fixture>();
+                        newFixturesList := List.push(newFixture, newFixturesList);
+
                         return {
                             number = gameweek.number;
                             status = gameweek.status;
-                            fixtures = List.push<Types.Fixture>(newFixture, gameweek.fixtures);
+                            fixtures = List.append(gameweek.fixtures, newFixturesList);
                             fixtureCount = 0;
                         };
                     } else { return gameweek; }
