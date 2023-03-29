@@ -25,7 +25,7 @@ const Season = () => {
 
   const fetchSeason = async () => {
     const seasonData = await football_god_backend_actor.getSeasonInfo(Number(seasonId));
-    setSeasonData(seasonData);
+    setSeasonData(seasonData[0]);
   };
 
   const fetchGameweeks = async () => {
@@ -89,6 +89,14 @@ const Season = () => {
     fetchData();
   }, []);
 
+  
+  useEffect(() => {
+    if (season && Object.keys(season).length > 0) {
+      setSeasonName(season.name);
+      setSeasonYear(season.year);
+    }
+  }, [season]);
+
   return (
     <Container>
       {isLoading && (
@@ -103,6 +111,13 @@ const Season = () => {
               <h2>Season: {season.name}</h2>
             </Card.Header>
             <Card.Body>
+              <Row>
+                <Col md={4}>
+                  <Button variant="primary" className="mb-3" onClick={() => { setShowUpdateSeasonModal(true); }}>
+                    Edit Season
+                  </Button>
+                </Col>
+              </Row>
               <Row className="justify-content-md-center">
                 <Col md={12}>
                   <Card className="mt-4">
@@ -146,9 +161,13 @@ const Season = () => {
                   </Card>
                 </Col>
               </Row>
-              <Button variant="primary" className="mb-3" onClick={() => { setShowDeleteConfirmModal(true); }}>
-                Delete Season
-              </Button>
+              <Row>
+                <Col md={4}>
+                  <Button variant="danger" className="mb-3 w-100" onClick={() => { setShowDeleteConfirmModal(true); }}>
+                    Delete Season
+                  </Button>
+                </Col>
+              </Row>
             </Card.Body>
           </Card>
         </Col>
@@ -181,7 +200,7 @@ const Season = () => {
         <Modal.Body>
           <Form onSubmit={submitUpdateSeason}>
             <Form.Group controlId="seasonName">
-              <Form.Label>Home Team</Form.Label>
+              <Form.Label>Season Name</Form.Label>
               <Form.Control
                 type="text"
                 placeholder="Enter season name"
@@ -190,7 +209,7 @@ const Season = () => {
               />
             </Form.Group>
             <Form.Group controlId="seasonYear">
-              <Form.Label>Away Team</Form.Label>
+              <Form.Label>Season Year</Form.Label>
               <Form.Control
                 type="number"
                 placeholder="Enter season year"

@@ -65,7 +65,6 @@ const UpdateFixture = () => {
 
   useEffect(() => {
     if (fixture && Object.keys(fixture).length > 0) {
-      console.log(fixture);
       setHomeTeam(fixture.homeTeamId);
       setAwayTeam(fixture.awayTeamId);
       setFixtureStatus(fixture.status);
