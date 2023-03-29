@@ -17,7 +17,10 @@ module {
             name = name;
         };
         
-        teams := List.push(newTeam, teams);
+        var newTeamList = List.nil<Types.Team>();
+        newTeamList := List.push(newTeam, newTeamList);
+
+        teams := List.append(teams, newTeamList);
         
         nextId := nextId + 1;
         return #ok(());

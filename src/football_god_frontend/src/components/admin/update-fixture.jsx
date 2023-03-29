@@ -146,12 +146,21 @@ const UpdateFixture = () => {
                     </Form.Group>
                 </Form>
               </Row>
-              <Button variant="primary" className="mb-3" onClick={ handleSubmitFixture }>
-                Save Fixture
-              </Button>
-              <Button variant="primary" className="mb-3" onClick={() => { setShowDeleteConfirmModal(true); }}>
-                Delete Fixture
-              </Button>
+              <Row>
+                <Col md={4}>
+                  <Button variant="primary" className="mb-3 w-100" onClick={ handleSubmitFixture }>
+                    Save Fixture
+                  </Button>
+                </Col>
+                
+              </Row>
+              <Row>
+                <Col md={4}>
+                  <Button variant="danger" className="mb-3 w-100" onClick={() => { setShowDeleteConfirmModal(true); }}>
+                    Delete Fixture
+                  </Button>
+                </Col>
+              </Row>
             </Card.Body>
           </Card>
         </Col>
