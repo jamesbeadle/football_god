@@ -10,16 +10,23 @@ const Admin = () => {
   
   const { authClient } = useContext(AuthContext);
   const [isLoading, setIsLoading] = useState(false);
+  const [seasonsData, setSeasonsData] = useState([]);
+
   const [activeSeason, setActiveSeason] = useState(null);
   const [activeGameweek, setActiveGameweek] = useState(null);
-  const [seasonsData, setSeasonsData] = useState([]);
-  const [showCreateModal, setShowCreateModal] = useState(false);
-  const [showSetActiveModal, setShowActiveModal] = useState(false);
+  const [activeSeasonId, setActiveSeasonId] = useState(null);
+  const [activeGameweekNumber, setActiveGameweekNumber] = useState(null);
   const [seasonName, setSeasonName] = useState('');
   const [seasonYear, setSeasonYear] = useState('');
   
-  const createSeason = () => setShowCreateModal(true);
-
+  const [showCreateModal, setShowCreateModal] = useState(false);
+  const [showSetActiveModal, setShowActiveModal] = useState(false);
+  
+  const fetchSeasons = async () => {
+    const seasons = await football_god_backend_actor.getSeasonsInfo();
+    setSeasonsData(seasons);
+  };
+  
   const fetchActiveSeason = async () => {
     const season = await football_god_backend_actor.getActiveSeasonInfo();
     setActiveSeason(season[0]);
@@ -28,12 +35,10 @@ const Admin = () => {
   const fetchActiveGameweek = async () => {
     const gameweek = await football_god_backend_actor.getActiveGameweekInfo();
     setActiveGameweek(gameweek[0]);
+    console.log(gameweek)
   };
-
-  const fetchSeasons = async () => {
-    const seasons = await football_god_backend_actor.getSeasonsInfo();
-    setSeasonsData(seasons);
-  };
+  
+  const createSeason = () => setShowCreateModal(true);
 
   const submitCreateSeason = async (event) => {
     event.preventDefault();
@@ -51,6 +56,25 @@ const Admin = () => {
     setShowCreateModal(false);
     setIsLoading(false);
   };
+
+  const submitSetActiveState = async (event) => {
+    event.preventDefault();
+    setIsLoading(true);
+    
+    const identity = authClient.getIdentity();
+    Actor.agentOf(football_god_backend_actor).replaceIdentity(identity);
+    
+    console.log(activeGameweekNumber)
+    await football_god_backend_actor.setActiveSeason(Number(activeSeasonId));
+    await football_god_backend_actor.setActiveGameweek(Number(activeGameweekNumber));
+    await fetchActiveSeason();
+    await fetchActiveGameweek();
+    
+    setActiveSeasonId('');
+    setActiveGameweekNumber('');
+    setShowActiveModal(false);
+    setIsLoading(false);
+  };
   
   useEffect(() => {
     const fetchData = async () => {
@@ -60,6 +84,14 @@ const Admin = () => {
     };
     fetchData();
   }, []);
+
+  useEffect(() => {
+    if (activeSeason && Object.keys(activeSeason).length > 0
+        && activeGameweek && Object.keys(activeGameweek).length > 0) {
+      setActiveSeasonId(activeSeason.id);
+      setActiveGameweekNumber(activeGameweek.number);
+    }
+  }, [activeSeason, activeGameweek]);
 
   return (
     <Container>
@@ -85,11 +117,9 @@ const Admin = () => {
                 <strong>Gameweek Status:</strong> {activeGameweek ? getGameweekStatus(activeGameweek.status) : 'Not set'}
               </p>
               <Row>
-                <LinkContainer to="/teams">
-                  <Button variant="primary" className="mb-4 w-100">
-                    Set Active State
-                  </Button>
-                </LinkContainer>
+                <Button variant="primary" onClick={() => { setShowActiveModal(true); }} className="mb-4 w-100">
+                  Set Active State
+                </Button>
               </Row>
               <Row>
                 <LinkContainer to="/teams">
@@ -184,15 +214,15 @@ const Admin = () => {
       </Modal>
 
       
-      <Modal show={showSetActiveModal} onHide={() => { setSetActiveModal(false); }}>
+      <Modal show={showSetActiveModal} onHide={() => { setShowActiveModal(false); }}>
         <Modal.Header closeButton>
           <Modal.Title>Set Active State</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <Form onSubmit={submitCreateSeason}>
+          <Form onSubmit={submitSetActiveState}>
             <Form.Group controlId="seasonName">
               <Form.Label>Active Season</Form.Label>
-              <Form.Control as="select" value={activeSeason} onChange={(e) => setActiveSeason(e.target.value)}>
+              <Form.Control as="select" value={activeSeasonId} onChange={(e) => setActiveSeasonId(e.target.value)}>
                 <option value="">Select Active Season</option>
                 {seasonsData.map((season) => (
                   <option key={season.id} value={season.id}>
@@ -204,7 +234,7 @@ const Admin = () => {
 
             <Form.Group controlId="seasonYear">
               <Form.Label>Active Gameweek</Form.Label>
-              <Form.Control as="select" value={activeGameweek} onChange={(e) => setActiveGameweek(e.target.value)}>
+              <Form.Control as="select" value={activeGameweekNumber} onChange={(e) => setActiveGameweekNumber(e.target.value)}>
                 <option value="">Select Gameweek</option>
                 {Array.from({ length: 38 }, (_, i) => i + 1).map((number) => (
                   <option key={number} value={number}>
@@ -219,7 +249,7 @@ const Admin = () => {
           <Button variant="secondary" onClick={() => { setShowActiveModal(false); }}>
             Cancel
           </Button>
-          <Button variant="primary" onClick={submitCreateSeason}>
+          <Button variant="primary" onClick={submitSetActiveState}>
             Save
           </Button>
         </Modal.Footer>
