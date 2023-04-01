@@ -4,25 +4,46 @@ import { football_god_backend as football_god_backend_actor } from '../../../dec
 import { useHistory } from 'react-router-dom';
 
 const Leaderboard = () => {
+
+  const history = useHistory();
   const [seasons, setSeasons] = useState([]);
   const [selectedSeason, setSelectedSeason] = useState(null);
-  const [gameweeks, setGameweeks] = useState([]);
   const [selectedGameweek, setSelectedGameweek] = useState(null);
   const [leaderboard, setLeaderboard] = useState([]);
   const [page, setPage] = useState(0);
   const resultsPerPage = 25;
-  const history = useHistory();
+
+  useEffect(() => {
+    fetchSeasons();
+  }, []);
+
+  useEffect(() => {
+    if(seasons && Object.keys(seasons).length > 0){
+      const fetchData = async () => {
+        await fetchActiveSeason();
+        await fetchActiveGameweek();
+      };
+      fetchData();
+    }
+  }, [seasons]);
+
+  useEffect(() => {
+    fetchLeaderboard();
+  }, [selectedSeason, selectedGameweek, page]);
 
   const fetchSeasons = async () => {
     const fetchedSeasons = await football_god_backend_actor.getSeasons();
     setSeasons(fetchedSeasons);
   };
 
-  const fetchGameweeks = async () => {
-    if (selectedSeason) {
-      const fetchedGameweeks = await football_god_backend_actor.getGameweeks(selectedSeason.id);
-      setGameweeks(fetchedGameweeks);
-    }
+  const fetchActiveSeason = async () => {
+    const activeSeason = await football_god_backend_actor.getActiveSeason();
+    setSelectedSeason(activeSeason[0]);
+  };
+
+  const fetchActiveGameweek = async () => {
+    const activeGameweek = await football_god_backend_actor.getActiveGameweek();
+    setSelectedGameweek(activeGameweek[0]);
   };
 
   const fetchLeaderboard = async () => {
@@ -31,18 +52,6 @@ const Leaderboard = () => {
       setLeaderboard(fetchedLeaderboard);
     }
   };
-
-  useEffect(() => {
-    fetchSeasons();
-  }, []);
-
-  useEffect(() => {
-    fetchGameweeks();
-  }, [selectedSeason]);
-
-  useEffect(() => {
-    fetchLeaderboard();
-  }, [selectedSeason, selectedGameweek, page]);
 
   const handleViewSubmission = (userId) => {
     history.push(`/view-submission/${userId}`);
@@ -122,3 +131,4 @@ const Leaderboard = () => {
 </Container>
 );
 };
+export default Leaderboard;

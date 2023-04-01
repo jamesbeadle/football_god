@@ -7,20 +7,41 @@ import { useHistory } from 'react-router-dom';
 
 const History = () => {
   const { authClient } = useContext(AuthContext);
+  const identity = authClient.getIdentity();
+  Actor.agentOf(football_god_backend_actor).replaceIdentity(identity);
+  const history = useHistory();
+
   const [displayName, setDisplayName] = useState('');
   const [seasons, setSeasons] = useState([]);
   const [selectedSeason, setSelectedSeason] = useState(null);
   const [userHistory, setUserHistory] = useState([]);
-  const history = useHistory();
+
+  useEffect(() => {
+    fetchDisplayName();
+    const fetchData = async () => {
+      await fetchSeasons();
+      await fetchActiveSeason();
+    };
+    fetchData();
+  }, []);
+
+  useEffect(() => {
+    fetchUserHistory();
+  }, [selectedSeason]);
 
   const fetchDisplayName = async () => {
-    const name = await football_god_backend_actor.getDisplayName();
-    setDisplayName(name);
+    const profile = await football_god_backend_actor.getProfile();
+    setDisplayName(profile.displayName);
   };
 
   const fetchSeasons = async () => {
     const fetchedSeasons = await football_god_backend_actor.getSeasons();
     setSeasons(fetchedSeasons);
+  };
+
+  const fetchActiveSeason = async () => {
+    const activeSeason = await football_god_backend_actor.getActiveSeason();
+    setSelectedSeason(activeSeason[0]);
   };
 
   const fetchUserHistory = async () => {
@@ -33,15 +54,6 @@ const History = () => {
   const handleSeasonSelect = (season) => {
     setSelectedSeason(season);
   };
-
-  useEffect(() => {
-    fetchDisplayName();
-    fetchSeasons();
-  }, []);
-
-  useEffect(() => {
-    fetchUserHistory();
-  }, [selectedSeason]);
 
   const handleViewSubmission = (gameweekId) => {
     history.push(`/view-submission/${gameweekId}`);

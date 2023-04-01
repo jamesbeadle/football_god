@@ -43,6 +43,7 @@ module Types {
     public type Profile = {
         displayName: Text;
         wallet: Text;
+        depositAddress: Text;
     };
 
     public type Prediction = {

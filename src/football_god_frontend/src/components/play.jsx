@@ -7,31 +7,61 @@ import { AuthContext } from "../contexts/AuthContext";
 const Play = () => {
   
   const { authClient } = useContext(AuthContext);
+  const identity = authClient.getIdentity();
+  Actor.agentOf(football_god_backend_actor).replaceIdentity(identity);
+
   const [isLoading, setIsLoading] = useState(false);
   const [hasProfile, setHasProfile] = useState(false);
   const [scores, setScores] = useState({});
   const [fixtures, setFixtures] = useState([]);
   const [activeSeason, setActiveSeason] = useState(null);
   const [activeGameweek, setActiveGameweek] = useState(null);
-  const [teamsData, setTeamsData] = useState([]);
-  const [predictions, setPredictions] = useState([]);
+  const [teams, setTeamsData] = useState([]);
   const [hasPaid, setHasPaid] = useState(false);
   const [balance, setBalance] = useState(0);
-  
+
+  useEffect(() => {
+    checkProfile();
+  }, []);
+
+  useEffect(() => {
+    if(hasProfile){
+      fetchTeams();
+      const fetchData = async () => {
+        await fetchActiveSeason();
+        await fetchActiveGameweek();
+      };
+      fetchData();
+    }
+  }, [hasProfile]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      await fetchFixtures();
+      await fetchExistingPredictions();
+      await checkSweepstakePayment();
+      await fetchBalance();
+    };
+    fetchData();
+  }, [activeSeason, activeGameweek]);
+
   const checkProfile = async () => {
-    const identity = authClient.getIdentity();
-    Actor.agentOf(football_god_backend_actor).replaceIdentity(identity);
     const profileExists = await football_god_backend_actor.checkForProfile();
     setHasProfile(profileExists);
   };
+  
+  const fetchTeams = async () => {
+    const teamsData = await football_god_backend_actor.getTeams();
+    setTeamsData(teamsData);
+  };
 
   const fetchActiveSeason = async () => {
-    const season = await football_god_backend_actor.getActiveSeasonInfo();
+    const season = await football_god_backend_actor.getActiveSeason();
     setActiveSeason(season[0]);
   };
 
   const fetchActiveGameweek = async () => {
-    const gameweek = await football_god_backend_actor.getActiveGameweekInfo();
+    const gameweek = await football_god_backend_actor.getActiveGameweek();
     setActiveGameweek(gameweek[0]);
   };
 
@@ -41,17 +71,28 @@ const Play = () => {
       setFixtures(fetchedFixtures);
     }
   };
-  
-  const fetchTeams = async () => {
-    const teams = await football_god_backend_actor.getTeams();
-    setTeamsData(teams);
+
+  const fetchExistingPredictions = async () => {
+    if (activeSeason && activeGameweek) {
+      const fetchedPredictions = await football_god_backend_actor.getPredictions(activeSeason.id, activeGameweek.number);
+      const existingScores = fetchedPredictions.reduce((acc, prediction) => {
+        acc[prediction.fixtureId] = { home: prediction.homeGoals, away: prediction.awayGoals };
+        return acc;
+      }, {});
+      setScores(existingScores);
+    }
   };
 
-  const getTeamNameById = (teamId) => {
-    const team = teamsData.find((team) => team.id === teamId);
-    return team ? team.name : '';
+  const checkSweepstakePayment = async () => {
+    const paid = await football_god_backend_actor.checkSweepstakePayment(Number(activeSeason.id), Number(activeGameweek.number));
+    setHasPaid(paid);
   };
   
+  const fetchBalance = async () => {
+    const userBalance = await football_god_backend_actor.getBalance();
+    setBalance(userBalance);
+  };
+
   const handleChange = (event, fixtureId, team) => {
     const updatedScores = { ...scores };
     if (!updatedScores[fixtureId]) {
@@ -60,37 +101,11 @@ const Play = () => {
     updatedScores[fixtureId][team] = parseInt(event.target.value);
     setScores(updatedScores);
   };
-
-  const fetchExistingPredictions = async () => {
-    if (activeSeason && activeGameweek) {
-      const fetchedPredictions = await football_god_backend_actor.getPredictions(activeSeason.id, activeGameweek.number);
-      setPredictions(fetchedPredictions);
-      // Convert predictions to scores format
-      const existingScores = fetchedPredictions.reduce((acc, prediction) => {
-        acc[prediction.fixtureId] = { home: prediction.homeGoals, away: prediction.awayGoals };
-        return acc;
-      }, {});
-      setScores(existingScores);
-    }
-  };
   
-  const checkSweepstakePayment = async () => {
-    const paid = await football_god_backend_actor.checkSweepstakePayment(Number(activeSeason.id), Number(activeGameweek.number));
-    setHasPaid(paid);
-  };
-
-  const fetchBalance = async () => {
-    const userBalance = await football_god_backend_actor.getBalance();
-    setBalance(userBalance);
-  };
-
-  const handleSubmit = async (event) => {
+  const handlePlayForFreeSubmit = async (event) => {
     event.preventDefault();
     setIsLoading(true);
-    const identity = authClient.getIdentity();
-    Actor.agentOf(football_god_backend_actor).replaceIdentity(identity);
 
-    // Convert scores to an array of Prediction objects
     const predictions = Object.entries(scores).map(([fixtureId, score]) => ({
       fixtureId: Number(fixtureId),
       homeGoals: Number(score.home),
@@ -109,33 +124,17 @@ const Play = () => {
   const handleSweepstakeSubmit = async (event) => {
     event.preventDefault();
     setIsLoading(true);
-    await handleSubmit(event);
+    await handlePlayForFreeSubmit(event);
     await football_god_backend_actor.enterSweepstake(Number(activeSeason.id), Number(activeGameweek.number));
     setIsLoading(false);
     checkSweepstakePayment();
   };
 
-  useEffect(() => {
-    checkProfile();
-  }, []);
-
-  useEffect(() => {
-    if(hasProfile){
-      const fetchData = async () => {
-        await fetchActiveSeason();
-        await fetchActiveGameweek();
-        await fetchExistingPredictions();
-        await checkSweepstakePayment();
-        await fetchBalance();
-      };
-      fetchData();
-    }
-  }, [hasProfile]);
-
-  useEffect(() => {
-    fetchTeams();
-    fetchFixtures();
-  }, [activeSeason, activeGameweek]);
+  const getTeamNameById = (teamId) => {
+    const team = teams.find((team) => team.id === teamId);
+    return team ? team.name : '';
+  };
+  
 
 
   return (
@@ -153,7 +152,7 @@ const Play = () => {
               <h2>Play</h2>
             </Card.Header>
             <Card.Body>
-              <Form onSubmit={handleSubmit}>
+              <Form onSubmit={handlePlayForFreeSubmit}>
                 {fixtures.map((fixture) => (
                   <Form.Group key={fixture.id} as={Row} className="mb-3">
                     <Col xs={3}>

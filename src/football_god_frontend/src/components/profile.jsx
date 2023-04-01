@@ -5,7 +5,11 @@ import { Actor } from "@dfinity/agent";
 import { AuthContext } from "../contexts/AuthContext";
 
 const Profile = () => {
+
   const { authClient } = useContext(AuthContext);
+  const identity = authClient.getIdentity();
+  Actor.agentOf(football_god_backend_actor).replaceIdentity(identity);
+  
   const [isLoading, setIsLoading] = useState(false);
   const [displayName, setDisplayName] = useState('');
   const [wallet, setWallet] = useState('');
@@ -14,7 +18,18 @@ const Profile = () => {
   const [showWithdrawModal, setShowWithdrawModal] = useState(false);
   const [withdrawAmount, setWithdrawAmount] = useState(0);
   const withdrawalFee = 0.001; // Set the withdrawal fee here
+  const [displayNameError, setDisplayNameError] = useState(null);
   
+  useEffect(() => {
+    fetchProfile();
+    fetchBalance();
+    fetchDepositAddress();
+  }, []);
+  
+  const fetchProfile = async () => {
+    const userProfile = await football_god_backend_actor.getProfile();
+    setBalance(userProfile);
+  };
   
   const fetchBalance = async () => {
     const userBalance = await football_god_backend_actor.getBalance();
@@ -26,6 +41,32 @@ const Profile = () => {
     setDepositAddress(address);
   };
 
+  const isDisplayNameValid = async () => {
+    
+    const isValid = await football_god_backend_actor.isDisplayNameValid(displayName);
+  
+    if (isValid) {
+      setDisplayNameError(null);
+    } else {
+      setDisplayNameError('Display name must be at least 3 characters long, no special characters and not already taken.');
+    }
+  
+    return isValid;
+  };
+
+  const handleProfileSubmit = async (event) => {
+    event.preventDefault();
+  
+    if (!isDisplayNameValid()) {
+      return;
+    }
+  
+    setIsLoading(true);
+    await football_god_backend_actor.saveProfile(displayName, wallet);
+    setIsLoading(false);
+  
+  };
+
   const handleWithdraw = async () => {
     setIsLoading(true);
     await football_god_backend_actor.withdrawICP(withdrawAmount);
@@ -33,11 +74,6 @@ const Profile = () => {
     setShowWithdrawModal(false);
     fetchBalance();
   };
-
-  useEffect(() => {
-    fetchBalance();
-    fetchDepositAddress();
-  }, []);
 
   return (
     <Container>
@@ -53,7 +89,7 @@ const Profile = () => {
               <h2>Profile</h2>
             </Card.Header>
             <Card.Body>
-              <Form onSubmit={handleSubmit}>
+              <Form onSubmit={handleProfileSubmit}>
                 <Form.Group className="mb-3">
                     <Form.Label>Display Name</Form.Label>
                     <Form.Control
@@ -61,7 +97,9 @@ const Profile = () => {
                       placeholder="Enter display name"
                       value={displayName}
                       onChange={(event) => setDisplayName(event.target.value)}
+                      onBlur={isDisplayNameValid}
                     />
+                    {displayNameError && <Form.Text className="text-danger">{displayNameError}</Form.Text>}
                   </Form.Group>
                   <Form.Group className="mb-3">
                     <Form.Label>Wallet</Form.Label>
