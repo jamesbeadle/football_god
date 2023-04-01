@@ -24,12 +24,12 @@ const Season = () => {
   const [seasonYear, setSeasonYear] = useState('');
 
   const fetchSeason = async () => {
-    const seasonData = await football_god_backend_actor.getSeasonInfo(Number(seasonId));
+    const seasonData = await football_god_backend_actor.getSeason(Number(seasonId));
     setSeasonData(seasonData[0]);
   };
 
   const fetchGameweeks = async () => {
-    const gameweeksData = await football_god_backend_actor.getGameweeksInfo(Number(seasonId));
+    const gameweeksData = await football_god_backend_actor.getGameweeks(Number(seasonId));
     setGameweeksData(gameweeksData);
   };
 

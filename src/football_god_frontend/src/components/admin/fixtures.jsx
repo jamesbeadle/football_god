@@ -44,7 +44,7 @@ const EditFixtures = () => {
   };
   
   const fetchSeason = async () => {
-    const seasonData = await football_god_backend_actor.getSeasonInfo(Number(seasonId));
+    const seasonData = await football_god_backend_actor.getSeason(Number(seasonId));
     setSeasonData(seasonData[0]);
   };
 

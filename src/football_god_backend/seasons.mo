@@ -12,7 +12,7 @@ module {
     private var nextSeasonId : Nat16 = 1;
     private var nextFixtureId : Nat32 = 1;
 
-    public func getSeasonsInfo() : [Types.Season] {
+    public func getSeasons() : [Types.Season] {
         return List.toArray(List.map<Types.Season, Types.Season>(seasons, func (season: Types.Season): Types.Season {
             return {
                 id = season.id;
@@ -23,7 +23,7 @@ module {
         }));
     };
 
-    public func getSeasonInfo(seasonId: Nat16) : ?Types.Season {
+    public func getSeason(seasonId: Nat16) : ?Types.Season {
         let foundSeason = List.find<Types.Season>(seasons, func (season: Types.Season): Bool {
             return season.id == seasonId;
         });
@@ -42,7 +42,7 @@ module {
         };
     };
 
-    public func getGameweeksInfo(seasonId: Nat16) : [Types.Gameweek] {
+    public func getGameweeks(seasonId: Nat16) : [Types.Gameweek] {
         let foundSeason = List.find<Types.Season>(seasons, func (season: Types.Season): Bool {
             return season.id == seasonId;
         });
@@ -64,7 +64,7 @@ module {
         };
     };
     
-    public func getGameweekInfo(seasonId: Nat16, gameweekNumber: Nat8) : ?Types.Gameweek {
+    public func getGameweek(seasonId: Nat16, gameweekNumber: Nat8) : ?Types.Gameweek {
         let foundSeason = List.find<Types.Season>(seasons, func (season: Types.Season): Bool {
             return season.id == seasonId;
         });

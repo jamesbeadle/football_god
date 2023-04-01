@@ -23,17 +23,17 @@ const Admin = () => {
   const [showSetActiveModal, setShowActiveModal] = useState(false);
   
   const fetchSeasons = async () => {
-    const seasons = await football_god_backend_actor.getSeasonsInfo();
+    const seasons = await football_god_backend_actor.getSeasons();
     setSeasonsData(seasons);
   };
   
   const fetchActiveSeason = async () => {
-    const season = await football_god_backend_actor.getActiveSeasonInfo();
+    const season = await football_god_backend_actor.getActiveSeason();
     setActiveSeason(season[0]);
   };
 
   const fetchActiveGameweek = async () => {
-    const gameweek = await football_god_backend_actor.getActiveGameweekInfo();
+    const gameweek = await football_god_backend_actor.getActiveGameweek();
     setActiveGameweek(gameweek[0]);
     console.log(gameweek)
   };

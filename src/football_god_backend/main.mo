@@ -70,22 +70,22 @@ actor {
     return #ok(());
   };
 
-  public query func getActiveSeasonInfo() : async ?Types.Season {
-    return seasonInstance.getSeasonInfo(activeSeason);
+  public query func getActiveSeason() : async ?Types.Season {
+    return seasonInstance.getSeason(activeSeason);
   };
 
-  public query func getActiveGameweekInfo() : async ?Types.Gameweek {
-    return seasonInstance.getGameweekInfo(activeSeason, activeGameweek);
+  public query func getActiveGameweek() : async ?Types.Gameweek {
+    return seasonInstance.getGameweek(activeSeason, activeGameweek);
   };
 
   //season functions
 
-  public query func getSeasonsInfo() : async [Types.Season] {
-    return seasonInstance.getSeasonsInfo();
+  public query func getSeasons() : async [Types.Season] {
+    return seasonInstance.getSeasons();
   };
 
-  public query func getSeasonInfo(seasonId : Nat16) : async ?Types.Season {
-    return seasonInstance.getSeasonInfo(seasonId);
+  public query func getSeason(seasonId : Nat16) : async ?Types.Season {
+    return seasonInstance.getSeason(seasonId);
   };
   
   public shared ({caller}) func createSeason(name : Text, year : Nat16) : async Result.Result<(), Types.Error> {
@@ -118,8 +118,8 @@ actor {
 
   //gameweek functions
 
-  public query func getGameweeksInfo(seasonId : Nat16) : async [Types.Gameweek] {
-    return seasonInstance.getGameweeksInfo(seasonId);
+  public query func getGameweeks(seasonId : Nat16) : async [Types.Gameweek] {
+    return seasonInstance.getGameweeks(seasonId);
   };
   
   public shared ({caller}) func updateGameweekStatus(seasonId : Nat16, gameweekNumber : Nat8, status: Nat8) : async Result.Result<(), Types.Error> {
@@ -223,12 +223,12 @@ actor {
       return #err(#NotAllowed);
     };
 
-    let currentSeason = switch (await getActiveSeasonInfo()) {  
+    let currentSeason = switch (await getActiveSeason()) {  
         case null { return #err(#NotAllowed) };
         case (?season) { season }
     };
 
-    let currentGameweek = switch (await getActiveGameweekInfo()) {  
+    let currentGameweek = switch (await getActiveGameweek()) {  
         case null { return #err(#NotAllowed) };
         case (?gameweek) { gameweek }
     };
