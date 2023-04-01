@@ -7,6 +7,7 @@ const Submission = () => {
   const { userId, seasonId, gameweekNumber } = useParams();
   const [playerName, setDisplayName] = useState('');
   const [season, setSeason] = useState('');
+  const [fixtures, setFixtures] = useState([]);
   const [totalCorrect, setTotalCorrect] = useState(0);
   const [totalFixtures, setTotalFixtures] = useState(0);
   const [predictions, setPredictions] = useState([]);
@@ -17,7 +18,9 @@ const Submission = () => {
   }, []);
 
   useEffect(() => {
+    fetchFixtures();
     fetchPredictions();
+    calculateTotals();
   }, [season]);
 
   const fetchDisplayName = async () => {
@@ -29,17 +32,57 @@ const Submission = () => {
     const seasonData = await football_god_backend_actor.getSeasons();
     setSeason(seasonData);
   };
+
+  const fetchFixtures = async () => {
+    const fixturesData = await football_god_backend_actor.getFixtures(seasonId, gameweekNumber);
+    setFixtures(fixturesData);
+  };
   
   const fetchPredictions = async () => {
     const predictionsData = await football_god_backend_actor.getPredictions(userId, seasonId, gameweekNumber);
     setPredictions(predictionsData);
   };
 
-
+  const calculateTotals = () => {
+    let correctCount = 0;
+  
+    predictions.forEach((prediction) => {
+      const fixture = fixtures.find(
+        (fixture) =>
+          fixture.homeTeam === prediction.homeTeam &&
+          fixture.awayTeam === prediction.awayTeam
+      );
+  
+      if (fixture && fixture.status === 'finished') {
+        if (
+          prediction.homeGoals === fixture.homeGoals &&
+          prediction.awayGoals === fixture.awayGoals
+        ) {
+          correctCount++;
+        }
+      }
+    });
+  
+    setTotalCorrect(correctCount);
+    setTotalFixtures(fixtures.length);
+  };
+  
   const getPredictionStatus = (prediction) => {
-    if (!prediction.played) {
+    const fixture = fixtures.find(
+      (fixture) =>
+        fixture.homeTeam === prediction.homeTeam &&
+        fixture.awayTeam === prediction.awayTeam
+    );
+  
+    if (!fixture || fixture.status !== 'finished') {
       return 'unplayed';
-    } else if (prediction.correct) {
+    }
+  
+    const correct =
+      prediction.homeGoals === fixture.homeGoals &&
+      prediction.awayGoals === fixture.awayGoals;
+  
+    if (correct) {
       return 'correct';
     } else {
       return 'incorrect';

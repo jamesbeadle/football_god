@@ -19,3 +19,15 @@
 .custom-dropdown .dropdown-menu {
     position: absolute;
 }
+
+.prediction-unplayed {
+    background-color: #f8f9fa;
+  }
+  
+  .prediction-correct {
+    background-color: #d4edda;
+  }
+  
+  .prediction-incorrect {
+    background-color: #f8d7da;
+  }
