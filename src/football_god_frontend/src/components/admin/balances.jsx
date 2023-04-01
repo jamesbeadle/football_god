@@ -1,8 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { Container, Row, Col, Card, Table, Button } from 'react-bootstrap';
 import { football_god_backend as football_god_backend_actor } from '../../../declarations/football_god_backend';
+import { Actor } from "@dfinity/agent";
+import { AuthContext } from "../contexts/AuthContext";
 
 const Balances = () => {
+  const { authClient } = useContext(AuthContext);
+  const identity = authClient.getIdentity();
+  Actor.agentOf(football_god_backend_actor).replaceIdentity(identity);
+  
   const [potBalance, setPotBalance] = useState(0);
   const [users, setUsers] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);

@@ -1,8 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { Container, Row, Col, Card, Button } from 'react-bootstrap';
 import { football_god_backend as football_god_backend_actor } from '../../../declarations/football_god_backend';
+import { Actor } from "@dfinity/agent";
+import { AuthContext } from "../contexts/AuthContext";
 
 const Payout = () => {
+  const { authClient } = useContext(AuthContext);
+  const identity = authClient.getIdentity();
+  Actor.agentOf(football_god_backend_actor).replaceIdentity(identity);
+
   const [season, setSeason] = useState(null);
   const [gameweek, setGameweek] = useState(null);
   const [totalPot, setTotalPot] = useState(0);
@@ -11,13 +17,22 @@ const Payout = () => {
   const [numWinners, setNumWinners] = useState(0);
   const [sharePerWinner, setSharePerWinner] = useState(0);
 
+  useEffect(() => {
+    fetchActiveSeason();
+    fetchActiveGameweek();
+  }, []);
+
+  useEffect(() => {
+    fetchPayoutData();
+  }, [season, gameweek]);
+
   const fetchActiveSeason = async () => {
-    const fetchedSeason = await football_god_backend_actor.getActiveSeasonInfo();
+    const fetchedSeason = await football_god_backend_actor.getActiveSeason();
     setSeason(fetchedSeason[0]);
   };
 
   const fetchActiveGameweek = async () => {
-    const fetchedGameweek = await football_god_backend_actor.getActiveGameweekInfo();
+    const fetchedGameweek = await football_god_backend_actor.getActiveGameweek();
     setGameweek(fetchedGameweek[0]);
   };
 
@@ -38,15 +53,6 @@ const Payout = () => {
       alert('Payout completed successfully!');
     }
   };
-
-  useEffect(() => {
-    fetchActiveSeason();
-    fetchActiveGameweek();
-  }, []);
-
-  useEffect(() => {
-    fetchPayoutData();
-  }, [season, gameweek]);
 
   return (
     <Container>

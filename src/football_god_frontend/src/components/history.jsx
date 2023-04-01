@@ -55,8 +55,8 @@ const History = () => {
     setSelectedSeason(season);
   };
 
-  const handleViewSubmission = (gameweekId) => {
-    history.push(`/view-submission/${gameweekId}`);
+  const handleViewSubmission = (gameweekNumber) => {
+    history.push(`/view-submission/${gameweekNumber}`);
   };
 
   return (
@@ -89,13 +89,13 @@ const History = () => {
               </thead>
               <tbody>
                 {userHistory.map((entry) => (
-                  <tr key={entry.gameweekId}>
+                  <tr key={entry.gameweekNumber}>
                     <td>{entry.gameweekNumber}</td>
                     <td>{entry.enteredSweepstake ? 'Yes' : 'No'}</td>
                     <td>{entry.score}</td>
                     <td>{entry.winnings}</td>
                     <td>
-                  <Button onClick={() => handleViewSubmission(entry.gameweekId)} variant="primary">
+                  <Button onClick={() => handleViewSubmission(entry.gameweekNumber)} variant="primary">
                     View
                   </Button>
                 </td>

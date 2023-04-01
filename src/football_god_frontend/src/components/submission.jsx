@@ -4,16 +4,37 @@ import { Container, Row, Col, Card, ListGroup } from 'react-bootstrap';
 import { football_god_backend as football_god_backend_actor } from '../../../declarations/football_god_backend';
 
 const Submission = () => {
-  const { userId, seasonId, gameweekId } = useParams();
-  const [playerName, setPlayerName] = useState('');
+  const { userId, seasonId, gameweekNumber } = useParams();
+  const [playerName, setDisplayName] = useState('');
   const [season, setSeason] = useState('');
-  const [gameweek, setGameweek] = useState('');
   const [totalCorrect, setTotalCorrect] = useState(0);
   const [totalFixtures, setTotalFixtures] = useState(0);
   const [predictions, setPredictions] = useState([]);
 
-  // Fetch the necessary data here using the provided IDs (userId, seasonId, gameweekId)
-  // and update the corresponding states
+  useEffect(() => {
+    fetchDisplayName();
+    fetchSeason();
+  }, []);
+
+  useEffect(() => {
+    fetchPredictions();
+  }, [season]);
+
+  const fetchDisplayName = async () => {
+    const profile = await football_god_backend_actor.getProfile();
+    setDisplayName(profile.displayName);
+  };
+
+  const fetchSeason = async () => {
+    const seasonData = await football_god_backend_actor.getSeasons();
+    setSeason(seasonData);
+  };
+  
+  const fetchPredictions = async () => {
+    const predictionsData = await football_god_backend_actor.getPredictions(userId, seasonId, gameweekNumber);
+    setPredictions(predictionsData);
+  };
+
 
   const getPredictionStatus = (prediction) => {
     if (!prediction.played) {
@@ -35,7 +56,7 @@ const Submission = () => {
             </Card.Header>
             <Card.Body>
               <p>Season: {season}</p>
-              <p>Gameweek: {gameweek}</p>
+              <p>Gameweek: {gameweekNumber}</p>
               <p>
                 Total Correct: {totalCorrect} / {totalFixtures}
               </p>

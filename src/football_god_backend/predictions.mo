@@ -20,7 +20,7 @@ module {
    
     private var userPredictions = Map.HashMap<Nat16, Map.HashMap<Nat8, Map.HashMap<PrincipalName, List.List<Types.Prediction>>>>(0, nat16Eq, nat16Hash);
    
-    public func submitPredictions(principalName: Text, seasonId: Nat16, gameweekId: Nat8, predictions: [Types.Prediction]) : Result.Result<(), Types.Error> {
+    public func submitPredictions(principalName: Text, seasonId: Nat16, gameweekNumber: Nat8, predictions: [Types.Prediction]) : Result.Result<(), Types.Error> {
         
         let gameWeekPredictions = List.fromArray<Types.Prediction>(predictions);
 
@@ -37,10 +37,10 @@ module {
         };
 
         // Get gameweek map or create a new one
-        let gameWeekMap = switch (seasonMap.get(gameweekId)) {
+        let gameWeekMap = switch (seasonMap.get(gameweekNumber)) {
             case null {
                 let newGameWeekMap = Map.HashMap<PrincipalName, List.List<Types.Prediction>>(0, Text.equal, Text.hash);
-                seasonMap.put(gameweekId, newGameWeekMap);
+                seasonMap.put(gameweekNumber, newGameWeekMap);
                 newGameWeekMap
             };
             case (?existingGameWeekMap) {
