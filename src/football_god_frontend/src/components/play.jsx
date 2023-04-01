@@ -1,5 +1,5 @@
 import React, { useState, useContext, useEffect } from 'react';
-import { Container, Row, Col, Card, Form, Button } from 'react-bootstrap';
+import { Container, Row, Col, Card, Form, Button, Spinner } from 'react-bootstrap';
 import { football_god_backend as football_god_backend_actor } from '../../../declarations/football_god_backend';
 import { Actor } from "@dfinity/agent";
 import { AuthContext } from "../contexts/AuthContext";
@@ -8,19 +8,30 @@ const Play = () => {
   
   const { authClient } = useContext(AuthContext);
   const [isLoading, setIsLoading] = useState(false);
+  const [hasProfile, setHasProfile] = useState(false);
   const [scores, setScores] = useState({});
   const [fixtures, setFixtures] = useState([]);
   const [activeSeason, setActiveSeason] = useState(null);
   const [activeGameweek, setActiveGameweek] = useState(null);
   const [teamsData, setTeamsData] = useState([]);
+  const [predictions, setPredictions] = useState([]);
+  const [hasPaid, setHasPaid] = useState(false);
+  const [balance, setBalance] = useState(0);
+  
+  const checkProfile = async () => {
+    const identity = authClient.getIdentity();
+    Actor.agentOf(football_god_backend_actor).replaceIdentity(identity);
+    const profileExists = await football_god_backend_actor.checkForProfile();
+    setHasProfile(profileExists);
+  };
 
   const fetchActiveSeason = async () => {
-    const season = await football_god_backend_actor.getActiveSeason();
+    const season = await football_god_backend_actor.getActiveSeasonInfo();
     setActiveSeason(season[0]);
   };
 
   const fetchActiveGameweek = async () => {
-    const gameweek = await football_god_backend_actor.getActiveGameweek();
+    const gameweek = await football_god_backend_actor.getActiveGameweekInfo();
     setActiveGameweek(gameweek[0]);
   };
 
@@ -41,7 +52,6 @@ const Play = () => {
     return team ? team.name : '';
   };
   
-
   const handleChange = (event, fixtureId, team) => {
     const updatedScores = { ...scores };
     if (!updatedScores[fixtureId]) {
@@ -49,6 +59,29 @@ const Play = () => {
     }
     updatedScores[fixtureId][team] = parseInt(event.target.value);
     setScores(updatedScores);
+  };
+
+  const fetchExistingPredictions = async () => {
+    if (activeSeason && activeGameweek) {
+      const fetchedPredictions = await football_god_backend_actor.getPredictions(activeSeason.id, activeGameweek.number);
+      setPredictions(fetchedPredictions);
+      // Convert predictions to scores format
+      const existingScores = fetchedPredictions.reduce((acc, prediction) => {
+        acc[prediction.fixtureId] = { home: prediction.homeGoals, away: prediction.awayGoals };
+        return acc;
+      }, {});
+      setScores(existingScores);
+    }
+  };
+  
+  const checkSweepstakePayment = async () => {
+    const paid = await football_god_backend_actor.checkSweepstakePayment(Number(activeSeason.id), Number(activeGameweek.number));
+    setHasPaid(paid);
+  };
+
+  const fetchBalance = async () => {
+    const userBalance = await football_god_backend_actor.getBalance();
+    setBalance(userBalance);
   };
 
   const handleSubmit = async (event) => {
@@ -59,38 +92,45 @@ const Play = () => {
 
     // Convert scores to an array of Prediction objects
     const predictions = Object.entries(scores).map(([fixtureId, score]) => ({
-      fixtureId: parseInt(fixtureId),
-      homeGoals: score.home,
-      awayGoals: score.away
+      fixtureId: Number(fixtureId),
+      homeGoals: Number(score.home),
+      awayGoals: Number(score.away)
     }));
-    
-    try {
-    
-      const result = await football_god_backend_actor.submitPredictions(
-        activeSeason.id,
-        activeGameweek.number,
-        predictions
-      );
 
-      if (result.ok) {
-        console.log('Predictions submitted successfully');
-      } else {
-        console.error('Error submitting predictions:', result.err);
-      }
-    } catch (error) {
-      console.error('Error:', error);
-    } finally {
-      setIsLoading(false);
-    }
+    await football_god_backend_actor.submitPredictions(
+      Number(activeSeason.id),
+      Number(activeGameweek.number),
+      predictions
+    );
+    setIsLoading(false);
+    
+  };
+
+  const handleSweepstakeSubmit = async (event) => {
+    event.preventDefault();
+    setIsLoading(true);
+    await handleSubmit(event);
+    await football_god_backend_actor.enterSweepstake(Number(activeSeason.id), Number(activeGameweek.number));
+    setIsLoading(false);
+    checkSweepstakePayment();
   };
 
   useEffect(() => {
-    const fetchData = async () => {
-      await fetchActiveSeason();
-      await fetchActiveGameweek();
-    };
-    fetchData();
+    checkProfile();
   }, []);
+
+  useEffect(() => {
+    if(hasProfile){
+      const fetchData = async () => {
+        await fetchActiveSeason();
+        await fetchActiveGameweek();
+        await fetchExistingPredictions();
+        await checkSweepstakePayment();
+        await fetchBalance();
+      };
+      fetchData();
+    }
+  }, [hasProfile]);
 
   useEffect(() => {
     fetchTeams();
@@ -105,7 +145,8 @@ const Play = () => {
           <Spinner animation="border" />
         </div>
       )}
-      <Row className="justify-content-md-center">
+      {hasProfile ? (
+        <Row className="justify-content-md-center">
         <Col md={8}>
           <Card className="mt-4">
             <Card.Header className="text-center">
@@ -126,7 +167,7 @@ const Play = () => {
                       />
                     </Col>
                     <Col xs={6} className="text-center">
-                      {fixture.home} vs {fixture.away}
+                      {getTeamNameById(fixture.homeTeamId)} vs {getTeamNameById(fixture.awayTeamId)}
                     </Col>
                     <Col xs={3}>
                       <Form.Control 
@@ -142,12 +183,43 @@ const Play = () => {
                 ))}
                 <div className="text-center">
                   <Button type="submit" variant="primary">Save Scores</Button>
+                  {hasPaid ? (
+                    <p className="mt-2">You have already paid for the sweepstake.</p>
+                    ) : (
+                    <div className="mt-2">
+                      {balance >= 1 ? (
+                        <Button variant="success" onClick={handleSweepstakeSubmit}>Save & Enter Sweepstake</Button>
+                      ) : (
+                        <p>You do not have enough ICP to enter the sweepstake.</p>
+                      )}
+                      </div>
+                    )}
                 </div>
               </Form>
             </Card.Body>
           </Card>
         </Col>
-      </Row>
+        </Row>
+      ) : (
+        <Row className="justify-content-md-center">
+          <Col md={8}>
+            <Card className="mt-4">
+              <Card.Header className="text-center">
+                <h2>Play</h2>
+              </Card.Header>
+              <Card.Body>
+                <p>You must set up your profile before you can play.</p> 
+                <LinkContainer to={'profile'}>
+                    <Button variant="primary" className="mb-4 w-100">
+                        Profile
+                    </Button>
+                </LinkContainer>
+              </Card.Body>
+            </Card>
+          </Col>
+        </Row>
+      )}
+
     </Container>
   );
 };

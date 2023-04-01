@@ -40,6 +40,11 @@ module Types {
         status: Nat8; // 0 = Unplayed, 1 = Active, 2 = Finished
     };
 
+    public type Profile = {
+        displayName: Text;
+        wallet: Text;
+    };
+
     public type Prediction = {
         fixtureId: Nat16;
         homeGoals: Nat8;

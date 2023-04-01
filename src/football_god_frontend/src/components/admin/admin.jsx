@@ -122,6 +122,20 @@ const Admin = () => {
                 </Button>
               </Row>
               <Row>
+                <LinkContainer to="/payout">
+                  <Button variant="primary" className="mb-4 w-100">
+                    Payout Gameweek
+                  </Button>
+                </LinkContainer>
+              </Row>
+              <Row>
+                <LinkContainer to="/balances">
+                  <Button variant="primary" className="mb-4 w-100">
+                    Account Balances
+                  </Button>
+                </LinkContainer>
+              </Row>
+              <Row>
                 <LinkContainer to="/teams">
                   <Button variant="primary" className="mb-4 w-100">
                     Manage Teams

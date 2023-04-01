@@ -5,6 +5,7 @@ import Text "mo:base/Text";
 import List "mo:base/List";
 import Hash "mo:base/Hash";
 import Prim "mo:prim";
+import Debug "mo:base/Debug";
 
 module {
     
@@ -25,7 +26,7 @@ module {
 
         // Get season map or create a new one
         let seasonMap = switch (userPredictions.get(seasonId)) {
-            case (null) {
+            case null {
                 let newSeasonMap = Map.HashMap<Nat8, Map.HashMap<PrincipalName, List.List<Types.Prediction>>>(0, nat8Eq, nat8Hash);
                 userPredictions.put(seasonId, newSeasonMap);
                 newSeasonMap
@@ -37,7 +38,7 @@ module {
 
         // Get gameweek map or create a new one
         let gameWeekMap = switch (seasonMap.get(gameweekId)) {
-            case (null) {
+            case null {
                 let newGameWeekMap = Map.HashMap<PrincipalName, List.List<Types.Prediction>>(0, Text.equal, Text.hash);
                 seasonMap.put(gameweekId, newGameWeekMap);
                 newGameWeekMap

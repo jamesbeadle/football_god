@@ -9,6 +9,7 @@ import Types "types";
 import Seasons "seasons";
 import Teams "teams";
 import Predictions "predictions";
+import Profiles "profiles";
 
 actor {
   
@@ -16,6 +17,7 @@ actor {
     Principal.fromText("zzlzc-qp3hr-or44h-2ur67-umtpf-66ybr-megk3-qpqq3-icp2x-5c3vd-zqe")
   ];
 
+  let profilesInstance = Profiles.Profiles();
   let seasonInstance = Seasons.Seasons();
   let teamInstance = Teams.Teams();
   let predictionsInstance = Predictions.Predictions();
@@ -37,6 +39,13 @@ actor {
   public shared query ({caller}) func isAdmin(): async Bool {
     return isAdminForCaller(caller);
   };
+
+  //profile functions
+  public shared ({caller}) func checkForProfile() : async Bool {
+    assert not Principal.isAnonymous(caller);
+    return profilesInstance.checkForProfile(Principal.toText(caller));
+  };
+  
 
   //system state functions
 
@@ -207,6 +216,12 @@ actor {
 
   public shared ({caller}) func submitPredictions(seasonId: Nat16, gameweekNumber: Nat8, predictions: [Types.Prediction]) : async Result.Result<(), Types.Error> {
     assert not Principal.isAnonymous(caller);
+
+    let hasProfile = profilesInstance.checkForProfile(Principal.toText(caller));
+
+    if (not hasProfile){
+      return #err(#NotAllowed);
+    };
 
     let currentSeason = switch (await getActiveSeasonInfo()) {  
         case null { return #err(#NotAllowed) };
