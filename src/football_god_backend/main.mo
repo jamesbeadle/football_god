@@ -10,6 +10,7 @@ import Seasons "seasons";
 import Teams "teams";
 import Predictions "predictions";
 import Profiles "profiles";
+import Book "book";
 
 actor {
   
@@ -21,6 +22,7 @@ actor {
   let seasonInstance = Seasons.Seasons();
   let teamInstance = Teams.Teams();
   let predictionsInstance = Predictions.Predictions();
+  let bookInstance = Book.Book();
   
   var activeSeason : Nat16 = 0;
   var activeGameweek : Nat8 = 0;
@@ -272,6 +274,27 @@ actor {
     assert not Principal.isAnonymous(caller);
     let principalName = Principal.toText(caller); 
     return predictionsInstance.checkSweepstakePaid(principalName, seasonId, gameweekNumber); 
+  };
+  
+  public shared ({caller}) func enterSweepstake(seasonId : Nat16, gameweekNumber: Nat8) : async Result.Result<(), Types.Error> {
+    assert not Principal.isAnonymous(caller);
+    let principalName = Principal.toText(caller); 
+   
+    let alreadyPaid = predictionsInstance.checkSweepstakePaid(principalName, seasonId, gameweekNumber);
+
+    if(alreadyPaid){
+      return #err(#NotAllowed);
+    };
+
+    let hasBalance = bookInstance.hasEnoughBalance(caller, 1);
+
+    if(hasBalance){
+      return #err(#NotAllowed);
+    };
+
+    //move the ICP from their sub account to the pot account
+
+    return predictionsInstance.enterSweepstake(principalName, seasonId, gameweekNumber);
   };
   
 }

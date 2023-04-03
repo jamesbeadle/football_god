@@ -83,6 +83,32 @@ module {
       };
     };
 
+    public func enterSweepstake(principalName: Text, seasonId: Nat16, gameweekNumber: Nat8) : Result.Result<(), Types.Error> {
+      let userGameweeks = userPredictions.get(principalName);
+
+      switch userGameweeks {
+        case (null) { return #err(#NotFound); };
+        case (?gameweeks) {
+          let updatedUserGameweeks = List.map<Types.UserGameweek, Types.UserGameweek>(gameweeks, func (ugw: Types.UserGameweek) : Types.UserGameweek {
+            if (ugw.seasonId == seasonId and ugw.gameweekNumber == gameweekNumber) {
+              return {
+                seasonId = ugw.seasonId;
+                gameweekNumber = ugw.gameweekNumber;
+                predictions = ugw.predictions;
+                enteredSweepstake = true;
+              };
+            } else {
+              return ugw;
+            };
+          });
+
+          userPredictions.put(principalName, updatedUserGameweeks);
+
+          return #ok(());
+        };
+      };
+    }
+
 
 
   }
