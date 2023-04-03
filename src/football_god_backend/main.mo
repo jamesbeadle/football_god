@@ -11,6 +11,8 @@ import Teams "teams";
 import Predictions "predictions";
 import Profiles "profiles";
 import Book "book";
+import Account "Account";
+import Ledger "canister:ledger";
 
 actor {
   
@@ -42,6 +44,55 @@ actor {
   };
 
   //profile functions
+
+  public shared ({caller}) func checkAccountBalance() : async Types.DepositReceipt {
+    assert not Principal.isAnonymous(caller);
+    
+    //called on login so check account balance
+    return await depositIcp(caller);
+
+  };
+
+  
+   private func depositIcp(caller: Principal): async Types.DepositReceipt {
+
+      // Calculate target subaccount
+      // NOTE: Should this be hashed first instead?
+      let source_account = Account.accountIdentifier(Principal.fromActor(this), Account.principalToSubaccount(caller));
+
+      // Check ledger for value
+      let balance = await Ledger.account_balance({ account = source_account });
+
+      // Transfer to default subaccount
+      let icp_receipt = if (Nat64.toNat(balance.e8s) > icp_fee) {
+          await Ledger.transfer({
+              memo: Nat64    = 0;
+              from_subaccount = ?Account.principalToSubaccount(caller);
+              to = Account.accountIdentifier(Principal.fromActor(this), Account.defaultSubaccount());
+              amount = { e8s = balance.e8s - Nat64.fromNat(icp_fee)};
+              fee = { e8s = Nat64.fromNat(icp_fee) };
+              created_at_time = ?{ timestamp_nanos = Nat64.fromNat(Int.abs(Time.now())) };
+          })
+      } else {
+          return #Err(#BalanceLow);
+      };
+
+      switch icp_receipt {
+          case ( #Err _) {
+              return #Err(#TransferFailure);
+          };
+          case _ {};
+      };
+      let available = { e8s : Nat = Nat64.toNat(balance.e8s) - icp_fee };
+
+      // keep track of deposited ICP
+      book.addTokens(caller,ledger,available.e8s);
+
+      // Return result
+      #Ok(available.e8s)
+    };
+  
+
   public shared ({caller}) func checkForProfile() : async Bool {
     assert not Principal.isAnonymous(caller);
     return profilesInstance.checkForProfile(Principal.toText(caller));
