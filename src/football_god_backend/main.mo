@@ -265,8 +265,13 @@ actor {
   };
 
   public shared ({caller}) func getPredictions(principalName: Text, seasonId: Nat16, gameweekNumber: Nat8) : async [Types.Prediction] {
-    
     return predictionsInstance.getPredictions(principalName, seasonId, gameweekNumber); 
+  };
+
+  public shared ({caller}) func checkSweepstakePaid(seasonId: Nat16, gameweekNumber: Nat8) : async Bool {
+    assert not Principal.isAnonymous(caller);
+    let principalName = Principal.toText(caller); 
+    return predictionsInstance.checkSweepstakePaid(principalName, seasonId, gameweekNumber); 
   };
   
 }

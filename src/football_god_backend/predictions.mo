@@ -3,8 +3,6 @@ import Result "mo:base/Result";
 import Map "mo:base/HashMap";
 import Text "mo:base/Text";
 import List "mo:base/List";
-import Hash "mo:base/Hash";
-import Prim "mo:prim";
 import Debug "mo:base/Debug";
 
 module {
@@ -66,6 +64,25 @@ module {
         };
       };
     };
+
+    public func checkSweepstakePaid(principalName: Text, seasonId: Nat16, gameweekNumber: Nat8) : Bool {
+      let userGameweeks = userPredictions.get(principalName);
+
+      switch userGameweeks {
+        case (null) { return false; };
+        case (?gameweeks) {
+          let gameweek = List.find<Types.UserGameweek>(gameweeks, func (ugw: Types.UserGameweek) : Bool {
+            return ugw.seasonId == seasonId and ugw.gameweekNumber == gameweekNumber;
+          });
+
+          switch gameweek {
+            case (null) { return false; };
+            case (?gw) { return gw.enteredSweepstake; };
+          };
+        };
+      };
+    };
+
 
 
   }

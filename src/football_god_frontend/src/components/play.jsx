@@ -39,7 +39,7 @@ const Play = () => {
     const fetchData = async () => {
       await fetchFixtures();
       await fetchExistingPredictions();
-      await checkSweepstakePayment();
+      await checkSweepstakePaid();
       await fetchBalance();
     };
     fetchData();
@@ -83,8 +83,8 @@ const Play = () => {
     }
   };
 
-  const checkSweepstakePayment = async () => {
-    const paid = await football_god_backend_actor.checkSweepstakePayment(Number(activeSeason.id), Number(activeGameweek.number));
+  const checkSweepstakePaid = async () => {
+    const paid = await football_god_backend_actor.checkSweepstakePaid(Number(activeSeason.id), Number(activeGameweek.number));
     setHasPaid(paid);
   };
   
@@ -127,7 +127,7 @@ const Play = () => {
     await handlePlayForFreeSubmit(event);
     await football_god_backend_actor.enterSweepstake(Number(activeSeason.id), Number(activeGameweek.number));
     setIsLoading(false);
-    checkSweepstakePayment();
+    checkSweepstakePaid();
   };
 
   const getTeamNameById = (teamId) => {
