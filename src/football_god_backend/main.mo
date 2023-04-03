@@ -296,5 +296,11 @@ actor {
 
     return predictionsInstance.enterSweepstake(principalName, seasonId, gameweekNumber);
   };
+
+  public shared ({caller}) func getUserHistory(seasonId: Nat16) : async [Types.UserGameweek] {
+    assert not Principal.isAnonymous(caller);
+    let principalName = Principal.toText(caller); 
+   return predictionsInstance.getUserHistory(principalName, seasonId);
+  };
   
 }

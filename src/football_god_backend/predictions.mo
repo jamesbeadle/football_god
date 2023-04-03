@@ -4,6 +4,8 @@ import Map "mo:base/HashMap";
 import Text "mo:base/Text";
 import List "mo:base/List";
 import Debug "mo:base/Debug";
+import Iter "mo:base/Iter";
+import Array "mo:base/Array";
 
 module {
     
@@ -20,6 +22,9 @@ module {
           gameweekNumber = gameweekNumber;
           predictions = List.fromArray<Types.Prediction>(predictions);
           enteredSweepstake = false;
+          correctScores = 0;
+          predictionCount = 0;
+          winnings = 0;
         }; 
 
         let existingUserGameweeks = userPredictions.get(principalName);
@@ -33,6 +38,9 @@ module {
                   gameweekNumber = userGameweek.gameweekNumber;
                   predictions = userGameweek.predictions;
                   enteredSweepstake = ugw.enteredSweepstake;
+                  correctScores = userGameweek.correctScores;
+                  predictionCount = userGameweek.predictionCount;
+                  winnings = userGameweek.winnings;
                 };
                 return updatedUserGameweek;
               } else {
@@ -96,6 +104,9 @@ module {
                 gameweekNumber = ugw.gameweekNumber;
                 predictions = ugw.predictions;
                 enteredSweepstake = true;
+                correctScores = ugw.correctScores;
+                predictionCount = ugw.predictionCount;
+                winnings = ugw.winnings;
               };
             } else {
               return ugw;
@@ -107,7 +118,64 @@ module {
           return #ok(());
         };
       };
-    }
+    };
+
+    
+
+    public func getUserHistory(principalName: Text, seasonId: Nat16) : [Types.UserGameweek] {
+        let userHistory = userPredictions.get(principalName);
+
+        switch userHistory {
+          case (null) { return []; };
+          case (?gameweeks) {
+            return List.toArray(gameweeks);
+          };
+        };
+    };
+
+    
+    public func getLeaderboard(seasonId: Nat16, gameweekNumber: Nat8, start: Nat, count: Nat) : [Types.LeaderboardEntry] {
+      
+        func compare(leaderboardEntry1: Types.LeaderboardEntry, leaderboardEntry2: Types.LeaderboardEntry) : Bool {
+            return leaderboardEntry1.correctScores >= leaderboardEntry2.correctScores;
+        };
+
+        func mergeSort(entries: List.List<Types.LeaderboardEntry>) : List.List<Types.LeaderboardEntry> {
+            let len = List.size(entries);
+
+            if (len <= 1) {
+                return entries;
+            } else {
+                let (firstHalf, secondHalf) = List.split(len / 2, entries);
+                return List.merge(mergeSort(firstHalf), mergeSort(secondHalf), compare);
+            };
+        };
+
+        let leaderboardEntries = Array.map< (PrincipalName, List.List<Types.UserGameweek>), List.List<Types.LeaderboardEntry>>(Iter.toArray(userPredictions.entries()), func ((principal, userGameweeks): (PrincipalName, List.List<Types.UserGameweek>)) : List.List<Types.LeaderboardEntry> {
+            let filteredGameweeks = List.filter(userGameweeks, func (ugw: Types.UserGameweek) : Bool {
+                return ugw.seasonId == seasonId and ugw.gameweekNumber == gameweekNumber;
+            });
+            
+            return List.map<Types.UserGameweek, Types.LeaderboardEntry>(filteredGameweeks, func (ugw: Types.UserGameweek) : Types.LeaderboardEntry {
+                return {
+                    principalName = principal;
+                    correctScores = ugw.correctScores;
+                    predictionCount = ugw.predictionCount;
+                };
+            });
+        });
+
+
+        let flattenedLeaderboardEntries = List.flatten<Types.LeaderboardEntry>(List.fromArray(leaderboardEntries));
+        let sortedLeaderboardEntries = mergeSort(flattenedLeaderboardEntries);
+        let paginatedLeaderboardEntries = List.take(List.drop(sortedLeaderboardEntries, start), count);
+
+        return List.toArray<Types.LeaderboardEntry>(paginatedLeaderboardEntries);
+    };
+
+
+
+
 
 
 

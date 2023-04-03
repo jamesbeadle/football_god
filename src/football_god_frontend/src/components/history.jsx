@@ -92,8 +92,8 @@ const History = () => {
                   <tr key={entry.gameweekNumber}>
                     <td>{entry.gameweekNumber}</td>
                     <td>{entry.enteredSweepstake ? 'Yes' : 'No'}</td>
-                    <td>{entry.score}</td>
-                    <td>{entry.winnings}</td>
+                    <td>{entry.correctScores} / {entry.predictionCount}</td>
+                    <td>{entry.enteredSweepstake ? entry.winnings : 'N/A'}</td>
                     <td>
                   <Button onClick={() => handleViewSubmission(entry.gameweekNumber)} variant="primary">
                     View

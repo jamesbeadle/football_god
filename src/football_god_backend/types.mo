@@ -52,12 +52,21 @@ module Types {
         gameweekNumber: Nat8;
         predictions: List.List<Types.Prediction>;
         enteredSweepstake: Bool;
+        correctScores: Nat8;
+        predictionCount: Nat8;
+        winnings: Nat;
     };
 
     public type Prediction = {
         fixtureId: Nat16;
         homeGoals: Nat8;
         awayGoals: Nat8;
+    };
+
+    public type LeaderboardEntry = {
+        principalName: Text;
+        correctScores: Nat8;
+        predictionCount: Nat8;
     };
 
 }
