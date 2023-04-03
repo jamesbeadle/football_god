@@ -27,7 +27,6 @@ actor {
 
 
   //admin functions
-
   private func isAdminForCaller(caller: Principal): Bool {
     //Debug.print(debug_show(caller));
     switch (Array.find<Principal>(admins, func (admin) { admin == caller })) {
@@ -45,7 +44,21 @@ actor {
     assert not Principal.isAnonymous(caller);
     return profilesInstance.checkForProfile(Principal.toText(caller));
   };
-  
+
+  public shared ({caller}) func getProfile() : async ?Types.Profile {
+    assert not Principal.isAnonymous(caller);
+    return profilesInstance.getProfile(Principal.toText(caller));
+  };
+
+  public shared ({caller}) func isDisplayNameValid(displayName: Text) : async Bool {
+    assert not Principal.isAnonymous(caller);
+    return profilesInstance.isDisplayNameValid(displayName);
+  };
+
+  public shared ({caller}) func saveProfile(displayName :Text, walletAddress: Text) : async Result.Result<(), Types.Error> {
+    assert not Principal.isAnonymous(caller);
+    return profilesInstance.updateProfile(Principal.toText(caller), displayName, walletAddress);
+  };
 
   //system state functions
 
@@ -214,6 +227,8 @@ actor {
     return totalICP;
   };
 
+  //prediction functions
+
   public shared ({caller}) func submitPredictions(seasonId: Nat16, gameweekNumber: Nat8, predictions: [Types.Prediction]) : async Result.Result<(), Types.Error> {
     assert not Principal.isAnonymous(caller);
 
@@ -247,6 +262,11 @@ actor {
 
     let principalName = Principal.toText(caller); 
     return predictionsInstance.submitPredictions(principalName, seasonId, gameweekNumber, predictions);
+  };
+
+  public shared ({caller}) func getPredictions(principalName: Text, seasonId: Nat16, gameweekNumber: Nat8) : async [Types.Prediction] {
+    
+    return predictionsInstance.getPredictions(principalName, seasonId, gameweekNumber); 
   };
   
 }

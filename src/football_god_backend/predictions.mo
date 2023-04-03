@@ -12,46 +12,61 @@ module {
   public class Predictions(){
 
     private type PrincipalName = Text;
-
-    let nat16Hash: (Nat16) -> Hash.Hash = func(x) { Prim.natToNat32(Prim.nat16ToNat(x)) };
-    let nat16Eq: (Nat16, Nat16) -> Bool = func(x, y) { x == y };
-    let nat8Hash: (Nat8) -> Hash.Hash = func(x) { Prim.natToNat32(Prim.nat8ToNat(x)) };
-    let nat8Eq: (Nat8, Nat8) -> Bool = func(x, y) { x == y };
    
-    private var userPredictions = Map.HashMap<Nat16, Map.HashMap<Nat8, Map.HashMap<PrincipalName, List.List<Types.Prediction>>>>(0, nat16Eq, nat16Hash);
+    private var userPredictions = Map.HashMap<PrincipalName, List.List<Types.UserGameweek>>(0, Text.equal, Text.hash);
    
-    public func submitPredictions(principalName: Text, seasonId: Nat16, gameweekNumber: Nat8, predictions: [Types.Prediction]) : Result.Result<(), Types.Error> {
+     public func submitPredictions(principalName: Text, seasonId: Nat16, gameweekNumber: Nat8, predictions: [Types.Prediction]) : Result.Result<(), Types.Error> {
         
-        let gameWeekPredictions = List.fromArray<Types.Prediction>(predictions);
+        let userGameweek: Types.UserGameweek = {
+          seasonId = seasonId;
+          gameweekNumber = gameweekNumber;
+          predictions = List.fromArray<Types.Prediction>(predictions);
+          enteredSweepstake = false;
+        }; 
 
-        // Get season map or create a new one
-        let seasonMap = switch (userPredictions.get(seasonId)) {
-            case null {
-                let newSeasonMap = Map.HashMap<Nat8, Map.HashMap<PrincipalName, List.List<Types.Prediction>>>(0, nat8Eq, nat8Hash);
-                userPredictions.put(seasonId, newSeasonMap);
-                newSeasonMap
-            };
-            case (?existingSeasonMap) {
-                existingSeasonMap
-            };
+        let existingUserGameweeks = userPredictions.get(principalName);
+        let updatedUserGameweeks = switch existingUserGameweeks {
+          case (null) { List.push<Types.UserGameweek>(userGameweek, List.nil<Types.UserGameweek>()) };
+          case (?userGameweeks) {
+            List.map<Types.UserGameweek, Types.UserGameweek>(userGameweeks, func (ugw: Types.UserGameweek) : Types.UserGameweek {
+              if (ugw.seasonId == seasonId and ugw.gameweekNumber == gameweekNumber) {
+                let updatedUserGameweek = {
+                  seasonId = userGameweek.seasonId;
+                  gameweekNumber = userGameweek.gameweekNumber;
+                  predictions = userGameweek.predictions;
+                  enteredSweepstake = ugw.enteredSweepstake;
+                };
+                return updatedUserGameweek;
+              } else {
+                return ugw;
+              };
+            });
+          };
         };
 
-        // Get gameweek map or create a new one
-        let gameWeekMap = switch (seasonMap.get(gameweekNumber)) {
-            case null {
-                let newGameWeekMap = Map.HashMap<PrincipalName, List.List<Types.Prediction>>(0, Text.equal, Text.hash);
-                seasonMap.put(gameweekNumber, newGameWeekMap);
-                newGameWeekMap
-            };
-            case (?existingGameWeekMap) {
-                existingGameWeekMap
-            };
-        };
+        userPredictions.put(principalName, updatedUserGameweeks);
 
-        // Update or add the list of predictions for the given principal
-        gameWeekMap.put(principalName, gameWeekPredictions);
         return #ok(());
     };
+
+    public func getPredictions(principalName: Text, seasonId: Nat16, gameweekNumber: Nat8) : [Types.Prediction] {
+      let userGameweeks = userPredictions.get(principalName);
+
+      switch userGameweeks {
+        case (null) { return []; };
+        case (?gameweeks) {
+          let gameweek = List.find<Types.UserGameweek>(gameweeks, func (ugw: Types.UserGameweek) : Bool {
+            return ugw.seasonId == seasonId and ugw.gameweekNumber == gameweekNumber;
+          });
+
+          switch gameweek {
+            case (null) { return []; };
+            case (?gw) { return List.toArray<Types.Prediction>(gw.predictions); };
+          };
+        };
+      };
+    };
+
 
   }
 }

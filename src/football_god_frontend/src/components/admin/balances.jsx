@@ -15,7 +15,7 @@ const Balances = () => {
   const pageSize = 25;
 
   const fetchPotBalance = async () => {
-    const balance = await football_god_backend_actor.getPotBalance();
+    const balance = await football_god_backend_actor.getGameweekPot();
     setPotBalance(balance);
   };
 

@@ -11,10 +11,10 @@ const Profile = () => {
   Actor.agentOf(football_god_backend_actor).replaceIdentity(identity);
   
   const [isLoading, setIsLoading] = useState(false);
+  const [userProfile, setUserProfile] = useState(null);
   const [displayName, setDisplayName] = useState('');
   const [wallet, setWallet] = useState('');
   const [balance, setBalance] = useState(0);
-  const [depositAddress, setDepositAddress] = useState('');
   const [showWithdrawModal, setShowWithdrawModal] = useState(false);
   const [withdrawAmount, setWithdrawAmount] = useState(0);
   const withdrawalFee = 0.001; // Set the withdrawal fee here
@@ -23,22 +23,16 @@ const Profile = () => {
   useEffect(() => {
     fetchProfile();
     fetchBalance();
-    fetchDepositAddress();
   }, []);
   
   const fetchProfile = async () => {
-    const userProfile = await football_god_backend_actor.getProfile();
-    setBalance(userProfile);
+    const profile = await football_god_backend_actor.getProfile();
+    setUserProfile(profile[0]);
   };
   
   const fetchBalance = async () => {
     const userBalance = await football_god_backend_actor.getBalance();
     setBalance(userBalance);
-  };
-
-  const fetchDepositAddress = async () => {
-    const address = await football_god_backend_actor.getDepositAddress();
-    setDepositAddress(address);
   };
 
   const isDisplayNameValid = async () => {
@@ -125,10 +119,10 @@ const Profile = () => {
                       <FormControl
                         type="text"
                         readOnly
-                        value={depositAddress}
+                        value={userProfile.depositAddress}
                       />
                       <InputGroup.Append>
-                        <Button variant="outline-secondary" onClick={() => navigator.clipboard.writeText(depositAddress)}>
+                        <Button variant="outline-secondary" onClick={() => navigator.clipboard.writeText(userProfile.depositAddress)}>
                           Copy
                         </Button>
                       </InputGroup.Append>

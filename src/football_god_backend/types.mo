@@ -2,6 +2,7 @@ import List "mo:base/List";
 import Map "mo:base/HashMap";
 import Principal "mo:base/Principal";
 import Hash "mo:base/Hash";
+import Blob "mo:base/Blob";
 
 module Types {
    
@@ -43,7 +44,14 @@ module Types {
     public type Profile = {
         displayName: Text;
         wallet: Text;
-        depositAddress: Text;
+        depositAddress: Blob;
+    };
+
+    public type UserGameweek = {
+        seasonId: Nat16;
+        gameweekNumber: Nat8;
+        predictions: List.List<Types.Prediction>;
+        enteredSweepstake: Bool;
     };
 
     public type Prediction = {

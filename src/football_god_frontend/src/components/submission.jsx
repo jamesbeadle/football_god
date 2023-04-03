@@ -24,7 +24,7 @@ const Submission = () => {
   }, [season]);
 
   const fetchDisplayName = async () => {
-    const profile = await football_god_backend_actor.getProfile();
+    const profile = await football_god_backend_actor.getPublicProfile();
     setDisplayName(profile.displayName);
   };
 

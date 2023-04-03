@@ -74,7 +74,7 @@ const Play = () => {
 
   const fetchExistingPredictions = async () => {
     if (activeSeason && activeGameweek) {
-      const fetchedPredictions = await football_god_backend_actor.getPredictions(activeSeason.id, activeGameweek.number);
+      const fetchedPredictions = await football_god_backend_actor.getPredictions(identity, activeSeason.id, activeGameweek.number);
       const existingScores = fetchedPredictions.reduce((acc, prediction) => {
         acc[prediction.fixtureId] = { home: prediction.homeGoals, away: prediction.awayGoals };
         return acc;
