@@ -353,7 +353,6 @@ actor Self {
     return #ok(());
   };
   
-  /*
   public shared ({caller}) func enterSweepstake(seasonId : Nat16, gameweekNumber: Nat8) : async Result.Result<(), Types.Error> {
     assert not Principal.isAnonymous(caller);
     let principalName = Principal.toText(caller); 
@@ -364,51 +363,62 @@ actor Self {
       return #err(#NotAllowed);
     };
 
-    let source_account = Account.accountIdentifier(Principal.fromActor(this), Account.principalToSubaccount(caller));
+    let source_account = Account.accountIdentifier(Principal.fromActor(Self), Account.principalToSubaccount(caller));
     let balance = await Ledger.account_balance({ account = source_account });
 
-    let hasBalance = balance > entry_fee;
+    let hasBalance = balance.e8s > entry_fee;
 
     if(hasBalance){
       return #err(#NotAllowed);
     };
 
-    await Ledger.transfer({
+    let result = await Ledger.transfer({
         memo: Nat64    = 0;
         from_subaccount = ?Account.principalToSubaccount(caller);
-        to = Account.accountIdentifier(Principal.fromActor(this), Account.defaultSubaccount());
-        amount = { e8s = Nat64.fromNat(entry_fee) - Nat64.fromNat(icp_fee)};
-        fee = { e8s = Nat64.fromNat(icp_fee) };
+        to = Account.accountIdentifier(Principal.fromActor(Self), Account.defaultSubaccount());
+        amount = { e8s = entry_fee - icp_fee};
+        fee = { e8s = icp_fee };
         created_at_time = ?{ timestamp_nanos = Nat64.fromNat(Int.abs(Time.now())) };
     });
 
     return predictionsInstance.enterSweepstake(principalName, seasonId, gameweekNumber);
   };
-*/
 
-
-/*
-  public shared ({caller}) func withdrawICP(amount: Nat) : async Result.Result<(), Types.Error> {
+  public shared ({caller}) func withdrawICP(amount: Nat64) : async Result.Result<(), Types.Error> {
     assert not Principal.isAnonymous(caller);
     let principalName = Principal.toText(caller); 
 
-    let withdrawable = await Ledger.account_balance({ account = source_account }) - icp_fee;
+    let source_account = Account.accountIdentifier(Principal.fromActor(Self), Account.principalToSubaccount(caller));
+    let balance = await Ledger.account_balance({ account = source_account });
+    let withdrawable = balance.e8s - icp_fee;
 
     if(amount > withdrawable){
       return #err(#NotAllowed);
     };
 
-    await Ledger.transfer({
-        memo: Nat64    = 0;
-        from_subaccount = ?Account.principalToSubaccount(caller);
-        to = account_id;
-        amount = { e8s = Nat64.fromNat(amount + icp_fee) };
-        fee = { e8s = Nat64.fromNat(icp_fee) };
-        created_at_time = ?{ timestamp_nanos = Nat64.fromNat(Int.abs(Time.now())) };
-    });
+    let userProfile = profilesInstance.getProfile(principalName);
 
-    return #ok(());
+    switch userProfile {
+      case (null) {
+        return #err(#NotFound);
+      };
+      case (?profile) {
+        let account_id = Account.accountIdentifier(Principal.fromText(profile.wallet), Account.defaultSubaccount());
+        
+        let result = await Ledger.transfer({
+            memo: Nat64    = 0;
+            from_subaccount = ?Account.principalToSubaccount(caller);
+            to = account_id;
+            amount = { e8s = amount };
+            fee = { e8s = icp_fee };
+            created_at_time = ?{ timestamp_nanos = Nat64.fromNat(Int.abs(Time.now())) };
+        });
+
+        return #ok(());
+
+
+      };
+    };
   };
-*/
   
 }
