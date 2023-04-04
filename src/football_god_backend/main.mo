@@ -26,6 +26,7 @@ actor {
   
   var activeSeason : Nat16 = 0;
   var activeGameweek : Nat8 = 0;
+  let entry_fee: Nat = 100_000_000;
   let icp_fee: Nat = 10_000;
 
 
@@ -311,7 +312,7 @@ actor {
         memo: Nat64    = 0;
         from_subaccount = ?Account.principalToSubaccount(caller);
         to = Account.accountIdentifier(Principal.fromActor(this), Account.defaultSubaccount());
-        amount = { e8s = 1 - Nat64.fromNat(icp_fee)};
+        amount = { e8s = Nat64.fromNat(entry_fee) - Nat64.fromNat(icp_fee)};
         fee = { e8s = Nat64.fromNat(icp_fee) };
         created_at_time = ?{ timestamp_nanos = Nat64.fromNat(Int.abs(Time.now())) };
     });
