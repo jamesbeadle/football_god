@@ -10,7 +10,6 @@ import Seasons "seasons";
 import Teams "teams";
 import Predictions "predictions";
 import Profiles "profiles";
-import Book "book";
 import Account "Account";
 import Ledger "canister:ledger";
 
@@ -24,10 +23,10 @@ actor {
   let seasonInstance = Seasons.Seasons();
   let teamInstance = Teams.Teams();
   let predictionsInstance = Predictions.Predictions();
-  let bookInstance = Book.Book();
   
   var activeSeason : Nat16 = 0;
   var activeGameweek : Nat8 = 0;
+  let icp_fee: Nat = 10_000;
 
 
   //admin functions
@@ -299,13 +298,23 @@ actor {
       return #err(#NotAllowed);
     };
 
-    let hasBalance = bookInstance.hasEnoughBalance(caller, 1);
+    let source_account = Account.accountIdentifier(Principal.fromActor(this), Account.principalToSubaccount(caller));
+    let balance = await Ledger.account_balance({ account = source_account });
+
+    let hasBalance = balance > 1;
 
     if(hasBalance){
       return #err(#NotAllowed);
     };
 
-    bookInstance.transferSweepstakeEntry(caller);
+    await Ledger.transfer({
+        memo: Nat64    = 0;
+        from_subaccount = ?Account.principalToSubaccount(caller);
+        to = Account.accountIdentifier(Principal.fromActor(this), Account.defaultSubaccount());
+        amount = { e8s = 1 - Nat64.fromNat(icp_fee)};
+        fee = { e8s = Nat64.fromNat(icp_fee) };
+        created_at_time = ?{ timestamp_nanos = Nat64.fromNat(Int.abs(Time.now())) };
+    });
 
     return predictionsInstance.enterSweepstake(principalName, seasonId, gameweekNumber);
   };
