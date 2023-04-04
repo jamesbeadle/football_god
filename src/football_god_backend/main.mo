@@ -238,8 +238,11 @@ actor {
     
     let source_account = Account.accountIdentifier(Principal.fromActor(this), Account.defaultSubaccount());
     let balance = await Ledger.account_balance({ account = source_account });
+    let balanceICP = (balance : Float) / 1e8;
+    let balanceICP_95 = balanceICP * 0.95;
+    let roundedBalanceICP = Nat(round(balanceICP_95));
     
-    return balance;
+    return roundedBalanceICP;
   };
 
   //prediction functions
@@ -302,7 +305,7 @@ actor {
     let source_account = Account.accountIdentifier(Principal.fromActor(this), Account.principalToSubaccount(caller));
     let balance = await Ledger.account_balance({ account = source_account });
 
-    let hasBalance = balance > 1;
+    let hasBalance = balance > entry_fee;
 
     if(hasBalance){
       return #err(#NotAllowed);
