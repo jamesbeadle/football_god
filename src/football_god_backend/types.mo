@@ -69,14 +69,9 @@ module Types {
         predictionCount: Nat8;
     };
 
-    public type DepositErr = {
-        #BalanceLow;
-        #TransferFailure;
-    };
-    
-    public type DepositReceipt = {
-        #Ok: Nat;
-        #Err: DepositErr;
+    public type PayoutData = {
+        totalPot: Nat;
+        winners: Nat;
     };
 
 }

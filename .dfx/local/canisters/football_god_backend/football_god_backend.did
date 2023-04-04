@@ -1,0 +1,82 @@
+type Team = 
+ record {
+   id: nat16;
+   name: text;
+ };
+type Season = 
+ record {
+   gameweeks: List;
+   id: nat16;
+   name: text;
+   year: nat16;
+ };
+type Result = 
+ variant {
+   err: Error;
+   ok;
+ };
+type Prediction = 
+ record {
+   awayGoals: nat8;
+   fixtureId: nat16;
+   homeGoals: nat8;
+ };
+type List_1 = 
+ opt record {
+       Fixture;
+       List_1;
+     };
+type List = 
+ opt record {
+       Gameweek;
+       List;
+     };
+type Gameweek = 
+ record {
+   fixtureCount: nat8;
+   fixtures: List_1;
+   number: nat8;
+   status: nat8;
+ };
+type Fixture = 
+ record {
+   awayGoals: nat8;
+   awayTeamId: nat16;
+   homeGoals: nat8;
+   homeTeamId: nat16;
+   id: nat32;
+   status: nat8;
+ };
+type Error = 
+ variant {
+   AlreadyExists;
+   NotAllowed;
+   NotAuthorized;
+   NotFound;
+ };
+service : {
+  addFixtureToGameweek: (nat16, nat8, nat16, nat16) -> (Result);
+  createSeason: (text, nat16) -> (Result);
+  createTeam: (text) -> (Result);
+  deleteFixture: (nat16, nat8, nat32) -> (Result);
+  deleteSeason: (nat16) -> (Result);
+  deleteTeam: (nat16) -> (Result);
+  getActiveGameweekInfo: () -> (opt Gameweek) query;
+  getActiveSeasonInfo: () -> (opt Season) query;
+  getFixture: (nat16, nat8, nat32) -> (opt Fixture) query;
+  getFixtures: (nat16, nat8) -> (vec Fixture) query;
+  getGameweekPot: () -> (nat32) query;
+  getGameweeksInfo: (nat16) -> (vec Gameweek) query;
+  getSeasonInfo: (nat16) -> (opt Season) query;
+  getSeasonsInfo: () -> (vec Season) query;
+  getTeams: () -> (vec Team) query;
+  isAdmin: () -> (bool) query;
+  setActiveGameweek: (nat8) -> (Result);
+  setActiveSeason: (nat16) -> (Result);
+  submitPredictions: (nat16, nat8, vec Prediction) -> (Result);
+  updateFixture: (nat16, nat8, nat32, nat16, nat16, nat8, nat8, nat8) ->
+   (Result);
+  updateGameweekStatus: (nat16, nat8, nat8) -> (Result);
+  updateSeason: (nat16, text, nat16) -> (Result);
+  updateTeam: (nat16, text) -> (Result);
+}

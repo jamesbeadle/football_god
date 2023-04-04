@@ -42,8 +42,8 @@ const Payout = () => {
       setTotalPot(payoutData.totalPot);
       setAdminFee(payoutData.totalPot * 0.05);
       setTotalPayout(payoutData.totalPot * 0.95);
-      setNumWinners(payoutData.numWinners);
-      setSharePerWinner(payoutData.sharePerWinner);
+      setNumWinners(payoutData.winners);
+      setSharePerWinner(payoutData.totalPot / payoutData.winners);
     }
   };
 

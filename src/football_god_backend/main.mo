@@ -233,7 +233,7 @@ actor {
     return teamInstance.deleteTeam(id);
   };
 
-  // ICP pot functions
+  // ICP payout functions
   public query func getGameweekPot() : async Nat64 {
     
     let source_account = Account.accountIdentifier(Principal.fromActor(this), Account.defaultSubaccount());
@@ -243,6 +243,43 @@ actor {
     let roundedBalanceICP = Nat(round(balanceICP_95));
     
     return roundedBalanceICP;
+  };
+
+  public query func getPayoutData(seasonId : Nat16, gameweekNumber: Nat8) : async PayoutData {
+    let isCallerAdmin = isAdminForCaller(caller);
+    if(isCallerAdmin == false){
+      return #err(#NotAuthorized);
+    };
+
+    let source_account = Account.accountIdentifier(Principal.fromActor(this), Account.defaultSubaccount());
+    let balance = await Ledger.account_balance({ account = source_account });
+    let balanceICP = (balance : Float) / 1e8;
+
+    let payoutData: PayoutData = {
+      winners = predictionsInstance.countWinners(seasonId, gameweekNumber);
+      totalPot = balanceICP;
+    };
+    
+    return payoutData;
+  };
+
+  public query func payoutSweepstake(seasonId : Nat16, gameweekNumber: Nat8) : async Result.Result<(), Types.Error> {
+    let isCallerAdmin = isAdminForCaller(caller);
+    if(isCallerAdmin == false){
+      return #err(#NotAuthorized);
+    };
+    
+    let source_account = Account.accountIdentifier(Principal.fromActor(this), Account.defaultSubaccount());
+    let balance = await Ledger.account_balance({ account = source_account });
+    
+    //get a list of all the winning accounts
+
+    //make a payment to all the winning accounts
+
+    //move 5% to admin account
+
+    
+    return #ok(());
   };
 
   //prediction functions
