@@ -77,6 +77,13 @@ module {
                 case (?balance) return balance >= amount;
                 case null return false;
             };
+        };
+
+        public func transferSweepstakeEntry(user: Principal, amount: Nat) : Bool {
+            switch (book.get(user)) {
+                case (?balance) return balance >= amount;
+                case null return false;
+            };
         }
     }
 }

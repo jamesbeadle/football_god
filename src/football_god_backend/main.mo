@@ -45,52 +45,14 @@ actor {
 
   //profile functions
 
-  public shared ({caller}) func checkAccountBalance() : async Types.DepositReceipt {
+  public shared ({caller}) func getBalance() : async Nat {
     assert not Principal.isAnonymous(caller);
+    let source_account = Account.accountIdentifier(Principal.fromActor(this), Account.principalToSubaccount(caller));
+    let balance = await Ledger.account_balance({ account = source_account });
     
-    //called on login so check account balance
-    return await depositIcp(caller);
+    return balance;
 
   };
-
-  
-   private func depositIcp(caller: Principal): async Types.DepositReceipt {
-
-      // Calculate target subaccount
-      // NOTE: Should this be hashed first instead?
-      let source_account = Account.accountIdentifier(Principal.fromActor(this), Account.principalToSubaccount(caller));
-
-      // Check ledger for value
-      let balance = await Ledger.account_balance({ account = source_account });
-
-      // Transfer to default subaccount
-      let icp_receipt = if (Nat64.toNat(balance.e8s) > icp_fee) {
-          await Ledger.transfer({
-              memo: Nat64    = 0;
-              from_subaccount = ?Account.principalToSubaccount(caller);
-              to = Account.accountIdentifier(Principal.fromActor(this), Account.defaultSubaccount());
-              amount = { e8s = balance.e8s - Nat64.fromNat(icp_fee)};
-              fee = { e8s = Nat64.fromNat(icp_fee) };
-              created_at_time = ?{ timestamp_nanos = Nat64.fromNat(Int.abs(Time.now())) };
-          })
-      } else {
-          return #Err(#BalanceLow);
-      };
-
-      switch icp_receipt {
-          case ( #Err _) {
-              return #Err(#TransferFailure);
-          };
-          case _ {};
-      };
-      let available = { e8s : Nat = Nat64.toNat(balance.e8s) - icp_fee };
-
-      // keep track of deposited ICP
-      book.addTokens(caller,ledger,available.e8s);
-
-      // Return result
-      #Ok(available.e8s)
-    };
   
 
   public shared ({caller}) func checkForProfile() : async Bool {
@@ -272,12 +234,12 @@ actor {
   };
 
   // ICP pot functions
-  public query func getGameweekPot() : async Nat32 {
-
-    //use the current week and season variable to get the pot
-
-    let totalICP : Nat32 = 0;
-    return totalICP;
+  public query func getGameweekPot() : async Nat64 {
+    
+    let source_account = Account.accountIdentifier(Principal.fromActor(this), Account.defaultSubaccount());
+    let balance = await Ledger.account_balance({ account = source_account });
+    
+    return balance;
   };
 
   //prediction functions
@@ -343,7 +305,7 @@ actor {
       return #err(#NotAllowed);
     };
 
-    //move the ICP from their sub account to the pot account
+    bookInstance.transferSweepstakeEntry(caller);
 
     return predictionsInstance.enterSweepstake(principalName, seasonId, gameweekNumber);
   };

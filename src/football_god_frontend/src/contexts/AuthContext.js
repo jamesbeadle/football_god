@@ -24,7 +24,6 @@ export const AuthProvider = ({ children }) => {
         Actor.agentOf(football_god_backend_actor).replaceIdentity(identity);
         const userIsAdmin = await football_god_backend_actor.isAdmin();
         setIsAdmin(userIsAdmin);
-        checkAccountBalance();
       }
     };
     initAuthClient();
@@ -87,12 +86,6 @@ export const AuthProvider = ({ children }) => {
     setIsAuthenticated(false);
     setIsAdmin(false);
     authClient.logout();
-  };
-
-  const checkAccountBalance = async () =>{
-    const identity = authClient.getIdentity();
-    Actor.agentOf(football_god_backend_actor).replaceIdentity(identity);
-    await football_god_backend_actor.checkAccountBalance();
   };
 
 
