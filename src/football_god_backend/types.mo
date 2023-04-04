@@ -70,7 +70,7 @@ module Types {
     };
 
     public type PayoutData = {
-        totalPot: Nat;
+        totalPot: Int64;
         winners: Nat;
     };
 

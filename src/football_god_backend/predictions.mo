@@ -213,6 +213,44 @@ module {
     };
 
 
+    public func getWinnerPrincipalIds(seasonId: Nat16, gameweekNumber: Nat8) : [PrincipalName] {
+      let leaderboardEntries = Array.map<(PrincipalName, List.List<Types.UserGameweek>), List.List<Types.LeaderboardEntry>>(Iter.toArray(userPredictions.entries()), func ((principal, userGameweeks): (PrincipalName, List.List<Types.UserGameweek>)) : List.List<Types.LeaderboardEntry> {
+        let filteredGameweeks = List.filter(userGameweeks, func (ugw: Types.UserGameweek) : Bool {
+          return ugw.seasonId == seasonId and ugw.gameweekNumber == gameweekNumber;
+        });
+
+        return List.map<Types.UserGameweek, Types.LeaderboardEntry>(filteredGameweeks, func (ugw: Types.UserGameweek) : Types.LeaderboardEntry {
+          return {
+            principalName = principal;
+            correctScores = ugw.correctScores;
+            predictionCount = ugw.predictionCount;
+          };
+        });
+      });
+
+      let flattenedLeaderboardEntries = List.flatten<Types.LeaderboardEntry>(List.fromArray(leaderboardEntries));
+
+      // Find the highest number of correct scores
+      let highestCorrectScores = List.foldLeft<Types.LeaderboardEntry, Nat8>(flattenedLeaderboardEntries, 0, func (highest: Nat8, entry: Types.LeaderboardEntry) : Nat8 {
+        if (entry.correctScores > highest) {
+          return entry.correctScores;
+        } else {
+          return highest;
+        };
+      });
+
+      // Filter the winners with the highest correct scores
+      let winners = List.filter<Types.LeaderboardEntry>(flattenedLeaderboardEntries, func (entry: Types.LeaderboardEntry) : Bool {
+        return entry.correctScores == highestCorrectScores;
+      });
+
+      // Extract the principal ids of the winners
+      let winnerPrincipalIds = List.map<Types.LeaderboardEntry, PrincipalName>(winners, func (entry: Types.LeaderboardEntry) : PrincipalName {
+        return entry.principalName;
+      });
+
+      return List.toArray<PrincipalName>(winnerPrincipalIds);
+    };
 
 
 
