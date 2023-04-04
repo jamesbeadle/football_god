@@ -1,13 +1,13 @@
 import Types "types";
 import Result "mo:base/Result";
-import Map "mo:base/HashMap";
+import List "mo:base/List";
 import Text "mo:base/Text";
 import Principal "mo:base/Principal";
-import SHA224 "SHA224";
-import CRC32 "CRC32";
+import Account "Account";
 
 import Nat8 "mo:base/Nat8";
 import Nat32 "mo:base/Nat32";
+import Nat64 "mo:base/Nat64";
 import Buffer "mo:base/Buffer";
 import Blob "mo:base/Blob";
 import Array "mo:base/Array";
@@ -18,66 +18,112 @@ module {
 
     private type PrincipalName = Text;
 
-    private var userProfiles = Map.HashMap<PrincipalName, Types.Profile>(0, Text.equal, Text.hash);
-
+    private var userProfiles = List.nil<Types.Profile>();
+    
+    public func getProfiles() : [Types.Profile] {
+        return List.toArray(List.map<Types.Profile, Types.Profile>(userProfiles, func (profile: Types.Profile): Types.Profile {
+            return {
+                principalName = profile.principalName; 
+                displayName = profile.displayName;
+                depositAddress = profile.depositAddress;
+                wallet = ""; 
+                balance = 0;
+            };
+        }));
+    };
+    
     public func updateProfile(principalName: PrincipalName, displayName: Text, wallet: Text) : Result.Result<(), Types.Error> {
         
         let updatedProfile: Types.Profile = {
+            principalName = principalName;
             displayName = displayName;
             wallet = wallet;
-            depositAddress = principalToSubaccount(Principal.fromText(principalName));
+            depositAddress = Account.principalToSubaccount(Principal.fromText(principalName));
+            balance = 0;
         };
+        
+        let existingProfile = List.find<Types.Profile>(userProfiles, func (profile: Types.Profile): Bool {
+            return profile.principalName == principalName;
+        });
 
-        let existingProfile = switch(userProfiles.get(principalName)) {
-            case null {
+        switch (existingProfile) {
+            case (null) { 
                 let nameValid = isDisplayNameValid(updatedProfile.displayName);
-                if(nameValid){
+                if(not nameValid){
                     return #err(#NotAllowed);
                 };
-                userProfiles.put(principalName, updatedProfile);
+                var newProfilesList = List.nil<Types.Profile>();
+                newProfilesList := List.push(updatedProfile, newProfilesList);
+                userProfiles := List.append(userProfiles, newProfilesList);
                 return #ok(());
-            };
+             };
             case (?existingProfile) {
                 let nameChanged = updatedProfile.displayName != existingProfile.displayName;
                 if(nameChanged){
                     let nameValid = isDisplayNameValid(updatedProfile.displayName);
-                    if(nameValid){
+                    if(not nameValid){
                         return #err(#NotAllowed);
                     };
                 };
-                userProfiles.put(principalName, updatedProfile);
+
+                userProfiles := List.map<Types.Profile, Types.Profile>(userProfiles, func (profile: Types.Profile): Types.Profile {
+                    if (profile.principalName == principalName) {
+                        { 
+                            principalName = profile.principalName; 
+                            displayName = displayName;
+                            wallet = wallet; 
+                            depositAddress = profile.depositAddress;
+                            balance = 0;
+                        }
+                    } else { profile }
+                });
+
                 return #ok(());
             };
         };
     };
 
     public func checkForProfile(principalName: Text) : Bool {
-        switch (userProfiles.get(principalName)) {
+        let existingProfile = List.find<Types.Profile>(userProfiles, func (profile: Types.Profile): Bool {
+            return profile.principalName == principalName;
+        });
+        switch (existingProfile) {
             case null { return false };
             case _ { return true };
         };
     };
 
     public func getProfile(principalName: Text) : ?Types.Profile {
-        return userProfiles.get(principalName);
-    };
+        let foundProfile = List.find<Types.Profile>(userProfiles, func (profile: Types.Profile): Bool {
+            return profile.principalName == principalName;
+        });
 
-    public func getPublicProfile(principalName: Text) : ?Types.Profile {
-        switch (userProfiles.get(principalName)) {
-            case (null) { return null };
-            case (?profile) { 
-                
-                let publicProfile = {
-                    displayName = profile.displayName;
-                    wallet = "";
-                    depositAddress = Blob.fromArrayMut(Array.init(32, 0 : Nat8));
-                };
-                
-                return ?publicProfile;
-            };
+        switch (foundProfile) {
+            case (null) { return null; };
+            case (?profile) { return ?profile; };
         };
     };
 
+    public func getPublicProfile(principalName: Text) : ?Types.Profile {
+        let foundProfile = List.find<Types.Profile>(userProfiles, func (profile: Types.Profile): Bool {
+            return profile.principalName == principalName;
+        });
+
+        switch (foundProfile) {
+            case (null) { return null; };
+            case (?profile) { 
+                let profileInfo = {
+                    principalName = "";
+                    displayName = profile.displayName;
+                    wallet = "";
+                    depositAddress = Blob.fromArrayMut(Array.init(32, 0 : Nat8));
+                    balance = Nat64.fromNat(0);
+                };
+                return ?profileInfo;
+            };
+        };
+    };
+    
     public func isDisplayNameValid(displayName: Text) : Bool {
         
         if (Text.size(displayName) < 3) {
@@ -98,32 +144,15 @@ module {
             return false;
         };
 
+        let foundProfile = List.find<Types.Profile>(userProfiles, func (profile: Types.Profile): Bool {
+            return profile.displayName == displayName;
+        });
 
-        for(x in userProfiles.vals()){
-            if(x.displayName == displayName){
-                return true;
-            }
+        if(foundProfile != null){
+            return false;
         };
 
-        return false;
-    };
-
-    public func principalToSubaccount(principal: Principal) : Blob {
-        let idHash = SHA224.Digest();
-        idHash.write(Blob.toArray(Principal.toBlob(principal)));
-        let hashSum = idHash.sum();
-        let crc32Bytes = beBytes(CRC32.ofArray(hashSum));
-        let buf = Buffer.Buffer<Nat8>(32);
-        let blob = Blob.fromArray(Array.append(crc32Bytes, hashSum));
-
-        return blob;
-    };
-
-    func beBytes(n: Nat32) : [Nat8] {
-        func byte(n: Nat32) : Nat8 {
-        Nat8.fromNat(Nat32.toNat(n & 0xff))
-        };
-        [byte(n >> 24), byte(n >> 16), byte(n >> 8), byte(n)]
+        return true;
     };
 
 

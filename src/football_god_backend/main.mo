@@ -420,5 +420,35 @@ actor Self {
       };
     };
   };
+
+  public shared ({caller}) func getUsersWithBalances() : async [Types.Profile] {
+    let isCallerAdmin = isAdminForCaller(caller);
+    if(isCallerAdmin == false){
+      return [];
+    };
+    
+    let allProfiles = profilesInstance.getProfiles();
+    var profilesWithBalances: [Types.Profile] = [];
+
+    for (i in Iter.range(0, allProfiles.size() - 1)) {
+      let source_account = Account.accountIdentifier(Principal.fromActor(Self), Account.principalToSubaccount(Principal.fromText(allProfiles[i].principalName)));
+      let balance = await Ledger.account_balance({ account = source_account });
+
+      let updatedProfile = {
+        principalName = allProfiles[i].principalName;
+        displayName = allProfiles[i].displayName;
+        wallet = allProfiles[i].wallet;
+        depositAddress = allProfiles[i].depositAddress;
+        balance = balance.e8s;
+      };
+    
+      profilesWithBalances := Array.append<Types.Profile>(profilesWithBalances, [updatedProfile]);
+    };
+
+
+    return profilesWithBalances;
+  };
+
+
   
 }
