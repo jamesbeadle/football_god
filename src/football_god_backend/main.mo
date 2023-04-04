@@ -328,5 +328,29 @@ actor {
     let principalName = Principal.toText(caller); 
    return predictionsInstance.getUserHistory(principalName, seasonId);
   };
+
+  public shared ({caller}) func withdrawICP(amount: Nat) : async Result.Result<(), Types.Error> {
+    assert not Principal.isAnonymous(caller);
+    let principalName = Principal.toText(caller); 
+
+    let withdrawable = await Ledger.account_balance({ account = source_account }) - icp_fee;
+
+    if(amount > withdrawable){
+      return #err(#NotAllowed);
+    };
+
+    await Ledger.transfer({
+        memo: Nat64    = 0;
+        from_subaccount = ?Account.principalToSubaccount(caller);
+        to = account_id;
+        amount = { e8s = Nat64.fromNat(amount + icp_fee) };
+        fee = { e8s = Nat64.fromNat(icp_fee) };
+        created_at_time = ?{ timestamp_nanos = Nat64.fromNat(Int.abs(Time.now())) };
+    });
+
+    return #ok(());
+  };
+
+
   
 }
