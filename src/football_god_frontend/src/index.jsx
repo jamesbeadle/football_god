@@ -15,6 +15,12 @@ import UpdateFixture from "./components/admin/update-fixture";
 import Play from "./components/play";
 
 import { AuthProvider } from "./contexts/AuthContext";
+import Balances from "./components/admin/balances";
+import Payout from "./components/admin/payout";
+import History from "./components/history";
+import Leaderboard from "./components/leaderboard";
+import Profile from "./components/profile";
+import Submission from "./components/submission";
 
 const App = () => {
  
@@ -25,12 +31,18 @@ const App = () => {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/admin" element={<Admin />} />
-            <Route path="/teams" element={<Teams />} />
-            <Route path="/game-rules" element={<Rules />} />
+            <Route path="/balances" element={<Balances />} />
             <Route path="/fixtures/:seasonId/:gameweekNumber" element={<Fixtures />} />
+            <Route path="/payout" element={<Payout />} />
             <Route path="/season/:seasonId" element={<Season />} />
+            <Route path="/teams" element={<Teams />} />
             <Route path="/update-fixture/:seasonId/:gameweekNumber/:fixtureId" element={<UpdateFixture />} />
+            <Route path="/history" element={<History />} />
+            <Route path="/leaderboard" element={<Leaderboard />} />
+            <Route path="/game-rules" element={<Rules />} />
             <Route path="/play" element={<Play />} />
+            <Route path="/profile" element={<Profile />} />
+            <Route path="/submission" element={<Submission />} />
           </Routes>
           <MyFooter />
         </div>
