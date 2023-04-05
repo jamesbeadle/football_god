@@ -185,7 +185,11 @@ actor Self {
       return #err(#NotAuthorized);
     };
 
-    return seasonInstance.updateFixture(seasonId, gameweekNumber, fixtureId, homeTeamId, awayTeamId, fixtureStatus, homeGoals, awayGoals);
+    let result = seasonInstance.updateFixture(seasonId, gameweekNumber, fixtureId, homeTeamId, awayTeamId, fixtureStatus, homeGoals, awayGoals);
+
+    let gameweekFixtures = seasonInstance.getFixtures(seasonId, gameweekNumber);
+
+    return predictionsInstance.updatePredictionsCount(seasonId, gameweekNumber, gameweekFixtures);
   };
 
   public shared ({caller}) func deleteFixture(seasonId : Nat16, gameweekNumber: Nat8, fixtureId: Nat32) : async Result.Result<(), Types.Error> {
@@ -264,8 +268,33 @@ actor Self {
       return #err(#NotAllowed);
     };
 
+    let validPredictions = checkValidPredictions(seasonId, gameweekNumber, predictions);
+
+    if(not validPredictions){
+      return #err(#NotAllowed);
+    };
+
     let principalName = Principal.toText(caller); 
     return predictionsInstance.submitPredictions(principalName, seasonId, gameweekNumber, predictions);
+  };
+
+  private func checkValidPredictions(seasonId: Nat16, gameweekNumber: Nat8, predictions: [Types.Prediction]) : Bool {
+      
+      let fixtures = seasonInstance.getFixtures(seasonId, gameweekNumber);
+      let fixturesCount = Array.size<Types.Fixture>(fixtures);
+      let predictionsCount = Array.size<Types.Prediction>(predictions);
+
+      if (fixturesCount != predictionsCount) {
+          return false;
+      };
+
+      let fixturesWithPredictions = Array.filter<Types.Fixture>(fixtures, func (fixture: Types.Fixture) : Bool {
+          return Array.find<Types.Prediction>(predictions, func (prediction: Types.Prediction) : Bool {
+              return prediction.fixtureId == fixture.id;
+          }) != null;
+      });
+
+      return Array.size<Types.Fixture>(fixturesWithPredictions) == fixturesCount;
   };
 
   public shared ({caller}) func getPredictions(principalName: Text, seasonId: Nat16, gameweekNumber: Nat8) : async [Types.Prediction] {

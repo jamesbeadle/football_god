@@ -60,7 +60,7 @@ module Types {
     };
 
     public type Prediction = {
-        fixtureId: Nat16;
+        fixtureId: Nat32;
         homeGoals: Nat8;
         awayGoals: Nat8;
     };

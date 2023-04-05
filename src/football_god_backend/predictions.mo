@@ -6,6 +6,7 @@ import List "mo:base/List";
 import Debug "mo:base/Debug";
 import Iter "mo:base/Iter";
 import Array "mo:base/Array";
+import Nat8 "mo:base/Nat8";
 
 module {
     
@@ -250,6 +251,68 @@ module {
       });
 
       return List.toArray<PrincipalName>(winnerPrincipalIds);
+    };
+
+    public func updatePredictionsCount(seasonId: Nat16, gameweekNumber: Nat8, fixtures: [Types.Fixture]) : Result.Result<(), Types.Error> {
+      
+      // Iterate through all users
+      for ((principalName, userGameweeks) in userPredictions.entries()) {
+
+        // Find the user's gameweek for the given season and gameweek number
+        let gameweek = List.find<Types.UserGameweek>(userGameweeks, func (ugw: Types.UserGameweek) : Bool {
+          return ugw.seasonId == seasonId and ugw.gameweekNumber == gameweekNumber;
+        });
+
+        // If the user has a gameweek, update the predictionCount and correctScores
+        switch gameweek {
+          case (null) { }; // Do nothing if the user has no gameweek
+          case (?gw) {
+            // Update predictionCount
+            let predictionCount = List.size<Types.Prediction>(gw.predictions);
+            
+            // Calculate correctScores
+            let correctScores = List.foldLeft<Types.Prediction, Nat8>(gw.predictions, 0, func (count: Nat8, prediction: Types.Prediction) : Nat8 {
+              let matchingFixture = List.find<Types.Fixture>(List.fromArray<Types.Fixture>(fixtures), func (fixture: Types.Fixture) : Bool {
+                return fixture.id == prediction.fixtureId;
+              });
+
+              switch matchingFixture {
+                case (null) { return count; };
+                case (?fixture) {
+                  let isCorrect = fixture.homeGoals == prediction.homeGoals and fixture.awayGoals == prediction.awayGoals;
+                  if(isCorrect){
+                    return count + 1;
+                  };
+                  return count;
+                };
+              };
+            });
+
+            // Update the user's gameweek
+            let updatedUserGameweek = {
+              seasonId = gw.seasonId;
+              gameweekNumber = gw.gameweekNumber;
+              predictions = gw.predictions;
+              enteredSweepstake = gw.enteredSweepstake;
+              correctScores = correctScores;
+              predictionCount = Nat8.fromNat(predictionCount);
+              winnings = gw.winnings;
+            };
+
+            let updatedUserGameweeks = List.map<Types.UserGameweek, Types.UserGameweek>(userGameweeks, func (ugw: Types.UserGameweek) : Types.UserGameweek {
+              if (ugw.seasonId == seasonId and ugw.gameweekNumber == gameweekNumber) {
+                return updatedUserGameweek;
+              } else {
+                return ugw;
+              };
+            });
+
+            userPredictions.put(principalName, updatedUserGameweeks);
+          };
+        };
+      };
+
+      return #ok(());
     };
 
 

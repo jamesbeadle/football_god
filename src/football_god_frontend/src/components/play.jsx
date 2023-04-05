@@ -3,12 +3,15 @@ import { Container, Row, Col, Card, Form, Button, Spinner } from 'react-bootstra
 import { football_god_backend as football_god_backend_actor } from '../../../declarations/football_god_backend';
 import { Actor } from "@dfinity/agent";
 import { AuthContext } from "../contexts/AuthContext";
+import { useHistory } from 'react-router-dom';
 
 const Play = () => {
   
   const { authClient } = useContext(AuthContext);
   const identity = authClient.getIdentity();
   Actor.agentOf(football_god_backend_actor).replaceIdentity(identity);
+
+  const history = useHistory();
 
   const [isLoading, setIsLoading] = useState(false);
   const [hasProfile, setHasProfile] = useState(false);
@@ -118,16 +121,29 @@ const Play = () => {
       predictions
     );
     setIsLoading(false);
+    history.push(`/view-submission/${activeSeason}/${activeGameweek}`);
     
   };
 
   const handleSweepstakeSubmit = async (event) => {
     event.preventDefault();
     setIsLoading(true);
-    await handlePlayForFreeSubmit(event);
+    
+    const predictions = Object.entries(scores).map(([fixtureId, score]) => ({
+      fixtureId: Number(fixtureId),
+      homeGoals: Number(score.home),
+      awayGoals: Number(score.away)
+    }));
+
+    await football_god_backend_actor.submitPredictions(
+      Number(activeSeason.id),
+      Number(activeGameweek.number),
+      predictions
+    );
+
     await football_god_backend_actor.enterSweepstake(Number(activeSeason.id), Number(activeGameweek.number));
     setIsLoading(false);
-    checkSweepstakePaid();
+    history.push(`/view-submission/${activeSeason}/${activeGameweek}`);
   };
 
   const getTeamNameById = (teamId) => {
