@@ -24,7 +24,7 @@ module {
           predictions = List.fromArray<Types.Prediction>(predictions);
           enteredSweepstake = false;
           correctScores = 0;
-          predictionCount = 0;
+          predictionCount = Nat8.fromNat(Array.size<Types.Prediction>(predictions));
           winnings = 0;
         }; 
 
@@ -252,6 +252,41 @@ module {
 
       return List.toArray<PrincipalName>(winnerPrincipalIds);
     };
+
+    public func deleteFixture(seasonId: Nat16, gameweekNumber: Nat8, fixtures: [Types.Fixture], fixtureId: Nat32) : Result.Result<(), Types.Error> {
+      
+      // Iterate through all users
+      for ((principalName, userGameweeks) in userPredictions.entries()) {
+        // Update user gameweeks by removing the given fixtureId from predictions
+        let updatedUserGameweeks = List.map<Types.UserGameweek, Types.UserGameweek>(userGameweeks, func (ugw: Types.UserGameweek) : Types.UserGameweek {
+          if (ugw.seasonId == seasonId and ugw.gameweekNumber == gameweekNumber) {
+            // Remove the prediction with the given fixtureId
+            let updatedPredictions = List.filter<Types.Prediction>(ugw.predictions, func (prediction: Types.Prediction) : Bool {
+              return prediction.fixtureId != fixtureId;
+            });
+
+            return {
+              seasonId = ugw.seasonId;
+              gameweekNumber = ugw.gameweekNumber;
+              predictions = updatedPredictions;
+              enteredSweepstake = ugw.enteredSweepstake;
+              correctScores = ugw.correctScores;
+              predictionCount = ugw.predictionCount;
+              winnings = ugw.winnings;
+            };
+          } else {
+            return ugw;
+          };
+        });
+
+        // Update the user's gameweeks in userPredictions
+        userPredictions.put(principalName, updatedUserGameweeks);
+      };
+
+      // Call updatePredictionsCount
+      return updatePredictionsCount(seasonId, gameweekNumber, fixtures);
+    };
+
 
     public func updatePredictionsCount(seasonId: Nat16, gameweekNumber: Nat8, fixtures: [Types.Fixture]) : Result.Result<(), Types.Error> {
       

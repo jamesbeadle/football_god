@@ -198,7 +198,12 @@ actor Self {
       return #err(#NotAuthorized);
     };
 
-    return seasonInstance.deleteFixture(seasonId, gameweekNumber, fixtureId);
+    let result = seasonInstance.deleteFixture(seasonId, gameweekNumber, fixtureId);
+
+    let gameweekFixtures = seasonInstance.getFixtures(seasonId, gameweekNumber);
+    return predictionsInstance.deleteFixture(seasonId, gameweekNumber, gameweekFixtures, fixtureId);
+
+
   };
 
   //team functions
