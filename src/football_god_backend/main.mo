@@ -18,6 +18,8 @@ import Predictions "predictions";
 import Profiles "profiles";
 import Account "Account";
 import Ledger "canister:ledger";
+import Map "mo:base/HashMap";
+import Text "mo:base/Text";
 
 actor Self {
   
@@ -26,18 +28,27 @@ actor Self {
   ];
 
   let profilesInstance = Profiles.Profiles();
-  let seasonInstance = Seasons.Seasons();
-  let teamInstance = Teams.Teams();
+  let seasonsInstance = Seasons.Seasons();
+  let teamsInstance = Teams.Teams();
   let predictionsInstance = Predictions.Predictions();
   
-  var activeSeason : Nat16 = 0;
-  var activeGameweek : Nat8 = 0;
   let entry_fee: Nat64 = 100_000_000;
   let icp_fee: Nat64 = 10_000;
 
   let adminAccount = "adminaccount";
 
+  //stable variables populated on pre upgrade
+  private stable var activeSeason : Nat16 = 0;
+  private stable var activeGameweek : Nat8 = 0;
+  private stable var stable_profiles: [Types.Profile] = [];
+  private stable var stable_predictions: [(Types.PrincipalName, List.List<Types.UserGameweek>)] = [];
+  private stable var stable_seasons: [Types.Season] = [];
+  private stable var stable_teams: [Types.Team] = [];
+  private stable var stable_nextSeasonId : Nat16 = 0;
+  private stable var stable_nextFixtureId : Nat32 = 0;
+  private stable var stable_nextTeamId : Nat16 = 0;
 
+  
   //admin functions
   private func isAdminForCaller(caller: Principal): Bool {
     //Debug.print(debug_show(caller));
@@ -97,21 +108,21 @@ actor Self {
   };
 
   public query func getActiveSeason() : async ?Types.Season {
-    return seasonInstance.getSeason(activeSeason);
+    return seasonsInstance.getSeason(activeSeason);
   };
 
   public query func getActiveGameweek() : async ?Types.Gameweek {
-    return seasonInstance.getGameweek(activeSeason, activeGameweek);
+    return seasonsInstance.getGameweek(activeSeason, activeGameweek);
   };
 
   //season functions
 
   public query func getSeasons() : async [Types.Season] {
-    return seasonInstance.getSeasons();
+    return seasonsInstance.getSeasons();
   };
 
   public query func getSeason(seasonId : Nat16) : async ?Types.Season {
-    return seasonInstance.getSeason(seasonId);
+    return seasonsInstance.getSeason(seasonId);
   };
   
   public shared ({caller}) func createSeason(name : Text, year : Nat16) : async Result.Result<(), Types.Error> {
@@ -121,7 +132,7 @@ actor Self {
       return #err(#NotAuthorized);
     };
 
-    return seasonInstance.createSeason(name, year);
+    return seasonsInstance.createSeason(name, year);
   };
 
   public shared ({caller}) func updateSeason(id : Nat16, newName : Text, newYear : Nat16) : async Result.Result<(), Types.Error> {
@@ -130,7 +141,7 @@ actor Self {
       return #err(#NotAuthorized);
     };
 
-    return seasonInstance.updateSeason(id, newName, newYear);
+    return seasonsInstance.updateSeason(id, newName, newYear);
   };
 
   public shared ({caller}) func deleteSeason(id : Nat16) : async Result.Result<(), Types.Error> {
@@ -139,13 +150,13 @@ actor Self {
       return #err(#NotAuthorized);
     };
 
-    return seasonInstance.deleteSeason(id);
+    return seasonsInstance.deleteSeason(id);
   };
 
   //gameweek functions
 
   public query func getGameweeks(seasonId : Nat16) : async [Types.Gameweek] {
-    return seasonInstance.getGameweeks(seasonId);
+    return seasonsInstance.getGameweeks(seasonId);
   };
   
   public shared ({caller}) func updateGameweekStatus(seasonId : Nat16, gameweekNumber : Nat8, status: Nat8) : async Result.Result<(), Types.Error> {
@@ -155,17 +166,17 @@ actor Self {
       return #err(#NotAuthorized);
     };
 
-    return seasonInstance.updateGameweekStatus(seasonId, gameweekNumber, status);
+    return seasonsInstance.updateGameweekStatus(seasonId, gameweekNumber, status);
   };
 
   //fixture functions
 
   public query func getFixtures(seasonId: Nat16, gameweekNumber: Nat8) : async [Types.Fixture] {
-    return seasonInstance.getFixtures(seasonId, gameweekNumber);
+    return seasonsInstance.getFixtures(seasonId, gameweekNumber);
   };
 
   public query func getFixture(seasonId : Nat16, gameweekNumber: Nat8, fixtureId: Nat32) : async ?Types.Fixture {
-    return seasonInstance.getFixture(seasonId, gameweekNumber, fixtureId);
+    return seasonsInstance.getFixture(seasonId, gameweekNumber, fixtureId);
   };
 
   public shared ({caller}) func addFixtureToGameweek(seasonId: Nat16, gameweekNumber: Nat8, homeTeamId: Nat16, awayTeamId: Nat16) : async Result.Result<(), Types.Error> {
@@ -175,7 +186,7 @@ actor Self {
       return #err(#NotAuthorized);
     };
 
-    return seasonInstance.addFixtureToGameweek(seasonId, gameweekNumber, homeTeamId, awayTeamId);
+    return seasonsInstance.addFixtureToGameweek(seasonId, gameweekNumber, homeTeamId, awayTeamId);
   };
 
   public shared ({caller}) func updateFixture(seasonId: Nat16, gameweekNumber: Nat8, fixtureId: Nat32, homeTeamId: Nat16, awayTeamId: Nat16, fixtureStatus: Nat8, homeGoals: Nat8, awayGoals: Nat8) : async Result.Result<(), Types.Error> {
@@ -185,9 +196,9 @@ actor Self {
       return #err(#NotAuthorized);
     };
 
-    let result = seasonInstance.updateFixture(seasonId, gameweekNumber, fixtureId, homeTeamId, awayTeamId, fixtureStatus, homeGoals, awayGoals);
+    let result = seasonsInstance.updateFixture(seasonId, gameweekNumber, fixtureId, homeTeamId, awayTeamId, fixtureStatus, homeGoals, awayGoals);
 
-    let gameweekFixtures = seasonInstance.getFixtures(seasonId, gameweekNumber);
+    let gameweekFixtures = seasonsInstance.getFixtures(seasonId, gameweekNumber);
 
     return predictionsInstance.updatePredictionsCount(seasonId, gameweekNumber, gameweekFixtures);
   };
@@ -198,9 +209,9 @@ actor Self {
       return #err(#NotAuthorized);
     };
 
-    let result = seasonInstance.deleteFixture(seasonId, gameweekNumber, fixtureId);
+    let result = seasonsInstance.deleteFixture(seasonId, gameweekNumber, fixtureId);
 
-    let gameweekFixtures = seasonInstance.getFixtures(seasonId, gameweekNumber);
+    let gameweekFixtures = seasonsInstance.getFixtures(seasonId, gameweekNumber);
     return predictionsInstance.deleteFixture(seasonId, gameweekNumber, gameweekFixtures, fixtureId);
 
 
@@ -209,7 +220,7 @@ actor Self {
   //team functions
 
   public query func getTeams() : async [Types.Team] {
-    return teamInstance.getTeams();
+    return teamsInstance.getTeams();
   };
 
   public shared ({caller}) func createTeam(name : Text) : async Result.Result<(), Types.Error> {
@@ -219,7 +230,7 @@ actor Self {
       return #err(#NotAuthorized);
     };
 
-    return teamInstance.createTeam(name);
+    return teamsInstance.createTeam(name);
   };
 
   public shared ({caller}) func updateTeam(id : Nat16, newName : Text) : async Result.Result<(), Types.Error> {
@@ -228,7 +239,7 @@ actor Self {
       return #err(#NotAuthorized);
     };
 
-    return teamInstance.updateTeam(id, newName);
+    return teamsInstance.updateTeam(id, newName);
   };
 
   public shared ({caller}) func deleteTeam(id : Nat16) : async Result.Result<(), Types.Error> {
@@ -237,7 +248,7 @@ actor Self {
       return #err(#NotAuthorized);
     };
 
-    return teamInstance.deleteTeam(id);
+    return teamsInstance.deleteTeam(id);
   };
 
   //prediction functions
@@ -285,7 +296,7 @@ actor Self {
 
   private func checkValidPredictions(seasonId: Nat16, gameweekNumber: Nat8, predictions: [Types.Prediction]) : Bool {
       
-      let fixtures = seasonInstance.getFixtures(seasonId, gameweekNumber);
+      let fixtures = seasonsInstance.getFixtures(seasonId, gameweekNumber);
       let fixturesCount = Array.size<Types.Fixture>(fixtures);
       let predictionsCount = Array.size<Types.Prediction>(predictions);
 
@@ -483,6 +494,21 @@ actor Self {
     return profilesWithBalances;
   };
 
+  system func preupgrade() {
+    stable_profiles := profilesInstance.getProfiles();
+    stable_predictions := predictionsInstance.getUserPredictions();
+    stable_seasons := seasonsInstance.getSeasons();
+    stable_nextSeasonId := seasonsInstance.getNextSeasonId();
+    stable_nextFixtureId := seasonsInstance.getNextFixtureId();
+    stable_teams := teamsInstance.getTeams();
+    stable_nextTeamId := teamsInstance.getNextTeamId();
+  };
 
+  system func postupgrade() {
+    profilesInstance.setData(stable_profiles);
+    predictionsInstance.setData(stable_predictions);
+    seasonsInstance.setData(stable_seasons, stable_nextSeasonId, stable_nextFixtureId);
+    teamsInstance.setData(stable_teams, stable_nextTeamId);
+  };
   
 }

@@ -16,9 +16,11 @@ module {
     
   public class Profiles(){
 
-    private type PrincipalName = Text;
-
     private var userProfiles = List.nil<Types.Profile>();
+
+    public func setData(stable_profiles: [Types.Profile]){
+        userProfiles := List.fromArray(stable_profiles);
+    };
     
     public func getProfiles() : [Types.Profile] {
         return List.toArray(List.map<Types.Profile, Types.Profile>(userProfiles, func (profile: Types.Profile): Types.Profile {
@@ -32,7 +34,7 @@ module {
         }));
     };
     
-    public func updateProfile(principalName: PrincipalName, displayName: Text, wallet: Text) : Result.Result<(), Types.Error> {
+    public func updateProfile(principalName: Types.PrincipalName, displayName: Text, wallet: Text) : Result.Result<(), Types.Error> {
         
         let updatedProfile: Types.Profile = {
             principalName = principalName;

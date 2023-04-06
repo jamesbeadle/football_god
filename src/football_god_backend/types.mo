@@ -76,4 +76,6 @@ module Types {
         winners: Nat;
     };
 
+    public type PrincipalName = Text;
+
 }

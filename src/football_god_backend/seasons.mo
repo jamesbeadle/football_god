@@ -12,6 +12,12 @@ module {
     private var nextSeasonId : Nat16 = 1;
     private var nextFixtureId : Nat32 = 1;
 
+    public func setData(stable_seasons: [Types.Season], stable_seasonId : Nat16, stable_fixtureId : Nat32){
+        seasons := List.fromArray(stable_seasons);
+        nextSeasonId := stable_seasonId;
+        nextFixtureId := stable_fixtureId;
+    };
+
     public func getSeasons() : [Types.Season] {
         return List.toArray(List.map<Types.Season, Types.Season>(seasons, func (season: Types.Season): Types.Season {
             return {
@@ -21,6 +27,14 @@ module {
                 gameweeks = List.nil<Types.Gameweek>();
             };
         }));
+    };
+
+    public func getNextSeasonId() : Nat16 {
+        return nextSeasonId;
+    };
+
+    public func getNextFixtureId() : Nat32 {
+        return nextFixtureId;
     };
 
     public func getSeason(seasonId: Nat16) : ?Types.Season {

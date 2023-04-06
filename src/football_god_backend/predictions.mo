@@ -11,12 +11,19 @@ import Nat8 "mo:base/Nat8";
 module {
     
   public class Predictions(){
+   
+    private var userPredictions = Map.HashMap<Types.PrincipalName, List.List<Types.UserGameweek>>(0, Text.equal, Text.hash);
 
-    private type PrincipalName = Text;
+    public func setData(stable_predictions: [(Types.PrincipalName, List.List<Types.UserGameweek>)]){
+      userPredictions := Map.fromIter<Types.PrincipalName, List.List<Types.UserGameweek>>(
+            stable_predictions.vals(), stable_predictions.size(), Text.equal, Text.hash);
+    };
+
+    public func getUserPredictions() : [(Types.PrincipalName, List.List<Types.UserGameweek>)] {
+      return Iter.toArray(userPredictions.entries());
+    };
    
-    private var userPredictions = Map.HashMap<PrincipalName, List.List<Types.UserGameweek>>(0, Text.equal, Text.hash);
-   
-     public func submitPredictions(principalName: Text, seasonId: Nat16, gameweekNumber: Nat8, predictions: [Types.Prediction]) : Result.Result<(), Types.Error> {
+    public func submitPredictions(principalName: Text, seasonId: Nat16, gameweekNumber: Nat8, predictions: [Types.Prediction]) : Result.Result<(), Types.Error> {
         
         let userGameweek: Types.UserGameweek = {
           seasonId = seasonId;
@@ -120,9 +127,7 @@ module {
         };
       };
     };
-
     
-
     public func getUserHistory(principalName: Text, seasonId: Nat16) : [Types.UserGameweek] {
         let userHistory = userPredictions.get(principalName);
 
@@ -152,9 +157,9 @@ module {
             };
         };
 
-        let leaderboardEntries = Array.map< (PrincipalName, List.List<Types.UserGameweek>), List.List<Types.LeaderboardEntry>>(Iter.toArray(userPredictions.entries()), func ((principal, userGameweeks): (PrincipalName, List.List<Types.UserGameweek>)) : List.List<Types.LeaderboardEntry> {
+        let leaderboardEntries = Array.map< (Types.PrincipalName, List.List<Types.UserGameweek>), List.List<Types.LeaderboardEntry>>(Iter.toArray(userPredictions.entries()), func ((principal, userGameweeks): (Types.PrincipalName, List.List<Types.UserGameweek>)) : List.List<Types.LeaderboardEntry> {
             let filteredGameweeks = List.filter(userGameweeks, func (ugw: Types.UserGameweek) : Bool {
-                return ugw.seasonId == seasonId and ugw.gameweekNumber == gameweekNumber;
+                return ugw.seasonId == seasonId and ugw.gameweekNumber == gameweekNumber and ugw.enteredSweepstake;
             });
             
             return List.map<Types.UserGameweek, Types.LeaderboardEntry>(filteredGameweeks, func (ugw: Types.UserGameweek) : Types.LeaderboardEntry {
@@ -176,9 +181,9 @@ module {
 
 
     public func countWinners(seasonId: Nat16, gameweekNumber: Nat8) : Nat {
-        let leaderboardEntries = Array.map< (PrincipalName, List.List<Types.UserGameweek>), List.List<Types.LeaderboardEntry>>(Iter.toArray(userPredictions.entries()), func ((principal, userGameweeks): (PrincipalName, List.List<Types.UserGameweek>)) : List.List<Types.LeaderboardEntry> {
+        let leaderboardEntries = Array.map< (Types.PrincipalName, List.List<Types.UserGameweek>), List.List<Types.LeaderboardEntry>>(Iter.toArray(userPredictions.entries()), func ((principal, userGameweeks): (Types.PrincipalName, List.List<Types.UserGameweek>)) : List.List<Types.LeaderboardEntry> {
             let filteredGameweeks = List.filter(userGameweeks, func (ugw: Types.UserGameweek) : Bool {
-                return ugw.seasonId == seasonId and ugw.gameweekNumber == gameweekNumber;
+                return ugw.seasonId == seasonId and ugw.gameweekNumber == gameweekNumber and ugw.enteredSweepstake;
             });
 
             return List.map<Types.UserGameweek, Types.LeaderboardEntry>(filteredGameweeks, func (ugw: Types.UserGameweek) : Types.LeaderboardEntry {
@@ -214,10 +219,10 @@ module {
     };
 
 
-    public func getWinnerPrincipalIds(seasonId: Nat16, gameweekNumber: Nat8) : [PrincipalName] {
-      let leaderboardEntries = Array.map<(PrincipalName, List.List<Types.UserGameweek>), List.List<Types.LeaderboardEntry>>(Iter.toArray(userPredictions.entries()), func ((principal, userGameweeks): (PrincipalName, List.List<Types.UserGameweek>)) : List.List<Types.LeaderboardEntry> {
+    public func getWinnerPrincipalIds(seasonId: Nat16, gameweekNumber: Nat8) : [Types.PrincipalName] {
+      let leaderboardEntries = Array.map<(Types.PrincipalName, List.List<Types.UserGameweek>), List.List<Types.LeaderboardEntry>>(Iter.toArray(userPredictions.entries()), func ((principal, userGameweeks): (Types.PrincipalName, List.List<Types.UserGameweek>)) : List.List<Types.LeaderboardEntry> {
         let filteredGameweeks = List.filter(userGameweeks, func (ugw: Types.UserGameweek) : Bool {
-          return ugw.seasonId == seasonId and ugw.gameweekNumber == gameweekNumber;
+          return ugw.seasonId == seasonId and ugw.gameweekNumber == gameweekNumber and ugw.enteredSweepstake;
         });
 
         return List.map<Types.UserGameweek, Types.LeaderboardEntry>(filteredGameweeks, func (ugw: Types.UserGameweek) : Types.LeaderboardEntry {
@@ -246,11 +251,11 @@ module {
       });
 
       // Extract the principal ids of the winners
-      let winnerPrincipalIds = List.map<Types.LeaderboardEntry, PrincipalName>(winners, func (entry: Types.LeaderboardEntry) : PrincipalName {
+      let winnerPrincipalIds = List.map<Types.LeaderboardEntry, Types.PrincipalName>(winners, func (entry: Types.LeaderboardEntry) : Types.PrincipalName {
         return entry.principalName;
       });
 
-      return List.toArray<PrincipalName>(winnerPrincipalIds);
+      return List.toArray<Types.PrincipalName>(winnerPrincipalIds);
     };
 
     public func deleteFixture(seasonId: Nat16, gameweekNumber: Nat8, fixtures: [Types.Fixture], fixtureId: Nat32) : Result.Result<(), Types.Error> {
