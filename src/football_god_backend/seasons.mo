@@ -1,8 +1,9 @@
 import List "mo:base/List";
-import Types "types";
 import Result "mo:base/Result";
 import Iter "mo:base/Iter";
 import Nat8 "mo:base/Nat8";
+
+import Types "types";
 
 module {
     

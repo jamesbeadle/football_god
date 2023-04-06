@@ -1,16 +1,13 @@
-import Types "types";
 import Result "mo:base/Result";
 import List "mo:base/List";
 import Text "mo:base/Text";
 import Principal "mo:base/Principal";
-import Account "Account";
-
-import Nat8 "mo:base/Nat8";
-import Nat32 "mo:base/Nat32";
 import Nat64 "mo:base/Nat64";
-import Buffer "mo:base/Buffer";
 import Blob "mo:base/Blob";
 import Array "mo:base/Array";
+
+import Types "types";
+import Account "Account";
 
 module {
     

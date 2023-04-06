@@ -1,8 +1,4 @@
 import List "mo:base/List";
-import Map "mo:base/HashMap";
-import Principal "mo:base/Principal";
-import Hash "mo:base/Hash";
-import Blob "mo:base/Blob";
 
 module Types {
    

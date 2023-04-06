@@ -1,6 +1,7 @@
 import List "mo:base/List";
-import Types "types";
 import Result "mo:base/Result";
+
+import Types "types";
 
 module {
     
