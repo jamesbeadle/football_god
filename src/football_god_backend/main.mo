@@ -332,8 +332,8 @@ actor Self {
 
   // Ledger functions
 
-  func myAccountId() : Account.AccountIdentifier {
-      Account.accountIdentifier(Principal.fromActor(Self), Account.defaultSubaccount());
+  private func getDefaultAccount() : Account.AccountIdentifier {
+    Account.accountIdentifier(Principal.fromActor(Self), Account.defaultSubaccount())
   };
   
   public shared ({caller}) func getBalance() : async Ledger.Tokens {
@@ -349,7 +349,7 @@ actor Self {
     let balance = await Ledger.account_balance({ account = source_account });
     let balance_95 = Float.fromInt64(Int64.fromNat64(balance.e8s)) * 0.95;
     let balanceICP = balance_95 / 1e8;
-    return Float.toInt64(balanceICP);
+    return Float.toInt64(Float.nearest(balanceICP));
   };
 
   public shared ({caller}) func getPayoutData(seasonId : Nat16, gameweekNumber: Nat8) : async ?Types.PayoutData {
