@@ -3,13 +3,13 @@ import { Container, Row, Col, Dropdown, Table, Button } from 'react-bootstrap';
 import { football_god_backend as football_god_backend_actor } from '../../../declarations/football_god_backend';
 import { Actor } from "@dfinity/agent";
 import { AuthContext } from "../contexts/AuthContext";
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 const History = () => {
   const { authClient } = useContext(AuthContext);
   const identity = authClient.getIdentity();
   Actor.agentOf(football_god_backend_actor).replaceIdentity(identity);
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const [displayName, setDisplayName] = useState('');
   const [seasons, setSeasons] = useState([]);
@@ -56,14 +56,14 @@ const History = () => {
   };
 
   const handleViewSubmission = (gameweekNumber) => {
-    history.push(`/view-submission/${gameweekNumber}`);
+    navigate(`/view-submission/${gameweekNumber}`);
   };
 
   return (
     <Container>
       <Row className="justify-content-md-center">
         <Col md={8}>
-          <h2 className="text-center mt-4">{displayName}'s History</h2>
+          <h2 className="text-center mt-4">Gameweek History</h2>
           <Dropdown className="mt-3">
             <Dropdown.Toggle variant="primary" id="season-dropdown">
               {selectedSeason ? selectedSeason.name : 'Select Season'}

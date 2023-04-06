@@ -19,12 +19,6 @@ export const AuthProvider = ({ children }) => {
       setIsAuthenticated(isLoggedIn);
       setAuthClient(authClient);
       
-      if(isLoggedIn){
-        const identity = authClient.getIdentity();
-        Actor.agentOf(football_god_backend_actor).replaceIdentity(identity);
-        const userIsAdmin = await football_god_backend_actor.isAdmin();
-        setIsAdmin(userIsAdmin);
-      }
     };
     initAuthClient();
   }, []);
@@ -45,6 +39,10 @@ export const AuthProvider = ({ children }) => {
   const checkLoginStatus = async () => {
     const isLoggedIn = await authClient.isAuthenticated();
     if (isLoggedIn && isTokenValid()) {
+      const identity = authClient.getIdentity();
+      Actor.agentOf(football_god_backend_actor).replaceIdentity(identity);
+      const userIsAdmin = await football_god_backend_actor.isAdmin();
+      setIsAdmin(userIsAdmin);
       setIsAuthenticated(true);
     } else {
       logout();

@@ -36,8 +36,10 @@ const Home = () => {
   const fetchActiveGameweek = async () => {
     const gameweek = await football_god_backend_actor.getActiveGameweek();
     setActiveGameweek(gameweek[0]);
-    setIsGameweekPlayable(gameweek[0].status === 1);
-    setIsGameweekClosed(gameweek[0].status === 2 || gameweek[0].status === 3);
+    if(gameweek[0] && Object.keys(gameweek[0].length > 0)){
+      setIsGameweekPlayable(gameweek[0].status === 1);
+      setIsGameweekClosed(gameweek[0].status === 2 || gameweek[0].status === 3);
+    }
   };
 
   const fetchTotalICP = async () => {

@@ -23,9 +23,9 @@ const MyNavbar = () => {
           {isAuthenticated ? (
             <>
               {isAdmin && <Nav.Link as={Link} to="/admin" onClick={() => setExpanded(false)}>Admin</Nav.Link>}
-              <Nav.Link to="/history" onClick={() => setExpanded(false)}>History</Nav.Link>
+              <Nav.Link as={Link} to="/history" onClick={() => setExpanded(false)}>History</Nav.Link>
               <NavDropdown title="My Account" id="basic-nav-dropdown" alignRight>
-                <NavDropdown.Item to="/profile" onClick={() => setExpanded(false)}>Profile</NavDropdown.Item>
+                <NavDropdown.Item as={Link} to="/profile" onClick={() => setExpanded(false)}>Profile</NavDropdown.Item>
                 <NavDropdown.Divider />
                 <NavDropdown.Item onClick={() => {logout(); setExpanded(false);}}>Disconnect</NavDropdown.Item>
               </NavDropdown>

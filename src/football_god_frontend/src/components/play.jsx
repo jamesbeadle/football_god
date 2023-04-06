@@ -3,7 +3,7 @@ import { Container, Row, Col, Card, Form, Button, Spinner } from 'react-bootstra
 import { football_god_backend as football_god_backend_actor } from '../../../declarations/football_god_backend';
 import { Actor } from "@dfinity/agent";
 import { AuthContext } from "../contexts/AuthContext";
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 const Play = () => {
   
@@ -11,7 +11,7 @@ const Play = () => {
   const identity = authClient.getIdentity();
   Actor.agentOf(football_god_backend_actor).replaceIdentity(identity);
 
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const [isLoading, setIsLoading] = useState(false);
   const [hasProfile, setHasProfile] = useState(false);
@@ -121,7 +121,7 @@ const Play = () => {
       predictions
     );
     setIsLoading(false);
-    history.push(`/view-submission/${activeSeason}/${activeGameweek}`);
+    navigate(`/view-submission/${activeSeason}/${activeGameweek}`);
     
   };
 
@@ -143,7 +143,7 @@ const Play = () => {
 
     await football_god_backend_actor.enterSweepstake(Number(activeSeason.id), Number(activeGameweek.number));
     setIsLoading(false);
-    history.push(`/view-submission/${activeSeason}/${activeGameweek}`);
+    navigate(`/view-submission/${activeSeason}/${activeGameweek}`);
   };
 
   const getTeamNameById = (teamId) => {

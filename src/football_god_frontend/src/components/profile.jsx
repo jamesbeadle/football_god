@@ -1,8 +1,9 @@
 import React, { useState, useContext, useEffect } from 'react';
-import { Container, Row, Col, Card, Form, Button, Spinner } from 'react-bootstrap';
+import { Container, Row, Col, Card, Form, Button, Spinner, InputGroup, Modal } from 'react-bootstrap';
 import { football_god_backend as football_god_backend_actor } from '../../../declarations/football_god_backend';
 import { Actor } from "@dfinity/agent";
 import { AuthContext } from "../contexts/AuthContext";
+import { toHexString } from './helpers';
 
 const Profile = () => {
 
@@ -13,6 +14,7 @@ const Profile = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [userProfile, setUserProfile] = useState(null);
   const [displayName, setDisplayName] = useState('');
+  const [depositAddress, setDepositAddress] = useState('');
   const [wallet, setWallet] = useState('');
   const [balance, setBalance] = useState(0);
   const [showWithdrawModal, setShowWithdrawModal] = useState(false);
@@ -27,17 +29,23 @@ const Profile = () => {
   
   const fetchProfile = async () => {
     const profile = await football_god_backend_actor.getProfile();
-    setUserProfile(profile[0]);
+    if(profile && Object.keys(profile).length > 0){
+      setDisplayName(profile[0].displayName);
+      setDepositAddress(profile[0].depositAddress);
+      setWallet(profile[0].wallet);
+      setUserProfile(profile[0]);
+    }
   };
   
   const fetchBalance = async () => {
-    const userBalance = await football_god_backend_actor.getBalance();
+    const userBalance = await football_god_backend_actor.getUserAccountBalance();
     setBalance(userBalance);
   };
 
   const isDisplayNameValid = async () => {
     
     const isValid = await football_god_backend_actor.isDisplayNameValid(displayName);
+    console.log(isValid);
   
     if (isValid) {
       setDisplayNameError(null);
@@ -116,13 +124,13 @@ const Profile = () => {
                   <Form.Group className="mb-3">
                     <Form.Label>Deposit Address</Form.Label>
                     <InputGroup>
-                      <FormControl
+                      <Form.Control
                         type="text"
                         readOnly
-                        value={userProfile.depositAddress}
+                        value={toHexString(depositAddress)}
                       />
                       <InputGroup.Append>
-                        <Button variant="outline-secondary" onClick={() => navigator.clipboard.writeText(userProfile.depositAddress)}>
+                        <Button variant="outline-secondary" onClick={() => navigator.clipboard.writeText(toHexString(depositAddress))}>
                           Copy
                         </Button>
                       </InputGroup.Append>

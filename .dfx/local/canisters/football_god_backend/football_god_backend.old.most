@@ -1,4 +1,52 @@
 // Version: 1.0.0
+type Fixture =
+  {
+    awayGoals : Nat8;
+    awayTeamId : Nat16;
+    homeGoals : Nat8;
+    homeTeamId : Nat16;
+    id : Nat32;
+    status : Nat8
+  };
+type Gameweek =
+  {
+    fixtureCount : Nat8;
+    fixtures : List<Fixture>;
+    number : Nat8;
+    status : Nat8
+  };
+type List<T> = ?(T, List<T>);
+type Prediction = {awayGoals : Nat8; fixtureId : Nat32; homeGoals : Nat8};
+type PrincipalName = Text;
+type Profile =
+  {
+    balance : Nat64;
+    depositAddress : Blob;
+    displayName : Text;
+    principalName : Text;
+    wallet : Text
+  };
+type Season =
+  {gameweeks : List<Gameweek>; id : Nat16; name : Text; year : Nat16};
+type Team = {id : Nat16; name : Text};
+type UserGameweek =
+  {
+    correctScores : Nat8;
+    enteredSweepstake : Bool;
+    gameweekNumber : Nat8;
+    predictionCount : Nat8;
+    predictions : List<Prediction>;
+    seasonId : Nat16;
+    winnings : Nat
+  };
 actor {
-  
+  stable var activeGameweek : Nat8;
+  stable var activeSeason : Nat16;
+  stable var stable_nextFixtureId : Nat32;
+  stable var stable_nextSeasonId : Nat16;
+  stable var stable_nextTeamId : Nat16;
+  stable var stable_predictions : [(PrincipalName, List<UserGameweek>)];
+  stable var stable_profiles : [Profile];
+  stable var stable_seasons : [Season];
+  stable var stable_teams : [Team]
 };

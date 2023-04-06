@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { Container, Row, Col, Dropdown, Table, Button, ButtonGroup } from 'react-bootstrap';
 import { football_god_backend as football_god_backend_actor } from '../../../declarations/football_god_backend';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 const Leaderboard = () => {
 
-  const history = useHistory();
+  const navigate = useNavigate();
   const [seasons, setSeasons] = useState([]);
   const [selectedSeason, setSelectedSeason] = useState(null);
   const [selectedGameweek, setSelectedGameweek] = useState(null);
@@ -54,7 +54,7 @@ const Leaderboard = () => {
   };
 
   const handleViewSubmission = (userId) => {
-    history.push(`/view-submission/${userId}`);
+    navigate(`/view-submission/${userId}`);
   };
 
   const handlePageChange = (change) => {

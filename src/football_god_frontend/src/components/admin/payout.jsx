@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { Container, Row, Col, Card, Button } from 'react-bootstrap';
 import { football_god_backend as football_god_backend_actor } from '../../../../declarations/football_god_backend';
 import { Actor } from "@dfinity/agent";
