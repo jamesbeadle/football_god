@@ -10,6 +10,7 @@ import Result "mo:base/Result";
 import Principal "mo:base/Principal";
 import Iter "mo:base/Iter";
 import Array "mo:base/Array";
+import Buffer "mo:base/Buffer";
 
 
 module {
@@ -99,8 +100,11 @@ module {
                 depositAddress = profiles[i].depositAddress;
                 balance = balance.e8s;
             };
-            
-            profilesWithBalances := Array.append<Types.Profile>(profilesWithBalances, [updatedProfile]);
+
+            let buffer = Buffer.fromArray<Types.Profile>(profilesWithBalances);
+            buffer.add(updatedProfile);
+
+            profilesWithBalances := Buffer.toArray(buffer);
         };
 
         return profilesWithBalances;

@@ -33,7 +33,13 @@ module {
     hash.write(Blob.toArray(subaccount));
     let hashSum = hash.sum();
     let crc32Bytes = beBytes(CRC32.ofArray(hashSum));
-    Blob.fromArray(Array.append(crc32Bytes, hashSum))
+
+    let buffer = Buffer.fromArray<Nat8>(crc32Bytes);
+    for (x in hashSum.vals()) {
+      buffer.add(x);
+    };
+    
+    Blob.fromArray(Buffer.toArray(buffer));
   };
 
   public func validateAccountIdentifier(accountIdentifier : AccountIdentifier) : Bool {
@@ -48,13 +54,19 @@ module {
   };
 
   public func principalToSubaccount(principal: Principal) : Blob {
-      let idHash = SHA224.Digest();
-      idHash.write(Blob.toArray(Principal.toBlob(principal)));
-      let hashSum = idHash.sum();
-      let crc32Bytes = beBytes(CRC32.ofArray(hashSum));
-      let buf = Buffer.Buffer<Nat8>(32);
-      let blob = Blob.fromArray(Array.append(crc32Bytes, hashSum));
+    let idHash = SHA224.Digest();
+    idHash.write(Blob.toArray(Principal.toBlob(principal)));
+    let hashSum = idHash.sum();
+    let crc32Bytes = beBytes(CRC32.ofArray(hashSum));
 
-      return blob;
+    let buffer = Buffer.fromArray<Nat8>(crc32Bytes);
+    for (x in hashSum.vals()) {
+      buffer.add(x);
+    };
+
+    let blob = Blob.fromArray(Buffer.toArray(buffer));
+
+    return blob;
   };
+  
 }
