@@ -1,25 +1,20 @@
 import List "mo:base/List";
 import Array "mo:base/Array";
-import Nat "mo:base/Nat";
-import Nat32 "mo:base/Nat32";
+import Iter "mo:base/Iter";
 import Nat64 "mo:base/Nat64";
 import Int64 "mo:base/Int64";
 import Float "mo:base/Float";
-import Iter "mo:base/Iter";
-import Int "mo:base/Int";
-import Time      "mo:base/Time";
 import Principal "mo:base/Principal";
 import Result "mo:base/Result";
 import Debug "mo:base/Debug";
+
 import Types "types";
 import Seasons "seasons";
 import Teams "teams";
 import Predictions "predictions";
 import Profiles "profiles";
+import Book "book";
 import Account "Account";
-import Ledger "canister:ledger";
-import Map "mo:base/HashMap";
-import Text "mo:base/Text";
 
 actor Self {
   
@@ -31,10 +26,8 @@ actor Self {
   let seasonsInstance = Seasons.Seasons();
   let teamsInstance = Teams.Teams();
   let predictionsInstance = Predictions.Predictions();
+  let bookInstance = Book.Book();
   
-  let entry_fee: Nat64 = 100_000_000;
-  let icp_fee: Nat64 = 10_000;
-
   let adminAccount = "adminaccount";
 
   //stable variables populated on pre upgrade
@@ -335,21 +328,17 @@ actor Self {
   private func getDefaultAccount() : Account.AccountIdentifier {
     Account.accountIdentifier(Principal.fromActor(Self), Account.defaultSubaccount())
   };
-  
-  public shared ({caller}) func getBalance() : async Ledger.Tokens {
-    assert not Principal.isAnonymous(caller);
-    let source_account = Account.accountIdentifier(Principal.fromActor(Self), Account.principalToSubaccount(caller));
-    let balance = await Ledger.account_balance({ account = source_account });
-    return balance;
-  };
 
   public shared func getGameweekPot() : async Int64 {
-    
-    let source_account = Account.accountIdentifier(Principal.fromActor(Self), Account.defaultSubaccount());
-    let balance = await Ledger.account_balance({ account = source_account });
-    let balance_95 = Float.fromInt64(Int64.fromNat64(balance.e8s)) * 0.95;
-    let balanceICP = balance_95 / 1e8;
+    let defaultSubAccount = getDefaultAccount();
+    let potBalance = await bookInstance.getGameweekPotBalance(defaultSubAccount);
+    let balanceICP = potBalance / 1e8;
     return Float.toInt64(Float.nearest(balanceICP));
+  };
+
+  public shared ({caller}) func getUserAccountBalance() : async Nat64 {
+    assert not Principal.isAnonymous(caller);
+    return await bookInstance.getUserAccountBalance(Principal.fromActor(Self), caller);
   };
 
   public shared ({caller}) func getPayoutData(seasonId : Nat16, gameweekNumber: Nat8) : async ?Types.PayoutData {
@@ -358,16 +347,17 @@ actor Self {
       return null;
     };
 
-    let source_account = Account.accountIdentifier(Principal.fromActor(Self), Account.defaultSubaccount());
-    let balance = await Ledger.account_balance({ account = source_account });
-    let balance_95 = Float.fromInt64(Int64.fromNat64(balance.e8s)) * 0.95;
-    let balanceICP = balance_95 / 1e8;
+    let defaultSubAccount = getDefaultAccount();
+    let potBalance = await bookInstance.getGameweekPotBalance(defaultSubAccount);
+    let balanceICP = potBalance / 1e8;
+
+    let winnerCount = predictionsInstance.countWinners(seasonId, gameweekNumber);
 
     let payoutData: Types.PayoutData = {
-      winners = predictionsInstance.countWinners(seasonId, gameweekNumber);
-      totalPot = Float.toInt64(balanceICP);
+      winners = winnerCount;
+      totalPot = balanceICP;
     };
-    
+
     return ?payoutData;
   };
 
@@ -376,92 +366,49 @@ actor Self {
     if(isCallerAdmin == false){
       return #err(#NotAuthorized);
     };
-    
-    let source_account = Account.accountIdentifier(Principal.fromActor(Self), Account.defaultSubaccount());
-    let balance = await Ledger.account_balance({ account = source_account });
-    let balance_95 = Float.fromInt64(Int64.fromNat64(balance.e8s)) * 0.95;
-    let balance_05 = Float.fromInt64(Int64.fromNat64(balance.e8s)) - balance_95;
-    
+
+    let defaultSubAccount = getDefaultAccount();
+    let potBalance = await bookInstance.getGameweekPotBalance(defaultSubAccount);
     let winningPrincipals = predictionsInstance.getWinnerPrincipalIds(seasonId, gameweekNumber);
-    let winningAmount = balance_95 / Float.fromInt64(Int64.fromNat64(Nat64.fromNat(winningPrincipals.size())));
+    let winnerShare = potBalance / Float.fromInt64(Int64.fromNat64(Nat64.fromNat(winningPrincipals.size())));
+
     for (i in Iter.range(0, winningPrincipals.size() - 1)) {
-      let res = await Ledger.transfer({
-          memo = 0;
-          from_subaccount = null;
-          to = Account.accountIdentifier(Principal.fromActor(Self), Account.principalToSubaccount(Principal.fromText(winningPrincipals[i])));
-          amount = { e8s = Int64.toNat64(Float.toInt64(winningAmount)) };
-          fee = { e8s = icp_fee };
-          created_at_time = ?{ timestamp_nanos = Nat64.fromNat(Int.abs(Time.now())) };
-        });
+      await bookInstance.transferWinnings(Principal.fromActor(Self), Principal.fromText(winningPrincipals[i]), winnerShare);
     };
-    
+
     return #ok(());
   };
-  
+
   public shared ({caller}) func enterSweepstake(seasonId : Nat16, gameweekNumber: Nat8) : async Result.Result<(), Types.Error> {
     assert not Principal.isAnonymous(caller);
-    let principalName = Principal.toText(caller); 
-   
-    let alreadyPaid = predictionsInstance.checkSweepstakePaid(principalName, seasonId, gameweekNumber);
-
+    
+    let alreadyPaid = predictionsInstance.checkSweepstakePaid(Principal.toText(caller), seasonId, gameweekNumber);
     if(alreadyPaid){
       return #err(#NotAllowed);
     };
 
-    let source_account = Account.accountIdentifier(Principal.fromActor(Self), Account.principalToSubaccount(caller));
-    let balance = await Ledger.account_balance({ account = source_account });
+    let canAffordEntry = await bookInstance.canAffordEntry(Principal.fromActor(Self), caller);
 
-    let hasBalance = balance.e8s > entry_fee;
-
-    if(hasBalance){
+    if(not canAffordEntry){
       return #err(#NotAllowed);
     };
 
-    let result = await Ledger.transfer({
-        memo: Nat64    = 0;
-        from_subaccount = ?Account.principalToSubaccount(caller);
-        to = Account.accountIdentifier(Principal.fromActor(Self), Account.defaultSubaccount());
-        amount = { e8s = entry_fee - icp_fee};
-        fee = { e8s = icp_fee };
-        created_at_time = ?{ timestamp_nanos = Nat64.fromNat(Int.abs(Time.now())) };
-    });
+    await bookInstance.transferEntryFee(Principal.fromActor(Self), caller);
 
-    return predictionsInstance.enterSweepstake(principalName, seasonId, gameweekNumber);
+    return predictionsInstance.enterSweepstake(Principal.toText(caller), seasonId, gameweekNumber);
   };
 
   public shared ({caller}) func withdrawICP(amount: Nat64) : async Result.Result<(), Types.Error> {
     assert not Principal.isAnonymous(caller);
-    let principalName = Principal.toText(caller); 
-
-    let source_account = Account.accountIdentifier(Principal.fromActor(Self), Account.principalToSubaccount(caller));
-    let balance = await Ledger.account_balance({ account = source_account });
-    let withdrawable = balance.e8s - icp_fee;
-
-    if(amount > withdrawable){
-      return #err(#NotAllowed);
-    };
-
-    let userProfile = profilesInstance.getProfile(principalName);
-
+    
+    let userProfile = profilesInstance.getProfile(Principal.toText(caller));
+    
     switch userProfile {
       case (null) {
         return #err(#NotFound);
       };
       case (?profile) {
-        let account_id = Account.accountIdentifier(Principal.fromText(profile.wallet), Account.defaultSubaccount());
-        
-        let result = await Ledger.transfer({
-            memo: Nat64    = 0;
-            from_subaccount = ?Account.principalToSubaccount(caller);
-            to = account_id;
-            amount = { e8s = amount };
-            fee = { e8s = icp_fee };
-            created_at_time = ?{ timestamp_nanos = Nat64.fromNat(Int.abs(Time.now())) };
-        });
-
-        return #ok(());
-
-
+        return await bookInstance.withdrawICP(Principal.fromActor(Self), caller, amount, profile.wallet);
       };
     };
   };
@@ -471,27 +418,9 @@ actor Self {
     if(isCallerAdmin == false){
       return [];
     };
-    
+
     let allProfiles = profilesInstance.getProfiles();
-    var profilesWithBalances: [Types.Profile] = [];
-
-    for (i in Iter.range(0, allProfiles.size() - 1)) {
-      let source_account = Account.accountIdentifier(Principal.fromActor(Self), Account.principalToSubaccount(Principal.fromText(allProfiles[i].principalName)));
-      let balance = await Ledger.account_balance({ account = source_account });
-
-      let updatedProfile = {
-        principalName = allProfiles[i].principalName;
-        displayName = allProfiles[i].displayName;
-        wallet = allProfiles[i].wallet;
-        depositAddress = allProfiles[i].depositAddress;
-        balance = balance.e8s;
-      };
-    
-      profilesWithBalances := Array.append<Types.Profile>(profilesWithBalances, [updatedProfile]);
-    };
-
-
-    return profilesWithBalances;
+    return await bookInstance.getProfileBalances(Principal.fromActor(Self), allProfiles);
   };
 
   system func preupgrade() {

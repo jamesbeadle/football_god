@@ -1,17 +1,17 @@
-import Array     "mo:base/Array";
-import Blob      "mo:base/Blob";
-import Nat8      "mo:base/Nat8";
-import Nat32     "mo:base/Nat32";
+import Array "mo:base/Array";
+import Blob "mo:base/Blob";
+import Nat8 "mo:base/Nat8";
+import Nat32 "mo:base/Nat32";
 import Principal "mo:base/Principal";
-import Text      "mo:base/Text";
-import CRC32     "./CRC32";
-import SHA224    "./SHA224";
-import Buffer      "mo:base/Buffer";
+import Text "mo:base/Text";
+import CRC32 "./CRC32";
+import SHA224 "./SHA224";
+import Buffer "mo:base/Buffer";
 
 module {
-  // 32-byte array.
+
   public type AccountIdentifier = Blob;
-  // 32-byte array.
+  
   public type Subaccount = Blob;
 
   func beBytes(n: Nat32) : [Nat8] {
