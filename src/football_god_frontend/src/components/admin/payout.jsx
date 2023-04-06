@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Container, Row, Col, Card, Button } from 'react-bootstrap';
-import { football_god_backend as football_god_backend_actor } from '../../../declarations/football_god_backend';
+import { football_god_backend as football_god_backend_actor } from '../../../../declarations/football_god_backend';
 import { Actor } from "@dfinity/agent";
-import { AuthContext } from "../contexts/AuthContext";
+import { AuthContext } from "../../contexts/AuthContext";
 
 const Payout = () => {
   const { authClient } = useContext(AuthContext);

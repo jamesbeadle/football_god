@@ -2,37 +2,58 @@ import type { Principal } from '@dfinity/principal';
 import type { ActorMethod } from '@dfinity/agent';
 
 export interface AccountBalanceArgs { 'account' : AccountIdentifier }
-export type AccountIdentifier = string;
-export interface ArchiveOptions {
-  'num_blocks_to_archive' : bigint,
-  'trigger_threshold' : bigint,
-  'max_message_size_bytes' : [] | [bigint],
-  'cycles_for_archive_creation' : [] | [bigint],
-  'node_max_memory_size_bytes' : [] | [bigint],
-  'controller_id' : Principal,
+export type AccountIdentifier = Uint8Array | number[];
+export interface Archive { 'canister_id' : Principal }
+export interface Archives { 'archives' : Array<Archive> }
+export interface Block {
+  'transaction' : Transaction,
+  'timestamp' : TimeStamp,
+  'parent_hash' : [] | [Uint8Array | number[]],
 }
 export type BlockIndex = bigint;
-export interface Duration { 'secs' : bigint, 'nanos' : number }
-export interface LedgerCanisterInitPayload {
-  'send_whitelist' : Array<Principal>,
-  'token_symbol' : [] | [string],
-  'transfer_fee' : [] | [Tokens],
-  'minting_account' : AccountIdentifier,
-  'transaction_window' : [] | [Duration],
-  'max_message_size_bytes' : [] | [bigint],
-  'archive_options' : [] | [ArchiveOptions],
-  'initial_values' : Array<[AccountIdentifier, Tokens]>,
-  'token_name' : [] | [string],
-}
+export interface BlockRange { 'blocks' : Array<Block> }
+export interface GetBlocksArgs { 'start' : BlockIndex, 'length' : bigint }
 export type Memo = bigint;
-export interface NotifyCanisterArgs {
-  'to_subaccount' : [] | [SubAccount],
-  'from_subaccount' : [] | [SubAccount],
-  'to_canister' : Principal,
-  'max_fee' : Tokens,
-  'block_height' : BlockIndex,
+export type Operation = {
+    'Burn' : { 'from' : AccountIdentifier, 'amount' : Tokens }
+  } |
+  { 'Mint' : { 'to' : AccountIdentifier, 'amount' : Tokens } } |
+  {
+    'Transfer' : {
+      'to' : AccountIdentifier,
+      'fee' : Tokens,
+      'from' : AccountIdentifier,
+      'amount' : Tokens,
+    }
+  };
+export type QueryArchiveError = {
+    'BadFirstBlockIndex' : {
+      'requested_index' : BlockIndex,
+      'first_valid_index' : BlockIndex,
+    }
+  } |
+  { 'Other' : { 'error_message' : string, 'error_code' : bigint } };
+export type QueryArchiveFn = ActorMethod<[GetBlocksArgs], QueryArchiveResult>;
+export type QueryArchiveResult = { 'Ok' : BlockRange } |
+  { 'Err' : QueryArchiveError };
+export interface QueryBlocksResponse {
+  'certificate' : [] | [Uint8Array | number[]],
+  'blocks' : Array<Block>,
+  'chain_length' : bigint,
+  'first_block_index' : BlockIndex,
+  'archived_blocks' : Array<
+    { 'callback' : QueryArchiveFn, 'start' : BlockIndex, 'length' : bigint }
+  >,
 }
-export interface SendArgs {
+export type SubAccount = Uint8Array | number[];
+export interface TimeStamp { 'timestamp_nanos' : bigint }
+export interface Tokens { 'e8s' : bigint }
+export interface Transaction {
+  'memo' : Memo,
+  'operation' : [] | [Operation],
+  'created_at_time' : TimeStamp,
+}
+export interface TransferArgs {
   'to' : AccountIdentifier,
   'fee' : Tokens,
   'memo' : Memo,
@@ -40,28 +61,24 @@ export interface SendArgs {
   'created_at_time' : [] | [TimeStamp],
   'amount' : Tokens,
 }
-export type SubAccount = Uint8Array | number[];
-export interface TimeStamp { 'timestamp_nanos' : bigint }
-export interface Tokens { 'e8s' : bigint }
-export interface Transaction {
-  'memo' : Memo,
-  'created_at' : BlockIndex,
-  'transfer' : Transfer,
-}
-export type Transfer = {
-    'Burn' : { 'from' : AccountIdentifier, 'amount' : Tokens }
+export type TransferError = {
+    'TxTooOld' : { 'allowed_window_nanos' : bigint }
   } |
-  { 'Mint' : { 'to' : AccountIdentifier, 'amount' : Tokens } } |
-  {
-    'Send' : {
-      'to' : AccountIdentifier,
-      'from' : AccountIdentifier,
-      'amount' : Tokens,
-    }
-  };
+  { 'BadFee' : { 'expected_fee' : Tokens } } |
+  { 'TxDuplicate' : { 'duplicate_of' : BlockIndex } } |
+  { 'TxCreatedInFuture' : null } |
+  { 'InsufficientFunds' : { 'balance' : Tokens } };
+export interface TransferFee { 'transfer_fee' : Tokens }
+export type TransferFeeArg = {};
+export type TransferResult = { 'Ok' : BlockIndex } |
+  { 'Err' : TransferError };
 export interface _SERVICE {
-  'account_balance_dfx' : ActorMethod<[AccountBalanceArgs], Tokens>,
-  'notify_dfx' : ActorMethod<[NotifyCanisterArgs], undefined>,
-  'notify_pb' : ActorMethod<[], undefined>,
-  'send_dfx' : ActorMethod<[SendArgs], BlockIndex>,
+  'account_balance' : ActorMethod<[AccountBalanceArgs], Tokens>,
+  'archives' : ActorMethod<[], Archives>,
+  'decimals' : ActorMethod<[], { 'decimals' : number }>,
+  'name' : ActorMethod<[], { 'name' : string }>,
+  'query_blocks' : ActorMethod<[GetBlocksArgs], QueryBlocksResponse>,
+  'symbol' : ActorMethod<[], { 'symbol' : string }>,
+  'transfer' : ActorMethod<[TransferArgs], TransferResult>,
+  'transfer_fee' : ActorMethod<[TransferFeeArg], TransferFee>,
 }

@@ -1,6 +1,9 @@
 {
   "canisters": {
     "football_god_backend": {
+      "dependencies": [
+        "ledger"
+      ],
       "main": "src/football_god_backend/main.mo",
       "type": "motoko"
     },
@@ -30,7 +33,7 @@
     },
     "ledger": {
       "type": "custom",
-      "candid": "ledger.public.did",
+      "candid": "ledger.private.did",
       "wasm": "ledger.wasm",
       "remote": {
         "candid": "ledger.public.did",

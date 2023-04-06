@@ -24,7 +24,6 @@ module {
     };
 
     public func createTeam(name : Text) : Result.Result<(), Types.Error> {
-        
         let id = nextTeamId;
         let newTeam : Types.Team = {
             id = id;
@@ -41,7 +40,6 @@ module {
     };
 
     public func updateTeam(id : Nat16, newName : Text) : Result.Result<(), Types.Error> {
-    
         teams := List.map<Types.Team, Types.Team>(teams,
         func (team: Types.Team): Types.Team {
             if (team.id == id) {
@@ -54,9 +52,8 @@ module {
     };
 
     public func deleteTeam(id : Nat16) : Result.Result<(), Types.Error> {
-        
-            teams := List.filter(teams, func(team: Types.Team): Bool { team.id != id });
-            return #ok(());
+        teams := List.filter(teams, func(team: Types.Team): Bool { team.id != id });
+        return #ok(());
     };
   }
 }
