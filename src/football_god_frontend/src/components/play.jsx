@@ -8,8 +8,6 @@ import { useNavigate } from 'react-router-dom';
 const Play = () => {
   
   const { authClient } = useContext(AuthContext);
-  const identity = authClient.getIdentity();
-  Actor.agentOf(football_god_backend_actor).replaceIdentity(identity);
 
   const navigate = useNavigate();
 
@@ -49,6 +47,8 @@ const Play = () => {
   }, [activeSeason, activeGameweek]);
 
   const checkProfile = async () => {
+    const identity = authClient.getIdentity();
+    Actor.agentOf(football_god_backend_actor).replaceIdentity(identity);
     const profileExists = await football_god_backend_actor.checkForProfile();
     setHasProfile(profileExists);
   };
@@ -77,6 +77,8 @@ const Play = () => {
 
   const fetchExistingPredictions = async () => {
     if (activeSeason && activeGameweek) {
+      const identity = authClient.getIdentity();
+      Actor.agentOf(football_god_backend_actor).replaceIdentity(identity);
       const fetchedPredictions = await football_god_backend_actor.getPredictions(identity, activeSeason.id, activeGameweek.number);
       const existingScores = fetchedPredictions.reduce((acc, prediction) => {
         acc[prediction.fixtureId] = { home: prediction.homeGoals, away: prediction.awayGoals };
@@ -87,12 +89,16 @@ const Play = () => {
   };
 
   const checkSweepstakePaid = async () => {
+    const identity = authClient.getIdentity();
+    Actor.agentOf(football_god_backend_actor).replaceIdentity(identity);
     const paid = await football_god_backend_actor.checkSweepstakePaid(Number(activeSeason.id), Number(activeGameweek.number));
     setHasPaid(paid);
   };
   
   const fetchBalance = async () => {
-    const userBalance = await football_god_backend_actor.getBalance();
+    const identity = authClient.getIdentity();
+    Actor.agentOf(football_god_backend_actor).replaceIdentity(identity);
+    const userBalance = await football_god_backend_actor.getUserAccountBalance();
     setBalance(userBalance);
   };
 
@@ -115,6 +121,8 @@ const Play = () => {
       awayGoals: Number(score.away)
     }));
 
+    const identity = authClient.getIdentity();
+    Actor.agentOf(football_god_backend_actor).replaceIdentity(identity);
     await football_god_backend_actor.submitPredictions(
       Number(activeSeason.id),
       Number(activeGameweek.number),
@@ -135,6 +143,8 @@ const Play = () => {
       awayGoals: Number(score.away)
     }));
 
+    const identity = authClient.getIdentity();
+    Actor.agentOf(football_god_backend_actor).replaceIdentity(identity);
     await football_god_backend_actor.submitPredictions(
       Number(activeSeason.id),
       Number(activeGameweek.number),

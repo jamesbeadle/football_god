@@ -6,8 +6,6 @@ import { AuthContext } from "../../contexts/AuthContext";
 
 const Payout = () => {
   const { authClient } = useContext(AuthContext);
-  const identity = authClient.getIdentity();
-  Actor.agentOf(football_god_backend_actor).replaceIdentity(identity);
 
   const [season, setSeason] = useState(null);
   const [gameweek, setGameweek] = useState(null);
@@ -38,6 +36,8 @@ const Payout = () => {
 
   const fetchPayoutData = async () => {
     if (season && gameweek) {
+      const identity = authClient.getIdentity();
+      Actor.agentOf(football_god_backend_actor).replaceIdentity(identity);
       const payoutData = await football_god_backend_actor.getPayoutData(season.id, gameweek.number);
       setTotalPot(payoutData.totalPot);
       setAdminFee(payoutData.totalPot * 0.05);

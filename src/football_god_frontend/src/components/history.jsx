@@ -7,8 +7,6 @@ import { useNavigate } from 'react-router-dom';
 
 const History = () => {
   const { authClient } = useContext(AuthContext);
-  const identity = authClient.getIdentity();
-  Actor.agentOf(football_god_backend_actor).replaceIdentity(identity);
   const navigate = useNavigate();
 
   const [displayName, setDisplayName] = useState('');
@@ -30,6 +28,8 @@ const History = () => {
   }, [selectedSeason]);
 
   const fetchDisplayName = async () => {
+    const identity = authClient.getIdentity();
+    Actor.agentOf(football_god_backend_actor).replaceIdentity(identity);
     const profile = await football_god_backend_actor.getProfile();
     setDisplayName(profile.displayName);
   };
@@ -46,6 +46,8 @@ const History = () => {
 
   const fetchUserHistory = async () => {
     if (selectedSeason) {
+      const identity = authClient.getIdentity();
+      Actor.agentOf(football_god_backend_actor).replaceIdentity(identity);
       const fetchedHistory = await football_god_backend_actor.getUserHistory(selectedSeason.id);
       setUserHistory(fetchedHistory);
     }

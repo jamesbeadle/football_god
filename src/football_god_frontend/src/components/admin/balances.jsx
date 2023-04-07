@@ -6,8 +6,6 @@ import { AuthContext } from "../../contexts/AuthContext";
 
 const Balances = () => {
   const { authClient } = useContext(AuthContext);
-  const identity = authClient.getIdentity();
-  Actor.agentOf(football_god_backend_actor).replaceIdentity(identity);
   
   const [potBalance, setPotBalance] = useState(0);
   const [users, setUsers] = useState([]);
@@ -20,6 +18,8 @@ const Balances = () => {
   };
 
   const fetchUsers = async () => {
+    const identity = authClient.getIdentity();
+    Actor.agentOf(football_god_backend_actor).replaceIdentity(identity);
     const userList = await football_god_backend_actor.getUsersWithBalances();
     setUsers(userList);
   };

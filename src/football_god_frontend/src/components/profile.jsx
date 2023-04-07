@@ -8,8 +8,6 @@ import { toHexString } from './helpers';
 const Profile = () => {
 
   const { authClient } = useContext(AuthContext);
-  const identity = authClient.getIdentity();
-  Actor.agentOf(football_god_backend_actor).replaceIdentity(identity);
   
   const [isLoading, setIsLoading] = useState(false);
   const [userProfile, setUserProfile] = useState(null);
@@ -28,6 +26,8 @@ const Profile = () => {
   }, []);
   
   const fetchProfile = async () => {
+    const identity = authClient.getIdentity();
+    Actor.agentOf(football_god_backend_actor).replaceIdentity(identity);
     const profile = await football_god_backend_actor.getProfile();
     if(profile && Object.keys(profile).length > 0){
       setDisplayName(profile[0].displayName);
@@ -38,13 +38,16 @@ const Profile = () => {
   };
   
   const fetchBalance = async () => {
+    const identity = authClient.getIdentity();
+    Actor.agentOf(football_god_backend_actor).replaceIdentity(identity);
     const userBalance = await football_god_backend_actor.getUserAccountBalance();
     console.log(Number(userBalance));
     setBalance(userBalance);
   };
 
   const isDisplayNameValid = async () => {
-    
+    const identity = authClient.getIdentity();
+    Actor.agentOf(football_god_backend_actor).replaceIdentity(identity);
     const isValid = await football_god_backend_actor.isDisplayNameValid(displayName);
     console.log(isValid);
   
@@ -65,6 +68,8 @@ const Profile = () => {
     }
   
     setIsLoading(true);
+    const identity = authClient.getIdentity();
+    Actor.agentOf(football_god_backend_actor).replaceIdentity(identity);
     await football_god_backend_actor.saveProfile(displayName, wallet);
     setIsLoading(false);
   
@@ -72,6 +77,8 @@ const Profile = () => {
 
   const handleWithdraw = async () => {
     setIsLoading(true);
+    const identity = authClient.getIdentity();
+    Actor.agentOf(football_god_backend_actor).replaceIdentity(identity);
     await football_god_backend_actor.withdrawICP(withdrawAmount);
     setIsLoading(false);
     setShowWithdrawModal(false);
