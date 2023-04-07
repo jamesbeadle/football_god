@@ -30,6 +30,18 @@ export const AuthProvider = ({ children }) => {
     initAuthClient();
   }, [isAuthenticated]);
 
+  useEffect(() => {
+    if (!authClient) return;
+
+    const interval = setInterval(() => {
+      checkLoginStatus();
+    }, 60000);
+
+    return () => {
+      clearInterval(interval);
+    };
+  }, [authClient]);
+
   const login = async () => {
     await authClient.login({
       identityProvider: process.env.II_URL,
@@ -46,9 +58,33 @@ export const AuthProvider = ({ children }) => {
 
   const logout = async () => {
     await authClient.logout();
-    console.log("Logged out");
     setIsAuthenticated(false);
     setIsAdmin(false);
+  };
+
+  const checkLoginStatus = async () => {
+    const isLoggedIn = await authClient.isAuthenticated();
+    if (isLoggedIn && isTokenValid()) {
+      setIsAuthenticated(true);
+    } else {
+      logout();
+    }
+  };
+
+  const isTokenValid = () => {
+    try {
+      const identity = authClient.getIdentity();
+      if (!identity || !identity._delegation || !identity._delegation.delegations) return false;
+
+      const delegation = identity._delegation.delegations[0];
+      if (!delegation) return false;
+
+      const expiration = BigInt(delegation.delegation.expiration);
+      const currentTime = BigInt(Date.now() * 1000000);
+      return currentTime < expiration;
+    } catch (error) {
+      return false;
+    }
   };
 
 
