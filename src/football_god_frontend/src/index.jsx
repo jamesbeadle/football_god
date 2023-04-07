@@ -11,7 +11,7 @@ import Rules from "./components/rules";
 import Admin from "./components/admin/admin";
 import Teams from "./components/admin/teams/teams";
 import Fixtures from "./components/admin/fixtures";
-import Season from "./components/admin/season";
+import Season from "./components/admin/seasons/season";
 import UpdateFixture from "./components/admin/update-fixture";
 import Play from "./components/play";
 import Balances from "./components/admin/balances";
@@ -20,6 +20,7 @@ import History from "./components/history";
 import Leaderboard from "./components/leaderboard";
 import Profile from "./components/profile";
 import Submission from "./components/submission";
+import Seasons from "./components/admin/seasons/seasons";
 
 const App = () => {
  
@@ -33,6 +34,7 @@ const App = () => {
             <Route path="/balances" element={<Balances />} />
             <Route path="/fixtures/:seasonId/:gameweekNumber" element={<Fixtures />} />
             <Route path="/payout" element={<Payout />} />
+            <Route path="/seasons" element={<Seasons />} />
             <Route path="/season/:seasonId" element={<Season />} />
             <Route path="/teams" element={<Teams />} />
             <Route path="/update-fixture/:seasonId/:gameweekNumber/:fixtureId" element={<UpdateFixture />} />

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Container, Row, Col, Card, Button, Table, Spinner, Dropdown  } from 'react-bootstrap';
-import { football_god_backend as football_god_backend_actor } from '../../../../../declarations/football_god_backend';
 import "../../../../assets/main.css"; 
+import { football_god_backend as football_god_backend_actor } from '../../../../../declarations/football_god_backend';
 import CreateTeamModal from './create-team-modal';
 import EditTeamModal from './edit-team-modal';
 import DeleteTeamModal from './delete-team-modal';

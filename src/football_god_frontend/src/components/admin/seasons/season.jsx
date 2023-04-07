@@ -2,9 +2,9 @@ import React, { useState, useEffect, useContext } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Container, Row, Col, Card, Button, Table, Dropdown, Modal, Spinner, Form } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
-import { getGameweekStatus } from '../helpers';
-import { football_god_backend as football_god_backend_actor } from '../../../../declarations/football_god_backend';
-import { AuthContext } from "../../contexts/AuthContext";
+import { getGameweekStatus } from '../../helpers';
+import { football_god_backend as football_god_backend_actor } from '../../../../../declarations/football_god_backend';
+import { AuthContext } from "../../../contexts/AuthContext";
 import { Actor } from "@dfinity/agent";
 
 const Season = () => {
