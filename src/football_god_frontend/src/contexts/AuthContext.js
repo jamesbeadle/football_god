@@ -74,6 +74,7 @@ export const AuthProvider = ({ children }) => {
         const identity = authClient.getIdentity();
         Actor.agentOf(football_god_backend_actor).replaceIdentity(identity);
         const userIsAdmin = await football_god_backend_actor.isAdmin();
+        console.log(userIsAdmin);
         setIsAdmin(userIsAdmin);
         setIsAuthenticated(true);
       }

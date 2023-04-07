@@ -26,21 +26,22 @@
       "wasm": "https://github.com/dfinity/internet-identity/releases/latest/download/internet_identity_dev.wasm",
       "remote": {
         "id": {
-          "ic": "rdmx6-jaaaa-aaaaa-aaadq-cai"
-        }
-      },
-      "frontend": {}
-    },
-    "ledger": {
-      "type": "custom",
-      "candid": "ledger.public.did",
-      "wasm": "ledger.wasm",
-      "remote": {
-        "candid": "ledger.public.did",
-        "id": {
-          "ic": "ryjl3-tyaaa-aaaaa-aaaba-cai"
+          "ic": "rdmx6-jaaaa-aaaaa-aaadq-cai",
+          "local": "rdmx6-jaaaa-aaaaa-aaadq-cai"
         }
       }
+    },
+    "ledger": {
+      "build": "",
+      "candid": "candid/nns-ledger.did",
+      "remote": {
+        "id": {
+          "ic": "ryjl3-tyaaa-aaaaa-aaaba-cai",
+          "local": "ryjl3-tyaaa-aaaaa-aaaba-cai"
+        }
+      },
+      "type": "custom",
+      "wasm": ""
     }
   },
   "defaults": {
@@ -49,7 +50,7 @@
       "packtool": ""
     },
     "replica": {
-      "subnet_type":"system"
+      "subnet_type": "system"
     }
   },
   "output_env_file": ".env",

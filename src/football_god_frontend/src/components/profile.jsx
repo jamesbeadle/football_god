@@ -39,6 +39,7 @@ const Profile = () => {
   
   const fetchBalance = async () => {
     const userBalance = await football_god_backend_actor.getUserAccountBalance();
+    console.log(Number(userBalance));
     setBalance(userBalance);
   };
 

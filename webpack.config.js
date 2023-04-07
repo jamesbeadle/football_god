@@ -41,7 +41,7 @@ const canisterEnvVariables = initCanisterEnv();
 
 const isDevelopment = process.env.NODE_ENV !== "production";
 
-const internetIdentityUrl = network === "local" ? `http://localhost:4943/?canisterId=${canisterEnvVariables["INTERNET_IDENTITY_CANISTER_ID"]}` : `https://identity.ic0.app`
+const internetIdentityUrl = network === "local" ? `http://localhost:8080/?canisterId=${canisterEnvVariables["INTERNET_IDENTITY_CANISTER_ID"]}` : `https://identity.ic0.app`
 
 const frontendDirectory = "football_god_frontend";
 
@@ -133,7 +133,7 @@ module.exports = {
     historyApiFallback: true,
     proxy: {
       "/api": {
-        target: "http://127.0.0.1:4943",
+        target: "http://127.0.0.1:8080",
         changeOrigin: true,
         pathRewrite: {
           "^/api": "/api",
