@@ -1,20 +1,19 @@
 import * as React from "react";
 import { createRoot } from 'react-dom/client';
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-
 import 'bootstrap/dist/css/bootstrap.min.css';
+import { AuthProvider } from "./contexts/AuthContext";
+
 import MyNavbar from './components/shared/navbar';
 import MyFooter from './components/shared/footer';
 import Home from "./components/home";
 import Rules from "./components/rules";
 import Admin from "./components/admin/admin";
-import Teams from "./components/admin/teams";
+import Teams from "./components/admin/teams/teams";
 import Fixtures from "./components/admin/fixtures";
 import Season from "./components/admin/season";
 import UpdateFixture from "./components/admin/update-fixture";
 import Play from "./components/play";
-
-import { AuthProvider } from "./contexts/AuthContext";
 import Balances from "./components/admin/balances";
 import Payout from "./components/admin/payout";
 import History from "./components/history";

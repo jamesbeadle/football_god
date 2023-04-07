@@ -4,6 +4,7 @@ import { football_god_backend as football_god_backend_actor } from '../../../dec
 import { Actor } from "@dfinity/agent";
 import { AuthContext } from "../contexts/AuthContext";
 import { useNavigate } from 'react-router-dom';
+import { LinkContainer } from 'react-router-bootstrap';
 
 const Play = () => {
   
@@ -234,7 +235,7 @@ const Play = () => {
               </Card.Header>
               <Card.Body>
                 <p>You must set up your profile before you can play.</p> 
-                <LinkContainer to={'profile'}>
+                <LinkContainer to="/profile">
                     <Button variant="primary" className="mb-4 w-100">
                         Profile
                     </Button>
