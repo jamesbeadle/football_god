@@ -31,13 +31,13 @@ module {
         }));
     };
     
-    public func updateProfile(principalName: Types.PrincipalName, displayName: Text, wallet: Text) : Result.Result<(), Types.Error> {
+    public func updateProfile(principalName: Types.PrincipalName, displayName: Text, wallet: Text, depositAddress: Account.AccountIdentifier) : Result.Result<(), Types.Error> {
         
         let updatedProfile: Types.Profile = {
             principalName = principalName;
             displayName = displayName;
             wallet = wallet;
-            depositAddress = Account.principalToSubaccount(Principal.fromText(principalName));
+            depositAddress = depositAddress;
             balance = 0;
         };
         
@@ -71,7 +71,7 @@ module {
                             principalName = profile.principalName; 
                             displayName = displayName;
                             wallet = wallet; 
-                            depositAddress = profile.depositAddress;
+                            depositAddress = depositAddress;
                             balance = 0;
                         }
                     } else { profile }

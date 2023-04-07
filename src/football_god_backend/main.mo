@@ -74,7 +74,7 @@ actor Self {
 
   public shared ({caller}) func saveProfile(displayName :Text, walletAddress: Text) : async Result.Result<(), Types.Error> {
     assert not Principal.isAnonymous(caller);
-    return profilesInstance.updateProfile(Principal.toText(caller), displayName, walletAddress);
+    return profilesInstance.updateProfile(Principal.toText(caller), displayName, walletAddress, getUserDepositAccount(caller));
   };
 
   //system state functions
@@ -327,6 +327,10 @@ actor Self {
 
   private func getDefaultAccount() : Account.AccountIdentifier {
     Account.accountIdentifier(Principal.fromActor(Self), Account.defaultSubaccount())
+  };
+
+  private func getUserDepositAccount(caller: Principal) : Account.AccountIdentifier {
+    Account.accountIdentifier(Principal.fromActor(Self), Account.principalToSubaccount(caller))
   };
 
   public shared func getGameweekPot() : async Int64 {
