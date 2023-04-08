@@ -120,5 +120,5 @@ service : {
   updateSeason: (nat16, text, nat16) -> (Result);
   updateTeam: (nat16, text) -> (Result);
   updateWalletAddress: (text) -> (Result);
-  withdrawICP: (nat64) -> (Result);
+  withdrawICP: (float64) -> (Result);
 }

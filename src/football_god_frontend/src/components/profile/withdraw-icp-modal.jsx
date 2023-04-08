@@ -16,8 +16,8 @@ const WithdrawICPModal = ({ show, onHide, setIsLoading, balance }) => {
     
     const identity = authClient.getIdentity();
     Actor.agentOf(football_god_backend_actor).replaceIdentity(identity);
-    await football_god_backend_actor.withdrawICP(withdrawAmount - withdrawalFee);
-    
+    let result = await football_god_backend_actor.withdrawICP(withdrawAmount - withdrawalFee);
+    console.log(result);
     hideModal();
   };
 

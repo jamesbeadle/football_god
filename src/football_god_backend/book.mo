@@ -4,7 +4,7 @@ import Float "mo:base/Float";
 import Int "mo:base/Int";
 import Int64 "mo:base/Int64";
 import Nat64 "mo:base/Nat64";
-import Nat "mo:base/Nat";
+import Debug "mo:base/Debug";
 import Types "types";
 import Time "mo:base/Time";
 import Result "mo:base/Result";
@@ -67,6 +67,11 @@ module {
         let e8Amount = Int64.toNat64(Float.toInt64(amount * 1e8));
         let source_account = Account.accountIdentifier(defaultAccount, Account.principalToSubaccount(user));
         let balance = await Ledger.account_balance({ account = source_account });
+
+        if(balance.e8s < icp_fee){
+            return #err(#NotAllowed);
+        };
+
         let withdrawable = balance.e8s - icp_fee;
 
         if(e8Amount > withdrawable){

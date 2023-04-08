@@ -51,7 +51,6 @@ actor Self {
   };
   
   public shared query ({caller}) func isAdmin(): async Bool {
-    Debug.print(debug_show(caller));
     return isAdminForCaller(caller);
   };
 
