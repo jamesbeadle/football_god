@@ -79,6 +79,18 @@ actor Self {
 
   //system state functions
 
+  public shared ({caller}) func unsetActiveState() : async Result.Result<(), Types.Error> {
+    
+    let isCallerAdmin = isAdminForCaller(caller);
+    if(isCallerAdmin == false){
+      return #err(#NotAuthorized);
+    };
+
+    activeSeason := 0;
+    activeGameweek := 0;
+    return #ok(());
+  };
+
   public shared ({caller}) func setActiveSeason(seasonId : Nat16) : async Result.Result<(), Types.Error> {
     
     let isCallerAdmin = isAdminForCaller(caller);
@@ -431,7 +443,7 @@ actor Self {
   system func preupgrade() {
     stable_profiles := profilesInstance.getProfiles();
     stable_predictions := predictionsInstance.getUserPredictions();
-    stable_seasons := seasonsInstance.getSeasons();
+    stable_seasons := seasonsInstance.getAllData();
     stable_nextSeasonId := seasonsInstance.getNextSeasonId();
     stable_nextFixtureId := seasonsInstance.getNextFixtureId();
     stable_teams := teamsInstance.getTeams();

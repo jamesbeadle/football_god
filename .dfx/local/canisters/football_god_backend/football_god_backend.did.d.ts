@@ -91,6 +91,7 @@ export interface _SERVICE {
     [number, number, Array<Prediction>],
     Result
   >,
+  'unsetActiveState' : ActorMethod<[], Result>,
   'updateFixture' : ActorMethod<
     [number, number, number, number, number, number, number, number],
     Result

@@ -40,7 +40,6 @@ const Season = () => {
     
     const identity = authClient.getIdentity();
     Actor.agentOf(football_god_backend_actor).replaceIdentity(identity);
-    
     await football_god_backend_actor.updateGameweekStatus(Number(seasonId), Number(updatedGameweek), Number(selectedStatus));
     
     fetchSeason();
@@ -145,12 +144,8 @@ const Season = () => {
             </Form>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={() => { setShowGameweekStatusModal(false); }}>
-            Cancel
-          </Button>
-          <Button variant="primary" onClick={submitUpdateGameweekStatus}>
-            Save
-          </Button>
+          <Button variant="secondary" onClick={() => { setShowGameweekStatusModal(false); }}>Cancel</Button>
+          <Button variant="primary" onClick={submitUpdateGameweekStatus}>Save</Button>
         </Modal.Footer>
       </Modal>
 

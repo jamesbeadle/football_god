@@ -114,6 +114,7 @@ export const idlFactory = ({ IDL }) => {
         [Result],
         [],
       ),
+    'unsetActiveState' : IDL.Func([], [Result], []),
     'updateFixture' : IDL.Func(
         [
           IDL.Nat16,

@@ -19,6 +19,10 @@ module {
         nextFixtureId := stable_fixtureId;
     };
 
+    public func getAllData() : [Types.Season] {
+        return List.toArray(seasons);
+    };
+
     public func getSeasons() : [Types.Season] {
         return List.toArray(List.map<Types.Season, Types.Season>(seasons, func (season: Types.Season): Types.Season {
             return {

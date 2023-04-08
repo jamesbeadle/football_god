@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Row, Col, Button, ListGroup } from 'react-bootstrap';
+import { Container, Row, Col, Button, ListGroup, Spinner } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
 import ICPImage from '../../assets/gold.png';
 import { football_god_backend as football_god_backend_actor } from '../../../declarations/football_god_backend';
 
 const Home = () => {
+  
+  const [isLoading, setIsLoading] = useState(true);
   
   const [totalICP, setTotalICP] = useState(0);
   const [activeSeason, setActiveSeason] = useState(null);
@@ -16,10 +18,11 @@ const Home = () => {
 
   useEffect(() => {
     const fetchData = async () => {
+      await fetchTeams();
+      await fetchTotalICP();
       await fetchActiveSeason();
       await fetchActiveGameweek();
-      await fetchTotalICP();
-      await fetchTeams();
+      setIsLoading(false);
     };
     fetchData();
   }, []);
@@ -85,7 +88,7 @@ const Home = () => {
               )}
               {isGameweekClosed && (
                 <LinkContainer to="/leaderboard">
-                  <Button variant="secondary" className="w-100" size="lg">Leaderboard</Button>
+                  <Button variant="primary" className="w-100" size="lg">Leaderboard</Button>
                 </LinkContainer>
               )}
             <br />
@@ -98,8 +101,8 @@ const Home = () => {
                   {getTeamNameById(fixture.homeTeamId)} vs {getTeamNameById(fixture.awayTeamId)}
                   {fixture.status === 2 && (
                     <span>
-                      {' '}
-                      - {fixture.homeTeamGoals}-{fixture.awayTeamGoals}
+                      <br />
+                      {fixture.homeGoals}-{fixture.awayGoals}
                     </span>
                   )}
                 </ListGroup.Item>
@@ -107,7 +110,11 @@ const Home = () => {
             </ListGroup>
           </Col>
         </Row>
-      </Container>) : (
+      </Container>) : isLoading ? (
+        <div className="customOverlay">
+          <Spinner animation="border" />
+        </div>
+      ) : (
       <Container className="flex-grow-1">
         <br />
         <div className="d-flex justify-content-center align-items-center" style={{ height: '100%' }}>

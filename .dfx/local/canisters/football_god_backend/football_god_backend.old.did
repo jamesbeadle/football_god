@@ -91,6 +91,7 @@ service : {
   deleteFixture: (nat16, nat8, nat32) -> (Result);
   deleteSeason: (nat16) -> (Result);
   deleteTeam: (nat16) -> (Result);
+  dummy: () -> (bool) query;
   enterSweepstake: (nat16, nat8) -> (Result);
   getActiveGameweek: () -> (opt Gameweek) query;
   getActiveSeason: () -> (opt Season) query;
@@ -114,6 +115,7 @@ service : {
   setActiveGameweek: (nat8) -> (Result);
   setActiveSeason: (nat16) -> (Result);
   submitPredictions: (nat16, nat8, vec Prediction) -> (Result);
+  unsetActiveState: () -> (Result);
   updateFixture: (nat16, nat8, nat32, nat16, nat16, nat8, nat8, nat8) ->
    (Result);
   updateGameweekStatus: (nat16, nat8, nat8) -> (Result);

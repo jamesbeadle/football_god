@@ -114,6 +114,7 @@ service : {
   setActiveGameweek: (nat8) -> (Result);
   setActiveSeason: (nat16) -> (Result);
   submitPredictions: (nat16, nat8, vec Prediction) -> (Result);
+  unsetActiveState: () -> (Result);
   updateFixture: (nat16, nat8, nat32, nat16, nat16, nat8, nat8, nat8) ->
    (Result);
   updateGameweekStatus: (nat16, nat8, nat8) -> (Result);

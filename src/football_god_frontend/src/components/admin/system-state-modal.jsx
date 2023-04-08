@@ -11,8 +11,10 @@ const SystemStateModal = ({ show, onHide, setIsLoading, activeSeason, activeGame
     const [activeGameweekNumber, setActiveGameweekNumber] = useState('');
 
     const onShow = async () => {
-        setActiveSeasonId(activeSeason.id); 
-        setActiveGameweekNumber(activeGameweek.number);
+        if(activeSeason && activeGameweek){
+            setActiveSeasonId(activeSeason.id); 
+            setActiveGameweekNumber(activeGameweek.number);
+        }
     };
 
     const handleSubmit = async (event) => {
@@ -24,6 +26,16 @@ const SystemStateModal = ({ show, onHide, setIsLoading, activeSeason, activeGame
         await football_god_backend_actor.setActiveSeason(Number(activeSeasonId));
         await football_god_backend_actor.setActiveGameweek(Number(activeGameweekNumber));
 
+        onHide();
+    };
+
+    const unsetSystemState = async (event) => {
+        event.preventDefault();
+        setIsLoading(true);
+
+        const identity = authClient.getIdentity();
+        Actor.agentOf(football_god_backend_actor).replaceIdentity(identity);
+        await football_god_backend_actor.unsetActiveState();
         onHide();
     };
 
@@ -60,8 +72,11 @@ const SystemStateModal = ({ show, onHide, setIsLoading, activeSeason, activeGame
                 </Form>
             </Modal.Body>
             <Modal.Footer>
-                <Button variant="secondary" onClick={() => { setShowActiveModal(false); }}>
+                <Button variant="secondary" onClick={onHide}>
                     Cancel
+                </Button>
+                <Button variant="danger" onClick={unsetSystemState}>
+                    Unset System State
                 </Button>
                 <Button variant="primary" onClick={handleSubmit}>
                     Save
