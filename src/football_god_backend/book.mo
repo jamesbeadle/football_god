@@ -4,6 +4,7 @@ import Float "mo:base/Float";
 import Int "mo:base/Int";
 import Int64 "mo:base/Int64";
 import Nat64 "mo:base/Nat64";
+import Nat "mo:base/Nat";
 import Types "types";
 import Time "mo:base/Time";
 import Result "mo:base/Result";
@@ -61,13 +62,14 @@ module {
     };
     
     //withdraw ICP
-    public func withdrawICP(defaultAccount: Principal, user: Principal, amount: Nat64, walletAddress: Text) : async Result.Result<(), Types.Error> {
+    public func withdrawICP(defaultAccount: Principal, user: Principal, amount: Float, walletAddress: Text) : async Result.Result<(), Types.Error> {
         
+        let e8Amount = Int64.toNat64(Float.toInt64(amount * 1e8));
         let source_account = Account.accountIdentifier(defaultAccount, Account.principalToSubaccount(user));
         let balance = await Ledger.account_balance({ account = source_account });
         let withdrawable = balance.e8s - icp_fee;
 
-        if(amount > withdrawable){
+        if(e8Amount > withdrawable){
             return #err(#NotAllowed);
         };
 
@@ -77,7 +79,7 @@ module {
             memo: Nat64    = 0;
             from_subaccount = ?Account.accountIdentifier(defaultAccount, Account.principalToSubaccount(user));
             to = account_id;
-            amount = { e8s = amount };
+            amount = { e8s = e8Amount };
             fee = { e8s = icp_fee };
             created_at_time = ?{ timestamp_nanos = Nat64.fromNat(Int.abs(Time.now())) };
         });

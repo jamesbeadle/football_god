@@ -1,12 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { Container, Row, Col, Button, ListGroup, Spinner } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
 import ICPImage from '../../assets/gold.png';
 import { football_god_backend as football_god_backend_actor } from '../../../declarations/football_god_backend';
+import { AuthContext } from "../contexts/AuthContext";
 
 const Home = () => {
   
   const [isLoading, setIsLoading] = useState(true);
+  const { isAuthenticated, login } = useContext(AuthContext);
   
   const [totalICP, setTotalICP] = useState(0);
   const [activeSeason, setActiveSeason] = useState(null);
@@ -81,7 +83,10 @@ const Home = () => {
             </div>
             <h2 className="mb-3 text-center">{totalICP} ICP</h2>
             <h2 className="mb-3 text-center">Total Pot</h2>
-              {isGameweekPlayable && (
+              {!isAuthenticated && (
+                  <Button onClick={() => { login(); }} variant="primary" className="w-100 mb-3" size="lg">Sign In To Play</Button>
+              )}
+              {isGameweekPlayable && isAuthenticated && (
                 <LinkContainer to="/play">
                   <Button variant="primary" className="w-100 mb-3" size="lg">Play</Button>
                 </LinkContainer>

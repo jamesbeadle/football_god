@@ -58,7 +58,6 @@ export interface _SERVICE {
     [number, number, number, number],
     Result
   >,
-  'checkForProfile' : ActorMethod<[], boolean>,
   'checkSweepstakePaid' : ActorMethod<[number, number], boolean>,
   'createSeason' : ActorMethod<[string, number], Result>,
   'createTeam' : ActorMethod<[string], Result>,
@@ -84,7 +83,6 @@ export interface _SERVICE {
   'isAdmin' : ActorMethod<[], boolean>,
   'isDisplayNameValid' : ActorMethod<[string], boolean>,
   'payoutSweepstake' : ActorMethod<[number, number], Result>,
-  'saveProfile' : ActorMethod<[string, string], Result>,
   'setActiveGameweek' : ActorMethod<[number], Result>,
   'setActiveSeason' : ActorMethod<[number], Result>,
   'submitPredictions' : ActorMethod<
@@ -92,6 +90,7 @@ export interface _SERVICE {
     Result
   >,
   'unsetActiveState' : ActorMethod<[], Result>,
+  'updateDisplayName' : ActorMethod<[string], Result>,
   'updateFixture' : ActorMethod<
     [number, number, number, number, number, number, number, number],
     Result
@@ -99,5 +98,6 @@ export interface _SERVICE {
   'updateGameweekStatus' : ActorMethod<[number, number, number], Result>,
   'updateSeason' : ActorMethod<[number, string, number], Result>,
   'updateTeam' : ActorMethod<[number, string], Result>,
-  'withdrawICP' : ActorMethod<[bigint], Result>,
+  'updateWalletAddress' : ActorMethod<[string], Result>,
+  'withdrawICP' : ActorMethod<[number], Result>,
 }

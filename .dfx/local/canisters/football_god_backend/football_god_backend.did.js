@@ -64,7 +64,6 @@ export const idlFactory = ({ IDL }) => {
         [Result],
         [],
       ),
-    'checkForProfile' : IDL.Func([], [IDL.Bool], []),
     'checkSweepstakePaid' : IDL.Func([IDL.Nat16, IDL.Nat8], [IDL.Bool], []),
     'createSeason' : IDL.Func([IDL.Text, IDL.Nat16], [Result], []),
     'createTeam' : IDL.Func([IDL.Text], [Result], []),
@@ -110,7 +109,6 @@ export const idlFactory = ({ IDL }) => {
     'isAdmin' : IDL.Func([], [IDL.Bool], ['query']),
     'isDisplayNameValid' : IDL.Func([IDL.Text], [IDL.Bool], []),
     'payoutSweepstake' : IDL.Func([IDL.Nat16, IDL.Nat8], [Result], []),
-    'saveProfile' : IDL.Func([IDL.Text, IDL.Text], [Result], []),
     'setActiveGameweek' : IDL.Func([IDL.Nat8], [Result], []),
     'setActiveSeason' : IDL.Func([IDL.Nat16], [Result], []),
     'submitPredictions' : IDL.Func(
@@ -119,6 +117,7 @@ export const idlFactory = ({ IDL }) => {
         [],
       ),
     'unsetActiveState' : IDL.Func([], [Result], []),
+    'updateDisplayName' : IDL.Func([IDL.Text], [Result], []),
     'updateFixture' : IDL.Func(
         [
           IDL.Nat16,
@@ -140,7 +139,8 @@ export const idlFactory = ({ IDL }) => {
       ),
     'updateSeason' : IDL.Func([IDL.Nat16, IDL.Text, IDL.Nat16], [Result], []),
     'updateTeam' : IDL.Func([IDL.Nat16, IDL.Text], [Result], []),
-    'withdrawICP' : IDL.Func([IDL.Nat64], [Result], []),
+    'updateWalletAddress' : IDL.Func([IDL.Text], [Result], []),
+    'withdrawICP' : IDL.Func([IDL.Float64], [Result], []),
   });
 };
 export const init = ({ IDL }) => { return []; };

@@ -12,13 +12,13 @@ import Admin from "./components/admin/admin";
 import Teams from "./components/admin/teams/teams";
 import Fixtures from "./components/admin/fixtures/fixtures";
 import Season from "./components/admin/seasons/season";
-import UpdateFixture from "./components/admin/update-fixture";
+import UpdateFixture from "./components/admin/fixtures/update-fixture";
 import Play from "./components/play";
 import Balances from "./components/admin/balances";
 import Payout from "./components/admin/payout";
 import History from "./components/history";
 import Leaderboard from "./components/leaderboard";
-import Profile from "./components/profile";
+import Profile from "./components/profile/profile";
 import Submission from "./components/submission";
 import Seasons from "./components/admin/seasons/seasons";
 

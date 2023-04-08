@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { Container, Row, Col, Card, Button, Modal, Form, Spinner } from 'react-bootstrap';
-import { football_god_backend as football_god_backend_actor } from '../../../../declarations/football_god_backend';
+import { football_god_backend as football_god_backend_actor } from '../../../../../declarations/football_god_backend';
 import { Actor } from "@dfinity/agent";
-import { AuthContext } from "../../contexts/AuthContext";
-import "../../../assets/main.css";
+import { AuthContext } from "../../../contexts/AuthContext";
+import "../../../../assets/main.css";
 import { useNavigate, useParams } from "react-router-dom";
 
 const UpdateFixture = () => {

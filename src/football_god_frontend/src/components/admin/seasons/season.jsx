@@ -11,7 +11,7 @@ const Season = () => {
   
   const { authClient } = useContext(AuthContext);
   const { seasonId } = useParams();
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [season, setSeasonData] = useState([]);
   const [gameweeks, setGameweeksData] = useState([]);
   const [showGameweekStatusModal, setShowGameweekStatusModal] = useState(false);
@@ -53,6 +53,7 @@ const Season = () => {
     const fetchData = async () => {
       await fetchSeason();
       await fetchGameweeks();
+      setIsLoading(false);
     };
     fetchData();
   }, []);

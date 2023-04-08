@@ -19,7 +19,7 @@ import Account "Account";
 actor Self {
   
   let admins : [Principal] = [
-    Principal.fromText("yu5kj-zdrav-n3afu-otqhy-edslm-72rc4-aw2op-ybylc-7w2qf-6xext-dae")
+    Principal.fromText("ztthu-cbxcc-xdbul-ju7cm-qxadr-u6y4i-57lof-nsmpm-wkdwf-nyxdl-oae")
   ];
 
   let profilesInstance = Profiles.Profiles();
@@ -57,14 +57,18 @@ actor Self {
 
   //profile functions
   
-  public shared ({caller}) func checkForProfile() : async Bool {
-    assert not Principal.isAnonymous(caller);
-    return profilesInstance.checkForProfile(Principal.toText(caller));
-  };
-
   public shared ({caller}) func getProfile() : async ?Types.Profile {
     assert not Principal.isAnonymous(caller);
-    return profilesInstance.getProfile(Principal.toText(caller));
+    let profile = profilesInstance.getProfile(Principal.toText(caller));
+
+    if(profile == null){
+      let result = profilesInstance.createProfile(Principal.toText(caller), Principal.toText(caller), "", getUserDepositAccount(caller));
+      if(result == #ok(())){
+        return profilesInstance.getProfile(Principal.toText(caller));
+      };
+    };
+
+    return profile;
   };
 
   public shared ({caller}) func isDisplayNameValid(displayName: Text) : async Bool {
@@ -72,9 +76,14 @@ actor Self {
     return profilesInstance.isDisplayNameValid(displayName);
   };
 
-  public shared ({caller}) func saveProfile(displayName :Text, walletAddress: Text) : async Result.Result<(), Types.Error> {
+  public shared ({caller}) func updateDisplayName(displayName :Text) : async Result.Result<(), Types.Error> {
     assert not Principal.isAnonymous(caller);
-    return profilesInstance.updateProfile(Principal.toText(caller), displayName, walletAddress, getUserDepositAccount(caller));
+    return profilesInstance.updateDisplayName(Principal.toText(caller), displayName);
+  };
+
+  public shared ({caller}) func updateWalletAddress(walletAddress :Text) : async Result.Result<(), Types.Error> {
+    assert not Principal.isAnonymous(caller);
+    return profilesInstance.updateWalletAddress(Principal.toText(caller), walletAddress);
   };
 
   //system state functions
@@ -415,7 +424,7 @@ actor Self {
     return predictionsInstance.enterSweepstake(Principal.toText(caller), seasonId, gameweekNumber);
   };
 
-  public shared ({caller}) func withdrawICP(amount: Nat64) : async Result.Result<(), Types.Error> {
+  public shared ({caller}) func withdrawICP(amount: Float) : async Result.Result<(), Types.Error> {
     assert not Principal.isAnonymous(caller);
     
     let userProfile = profilesInstance.getProfile(Principal.toText(caller));

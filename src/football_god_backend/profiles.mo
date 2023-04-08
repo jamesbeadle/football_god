@@ -60,7 +60,7 @@ module {
     };
 
     
-    public func updateProfile(principalName: Types.PrincipalName, displayName: Text, wallet: Text, depositAddress: Account.AccountIdentifier) : Result.Result<(), Types.Error> {
+    public func createProfile(principalName: Types.PrincipalName, displayName: Text, wallet: Text, depositAddress: Account.AccountIdentifier) : Result.Result<(), Types.Error> {
         
         let updatedProfile: Types.Profile = {
             principalName = principalName;
@@ -111,6 +111,79 @@ module {
         };
     };
 
+    public func updateDisplayName(principalName: Types.PrincipalName, displayName: Text) : Result.Result<(), Types.Error> {
+        
+        let existingProfile = List.find<Types.Profile>(userProfiles, func (profile: Types.Profile): Bool {
+            return profile.principalName == principalName;
+        });
+
+        switch (existingProfile) {
+            case (null) { 
+                return #err(#NotFound);
+            };
+            case (?existingProfile) {
+
+                if(existingProfile.displayName == displayName){
+                    return #ok(());
+                };
+        
+                let updatedProfile: Types.Profile = {
+                    principalName = existingProfile.principalName;
+                    displayName = displayName;
+                    wallet = existingProfile.wallet;
+                    depositAddress = existingProfile.depositAddress;
+                    balance = 0;
+                };
+
+                let nameValid = isDisplayNameValid(updatedProfile.displayName);
+                if(not nameValid){
+                    return #err(#NotAllowed);
+                };
+
+                userProfiles := List.map<Types.Profile, Types.Profile>(userProfiles, func (profile: Types.Profile): Types.Profile {
+                    if (profile.principalName == principalName) { updatedProfile } else { profile }
+                });
+
+                return #ok(());
+            };
+        };
+    };
+
+    
+
+    public func updateWalletAddress(principalName: Types.PrincipalName, walletAddress: Text) : Result.Result<(), Types.Error> {
+        
+        let existingProfile = List.find<Types.Profile>(userProfiles, func (profile: Types.Profile): Bool {
+            return profile.principalName == principalName;
+        });
+
+        switch (existingProfile) {
+            case (null) { 
+                return #err(#NotFound);
+            };
+            case (?existingProfile) {
+
+                if(existingProfile.wallet == walletAddress){
+                    return #ok(());
+                };
+        
+                let updatedProfile: Types.Profile = {
+                    principalName = existingProfile.principalName;
+                    displayName = existingProfile.displayName;
+                    wallet = walletAddress;
+                    depositAddress = existingProfile.depositAddress;
+                    balance = 0;
+                };
+
+                userProfiles := List.map<Types.Profile, Types.Profile>(userProfiles, func (profile: Types.Profile): Types.Profile {
+                    if (profile.principalName == principalName) { updatedProfile } else { profile }
+                });
+
+                return #ok(());
+            };
+        };
+    };
+
     public func checkForProfile(principalName: Text) : Bool {
         let existingProfile = List.find<Types.Profile>(userProfiles, func (profile: Types.Profile): Bool {
             return profile.principalName == principalName;
@@ -154,7 +227,7 @@ module {
     
     public func isDisplayNameValid(displayName: Text) : Bool {
         
-        if (Text.size(displayName) < 3) {
+        if (Text.size(displayName) < 3 or Text.size(displayName) > 20) {
             return false;
         };
 

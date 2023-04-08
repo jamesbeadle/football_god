@@ -50,7 +50,8 @@ const Play = () => {
   const checkProfile = async () => {
     const identity = authClient.getIdentity();
     Actor.agentOf(football_god_backend_actor).replaceIdentity(identity);
-    const profileExists = await football_god_backend_actor.checkForProfile();
+    const profile = await football_god_backend_actor.getProfile();
+    const profileExists = profile != null;
     setHasProfile(profileExists);
   };
   
@@ -166,12 +167,11 @@ const Play = () => {
 
   return (
     <Container>
-      {isLoading && (
+      {isLoading ? (
         <div className="customOverlay">
           <Spinner animation="border" />
         </div>
-      )}
-      {hasProfile ? (
+      ) : hasProfile ? (
         <Row className="justify-content-md-center">
         <Col md={8}>
           <Card className="mt-4">

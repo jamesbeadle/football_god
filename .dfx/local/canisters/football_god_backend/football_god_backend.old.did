@@ -84,7 +84,6 @@ type Error =
  };
 service : {
   addFixtureToGameweek: (nat16, nat8, nat16, nat16) -> (Result);
-  checkForProfile: () -> (bool);
   checkSweepstakePaid: (nat16, nat8) -> (bool);
   createSeason: (text, nat16) -> (Result);
   createTeam: (text) -> (Result);
@@ -110,15 +109,16 @@ service : {
   isAdmin: () -> (bool) query;
   isDisplayNameValid: (text) -> (bool);
   payoutSweepstake: (nat16, nat8) -> (Result);
-  saveProfile: (text, text) -> (Result);
   setActiveGameweek: (nat8) -> (Result);
   setActiveSeason: (nat16) -> (Result);
   submitPredictions: (nat16, nat8, vec Prediction) -> (Result);
   unsetActiveState: () -> (Result);
+  updateDisplayName: (text) -> (Result);
   updateFixture: (nat16, nat8, nat32, nat16, nat16, nat8, nat8, nat8) ->
    (Result);
   updateGameweekStatus: (nat16, nat8, nat8) -> (Result);
   updateSeason: (nat16, text, nat16) -> (Result);
   updateTeam: (nat16, text) -> (Result);
+  updateWalletAddress: (text) -> (Result);
   withdrawICP: (nat64) -> (Result);
 }
