@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { Container, Row, Col, Card, Button, Table, Dropdown, Modal, Spinner, Form } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
 import { getGameweekStatus } from '../../helpers';
@@ -10,18 +10,13 @@ import { Actor } from "@dfinity/agent";
 const Season = () => {
   
   const { authClient } = useContext(AuthContext);
-  const navigate = useNavigate();
   const { seasonId } = useParams();
   const [isLoading, setIsLoading] = useState(false);
   const [season, setSeasonData] = useState([]);
   const [gameweeks, setGameweeksData] = useState([]);
   const [showGameweekStatusModal, setShowGameweekStatusModal] = useState(false);
-  const [showUpdateSeasonModal, setShowUpdateSeasonModal] = useState(false);
-  const [showDeleteConfirmModal, setShowDeleteConfirmModal] = useState(false);
   const [updatedGameweek, setGameweekToUpdate] = useState(null);
   const [selectedStatus, setSelectedStatus] = useState('');
-  const [seasonName, setSeasonName] = useState('');
-  const [seasonYear, setSeasonYear] = useState('');
 
   const fetchSeason = async () => {
     const seasonData = await football_god_backend_actor.getSeason(Number(seasonId));
@@ -38,22 +33,6 @@ const Season = () => {
     setSelectedStatus(gameweek.status);
     setShowGameweekStatusModal(true);
   };  
-
-  
-  const submitUpdateSeason = async (event) => {
-    event.preventDefault();
-    setIsLoading(true);
-
-    const identity = authClient.getIdentity();
-    Actor.agentOf(football_god_backend_actor).replaceIdentity(identity);
-
-    await football_god_backend_actor.updateSeason(Number(seasonId), seasonName, Number(seasonYear));
-
-    fetchSeason();
-    setShowUpdateSeasonModal(false);
-    setIsLoading(false);
-  };
-
   
   const submitUpdateGameweekStatus = async (event) => {
     event.preventDefault();
@@ -70,16 +49,6 @@ const Season = () => {
     setShowGameweekStatusModal(false);
     setIsLoading(false);
   };
-
-  const handleDeleteConfirmed = async () => {
-    setIsLoading(true);
-    const identity = authClient.getIdentity();
-    Actor.agentOf(football_god_backend_actor).replaceIdentity(identity);
-    await football_god_backend_actor.deleteSeason(Number(seasonId));
-    setShowDeleteConfirmModal(false);
-    setIsLoading(false);
-    navigate(`/admin`);
-  };
   
   useEffect(() => {
     const fetchData = async () => {
@@ -88,14 +57,6 @@ const Season = () => {
     };
     fetchData();
   }, []);
-
-  
-  useEffect(() => {
-    if (season && Object.keys(season).length > 0) {
-      setSeasonName(season.name);
-      setSeasonYear(season.year);
-    }
-  }, [season]);
 
   return (
     <Container>
@@ -111,13 +72,6 @@ const Season = () => {
               <h2>Season: {season.name}</h2>
             </Card.Header>
             <Card.Body>
-              <Row>
-                <Col md={4}>
-                  <Button variant="primary" className="mb-3" onClick={() => { setShowUpdateSeasonModal(true); }}>
-                    Edit Season
-                  </Button>
-                </Col>
-              </Row>
               <Row className="justify-content-md-center">
                 <Col md={12}>
                   <Card className="mt-4">
@@ -161,73 +115,10 @@ const Season = () => {
                   </Card>
                 </Col>
               </Row>
-              <Row>
-                <Col md={4}>
-                  <Button variant="danger" className="mb-3 w-100" onClick={() => { setShowDeleteConfirmModal(true); }}>
-                    Delete Season
-                  </Button>
-                </Col>
-              </Row>
             </Card.Body>
           </Card>
         </Col>
       </Row>
-
-      <Modal show={showDeleteConfirmModal} onHide={() => { setShowDeleteConfirmModal(false); }}>
-        <Modal.Header closeButton>
-          <Modal.Title>Delete Season</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>Are you sure you want to delete this season, related gameweeks and fixtures?</Modal.Body>
-        <Modal.Footer>
-          <Button
-            variant="secondary"
-            onClick={() => {
-              setShowDeleteConfirmModal(false);
-            }}
-          >
-            Cancel
-          </Button>
-          <Button variant="danger" onClick={handleDeleteConfirmed}>
-            Delete
-          </Button>
-        </Modal.Footer>
-      </Modal>
-
-      <Modal show={showUpdateSeasonModal} onHide={() => { setShowUpdateSeasonModal(false); }}>
-        <Modal.Header closeButton>
-          <Modal.Title>Update Season</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <Form onSubmit={submitUpdateSeason}>
-            <Form.Group controlId="seasonName">
-              <Form.Label>Season Name</Form.Label>
-              <Form.Control
-                type="text"
-                placeholder="Enter season name"
-                value={seasonName}
-                onChange={(e) => setSeasonName(e.target.value)}
-              />
-            </Form.Group>
-            <Form.Group controlId="seasonYear">
-              <Form.Label>Season Year</Form.Label>
-              <Form.Control
-                type="number"
-                placeholder="Enter season year"
-                value={seasonYear}
-                onChange={(e) => setSeasonYear(e.target.value)}
-              />
-            </Form.Group>
-          </Form>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={() => { setShowGameweekStatusModal(false); }}>
-            Cancel
-          </Button>
-          <Button variant="primary" onClick={submitUpdateSeason}>
-            Save
-          </Button>
-        </Modal.Footer>
-      </Modal>
 
       <Modal show={showGameweekStatusModal} onHide={() => { setShowGameweekStatusModal(false); }}>
         <Modal.Header closeButton>
