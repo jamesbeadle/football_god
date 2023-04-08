@@ -4,7 +4,7 @@ import { football_god_backend as football_god_backend_actor } from '../../../../
 import { Actor } from "@dfinity/agent";
 import { AuthContext } from "../../../contexts/AuthContext";
 
-const DeleteTeamModal = ({ show, onHide, setIsLoading, teamToDelete }) => {
+const DeleteSeasonModal = ({ show, onHide, setIsLoading, seasonToDelete }) => {
 
   const { authClient } = useContext(AuthContext);
   
@@ -13,23 +13,23 @@ const DeleteTeamModal = ({ show, onHide, setIsLoading, teamToDelete }) => {
 
     const identity = authClient.getIdentity();
     Actor.agentOf(football_god_backend_actor).replaceIdentity(identity);
-    await football_god_backend_actor.deleteTeam(teamToDelete);
+    await football_god_backend_actor.deleteSeason(seasonToDelete);
 
     onHide();
   };
 
   return (
     <Modal show={show} onHide={onHide}>
-      <Modal.Header closeButton>
-        <Modal.Title>Delete Team</Modal.Title>
-      </Modal.Header>
-      <Modal.Body>Are you sure you want to delete this team?</Modal.Body>
-      <Modal.Footer>
-        <Button variant="secondary" onClick={onHide}>Cancel</Button>
-        <Button variant="danger" onClick={handleSubmit}>Delete</Button>
-      </Modal.Footer>
+        <Modal.Header closeButton>
+            <Modal.Title>Delete Season</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>Are you sure you want to delete this season, related gameweeks and fixtures?</Modal.Body>
+        <Modal.Footer>
+            <Button variant="secondary" onClick={onHide}>Cancel</Button>
+            <Button variant="danger" onClick={handleSubmit}>Delete</Button>
+        </Modal.Footer>
     </Modal>
   );
 };
 
-export default DeleteTeamModal;
+export default DeleteSeasonModal;
