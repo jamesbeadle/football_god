@@ -80,7 +80,7 @@ export interface _SERVICE {
   'getTeams' : ActorMethod<[], Array<Team>>,
   'getUserAccountBalance' : ActorMethod<[], bigint>,
   'getUserHistory' : ActorMethod<[number], Array<UserGameweek>>,
-  'getUsersWithBalances' : ActorMethod<[], Array<Profile>>,
+  'getUsersWithBalances' : ActorMethod<[bigint, bigint], Array<Profile>>,
   'isAdmin' : ActorMethod<[], boolean>,
   'isDisplayNameValid' : ActorMethod<[string], boolean>,
   'payoutSweepstake' : ActorMethod<[number, number], Result>,

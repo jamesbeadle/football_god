@@ -102,7 +102,11 @@ export const idlFactory = ({ IDL }) => {
     'getTeams' : IDL.Func([], [IDL.Vec(Team)], ['query']),
     'getUserAccountBalance' : IDL.Func([], [IDL.Nat64], []),
     'getUserHistory' : IDL.Func([IDL.Nat16], [IDL.Vec(UserGameweek)], []),
-    'getUsersWithBalances' : IDL.Func([], [IDL.Vec(Profile)], []),
+    'getUsersWithBalances' : IDL.Func(
+        [IDL.Nat, IDL.Nat],
+        [IDL.Vec(Profile)],
+        [],
+      ),
     'isAdmin' : IDL.Func([], [IDL.Bool], ['query']),
     'isDisplayNameValid' : IDL.Func([IDL.Text], [IDL.Bool], []),
     'payoutSweepstake' : IDL.Func([IDL.Nat16, IDL.Nat8], [Result], []),

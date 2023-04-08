@@ -5,6 +5,7 @@ import Principal "mo:base/Principal";
 import Nat64 "mo:base/Nat64";
 import Blob "mo:base/Blob";
 import Array "mo:base/Array";
+import Buffer "mo:base/Buffer";
 
 import Types "types";
 import Account "Account";
@@ -30,6 +31,34 @@ module {
             };
         }));
     };
+
+    public func getProfilesByPage(page: Int, pageSize: Int) : [Types.Profile] {
+        let startIndex = (page - 1) * pageSize;
+        let endIndex = page * pageSize;
+        var paginatedProfiles : [Types.Profile] = [];
+        let totalProfiles = List.size<Types.Profile>(userProfiles);
+        let buffer = Buffer.fromArray<Types.Profile>(paginatedProfiles);
+                
+        if (startIndex >= totalProfiles) {
+            return paginatedProfiles;
+        };
+
+        var index = 0;
+        for (profile in List.toArray(userProfiles).vals()) {
+            if (index >= startIndex and index < endIndex) {
+                buffer.add({
+                    principalName = profile.principalName; 
+                    displayName = profile.displayName;
+                    depositAddress = profile.depositAddress;
+                    wallet = ""; 
+                    balance = 0;
+                });
+            };
+            index += 1;
+        };
+        return Buffer.toArray(buffer);
+    };
+
     
     public func updateProfile(principalName: Types.PrincipalName, displayName: Text, wallet: Text, depositAddress: Account.AccountIdentifier) : Result.Result<(), Types.Error> {
         

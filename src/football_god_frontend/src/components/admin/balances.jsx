@@ -29,7 +29,7 @@ const Balances = () => {
     }
     const identity = authClient.getIdentity();
     Actor.agentOf(football_god_backend_actor).replaceIdentity(identity);
-    const userList = await football_god_backend_actor.getUsersWithBalances();
+    const userList = await football_god_backend_actor.getUsersWithBalances(currentPage, pageSize);
     setUsers(userList);
   };
 
@@ -83,17 +83,12 @@ const Balances = () => {
                 </Table>
               </div>
               <div className="d-flex justify-content-center">
-                <Button onClick={() => handlePageChange(-1)} variant="primary" disabled={currentPage === 1}>
-                  Previous
-                </Button>
+                <Button onClick={() => handlePageChange(-1)} variant="primary" disabled={currentPage === 1}>Previous</Button>
                 <span className="mx-3">Page {currentPage}</span>
                 <Button
                   onClick={() => handlePageChange(1)}
                   variant="primary"
-                  disabled={currentPage * pageSize >= users.length}
-                >
-                  Next
-                </Button>
+                  disabled={currentPage * pageSize >= users.length}>Next</Button>
               </div>
             </Card.Body>
           </Card>

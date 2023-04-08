@@ -10,7 +10,7 @@ import Home from "./components/home";
 import Rules from "./components/rules";
 import Admin from "./components/admin/admin";
 import Teams from "./components/admin/teams/teams";
-import Fixtures from "./components/admin/fixtures";
+import Fixtures from "./components/admin/fixtures/fixtures";
 import Season from "./components/admin/seasons/season";
 import UpdateFixture from "./components/admin/update-fixture";
 import Play from "./components/play";

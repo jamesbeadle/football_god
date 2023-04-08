@@ -106,7 +106,7 @@ service : {
   getTeams: () -> (vec Team) query;
   getUserAccountBalance: () -> (nat64);
   getUserHistory: (nat16) -> (vec UserGameweek);
-  getUsersWithBalances: () -> (vec Profile);
+  getUsersWithBalances: (nat, nat) -> (vec Profile);
   isAdmin: () -> (bool) query;
   isDisplayNameValid: (text) -> (bool);
   payoutSweepstake: (nat16, nat8) -> (Result);

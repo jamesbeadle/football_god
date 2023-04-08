@@ -1,43 +1,29 @@
-import React, { useState, useEffect, useContext } from 'react';
-import { Container, Row, Col, Card, Button, Table, Modal, Form, Spinner, Dropdown } from 'react-bootstrap';
-import { football_god_backend as football_god_backend_actor } from '../../../../declarations/football_god_backend';
-import { Actor } from "@dfinity/agent";
-import { AuthContext } from "../../contexts/AuthContext";
-import "../../../assets/main.css";
-import { useParams } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Container, Row, Col, Card, Button, Table, Spinner } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
-import { getFixtureStatus } from '../helpers';
+import "../../../../assets/main.css";
+import { football_god_backend as football_god_backend_actor } from '../../../../../declarations/football_god_backend';
+import { useParams } from 'react-router-dom';
+import { getFixtureStatus } from '../../helpers';
+import CreateFixtureModal from './create-fixture-modal';
 
 const EditFixtures = () => {
   const { seasonId, gameweekNumber } = useParams();
 
-  const { authClient } = useContext(AuthContext);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [teams, setTeamsData] = useState([]);
   const [season, setSeasonData] = useState([]);
   const [fixturesData, setFixturesData] = useState([]);
   const [showAddFixtureModal, setShowAddFixtureModal] = useState(false);
 
-  const [homeTeam, setHomeTeam] = useState('');
-  const [awayTeam, setAwayTeam] = useState('');
-
   const addFixture = () => setShowAddFixtureModal(true);
 
-  const handleSubmitFixture = async (event) => {
-    event.preventDefault();
-    setIsLoading(true);
-
-    const identity = authClient.getIdentity();
-    Actor.agentOf(football_god_backend_actor).replaceIdentity(identity);
-    await football_god_backend_actor.addFixtureToGameweek(Number(seasonId), Number(gameweekNumber), Number(homeTeam), Number(awayTeam));
-
+  const hideAddFixtureModal = async () => {
+    setShowAddFixtureModal(false); 
     fetchFixtures();
-    setHomeTeam('');
-    setAwayTeam('');
-    setShowAddFixtureModal(false);
     setIsLoading(false);
   };
-  
+
   const fetchTeams = async () => {
     const teamsData = await football_god_backend_actor.getTeams();
     setTeamsData(teamsData);
@@ -52,11 +38,15 @@ const EditFixtures = () => {
     const fixtures = await football_god_backend_actor.getFixtures(Number(seasonId), Number(gameweekNumber));
     setFixturesData(fixtures);
   };
-
+  
   useEffect(() => {
-    fetchTeams();
-    fetchSeason();
-    fetchFixtures();
+    const fetchData = async () => {
+      await fetchTeams();
+      await fetchSeason();
+      await fetchFixtures();
+      setIsLoading(false);
+    };
+    fetchData();
   }, []);
 
   const getTeamNameById = (teamId) => {
@@ -125,45 +115,14 @@ const EditFixtures = () => {
         </Col>
       </Row>
 
-      <Modal show={showAddFixtureModal} onHide={() => { setShowAddFixtureModal(false); }}>
-        <Modal.Header closeButton>
-          <Modal.Title>Add New Fixture</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-        <Form onSubmit={handleSubmitFixture}>
-          <Form.Group controlId="homeTeam">
-            <Form.Label>Home Team</Form.Label>
-            <Form.Control as="select" value={homeTeam} onChange={(e) => setHomeTeam(e.target.value)}>
-              <option value="">Select Home Team</option>
-              {teams.map((team) => (
-                <option key={team.id} value={team.id}>
-                  {team.name}
-                </option>
-              ))}
-            </Form.Control>
-          </Form.Group>
-          <Form.Group controlId="awayTeam">
-            <Form.Label>Away Team</Form.Label>
-            <Form.Control as="select" value={awayTeam} onChange={(e) => setAwayTeam(e.target.value)}>
-              <option value="">Select Away Team</option>
-              {teams.map((team) => (
-                <option key={team.id} value={team.id}>
-                  {team.name}
-                </option>
-              ))}
-            </Form.Control>
-          </Form.Group>
-        </Form>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={() => { setShowAddFixtureModal(false); }}>
-            Cancel
-          </Button>
-          <Button variant="primary" onClick={handleSubmitFixture}>
-            Save
-          </Button>
-        </Modal.Footer>
-      </Modal>
+      <CreateFixtureModal
+        show={showAddFixtureModal}
+        onHide={hideAddFixtureModal}
+        setIsLoading={setIsLoading}
+        seasonId={seasonId}
+        gameweekNumber={gameweekNumber}
+        teams={teams}
+      />
 
     </Container>
   );
