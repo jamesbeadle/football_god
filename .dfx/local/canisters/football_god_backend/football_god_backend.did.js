@@ -3,6 +3,7 @@ export const idlFactory = ({ IDL }) => {
   const List_1 = IDL.Rec();
   const List_2 = IDL.Rec();
   const Error = IDL.Variant({
+    'DecodeError' : IDL.Null,
     'NotAllowed' : IDL.Null,
     'NotFound' : IDL.Null,
     'NotAuthorized' : IDL.Null,

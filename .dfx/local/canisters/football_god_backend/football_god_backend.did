@@ -78,6 +78,7 @@ type Fixture =
 type Error = 
  variant {
    AlreadyExists;
+   DecodeError;
    NotAllowed;
    NotAuthorized;
    NotFound;

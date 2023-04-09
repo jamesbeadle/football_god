@@ -13,36 +13,26 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const initAuthClient = async () => {
       const authClient = await AuthClient.create();
-      setAuthClient(authClient);
-
-      const isLoggedIn = await authClient.isAuthenticated();
-      setIsAuthenticated(isLoggedIn);
+      const isLoggedIn = await checkLoginStatus(authClient);
       
       if (isLoggedIn) {
-        try{
-          const identity = authClient.getIdentity();
-          console.log(identity.getPrincipal())
-          Actor.agentOf(football_god_backend_actor).replaceIdentity(identity);
-          const userIsAdmin = await football_god_backend_actor.isAdmin();
-          setIsAdmin(userIsAdmin);
-        }
-        catch(error){
-          console.log(error);
-          authClient.logout();
-        }
-      
+        const identity = authClient.getIdentity();
+        Actor.agentOf(football_god_backend_actor).replaceIdentity(identity);
+        const userIsAdmin = await football_god_backend_actor.isAdmin();
+        setIsAdmin(userIsAdmin);
       } else {
         setIsAdmin(false);
       }
+      setAuthClient(authClient);
     };
     initAuthClient();
-  }, [isAuthenticated]);
+  }, []);
 
   useEffect(() => {
     if (!authClient) return;
 
     const interval = setInterval(() => {
-      checkLoginStatus();
+      checkLoginStatus(authClient);
     }, 60000);
 
     return () => {
@@ -70,18 +60,23 @@ export const AuthProvider = ({ children }) => {
     setIsAdmin(false);
   };
 
-  const checkLoginStatus = async () => {
-    const isLoggedIn = await authClient.isAuthenticated();
-    if (isLoggedIn && isTokenValid()) {
+  const checkLoginStatus = async (client) => {
+    if(client == null){
+      return false;
+    }
+    const isLoggedIn = await client.isAuthenticated();
+    if (isLoggedIn && isTokenValid(client)) {
       setIsAuthenticated(true);
+      return true;
     } else {
-      logout();
+      return false;
     }
   };
+  
 
-  const isTokenValid = () => {
+  const isTokenValid = (client) => {
     try {
-      const identity = authClient.getIdentity();
+      const identity = client.getIdentity();
       if (!identity || !identity._delegation || !identity._delegation.delegations) return false;
 
       const delegation = identity._delegation.delegations[0];

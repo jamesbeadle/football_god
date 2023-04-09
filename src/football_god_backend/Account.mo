@@ -79,9 +79,7 @@ module {
 
     return blob;
   };
-
-  
-
+ 
   public func decode(text : Text) : Result.Result<[Nat8], Types.Error> {
       let next = text.chars().next;
       func parse() : Result.Result<Nat8, Types.Error> {

@@ -116,6 +116,8 @@ const Leaderboard = () => {
           </tbody>
         </Table>
       )}
+      <p>You can update your display name in on your profile page.</p>
+        
       <div className="d-flex justify-content-center mt-3">
         <ButtonGroup>
           <Button onClick={() => handlePageChange(-1)} variant="primary" disabled={page === 0}>

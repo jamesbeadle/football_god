@@ -21,37 +21,38 @@ const Play = () => {
   const [balance, setBalance] = useState(0);
 
   useEffect(() => {
-      fetchTeams();
       const fetchData = async () => {
         await checkProfile();
         await fetchActiveSeason();
         await fetchActiveGameweek();
       };
       fetchData();
-  });
+  }, []);
 
   useEffect(() => {
+    if(!activeSeason || !activeGameweek){
+      return;
+    }
+    
     const fetchData = async () => {
+      await fetchTeams();
       await fetchFixtures();
       await fetchExistingPredictions();
-      await checkSweepstakePaid();
-      await fetchBalance();
       setIsLoading(false);
     };
     fetchData();
   }, [activeSeason, activeGameweek]);
 
   const checkProfile = async () => {
+    if(authClient == null){
+      return;
+    }
     const identity = authClient.getIdentity();
     Actor.agentOf(football_god_backend_actor).replaceIdentity(identity);
     const profile = await football_god_backend_actor.getProfile();
-    const profileExists = profile != null;
-    setHasProfile(profileExists);
-  };
-  
-  const fetchTeams = async () => {
-    const teamsData = await football_god_backend_actor.getTeams();
-    setTeamsData(teamsData);
+    if(profile == null){
+      navigate('/');
+    }
   };
 
   const fetchActiveSeason = async () => {
@@ -63,6 +64,11 @@ const Play = () => {
     const gameweek = await football_god_backend_actor.getActiveGameweek();
     setActiveGameweek(gameweek[0]);
   };
+  
+  const fetchTeams = async () => {
+    const teamsData = await football_god_backend_actor.getTeams();
+    setTeamsData(teamsData);
+  };
 
   const fetchFixtures = async () => {
     if (activeSeason && activeGameweek) {
@@ -72,15 +78,16 @@ const Play = () => {
   };
 
   const fetchExistingPredictions = async () => {
-    if (activeSeason && activeGameweek) {
-      const identity = authClient.getIdentity();
-      Actor.agentOf(football_god_backend_actor).replaceIdentity(identity);
-      const fetchedPredictions = await football_god_backend_actor.getPredictions(activeSeason.id, activeGameweek.number);
-      const existingScores = fetchedPredictions.reduce((acc, prediction) => {
-        acc[prediction.fixtureId] = { home: prediction.homeGoals, away: prediction.awayGoals };
-        return acc;
-      }, {});
-      setScores(existingScores);
+    const identity = authClient.getIdentity();
+    Actor.agentOf(football_god_backend_actor).replaceIdentity(identity);
+    const fetchedPredictions = await football_god_backend_actor.getPredictions(activeSeason.id, activeGameweek.number);
+    const existingScores = fetchedPredictions.reduce((acc, prediction) => {
+      acc[prediction.fixtureId] = { home: prediction.homeGoals, away: prediction.awayGoals };
+      return acc;
+    }, {});
+    setScores(existingScores);
+    if(existingScores){  
+      await checkSweepstakePaid();
     }
   };
 
@@ -89,6 +96,9 @@ const Play = () => {
     Actor.agentOf(football_god_backend_actor).replaceIdentity(identity);
     const paid = await football_god_backend_actor.checkSweepstakePaid(Number(activeSeason.id), Number(activeGameweek.number));
     setHasPaid(paid);
+    if(!paid){
+      await fetchBalance();
+    }
   };
   
   const fetchBalance = async () => {
@@ -165,7 +175,7 @@ const Play = () => {
         <div className="customOverlay">
           <Spinner animation="border" />
         </div>
-      ) : hasProfile ? (
+      ) : (
         <Row className="justify-content-md-center">
         <Col md={8}>
           <Card className="mt-4">
@@ -219,24 +229,6 @@ const Play = () => {
             </Card.Body>
           </Card>
         </Col>
-        </Row>
-      ) : (
-        <Row className="justify-content-md-center">
-          <Col md={8}>
-            <Card className="mt-4">
-              <Card.Header className="text-center">
-                <h2>Play</h2>
-              </Card.Header>
-              <Card.Body>
-                <p>You must set up your profile before you can play.</p> 
-                <LinkContainer to="/profile">
-                    <Button variant="primary" className="mb-4 w-100">
-                        Profile
-                    </Button>
-                </LinkContainer>
-              </Card.Body>
-            </Card>
-          </Col>
         </Row>
       )}
 
