@@ -91,7 +91,7 @@ export const idlFactory = ({ IDL }) => {
         [],
       ),
     'getPredictions' : IDL.Func(
-        [IDL.Text, IDL.Nat16, IDL.Nat8],
+        [IDL.Nat16, IDL.Nat8],
         [IDL.Vec(Prediction)],
         [],
       ),

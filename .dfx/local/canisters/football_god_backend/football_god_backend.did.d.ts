@@ -72,7 +72,7 @@ export interface _SERVICE {
   'getGameweekPot' : ActorMethod<[], bigint>,
   'getGameweeks' : ActorMethod<[number], Array<Gameweek>>,
   'getPayoutData' : ActorMethod<[number, number], [] | [PayoutData]>,
-  'getPredictions' : ActorMethod<[string, number, number], Array<Prediction>>,
+  'getPredictions' : ActorMethod<[number, number], Array<Prediction>>,
   'getProfile' : ActorMethod<[], [] | [Profile]>,
   'getSeason' : ActorMethod<[number], [] | [Season]>,
   'getSeasons' : ActorMethod<[], Array<Season>>,

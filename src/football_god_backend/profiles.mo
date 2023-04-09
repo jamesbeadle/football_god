@@ -26,7 +26,7 @@ module {
                 principalName = profile.principalName; 
                 displayName = profile.displayName;
                 depositAddress = profile.depositAddress;
-                wallet = ""; 
+                wallet = profile.wallet; 
                 balance = 0;
             };
         }));

@@ -77,71 +77,82 @@ const Profile = () => {
   }, []);
 
   return (
-    <Container>
-      {isLoading && (
+      isLoading ? (
         <div className="customOverlay">
           <Spinner animation="border" />
         </div>
-      )}
-      <Row className="justify-content-md-center">
-        <Col md={8}>
-          <Card className="mt-4">
-            <Card.Header className="text-center">
-              <h2>Profile</h2>
-            </Card.Header>
-            <Card.Body>
-              <ListGroup variant="flush">
+      ) : (
+        <Container>
+        <Row className="justify-content-md-center">
+          <Col md={8}>
+            <Card className="mt-4">
+              <Card.Header className="text-center">
+                <h2>Profile</h2>
+              </Card.Header>
+              <Card.Body>
+                <ListGroup variant="flush">
 
-                <ListGroup.Item>
-                  <strong>Principal Id:</strong> {principalName}
-                </ListGroup.Item>
+                  <ListGroup.Item>
+                    <h6>Principal Id:</h6>
+                    <p><small>{principalName}</small></p>
+                  </ListGroup.Item>
 
-                <ListGroup.Item>
-                  <strong>Deposit Address:</strong> {toHexString(depositAddress)}{' '}
-                  <CopyIcon onClick={() => navigator.clipboard.writeText(toHexString(depositAddress))} />
-                </ListGroup.Item>
+                  <ListGroup.Item>
+                    <h6>Deposit Address:</h6>
+                    <p><small>{toHexString(depositAddress)}{' '}
+                    <CopyIcon onClick={() => navigator.clipboard.writeText(toHexString(depositAddress))} /></small></p>
+                  </ListGroup.Item>
 
-                <ListGroup.Item>
-                  <strong>Account Balance:</strong> {(Number(balance) / 1e8).toFixed(4)} ICP
-                  <Button className="ml-2" variant="warning" onClick={() => setShowWithdrawICPModal(true)}>Withdraw</Button>
-                </ListGroup.Item>
+                  <ListGroup.Item>
+                    <h6>Display Name:</h6>
+                    <p>
+                      <small>{displayName}</small>
+                      <Button className="btn btn-primary btn-sm ml-3" onClick={() => setShowUpdateNameModal(true)}>Update</Button>
+                    </p>
+                  </ListGroup.Item>
 
-                <ListGroup.Item>
-                  <strong>Display Name:</strong> {displayName }
-                  <Button className="ml-2" variant="primary" onClick={() => setShowUpdateNameModal(true)}>Update</Button>
-                </ListGroup.Item>
+                  <ListGroup.Item>
+                    <h6>Account Balance:</h6>
+                    <p>
+                      <small>{(Number(balance) / 1e8).toFixed(4)} ICP</small>
+                      <Button className="btn btn-primary btn-sm ml-3" onClick={() => setShowWithdrawICPModal(true)}>Withdraw</Button>
+                    </p>
+                  </ListGroup.Item>
 
-                <ListGroup.Item>
-                  <strong>Withdraw Wallet Address:</strong> {wallet ? wallet : 'Not Set'}
-                  <Button className="ml-2" variant="primary" onClick={() => setShowUpdateWalletModal(true)}>Update</Button>
-                </ListGroup.Item>
-              </ListGroup>
-              
-            </Card.Body>
-          </Card>
-        </Col>
-      </Row>
+                  <ListGroup.Item>
+                    <h6>Withdraw Wallet Address:</h6>
+                    <p>
+                      <small>{wallet ? wallet : 'Not Set'}</small>
+                      <Button className="btn btn-primary btn-sm ml-3" onClick={() => setShowUpdateWalletModal(true)}>Update</Button>
+                    </p>
+                  </ListGroup.Item>
+                </ListGroup>
+                
+              </Card.Body>
+            </Card>
+          </Col>
+        </Row>
 
-      <UpdateNameModal
-        show={showUpdateNameModal}
-        onHide={hideUpdateNameModal}
-        setIsLoading={setIsLoading}
-      />
+        <UpdateNameModal
+          show={showUpdateNameModal}
+          onHide={hideUpdateNameModal}
+          setIsLoading={setIsLoading}
+        />
 
-      <UpdateWalletModal
-        show={showUpdateWalletModal}
-        onHide={hideUpdateWalletModal}
-        setIsLoading={setIsLoading}
-      />
+        <UpdateWalletModal
+          show={showUpdateWalletModal}
+          onHide={hideUpdateWalletModal}
+          setIsLoading={setIsLoading}
+        />
 
-      <WithdrawICPModal
-        show={showWithdrawICPModal}
-        onHide={hideWithdrawICPModal}
-        setIsLoading={setIsLoading}
-        balance={balance}
-      />
-
-    </Container>
+        <WithdrawICPModal
+          show={showWithdrawICPModal}
+          onHide={hideWithdrawICPModal}
+          setIsLoading={setIsLoading}
+          balance={balance}
+        />
+      </Container>
+    )
   );
 };
 

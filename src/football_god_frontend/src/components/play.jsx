@@ -9,33 +9,26 @@ import { LinkContainer } from 'react-router-bootstrap';
 const Play = () => {
   
   const { authClient } = useContext(AuthContext);
-
   const navigate = useNavigate();
 
-  const [isLoading, setIsLoading] = useState(false);
-  const [hasProfile, setHasProfile] = useState(false);
-  const [scores, setScores] = useState({});
-  const [fixtures, setFixtures] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [activeSeason, setActiveSeason] = useState(null);
   const [activeGameweek, setActiveGameweek] = useState(null);
   const [teams, setTeamsData] = useState([]);
+  const [fixtures, setFixtures] = useState([]);
+  const [scores, setScores] = useState({});
   const [hasPaid, setHasPaid] = useState(false);
   const [balance, setBalance] = useState(0);
 
   useEffect(() => {
-    checkProfile();
-  }, []);
-
-  useEffect(() => {
-    if(hasProfile){
       fetchTeams();
       const fetchData = async () => {
+        await checkProfile();
         await fetchActiveSeason();
         await fetchActiveGameweek();
       };
       fetchData();
-    }
-  }, [hasProfile]);
+  });
 
   useEffect(() => {
     const fetchData = async () => {
@@ -43,6 +36,7 @@ const Play = () => {
       await fetchExistingPredictions();
       await checkSweepstakePaid();
       await fetchBalance();
+      setIsLoading(false);
     };
     fetchData();
   }, [activeSeason, activeGameweek]);
@@ -81,7 +75,7 @@ const Play = () => {
     if (activeSeason && activeGameweek) {
       const identity = authClient.getIdentity();
       Actor.agentOf(football_god_backend_actor).replaceIdentity(identity);
-      const fetchedPredictions = await football_god_backend_actor.getPredictions(identity, activeSeason.id, activeGameweek.number);
+      const fetchedPredictions = await football_god_backend_actor.getPredictions(activeSeason.id, activeGameweek.number);
       const existingScores = fetchedPredictions.reduce((acc, prediction) => {
         acc[prediction.fixtureId] = { home: prediction.homeGoals, away: prediction.awayGoals };
         return acc;

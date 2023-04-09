@@ -326,7 +326,9 @@ actor Self {
       return Array.size<Types.Fixture>(fixturesWithPredictions) == fixturesCount;
   };
 
-  public shared ({caller}) func getPredictions(principalName: Text, seasonId: Nat16, gameweekNumber: Nat8) : async [Types.Prediction] {
+  public shared ({caller}) func getPredictions(seasonId: Nat16, gameweekNumber: Nat8) : async [Types.Prediction] {
+    assert not Principal.isAnonymous(caller);
+    let principalName = Principal.toText(caller); 
     return predictionsInstance.getPredictions(principalName, seasonId, gameweekNumber); 
   };
 

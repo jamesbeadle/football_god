@@ -98,7 +98,7 @@ service : {
   getGameweekPot: () -> (int64);
   getGameweeks: (nat16) -> (vec Gameweek) query;
   getPayoutData: (nat16, nat8) -> (opt PayoutData);
-  getPredictions: (text, nat16, nat8) -> (vec Prediction);
+  getPredictions: (nat16, nat8) -> (vec Prediction);
   getProfile: () -> (opt Profile);
   getSeason: (nat16) -> (opt Season) query;
   getSeasons: () -> (vec Season) query;

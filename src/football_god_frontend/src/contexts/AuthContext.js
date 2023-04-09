@@ -17,12 +17,20 @@ export const AuthProvider = ({ children }) => {
 
       const isLoggedIn = await authClient.isAuthenticated();
       setIsAuthenticated(isLoggedIn);
-
+      
       if (isLoggedIn) {
-        const identity = authClient.getIdentity();
-        Actor.agentOf(football_god_backend_actor).replaceIdentity(identity);
-        const userIsAdmin = await football_god_backend_actor.isAdmin();
-        setIsAdmin(userIsAdmin);
+        try{
+          const identity = authClient.getIdentity();
+          console.log(identity.getPrincipal())
+          Actor.agentOf(football_god_backend_actor).replaceIdentity(identity);
+          const userIsAdmin = await football_god_backend_actor.isAdmin();
+          setIsAdmin(userIsAdmin);
+        }
+        catch(error){
+          console.log(error);
+          authClient.logout();
+        }
+      
       } else {
         setIsAdmin(false);
       }
