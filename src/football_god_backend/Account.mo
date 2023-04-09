@@ -7,12 +7,23 @@ import Text "mo:base/Text";
 import CRC32 "./CRC32";
 import SHA224 "./SHA224";
 import Buffer "mo:base/Buffer";
+import Iter "mo:base/Iter";
+import Result "mo:base/Result";
+import Option "mo:base/Option";
+import Types "types";
 
 module {
 
   public type AccountIdentifier = Blob;
   
   public type Subaccount = Blob;
+
+  private let base : Nat8 = 0x10;
+
+  private let symbols = [
+      '0', '1', '2', '3', '4', '5', '6', '7',
+      '8', '9', 'a', 'b', 'c', 'd', 'e', 'f',
+  ];
 
   func beBytes(n: Nat32) : [Nat8] {
     func byte(n: Nat32) : Nat8 {
@@ -67,6 +78,50 @@ module {
     let blob = Blob.fromArray(Buffer.toArray(buffer));
 
     return blob;
+  };
+
+  
+
+  public func decode(text : Text) : Result.Result<[Nat8], Types.Error> {
+      let next = text.chars().next;
+      func parse() : Result.Result<Nat8, Types.Error> {
+      Option.get<Result.Result<Nat8, Types.Error>>(
+          do ? {
+          let c1 = next()!;
+          let c2 = next()!;
+          Result.chain<Nat8, Nat8, Types.Error>(decodeW4(c1), func (x1) {
+              Result.chain<Nat8, Nat8, Types.Error>(decodeW4(c2), func (x2) {
+                  #ok (x1 * base + x2);
+              })
+          })
+          },
+          #err (#DecodeError),
+      );
+      };
+      var i = 0;
+      let n = text.size() / 2 + text.size() % 2;
+      let array = Array.init<Nat8>(n, 0);
+      while (i != n) {
+      switch (parse()) {
+          case (#ok w8) {
+          array[i] := w8;
+          i += 1;
+          };
+          case (#err err) {
+          return #err err;
+          };
+      };
+      };
+      #ok (Array.freeze<Nat8>(array));
+  };
+
+  private func decodeW4(char : Char) : Result.Result<Nat8, Types.Error> {
+      for (i in Iter.range(0, 15)) {
+      if (symbols[i] == char) {
+          return #ok (Nat8.fromNat(i));
+      };
+      };
+      #err (#DecodeError);
   };
   
 }

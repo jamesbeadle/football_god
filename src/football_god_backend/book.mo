@@ -4,7 +4,6 @@ import Float "mo:base/Float";
 import Int "mo:base/Int";
 import Int64 "mo:base/Int64";
 import Nat64 "mo:base/Nat64";
-import Debug "mo:base/Debug";
 import Types "types";
 import Time "mo:base/Time";
 import Result "mo:base/Result";
@@ -14,7 +13,6 @@ import Array "mo:base/Array";
 import Buffer "mo:base/Buffer";
 import Text "mo:base/Text";
 import Blob "mo:base/Blob";
-import Nat8 "mo:base/Nat8";
 
 module {
     
@@ -69,8 +67,6 @@ module {
         let e8Amount = Int64.toNat64(Float.toInt64(amount * 1e8));
         let source_account = Account.accountIdentifier(defaultAccount, Account.principalToSubaccount(user));
         let balance = await Ledger.account_balance({ account = source_account });
-
-        Debug.print(debug_show balance);
         
         if(balance.e8s < icp_fee){
             return #err(#NotAllowed);
@@ -82,21 +78,24 @@ module {
             return #err(#NotAllowed);
         };
 
-        Debug.print(debug_show balance);
-        let account_id = Account.accountIdentifier(user, Account.defaultSubaccount());
+        let account_id = Account.decode(walletAddress);
+        switch account_id {
+            case (#ok array) {
+                let result = await Ledger.transfer({
+                    memo: Nat64    = 0;
+                    from_subaccount = ?Account.principalToSubaccount(user);
+                    to = Blob.fromArray(array);
+                    amount = { e8s = e8Amount };
+                    fee = { e8s = icp_fee };
+                    created_at_time = ?{ timestamp_nanos = Nat64.fromNat(Int.abs(Time.now())) };
+                });
 
-        let result = await Ledger.transfer({
-            memo: Nat64    = 0;
-            from_subaccount = ?source_account;
-            to = account_id;
-            amount = { e8s = e8Amount };
-            fee = { e8s = icp_fee };
-            created_at_time = ?{ timestamp_nanos = Nat64.fromNat(Int.abs(Time.now())) };
-        });
-
-        Debug.print(debug_show result);
-
-        return #ok(());
+                return #ok(());
+            };
+            case (#err err) {
+                return #err(#NotAllowed);
+            };
+        };
     };
 
     public func getProfileBalances(defaultAccount: Principal, profiles: [Types.Profile]) : async [Types.Profile] {

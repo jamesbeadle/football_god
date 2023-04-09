@@ -7,6 +7,7 @@ module Types {
         #AlreadyExists;
         #NotAuthorized;
         #NotAllowed;
+        #DecodeError;
     };
 
     public type Season = {
