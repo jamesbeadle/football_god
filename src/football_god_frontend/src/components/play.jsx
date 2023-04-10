@@ -143,7 +143,7 @@ const Play = () => {
       predictions
     );
     setIsLoading(false);
-    navigate(`/view-submission/${activeSeason}/${activeGameweek}`);
+    navigate(`/view-submission/${Number(activeSeason.id)}/${Number(activeGameweek.number)}`);
     
   };
 
@@ -167,7 +167,7 @@ const Play = () => {
 
     await football_god_backend_actor.enterSweepstake(Number(activeSeason.id), Number(activeGameweek.number));
     setIsLoading(false);
-    navigate(`/view-submission/${activeSeason}/${activeGameweek}`);
+    navigate(`/view-submission/${Number(activeSeason.id)}/${Number(activeGameweek.number)}`);
   };
 
   const getTeamNameById = (teamId) => {

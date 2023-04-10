@@ -21,11 +21,17 @@ const ViewSubmission = () => {
       await fetchTeams();
       await fetchFixtures();
       await fetchPredictions();
-      calculateTotals()
-      setIsLoading(false);
     };
     fetchData();
   }, []);
+
+  
+  useEffect(() => {
+    if (fixtures.length > 0 && predictions.length > 0) {
+      calculateTotals();
+      setIsLoading(false);
+    }
+  }, [fixtures, predictions]);
 
   const fetchSeason = async () => {
     const seasonData = await football_god_backend_actor.getSeason(Number(seasonId));
@@ -47,7 +53,7 @@ const ViewSubmission = () => {
     setPredictions(predictionsData);
   };
 
-  const calculateTotals = () => {
+  const calculateTotals = async () => {
     let correctCount = 0;
   
     predictions.forEach((prediction) => {
@@ -57,7 +63,7 @@ const ViewSubmission = () => {
           fixture.awayTeam === prediction.awayTeam
       );
   
-      if (fixture && fixture.status === 'finished') {
+      if (fixture && fixture.status < 2) {
         if (
           prediction.homeGoals === fixture.homeGoals &&
           prediction.awayGoals === fixture.awayGoals
@@ -66,7 +72,7 @@ const ViewSubmission = () => {
         }
       }
     });
-  
+    
     setTotalCorrect(correctCount);
     setTotalFixtures(fixtures.length);
   };
@@ -77,8 +83,8 @@ const ViewSubmission = () => {
         fixture.homeTeam === prediction.homeTeam &&
         fixture.awayTeam === prediction.awayTeam
     );
-  
-    if (!fixture || fixture.status !== 'finished') {
+      
+    if (!fixture || fixture.status < 2) {
       return 'unplayed';
     }
   
