@@ -4,7 +4,6 @@ import { football_god_backend as football_god_backend_actor } from '../../../dec
 import { Actor } from "@dfinity/agent";
 import { AuthContext } from "../contexts/AuthContext";
 import { useNavigate } from 'react-router-dom';
-import { LinkContainer } from 'react-router-bootstrap';
 
 const Play = () => {
   
@@ -105,7 +104,7 @@ const Play = () => {
     const identity = authClient.getIdentity();
     Actor.agentOf(football_god_backend_actor).replaceIdentity(identity);
     const userBalance = await football_god_backend_actor.getUserAccountBalance();
-    setBalance(userBalance);
+    setBalance((Number(userBalance) / 1e8));
   };
 
   const handleChange = (event, fixtureId, team) => {
@@ -166,6 +165,25 @@ const Play = () => {
     const team = teams.find((team) => team.id === teamId);
     return team ? team.name : '';
   };
+
+  
+  const incrementScore = (fixtureId, team) => {
+    const updatedScores = { ...scores };
+    if (!updatedScores[fixtureId]) {
+      updatedScores[fixtureId] = { home: 0, away: 0 };
+    }
+    updatedScores[fixtureId][team] += 1;
+    setScores(updatedScores);
+  };
+
+  const decrementScore = (fixtureId, team) => {
+    const updatedScores = { ...scores };
+    if (!updatedScores[fixtureId]) {
+      updatedScores[fixtureId] = { home: 0, away: 0 };
+    }
+    updatedScores[fixtureId][team] = Math.max(0, updatedScores[fixtureId][team] - 1);
+    setScores(updatedScores);
+  };
   
 
 
@@ -185,31 +203,44 @@ const Play = () => {
             <Card.Body>
               <Form onSubmit={handlePlayForFreeSubmit}>
                 {fixtures.map((fixture) => (
-                  <Form.Group key={fixture.id} as={Row} className="mb-3">
-                    <Col xs={3}>
-                      <Form.Control
-                        className="w-100"
-                        type="number"
-                        min="0"
-                        placeholder="Home"
-                        value={scores[fixture.id]?.homeGoals}
-                        onChange={(event) => handleChange(event, fixture.id, 'home')}
-                      />
-                    </Col>
-                    <Col xs={6} className="text-center">
-                      {getTeamNameById(fixture.homeTeamId)} vs {getTeamNameById(fixture.awayTeamId)}
-                    </Col>
-                    <Col xs={3}>
-                      <Form.Control 
-                        className="w-100"
-                        type="number"
-                        min="0"
-                        placeholder="Away"
-                        value={scores[fixture.id]?.awayGoals}
-                        onChange={(event) => handleChange(event, fixture.id, 'away')}
-                      />
-                    </Col>
-                  </Form.Group>
+                   <Form.Group key={fixture.id} as={Row} className="mb-3">
+                   <Col xs={4} className="text-center my-1">
+                     <Form.Group className="w-100 h-100">
+                       <Button onClick={() => incrementScore(fixture.id, 'home')} className="d-block mx-auto w-100">+</Button>
+                       <Form.Control
+                         style={{height: '3rem', textAlign: 'center'}}
+                         type="number"
+                         min="0"
+                         placeholder=""
+                         value={scores[fixture.id]?.homeGoals || 0}
+                         onChange={(event) => handleChange(event, fixture.id, 'home')}
+                         className="d-block mx-auto custom-number-input w-100"
+                       />
+                       <Button onClick={() => decrementScore(fixture.id, 'home')} className="d-block mx-auto w-100">-</Button>
+                     </Form.Group>
+                   </Col>
+                   <Col xs={4} className="text-center my-1 d-flex align-items-center justify-content-center flex-column">
+                     <span>{getTeamNameById(fixture.homeTeamId)}</span>
+                     <span>vs</span>
+                     <span>{getTeamNameById(fixture.awayTeamId)}</span>
+                   </Col>
+                   <Col xs={4} className="text-center my-1">
+                     <Form.Group className="w-100 h-100">
+                       <Button onClick={() => incrementScore(fixture.id, 'away')} className="d-block mx-auto w-100">+</Button>
+                       <Form.Control
+                         style={{height: '3rem', textAlign: 'center'}}
+                         type="number"
+                         min="0"
+                         placeholder=""
+                         value={scores[fixture.id]?.awayGoals || 0}
+                         onChange={(event) => handleChange(event, fixture.id, 'away')}
+                         className="d-block mx-auto custom-number-input w-100"
+                       />
+                       <Button onClick={() => decrementScore(fixture.id, 'away')} className="d-block mx-auto w-100">-</Button>
+                     </Form.Group>
+                   </Col>
+                 </Form.Group>
+                 
                 ))}
                 <div className="text-center">
                   <Button type="submit" variant="primary">Save Scores</Button>
