@@ -41,3 +41,27 @@
 .custom-number-input {
   -moz-appearance: textfield;
 }
+
+.fixture-row {
+  border: 4px solid #ccc;
+}
+
+
+
+.column-border {
+  border-left: 1px solid #ccc;
+  border-right: 1px solid #ccc;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+
+.fixture-row .form-group {
+  margin-bottom: 0;
+  padding: 0;
+}
+
+.button-column {
+  padding-right: 0;
+  padding-left: 0;
+}
+
