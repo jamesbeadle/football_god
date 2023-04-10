@@ -332,6 +332,25 @@ actor Self {
     return predictionsInstance.getPredictions(principalName, seasonId, gameweekNumber); 
   };
 
+  public shared ({caller}) func getUserPredictions(principalName: Text, seasonId: Nat16, gameweekNumber: Nat8) : async [Types.Prediction] {
+
+    let gameweek = seasonsInstance.getGameweek(activeSeason, activeGameweek);
+    
+    switch gameweek {
+      case (null) {
+        return [];
+      };
+      
+      case (?gw) {
+        if(gw.status == 0 or gw.status == 1){
+          return [];
+        };
+      };
+    };
+
+    return predictionsInstance.getPredictions(principalName, seasonId, gameweekNumber); 
+  };
+
   public shared ({caller}) func checkSweepstakePaid(seasonId: Nat16, gameweekNumber: Nat8) : async Bool {
     assert not Principal.isAnonymous(caller);
     let principalName = Principal.toText(caller); 

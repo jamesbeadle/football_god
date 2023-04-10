@@ -19,8 +19,9 @@ import Payout from "./components/admin/payout";
 import History from "./components/history";
 import Leaderboard from "./components/leaderboard";
 import Profile from "./components/profile/profile";
-import Submission from "./components/submission";
+import ViewSubmission from "./components/view-submission";
 import Seasons from "./components/admin/seasons/seasons";
+import ViewPrediction from "./components/view-prediction";
 
 const App = () => {
  
@@ -43,7 +44,8 @@ const App = () => {
             <Route path="/game-rules" element={<Rules />} />
             <Route path="/play" element={<Play />} />
             <Route path="/profile" element={<Profile />} />
-            <Route path="/submission" element={<Submission />} />
+            <Route path="/view-submission/:seasonId/:gameweekNumber" element={<ViewSubmission />} />
+            <Route path="/view-prediction/:userId/:seasonId/:gameweekNumber" element={<ViewPrediction />} />
           </Routes>
           <MyFooter />
         </div>

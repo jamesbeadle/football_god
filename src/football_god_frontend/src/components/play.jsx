@@ -98,9 +98,6 @@ const Play = () => {
       await checkSweepstakePaid();
     }
   };
-  
-  
-  
 
   const checkSweepstakePaid = async () => {
     const identity = authClient.getIdentity();
@@ -177,7 +174,6 @@ const Play = () => {
     const team = teams.find((team) => team.id === teamId);
     return team ? team.name : '';
   };
-
   
   const incrementScore = (fixtureId, team) => {
     setScores((prevScores) => {
@@ -190,7 +186,6 @@ const Play = () => {
     });
   };
   
-
   const decrementScore = (fixtureId, team) => {
     setScores((prevScores) => {
       const updatedScores = { ...prevScores };
@@ -201,9 +196,6 @@ const Play = () => {
       return updatedScores;
     });
   };
-  
-  
-
 
   return (
     <Container>

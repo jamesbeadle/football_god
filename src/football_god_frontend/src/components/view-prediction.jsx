@@ -3,8 +3,8 @@ import { useParams } from 'react-router-dom';
 import { Container, Row, Col, Card, ListGroup } from 'react-bootstrap';
 import { football_god_backend as football_god_backend_actor } from '../../../declarations/football_god_backend';
 
-const Submission = () => {
-  const { userId, seasonId, gameweekNumber } = useParams();
+const ViewPrediction = () => {
+  const { seasonId, gameweekNumber } = useParams();
   const [playerName, setDisplayName] = useState('');
   const [season, setSeason] = useState('');
   const [fixtures, setFixtures] = useState([]);
@@ -39,7 +39,7 @@ const Submission = () => {
   };
   
   const fetchPredictions = async () => {
-    const predictionsData = await football_god_backend_actor.getPredictions(userId, seasonId, gameweekNumber);
+    const predictionsData = await football_god_backend_actor.getPredictions(seasonId, gameweekNumber);
     setPredictions(predictionsData);
   };
 
@@ -120,4 +120,4 @@ const Submission = () => {
   );
 };
 
-export default Submission;
+export default ViewPrediction;

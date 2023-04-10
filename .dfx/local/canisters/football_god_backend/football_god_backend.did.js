@@ -102,6 +102,11 @@ export const idlFactory = ({ IDL }) => {
     'getTeams' : IDL.Func([], [IDL.Vec(Team)], ['query']),
     'getUserAccountBalance' : IDL.Func([], [IDL.Nat64], []),
     'getUserHistory' : IDL.Func([IDL.Nat16], [IDL.Vec(UserGameweek)], []),
+    'getUserPredictions' : IDL.Func(
+        [IDL.Text, IDL.Nat16, IDL.Nat8],
+        [IDL.Vec(Prediction)],
+        [],
+      ),
     'getUsersWithBalances' : IDL.Func(
         [IDL.Nat, IDL.Nat],
         [IDL.Vec(Profile)],

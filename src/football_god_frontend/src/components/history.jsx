@@ -58,7 +58,7 @@ const History = () => {
   };
 
   const handleViewSubmission = (gameweekNumber) => {
-    navigate(`/view-submission/${gameweekNumber}`);
+    navigate(`/view-submission/${selectedSeason.id}/${gameweekNumber}`);
   };
 
   return (
