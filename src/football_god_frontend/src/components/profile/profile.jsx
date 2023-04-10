@@ -49,6 +49,7 @@ const Profile = () => {
     const identity = authClient.getIdentity();
     Actor.agentOf(football_god_backend_actor).replaceIdentity(identity);
     const profile = await football_god_backend_actor.getProfile();
+    console.log(profile)
     if(profile && Object.keys(profile).length > 0){
       setPrincipalName(profile[0].principalName);
       setDisplayName(profile[0].displayName);

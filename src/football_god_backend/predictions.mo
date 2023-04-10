@@ -128,12 +128,15 @@ module {
     };
     
     public func getUserHistory(principalName: Text, seasonId: Nat16) : [Types.UserGameweek] {
-        let userHistory = userPredictions.get(principalName);
+      let userHistory = userPredictions.get(principalName);
 
-        switch userHistory {
+      switch userHistory {
           case (null) { return []; };
           case (?gameweeks) {
-            return List.toArray(gameweeks);
+            let filteredGameweeks = List.filter<Types.UserGameweek>(gameweeks, func (ugw: Types.UserGameweek) : Bool {
+              return ugw.seasonId == seasonId;
+            });
+            return List.toArray(filteredGameweeks);
           };
         };
     };

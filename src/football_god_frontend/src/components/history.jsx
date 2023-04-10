@@ -1,5 +1,5 @@
 import React, { useState, useContext, useEffect } from 'react';
-import { Container, Row, Col, Dropdown, Table, Button } from 'react-bootstrap';
+import { Container, Row, Col, Dropdown, Table, Button, Spinner } from 'react-bootstrap';
 import { football_god_backend as football_god_backend_actor } from '../../../declarations/football_god_backend';
 import { Actor } from "@dfinity/agent";
 import { AuthContext } from "../contexts/AuthContext";
@@ -9,13 +9,12 @@ const History = () => {
   const { authClient } = useContext(AuthContext);
   const navigate = useNavigate();
 
-  const [displayName, setDisplayName] = useState('');
+  const [isLoading, setIsLoading] = useState(true);
   const [seasons, setSeasons] = useState([]);
   const [selectedSeason, setSelectedSeason] = useState(null);
   const [userHistory, setUserHistory] = useState([]);
 
   useEffect(() => {
-    fetchDisplayName();
     const fetchData = async () => {
       await fetchSeasons();
       await fetchActiveSeason();
@@ -24,15 +23,14 @@ const History = () => {
   }, []);
 
   useEffect(() => {
-    fetchUserHistory();
-  }, [selectedSeason]);
-
-  const fetchDisplayName = async () => {
-    const identity = authClient.getIdentity();
-    Actor.agentOf(football_god_backend_actor).replaceIdentity(identity);
-    const profile = await football_god_backend_actor.getProfile();
-    setDisplayName(profile.displayName);
-  };
+    if(!selectedSeason || !seasons){
+      return;
+    }
+    const fetchData = async () => {
+      await fetchUserHistory();
+    };
+    fetchData();
+  }, [selectedSeason, seasons]);
 
   const fetchSeasons = async () => {
     const fetchedSeasons = await football_god_backend_actor.getSeasons();
@@ -45,15 +43,15 @@ const History = () => {
   };
 
   const fetchUserHistory = async () => {
-    if (selectedSeason) {
-      const identity = authClient.getIdentity();
-      Actor.agentOf(football_god_backend_actor).replaceIdentity(identity);
-      const fetchedHistory = await football_god_backend_actor.getUserHistory(selectedSeason.id);
-      setUserHistory(fetchedHistory);
-    }
+    const identity = authClient.getIdentity();
+    Actor.agentOf(football_god_backend_actor).replaceIdentity(identity);
+    const fetchedHistory = await football_god_backend_actor.getUserHistory(selectedSeason.id);
+    setUserHistory(fetchedHistory);
+    setIsLoading(false);
   };
 
   const handleSeasonSelect = (season) => {
+    setIsLoading(true);
     setSelectedSeason(season);
   };
 
@@ -62,6 +60,11 @@ const History = () => {
   };
 
   return (
+    isLoading ? (
+      <div className="customOverlay">
+        <Spinner animation="border" />
+      </div>
+    ) : (
     <Container>
       <Row className="justify-content-md-center">
         <Col md={8}>
@@ -82,21 +85,21 @@ const History = () => {
             <Table striped bordered hover responsive className="mt-4">
               <thead>
                 <tr>
-                  <th>Gameweek</th>
-                  <th>Sweepstake</th>
-                  <th>Score</th>
-                  <th>Winnings (ICP)</th>
-                  <th>View</th>
+                  <th className="text-center">Gameweek</th>
+                  <th className="text-center">Sweepstake</th>
+                  <th className="text-center">Score</th>
+                  <th className="text-center">Winnings (ICP)</th>
+                  <th className="text-center">View</th>
                 </tr>
               </thead>
               <tbody>
                 {userHistory.map((entry) => (
                   <tr key={entry.gameweekNumber}>
-                    <td>{entry.gameweekNumber}</td>
-                    <td>{entry.enteredSweepstake ? 'Yes' : 'No'}</td>
-                    <td>{entry.correctScores} / {entry.predictionCount}</td>
-                    <td>{entry.enteredSweepstake ? entry.winnings : 'N/A'}</td>
-                    <td>
+                    <td className="text-center">{entry.gameweekNumber}</td>
+                    <td className="text-center">{entry.enteredSweepstake ? 'Yes' : 'No'}</td>
+                    <td className="text-center">{entry.correctScores} / {entry.predictionCount}</td>
+                    <td className="text-center">{entry.enteredSweepstake ? Number(entry.winnings).toFixed(4) : 'N/A'}</td>
+                    <td className="text-center">
                   <Button onClick={() => handleViewSubmission(entry.gameweekNumber)} variant="primary">
                     View
                   </Button>
@@ -108,8 +111,9 @@ const History = () => {
       )}
     </Col>
   </Row>
-</Container>
-);
+    </Container>
+    )
+  );
 };
 
 export default History;

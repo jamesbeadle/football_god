@@ -49,7 +49,7 @@ const Home = () => {
 
   const fetchTotalICP = async () => {
     const icp = await football_god_backend_actor.getGameweekPot();
-    setTotalICP(icp);
+    setTotalICP(Number(icp));
   };
   
   const fetchTeams = async () => {

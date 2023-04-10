@@ -13,6 +13,7 @@ import Array "mo:base/Array";
 import Buffer "mo:base/Buffer";
 import Text "mo:base/Text";
 import Blob "mo:base/Blob";
+import Debug "mo:base/Debug";
 
 module {
     
@@ -23,6 +24,7 @@ module {
    
     public func getGameweekPotBalance(defaultSubAccount: Account.AccountIdentifier) : async Float {
         let balance = await Ledger.account_balance({ account = defaultSubAccount });
+        Debug.print(debug_show(balance));
         return Float.fromInt64(Int64.fromNat64(balance.e8s)) * 0.95;
     };
 
@@ -35,8 +37,8 @@ module {
     public func transferWinnings(defaultAccount: Principal, user: Principal, amount: Float) : async () {
         let result = await Ledger.transfer({
           memo = 0;
-          from_subaccount = ?Account.defaultSubaccount();
-          to = Account.accountIdentifier(defaultAccount, Account.principalToSubaccount(user));
+          from_subaccount = ?Account.principalToSubaccount(defaultAccount);
+          to = Account.principalToSubaccount(user);
           amount = { e8s = Int64.toNat64(Float.toInt64(amount)) };
           fee = { e8s = icp_fee };
           created_at_time = ?{ timestamp_nanos = Nat64.fromNat(Int.abs(Time.now())) };
@@ -46,15 +48,15 @@ module {
     public func canAffordEntry(defaultAccount: Principal, user: Principal) : async Bool {
         let source_account = Account.accountIdentifier(defaultAccount, Account.principalToSubaccount(user));
         let balance = await Ledger.account_balance({ account = source_account });
-
-        return balance.e8s > entry_fee;
+        
+        return balance.e8s >= entry_fee;
     };
 
     public func transferEntryFee(defaultAccount: Principal, user: Principal) : async () {
         let result = await Ledger.transfer({
           memo = 0;
-          from_subaccount = ?Account.accountIdentifier(defaultAccount, Account.principalToSubaccount(user));
-          to = Account.defaultSubaccount();
+          from_subaccount = ?Account.principalToSubaccount(user);
+          to = Account.accountIdentifier(defaultAccount, Account.defaultSubaccount());
           amount = { e8s = entry_fee - icp_fee};
           fee = { e8s = icp_fee };
           created_at_time = ?{ timestamp_nanos = Nat64.fromNat(Int.abs(Time.now())) };
@@ -74,7 +76,7 @@ module {
 
         let withdrawable = balance.e8s - icp_fee;
 
-        if(e8Amount > withdrawable){
+        if(e8Amount >= withdrawable){
             return #err(#NotAllowed);
         };
 

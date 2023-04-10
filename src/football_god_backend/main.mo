@@ -59,9 +59,10 @@ actor Self {
   public shared ({caller}) func getProfile() : async ?Types.Profile {
     assert not Principal.isAnonymous(caller);
     let profile = profilesInstance.getProfile(Principal.toText(caller));
-
+    
     if(profile == null){
       let result = profilesInstance.createProfile(Principal.toText(caller), Principal.toText(caller), "", getUserDepositAccount(caller));
+      
       if(result == #ok(())){
         return profilesInstance.getProfile(Principal.toText(caller));
       };
@@ -377,6 +378,7 @@ actor Self {
   public shared func getGameweekPot() : async Int64 {
     let defaultSubAccount = getDefaultAccount();
     let potBalance = await bookInstance.getGameweekPotBalance(defaultSubAccount);
+    
     let balanceICP = potBalance / 1e8;
     return Float.toInt64(Float.nearest(balanceICP));
   };

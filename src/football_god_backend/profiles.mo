@@ -76,39 +76,16 @@ module {
 
         switch (existingProfile) {
             case (null) { 
-                let nameValid = isDisplayNameValid(updatedProfile.displayName);
-                if(not nameValid){
-                    return #err(#NotAllowed);
-                };
                 var newProfilesList = List.nil<Types.Profile>();
                 newProfilesList := List.push(updatedProfile, newProfilesList);
                 userProfiles := List.append(userProfiles, newProfilesList);
-                return #ok(());
              };
             case (?existingProfile) {
-                let nameChanged = updatedProfile.displayName != existingProfile.displayName;
-                if(nameChanged){
-                    let nameValid = isDisplayNameValid(updatedProfile.displayName);
-                    if(not nameValid){
-                        return #err(#NotAllowed);
-                    };
-                };
-
-                userProfiles := List.map<Types.Profile, Types.Profile>(userProfiles, func (profile: Types.Profile): Types.Profile {
-                    if (profile.principalName == principalName) {
-                        { 
-                            principalName = profile.principalName; 
-                            displayName = displayName;
-                            wallet = wallet; 
-                            depositAddress = depositAddress;
-                            balance = 0;
-                        }
-                    } else { profile }
-                });
-
-                return #ok(());
+                return #err(#NotAllowed);
             };
         };
+        return #ok(());
+
     };
 
     public func updateDisplayName(principalName: Types.PrincipalName, displayName: Text) : Result.Result<(), Types.Error> {
