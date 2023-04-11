@@ -6,6 +6,7 @@ import List "mo:base/List";
 import Iter "mo:base/Iter";
 import Array "mo:base/Array";
 import Nat8 "mo:base/Nat8";
+import Nat32 "mo:base/Nat32";
 
 module {
     
@@ -142,14 +143,17 @@ module {
     };
 
     
-    public func getLeaderboard(seasonId: Nat16, gameweekNumber: Nat8, start: Nat, count: Nat) : [Types.LeaderboardEntry] {
-      
+    public func getLeaderboard(seasonId: Nat16, gameweekNumber: Nat8, start: Nat, count: Nat) : Types.Leaderboard {
+
+        var totalEntries: Nat32 = 0;
+
         func compare(leaderboardEntry1: Types.LeaderboardEntry, leaderboardEntry2: Types.LeaderboardEntry) : Bool {
             return leaderboardEntry1.correctScores >= leaderboardEntry2.correctScores;
         };
 
         func mergeSort(entries: List.List<Types.LeaderboardEntry>) : List.List<Types.LeaderboardEntry> {
             let len = List.size(entries);
+            totalEntries := Nat32.fromNat(len);
 
             if (len <= 1) {
                 return entries;
@@ -167,6 +171,7 @@ module {
             return List.map<Types.UserGameweek, Types.LeaderboardEntry>(filteredGameweeks, func (ugw: Types.UserGameweek) : Types.LeaderboardEntry {
                 return {
                     principalName = principal;
+                    displayName = principal;
                     correctScores = ugw.correctScores;
                     predictionCount = ugw.predictionCount;
                 };
@@ -178,7 +183,12 @@ module {
         let sortedLeaderboardEntries = mergeSort(flattenedLeaderboardEntries);
         let paginatedLeaderboardEntries = List.take(List.drop(sortedLeaderboardEntries, start), count);
 
-        return List.toArray<Types.LeaderboardEntry>(paginatedLeaderboardEntries);
+        let leaderboard: Types.Leaderboard = {
+          entries = List.toArray<Types.LeaderboardEntry>(paginatedLeaderboardEntries);
+          totalEntries = totalEntries;
+        };
+        
+        return leaderboard;
     };
 
 
@@ -191,6 +201,7 @@ module {
             return List.map<Types.UserGameweek, Types.LeaderboardEntry>(filteredGameweeks, func (ugw: Types.UserGameweek) : Types.LeaderboardEntry {
                 return {
                     principalName = principal;
+                    displayName = principal;
                     correctScores = ugw.correctScores;
                     predictionCount = ugw.predictionCount;
                 };
@@ -230,6 +241,7 @@ module {
         return List.map<Types.UserGameweek, Types.LeaderboardEntry>(filteredGameweeks, func (ugw: Types.UserGameweek) : Types.LeaderboardEntry {
           return {
             principalName = principal;
+            displayName = principal;
             correctScores = ugw.correctScores;
             predictionCount = ugw.predictionCount;
           };

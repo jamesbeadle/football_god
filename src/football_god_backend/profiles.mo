@@ -233,6 +233,30 @@ module {
         return true;
     };
 
+    public func getLeaderboardNames(leaderboard: Types.Leaderboard) : Types.Leaderboard {
+        let populatedEntries = List.map<Types.LeaderboardEntry, Types.LeaderboardEntry>(List.fromArray(leaderboard.entries), func(entry: Types.LeaderboardEntry): Types.LeaderboardEntry {
+            let profile = getProfile(entry.principalName);
+            switch (profile) {
+                case (null) {
+                    return entry; // Keep the existing entry if no profile is found
+                };
+                case (?profileData) {
+                    return {
+                        principalName = entry.principalName;
+                        displayName = profileData.displayName;
+                        correctScores = entry.correctScores;
+                        predictionCount = entry.predictionCount;
+                    };
+                };
+            };
+        });
+        return {
+            entries = List.toArray(populatedEntries);
+            totalEntries = leaderboard.totalEntries;
+        };
+    };
+
+
 
   }
 }

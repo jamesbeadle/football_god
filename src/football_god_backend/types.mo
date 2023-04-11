@@ -62,8 +62,14 @@ module Types {
         awayGoals: Nat8;
     };
 
+    public type Leaderboard = {
+        entries: [LeaderboardEntry];
+        totalEntries: Nat32;
+    };
+
     public type LeaderboardEntry = {
         principalName: Text;
+        displayName: Text;
         correctScores: Nat8;
         predictionCount: Nat8;
     };

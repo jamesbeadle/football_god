@@ -368,6 +368,7 @@ actor Self {
   // Ledger functions
 
   private func getDefaultAccount() : Account.AccountIdentifier {
+    Debug.print(debug_show(Account.principalToSubaccount(Principal.fromActor(Self))));
     Account.accountIdentifier(Principal.fromActor(Self), Account.defaultSubaccount())
   };
 
@@ -474,6 +475,17 @@ actor Self {
     let profiles = profilesInstance.getProfilesByPage(page, pageSize);
     let profilesWithBalances = await bookInstance.getProfileBalances(Principal.fromActor(Self), profiles);
     return profilesWithBalances;
+  };
+
+  //leaderboard functions
+  
+
+  public shared ({caller}) func getLeaderboard(seasonId: Nat16, gameweekNumber: Nat8, start: Nat, count: Nat) : async Types.Leaderboard {
+
+    let leaderboard = predictionsInstance.getLeaderboard(seasonId, gameweekNumber, start, count);
+    let leaderboardWithNames = profilesInstance.getLeaderboardNames(leaderboard);
+
+    return leaderboardWithNames; 
   };
 
   system func preupgrade() {

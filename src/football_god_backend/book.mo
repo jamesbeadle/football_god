@@ -24,7 +24,7 @@ module {
    
     public func getGameweekPotBalance(defaultSubAccount: Account.AccountIdentifier) : async Float {
         let balance = await Ledger.account_balance({ account = defaultSubAccount });
-        Debug.print(debug_show(balance));
+        Debug.print(debug_show(defaultSubAccount));
         return Float.fromInt64(Int64.fromNat64(balance.e8s)) * 0.95;
     };
 

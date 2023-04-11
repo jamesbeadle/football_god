@@ -59,6 +59,17 @@ type List =
        Prediction;
        List;
      };
+type LeaderboardEntry = 
+ record {
+   correctScores: nat8;
+   predictionCount: nat8;
+   principalName: text;
+ };
+type Leaderboard = 
+ record {
+   entries: vec LeaderboardEntry;
+   totalEntries: nat32;
+ };
 type Gameweek = 
  record {
    fixtureCount: nat8;
@@ -98,6 +109,7 @@ service : {
   getFixtures: (nat16, nat8) -> (vec Fixture) query;
   getGameweekPot: () -> (int64);
   getGameweeks: (nat16) -> (vec Gameweek) query;
+  getLeaderboard: (nat16, nat8, nat, nat) -> (Leaderboard);
   getPayoutData: (nat16, nat8) -> (opt PayoutData);
   getPredictions: (nat16, nat8) -> (vec Prediction);
   getProfile: () -> (opt Profile);

@@ -1,15 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Row, Col, Dropdown, Table, Button, ButtonGroup } from 'react-bootstrap';
+import { Container, Row, Col, Dropdown, Table, Button, ButtonGroup, Spinner } from 'react-bootstrap';
 import { football_god_backend as football_god_backend_actor } from '../../../declarations/football_god_backend';
 import { useNavigate } from 'react-router-dom';
 
 const Leaderboard = () => {
 
   const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(true);
+
   const [seasons, setSeasons] = useState([]);
   const [selectedSeason, setSelectedSeason] = useState(null);
   const [selectedGameweek, setSelectedGameweek] = useState(null);
-  const [leaderboard, setLeaderboard] = useState([]);
+  const [leaderboard, setLeaderboard] = useState(null);
   const [page, setPage] = useState(0);
   const resultsPerPage = 25;
 
@@ -28,7 +30,14 @@ const Leaderboard = () => {
   }, [seasons]);
 
   useEffect(() => {
-    fetchLeaderboard();
+    const fetchData = async () => {
+      if (selectedSeason && selectedSeason.id > 0 && selectedGameweek > 0) {
+        await fetchLeaderboard();
+        setIsLoading(false);
+      }
+    };
+    fetchData();
+    
   }, [selectedSeason, selectedGameweek, page]);
 
   const fetchSeasons = async () => {
@@ -43,12 +52,13 @@ const Leaderboard = () => {
 
   const fetchActiveGameweek = async () => {
     const activeGameweek = await football_god_backend_actor.getActiveGameweek();
-    setSelectedGameweek(activeGameweek[0]);
+    setSelectedGameweek(activeGameweek[0].number);
   };
 
   const fetchLeaderboard = async () => {
     if (selectedSeason && selectedGameweek) {
-      const fetchedLeaderboard = await football_god_backend_actor.getLeaderboard(selectedSeason.id, selectedGameweek.number, page * resultsPerPage, resultsPerPage);
+      setIsLoading(true);
+      const fetchedLeaderboard = await football_god_backend_actor.getLeaderboard(Number(selectedSeason.id), Number(selectedGameweek), Number(page * resultsPerPage), Number(resultsPerPage));
       setLeaderboard(fetchedLeaderboard);
     }
   };
@@ -63,6 +73,11 @@ const Leaderboard = () => {
 
   return (
     <Container>
+      {isLoading ? (
+        <div className="customOverlay">
+          <Spinner animation="border" />
+        </div>
+      ) : (
       <Row className="justify-content-md-center">
         <Col md={8}>
           <h2 className="text-center mt-4">Leaderboard</h2>
@@ -80,17 +95,16 @@ const Leaderboard = () => {
           </Dropdown>
           <Dropdown className="mt-3">
             <Dropdown.Toggle variant="primary" id="gameweek-dropdown">
-              {selectedGameweek ? `Gameweek ${selectedGameweek.number}` : 'Select Gameweek'}
+              {selectedGameweek ? `Gameweek ${selectedGameweek}` : 'Select Gameweek'}
             </Dropdown.Toggle>
             <Dropdown.Menu>
-              {gameweeks.map((gameweek) => (
-                <Dropdown.Item key={gameweek.id} onClick={() => setSelectedGameweek(gameweek)}>
-                  Gameweek {gameweek.number}
+              {Array.from({ length: 38 }, (_, i) => i + 1).map((number) => (
+                <Dropdown.Item key={number} onClick={() => setSelectedGameweek(number)}>
+                  Gameweek {number}
                 </Dropdown.Item>
               ))}
             </Dropdown.Menu>
             </Dropdown>
-      {leaderboard.length > 0 && (
         <Table striped bordered hover responsive className="mt-3">
           <thead>
             <tr>
@@ -101,11 +115,11 @@ const Leaderboard = () => {
             </tr>
           </thead>
           <tbody>
-            {leaderboard.map((entry, index) => (
-              <tr key={entry.userId}>
+            {leaderboard && leaderboard.entries.map((entry, index) => (
+              <tr key={entry.principalName}>
                 <td>{index + 1 + page * resultsPerPage}</td>
                 <td>{entry.displayName}</td>
-                <td>{entry.score}</td>
+                <td>{entry.correctScores} / {entry.predictionCount}</td>
                 <td>
                   <Button onClick={() => handleViewSubmission(entry.userId)} variant="primary">
                     View
@@ -115,7 +129,6 @@ const Leaderboard = () => {
             ))}
           </tbody>
         </Table>
-      )}
       <p>You can update your display name in on your profile page.</p>
         
       <div className="d-flex justify-content-center mt-3">
@@ -129,7 +142,8 @@ const Leaderboard = () => {
         </ButtonGroup>
       </div>
     </Col>
-  </Row>
+      </Row>
+      )}
 </Container>
 );
 };

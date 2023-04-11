@@ -32,6 +32,16 @@ export const idlFactory = ({ IDL }) => {
     'year' : IDL.Nat16,
     'gameweeks' : List_1,
   });
+  const LeaderboardEntry = IDL.Record({
+    'correctScores' : IDL.Nat8,
+    'displayName' : IDL.Text,
+    'predictionCount' : IDL.Nat8,
+    'principalName' : IDL.Text,
+  });
+  const Leaderboard = IDL.Record({
+    'totalEntries' : IDL.Nat32,
+    'entries' : IDL.Vec(LeaderboardEntry),
+  });
   const PayoutData = IDL.Record({
     'totalPot' : IDL.Float64,
     'winners' : IDL.Nat,
@@ -86,6 +96,11 @@ export const idlFactory = ({ IDL }) => {
       ),
     'getGameweekPot' : IDL.Func([], [IDL.Int64], []),
     'getGameweeks' : IDL.Func([IDL.Nat16], [IDL.Vec(Gameweek)], ['query']),
+    'getLeaderboard' : IDL.Func(
+        [IDL.Nat16, IDL.Nat8, IDL.Nat, IDL.Nat],
+        [Leaderboard],
+        [],
+      ),
     'getPayoutData' : IDL.Func(
         [IDL.Nat16, IDL.Nat8],
         [IDL.Opt(PayoutData)],
