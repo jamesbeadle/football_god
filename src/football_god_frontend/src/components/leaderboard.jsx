@@ -59,12 +59,13 @@ const Leaderboard = () => {
     if (selectedSeason && selectedGameweek) {
       setIsLoading(true);
       const fetchedLeaderboard = await football_god_backend_actor.getLeaderboard(Number(selectedSeason.id), Number(selectedGameweek), Number(page * resultsPerPage), Number(resultsPerPage));
+      console.log(fetchedLeaderboard)
       setLeaderboard(fetchedLeaderboard);
     }
   };
 
-  const handleViewSubmission = (userId) => {
-    navigate(`/view-submission/${userId}`);
+  const handleViewPrediction = (userId) => {
+    navigate(`/view-prediction/${userId}/${selectedSeason.id}/${selectedGameweek}`);
   };
 
   const handlePageChange = (change) => {
@@ -121,7 +122,7 @@ const Leaderboard = () => {
                 <td>{entry.displayName}</td>
                 <td>{entry.correctScores} / {entry.predictionCount}</td>
                 <td>
-                  <Button onClick={() => handleViewSubmission(entry.userId)} variant="primary">
+                  <Button onClick={() => handleViewPrediction(entry.principalName)} variant="primary">
                     View
                   </Button>
                 </td>
@@ -136,7 +137,7 @@ const Leaderboard = () => {
           <Button onClick={() => handlePageChange(-1)} variant="primary" disabled={page === 0}>
             Prior
           </Button>
-          <Button onClick={() => handlePageChange(1)} variant="primary">
+          <Button onClick={() => handlePageChange(1)} variant="primary" disabled={(page + 1) * resultsPerPage >= leaderboard.totalEntries}>
             Next
           </Button>
         </ButtonGroup>

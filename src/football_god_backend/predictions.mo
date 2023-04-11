@@ -145,7 +145,6 @@ module {
     
     public func getLeaderboard(seasonId: Nat16, gameweekNumber: Nat8, start: Nat, count: Nat) : Types.Leaderboard {
 
-        var totalEntries: Nat32 = 0;
 
         func compare(leaderboardEntry1: Types.LeaderboardEntry, leaderboardEntry2: Types.LeaderboardEntry) : Bool {
             return leaderboardEntry1.correctScores >= leaderboardEntry2.correctScores;
@@ -153,8 +152,7 @@ module {
 
         func mergeSort(entries: List.List<Types.LeaderboardEntry>) : List.List<Types.LeaderboardEntry> {
             let len = List.size(entries);
-            totalEntries := Nat32.fromNat(len);
-
+           
             if (len <= 1) {
                 return entries;
             } else {
@@ -181,11 +179,13 @@ module {
 
         let flattenedLeaderboardEntries = List.flatten<Types.LeaderboardEntry>(List.fromArray(leaderboardEntries));
         let sortedLeaderboardEntries = mergeSort(flattenedLeaderboardEntries);
+        
+        var totalEntries: Nat = List.size(sortedLeaderboardEntries);
         let paginatedLeaderboardEntries = List.take(List.drop(sortedLeaderboardEntries, start), count);
 
         let leaderboard: Types.Leaderboard = {
           entries = List.toArray<Types.LeaderboardEntry>(paginatedLeaderboardEntries);
-          totalEntries = totalEntries;
+          totalEntries = Nat32.fromNat(totalEntries);
         };
         
         return leaderboard;

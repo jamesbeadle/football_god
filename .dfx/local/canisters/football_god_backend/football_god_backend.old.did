@@ -62,6 +62,7 @@ type List =
 type LeaderboardEntry = 
  record {
    correctScores: nat8;
+   displayName: text;
    predictionCount: nat8;
    principalName: text;
  };
