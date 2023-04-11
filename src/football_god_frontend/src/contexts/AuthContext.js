@@ -9,6 +9,7 @@ export const AuthProvider = ({ children }) => {
   const [authClient, setAuthClient] = useState(null);
   const [isAdmin, setIsAdmin] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [loading, setLoading] = useState(true);
  
   useEffect(() => {
     const initAuthClient = async () => {
@@ -24,6 +25,7 @@ export const AuthProvider = ({ children }) => {
         setIsAdmin(false);
       }
       setAuthClient(authClient);
+      setLoading(false);
     };
     initAuthClient();
   }, []);
@@ -93,7 +95,7 @@ export const AuthProvider = ({ children }) => {
 
   return (
     <AuthContext.Provider value={ { authClient, isAdmin, isAuthenticated, setIsAdmin, setIsAuthenticated, login, logout }}>
-      {children}
+      {!loading && children}
     </AuthContext.Provider>
   );
 };

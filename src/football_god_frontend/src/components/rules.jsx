@@ -25,10 +25,13 @@ const Rules = () => {
                   Predictions must include the final score for each fixture in the game week.
                 </li>
                 <li>
-                  The player(s) with the highest correct results for the game week will win a share of the total ICP pot.
+                  The player(s) with the highest correct results for the game week who have entered the sweepstake will win a share of the total ICP pot.
                 </li>
                 <li>
                   In case of a tie, the total ICP pot will be divided equally among the tied players.
+                </li>
+                <li>
+                  If a free playing user gets every prediction correct for the gameweek then they will also receive a share of the total ICP pot.
                 </li>
                 <li>
                   Winners will be announced and paid out after the game week has been finalized.
