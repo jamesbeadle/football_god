@@ -33,7 +33,7 @@ export interface LeaderboardEntry {
 export type List = [] | [[Prediction, List]];
 export type List_1 = [] | [[Gameweek, List_1]];
 export type List_2 = [] | [[Fixture, List_2]];
-export interface PayoutData { 'totalPot' : number, 'winners' : bigint }
+export interface PayoutData { 'totalPot' : bigint, 'winners' : bigint }
 export interface Prediction {
   'fixtureId' : number,
   'homeGoals' : number,
@@ -86,6 +86,7 @@ export interface _SERVICE {
   'getPayoutData' : ActorMethod<[number, number], [] | [PayoutData]>,
   'getPredictions' : ActorMethod<[number, number], Array<Prediction>>,
   'getProfile' : ActorMethod<[], [] | [Profile]>,
+  'getPublicProfile' : ActorMethod<[string], [] | [Profile]>,
   'getSeason' : ActorMethod<[number], [] | [Season]>,
   'getSeasons' : ActorMethod<[], Array<Season>>,
   'getTeams' : ActorMethod<[], Array<Team>>,

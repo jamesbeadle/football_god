@@ -78,11 +78,7 @@ const ViewSubmission = () => {
   };
   
   const getPredictionStatus = (prediction) => {
-    const fixture = fixtures.find(
-      (fixture) =>
-        fixture.homeTeam === prediction.homeTeam &&
-        fixture.awayTeam === prediction.awayTeam
-    );
+    const fixture = fixtures.find((fixture) => fixture.id === prediction.fixtureId);
       
     if (!fixture || fixture.status < 2) {
       return 'unplayed';

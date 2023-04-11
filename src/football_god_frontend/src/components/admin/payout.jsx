@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { Container, Row, Col, Card, Button } from 'react-bootstrap';
+import { Container, Row, Col, Card, Button, Spinner } from 'react-bootstrap';
 import { football_god_backend as football_god_backend_actor } from '../../../../declarations/football_god_backend';
 import { Actor } from "@dfinity/agent";
 import { AuthContext } from "../../contexts/AuthContext";
@@ -7,6 +7,7 @@ import { AuthContext } from "../../contexts/AuthContext";
 const Payout = () => {
   const { authClient } = useContext(AuthContext);
 
+  const [isLoading, setIsLoading] = useState(true);
   const [season, setSeason] = useState(null);
   const [gameweek, setGameweek] = useState(null);
   const [totalPot, setTotalPot] = useState(0);
@@ -16,12 +17,24 @@ const Payout = () => {
   const [sharePerWinner, setSharePerWinner] = useState(0);
 
   useEffect(() => {
-    fetchActiveSeason();
-    fetchActiveGameweek();
+    const fetchData = async () => {
+      await fetchActiveSeason();
+      await fetchActiveGameweek();
+    };
+    fetchData();
   }, []);
 
   useEffect(() => {
-    fetchPayoutData();
+    const fetchData = async () => {
+      console.log(season)
+      console.log(gameweek)
+      if (!season || !gameweek) {
+        return;
+      }
+      await fetchPayoutData();
+      setIsLoading(false);
+    };
+    fetchData();
   }, [season, gameweek]);
 
   const fetchActiveSeason = async () => {
@@ -39,23 +52,33 @@ const Payout = () => {
       const identity = authClient.getIdentity();
       Actor.agentOf(football_god_backend_actor).replaceIdentity(identity);
       const payoutData = await football_god_backend_actor.getPayoutData(season.id, gameweek.number);
-      setTotalPot(payoutData.totalPot);
-      setAdminFee(payoutData.totalPot * 0.05);
-      setTotalPayout(payoutData.totalPot * 0.95);
-      setNumWinners(payoutData.winners);
-      setSharePerWinner(payoutData.totalPot / payoutData.winners);
+
+      var totalPot = (Number(payoutData[0].totalPot) / 1e8).toFixed(4);
+
+      setTotalPot(totalPot);
+      setAdminFee(totalPot * 0.05);
+      setTotalPayout(totalPot * 0.95);
+      setNumWinners(Number(payoutData[0].winners));
+      setSharePerWinner(totalPot / Number(payoutData[0].winners));
     }
   };
 
   const handlePayout = async () => {
     if (window.confirm('Are you sure you want to pay out the sweepstake for the week?')) {
+      setIsLoading(true);
       await football_god_backend_actor.payOutSweepstake(season.id, gameweek.number);
+      setIsLoading(false);
       alert('Payout completed successfully!');
     }
   };
 
   return (
     <Container>
+      {isLoading ? (
+        <div className="customOverlay">
+          <Spinner animation="border" />
+        </div>
+      ) : (
       <Row className="justify-content-md-center">
         <Col md={8}>
           <Card className="mt-4">
@@ -79,6 +102,7 @@ const Payout = () => {
           </Card>
         </Col>
       </Row>
+      )}
     </Container>
   );
 };

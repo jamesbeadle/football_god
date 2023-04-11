@@ -75,7 +75,7 @@ module Types {
     };
 
     public type PayoutData = {
-        totalPot: Float;
+        totalPot: Nat64;
         winners: Nat;
     };
 

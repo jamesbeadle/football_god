@@ -22,9 +22,13 @@ module {
     let entry_fee: Nat64 = 100_000_000;
     let icp_fee: Nat64 = 10_000;
    
+    public func getTotalBalance(defaultSubAccount: Account.AccountIdentifier) : async Nat64 {
+        let balance = await Ledger.account_balance({ account = defaultSubAccount });
+        return balance.e8s;
+    };
+   
     public func getGameweekPotBalance(defaultSubAccount: Account.AccountIdentifier) : async Float {
         let balance = await Ledger.account_balance({ account = defaultSubAccount });
-        Debug.print(debug_show(defaultSubAccount));
         return Float.fromInt64(Int64.fromNat64(balance.e8s)) * 0.95;
     };
 
@@ -88,6 +92,31 @@ module {
                     from_subaccount = ?Account.principalToSubaccount(user);
                     to = Blob.fromArray(array);
                     amount = { e8s = e8Amount };
+                    fee = { e8s = icp_fee };
+                    created_at_time = ?{ timestamp_nanos = Nat64.fromNat(Int.abs(Time.now())) };
+                });
+
+                return #ok(());
+            };
+            case (#err err) {
+                return #err(#NotAllowed);
+            };
+        };
+    };
+
+    public func transferAdminFee(defaultAccount: Principal, walletAddress: Text) : async Result.Result<(), Types.Error> {
+        
+        let source_account = Account.accountIdentifier(defaultAccount, Account.defaultSubaccount());
+        let balance = await Ledger.account_balance({ account = source_account });
+        
+        let account_id = Account.decode(walletAddress);
+        switch account_id {
+            case (#ok array) {
+                let result = await Ledger.transfer({
+                    memo: Nat64    = 0;
+                    from_subaccount = ?Account.principalToSubaccount(defaultAccount);
+                    to = Blob.fromArray(array);
+                    amount = { e8s = balance.e8s - icp_fee };
                     fee = { e8s = icp_fee };
                     created_at_time = ?{ timestamp_nanos = Nat64.fromNat(Int.abs(Time.now())) };
                 });

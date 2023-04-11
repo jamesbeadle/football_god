@@ -105,47 +105,46 @@ const Leaderboard = () => {
                 </Dropdown.Item>
               ))}
             </Dropdown.Menu>
-            </Dropdown>
-            <p className='mt-3'><small>You can update your display name in on your profile page.</small></p>
-        <Table striped bordered hover responsive className="mt-1">
-          <thead>
-            <tr>
-              <th>Position</th>
-              <th>Name</th>
-              <th>Score</th>
-              <th>View</th>
-            </tr>
-          </thead>
-          <tbody>
-            {leaderboard && leaderboard.entries.map((entry, index) => (
-              <tr key={entry.principalName}>
-                <td>{index + 1 + page * resultsPerPage}</td>
-                <td>{entry.displayName}</td>
-                <td>{entry.correctScores} / {entry.predictionCount}</td>
-                <td>
-                  <Button onClick={() => handleViewPrediction(entry.principalName)} variant="primary">
-                    View
-                  </Button>
-                </td>
+          </Dropdown>
+          <p className='mt-3'><small>You can update your display name in on your profile page.</small></p>
+          <Table striped bordered hover responsive className="mt-1">
+            <thead>
+              <tr>
+                <th>Position</th>
+                <th>Name</th>
+                <th>Score</th>
+                <th>View</th>
               </tr>
-            ))}
-          </tbody>
-        </Table>
-        
-      <div className="d-flex justify-content-center mt-3">
-        <ButtonGroup>
-          <Button onClick={() => handlePageChange(-1)} variant="primary" disabled={page === 0}>
-            Prior
-          </Button>
-          <Button onClick={() => handlePageChange(1)} variant="primary" disabled={(page + 1) * resultsPerPage >= leaderboard.totalEntries}>
-            Next
-          </Button>
-        </ButtonGroup>
-      </div>
-    </Col>
+            </thead>
+            <tbody>
+              {leaderboard && leaderboard.entries.map((entry, index) => (
+                <tr key={entry.principalName}>
+                  <td>{index + 1 + page * resultsPerPage}</td>
+                  <td>{entry.displayName}</td>
+                  <td>{entry.correctScores} / {entry.predictionCount}</td>
+                  <td>
+                    <Button onClick={() => handleViewPrediction(entry.principalName)} variant="primary">
+                      View
+                    </Button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </Table>
+          <div className="d-flex justify-content-center mt-3">
+            <ButtonGroup>
+              <Button onClick={() => handlePageChange(-1)} variant="primary" disabled={page === 0}>
+                Prior
+              </Button>
+              <Button onClick={() => handlePageChange(1)} variant="primary" disabled={(page + 1) * resultsPerPage >= leaderboard.totalEntries}>
+                Next
+              </Button>
+            </ButtonGroup>
+          </div>
+        </Col>
       </Row>
       )}
-</Container>
-);
+    </Container>
+  );
 };
 export default Leaderboard;

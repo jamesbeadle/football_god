@@ -114,6 +114,7 @@ service : {
   getPayoutData: (nat16, nat8) -> (opt PayoutData);
   getPredictions: (nat16, nat8) -> (vec Prediction);
   getProfile: () -> (opt Profile);
+  getPublicProfile: (text) -> (opt Profile);
   getSeason: (nat16) -> (opt Season) query;
   getSeasons: () -> (vec Season) query;
   getTeams: () -> (vec Team) query;

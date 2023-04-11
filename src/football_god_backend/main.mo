@@ -70,6 +70,12 @@ actor Self {
 
     return profile;
   };
+  
+  public shared ({caller}) func getPublicProfile(principalName: Text) : async ?Types.Profile {
+    let profile = profilesInstance.getPublicProfile(principalName);
+    
+    return profile;
+  };
 
   public shared ({caller}) func isDisplayNameValid(displayName: Text) : async Bool {
     assert not Principal.isAnonymous(caller);
@@ -368,7 +374,6 @@ actor Self {
   // Ledger functions
 
   private func getDefaultAccount() : Account.AccountIdentifier {
-    Debug.print(debug_show(Account.principalToSubaccount(Principal.fromActor(Self))));
     Account.accountIdentifier(Principal.fromActor(Self), Account.defaultSubaccount())
   };
 
@@ -397,14 +402,13 @@ actor Self {
     };
 
     let defaultSubAccount = getDefaultAccount();
-    let potBalance = await bookInstance.getGameweekPotBalance(defaultSubAccount);
-    let balanceICP = potBalance / 1e8;
+    let potBalance = await bookInstance.getTotalBalance(defaultSubAccount);
 
     let winnerCount = predictionsInstance.countWinners(seasonId, gameweekNumber);
 
     let payoutData: Types.PayoutData = {
       winners = winnerCount;
-      totalPot = balanceICP;
+      totalPot = potBalance;
     };
 
     return ?payoutData;
@@ -425,7 +429,7 @@ actor Self {
       await bookInstance.transferWinnings(Principal.fromActor(Self), Principal.fromText(winningPrincipals[i]), winnerShare);
     };
 
-    return #ok(());
+    return await bookInstance.transferAdminFee(Principal.fromActor(Self), adminAccount);
   };
 
   public shared ({caller}) func enterSweepstake(seasonId : Nat16, gameweekNumber: Nat8) : async Result.Result<(), Types.Error> {
