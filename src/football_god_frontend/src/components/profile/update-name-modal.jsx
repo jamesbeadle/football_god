@@ -4,15 +4,20 @@ import { football_god_backend as football_god_backend_actor } from '../../../../
 import { Actor } from "@dfinity/agent";
 import { AuthContext } from "../../contexts/AuthContext";
 
-const UpdateNameModal = ({ show, onHide }) => {
+const UpdateNameModal = ({ show, onHide, displayName }) => {
   
   const { authClient } = useContext(AuthContext);
   const [isLoading, setIsLoading] = useState(false);
-  const [displayName, setDisplayName] = useState('');
+  const [newDisplayName, setNewDisplayName] = useState(displayName);
   const [displayNameError, setDisplayNameError] = useState(null);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+
+    if(displayName == newDisplayName){
+      hideModal();
+      return;
+    }
     
     setIsLoading(true);
     let validName = await isDisplayNameValid();
@@ -24,9 +29,12 @@ const UpdateNameModal = ({ show, onHide }) => {
     
     const identity = authClient.getIdentity();
     Actor.agentOf(football_god_backend_actor).replaceIdentity(identity);
-    await football_god_backend_actor.updateDisplayName(displayName);
+    await football_god_backend_actor.updateDisplayName(newDisplayName);
     
-    hideModal();
+    
+    setNewDisplayName('');
+    setDisplayNameError(null);
+    onHide(true);
   };
 
   const isDisplayNameValid = async () => {
@@ -35,7 +43,7 @@ const UpdateNameModal = ({ show, onHide }) => {
     }
     const identity = authClient.getIdentity();
     Actor.agentOf(football_god_backend_actor).replaceIdentity(identity);
-    const isValid = await football_god_backend_actor.isDisplayNameValid(displayName);
+    const isValid = await football_god_backend_actor.isDisplayNameValid(newDisplayName);
   
     if (isValid) {
       setDisplayNameError(null);
@@ -47,9 +55,9 @@ const UpdateNameModal = ({ show, onHide }) => {
   };
 
   const hideModal = () => {
-    setDisplayName('');
+    setNewDisplayName(displayName);
     setDisplayNameError(null);
-    onHide();
+    onHide(false);
   };
 
   return (
@@ -69,15 +77,15 @@ const UpdateNameModal = ({ show, onHide }) => {
                 <Form.Control
                     type="text"
                     placeholder="Enter display name"
-                    value={displayName}
-                    onChange={(event) => setDisplayName(event.target.value)}
+                    value={newDisplayName}
+                    onChange={(event) => setNewDisplayName(event.target.value)}
                 />
                 {displayNameError && <Form.Text className="text-danger">{displayNameError}</Form.Text>}
             </Form.Group>
         </Form>
       </Modal.Body>
       <Modal.Footer>
-        <Button variant="secondary" onClick={onHide}>Cancel</Button>
+        <Button variant="secondary" onClick={hideModal}>Cancel</Button>
         <Button variant="primary" onClick={handleSubmit}>Save</Button>
       </Modal.Footer>
     </Modal>

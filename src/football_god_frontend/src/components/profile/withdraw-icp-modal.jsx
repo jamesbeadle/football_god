@@ -9,21 +9,56 @@ const WithdrawICPModal = ({ show, onHide, balance, wallet }) => {
   const { authClient } = useContext(AuthContext);
   const [isLoading, setIsLoading] = useState(false);
   const [withdrawAmount, setWithdrawAmount] = useState(0);
+  const [withdrawError, setWithdrawError] = useState(null);
   const withdrawalFee = 0.0001; 
 
   const handleSubmit = async (event) => {
     event.preventDefault();
     setIsLoading(true);
     
+
+    let validWithdrawal = await isWithdrawalAmountValid();
+    
+    if (!validWithdrawal) {
+        setIsLoading(false);
+        return;
+    }
+
     const identity = authClient.getIdentity();
     Actor.agentOf(football_god_backend_actor).replaceIdentity(identity);
     await football_god_backend_actor.withdrawICP(withdrawAmount - withdrawalFee);
-    hideModal();
+
+    setWithdrawAmount(0);
+    setWithdrawError(null);
+    onHide(true);
+  };
+
+  const isWithdrawalAmountValid = async () => {
+    
+    if(withdrawAmount > balance){
+      setWithdrawError("You don't have enough to withdraw that amount.");
+      return false;
+    }
+
+    if(withdrawAmount == 0){
+      setWithdrawError("Cannot withdraw nothing.");
+      return false;
+    }
+
+    if(withdrawAmount <= withdrawalFee){
+      setWithdrawError("Please withdraw more than the withdrawal fee.");
+      return false;
+    }
+    
+    setWithdrawError(null);
+    
+    return true;
   };
 
   const hideModal = () => {
     setWithdrawAmount(0);
-    onHide();
+    setWithdrawError(null);
+    onHide(false);
   };
 
   return (
@@ -45,22 +80,23 @@ const WithdrawICPModal = ({ show, onHide, balance, wallet }) => {
               <small className='text-break'>{wallet}</small></p>
             
             <Form.Group className='mt-3' controlId="withdrawAmount">
-            <Form.Label>Amount</Form.Label>
-            <Form.Control
-                type="number"
-                min="0"
-                step="0.01"
-                placeholder="Enter amount to withdraw"
-                value={withdrawAmount}
-                onChange={(event) => setWithdrawAmount(event.target.value)}
-            />
+              <Form.Label>Amount</Form.Label>
+              <Form.Control
+                  type="number"
+                  min="0"
+                  step="0.01"
+                  placeholder="Enter amount to withdraw"
+                  value={withdrawAmount}
+                  onChange={(event) => setWithdrawAmount(event.target.value)}
+              />
+              {withdrawError && <Form.Text className="text-danger">{withdrawError}</Form.Text>}
             </Form.Group>
             <p>We will take the withdrawal fee of {withdrawalFee} ICP off your withdrawal amount.</p>
         </Form>
       </div>
       </Modal.Body>
       <Modal.Footer>
-        <Button variant="secondary" onClick={onHide}>Cancel</Button>
+        <Button variant="secondary" onClick={hideModal}>Cancel</Button>
         <Button variant="primary" onClick={handleSubmit}>Withdraw</Button>
       </Modal.Footer>
     </Modal>

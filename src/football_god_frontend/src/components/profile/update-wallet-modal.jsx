@@ -4,15 +4,19 @@ import { football_god_backend as football_god_backend_actor } from '../../../../
 import { Actor } from "@dfinity/agent";
 import { AuthContext } from "../../contexts/AuthContext";
 
-const UpdateNameModal = ({ show, onHide }) => {
-  
+const UpdateNameModal = ({ show, onHide, wallet }) => {
   const { authClient } = useContext(AuthContext);
   const [isLoading, setIsLoading] = useState(false);
-  const [walletAddress, setWalletAddress] = useState('');
+  const [newWallet, setNewWallet] = useState(wallet);
   const [walletError, setWalletError] = useState(null);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+
+    if(wallet == newWallet){
+      hideModal();
+      return;
+    }
     
     setIsLoading(true);
     let validWallet = await isWalletValid();
@@ -24,9 +28,11 @@ const UpdateNameModal = ({ show, onHide }) => {
     
     const identity = authClient.getIdentity();
     Actor.agentOf(football_god_backend_actor).replaceIdentity(identity);
-    await football_god_backend_actor.updateWalletAddress(walletAddress);
+    await football_god_backend_actor.updateWalletAddress(newWallet);
     
-    hideModal();
+    setNewWallet('');
+    setWalletError(null);
+    onHide(true);
   };
 
   
@@ -36,7 +42,7 @@ const UpdateNameModal = ({ show, onHide }) => {
     }
     const identity = authClient.getIdentity();
     Actor.agentOf(football_god_backend_actor).replaceIdentity(identity);
-    const isValid = await football_god_backend_actor.isWalletValid(walletAddress);
+    const isValid = await football_god_backend_actor.isWalletValid(newWallet);
   
     if (isValid) {
       setWalletError(null);
@@ -48,8 +54,9 @@ const UpdateNameModal = ({ show, onHide }) => {
   };
 
   const hideModal = () => {
-    setWalletAddress('');
-    onHide();
+    setNewWallet(wallet);
+    setWalletError(null);
+    onHide(false);
   };
 
   return (
@@ -69,15 +76,15 @@ const UpdateNameModal = ({ show, onHide }) => {
                 <Form.Control
                     type="text"
                     placeholder="Enter wallet address"
-                    value={walletAddress}
-                    onChange={(event) => setWalletAddress(event.target.value)}
+                    value={newWallet}
+                    onChange={(event) => setNewWallet(event.target.value)}
                 />
                 {walletError && <Form.Text className="text-danger">{walletError}</Form.Text>}
             </Form.Group>
         </Form>
       </Modal.Body>
       <Modal.Footer>
-        <Button variant="secondary" onClick={onHide}>Cancel</Button>
+        <Button variant="secondary" onClick={hideModal}>Cancel</Button>
         <Button variant="primary" onClick={handleSubmit}>Save</Button>
       </Modal.Footer>
     </Modal>

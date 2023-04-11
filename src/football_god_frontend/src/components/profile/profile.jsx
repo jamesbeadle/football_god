@@ -24,21 +24,33 @@ const Profile = () => {
   const [showUpdateWalletModal, setShowUpdateWalletModal] = useState(false);
   const [showWithdrawICPModal, setShowWithdrawICPModal] = useState(false);
 
-  const hideUpdateNameModal = async () => {
+  const hideUpdateNameModal = async (changed) => {
+    if(!changed){
+      setShowUpdateNameModal(false); 
+      return;
+    }
     setIsLoading(true);
     setShowUpdateNameModal(false); 
     await fetchProfile();
     setIsLoading(false);
   };
 
-  const hideUpdateWalletModal = async () => {
+  const hideUpdateWalletModal = async (changed) => {
+    if(!changed){
+      setShowUpdateWalletModal(false); 
+      return;
+    }
     setIsLoading(true);
     setShowUpdateWalletModal(false); 
     await fetchProfile();
     setIsLoading(false);
   };
 
-  const hideWithdrawICPModal = async () => {
+  const hideWithdrawICPModal = async (changed) => {
+    if(!changed){
+      setShowWithdrawICPModal(false); 
+      return;
+    }
     setIsLoading(true);
     setShowWithdrawICPModal(false); 
     await fetchBalance();
@@ -139,11 +151,13 @@ const Profile = () => {
         <UpdateNameModal
           show={showUpdateNameModal}
           onHide={hideUpdateNameModal}
+          displayName={displayName}
         />
 
         <UpdateWalletModal
           show={showUpdateWalletModal}
           onHide={hideUpdateWalletModal}
+          wallet={wallet}
         />
 
         <WithdrawICPModal
