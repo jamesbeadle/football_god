@@ -106,7 +106,8 @@ const Leaderboard = () => {
               ))}
             </Dropdown.Menu>
             </Dropdown>
-        <Table striped bordered hover responsive className="mt-3">
+            <p className='mt-3'><small>You can update your display name in on your profile page.</small></p>
+        <Table striped bordered hover responsive className="mt-1">
           <thead>
             <tr>
               <th>Position</th>
@@ -130,7 +131,6 @@ const Leaderboard = () => {
             ))}
           </tbody>
         </Table>
-      <p>You can update your display name in on your profile page.</p>
         
       <div className="d-flex justify-content-center mt-3">
         <ButtonGroup>
