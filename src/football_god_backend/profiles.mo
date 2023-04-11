@@ -233,6 +233,23 @@ module {
         return true;
     };
 
+    public func isWalletValid(walletAddress: Text) : Bool {
+        
+        let account_id = Account.decode(walletAddress);
+        switch account_id {
+            case (#ok array) {
+                if(Account.validateAccountIdentifier(Blob.fromArray(array))){
+                    return true;
+                };
+            };
+            case (#err err) {
+                return false;
+            };
+        };
+
+        return false;
+    };
+
     public func getLeaderboardNames(leaderboard: Types.Leaderboard) : Types.Leaderboard {
         let populatedEntries = List.map<Types.LeaderboardEntry, Types.LeaderboardEntry>(List.fromArray(leaderboard.entries), func(entry: Types.LeaderboardEntry): Types.LeaderboardEntry {
             let profile = getProfile(entry.principalName);

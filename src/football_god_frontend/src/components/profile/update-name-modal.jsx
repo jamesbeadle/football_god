@@ -1,12 +1,13 @@
 import React, { useState, useContext } from 'react';
-import { Modal, Button, Form } from 'react-bootstrap';
+import { Modal, Button, Form, Spinner } from 'react-bootstrap';
 import { football_god_backend as football_god_backend_actor } from '../../../../declarations/football_god_backend';
 import { Actor } from "@dfinity/agent";
 import { AuthContext } from "../../contexts/AuthContext";
 
-const UpdateNameModal = ({ show, onHide, setIsLoading }) => {
+const UpdateNameModal = ({ show, onHide }) => {
   
   const { authClient } = useContext(AuthContext);
+  const [isLoading, setIsLoading] = useState(false);
   const [displayName, setDisplayName] = useState('');
   const [displayNameError, setDisplayNameError] = useState(null);
 
@@ -14,8 +15,9 @@ const UpdateNameModal = ({ show, onHide, setIsLoading }) => {
     event.preventDefault();
     
     setIsLoading(true);
+    let validName = await isDisplayNameValid();
     
-    if (!isDisplayNameValid()) {
+    if (!validName) {
         setIsLoading(false);
         return;
     }
@@ -26,8 +28,6 @@ const UpdateNameModal = ({ show, onHide, setIsLoading }) => {
     
     hideModal();
   };
-
-  
 
   const isDisplayNameValid = async () => {
     if(authClient == null){
@@ -54,6 +54,11 @@ const UpdateNameModal = ({ show, onHide, setIsLoading }) => {
 
   return (
     <Modal show={show} onHide={hideModal}>
+      {isLoading && (
+        <div className="customOverlay">
+          <Spinner animation="border" />
+        </div>
+      )}
       <Modal.Header closeButton>
         <Modal.Title>Set Display Name</Modal.Title>
       </Modal.Header>
@@ -66,7 +71,6 @@ const UpdateNameModal = ({ show, onHide, setIsLoading }) => {
                     placeholder="Enter display name"
                     value={displayName}
                     onChange={(event) => setDisplayName(event.target.value)}
-                    onBlur={isDisplayNameValid}
                 />
                 {displayNameError && <Form.Text className="text-danger">{displayNameError}</Form.Text>}
             </Form.Group>

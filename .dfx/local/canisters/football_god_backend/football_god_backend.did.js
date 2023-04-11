@@ -130,6 +130,7 @@ export const idlFactory = ({ IDL }) => {
       ),
     'isAdmin' : IDL.Func([], [IDL.Bool], ['query']),
     'isDisplayNameValid' : IDL.Func([IDL.Text], [IDL.Bool], []),
+    'isWalletValid' : IDL.Func([IDL.Text], [IDL.Bool], []),
     'payoutSweepstake' : IDL.Func([IDL.Nat16, IDL.Nat8], [Result], []),
     'setActiveGameweek' : IDL.Func([IDL.Nat8], [Result], []),
     'setActiveSeason' : IDL.Func([IDL.Nat16], [Result], []),

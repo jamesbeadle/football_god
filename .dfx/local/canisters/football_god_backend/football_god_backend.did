@@ -124,6 +124,7 @@ service : {
   getUsersWithBalances: (nat, nat) -> (vec Profile);
   isAdmin: () -> (bool) query;
   isDisplayNameValid: (text) -> (bool);
+  isWalletValid: (text) -> (bool);
   payoutSweepstake: (nat16, nat8) -> (Result);
   setActiveGameweek: (nat8) -> (Result);
   setActiveSeason: (nat16) -> (Result);

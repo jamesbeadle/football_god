@@ -75,6 +75,10 @@ module {
     //withdraw ICP
     public func withdrawICP(defaultAccount: Principal, user: Principal, amount: Float, walletAddress: Text) : async Result.Result<(), Types.Error> {
         
+        if(amount <= 0){
+            return #err(#NotAllowed);
+        };
+
         let e8Amount = Int64.toNat64(Float.toInt64(amount * 1e8));
         let source_account = Account.accountIdentifier(defaultAccount, Account.principalToSubaccount(user));
         let balance = await Ledger.account_balance({ account = source_account });
@@ -92,6 +96,11 @@ module {
         let account_id = Account.decode(walletAddress);
         switch account_id {
             case (#ok array) {
+
+                if(not Account.validateAccountIdentifier(Blob.fromArray(array))){
+                    return #err(#NotAllowed);
+                };
+
                 let result = await Ledger.transfer({
                     memo: Nat64    = 0;
                     from_subaccount = ?Account.principalToSubaccount(user);

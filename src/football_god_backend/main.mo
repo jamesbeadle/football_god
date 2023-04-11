@@ -92,6 +92,11 @@ actor Self {
     return profilesInstance.updateWalletAddress(Principal.toText(caller), walletAddress);
   };
 
+  public shared ({caller}) func isWalletValid(walletAddress: Text) : async Bool {
+    assert not Principal.isAnonymous(caller);
+    return profilesInstance.isWalletValid(walletAddress);
+  };
+
   //system state functions
 
   public shared ({caller}) func unsetActiveState() : async Result.Result<(), Types.Error> {

@@ -25,18 +25,21 @@ const Profile = () => {
   const [showWithdrawICPModal, setShowWithdrawICPModal] = useState(false);
 
   const hideUpdateNameModal = async () => {
+    setIsLoading(true);
     setShowUpdateNameModal(false); 
     await fetchProfile();
     setIsLoading(false);
   };
 
   const hideUpdateWalletModal = async () => {
+    setIsLoading(true);
     setShowUpdateWalletModal(false); 
     await fetchProfile();
     setIsLoading(false);
   };
 
   const hideWithdrawICPModal = async () => {
+    setIsLoading(true);
     setShowWithdrawICPModal(false); 
     await fetchBalance();
     setIsLoading(false);
@@ -49,7 +52,6 @@ const Profile = () => {
     const identity = authClient.getIdentity();
     Actor.agentOf(football_god_backend_actor).replaceIdentity(identity);
     const profile = await football_god_backend_actor.getProfile();
-    console.log(profile)
     if(profile && Object.keys(profile).length > 0){
       setPrincipalName(profile[0].principalName);
       setDisplayName(profile[0].displayName);
@@ -137,20 +139,18 @@ const Profile = () => {
         <UpdateNameModal
           show={showUpdateNameModal}
           onHide={hideUpdateNameModal}
-          setIsLoading={setIsLoading}
         />
 
         <UpdateWalletModal
           show={showUpdateWalletModal}
           onHide={hideUpdateWalletModal}
-          setIsLoading={setIsLoading}
         />
 
         <WithdrawICPModal
           show={showWithdrawICPModal}
           onHide={hideWithdrawICPModal}
-          setIsLoading={setIsLoading}
           balance={balance}
+          wallet={wallet}
         />
       </Container>
     )

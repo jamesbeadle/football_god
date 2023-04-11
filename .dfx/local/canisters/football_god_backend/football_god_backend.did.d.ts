@@ -99,6 +99,7 @@ export interface _SERVICE {
   'getUsersWithBalances' : ActorMethod<[bigint, bigint], Array<Profile>>,
   'isAdmin' : ActorMethod<[], boolean>,
   'isDisplayNameValid' : ActorMethod<[string], boolean>,
+  'isWalletValid' : ActorMethod<[string], boolean>,
   'payoutSweepstake' : ActorMethod<[number, number], Result>,
   'setActiveGameweek' : ActorMethod<[number], Result>,
   'setActiveSeason' : ActorMethod<[number], Result>,
