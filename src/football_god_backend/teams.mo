@@ -1,6 +1,6 @@
 import List "mo:base/List";
 import Result "mo:base/Result";
-
+import Iter "mo:base/Iter";
 import Types "types";
 
 module {
@@ -16,7 +16,44 @@ module {
     };
 
     public func getTeams() : [Types.Team] {
-        return List.toArray(teams);
+        let sortedTeams = bubbleSort(teams, List.size(teams));
+        return List.toArray(sortedTeams);
+    };
+
+    private func bubbleSort(list: List.List<Types.Team>, n: Nat): List.List<Types.Team> {
+        if (n <= 1) {
+            return list;
+        } else {
+            let sortedList = sortPass(list, n, 0);
+            return bubbleSort(sortedList, n - 1);
+        }
+    };
+
+    private func sortPass(list: List.List<Types.Team>, n: Int, idx: Nat): List.List<Types.Team> {
+        if (idx >= n - 1) {
+            return list;
+        } else {
+            let updatedList = swapIfGreater(list, idx);
+            return sortPass(updatedList, n, idx + 1);
+        }
+    };
+
+    private func swapIfGreater(list: List.List<Types.Team>, idx: Nat): List.List<Types.Team> {
+        let team1 = List.get(list, idx);
+        let team2 = List.get(list, idx + 1);
+
+        switch (team1, team2) {
+            case (?t1, ?t2) {
+                if (t1.name > t2.name) {
+                    return List.push(t2, List.push(t1, List.drop(list, idx + 2)));
+                } else {
+                    return list;
+                }
+            };
+            case _ {
+                return list;
+            };
+        };
     };
 
     public func getNextTeamId() : Nat16{

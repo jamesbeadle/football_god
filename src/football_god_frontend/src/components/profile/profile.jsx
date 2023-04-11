@@ -13,6 +13,7 @@ const Profile = () => {
 
   const { authClient } = useContext(AuthContext);
   const [isLoading, setIsLoading] = useState(true);
+  const [copied, setCopied] = useState(false);
   
   const [principalName, setPrincipalName] = useState('');
   const [displayName, setDisplayName] = useState('');
@@ -115,7 +116,8 @@ const Profile = () => {
                   <ListGroup.Item>
                     <h6>Deposit Address:</h6>
                     <p><small>{toHexString(depositAddress)}{' '}
-                    <CopyIcon onClick={() => navigator.clipboard.writeText(toHexString(depositAddress))} /></small></p>
+                    <CopyIcon onClick={() => {navigator.clipboard.writeText(toHexString(depositAddress)); setCopied(true); }} /></small></p>
+                    {copied && <p className="text-primary"><small>Copied to clipboard.</small></p>}
                   </ListGroup.Item>
 
                   <ListGroup.Item>
