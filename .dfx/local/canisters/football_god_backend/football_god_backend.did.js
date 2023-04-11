@@ -36,6 +36,7 @@ export const idlFactory = ({ IDL }) => {
     'correctScores' : IDL.Nat8,
     'displayName' : IDL.Text,
     'predictionCount' : IDL.Nat8,
+    'enteredSweepstake' : IDL.Bool,
     'principalName' : IDL.Text,
   });
   const Leaderboard = IDL.Record({

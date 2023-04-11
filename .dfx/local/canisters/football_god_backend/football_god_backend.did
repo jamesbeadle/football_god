@@ -63,6 +63,7 @@ type LeaderboardEntry =
  record {
    correctScores: nat8;
    displayName: text;
+   enteredSweepstake: bool;
    predictionCount: nat8;
    principalName: text;
  };

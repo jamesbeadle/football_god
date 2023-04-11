@@ -36,29 +36,35 @@ module {
           predictionCount = Nat8.fromNat(Array.size<Types.Prediction>(predictions));
           winnings = 0;
         }; 
-        
-        let existingUserGameweeks = userPredictions.get(principalName);
-        
-        let updatedUserGameweeks = switch existingUserGameweeks {
-          case (null) { List.push<Types.UserGameweek>(userGameweek, List.nil<Types.UserGameweek>()) };
-          case (?userGameweeks) {
-            List.map<Types.UserGameweek, Types.UserGameweek>(userGameweeks, func (ugw: Types.UserGameweek) : Types.UserGameweek {
-              if (ugw.seasonId == seasonId and ugw.gameweekNumber == gameweekNumber) {
-                let updatedUserGameweek = {
-                  seasonId = userGameweek.seasonId;
-                  gameweekNumber = userGameweek.gameweekNumber;
-                  predictions = userGameweek.predictions;
-                  enteredSweepstake = ugw.enteredSweepstake;
-                  correctScores = userGameweek.correctScores;
-                  predictionCount = userGameweek.predictionCount;
-                  winnings = userGameweek.winnings;
-                };
-                return updatedUserGameweek;
+
+        let updatedUserGameweeks = switch (userPredictions.get(principalName)) {  
+            case (null) { List.push<Types.UserGameweek>(userGameweek, List.nil<Types.UserGameweek>()) };
+            case (?userGameweeks) {
+              let alreadyExists = List.some(userGameweeks, func (ugw: Types.UserGameweek) : Bool {
+                return ugw.seasonId == seasonId and ugw.gameweekNumber == gameweekNumber;
+              });
+
+              if (alreadyExists) {
+                List.map<Types.UserGameweek, Types.UserGameweek>(userGameweeks, func (ugw: Types.UserGameweek) : Types.UserGameweek {
+                  if (ugw.seasonId == seasonId and ugw.gameweekNumber == gameweekNumber) {
+                    let updatedUserGameweek = {
+                      seasonId = userGameweek.seasonId;
+                      gameweekNumber = userGameweek.gameweekNumber;
+                      predictions = userGameweek.predictions;
+                      enteredSweepstake = ugw.enteredSweepstake;
+                      correctScores = userGameweek.correctScores;
+                      predictionCount = userGameweek.predictionCount;
+                      winnings = userGameweek.winnings;
+                    };
+                    return updatedUserGameweek;
+                  } else {
+                    return ugw;
+                  };
+                });
               } else {
-                return ugw;
-              };
-            });
-          };
+                List.push<Types.UserGameweek>(userGameweek, userGameweeks);
+              }
+            };
         };
 
         userPredictions.put(principalName, updatedUserGameweeks);
@@ -175,6 +181,7 @@ module {
                     displayName = principal;
                     correctScores = ugw.correctScores;
                     predictionCount = ugw.predictionCount;
+                    enteredSweepstake = ugw.enteredSweepstake;
                 };
             });
         });
@@ -196,84 +203,83 @@ module {
 
 
     public func countWinners(seasonId: Nat16, gameweekNumber: Nat8) : Nat {
-        let leaderboardEntries = Array.map< (Types.PrincipalName, List.List<Types.UserGameweek>), List.List<Types.LeaderboardEntry>>(Iter.toArray(userPredictions.entries()), func ((principal, userGameweeks): (Types.PrincipalName, List.List<Types.UserGameweek>)) : List.List<Types.LeaderboardEntry> {
-            let filteredGameweeks = List.filter(userGameweeks, func (ugw: Types.UserGameweek) : Bool {
-                return ugw.seasonId == seasonId and ugw.gameweekNumber == gameweekNumber and ugw.enteredSweepstake;
-            });
+      let leaderboardEntries = Array.map< (Types.PrincipalName, List.List<Types.UserGameweek>), List.List<Types.LeaderboardEntry>>(Iter.toArray(userPredictions.entries()), func ((principal, userGameweeks): (Types.PrincipalName, List.List<Types.UserGameweek>)) : List.List<Types.LeaderboardEntry> {
+          let filteredGameweeks = List.filter(userGameweeks, func (ugw: Types.UserGameweek) : Bool {
+              return ugw.seasonId == seasonId and ugw.gameweekNumber == gameweekNumber;
+          });
 
-            return List.map<Types.UserGameweek, Types.LeaderboardEntry>(filteredGameweeks, func (ugw: Types.UserGameweek) : Types.LeaderboardEntry {
-                return {
-                    principalName = principal;
-                    displayName = principal;
-                    correctScores = ugw.correctScores;
-                    predictionCount = ugw.predictionCount;
-                };
-            });
-        });
-
-        let flattenedLeaderboardEntries = List.flatten<Types.LeaderboardEntry>(List.fromArray(leaderboardEntries));
-
-        // Find the highest number of correct scores
-        let highestCorrectScores = List.foldLeft<Types.LeaderboardEntry, Nat8>(flattenedLeaderboardEntries, 0, func (highest: Nat8, entry: Types.LeaderboardEntry) : Nat8 {
-            if (entry.correctScores > highest) {
-                return entry.correctScores;
-            } else {
-                return highest;
-            };
-        });
-
-        // Count the winners with the highest correct scores
-        let winnerCount = List.foldLeft<Types.LeaderboardEntry, Nat>(flattenedLeaderboardEntries, 0, func (count: Nat, entry: Types.LeaderboardEntry) : Nat {
-            if (entry.correctScores == highestCorrectScores) {
-                return count + 1;
-            } else {
-                return count;
-            };
-        });
-
-        return winnerCount;
-    };
-
-
-    public func getWinnerPrincipalIds(seasonId: Nat16, gameweekNumber: Nat8) : [Types.PrincipalName] {
-      let leaderboardEntries = Array.map<(Types.PrincipalName, List.List<Types.UserGameweek>), List.List<Types.LeaderboardEntry>>(Iter.toArray(userPredictions.entries()), func ((principal, userGameweeks): (Types.PrincipalName, List.List<Types.UserGameweek>)) : List.List<Types.LeaderboardEntry> {
-        let filteredGameweeks = List.filter(userGameweeks, func (ugw: Types.UserGameweek) : Bool {
-          return ugw.seasonId == seasonId and ugw.gameweekNumber == gameweekNumber and ugw.enteredSweepstake;
-        });
-
-        return List.map<Types.UserGameweek, Types.LeaderboardEntry>(filteredGameweeks, func (ugw: Types.UserGameweek) : Types.LeaderboardEntry {
-          return {
-            principalName = principal;
-            displayName = principal;
-            correctScores = ugw.correctScores;
-            predictionCount = ugw.predictionCount;
-          };
-        });
+          return List.map<Types.UserGameweek, Types.LeaderboardEntry>(filteredGameweeks, func (ugw: Types.UserGameweek) : Types.LeaderboardEntry {
+              return {
+                  principalName = principal;
+                  displayName = principal;
+                  correctScores = ugw.correctScores;
+                  predictionCount = ugw.predictionCount;
+                  enteredSweepstake = ugw.enteredSweepstake;
+              };
+          });
       });
 
       let flattenedLeaderboardEntries = List.flatten<Types.LeaderboardEntry>(List.fromArray(leaderboardEntries));
 
-      // Find the highest number of correct scores
       let highestCorrectScores = List.foldLeft<Types.LeaderboardEntry, Nat8>(flattenedLeaderboardEntries, 0, func (highest: Nat8, entry: Types.LeaderboardEntry) : Nat8 {
-        if (entry.correctScores > highest) {
-          return entry.correctScores;
-        } else {
-          return highest;
-        };
+          if (entry.correctScores > highest) {
+              return entry.correctScores;
+          } else {
+              return highest;
+          };
       });
 
-      // Filter the winners with the highest correct scores
+      let winnerCount = List.foldLeft<Types.LeaderboardEntry, Nat>(flattenedLeaderboardEntries, 0, func (count: Nat, entry: Types.LeaderboardEntry) : Nat {
+          let perfectScore = entry.correctScores == entry.predictionCount and entry.predictionCount > 0;
+          if ((entry.correctScores == highestCorrectScores and entry.enteredSweepstake) or (perfectScore and not entry.enteredSweepstake)) {
+              return count + 1;
+          } else {
+              return count;
+          };
+      });
+
+      return winnerCount;
+    };
+
+    public func getWinnerPrincipalIds(seasonId: Nat16, gameweekNumber: Nat8) : [Types.PrincipalName] {
+      let leaderboardEntries = Array.map<(Types.PrincipalName, List.List<Types.UserGameweek>), List.List<Types.LeaderboardEntry>>(Iter.toArray(userPredictions.entries()), func ((principal, userGameweeks): (Types.PrincipalName, List.List<Types.UserGameweek>)) : List.List<Types.LeaderboardEntry> {
+          let filteredGameweeks = List.filter(userGameweeks, func (ugw: Types.UserGameweek) : Bool {
+              return ugw.seasonId == seasonId and ugw.gameweekNumber == gameweekNumber;
+          });
+
+          return List.map<Types.UserGameweek, Types.LeaderboardEntry>(filteredGameweeks, func (ugw: Types.UserGameweek) : Types.LeaderboardEntry {
+              return {
+                  principalName = principal;
+                  displayName = principal;
+                  correctScores = ugw.correctScores;
+                  predictionCount = ugw.predictionCount;
+                  enteredSweepstake = ugw.enteredSweepstake;
+              };
+          });
+      });
+
+      let flattenedLeaderboardEntries = List.flatten<Types.LeaderboardEntry>(List.fromArray(leaderboardEntries));
+
+      let highestCorrectScores = List.foldLeft<Types.LeaderboardEntry, Nat8>(flattenedLeaderboardEntries, 0, func (highest: Nat8, entry: Types.LeaderboardEntry) : Nat8 {
+          if (entry.correctScores > highest) {
+              return entry.correctScores;
+          } else {
+              return highest;
+          };
+      });
+
       let winners = List.filter<Types.LeaderboardEntry>(flattenedLeaderboardEntries, func (entry: Types.LeaderboardEntry) : Bool {
-        return entry.correctScores == highestCorrectScores;
+          let perfectScore = entry.correctScores == entry.predictionCount and entry.predictionCount > 0;
+          return (entry.correctScores == highestCorrectScores and entry.enteredSweepstake) or (perfectScore and not entry.enteredSweepstake);
       });
 
-      // Extract the principal ids of the winners
       let winnerPrincipalIds = List.map<Types.LeaderboardEntry, Types.PrincipalName>(winners, func (entry: Types.LeaderboardEntry) : Types.PrincipalName {
-        return entry.principalName;
+          return entry.principalName;
       });
 
       return List.toArray<Types.PrincipalName>(winnerPrincipalIds);
     };
+
 
     public func deleteFixture(seasonId: Nat16, gameweekNumber: Nat8, fixtures: [Types.Fixture], fixtureId: Nat32) : Result.Result<(), Types.Error> {
       

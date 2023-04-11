@@ -28,6 +28,7 @@ export interface LeaderboardEntry {
   'correctScores' : number,
   'displayName' : string,
   'predictionCount' : number,
+  'enteredSweepstake' : boolean,
   'principalName' : string,
 }
 export type List = [] | [[Prediction, List]];

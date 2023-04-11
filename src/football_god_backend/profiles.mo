@@ -263,6 +263,7 @@ module {
                         displayName = profileData.displayName;
                         correctScores = entry.correctScores;
                         predictionCount = entry.predictionCount;
+                        enteredSweepstake = entry.enteredSweepstake;
                     };
                 };
             };

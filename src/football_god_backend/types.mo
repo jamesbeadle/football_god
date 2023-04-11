@@ -72,6 +72,7 @@ module Types {
         displayName: Text;
         correctScores: Nat8;
         predictionCount: Nat8;
+        enteredSweepstake: Bool;
     };
 
     public type PayoutData = {

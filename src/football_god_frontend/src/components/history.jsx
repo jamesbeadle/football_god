@@ -98,7 +98,7 @@ const History = () => {
                     <td className="text-center">{entry.gameweekNumber}</td>
                     <td className="text-center">{entry.enteredSweepstake ? 'Yes' : 'No'}</td>
                     <td className="text-center">{entry.correctScores} / {entry.predictionCount}</td>
-                    <td className="text-center">{entry.enteredSweepstake ? (Number(entry.winnings) / 1e8).toFixed(0) : 'N/A'}</td>
+                    <td className="text-center">{entry.enteredSweepstake || Number(entry.winnings) > 0 ? (Number(entry.winnings) / 1e8).toFixed(2) : 'N/A'}</td>
                     <td className="text-center">
                       <Button onClick={() => handleViewSubmission(entry.gameweekNumber)} variant="primary">
                         View
