@@ -41,7 +41,7 @@ type Prediction =
  };
 type PayoutData = 
  record {
-   totalPot: float64;
+   totalPot: nat64;
    winners: nat;
  };
 type List_2 = 

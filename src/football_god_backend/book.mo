@@ -39,14 +39,19 @@ module {
     };
 
     public func transferWinnings(defaultAccount: Principal, user: Principal, amount: Float) : async () {
+
+        Debug.print(debug_show(user));
+        Debug.print(debug_show(amount));
+
         let result = await Ledger.transfer({
           memo = 0;
-          from_subaccount = ?Account.principalToSubaccount(defaultAccount);
-          to = Account.principalToSubaccount(user);
+          from_subaccount = null;
+          to = Account.accountIdentifier(defaultAccount, Account.principalToSubaccount(user));
           amount = { e8s = Int64.toNat64(Float.toInt64(amount)) };
           fee = { e8s = icp_fee };
           created_at_time = ?{ timestamp_nanos = Nat64.fromNat(Int.abs(Time.now())) };
         });
+        Debug.print(debug_show(result));
     };
 
     public func canAffordEntry(defaultAccount: Principal, user: Principal) : async Bool {
@@ -114,12 +119,13 @@ module {
             case (#ok array) {
                 let result = await Ledger.transfer({
                     memo: Nat64    = 0;
-                    from_subaccount = ?Account.principalToSubaccount(defaultAccount);
+                    from_subaccount = null;
                     to = Blob.fromArray(array);
                     amount = { e8s = balance.e8s - icp_fee };
                     fee = { e8s = icp_fee };
                     created_at_time = ?{ timestamp_nanos = Nat64.fromNat(Int.abs(Time.now())) };
                 });
+                Debug.print(debug_show(result));
 
                 return #ok(());
             };

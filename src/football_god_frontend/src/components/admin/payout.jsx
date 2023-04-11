@@ -26,8 +26,6 @@ const Payout = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      console.log(season)
-      console.log(gameweek)
       if (!season || !gameweek) {
         return;
       }
@@ -66,7 +64,7 @@ const Payout = () => {
   const handlePayout = async () => {
     if (window.confirm('Are you sure you want to pay out the sweepstake for the week?')) {
       setIsLoading(true);
-      await football_god_backend_actor.payOutSweepstake(season.id, gameweek.number);
+      await football_god_backend_actor.payoutSweepstake(season.id, gameweek.number);
       setIsLoading(false);
       alert('Payout completed successfully!');
     }
