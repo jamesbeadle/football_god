@@ -19,7 +19,7 @@ import Account "Account";
 actor Self {
   
   let admins : [Principal] = [
-    Principal.fromText("ztthu-cbxcc-xdbul-ju7cm-qxadr-u6y4i-57lof-nsmpm-wkdwf-nyxdl-oae")
+    Principal.fromText("5mdop-qg5yr-jbxve-kwibd-vzckf-zauna-bi6g3-53zd4-szfl3-lohay-2ae")
   ];
 
   let profilesInstance = Profiles.Profiles();
@@ -174,7 +174,11 @@ actor Self {
     if(isCallerAdmin == false){
       return #err(#NotAuthorized);
     };
-
+    if(activeSeason == id){  
+      activeSeason := 0;
+      activeGameweek := 0;
+    };
+    let result = predictionsInstance.deleteSeason(id);
     return seasonsInstance.deleteSeason(id);
   };
 
@@ -281,7 +285,10 @@ actor Self {
   public shared ({caller}) func submitPredictions(seasonId: Nat16, gameweekNumber: Nat8, predictions: [Types.Prediction]) : async Result.Result<(), Types.Error> {
     assert not Principal.isAnonymous(caller);
 
+    Debug.print(debug_show("submitting predictions"));
+
     let hasProfile = profilesInstance.checkForProfile(Principal.toText(caller));
+    Debug.print(debug_show(hasProfile));
 
     if (not hasProfile){
       return #err(#NotAllowed);
@@ -432,6 +439,7 @@ actor Self {
 
     for (i in Iter.range(0, winningPrincipals.size() - 1)) {
       await bookInstance.transferWinnings(Principal.fromActor(Self), Principal.fromText(winningPrincipals[i]), winnerShare);
+      let result = predictionsInstance.updateWinnings(seasonId, gameweekNumber, winningPrincipals[i], Int64.toNat64(Float.toInt64(winnerShare)));
     };
 
     return await bookInstance.transferAdminFee(Principal.fromActor(Self), adminAccount);

@@ -7,6 +7,8 @@ import Iter "mo:base/Iter";
 import Array "mo:base/Array";
 import Nat8 "mo:base/Nat8";
 import Nat32 "mo:base/Nat32";
+import Nat64 "mo:base/Nat64";
+import Debug "mo:base/Debug";
 
 module {
     
@@ -34,8 +36,9 @@ module {
           predictionCount = Nat8.fromNat(Array.size<Types.Prediction>(predictions));
           winnings = 0;
         }; 
-
+        
         let existingUserGameweeks = userPredictions.get(principalName);
+        
         let updatedUserGameweeks = switch existingUserGameweeks {
           case (null) { List.push<Types.UserGameweek>(userGameweek, List.nil<Types.UserGameweek>()) };
           case (?userGameweeks) {
@@ -368,6 +371,52 @@ module {
 
       return #ok(());
     };
+
+    public func updateWinnings(seasonId: Nat16, gameweekNumber: Nat8, principalName: Text, winnings: Nat64) : Result.Result<(), Types.Error> {
+      let userGameweeks = userPredictions.get(principalName);
+
+      switch userGameweeks {
+        case (null) { return #err(#NotFound); };
+        case (?gameweeks) {
+          let updatedUserGameweeks = List.map<Types.UserGameweek, Types.UserGameweek>(gameweeks, func (ugw: Types.UserGameweek) : Types.UserGameweek {
+            if (ugw.seasonId == seasonId and ugw.gameweekNumber == gameweekNumber) {
+              return {
+                seasonId = ugw.seasonId;
+                gameweekNumber = ugw.gameweekNumber;
+                predictions = ugw.predictions;
+                enteredSweepstake = ugw.enteredSweepstake;
+                correctScores = ugw.correctScores;
+                predictionCount = ugw.predictionCount;
+                winnings = Nat64.toNat(winnings);
+              };
+            } else {
+              return ugw;
+            };
+          });
+
+          userPredictions.put(principalName, updatedUserGameweeks);
+
+          return #ok(());
+        };
+      };
+    };
+
+    public func deleteSeason(seasonId: Nat16) : Result.Result<(), Types.Error> {
+      // Iterate through all users
+      for ((principalName, userGameweeks) in userPredictions.entries()) {
+        // Remove all gameweeks with the given seasonId
+        let updatedUserGameweeks = List.filter<Types.UserGameweek>(userGameweeks, func (ugw: Types.UserGameweek) : Bool {
+          return ugw.seasonId != seasonId;
+        });
+
+        // Update the user's gameweeks in userPredictions
+        userPredictions.put(principalName, updatedUserGameweeks);
+      };
+
+      return #ok(());
+    };
+
+
 
   }
 }

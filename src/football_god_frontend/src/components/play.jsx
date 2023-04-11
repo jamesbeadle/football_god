@@ -137,11 +137,12 @@ const Play = () => {
 
     const identity = authClient.getIdentity();
     Actor.agentOf(football_god_backend_actor).replaceIdentity(identity);
-    await football_god_backend_actor.submitPredictions(
+    let result = await football_god_backend_actor.submitPredictions(
       Number(activeSeason.id),
       Number(activeGameweek.number),
       predictions
     );
+    console.log(result);
     setIsLoading(false);
     navigate(`/view-submission/${Number(activeSeason.id)}/${Number(activeGameweek.number)}`);
     
@@ -165,7 +166,8 @@ const Play = () => {
       predictions
     );
 
-    await football_god_backend_actor.enterSweepstake(Number(activeSeason.id), Number(activeGameweek.number));
+    let result = await football_god_backend_actor.enterSweepstake(Number(activeSeason.id), Number(activeGameweek.number));
+    console.log(result)
     setIsLoading(false);
     navigate(`/view-submission/${Number(activeSeason.id)}/${Number(activeGameweek.number)}`);
   };
