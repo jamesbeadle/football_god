@@ -36,6 +36,10 @@ export const idlFactory = ({ IDL }) => {
     'displayName' : IDL.Text,
     'principalName' : IDL.Text,
   });
+  const CorrectPredictions = IDL.Record({
+    'totalEntries' : IDL.Nat32,
+    'entries' : IDL.Vec(GameweekSummary),
+  });
   const LeaderboardEntry = IDL.Record({
     'correctScores' : IDL.Nat8,
     'displayName' : IDL.Text,
@@ -91,8 +95,8 @@ export const idlFactory = ({ IDL }) => {
     'getActiveGameweek' : IDL.Func([], [IDL.Opt(Gameweek)], ['query']),
     'getActiveSeason' : IDL.Func([], [IDL.Opt(Season)], ['query']),
     'getCorrectPredictions' : IDL.Func(
-        [IDL.Nat16, IDL.Nat8, IDL.Nat32],
-        [IDL.Vec(GameweekSummary)],
+        [IDL.Nat16, IDL.Nat8, IDL.Nat32, IDL.Nat, IDL.Nat],
+        [IDL.Opt(CorrectPredictions)],
         [],
       ),
     'getFixture' : IDL.Func(

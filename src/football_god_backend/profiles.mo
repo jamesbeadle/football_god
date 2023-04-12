@@ -275,6 +275,29 @@ module {
         };
     };
 
+    
+
+    public func getPredictionNames(predictions: Types.CorrectPredictions) : Types.CorrectPredictions {
+        let populatedEntries = List.map<Types.GameweekSummary, Types.GameweekSummary>(List.fromArray(predictions.entries), func(entry: Types.GameweekSummary): Types.GameweekSummary {
+            let profile = getProfile(entry.principalName);
+            switch (profile) {
+                case (null) {
+                    return entry;
+                };
+                case (?profileData) {
+                    return {
+                        principalName = entry.principalName;
+                        displayName = profileData.displayName;
+                    };
+                };
+            };
+        });
+        return {
+            entries = List.toArray(populatedEntries);
+            totalEntries = predictions.totalEntries;
+        };
+    };
+
 
 
   }

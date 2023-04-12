@@ -61,14 +61,19 @@ module Types {
         displayName: Text;
     };
 
+    public type Leaderboard = {
+        entries: [LeaderboardEntry];
+        totalEntries: Nat32;
+    };
+
     public type Prediction = {
         fixtureId: Nat32;
         homeGoals: Nat8;
         awayGoals: Nat8;
     };
 
-    public type Leaderboard = {
-        entries: [LeaderboardEntry];
+    public type CorrectPredictions = {
+        entries: [GameweekSummary];
         totalEntries: Nat32;
     };
 

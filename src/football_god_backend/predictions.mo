@@ -92,7 +92,7 @@ module {
       };
     };
 
-    public func getCorrectPredictions(seasonId: Nat16, gameweekNumber: Nat8, fixture: Types.Fixture) : [Types.GameweekSummary] {
+    public func getCorrectPredictions(seasonId: Nat16, gameweekNumber: Nat8, fixture: Types.Fixture, start: Nat, count: Nat) : Types.CorrectPredictions {
       let iter = userPredictions.entries();
       var correctPredictions: [Types.GameweekSummary] = [];
 
@@ -124,7 +124,16 @@ module {
         };
       };
 
-      return correctPredictions;
+      let predictionsList = List.fromArray(correctPredictions);
+      var totalEntries: Nat = List.size(predictionsList);
+      let paginatedCorrectPredictions = List.take(List.drop(predictionsList, start), count);
+
+      let correctPredictionsSummary: Types.CorrectPredictions = {
+        entries = List.toArray(paginatedCorrectPredictions);
+        totalEntries = Nat32.fromNat(totalEntries);
+      };
+
+      return correctPredictionsSummary;
     };
 
 
@@ -238,8 +247,6 @@ module {
         
         return leaderboard;
     };
-
-
 
     public func countWinners(seasonId: Nat16, gameweekNumber: Nat8) : Nat {
       let leaderboardEntries = Array.map< (Types.PrincipalName, List.List<Types.UserGameweek>), List.List<Types.LeaderboardEntry>>(Iter.toArray(userPredictions.entries()), func ((principal, userGameweeks): (Types.PrincipalName, List.List<Types.UserGameweek>)) : List.List<Types.LeaderboardEntry> {

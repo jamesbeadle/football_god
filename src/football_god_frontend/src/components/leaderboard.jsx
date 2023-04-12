@@ -119,11 +119,7 @@ const Leaderboard = () => {
             </thead>
             <tbody>
             {leaderboard && (() => {
-                return leaderboard.entries.map((entry, index) => { 
-                  
-                //const classes = entry.positiontext === '1' || entry.positiontext.startsWith('T1') ? 'gold-bg' : '';
-                //className={classes}
-                return (
+                return leaderboard.entries.map((entry, index) => (
                   <tr key={entry.principalName}>
                     <td>{index + 1 + page * resultsPerPage}</td>
                     <td>{entry.displayName}</td>
@@ -134,7 +130,7 @@ const Leaderboard = () => {
                       </Button>
                     </td>
                   </tr>
-                )});
+                ));
               })()}
             </tbody>
           </Table>

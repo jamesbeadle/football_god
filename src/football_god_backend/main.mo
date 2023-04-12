@@ -367,17 +367,25 @@ actor Self {
     return predictionsInstance.getPredictions(principalName, seasonId, gameweekNumber); 
   };
 
-  public shared ({caller}) func getCorrectPredictions(seasonId: Nat16, gameweekNumber: Nat8, fixtureId: Nat32) : async [Types.GameweekSummary] {
+  public shared ({caller}) func getCorrectPredictions(seasonId: Nat16, gameweekNumber: Nat8, fixtureId: Nat32, start: Nat, count: Nat) : async ?Types.CorrectPredictions {
     let isCallerAdmin = isAdminForCaller(caller);
     if(isCallerAdmin == false){
-      return [];
+      return null;
     };
 
     let fixture = seasonsInstance.getFixture(seasonId, gameweekNumber, fixtureId);
     switch fixture {
-      case (null) { return []; };
+      case (null) { return null; };
       case (?foundFixture) {
-        return predictionsInstance.getCorrectPredictions(seasonId, gameweekNumber, foundFixture); 
+        
+        let predictions = ?predictionsInstance.getCorrectPredictions(seasonId, gameweekNumber, foundFixture, start, count); 
+        switch predictions {
+          case (null) { return null; };
+          case (?foundPredictions) {
+            let predictionsWithNames = profilesInstance.getPredictionNames(foundPredictions);
+            return ?predictionsWithNames;
+          };
+        };
       };
     };
   };

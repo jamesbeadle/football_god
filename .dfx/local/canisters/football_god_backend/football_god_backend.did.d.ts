@@ -1,6 +1,10 @@
 import type { Principal } from '@dfinity/principal';
 import type { ActorMethod } from '@dfinity/agent';
 
+export interface CorrectPredictions {
+  'totalEntries' : number,
+  'entries' : Array<GameweekSummary>,
+}
 export type Error = { 'DecodeError' : null } |
   { 'NotAllowed' : null } |
   { 'NotFound' : null } |
@@ -85,8 +89,8 @@ export interface _SERVICE {
   'getActiveGameweek' : ActorMethod<[], [] | [Gameweek]>,
   'getActiveSeason' : ActorMethod<[], [] | [Season]>,
   'getCorrectPredictions' : ActorMethod<
-    [number, number, number],
-    Array<GameweekSummary>
+    [number, number, number, bigint, bigint],
+    [] | [CorrectPredictions]
   >,
   'getFixture' : ActorMethod<[number, number, number], [] | [Fixture]>,
   'getFixtures' : ActorMethod<[number, number], Array<Fixture>>,

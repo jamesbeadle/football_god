@@ -102,6 +102,11 @@ type Error =
    NotAuthorized;
    NotFound;
  };
+type CorrectPredictions = 
+ record {
+   entries: vec GameweekSummary;
+   totalEntries: nat32;
+ };
 service : {
   addFixtureToGameweek: (nat16, nat8, nat16, nat16) -> (Result);
   checkSweepstakePaid: (nat16, nat8) -> (bool);
@@ -113,7 +118,8 @@ service : {
   enterSweepstake: (nat16, nat8) -> (Result);
   getActiveGameweek: () -> (opt Gameweek) query;
   getActiveSeason: () -> (opt Season) query;
-  getCorrectPredictions: (nat16, nat8, nat32) -> (vec GameweekSummary);
+  getCorrectPredictions: (nat16, nat8, nat32, nat, nat) ->
+   (opt CorrectPredictions);
   getFixture: (nat16, nat8, nat32) -> (opt Fixture) query;
   getFixtures: (nat16, nat8) -> (vec Fixture) query;
   getGameweekPot: () -> (int64);
