@@ -145,8 +145,11 @@ const Leaderboard = () => {
             <tbody>
             {leaderboard && (() => {
                 const formattedPositions = getFormattedPositions(leaderboard);
-                return leaderboard.entries.map((entry, index) => (
-                  <tr key={entry.principalName}>
+                return leaderboard.entries.map((entry, index) => { 
+                  
+                const classes = formattedPositions[index] === '1' || formattedPositions[index].startsWith('T1') ? 'gold-bg' : '';
+                  return (
+                  <tr key={entry.principalName} className={classes}>
                     <td>{formattedPositions[index]}</td>
                     <td>{entry.displayName}</td>
                     <td>{entry.correctScores} / {entry.predictionCount}</td>
@@ -156,7 +159,7 @@ const Leaderboard = () => {
                       </Button>
                     </td>
                   </tr>
-                ));
+                )});
               })()}
             </tbody>
           </Table>

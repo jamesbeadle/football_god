@@ -64,3 +64,11 @@
   padding-left: 0;
 }
 
+.gold-bg {
+  background-color: #C0C0C0 !important;
+  color: black !important;
+}
+
+.gold-bg td {
+  color: black !important;
+}
