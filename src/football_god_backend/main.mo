@@ -370,6 +370,21 @@ actor Self {
     return predictionsInstance.getPredictions(principalName, seasonId, gameweekNumber); 
   };
 
+  public shared ({caller}) func getCorrectPredictions(seasonId: Nat16, gameweekNumber: Nat8, fixtureId: Nat32) : async [Types.GameweekSummary] {
+    let isCallerAdmin = isAdminForCaller(caller);
+    if(isCallerAdmin == false){
+      return [];
+    };
+
+    let fixture = seasonsInstance.getFixture(seasonId, gameweekNumber, fixtureId);
+    switch fixture {
+      case (null) { return []; };
+      case (?foundFixture) {
+        return predictionsInstance.getCorrectPredictions(seasonId, gameweekNumber, foundFixture); 
+      };
+    };
+  };
+
   public shared ({caller}) func checkSweepstakePaid(seasonId: Nat16, gameweekNumber: Nat8) : async Bool {
     assert not Principal.isAnonymous(caller);
     let principalName = Principal.toText(caller); 

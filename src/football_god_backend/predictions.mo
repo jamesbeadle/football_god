@@ -9,6 +9,7 @@ import Nat8 "mo:base/Nat8";
 import Nat32 "mo:base/Nat32";
 import Nat64 "mo:base/Nat64";
 import Debug "mo:base/Debug";
+import Buffer "mo:base/Buffer";
 
 module {
     
@@ -89,6 +90,42 @@ module {
         };
       };
     };
+
+    public func getCorrectPredictions(seasonId: Nat16, gameweekNumber: Nat8, fixture: Types.Fixture) : [Types.GameweekSummary] {
+      let iter = userPredictions.entries();
+      var correctPredictions: [Types.GameweekSummary] = [];
+
+      for ((principalName, userGameweeks) in iter) {
+        let gameweek = List.find<Types.UserGameweek>(userGameweeks, func (ugw: Types.UserGameweek) : Bool {
+          return ugw.seasonId == seasonId and ugw.gameweekNumber == gameweekNumber;
+        });
+
+        switch gameweek {
+          case (null) {  };
+          case (?gw) {
+            let isPredictionCorrect = List.some<Types.Prediction>(gw.predictions, func (prediction: Types.Prediction) : Bool {
+              return prediction.fixtureId == fixture.id and
+                    prediction.homeGoals == fixture.homeGoals and
+                    prediction.awayGoals == fixture.awayGoals;
+            });
+
+            if (isPredictionCorrect) {
+              let buffer = Buffer.fromArray<Types.GameweekSummary>(correctPredictions);
+              let summary: Types.GameweekSummary = {
+                principalName = principalName;
+                displayName = "";
+              };
+              buffer.add(summary);
+
+              correctPredictions := Buffer.toArray(buffer);
+            };
+          };
+        };
+      };
+
+      return correctPredictions;
+    };
+
 
     public func checkSweepstakePaid(principalName: Text, seasonId: Nat16, gameweekNumber: Nat8) : Bool {
       let userGameweeks = userPredictions.get(principalName);

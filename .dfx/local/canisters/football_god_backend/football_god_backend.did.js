@@ -32,6 +32,10 @@ export const idlFactory = ({ IDL }) => {
     'year' : IDL.Nat16,
     'gameweeks' : List_1,
   });
+  const GameweekSummary = IDL.Record({
+    'displayName' : IDL.Text,
+    'principalName' : IDL.Text,
+  });
   const LeaderboardEntry = IDL.Record({
     'correctScores' : IDL.Nat8,
     'displayName' : IDL.Text,
@@ -85,6 +89,11 @@ export const idlFactory = ({ IDL }) => {
     'enterSweepstake' : IDL.Func([IDL.Nat16, IDL.Nat8], [Result], []),
     'getActiveGameweek' : IDL.Func([], [IDL.Opt(Gameweek)], ['query']),
     'getActiveSeason' : IDL.Func([], [IDL.Opt(Season)], ['query']),
+    'getCorrectPredictions' : IDL.Func(
+        [IDL.Nat16, IDL.Nat8, IDL.Nat32],
+        [IDL.Vec(GameweekSummary)],
+        [],
+      ),
     'getFixture' : IDL.Func(
         [IDL.Nat16, IDL.Nat8, IDL.Nat32],
         [IDL.Opt(Fixture)],

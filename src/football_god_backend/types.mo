@@ -56,6 +56,11 @@ module Types {
         winnings: Nat;
     };
 
+    public type GameweekSummary = {
+        principalName: Text;
+        displayName: Text;
+    };
+
     public type Prediction = {
         fixtureId: Nat32;
         homeGoals: Nat8;

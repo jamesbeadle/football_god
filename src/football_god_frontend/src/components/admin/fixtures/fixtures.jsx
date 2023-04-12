@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Row, Col, Card, Button, Table, Spinner } from 'react-bootstrap';
-import { LinkContainer } from 'react-router-bootstrap';
+import { Container, Row, Col, Card, Button, Table, Spinner, Dropdown } from 'react-bootstrap';
+import { Link } from "react-router-dom";
 import "../../../../assets/main.css";
 import { football_god_backend as football_god_backend_actor } from '../../../../../declarations/football_god_backend';
 import { useParams } from 'react-router-dom';
@@ -99,11 +99,13 @@ const EditFixtures = () => {
                                 <td>{fixture.homeGoals}</td>
                                 <td>{fixture.awayGoals}</td>
                                 <td>
-                                    <LinkContainer to={`/update-fixture/${seasonId}/${gameweekNumber}/${fixture.id}`}>
-                                        <Button variant="primary" className="mb-4 w-100">
-                                            Edit
-                                        </Button>
-                                    </LinkContainer>
+                                  <Dropdown alignRight className="custom-dropdown">
+                                    <Dropdown.Toggle variant="secondary" id="dropdown-basic">Options</Dropdown.Toggle>
+                                    <Dropdown.Menu>
+                                        <Dropdown.Item as={Link} to={`/update-fixture/${seasonId}/${gameweekNumber}/${fixture.id}`}>Edit</Dropdown.Item>
+                                        <Dropdown.Item as={Link} to={`/correct-predictions/${seasonId}/${gameweekNumber}/${fixture.id}`}>Correct Predictions</Dropdown.Item>
+                                    </Dropdown.Menu>
+                                  </Dropdown>
                                 </td>
                             </tr>
                             ))}

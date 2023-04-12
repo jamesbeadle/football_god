@@ -70,7 +70,7 @@ const ViewPrediction = () => {
           fixture.awayTeam === prediction.awayTeam
       );
   
-      if (fixture && fixture.status < 2) {
+      if (fixture && fixture.status > 0) {
         if (
           prediction.homeGoals === fixture.homeGoals &&
           prediction.awayGoals === fixture.awayGoals

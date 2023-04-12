@@ -20,6 +20,10 @@ export interface Gameweek {
   'fixtureCount' : number,
   'fixtures' : List_2,
 }
+export interface GameweekSummary {
+  'displayName' : string,
+  'principalName' : string,
+}
 export interface Leaderboard {
   'totalEntries' : number,
   'entries' : Array<LeaderboardEntry>,
@@ -79,6 +83,10 @@ export interface _SERVICE {
   'enterSweepstake' : ActorMethod<[number, number], Result>,
   'getActiveGameweek' : ActorMethod<[], [] | [Gameweek]>,
   'getActiveSeason' : ActorMethod<[], [] | [Season]>,
+  'getCorrectPredictions' : ActorMethod<
+    [number, number, number],
+    Array<GameweekSummary>
+  >,
   'getFixture' : ActorMethod<[number, number, number], [] | [Fixture]>,
   'getFixtures' : ActorMethod<[number, number], Array<Fixture>>,
   'getGameweekPot' : ActorMethod<[], bigint>,
