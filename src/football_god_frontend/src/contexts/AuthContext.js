@@ -13,7 +13,11 @@ export const AuthProvider = ({ children }) => {
  
   useEffect(() => {
     const initAuthClient = async () => {
-      const authClient = await AuthClient.create();
+      const authClient = await AuthClient.create({
+        idleOptions: {
+          idleTimeout: 1000 * 60 * 60
+        }
+      });
       const isLoggedIn = await checkLoginStatus(authClient);
       
       if (isLoggedIn) {

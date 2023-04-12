@@ -59,7 +59,6 @@ const Leaderboard = () => {
     if (selectedSeason && selectedGameweek) {
       setIsLoading(true);
       const fetchedLeaderboard = await football_god_backend_actor.getLeaderboard(Number(selectedSeason.id), Number(selectedGameweek), Number(page * resultsPerPage), Number(resultsPerPage));
-      console.log(fetchedLeaderboard)
       setLeaderboard(fetchedLeaderboard);
     }
   };

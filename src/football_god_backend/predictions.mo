@@ -172,7 +172,7 @@ module {
 
         let leaderboardEntries = Array.map< (Types.PrincipalName, List.List<Types.UserGameweek>), List.List<Types.LeaderboardEntry>>(Iter.toArray(userPredictions.entries()), func ((principal, userGameweeks): (Types.PrincipalName, List.List<Types.UserGameweek>)) : List.List<Types.LeaderboardEntry> {
             let filteredGameweeks = List.filter(userGameweeks, func (ugw: Types.UserGameweek) : Bool {
-                return ugw.seasonId == seasonId and ugw.gameweekNumber == gameweekNumber and ugw.enteredSweepstake;
+                return ugw.seasonId == seasonId and ugw.gameweekNumber == gameweekNumber;
             });
             
             return List.map<Types.UserGameweek, Types.LeaderboardEntry>(filteredGameweeks, func (ugw: Types.UserGameweek) : Types.LeaderboardEntry {
