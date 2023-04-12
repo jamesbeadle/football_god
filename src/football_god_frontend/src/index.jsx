@@ -24,9 +24,54 @@ import Seasons from "./components/admin/seasons/seasons";
 import ViewPrediction from "./components/view-prediction";
 import CorrectPredictions from "./components/admin/fixtures/correct-predictions";
 
+const PrivateWindowFallback = () => {
+  return (
+    <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center" }}>
+      <h1>Please use a non-private window to access this app</h1>
+    </div>
+  );
+};
+
 const App = () => {
+
+  const [isPrivateWindow, setIsPrivateWindow] = React.useState(false);
+
+  React.useEffect(() => {
+    if (window.indexedDB) {
+      const request = window.indexedDB.open("TestDB");
+
+      request.onerror = () => {
+        setIsPrivateWindow(true);
+      };
+
+      request.onsuccess = (event) => {
+        const db = event.target.result;
+        db.close(); // make sure the db is closed before deleting
+        const deleteRequest = window.indexedDB.deleteDatabase("TestDB");
+  
+        deleteRequest.onerror = (event) => {
+          console.error("Failed to delete TestDB", event);
+        };
+  
+        deleteRequest.onsuccess = () => {
+          console.log("TestDB deleted successfully");
+        };
+      };
+  
+
+    } else {
+      setIsPrivateWindow(true);
+    }
+  }, []);
+
+  if (isPrivateWindow) {
+    return (
+      <PrivateWindowFallback />
+    );
+  }
  
   return (
+    <AuthProvider>
       <Router>
         <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}>
           <MyNavbar />
@@ -52,11 +97,11 @@ const App = () => {
           <MyFooter />
         </div>
       </Router>   
+  </AuthProvider>
   );
 };
 
 const root = document.getElementById("app");
 createRoot(root).render(
-  <AuthProvider>
     <App />
-  </AuthProvider>);
+);
