@@ -71,6 +71,33 @@ const Leaderboard = () => {
     setPage((prevPage) => prevPage + change);
   };
 
+  const getFormattedPositions = (leaderboard) => {
+    const formattedPositions = [];
+    let currentPosition = 1;
+    let tiedCount = 0;
+  
+    for (let i = 0; i < leaderboard.entries.length; i++) {
+      if (i > 0 && leaderboard.entries[i].correctScores === leaderboard.entries[i - 1].correctScores) {
+        tiedCount++;
+      } else {
+        currentPosition += tiedCount;
+        tiedCount = 1;
+      }
+  
+      if (
+        (i < leaderboard.entries.length - 1 && leaderboard.entries[i].correctScores === leaderboard.entries[i + 1].correctScores) ||
+        (i > 0 && leaderboard.entries[i].correctScores === leaderboard.entries[i - 1].correctScores)
+      ) {
+        formattedPositions.push(`T${currentPosition + page * resultsPerPage}`);
+      } else {
+        formattedPositions.push(`${currentPosition + page * resultsPerPage}`);
+      }
+    }
+  
+    return formattedPositions;
+  };
+  
+
   return (
     <Container>
       {isLoading ? (
@@ -116,18 +143,21 @@ const Leaderboard = () => {
               </tr>
             </thead>
             <tbody>
-              {leaderboard && leaderboard.entries.map((entry, index) => (
-                <tr key={entry.principalName}>
-                  <td>{index + 1 + page * resultsPerPage}</td>
-                  <td>{entry.displayName}</td>
-                  <td>{entry.correctScores} / {entry.predictionCount}</td>
-                  <td>
-                    <Button onClick={() => handleViewPrediction(entry.principalName)} variant="primary">
-                      View
-                    </Button>
-                  </td>
-                </tr>
-              ))}
+            {leaderboard && (() => {
+                const formattedPositions = getFormattedPositions(leaderboard);
+                return leaderboard.entries.map((entry, index) => (
+                  <tr key={entry.principalName}>
+                    <td>{formattedPositions[index]}</td>
+                    <td>{entry.displayName}</td>
+                    <td>{entry.correctScores} / {entry.predictionCount}</td>
+                    <td>
+                      <Button onClick={() => handleViewPrediction(entry.principalName)} variant="primary">
+                        View
+                      </Button>
+                    </td>
+                  </tr>
+                ));
+              })()}
             </tbody>
           </Table>
           <div className="d-flex justify-content-center mt-3">
