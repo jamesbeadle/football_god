@@ -40,6 +40,7 @@ export const idlFactory = ({ IDL }) => {
     'correctScores' : IDL.Nat8,
     'displayName' : IDL.Text,
     'predictionCount' : IDL.Nat8,
+    'positionText' : IDL.Text,
     'enteredSweepstake' : IDL.Bool,
     'principalName' : IDL.Text,
   });

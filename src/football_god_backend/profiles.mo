@@ -255,10 +255,11 @@ module {
             let profile = getProfile(entry.principalName);
             switch (profile) {
                 case (null) {
-                    return entry; // Keep the existing entry if no profile is found
+                    return entry;
                 };
                 case (?profileData) {
                     return {
+                        positionText = entry.positionText;
                         principalName = entry.principalName;
                         displayName = profileData.displayName;
                         correctScores = entry.correctScores;

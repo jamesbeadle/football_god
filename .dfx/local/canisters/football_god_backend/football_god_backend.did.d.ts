@@ -32,6 +32,7 @@ export interface LeaderboardEntry {
   'correctScores' : number,
   'displayName' : string,
   'predictionCount' : number,
+  'positionText' : string,
   'enteredSweepstake' : boolean,
   'principalName' : string,
 }

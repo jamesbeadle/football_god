@@ -72,33 +72,6 @@ const Leaderboard = () => {
     setPage((prevPage) => prevPage + change);
   };
 
-  const getFormattedPositions = (leaderboard) => {
-    const formattedPositions = [];
-    let currentPosition = 1;
-    let tiedCount = 0;
-  
-    for (let i = 0; i < leaderboard.entries.length; i++) {
-      if (i > 0 && leaderboard.entries[i].correctScores === leaderboard.entries[i - 1].correctScores) {
-        tiedCount++;
-      } else {
-        currentPosition += tiedCount;
-        tiedCount = 1;
-      }
-  
-      if (
-        (i < leaderboard.entries.length - 1 && leaderboard.entries[i].correctScores === leaderboard.entries[i + 1].correctScores) ||
-        (i > 0 && leaderboard.entries[i].correctScores === leaderboard.entries[i - 1].correctScores)
-      ) {
-        formattedPositions.push(`T${currentPosition + page * resultsPerPage}`);
-      } else {
-        formattedPositions.push(`${currentPosition + page * resultsPerPage}`);
-      }
-    }
-  
-    return formattedPositions;
-  };
-  
-
   return (
     <Container>
       {isLoading ? (
@@ -146,13 +119,13 @@ const Leaderboard = () => {
             </thead>
             <tbody>
             {leaderboard && (() => {
-                const formattedPositions = getFormattedPositions(leaderboard);
                 return leaderboard.entries.map((entry, index) => { 
                   
-                const classes = formattedPositions[index] === '1' || formattedPositions[index].startsWith('T1') ? 'gold-bg' : '';
-                  return (
-                  <tr key={entry.principalName} className={classes}>
-                    <td>{formattedPositions[index]}</td>
+                //const classes = entry.positiontext === '1' || entry.positiontext.startsWith('T1') ? 'gold-bg' : '';
+                //className={classes}
+                return (
+                  <tr key={entry.principalName}>
+                    <td>{index + 1 + page * resultsPerPage}</td>
                     <td>{entry.displayName}</td>
                     <td>{entry.correctScores} / {entry.predictionCount}</td>
                     <td>

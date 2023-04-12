@@ -10,6 +10,7 @@ import Nat32 "mo:base/Nat32";
 import Nat64 "mo:base/Nat64";
 import Debug "mo:base/Debug";
 import Buffer "mo:base/Buffer";
+import Nat "mo:base/Nat";
 
 module {
     
@@ -188,7 +189,6 @@ module {
         };
     };
 
-    
     public func getLeaderboard(seasonId: Nat16, gameweekNumber: Nat8, start: Nat, count: Nat) : Types.Leaderboard {
 
 
@@ -214,6 +214,7 @@ module {
             
             return List.map<Types.UserGameweek, Types.LeaderboardEntry>(filteredGameweeks, func (ugw: Types.UserGameweek) : Types.LeaderboardEntry {
                 return {
+                    positionText = "";
                     principalName = principal;
                     displayName = principal;
                     correctScores = ugw.correctScores;
@@ -239,6 +240,7 @@ module {
     };
 
 
+
     public func countWinners(seasonId: Nat16, gameweekNumber: Nat8) : Nat {
       let leaderboardEntries = Array.map< (Types.PrincipalName, List.List<Types.UserGameweek>), List.List<Types.LeaderboardEntry>>(Iter.toArray(userPredictions.entries()), func ((principal, userGameweeks): (Types.PrincipalName, List.List<Types.UserGameweek>)) : List.List<Types.LeaderboardEntry> {
           let filteredGameweeks = List.filter(userGameweeks, func (ugw: Types.UserGameweek) : Bool {
@@ -247,6 +249,7 @@ module {
 
           return List.map<Types.UserGameweek, Types.LeaderboardEntry>(filteredGameweeks, func (ugw: Types.UserGameweek) : Types.LeaderboardEntry {
               return {
+                  positionText = "";
                   principalName = principal;
                   displayName = principal;
                   correctScores = ugw.correctScores;
@@ -286,6 +289,7 @@ module {
 
           return List.map<Types.UserGameweek, Types.LeaderboardEntry>(filteredGameweeks, func (ugw: Types.UserGameweek) : Types.LeaderboardEntry {
               return {
+                  positionText = "";
                   principalName = principal;
                   displayName = principal;
                   correctScores = ugw.correctScores;

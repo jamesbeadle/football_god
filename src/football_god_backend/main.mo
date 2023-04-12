@@ -285,10 +285,7 @@ actor Self {
   public shared ({caller}) func submitPredictions(seasonId: Nat16, gameweekNumber: Nat8, predictions: [Types.Prediction]) : async Result.Result<(), Types.Error> {
     assert not Principal.isAnonymous(caller);
 
-    Debug.print(debug_show("submitting predictions"));
-
     let hasProfile = profilesInstance.checkForProfile(Principal.toText(caller));
-    Debug.print(debug_show(hasProfile));
 
     if (not hasProfile){
       return #err(#NotAllowed);

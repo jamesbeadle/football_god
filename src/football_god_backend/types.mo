@@ -73,6 +73,7 @@ module Types {
     };
 
     public type LeaderboardEntry = {
+        positionText: Text;
         principalName: Text;
         displayName: Text;
         correctScores: Nat8;

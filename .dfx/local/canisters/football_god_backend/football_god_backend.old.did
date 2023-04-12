@@ -64,6 +64,7 @@ type LeaderboardEntry =
    correctScores: nat8;
    displayName: text;
    enteredSweepstake: bool;
+   positionText: text;
    predictionCount: nat8;
    principalName: text;
  };
@@ -71,6 +72,11 @@ type Leaderboard =
  record {
    entries: vec LeaderboardEntry;
    totalEntries: nat32;
+ };
+type GameweekSummary = 
+ record {
+   displayName: text;
+   principalName: text;
  };
 type Gameweek = 
  record {
@@ -107,7 +113,7 @@ service : {
   enterSweepstake: (nat16, nat8) -> (Result);
   getActiveGameweek: () -> (opt Gameweek) query;
   getActiveSeason: () -> (opt Season) query;
-  getCorrectPredictions: (nat16, nat8, nat32) -> (vec UserGameweek);
+  getCorrectPredictions: (nat16, nat8, nat32) -> (vec GameweekSummary);
   getFixture: (nat16, nat8, nat32) -> (opt Fixture) query;
   getFixtures: (nat16, nat8) -> (vec Fixture) query;
   getGameweekPot: () -> (int64);

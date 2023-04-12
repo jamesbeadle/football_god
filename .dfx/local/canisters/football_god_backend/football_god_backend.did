@@ -64,6 +64,7 @@ type LeaderboardEntry =
    correctScores: nat8;
    displayName: text;
    enteredSweepstake: bool;
+   positionText: text;
    predictionCount: nat8;
    principalName: text;
  };
