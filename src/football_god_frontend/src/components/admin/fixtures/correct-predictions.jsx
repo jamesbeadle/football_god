@@ -33,6 +33,7 @@ const CorrectPredictions = () => {
   };
 
   const fetchPredictionsData = async () => {
+    setIsLoading(true);
     const predictionsData = await football_god_backend_actor.getCorrectPredictions(Number(seasonId), Number(gameweekNumber), Number(fixtureId), page, resultsPerPage);
     setPredictionsData(predictionsData[0]);
   };
@@ -53,7 +54,7 @@ const CorrectPredictions = () => {
       }
     };
     fetchData();
-  }, [teams]);
+  }, [teams, page]);
 
   useEffect(() => {
     if(fixture && predictions){

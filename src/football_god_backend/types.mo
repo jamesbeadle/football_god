@@ -61,6 +61,11 @@ module Types {
         displayName: Text;
     };
 
+    public type UserBalances = {
+        entries: [Profile];
+        totalEntries: Nat32;
+    };
+
     public type Leaderboard = {
         entries: [LeaderboardEntry];
         totalEntries: Nat32;

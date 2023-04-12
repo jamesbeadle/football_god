@@ -79,6 +79,10 @@ export const idlFactory = ({ IDL }) => {
     'enteredSweepstake' : IDL.Bool,
     'gameweekNumber' : IDL.Nat8,
   });
+  const UserBalances = IDL.Record({
+    'totalEntries' : IDL.Nat32,
+    'entries' : IDL.Vec(Profile),
+  });
   return IDL.Service({
     'addFixtureToGameweek' : IDL.Func(
         [IDL.Nat16, IDL.Nat8, IDL.Nat16, IDL.Nat16],
@@ -140,7 +144,7 @@ export const idlFactory = ({ IDL }) => {
       ),
     'getUsersWithBalances' : IDL.Func(
         [IDL.Nat, IDL.Nat],
-        [IDL.Vec(Profile)],
+        [IDL.Opt(UserBalances)],
         [],
       ),
     'isAdmin' : IDL.Func([], [IDL.Bool], ['query']),

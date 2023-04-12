@@ -65,6 +65,10 @@ export interface Season {
   'gameweeks' : List_1,
 }
 export interface Team { 'id' : number, 'name' : string }
+export interface UserBalances {
+  'totalEntries' : number,
+  'entries' : Array<Profile>,
+}
 export interface UserGameweek {
   'correctScores' : number,
   'predictionCount' : number,
@@ -110,7 +114,7 @@ export interface _SERVICE {
     [string, number, number],
     Array<Prediction>
   >,
-  'getUsersWithBalances' : ActorMethod<[bigint, bigint], Array<Profile>>,
+  'getUsersWithBalances' : ActorMethod<[bigint, bigint], [] | [UserBalances]>,
   'isAdmin' : ActorMethod<[], boolean>,
   'isDisplayNameValid' : ActorMethod<[string], boolean>,
   'isWalletValid' : ActorMethod<[string], boolean>,

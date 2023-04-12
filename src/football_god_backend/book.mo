@@ -144,26 +144,31 @@ module {
         };
     };
 
-    public func getProfileBalances(defaultAccount: Principal, profiles: [Types.Profile]) : async [Types.Profile] {
+    public func getProfileBalances(defaultAccount: Principal, profiles: Types.UserBalances) : async Types.UserBalances {
         
-        var profilesWithBalances: [Types.Profile] = [];
+        var profileBalances: [Types.Profile] = [];
 
-        for (i in Iter.range(0, profiles.size() - 1)) {
-            let source_account = Account.accountIdentifier(defaultAccount, Account.principalToSubaccount(Principal.fromText(profiles[i].principalName)));
+        for (i in Iter.range(0, profiles.entries.size() - 1)) {
+            let source_account = Account.accountIdentifier(defaultAccount, Account.principalToSubaccount(Principal.fromText(profiles.entries[i].principalName)));
             let balance = await Ledger.account_balance({ account = source_account });
 
             let updatedProfile = {
-                principalName = profiles[i].principalName;
-                displayName = profiles[i].displayName;
-                wallet = profiles[i].wallet;
-                depositAddress = profiles[i].depositAddress;
+                principalName = profiles.entries[i].principalName;
+                displayName = profiles.entries[i].displayName;
+                wallet = profiles.entries[i].wallet;
+                depositAddress = profiles.entries[i].depositAddress;
                 balance = balance.e8s;
             };
 
-            let buffer = Buffer.fromArray<Types.Profile>(profilesWithBalances);
+            let buffer = Buffer.fromArray<Types.Profile>(profileBalances);
             buffer.add(updatedProfile);
 
-            profilesWithBalances := Buffer.toArray(buffer);
+            profileBalances := Buffer.toArray(buffer);
+        };
+
+        let profilesWithBalances: Types.UserBalances = {
+            entries = profileBalances;
+            totalEntries = profiles.totalEntries;
         };
 
         return profilesWithBalances;

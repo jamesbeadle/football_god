@@ -8,6 +8,11 @@ type UserGameweek =
    seasonId: nat16;
    winnings: nat;
  };
+type UserBalances = 
+ record {
+   entries: vec Profile;
+   totalEntries: nat32;
+ };
 type Team = 
  record {
    id: nat16;
@@ -135,7 +140,7 @@ service : {
   getUserAccountBalance: () -> (nat64);
   getUserHistory: (nat16) -> (vec UserGameweek);
   getUserPredictions: (text, nat16, nat8) -> (vec Prediction);
-  getUsersWithBalances: (nat, nat) -> (vec Profile);
+  getUsersWithBalances: (nat, nat) -> (opt UserBalances);
   isAdmin: () -> (bool) query;
   isDisplayNameValid: (text) -> (bool);
   isWalletValid: (text) -> (bool);

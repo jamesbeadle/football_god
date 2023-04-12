@@ -6,6 +6,7 @@ import Nat64 "mo:base/Nat64";
 import Blob "mo:base/Blob";
 import Array "mo:base/Array";
 import Buffer "mo:base/Buffer";
+import Nat32 "mo:base/Nat32";
 
 import Types "types";
 import Account "Account";
@@ -32,17 +33,13 @@ module {
         }));
     };
 
-    public func getProfilesByPage(page: Int, pageSize: Int) : [Types.Profile] {
+    public func getProfilesByPage(page: Int, pageSize: Int) : Types.UserBalances {
         let startIndex = (page - 1) * pageSize;
         let endIndex = page * pageSize;
         var paginatedProfiles : [Types.Profile] = [];
         let totalProfiles = List.size<Types.Profile>(userProfiles);
         let buffer = Buffer.fromArray<Types.Profile>(paginatedProfiles);
                 
-        if (startIndex >= totalProfiles) {
-            return paginatedProfiles;
-        };
-
         var index = 0;
         for (profile in List.toArray(userProfiles).vals()) {
             if (index >= startIndex and index < endIndex) {
@@ -56,7 +53,13 @@ module {
             };
             index += 1;
         };
-        return Buffer.toArray(buffer);
+
+        let profileObject: Types.UserBalances = {
+            totalEntries = Nat32.fromNat(totalProfiles);
+            entries = Buffer.toArray(buffer);
+        };
+        
+        return profileObject;
     };
 
     

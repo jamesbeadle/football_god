@@ -499,19 +499,20 @@ actor Self {
     };
   };
 
-  public shared ({caller}) func getUsersWithBalances(page: Nat, pageSize: Nat) : async [Types.Profile] {
+  public shared ({caller}) func getUsersWithBalances(page: Nat, pageSize: Nat) : async ?Types.UserBalances {
     let isCallerAdmin = isAdminForCaller(caller);
     if(isCallerAdmin == false){
-      return [];
+      return null;
     };
     
     if(page < 1){
-      return [];
+      return null;
     };
 
     let profiles = profilesInstance.getProfilesByPage(page, pageSize);
     let profilesWithBalances = await bookInstance.getProfileBalances(Principal.fromActor(Self), profiles);
-    return profilesWithBalances;
+    
+    return ?profilesWithBalances;
   };
 
   //leaderboard functions
