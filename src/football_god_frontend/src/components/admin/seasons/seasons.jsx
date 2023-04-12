@@ -9,6 +9,7 @@ import DeleteSeasonModal from './delete-season-modal';
 
 const Seasons = () => {
   const [isLoading, setIsLoading] = useState(true);
+  const [loadingText, setLoadingText] = useState('');
   const [seasonsData, setSeasonsData] = useState([]);
   
   const [showCreateModal, setShowCreateModal] = useState(false);
@@ -61,9 +62,10 @@ const Seasons = () => {
   return (
     <Container>
       {isLoading && (
-        <div className="customOverlay">
-          <Spinner animation="border" />
-        </div>
+       <div className="customOverlay d-flex flex-column align-items-center justify-content-center">
+        <Spinner animation="border" />
+        <p className='text-center mt-1'>{loadingText}</p>
+      </div>
       )}
       <Row className="justify-content-md-center">
         <Col md={12}>

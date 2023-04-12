@@ -11,6 +11,7 @@ const Play = () => {
   const navigate = useNavigate();
 
   const [isLoading, setIsLoading] = useState(true);
+  const [loadingText, setLoadingText] = useState('');
   const [activeSeason, setActiveSeason] = useState(null);
   const [activeGameweek, setActiveGameweek] = useState(null);
   const [teams, setTeamsData] = useState([]);
@@ -202,8 +203,9 @@ const Play = () => {
   return (
     <Container>
       {isLoading ? (
-        <div className="customOverlay">
+        <div className="customOverlay d-flex flex-column align-items-center justify-content-center">
           <Spinner animation="border" />
+          <p className='text-center mt-1'>{loadingText}</p>
         </div>
       ) : (
         <Row className="justify-content-md-center">

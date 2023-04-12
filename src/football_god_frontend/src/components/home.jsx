@@ -8,6 +8,7 @@ import { AuthContext } from "../contexts/AuthContext";
 const Home = () => {
   
   const [isLoading, setIsLoading] = useState(true);
+  const [loadingText, setLoadingText] = useState('');
   const { isAuthenticated, login } = useContext(AuthContext);
   
   const [totalICP, setTotalICP] = useState(0);
@@ -20,6 +21,7 @@ const Home = () => {
 
   useEffect(() => {
     const fetchData = async () => {
+      setLoadingText("loading");
       await fetchTeams();
       await fetchTotalICP();
       await fetchActiveSeason();
@@ -116,8 +118,9 @@ const Home = () => {
           </Col>
         </Row>
       </Container>) : isLoading ? (
-        <div className="customOverlay">
+        <div className="customOverlay d-flex flex-column align-items-center justify-content-center">
           <Spinner animation="border" />
+          <p className='text-center mt-1'>{loadingText}</p>
         </div>
       ) : (
       <Container className="flex-grow-1">

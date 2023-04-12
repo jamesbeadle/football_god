@@ -13,6 +13,7 @@ const Profile = () => {
 
   const { authClient } = useContext(AuthContext);
   const [isLoading, setIsLoading] = useState(true);
+  const [loadingText, setLoadingText] = useState('');
   const [copied, setCopied] = useState(false);
   
   const [principalName, setPrincipalName] = useState('');
@@ -94,8 +95,9 @@ const Profile = () => {
 
   return (
       isLoading ? (
-        <div className="customOverlay">
+        <div className="customOverlay d-flex flex-column align-items-center justify-content-center">
           <Spinner animation="border" />
+          <p className='text-center mt-1'>{loadingText}</p>
         </div>
       ) : (
         <Container>

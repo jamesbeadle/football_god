@@ -8,6 +8,7 @@ const WithdrawICPModal = ({ show, onHide, balance, wallet }) => {
   
   const { authClient } = useContext(AuthContext);
   const [isLoading, setIsLoading] = useState(false);
+  const [loadingText, setLoadingText] = useState('');
   const [withdrawAmount, setWithdrawAmount] = useState(0);
   const [withdrawError, setWithdrawError] = useState(null);
   const withdrawalFee = 0.0001; 
@@ -64,8 +65,9 @@ const WithdrawICPModal = ({ show, onHide, balance, wallet }) => {
   return (
     <Modal show={show} onHide={hideModal}>
       {isLoading && (
-        <div className="customOverlay">
+        <div className="customOverlay d-flex flex-column align-items-center justify-content-center">
           <Spinner animation="border" />
+          <p className='text-center mt-1'>{loadingText}</p>
         </div>
       )}
       <Modal.Header closeButton>
