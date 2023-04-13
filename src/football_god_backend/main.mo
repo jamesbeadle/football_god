@@ -515,9 +515,99 @@ actor Self {
     };
   };
 
+  public shared ({caller}) func getAdminDTO() : async DTOs.AdminDTO {
+    assert not Principal.isAnonymous(caller);
+    let isCallerAdmin = isAdminForCaller(caller);
+    if(isCallerAdmin == false){
+      return { activeSeasonId = 0; activeSeasonName = ""; activeGameweekNumber = 0; seasons = []; activeGameweekStatus = ""; };
+    };
 
+    var activeSeasonId = activeSeason;
+    var activeGameweekNumber = activeGameweek;
+    var activeSeasonName = "";
+    var seasons: [DTOs.SeasonDTO] = [];
+    var activeGameweekStatus = "";
 
+    let season = seasonsInstance.getSeason(activeSeasonId);
+    switch(season){
+      case (null) {};
+      case (?s) {
+        activeSeasonName := s.name;
+      };
+    };
 
+    let seasonsBuffer = Buffer.fromArray<DTOs.SeasonDTO>(seasons);
+    let allSeasons = seasonsInstance.getSeasons();
+
+    for (season in Iter.fromArray<Types.Season>(allSeasons)) {
+      let seasonDTO: DTOs.SeasonDTO = {
+        seasonId = season.id;
+        seasonName = season.name;
+        seasonYear = season.year;
+        gameweeks = [];
+      };
+      seasonsBuffer.add(seasonDTO);
+    };
+
+    let gameweek = seasonsInstance.getGameweek(activeSeason, activeGameweek);
+    switch(gameweek){
+      case (null) {
+        activeGameweekStatus := "Not set";
+      };
+      case (?g){
+        switch(g.status){
+          case (0) {
+            activeGameweekStatus := "Unopened";
+          };
+          case (1){
+            activeGameweekStatus := "Open";
+          };
+          case (2){
+            activeGameweekStatus := "Closed";
+          };
+          case (3){
+            activeGameweekStatus := "Finalised";
+          };
+          case (_){
+            activeGameweekStatus := "Not Set";
+          };
+        };
+      };
+    };
+
+    let historyDTO: DTOs.AdminDTO = {
+      activeSeasonId = activeSeasonId; 
+      activeSeasonName = activeSeasonName; 
+      activeGameweekNumber = activeGameweekNumber; 
+      seasons = Buffer.toArray(seasonsBuffer);
+      activeGameweekStatus = activeGameweekStatus;
+    };
+    
+  };
+
+  public shared ({caller}) func unsetActiveState() : async Result.Result<(), Types.Error> {
+    
+    let isCallerAdmin = isAdminForCaller(caller);
+    if(isCallerAdmin == false){
+      return #err(#NotAuthorized);
+    };
+
+    activeSeason := 0;
+    activeGameweek := 0;
+    return #ok(());
+  };
+
+  public shared ({caller}) func setSystemState(seasonId : Nat16, gameweekNumber : Nat8) : async Result.Result<(), Types.Error> {
+    
+    let isCallerAdmin = isAdminForCaller(caller);
+    if(isCallerAdmin == false){
+      return #err(#NotAuthorized);
+    };
+
+    activeSeason := seasonId;
+    activeGameweek := gameweekNumber;
+    return #ok(());
+  };
 
 
 //should be able to delete the others:
@@ -577,38 +667,8 @@ actor Self {
 
   //system state functions
 
-  public shared ({caller}) func unsetActiveState() : async Result.Result<(), Types.Error> {
-    
-    let isCallerAdmin = isAdminForCaller(caller);
-    if(isCallerAdmin == false){
-      return #err(#NotAuthorized);
-    };
+  
 
-    activeSeason := 0;
-    activeGameweek := 0;
-    return #ok(());
-  };
-
-  public shared ({caller}) func setActiveSeason(seasonId : Nat16) : async Result.Result<(), Types.Error> {
-    
-    let isCallerAdmin = isAdminForCaller(caller);
-    if(isCallerAdmin == false){
-      return #err(#NotAuthorized);
-    };
-
-    activeSeason := seasonId;
-    return #ok(());
-  };
-
-  public shared ({caller}) func setActiveGameweek(gameweekNumber : Nat8) : async Result.Result<(), Types.Error> {
-    let isCallerAdmin = isAdminForCaller(caller);
-    if(isCallerAdmin == false){
-      return #err(#NotAuthorized);
-    };
-
-    activeGameweek := gameweekNumber;
-    return #ok(());
-  };
 
   public query func getActiveSeason() : async ?Types.Season {
     return seasonsInstance.getSeason(activeSeason);

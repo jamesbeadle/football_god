@@ -75,13 +75,8 @@ module DTOs {
         activeSeasonId: Nat16;
         activeSeasonName: Text;
         activeGameweekNumber: Nat8;
+        activeGameweekStatus: Text;
         seasons: [SeasonDTO];
-    };
-
-    public type SetSystemStateDTO = {
-        seasonId: Nat16;
-        gameweekNumber: Nat8;
-        unset: Bool;
     };
 
     public type BalancesDTO = {

@@ -12,8 +12,8 @@ const SystemStateModal = ({ show, onHide, setIsLoading, activeSeason, activeGame
 
     const onShow = async () => {
         if(activeSeason && activeGameweek){
-            setActiveSeasonId(activeSeason.id); 
-            setActiveGameweekNumber(activeGameweek.number);
+            setActiveSeasonId(activeSeason); 
+            setActiveGameweekNumber(activeGameweek);
         }
     };
 
@@ -23,8 +23,7 @@ const SystemStateModal = ({ show, onHide, setIsLoading, activeSeason, activeGame
 
         const identity = authClient.getIdentity();
         Actor.agentOf(football_god_backend_actor).replaceIdentity(identity);
-        await football_god_backend_actor.setActiveSeason(Number(activeSeasonId));
-        await football_god_backend_actor.setActiveGameweek(Number(activeGameweekNumber));
+        await football_god_backend_actor.setSystemState(Number(activeSeasonId), Number(activeGameweekNumber));
 
         onHide();
     };
@@ -51,8 +50,8 @@ const SystemStateModal = ({ show, onHide, setIsLoading, activeSeason, activeGame
                     <Form.Control as="select" value={activeSeasonId} onChange={(e) => setActiveSeasonId(e.target.value)}>
                         <option value="">Select Active Season</option>
                         {seasonsData.map((season) => (
-                        <option key={season.id} value={season.id}>
-                            {season.name}
+                        <option key={season.seasonId} value={season.seasonId}>
+                            {season.seasonName}
                         </option>
                         ))}
                     </Form.Control>

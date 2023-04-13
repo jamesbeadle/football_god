@@ -1,6 +1,13 @@
 import type { Principal } from '@dfinity/principal';
 import type { ActorMethod } from '@dfinity/agent';
 
+export interface AdminDTO {
+  'activeGameweekNumber' : number,
+  'seasons' : Array<SeasonDTO>,
+  'activeGameweekStatus' : string,
+  'activeSeasonId' : number,
+  'activeSeasonName' : string,
+}
 export interface CorrectPredictions {
   'totalEntries' : number,
   'entries' : Array<GameweekSummary>,
@@ -155,6 +162,7 @@ export interface _SERVICE {
   'deleteTeam' : ActorMethod<[number], Result>,
   'getActiveGameweek' : ActorMethod<[], [] | [Gameweek]>,
   'getActiveSeason' : ActorMethod<[], [] | [Season]>,
+  'getAdminDTO' : ActorMethod<[], AdminDTO>,
   'getCorrectPredictions' : ActorMethod<
     [number, number, number, bigint, bigint],
     [] | [CorrectPredictions]
@@ -172,7 +180,6 @@ export interface _SERVICE {
   'getPlayDTO' : ActorMethod<[], PlayDTO>,
   'getPredictions' : ActorMethod<[number, number], Array<Prediction>>,
   'getProfileDTO' : ActorMethod<[], ProfileDTO>,
-  'getPublicProfile' : ActorMethod<[string], [] | [Profile]>,
   'getSeason' : ActorMethod<[number], [] | [Season]>,
   'getSeasons' : ActorMethod<[], Array<Season>>,
   'getTeams' : ActorMethod<[], Array<Team>>,
@@ -190,8 +197,7 @@ export interface _SERVICE {
   'isDisplayNameValid' : ActorMethod<[string], boolean>,
   'isWalletValid' : ActorMethod<[string], boolean>,
   'payoutSweepstake' : ActorMethod<[number, number], Result>,
-  'setActiveGameweek' : ActorMethod<[number], Result>,
-  'setActiveSeason' : ActorMethod<[number], Result>,
+  'setSystemState' : ActorMethod<[number, number], Result>,
   'submitPlayDTO' : ActorMethod<[SubmitPlayDTO], Result>,
   'unsetActiveState' : ActorMethod<[], Result>,
   'updateDisplayName' : ActorMethod<[string], Result>,
