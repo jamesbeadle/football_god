@@ -1,10 +1,12 @@
 module DTOs {
    
     public type HomeDTO = {
+        systemUpdating: Bool;
         activeSeasonName: Text;
         activeGameweekNumber: Nat8;
         gameweekPot: Nat64;
-        fixtures: [FixtureDTO]
+        fixtures: [FixtureDTO];
+        gameweekStatus: Nat8;
     };
 
     public type PlayDTO = {
@@ -12,7 +14,7 @@ module DTOs {
         activeGameweekNumber: Nat8;
         fixtures: [FixtureDTO];
         sweepstakePaid: Bool;
-        accountBalance: ?Nat64;
+        accountBalance: Nat64;
     };
 
     public type SubmitPlayDTO = {
@@ -87,9 +89,9 @@ module DTOs {
     };
 
     public type SetSystemStateDTO = {
-        seasonId: ?Nat16;
-        gameweekNumber: ?Nat8;
-        unset: ?Bool;
+        seasonId: Nat16;
+        gameweekNumber: Nat8;
+        unset: Bool;
     };
 
     public type BalancesDTO = {
@@ -199,24 +201,24 @@ module DTOs {
     };
 
     public type FixtureDTO = {
-        fixtureId: ?Nat32;
-        homeTeamId: ?Nat16;
-        awayTeamId: ?Nat16;
-        homeTeamName: ?Text;
-        awayTeamName: ?Text;
-        homeTeamGoals: ?Nat8;
-        awayTeamGoals: ?Nat8;
-        homeTeamPrediction: ?Nat8;
-        awayTeamPrediction: ?Nat8;
-        correct: ?Bool;
-        status: ?Nat8;
+        fixtureId: Nat32;
+        homeTeamId: Nat16;
+        awayTeamId: Nat16;
+        homeTeamName: Text;
+        awayTeamName: Text;
+        homeTeamGoals: Nat8;
+        awayTeamGoals: Nat8;
+        homeTeamPrediction: Nat8;
+        awayTeamPrediction: Nat8;
+        correct: Bool;
+        status: Nat8;
     };
 
     public type SeasonDTO = {
         seasonId: Nat16;
         seasonName: Text;
-        seasonYear: ?Nat16;
-        gameweeks: ?[GameweekDTO];
+        seasonYear: Nat16;
+        gameweeks: [GameweekDTO];
     };
 
     public type UpdateGameweekStatusDTO = {
@@ -244,18 +246,18 @@ module DTOs {
 
     public type GameweekDTO = {
         gameweekNumber: Nat8;
-        sweepstakeEntered: ?Bool;
-        correctScores: ?Nat8;
+        sweepstakeEntered: Bool;
+        correctScores: Nat8;
         totalFixtures: Nat8;
-        winnings: ?Nat64;
-        status: ?Nat8;
+        winnings: Nat64;
+        status: Nat8;
     };
 
     public type ProfileDTO = {
         principalName: Text;
-        depositAddress: ?Text;
+        depositAddress: Text;
         displayName: Text;
-        walletAddress: ?Text;
+        walletAddress: Text;
     };
 
     public type TeamDTO = {

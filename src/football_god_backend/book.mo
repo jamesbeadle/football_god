@@ -27,9 +27,9 @@ module {
         return balance.e8s;
     };
    
-    public func getGameweekPotBalance(defaultSubAccount: Account.AccountIdentifier) : async Float {
+    public func getGameweekPotBalance(defaultSubAccount: Account.AccountIdentifier) : async Nat64 {
         let balance = await Ledger.account_balance({ account = defaultSubAccount });
-        return Float.fromInt64(Int64.fromNat64(balance.e8s)) * 0.95;
+        return Int64.toNat64(Float.toInt64(Float.fromInt64(Int64.fromNat64(balance.e8s)) * 0.95));
     };
 
     public func getUserAccountBalance(defaultAccount: Principal, user: Principal) : async Nat64 {

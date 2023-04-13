@@ -201,22 +201,22 @@ module {
     };
 
 
-    public func getFixtures(seasonId: Nat16, gameweekNumber: Nat8) : [Types.Fixture] {
+    public func getFixtures(seasonId: Nat16, gameweekNumber: Nat8) : ?List.List<Types.Fixture> {
       let foundSeason = List.find<Types.Season>(seasons, func (season: Types.Season): Bool {
           return season.id == seasonId;
       });
 
       switch (foundSeason) {
-          case (null) { return []; };
+          case (null) { return null; };
           case (?season) {
               let foundGameweek = List.find<Types.Gameweek>(season.gameweeks, func (gameweek: Types.Gameweek): Bool {
                   return gameweek.number == gameweekNumber;
               });
 
               switch (foundGameweek) {
-                  case (null) { return []; };
+                  case (null) { return null; };
                   case (?gameweek) {
-                      return List.toArray(gameweek.fixtures);
+                      return ?gameweek.fixtures;
                   };
               };
           };

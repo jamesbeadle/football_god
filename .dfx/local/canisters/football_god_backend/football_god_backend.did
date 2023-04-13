@@ -78,6 +78,15 @@ type Leaderboard =
    entries: vec LeaderboardEntry;
    totalEntries: nat32;
  };
+type HomeDTO = 
+ record {
+   activeGameweekNumber: nat8;
+   activeSeasonName: text;
+   fixtures: vec FixtureDTO;
+   gameweekPot: nat64;
+   gameweekStatus: nat8;
+   systemUpdating: bool;
+ };
 type GameweekSummary = 
  record {
    displayName: text;
@@ -88,6 +97,20 @@ type Gameweek =
    fixtureCount: nat8;
    fixtures: List_2;
    number: nat8;
+   status: nat8;
+ };
+type FixtureDTO = 
+ record {
+   awayTeamGoals: nat8;
+   awayTeamId: nat16;
+   awayTeamName: text;
+   awayTeamPrediction: nat8;
+   correct: bool;
+   fixtureId: nat32;
+   homeTeamGoals: nat8;
+   homeTeamId: nat16;
+   homeTeamName: text;
+   homeTeamPrediction: nat8;
    status: nat8;
  };
 type Fixture = 
@@ -127,8 +150,8 @@ service : {
    (opt CorrectPredictions);
   getFixture: (nat16, nat8, nat32) -> (opt Fixture) query;
   getFixtures: (nat16, nat8) -> (vec Fixture) query;
-  getGameweekPot: () -> (int64);
   getGameweeks: (nat16) -> (vec Gameweek) query;
+  getHomeDTO: () -> (HomeDTO);
   getLeaderboard: (nat16, nat8, nat, nat) -> (Leaderboard);
   getPayoutData: (nat16, nat8) -> (opt PayoutData);
   getPredictions: (nat16, nat8) -> (vec Prediction);

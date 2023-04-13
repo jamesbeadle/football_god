@@ -8,82 +8,58 @@ import { AuthContext } from "../contexts/AuthContext";
 const Home = () => {
   
   const [isLoading, setIsLoading] = useState(true);
-  const [loadingText, setLoadingText] = useState('');
   const { isAuthenticated, login } = useContext(AuthContext);
   
-  const [totalICP, setTotalICP] = useState(0);
-  const [activeSeason, setActiveSeason] = useState(null);
-  const [activeGameweek, setActiveGameweek] = useState(null);
-  const [teams, setTeamsData] = useState([]);
-  const [fixtures, setFixtures] = useState([]);
+  const [viewData, setViewData] = useState(null);
   const [isGameweekPlayable, setIsGameweekPlayable] = useState(false);
   const [isGameweekClosed, setIsGameweekClosed] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
-      setLoadingText("loading");
-      await fetchTeams();
-      await fetchTotalICP();
-      await fetchActiveSeason();
-      await fetchActiveGameweek();
-      setIsLoading(false);
+      await fetchViewData();
     };
     fetchData();
   }, []);
 
   useEffect(() => {
-    fetchFixtures();
-  }, [activeSeason, activeGameweek]);
-
-  const fetchActiveSeason = async () => {
-    const season = await football_god_backend_actor.getActiveSeason();
-    setActiveSeason(season[0]);
-  };
-
-  const fetchActiveGameweek = async () => {
-    const gameweek = await football_god_backend_actor.getActiveGameweek();
-    setActiveGameweek(gameweek[0]);
-    if(gameweek[0] && Object.keys(gameweek[0].length > 0)){
-      setIsGameweekPlayable(gameweek[0].status === 1);
-      setIsGameweekClosed(gameweek[0].status === 2 || gameweek[0].status === 3);
+    if(!viewData){
+      return;
     }
-  };
+    setIsGameweekPlayable(viewData.gameweekStatus === 1);
+    setIsGameweekClosed(viewData.gameweekStatus === 2 || viewData.gameweekStatus === 3);
+    setIsLoading(false);
 
-  const fetchTotalICP = async () => {
-    const icp = await football_god_backend_actor.getGameweekPot();
-    setTotalICP(Number(icp));
+  }, [viewData]);
+
+  const fetchViewData = async () => {
+    const data = await football_god_backend_actor.getHomeDTO();
+    setViewData(data);
   };
   
-  const fetchTeams = async () => {
-    const teamsData = await football_god_backend_actor.getTeams();
-    setTeamsData(teamsData);
-  };
-
-  const fetchFixtures = async () => {
-    if (activeSeason && activeGameweek) {
-      const fetchedFixtures = await football_god_backend_actor.getFixtures(activeSeason.id, activeGameweek.number);
-      setFixtures(fetchedFixtures);
-    }
-  };
-
-  const getTeamNameById = (teamId) => {
-    const team = teams.find((team) => team.id === teamId);
-    return team ? team.name : '';
-  };
-
   return (
-    activeSeason && activeGameweek ? (
+    isLoading ? (
+      <div className="customOverlay d-flex flex-column align-items-center justify-content-center">
+        <Spinner animation="border" />
+        <p className='text-center mt-1'>Loading</p>
+      </div>) 
+      : viewData.systemUpdating ? (
+      <Container className="flex-grow-1">
+        <br />
+        <div className="d-flex justify-content-center align-items-center" style={{ height: '100%' }}>
+          <h2>System being updated</h2>
+        </div>
+      </Container>) :
       <Container className="flex-grow-1">
         <br />
         <Row>
           <Col sm={12} md={4} className="mb-3">
-            <h5 className="text-center mb-1">{activeSeason.name} Season</h5>
-            <h5 className="text-center mb-3">Gameweek {activeGameweek.number}</h5>
+            <h5 className="text-center mb-1">{viewData.activeSeasonName} Season</h5>
+            <h5 className="text-center mb-3">Gameweek {viewData.activeGameweekNumber}</h5>
             <br />
             <div className="d-flex justify-content-center mb-3">
               <img src={ICPImage} alt="ICP" style={{ maxWidth: '100px', maxHeight: '50px' }} />
             </div>
-            <h2 className="mb-3 text-center">{totalICP} ICP</h2>
+            <h2 className="mb-3 text-center">{(Number(viewData.gameweekPot) / 1e8).toFixed(0)} ICP</h2>
             <h2 className="mb-3 text-center">Total Pot</h2>
               {!isAuthenticated && (
                   <Button onClick={() => { login(); }} variant="primary" className="w-100 mb-3" size="lg">Sign In To Play</Button>
@@ -103,13 +79,13 @@ const Home = () => {
           <Col sm={12} md={8}>
             <h2 className="text-center mb-3">Fixtures</h2>
             <ListGroup>
-              {fixtures.map((fixture, index) => (
+              {viewData.fixtures.map((fixture, index) => (
                 <ListGroup.Item key={index} className="text-center">
-                  {getTeamNameById(fixture.homeTeamId)} vs {getTeamNameById(fixture.awayTeamId)}
+                  {fixture.homeTeamName} vs {fixture.awayTeamName}
                   {fixture.status === 2 && (
                     <span>
                       <br />
-                      {fixture.homeGoals}-{fixture.awayGoals}
+                      {fixture.homeTeamGoals}-{fixture.awayTeamGoals}
                     </span>
                   )}
                 </ListGroup.Item>
@@ -117,19 +93,8 @@ const Home = () => {
             </ListGroup>
           </Col>
         </Row>
-      </Container>) : isLoading ? (
-        <div className="customOverlay d-flex flex-column align-items-center justify-content-center">
-          <Spinner animation="border" />
-          <p className='text-center mt-1'>{loadingText}</p>
-        </div>
-      ) : (
-      <Container className="flex-grow-1">
-        <br />
-        <div className="d-flex justify-content-center align-items-center" style={{ height: '100%' }}>
-          <h2>System being updated</h2>
-        </div>
       </Container>
-    )
+      
   );
 };
 

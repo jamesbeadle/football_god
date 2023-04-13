@@ -40,6 +40,27 @@ export const idlFactory = ({ IDL }) => {
     'totalEntries' : IDL.Nat32,
     'entries' : IDL.Vec(GameweekSummary),
   });
+  const FixtureDTO = IDL.Record({
+    'status' : IDL.Nat8,
+    'awayTeamPrediction' : IDL.Nat8,
+    'fixtureId' : IDL.Nat32,
+    'homeTeamPrediction' : IDL.Nat8,
+    'awayTeamId' : IDL.Nat16,
+    'awayTeamName' : IDL.Text,
+    'homeTeamId' : IDL.Nat16,
+    'correct' : IDL.Bool,
+    'homeTeamName' : IDL.Text,
+    'homeTeamGoals' : IDL.Nat8,
+    'awayTeamGoals' : IDL.Nat8,
+  });
+  const HomeDTO = IDL.Record({
+    'activeGameweekNumber' : IDL.Nat8,
+    'gameweekPot' : IDL.Nat64,
+    'systemUpdating' : IDL.Bool,
+    'gameweekStatus' : IDL.Nat8,
+    'activeSeasonName' : IDL.Text,
+    'fixtures' : IDL.Vec(FixtureDTO),
+  });
   const LeaderboardEntry = IDL.Record({
     'correctScores' : IDL.Nat8,
     'displayName' : IDL.Text,
@@ -113,8 +134,8 @@ export const idlFactory = ({ IDL }) => {
         [IDL.Vec(Fixture)],
         ['query'],
       ),
-    'getGameweekPot' : IDL.Func([], [IDL.Int64], []),
     'getGameweeks' : IDL.Func([IDL.Nat16], [IDL.Vec(Gameweek)], ['query']),
+    'getHomeDTO' : IDL.Func([], [HomeDTO], []),
     'getLeaderboard' : IDL.Func(
         [IDL.Nat16, IDL.Nat8, IDL.Nat, IDL.Nat],
         [Leaderboard],

@@ -1,12 +1,14 @@
 import List "mo:base/List";
 import Array "mo:base/Array";
 import Iter "mo:base/Iter";
+import Nat8 "mo:base/Nat8";
 import Nat64 "mo:base/Nat64";
 import Int64 "mo:base/Int64";
 import Float "mo:base/Float";
 import Principal "mo:base/Principal";
 import Result "mo:base/Result";
 import Debug "mo:base/Debug";
+import Buffer "mo:base/Buffer";
 
 import Types "types";
 import Seasons "seasons";
@@ -15,6 +17,7 @@ import Predictions "predictions";
 import Profiles "profiles";
 import Book "book";
 import Account "Account";
+import DTOs "DTOs";
 
 actor Self {
   
@@ -53,6 +56,109 @@ actor Self {
   public shared query ({caller}) func isAdmin(): async Bool {
     return isAdminForCaller(caller);
   };
+
+
+
+  public shared ({caller}) func getHomeDTO() : async DTOs.HomeDTO {
+
+    let systemUpdating = (activeSeason == 0) or (activeGameweek == 0);
+    var activeSeasonName = "";
+    var activeGameweekNumber = activeGameweek;
+    var gameweekPot = Nat64.fromNat(0);
+    var fixtures: [DTOs.FixtureDTO] = [];
+    var gameweekStatus = Nat8.fromNat(0);
+
+    if(not systemUpdating){
+
+      let season = seasonsInstance.getSeason(activeSeason);
+      switch(season){
+        case (null) {};
+        case (?s) {
+          activeSeasonName := s.name;
+        };
+      };
+
+      let gameweek = seasonsInstance.getGameweek(activeSeason, activeGameweek);
+      switch(gameweek){
+        case (null) {};
+        case (?g) {
+          gameweekStatus := g.status;
+        };
+      };
+    
+      let defaultSubAccount = getDefaultAccount();
+      gameweekPot := await bookInstance.getGameweekPotBalance(defaultSubAccount);
+
+      let fixturesBuffer = Buffer.fromArray<DTOs.FixtureDTO>(fixtures);
+      let gameweekFixtures = seasonsInstance.getFixtures(activeSeason, activeGameweek);
+      switch (gameweekFixtures) {
+        case (null) { };
+        case (?fixtures) {
+          for (fixture in Iter.fromList<Types.Fixture>(fixtures)) {
+            let fixtureDTO: DTOs.FixtureDTO = {
+              fixtureId = 0;
+              homeTeamId = 0;
+              awayTeamId = 0;
+              homeTeamName = teamsInstance.getTeamName(fixture.homeTeamId);
+              awayTeamName = teamsInstance.getTeamName(fixture.awayTeamId);
+              homeTeamGoals = fixture.homeGoals;
+              awayTeamGoals = fixture.awayGoals;
+              homeTeamPrediction = 0;
+              awayTeamPrediction = 0;
+              correct = false;
+              status = fixture.status;
+            };
+            fixturesBuffer.add(fixtureDTO);
+
+          };
+        };
+      };
+      fixtures := Buffer.toArray(fixturesBuffer);
+    };
+
+    let homeDTO: DTOs.HomeDTO = {
+      systemUpdating = systemUpdating;
+      activeSeasonName = activeSeasonName;
+      activeGameweekNumber = activeGameweekNumber;
+      gameweekPot = gameweekPot;
+      fixtures = fixtures;
+      gameweekStatus = gameweekStatus;
+    };
+
+    return homeDTO;
+  };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   //profile functions
   
@@ -201,7 +307,12 @@ actor Self {
   //fixture functions
 
   public query func getFixtures(seasonId: Nat16, gameweekNumber: Nat8) : async [Types.Fixture] {
-    return seasonsInstance.getFixtures(seasonId, gameweekNumber);
+
+    let fixtures = seasonsInstance.getFixtures(seasonId, gameweekNumber);
+    switch(fixtures){
+      case (null) {return []};
+      case (?f) { return List.toArray(f);}
+    };
   };
 
   public query func getFixture(seasonId : Nat16, gameweekNumber: Nat8, fixtureId: Nat32) : async ?Types.Fixture {
@@ -227,9 +338,14 @@ actor Self {
 
     let result = seasonsInstance.updateFixture(seasonId, gameweekNumber, fixtureId, homeTeamId, awayTeamId, fixtureStatus, homeGoals, awayGoals);
 
-    let gameweekFixtures = seasonsInstance.getFixtures(seasonId, gameweekNumber);
-
-    return predictionsInstance.updatePredictionsCount(seasonId, gameweekNumber, gameweekFixtures);
+    let fixtures = seasonsInstance.getFixtures(seasonId, gameweekNumber);
+    switch(fixtures){
+      case (null) {return #err(#NotAllowed);};
+      case (?f) { 
+        return predictionsInstance.updatePredictionsCount(seasonId, gameweekNumber, List.toArray(f));
+      }
+    };
+    
   };
 
   public shared ({caller}) func deleteFixture(seasonId : Nat16, gameweekNumber: Nat8, fixtureId: Nat32) : async Result.Result<(), Types.Error> {
@@ -240,8 +356,13 @@ actor Self {
 
     let result = seasonsInstance.deleteFixture(seasonId, gameweekNumber, fixtureId);
 
-    let gameweekFixtures = seasonsInstance.getFixtures(seasonId, gameweekNumber);
-    return predictionsInstance.deleteFixture(seasonId, gameweekNumber, gameweekFixtures, fixtureId);
+    let fixtures = seasonsInstance.getFixtures(seasonId, gameweekNumber);
+    switch(fixtures){
+      case (null) {return #err(#NotAllowed);};
+      case (?f) { 
+        return predictionsInstance.deleteFixture(seasonId, gameweekNumber, List.toArray(f), fixtureId);
+      }
+    };
 
 
   };
@@ -313,7 +434,8 @@ actor Self {
       return #err(#NotAllowed);
     };
 
-    let validPredictions = checkValidPredictions(seasonId, gameweekNumber, predictions);
+    //let validPredictions = checkValidPredictions(seasonId, gameweekNumber, predictions);
+    let validPredictions = false;
 
     if(not validPredictions){
       return #err(#NotAllowed);
@@ -323,6 +445,7 @@ actor Self {
     return predictionsInstance.submitPredictions(principalName, seasonId, gameweekNumber, predictions);
   };
 
+  /*
   private func checkValidPredictions(seasonId: Nat16, gameweekNumber: Nat8, predictions: [Types.Prediction]) : Bool {
       
       let fixtures = seasonsInstance.getFixtures(seasonId, gameweekNumber);
@@ -341,6 +464,7 @@ actor Self {
 
       return Array.size<Types.Fixture>(fixturesWithPredictions) == fixturesCount;
   };
+  */
 
   public shared ({caller}) func getPredictions(seasonId: Nat16, gameweekNumber: Nat8) : async [Types.Prediction] {
     assert not Principal.isAnonymous(caller);
@@ -413,6 +537,7 @@ actor Self {
     Account.accountIdentifier(Principal.fromActor(Self), Account.principalToSubaccount(caller))
   };
 
+/*
   public shared func getGameweekPot() : async Int64 {
     let defaultSubAccount = getDefaultAccount();
     let potBalance = await bookInstance.getGameweekPotBalance(defaultSubAccount);
@@ -420,6 +545,7 @@ actor Self {
     let balanceICP = potBalance / 1e8;
     return Float.toInt64(Float.nearest(balanceICP));
   };
+*/
 
   public shared ({caller}) func getUserAccountBalance() : async Nat64 {
     assert not Principal.isAnonymous(caller);
@@ -455,7 +581,7 @@ actor Self {
     let defaultSubAccount = getDefaultAccount();
     let potBalance = await bookInstance.getGameweekPotBalance(defaultSubAccount);
     let winningPrincipals = predictionsInstance.getWinnerPrincipalIds(seasonId, gameweekNumber);
-    let winnerShare = potBalance / Float.fromInt64(Int64.fromNat64(Nat64.fromNat(winningPrincipals.size())));
+    let winnerShare = Float.fromInt64(Int64.fromNat64(potBalance)) / Float.fromInt64(Int64.fromNat64(Nat64.fromNat(winningPrincipals.size())));
 
     for (i in Iter.range(0, winningPrincipals.size() - 1)) {
       await bookInstance.transferWinnings(Principal.fromActor(Self), Principal.fromText(winningPrincipals[i]), winnerShare);

@@ -18,6 +18,19 @@ export interface Fixture {
   'homeGoals' : number,
   'awayGoals' : number,
 }
+export interface FixtureDTO {
+  'status' : number,
+  'awayTeamPrediction' : number,
+  'fixtureId' : number,
+  'homeTeamPrediction' : number,
+  'awayTeamId' : number,
+  'awayTeamName' : string,
+  'homeTeamId' : number,
+  'correct' : boolean,
+  'homeTeamName' : string,
+  'homeTeamGoals' : number,
+  'awayTeamGoals' : number,
+}
 export interface Gameweek {
   'status' : number,
   'number' : number,
@@ -27,6 +40,14 @@ export interface Gameweek {
 export interface GameweekSummary {
   'displayName' : string,
   'principalName' : string,
+}
+export interface HomeDTO {
+  'activeGameweekNumber' : number,
+  'gameweekPot' : bigint,
+  'systemUpdating' : boolean,
+  'gameweekStatus' : number,
+  'activeSeasonName' : string,
+  'fixtures' : Array<FixtureDTO>,
 }
 export interface Leaderboard {
   'totalEntries' : number,
@@ -98,8 +119,8 @@ export interface _SERVICE {
   >,
   'getFixture' : ActorMethod<[number, number, number], [] | [Fixture]>,
   'getFixtures' : ActorMethod<[number, number], Array<Fixture>>,
-  'getGameweekPot' : ActorMethod<[], bigint>,
   'getGameweeks' : ActorMethod<[number], Array<Gameweek>>,
+  'getHomeDTO' : ActorMethod<[], HomeDTO>,
   'getLeaderboard' : ActorMethod<[number, number, bigint, bigint], Leaderboard>,
   'getPayoutData' : ActorMethod<[number, number], [] | [PayoutData]>,
   'getPredictions' : ActorMethod<[number, number], Array<Prediction>>,

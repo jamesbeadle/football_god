@@ -20,6 +20,19 @@ module {
         return List.toArray(sortedTeams);
     };
 
+    public func getTeamName(teamId: Nat16) : Text {
+        let foundTeam = List.find<Types.Team>(teams, func (team: Types.Team): Bool {
+            return team.id == teamId;
+        });
+
+        switch (foundTeam) {
+            case (null) { return "" };
+            case (?team) {
+                return team.name;
+            };
+        };
+    };
+
     private func bubbleSort(list: List.List<Types.Team>, n: Nat): List.List<Types.Team> {
         if (n <= 1) {
             return list;
