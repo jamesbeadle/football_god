@@ -392,7 +392,57 @@ actor Self {
     return historyDTO;
   };
 
+  public shared ({caller}) func getLeaderboard(seasonId: Nat16, gameweekNumber: Nat8, page: Nat, count: Nat) : async DTOs.LeaderBoardDTO {
 
+    var activeSeasonId = seasonId;
+    var activeGameweekNumber = gameweekNumber;
+    var activeSeasonName = "";
+    var seasons: [DTOs.SeasonDTO] = [];
+
+    if(activeSeasonId == 0){
+      activeSeasonId := activeSeason;
+    };
+
+    if(activeGameweekNumber == 0){
+      activeGameweekNumber := activeGameweek;
+    };
+
+    let season = seasonsInstance.getSeason(activeSeasonId);
+    switch(season){
+      case (null) {};
+      case (?s) {
+        activeSeasonName := s.name;
+      };
+    };
+
+    let seasonsBuffer = Buffer.fromArray<DTOs.SeasonDTO>(seasons);
+    let allSeasons = seasonsInstance.getSeasons();
+
+    for (season in Iter.fromArray<Types.Season>(allSeasons)) {
+      let seasonDTO: DTOs.SeasonDTO = {
+        seasonId = season.id;
+        seasonName = season.name;
+        seasonYear = season.year;
+        gameweeks = [];
+      };
+      seasonsBuffer.add(seasonDTO);
+    };
+
+    let leaderBoardDTO = predictionsInstance.getLeaderboardDTO(activeSeasonId, activeGameweekNumber, page, count);
+    let leaderboardEntriesWithNames = profilesInstance.getLeaderboardEntryNames(leaderBoardDTO);
+    
+    let leaderboard: DTOs.LeaderBoardDTO = {
+      seasons = Buffer.toArray(seasonsBuffer);
+      activeSeasonId = activeSeasonId;
+      activeSeasonName = activeSeasonName;
+      activeGameweekNumber = activeGameweekNumber;
+      leaderboardEntries = leaderboardEntriesWithNames.leaderboardEntries;
+      totalEntries = leaderboardEntriesWithNames.totalEntries;
+      page = page;
+      count = count;
+    };
+    return leaderboard; 
+  };
 
 
 //should be able to delete the others:
@@ -919,13 +969,6 @@ actor Self {
   //leaderboard functions
   
 
-  public shared ({caller}) func getLeaderboard(seasonId: Nat16, gameweekNumber: Nat8, start: Nat, count: Nat) : async Types.Leaderboard {
-
-    let leaderboard = predictionsInstance.getLeaderboard(seasonId, gameweekNumber, start, count);
-    let leaderboardWithNames = profilesInstance.getLeaderboardNames(leaderboard);
-
-    return leaderboardWithNames; 
-  };
 
   system func preupgrade() {
     stable_profiles := profilesInstance.getProfiles();

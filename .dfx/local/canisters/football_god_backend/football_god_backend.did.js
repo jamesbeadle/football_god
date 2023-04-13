@@ -80,17 +80,23 @@ export const idlFactory = ({ IDL }) => {
     'activeSeasonName' : IDL.Text,
     'fixtures' : IDL.Vec(FixtureDTO),
   });
-  const LeaderboardEntry = IDL.Record({
+  const LeaderboardEntryDTO = IDL.Record({
+    'totalFixtures' : IDL.Nat8,
     'correctScores' : IDL.Nat8,
     'displayName' : IDL.Text,
-    'predictionCount' : IDL.Nat8,
-    'positionText' : IDL.Text,
     'enteredSweepstake' : IDL.Bool,
     'principalName' : IDL.Text,
+    'position' : IDL.Text,
   });
-  const Leaderboard = IDL.Record({
-    'totalEntries' : IDL.Nat32,
-    'entries' : IDL.Vec(LeaderboardEntry),
+  const LeaderBoardDTO = IDL.Record({
+    'activeGameweekNumber' : IDL.Nat8,
+    'totalEntries' : IDL.Nat64,
+    'seasons' : IDL.Vec(SeasonDTO),
+    'page' : IDL.Nat,
+    'count' : IDL.Nat,
+    'leaderboardEntries' : IDL.Vec(LeaderboardEntryDTO),
+    'activeSeasonId' : IDL.Nat16,
+    'activeSeasonName' : IDL.Text,
   });
   const PayoutData = IDL.Record({
     'totalPot' : IDL.Nat64,
@@ -167,7 +173,7 @@ export const idlFactory = ({ IDL }) => {
     'getHomeDTO' : IDL.Func([], [HomeDTO], []),
     'getLeaderboard' : IDL.Func(
         [IDL.Nat16, IDL.Nat8, IDL.Nat, IDL.Nat],
-        [Leaderboard],
+        [LeaderBoardDTO],
         [],
       ),
     'getPayoutData' : IDL.Func(

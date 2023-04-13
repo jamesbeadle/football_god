@@ -66,11 +66,6 @@ module Types {
         totalEntries: Nat32;
     };
 
-    public type Leaderboard = {
-        entries: [LeaderboardEntry];
-        totalEntries: Nat32;
-    };
-
     public type Prediction = {
         fixtureId: Nat32;
         homeGoals: Nat8;
@@ -80,15 +75,6 @@ module Types {
     public type CorrectPredictions = {
         entries: [GameweekSummary];
         totalEntries: Nat32;
-    };
-
-    public type LeaderboardEntry = {
-        positionText: Text;
-        principalName: Text;
-        displayName: Text;
-        correctScores: Nat8;
-        predictionCount: Nat8;
-        enteredSweepstake: Bool;
     };
 
     public type PayoutData = {

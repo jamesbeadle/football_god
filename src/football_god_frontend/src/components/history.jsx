@@ -25,7 +25,6 @@ const History = () => {
     Actor.agentOf(football_god_backend_actor).replaceIdentity(identity);
     const data = await football_god_backend_actor.getHistoryDTO(Number(selectedSeason));
     setViewData(data);
-    console.log(data)
     setSelectedSeason(data.activeSeasonId);
     setIsLoading(false);
   };

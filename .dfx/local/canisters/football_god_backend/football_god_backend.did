@@ -79,19 +79,25 @@ type List =
        Gameweek;
        List;
      };
-type LeaderboardEntry = 
+type LeaderboardEntryDTO = 
  record {
    correctScores: nat8;
    displayName: text;
    enteredSweepstake: bool;
-   positionText: text;
-   predictionCount: nat8;
+   position: text;
    principalName: text;
+   totalFixtures: nat8;
  };
-type Leaderboard = 
+type LeaderBoardDTO = 
  record {
-   entries: vec LeaderboardEntry;
-   totalEntries: nat32;
+   activeGameweekNumber: nat8;
+   activeSeasonId: nat16;
+   activeSeasonName: text;
+   count: nat;
+   leaderboardEntries: vec LeaderboardEntryDTO;
+   page: nat;
+   seasons: vec SeasonDTO;
+   totalEntries: nat64;
  };
 type HomeDTO = 
  record {
@@ -183,7 +189,7 @@ service : {
   getGameweeks: (nat16) -> (vec Gameweek) query;
   getHistoryDTO: (nat16) -> (HistoryDTO);
   getHomeDTO: () -> (HomeDTO);
-  getLeaderboard: (nat16, nat8, nat, nat) -> (Leaderboard);
+  getLeaderboard: (nat16, nat8, nat, nat) -> (LeaderBoardDTO);
   getPayoutData: (nat16, nat8) -> (opt PayoutData);
   getPlayDTO: () -> (PlayDTO);
   getPredictions: (nat16, nat8) -> (vec Prediction);

@@ -9,6 +9,7 @@ import Buffer "mo:base/Buffer";
 import Nat32 "mo:base/Nat32";
 
 import Types "types";
+import DTOs "DTOs";
 import Account "Account";
 
 module {
@@ -67,6 +68,50 @@ module {
             case (?existingProfile) { };
         };
     };
+
+    public func getLeaderboardEntryNames(leaderboard: DTOs.LeaderBoardDTO) : DTOs.LeaderBoardDTO {
+        let populatedEntries = List.map<DTOs.LeaderboardEntryDTO, DTOs.LeaderboardEntryDTO>(List.fromArray(leaderboard.leaderboardEntries), func(entry: DTOs.LeaderboardEntryDTO): DTOs.LeaderboardEntryDTO {
+            let profile = getProfile(entry.principalName);
+            switch (profile) {
+                case (null) {
+                    return entry;
+                };
+                case (?profileData) {
+                    return {
+                        position = entry.position;
+                        principalName = entry.principalName;
+                        displayName = profileData.displayName;
+                        correctScores = entry.correctScores;
+                        totalFixtures = entry.totalFixtures;
+                        enteredSweepstake = entry.enteredSweepstake;
+                    };
+                };
+            };
+        });
+        return {
+            seasons = leaderboard.seasons;
+            activeSeasonId = leaderboard.activeSeasonId;
+            activeSeasonName = leaderboard.activeSeasonName;
+            activeGameweekNumber = leaderboard.activeGameweekNumber;
+            leaderboardEntries = List.toArray(populatedEntries);
+            totalEntries = leaderboard.totalEntries;
+            page = leaderboard.page;
+            count = leaderboard.count;
+        };
+    };
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     public func getProfilesByPage(page: Int, pageSize: Int) : Types.UserBalances {
         let startIndex = (page - 1) * pageSize;
@@ -248,31 +293,6 @@ module {
         };
 
         return false;
-    };
-
-    public func getLeaderboardNames(leaderboard: Types.Leaderboard) : Types.Leaderboard {
-        let populatedEntries = List.map<Types.LeaderboardEntry, Types.LeaderboardEntry>(List.fromArray(leaderboard.entries), func(entry: Types.LeaderboardEntry): Types.LeaderboardEntry {
-            let profile = getProfile(entry.principalName);
-            switch (profile) {
-                case (null) {
-                    return entry;
-                };
-                case (?profileData) {
-                    return {
-                        positionText = entry.positionText;
-                        principalName = entry.principalName;
-                        displayName = profileData.displayName;
-                        correctScores = entry.correctScores;
-                        predictionCount = entry.predictionCount;
-                        enteredSweepstake = entry.enteredSweepstake;
-                    };
-                };
-            };
-        });
-        return {
-            entries = List.toArray(populatedEntries);
-            totalEntries = leaderboard.totalEntries;
-        };
     };
 
     

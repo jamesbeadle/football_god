@@ -7,65 +7,44 @@ const Leaderboard = () => {
 
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(true);
-  const [loadingText, setLoadingText] = useState('');
-
-  const [seasons, setSeasons] = useState([]);
-  const [selectedSeason, setSelectedSeason] = useState(null);
-  const [selectedGameweek, setSelectedGameweek] = useState(null);
-  const [leaderboard, setLeaderboard] = useState(null);
+  const [viewData, setViewData] = useState(null);
+  const [selectedSeason, setSelectedSeason] = useState(0);
+  const [selectedGameweek, setSelectedGameweek] = useState(0);
   const [page, setPage] = useState(0);
-  const resultsPerPage = 25;
-
-  useEffect(() => {
-    fetchSeasons();
-  }, []);
-
-  useEffect(() => {
-    if(seasons && Object.keys(seasons).length > 0){
-      const fetchData = async () => {
-        await fetchActiveSeason();
-        await fetchActiveGameweek();
-      };
-      fetchData();
-    }
-  }, [seasons]);
+  const count = 25;
 
   useEffect(() => {
     const fetchData = async () => {
-      if (selectedSeason && selectedSeason.id > 0 && selectedGameweek > 0) {
-        await fetchLeaderboard();
+      await fetchViewData();
+    };
+    fetchData();
+  }, []);
+
+  useEffect(() => {
+    console.log(selectedGameweek)
+    if (selectedSeason == 0 && selectedGameweek == 0) {
+      return;
+    }
+
+    setIsLoading(true);
+    
+    const fetchData = async () => {
+        await fetchViewData();
         setIsLoading(false);
-      }
     };
     fetchData();
     
   }, [selectedSeason, selectedGameweek, page]);
 
-  const fetchSeasons = async () => {
-    const fetchedSeasons = await football_god_backend_actor.getSeasons();
-    setSeasons(fetchedSeasons);
-  };
-
-  const fetchActiveSeason = async () => {
-    const activeSeason = await football_god_backend_actor.getActiveSeason();
-    setSelectedSeason(activeSeason[0]);
-  };
-
-  const fetchActiveGameweek = async () => {
-    const activeGameweek = await football_god_backend_actor.getActiveGameweek();
-    setSelectedGameweek(activeGameweek[0].number);
-  };
-
-  const fetchLeaderboard = async () => {
-    if (selectedSeason && selectedGameweek) {
-      setIsLoading(true);
-      const fetchedLeaderboard = await football_god_backend_actor.getLeaderboard(Number(selectedSeason.id), Number(selectedGameweek), Number(page * resultsPerPage), Number(resultsPerPage));
-      setLeaderboard(fetchedLeaderboard);
-    }
+  const fetchViewData = async () => {
+    const data = await football_god_backend_actor.getLeaderboard(Number(selectedSeason), Number(selectedGameweek), Number(page), Number(count));
+    console.log(data)
+    setViewData(data);
+    setIsLoading(false);
   };
 
   const handleViewPrediction = (userId) => {
-    navigate(`/view-prediction/${userId}/${selectedSeason.id}/${selectedGameweek}`);
+    navigate(`/view-prediction/${userId}/${Number(selectedSeason)}/${Number(selectedGameweek)}`);
   };
 
   const handlePageChange = (change) => {
@@ -77,7 +56,7 @@ const Leaderboard = () => {
       {isLoading ? (
         <div className="customOverlay d-flex flex-column align-items-center justify-content-center">
           <Spinner animation="border" />
-          <p className='text-center mt-1'>{loadingText}</p>
+          <p className='text-center mt-1'>Loading Leaderboard</p>
         </div>
       ) : (
       <Row className="justify-content-md-center">
@@ -85,19 +64,19 @@ const Leaderboard = () => {
           <h2 className="text-center mt-4">Leaderboard</h2>
           <Dropdown className="mt-3">
             <Dropdown.Toggle variant="primary" id="season-dropdown">
-              {selectedSeason ? selectedSeason.name : 'Select Season'}
+              {viewData.activeSeasonName}
             </Dropdown.Toggle>
             <Dropdown.Menu>
-              {seasons.map((season) => (
-                <Dropdown.Item key={season.id} onClick={() => setSelectedSeason(season)}>
-                  {season.name}
+              {viewData.seasons.map((season) => (
+                <Dropdown.Item key={season.seasonId} onClick={() => setSelectedSeason(season.seasonId)}>
+                  {season.seasonName}
                 </Dropdown.Item>
               ))}
             </Dropdown.Menu>
           </Dropdown>
           <Dropdown className="mt-3">
             <Dropdown.Toggle variant="primary" id="gameweek-dropdown">
-              {selectedGameweek ? `Gameweek ${selectedGameweek}` : 'Select Gameweek'}
+              {`Gameweek ${viewData.activeGameweekNumber}`}
             </Dropdown.Toggle>
             <Dropdown.Menu>
               {Array.from({ length: 38 }, (_, i) => i + 1).map((number) => (
@@ -118,20 +97,18 @@ const Leaderboard = () => {
               </tr>
             </thead>
             <tbody>
-            {leaderboard && (() => {
-                return leaderboard.entries.map((entry, index) => (
-                  <tr key={entry.principalName}>
-                    <td>{index + 1 + page * resultsPerPage}</td>
-                    <td>{entry.displayName}</td>
-                    <td>{entry.correctScores} / {entry.predictionCount}</td>
-                    <td>
-                      <Button onClick={() => handleViewPrediction(entry.principalName)} variant="primary">
-                        View
-                      </Button>
-                    </td>
-                  </tr>
-                ));
-              })()}
+              {viewData.leaderboardEntries.map((entry, index) => (
+                <tr key={entry.principalName}>
+                  <td>{index + 1 + page * count}</td>
+                  <td>{entry.displayName}</td>
+                  <td>{entry.correctScores} / {entry.totalFixtures}</td>
+                  <td>
+                    <Button onClick={() => handleViewPrediction(entry.principalName)} variant="primary">
+                      View
+                    </Button>
+                  </td>
+                </tr>
+              ))}
             </tbody>
           </Table>
           <div className="d-flex justify-content-center mt-3">
@@ -139,7 +116,7 @@ const Leaderboard = () => {
               <Button onClick={() => handlePageChange(-1)} variant="primary" disabled={page === 0}>
                 Prior
               </Button>
-              <Button onClick={() => handlePageChange(1)} variant="primary" disabled={(page + 1) * resultsPerPage >= leaderboard.totalEntries}>
+              <Button onClick={() => handlePageChange(1)} variant="primary" disabled={(page + 1) * count >= viewData.totalEntries}>
                 Next
               </Button>
             </ButtonGroup>

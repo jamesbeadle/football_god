@@ -47,17 +47,21 @@ module DTOs {
     public type LeaderBoardDTO = {
         seasons: [SeasonDTO];
         activeSeasonId: Nat16;
+        activeSeasonName: Text;
         activeGameweekNumber: Nat8;
-        leaderboardEntries: [LeaderboardEntry];
+        leaderboardEntries: [LeaderboardEntryDTO];
         totalEntries: Nat64;
+        page: Nat;
+        count: Nat;
     };
 
-    public type LeaderboardEntry = {
+    public type LeaderboardEntryDTO = {
         principalName: Text;
         position: Text;
         displayName: Text;
         correctScores: Nat8;
         totalFixtures: Nat8;
+        enteredSweepstake: Bool;
     };
 
     public type GetleaderboardDTO = {

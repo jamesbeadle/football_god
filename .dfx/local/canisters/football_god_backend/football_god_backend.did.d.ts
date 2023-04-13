@@ -63,17 +63,23 @@ export interface HomeDTO {
   'activeSeasonName' : string,
   'fixtures' : Array<FixtureDTO>,
 }
-export interface Leaderboard {
-  'totalEntries' : number,
-  'entries' : Array<LeaderboardEntry>,
+export interface LeaderBoardDTO {
+  'activeGameweekNumber' : number,
+  'totalEntries' : bigint,
+  'seasons' : Array<SeasonDTO>,
+  'page' : bigint,
+  'count' : bigint,
+  'leaderboardEntries' : Array<LeaderboardEntryDTO>,
+  'activeSeasonId' : number,
+  'activeSeasonName' : string,
 }
-export interface LeaderboardEntry {
+export interface LeaderboardEntryDTO {
+  'totalFixtures' : number,
   'correctScores' : number,
   'displayName' : string,
-  'predictionCount' : number,
-  'positionText' : string,
   'enteredSweepstake' : boolean,
   'principalName' : string,
+  'position' : string,
 }
 export type List = [] | [[Gameweek, List]];
 export type List_1 = [] | [[Fixture, List_1]];
@@ -151,7 +157,10 @@ export interface _SERVICE {
   'getGameweeks' : ActorMethod<[number], Array<Gameweek>>,
   'getHistoryDTO' : ActorMethod<[number], HistoryDTO>,
   'getHomeDTO' : ActorMethod<[], HomeDTO>,
-  'getLeaderboard' : ActorMethod<[number, number, bigint, bigint], Leaderboard>,
+  'getLeaderboard' : ActorMethod<
+    [number, number, bigint, bigint],
+    LeaderBoardDTO
+  >,
   'getPayoutData' : ActorMethod<[number, number], [] | [PayoutData]>,
   'getPlayDTO' : ActorMethod<[], PlayDTO>,
   'getPredictions' : ActorMethod<[number, number], Array<Prediction>>,
