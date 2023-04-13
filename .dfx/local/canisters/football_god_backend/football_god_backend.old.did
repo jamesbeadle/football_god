@@ -1,20 +1,10 @@
 type ViewPredictionDTO = 
  record {
-   correstScores: nat8;
+   correctScores: nat8;
    fixtures: vec FixtureDTO;
    playerName: text;
    seasonName: text;
    totalFixtures: nat8;
- };
-type UserGameweek = 
- record {
-   correctScores: nat8;
-   enteredSweepstake: bool;
-   gameweekNumber: nat8;
-   predictionCount: nat8;
-   predictions: List;
-   seasonId: nat16;
-   winnings: nat;
  };
 type UserBalances = 
  record {
@@ -31,9 +21,16 @@ type SubmitPlayDTO =
    enterSweepstake: bool;
    fixtures: vec FixtureDTO;
  };
+type SeasonDTO = 
+ record {
+   gameweeks: vec GameweekDTO;
+   seasonId: nat16;
+   seasonName: text;
+   seasonYear: nat16;
+ };
 type Season = 
  record {
-   gameweeks: List_1;
+   gameweeks: List;
    id: nat16;
    name: text;
    year: nat16;
@@ -72,19 +69,14 @@ type PayoutData =
    totalPot: nat64;
    winners: nat;
  };
-type List_2 = 
- opt record {
-       Fixture;
-       List_2;
-     };
 type List_1 = 
  opt record {
-       Gameweek;
+       Fixture;
        List_1;
      };
 type List = 
  opt record {
-       Prediction;
+       Gameweek;
        List;
      };
 type LeaderboardEntry = 
@@ -110,15 +102,31 @@ type HomeDTO =
    gameweekStatus: nat8;
    systemUpdating: bool;
  };
+type HistoryDTO = 
+ record {
+   activeSeasonId: nat16;
+   activeSeasonName: text;
+   seasonGameweeks: vec GameweekDTO;
+   seasons: vec SeasonDTO;
+   userId: text;
+ };
 type GameweekSummary = 
  record {
    displayName: text;
    principalName: text;
  };
+type GameweekDTO = 
+ record {
+   correctScores: nat8;
+   gameweekNumber: nat8;
+   sweepstakeEntered: bool;
+   totalFixtures: nat8;
+   winnings: nat64;
+ };
 type Gameweek = 
  record {
    fixtureCount: nat8;
-   fixtures: List_2;
+   fixtures: List_1;
    number: nat8;
    status: nat8;
  };
@@ -173,6 +181,7 @@ service : {
   getFixture: (nat16, nat8, nat32) -> (opt Fixture) query;
   getFixtures: (nat16, nat8) -> (vec Fixture) query;
   getGameweeks: (nat16) -> (vec Gameweek) query;
+  getHistoryDTO: (nat16) -> (HistoryDTO);
   getHomeDTO: () -> (HomeDTO);
   getLeaderboard: (nat16, nat8, nat, nat) -> (Leaderboard);
   getPayoutData: (nat16, nat8) -> (opt PayoutData);
@@ -184,7 +193,6 @@ service : {
   getSeasons: () -> (vec Season) query;
   getTeams: () -> (vec Team) query;
   getUserAccountBalance: () -> (nat64);
-  getUserHistory: (nat16) -> (vec UserGameweek);
   getUserPredictions: (text, nat16, nat8) -> (vec Prediction);
   getUsersWithBalances: (nat, nat) -> (opt UserBalances);
   getViewPredictionDTO: (text, nat16, nat8) -> (ViewPredictionDTO);

@@ -28,14 +28,16 @@ module DTOs {
         seasonName: Text;
         fixtures: [FixtureDTO];
         playerName: Text;
-        correstScores: Nat8;
+        correctScores: Nat8;
         totalFixtures: Nat8;
     };
 
     public type HistoryDTO = {
         seasons: [SeasonDTO];
         activeSeasonId: Nat16;
+        activeSeasonName: Text;
         seasonGameweeks: [GameweekDTO];
+        userId: Text;
     };
 
     public type GetHistoryDTO = {
@@ -252,7 +254,6 @@ module DTOs {
         correctScores: Nat8;
         totalFixtures: Nat8;
         winnings: Nat64;
-        status: Nat8;
     };
 
     public type ProfileDTO = {

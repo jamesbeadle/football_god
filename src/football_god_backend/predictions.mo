@@ -115,6 +115,36 @@ module {
       return #ok(());
     };
 
+    public func getUserHistory(principalName: Text, seasonId: Nat16) : [DTOs.GameweekDTO] {
+      let userHistory = userPredictions.get(principalName);
+      Debug.print(debug_show userHistory);
+      switch userHistory {
+          case (null) { return []; };
+          case (?gameweeks) {
+
+            return List.toArray(List.map<Types.UserGameweek, DTOs.GameweekDTO>(
+              List.filter<Types.UserGameweek>(gameweeks, func (ugw: Types.UserGameweek) : Bool {
+                return ugw.seasonId == seasonId;
+              }), 
+              func (ugw: Types.UserGameweek) : DTOs.GameweekDTO {
+                return {
+                    gameweekNumber = ugw.gameweekNumber;
+                    sweepstakeEntered = ugw.enteredSweepstake;
+                    correctScores = ugw.correctScores;
+                    totalFixtures = ugw.predictionCount;
+                    winnings = ugw.winnings;
+                };
+            }));
+          };
+        };
+    };
+
+
+
+
+
+
+
 
 
 
@@ -203,19 +233,6 @@ module {
     };
     */
     
-    public func getUserHistory(principalName: Text, seasonId: Nat16) : [Types.UserGameweek] {
-      let userHistory = userPredictions.get(principalName);
-
-      switch userHistory {
-          case (null) { return []; };
-          case (?gameweeks) {
-            let filteredGameweeks = List.filter<Types.UserGameweek>(gameweeks, func (ugw: Types.UserGameweek) : Bool {
-              return ugw.seasonId == seasonId;
-            });
-            return List.toArray(filteredGameweeks);
-          };
-        };
-    };
 
     public func getLeaderboard(seasonId: Nat16, gameweekNumber: Nat8, start: Nat, count: Nat) : Types.Leaderboard {
 
@@ -460,7 +477,7 @@ module {
                 enteredSweepstake = ugw.enteredSweepstake;
                 correctScores = ugw.correctScores;
                 predictionCount = ugw.predictionCount;
-                winnings = Nat64.toNat(winnings);
+                winnings = winnings;
               };
             } else {
               return ugw;

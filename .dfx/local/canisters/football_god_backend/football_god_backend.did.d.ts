@@ -35,11 +35,25 @@ export interface Gameweek {
   'status' : number,
   'number' : number,
   'fixtureCount' : number,
-  'fixtures' : List_2,
+  'fixtures' : List_1,
+}
+export interface GameweekDTO {
+  'totalFixtures' : number,
+  'correctScores' : number,
+  'winnings' : bigint,
+  'sweepstakeEntered' : boolean,
+  'gameweekNumber' : number,
 }
 export interface GameweekSummary {
   'displayName' : string,
   'principalName' : string,
+}
+export interface HistoryDTO {
+  'seasons' : Array<SeasonDTO>,
+  'seasonGameweeks' : Array<GameweekDTO>,
+  'userId' : string,
+  'activeSeasonId' : number,
+  'activeSeasonName' : string,
 }
 export interface HomeDTO {
   'activeGameweekNumber' : number,
@@ -61,9 +75,8 @@ export interface LeaderboardEntry {
   'enteredSweepstake' : boolean,
   'principalName' : string,
 }
-export type List = [] | [[Prediction, List]];
-export type List_1 = [] | [[Gameweek, List_1]];
-export type List_2 = [] | [[Fixture, List_2]];
+export type List = [] | [[Gameweek, List]];
+export type List_1 = [] | [[Fixture, List_1]];
 export interface PayoutData { 'totalPot' : bigint, 'winners' : bigint }
 export interface PlayDTO {
   'activeGameweekNumber' : number,
@@ -92,7 +105,13 @@ export interface Season {
   'id' : number,
   'name' : string,
   'year' : number,
-  'gameweeks' : List_1,
+  'gameweeks' : List,
+}
+export interface SeasonDTO {
+  'seasonId' : number,
+  'gameweeks' : Array<GameweekDTO>,
+  'seasonName' : string,
+  'seasonYear' : number,
 }
 export interface SubmitPlayDTO {
   'enterSweepstake' : boolean,
@@ -103,19 +122,10 @@ export interface UserBalances {
   'totalEntries' : number,
   'entries' : Array<Profile>,
 }
-export interface UserGameweek {
-  'correctScores' : number,
-  'predictionCount' : number,
-  'winnings' : bigint,
-  'predictions' : List,
-  'seasonId' : number,
-  'enteredSweepstake' : boolean,
-  'gameweekNumber' : number,
-}
 export interface ViewPredictionDTO {
   'totalFixtures' : number,
+  'correctScores' : number,
   'playerName' : string,
-  'correstScores' : number,
   'seasonName' : string,
   'fixtures' : Array<FixtureDTO>,
 }
@@ -139,6 +149,7 @@ export interface _SERVICE {
   'getFixture' : ActorMethod<[number, number, number], [] | [Fixture]>,
   'getFixtures' : ActorMethod<[number, number], Array<Fixture>>,
   'getGameweeks' : ActorMethod<[number], Array<Gameweek>>,
+  'getHistoryDTO' : ActorMethod<[number], HistoryDTO>,
   'getHomeDTO' : ActorMethod<[], HomeDTO>,
   'getLeaderboard' : ActorMethod<[number, number, bigint, bigint], Leaderboard>,
   'getPayoutData' : ActorMethod<[number, number], [] | [PayoutData]>,
@@ -150,7 +161,6 @@ export interface _SERVICE {
   'getSeasons' : ActorMethod<[], Array<Season>>,
   'getTeams' : ActorMethod<[], Array<Team>>,
   'getUserAccountBalance' : ActorMethod<[], bigint>,
-  'getUserHistory' : ActorMethod<[number], Array<UserGameweek>>,
   'getUserPredictions' : ActorMethod<
     [string, number, number],
     Array<Prediction>

@@ -37,7 +37,7 @@ type UserGameweek =
     predictionCount : Nat8;
     predictions : List<Prediction>;
     seasonId : Nat16;
-    winnings : Nat
+    winnings : Nat64
   };
 actor {
   stable var activeGameweek : Nat8;

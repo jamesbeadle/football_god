@@ -214,7 +214,6 @@ actor Self {
     return playDTO;
   };
 
-  
   public shared ({caller}) func submitPlayDTO(playDTO: DTOs.SubmitPlayDTO) : async Result.Result<(), Types.Error> {
     
     assert not Principal.isAnonymous(caller);
@@ -260,93 +259,143 @@ actor Self {
     return predictionsInstance.submitPredictions(principalName, activeSeason, activeGameweek, playDTO.fixtures, playDTO.enterSweepstake);
   };
 
-
   public shared ({caller}) func getViewPredictionDTO(principalName: Text, seasonId: Nat16, gameweekNumber: Nat8) : async DTOs.ViewPredictionDTO {
       
-      var seasonName = "";
-      var fixtures: [DTOs.FixtureDTO] = [];
-      var playerName = "";
-      var correstScores = Nat8.fromNat(0);
-      var totalFixtures = Nat8.fromNat(0);
+    var seasonName = "";
+    var fixtures: [DTOs.FixtureDTO] = [];
+    var playerName = "";
+    var correctScores = Nat8.fromNat(0);
+    var totalFixtures = Nat8.fromNat(0);
 
-      let season = seasonsInstance.getSeason(seasonId);
-      switch(season){
-        case (null) {};
-        case (?s) {
-          seasonName := s.name;
-        };
+    let season = seasonsInstance.getSeason(seasonId);
+    switch(season){
+      case (null) {};
+      case (?s) {
+        seasonName := s.name;
       };
-
-      let profile = profilesInstance.getProfile(principalName);
-    
-      switch profile {
-        case (null) { };
-        case (?p) {
-          playerName := p.displayName;
-        };
-      };
-      
-      let fixturesBuffer = Buffer.fromArray<DTOs.FixtureDTO>(fixtures);
-      let gameweekFixtures = seasonsInstance.getFixtures(seasonId, gameweekNumber);
-      let existingPredictions = predictionsInstance.getPredictions(principalName, seasonId, gameweekNumber); 
-
-      switch (gameweekFixtures) {
-        case (null) { };
-        case (?fixtures) {
-          for (fixture in Iter.fromList<Types.Fixture>(fixtures)) {
-            
-            var predictedHomeGoals = Nat8.fromNat(0);
-            var predictedAwayGoals = Nat8.fromNat(0);
-
-            let existingPrediction = Array.find<Types.Prediction>(existingPredictions, func (prediction: Types.Prediction) : Bool {
-              return prediction.fixtureId == fixture.id;
-            });
-
-            switch(existingPrediction){
-              case (null) { };
-              case (?prediction){
-                predictedHomeGoals := prediction.homeGoals;
-                predictedAwayGoals := prediction.awayGoals;
-              };
-            };
-
-            totalFixtures += 1;
-            let correctPrediction = (fixture.homeGoals == predictedHomeGoals and fixture.awayGoals == predictedAwayGoals);
-            if(correctPrediction){
-              correstScores += 1;
-            };
-
-            let fixtureDTO: DTOs.FixtureDTO = {
-              fixtureId = fixture.id;
-              homeTeamId = 0;
-              awayTeamId = 0;
-              homeTeamName = teamsInstance.getTeamName(fixture.homeTeamId);
-              awayTeamName = teamsInstance.getTeamName(fixture.awayTeamId);
-              homeTeamGoals = fixture.homeGoals;
-              awayTeamGoals = fixture.awayGoals;
-              homeTeamPrediction = predictedHomeGoals;
-              awayTeamPrediction = predictedAwayGoals;
-              correct = correctPrediction;
-              status = fixture.status;
-            };
-            fixturesBuffer.add(fixtureDTO);
-
-          };
-        };
-      };
-      fixtures := Buffer.toArray(fixturesBuffer);
-
-      let viewPredictionDTO: DTOs.ViewPredictionDTO = {
-        seasonName = seasonName;
-        playerName = playerName;
-        fixtures = fixtures;
-        correstScores = correstScores;
-        totalFixtures = totalFixtures;
-      };
-
-      return viewPredictionDTO;
     };
 
+    let profile = profilesInstance.getProfile(principalName);
+  
+    switch profile {
+      case (null) { };
+      case (?p) {
+        playerName := p.displayName;
+      };
+    };
+    
+    let fixturesBuffer = Buffer.fromArray<DTOs.FixtureDTO>(fixtures);
+    let gameweekFixtures = seasonsInstance.getFixtures(seasonId, gameweekNumber);
+    let existingPredictions = predictionsInstance.getPredictions(principalName, seasonId, gameweekNumber); 
+
+    switch (gameweekFixtures) {
+      case (null) { };
+      case (?fixtures) {
+        for (fixture in Iter.fromList<Types.Fixture>(fixtures)) {
+          
+          var predictedHomeGoals = Nat8.fromNat(0);
+          var predictedAwayGoals = Nat8.fromNat(0);
+
+          let existingPrediction = Array.find<Types.Prediction>(existingPredictions, func (prediction: Types.Prediction) : Bool {
+            return prediction.fixtureId == fixture.id;
+          });
+
+          switch(existingPrediction){
+            case (null) { };
+            case (?prediction){
+              predictedHomeGoals := prediction.homeGoals;
+              predictedAwayGoals := prediction.awayGoals;
+            };
+          };
+
+          totalFixtures += 1;
+          let correctPrediction = (fixture.homeGoals == predictedHomeGoals and fixture.awayGoals == predictedAwayGoals and fixture.status > 0);
+          if(correctPrediction){
+            correctScores += 1;
+          };
+
+          let fixtureDTO: DTOs.FixtureDTO = {
+            fixtureId = fixture.id;
+            homeTeamId = 0;
+            awayTeamId = 0;
+            homeTeamName = teamsInstance.getTeamName(fixture.homeTeamId);
+            awayTeamName = teamsInstance.getTeamName(fixture.awayTeamId);
+            homeTeamGoals = fixture.homeGoals;
+            awayTeamGoals = fixture.awayGoals;
+            homeTeamPrediction = predictedHomeGoals;
+            awayTeamPrediction = predictedAwayGoals;
+            correct = correctPrediction;
+            status = fixture.status;
+          };
+          fixturesBuffer.add(fixtureDTO);
+
+        };
+      };
+    };
+    fixtures := Buffer.toArray(fixturesBuffer);
+
+    let viewPredictionDTO: DTOs.ViewPredictionDTO = {
+      seasonName = seasonName;
+      playerName = playerName;
+      fixtures = fixtures;
+      correctScores = correctScores;
+      totalFixtures = totalFixtures;
+    };
+
+    return viewPredictionDTO;
+  };
+
+  public shared ({caller}) func getHistoryDTO(seasonId: Nat16) : async DTOs.HistoryDTO {
+    assert not Principal.isAnonymous(caller);
+    let principalName = Principal.toText(caller);
+
+    var activeSeasonName = "";
+    var seasons: [DTOs.SeasonDTO] = [];
+    var seasonGameweeks: [DTOs.GameweekDTO] = [];
+    var activeSeasonId = seasonId;
+
+    if(activeSeasonId == 0){
+      activeSeasonId := activeSeason;
+    };
+
+    let season = seasonsInstance.getSeason(activeSeasonId);
+    switch(season){
+      case (null) {};
+      case (?s) {
+        activeSeasonName := s.name;
+      };
+    };
+
+    let seasonsBuffer = Buffer.fromArray<DTOs.SeasonDTO>(seasons);
+    let allSeasons = seasonsInstance.getSeasons();
+
+    for (season in Iter.fromArray<Types.Season>(allSeasons)) {
+      let seasonDTO: DTOs.SeasonDTO = {
+        seasonId = season.id;
+        seasonName = season.name;
+        seasonYear = season.year;
+        gameweeks = [];
+      };
+      seasonsBuffer.add(seasonDTO);
+    };
+
+    let userHistory = predictionsInstance.getUserHistory(principalName, activeSeasonId);
+
+    let historyDTO: DTOs.HistoryDTO = {
+      seasons = Buffer.toArray(seasonsBuffer);
+      activeSeasonId = activeSeasonId;
+      activeSeasonName = activeSeasonName;
+      seasonGameweeks = userHistory;
+      userId = principalName;
+    };
+
+    return historyDTO;
+  };
+
+
+
+
+//should be able to delete the others:
 
 
 
@@ -368,10 +417,24 @@ actor Self {
 
 
 
-
-
-
-
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
   //profile functions
   
   public shared ({caller}) func getProfile() : async ?Types.Profile {
@@ -729,11 +792,13 @@ actor Self {
     return predictionsInstance.checkSweepstakePaid(principalName, seasonId, gameweekNumber); 
   };
 
+/*
   public shared ({caller}) func getUserHistory(seasonId: Nat16) : async [Types.UserGameweek] {
     assert not Principal.isAnonymous(caller);
     let principalName = Principal.toText(caller); 
    return predictionsInstance.getUserHistory(principalName, seasonId);
   };
+  */
 
 
   // Ledger functions

@@ -53,7 +53,7 @@ module Types {
         enteredSweepstake: Bool;
         correctScores: Nat8;
         predictionCount: Nat8;
-        winnings: Nat;
+        winnings: Nat64;
     };
 
     public type GameweekSummary = {

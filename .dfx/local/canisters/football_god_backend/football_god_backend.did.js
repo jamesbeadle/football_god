@@ -1,7 +1,6 @@
 export const idlFactory = ({ IDL }) => {
   const List = IDL.Rec();
   const List_1 = IDL.Rec();
-  const List_2 = IDL.Rec();
   const Error = IDL.Variant({
     'DecodeError' : IDL.Null,
     'NotAllowed' : IDL.Null,
@@ -18,19 +17,19 @@ export const idlFactory = ({ IDL }) => {
     'homeGoals' : IDL.Nat8,
     'awayGoals' : IDL.Nat8,
   });
-  List_2.fill(IDL.Opt(IDL.Tuple(Fixture, List_2)));
+  List_1.fill(IDL.Opt(IDL.Tuple(Fixture, List_1)));
   const Gameweek = IDL.Record({
     'status' : IDL.Nat8,
     'number' : IDL.Nat8,
     'fixtureCount' : IDL.Nat8,
-    'fixtures' : List_2,
+    'fixtures' : List_1,
   });
-  List_1.fill(IDL.Opt(IDL.Tuple(Gameweek, List_1)));
+  List.fill(IDL.Opt(IDL.Tuple(Gameweek, List)));
   const Season = IDL.Record({
     'id' : IDL.Nat16,
     'name' : IDL.Text,
     'year' : IDL.Nat16,
-    'gameweeks' : List_1,
+    'gameweeks' : List,
   });
   const GameweekSummary = IDL.Record({
     'displayName' : IDL.Text,
@@ -39,6 +38,26 @@ export const idlFactory = ({ IDL }) => {
   const CorrectPredictions = IDL.Record({
     'totalEntries' : IDL.Nat32,
     'entries' : IDL.Vec(GameweekSummary),
+  });
+  const GameweekDTO = IDL.Record({
+    'totalFixtures' : IDL.Nat8,
+    'correctScores' : IDL.Nat8,
+    'winnings' : IDL.Nat64,
+    'sweepstakeEntered' : IDL.Bool,
+    'gameweekNumber' : IDL.Nat8,
+  });
+  const SeasonDTO = IDL.Record({
+    'seasonId' : IDL.Nat16,
+    'gameweeks' : IDL.Vec(GameweekDTO),
+    'seasonName' : IDL.Text,
+    'seasonYear' : IDL.Nat16,
+  });
+  const HistoryDTO = IDL.Record({
+    'seasons' : IDL.Vec(SeasonDTO),
+    'seasonGameweeks' : IDL.Vec(GameweekDTO),
+    'userId' : IDL.Text,
+    'activeSeasonId' : IDL.Nat16,
+    'activeSeasonName' : IDL.Text,
   });
   const FixtureDTO = IDL.Record({
     'status' : IDL.Nat8,
@@ -99,24 +118,14 @@ export const idlFactory = ({ IDL }) => {
     'wallet' : IDL.Text,
   });
   const Team = IDL.Record({ 'id' : IDL.Nat16, 'name' : IDL.Text });
-  List.fill(IDL.Opt(IDL.Tuple(Prediction, List)));
-  const UserGameweek = IDL.Record({
-    'correctScores' : IDL.Nat8,
-    'predictionCount' : IDL.Nat8,
-    'winnings' : IDL.Nat,
-    'predictions' : List,
-    'seasonId' : IDL.Nat16,
-    'enteredSweepstake' : IDL.Bool,
-    'gameweekNumber' : IDL.Nat8,
-  });
   const UserBalances = IDL.Record({
     'totalEntries' : IDL.Nat32,
     'entries' : IDL.Vec(Profile),
   });
   const ViewPredictionDTO = IDL.Record({
     'totalFixtures' : IDL.Nat8,
+    'correctScores' : IDL.Nat8,
     'playerName' : IDL.Text,
-    'correstScores' : IDL.Nat8,
     'seasonName' : IDL.Text,
     'fixtures' : IDL.Vec(FixtureDTO),
   });
@@ -154,6 +163,7 @@ export const idlFactory = ({ IDL }) => {
         ['query'],
       ),
     'getGameweeks' : IDL.Func([IDL.Nat16], [IDL.Vec(Gameweek)], ['query']),
+    'getHistoryDTO' : IDL.Func([IDL.Nat16], [HistoryDTO], []),
     'getHomeDTO' : IDL.Func([], [HomeDTO], []),
     'getLeaderboard' : IDL.Func(
         [IDL.Nat16, IDL.Nat8, IDL.Nat, IDL.Nat],
@@ -177,7 +187,6 @@ export const idlFactory = ({ IDL }) => {
     'getSeasons' : IDL.Func([], [IDL.Vec(Season)], ['query']),
     'getTeams' : IDL.Func([], [IDL.Vec(Team)], ['query']),
     'getUserAccountBalance' : IDL.Func([], [IDL.Nat64], []),
-    'getUserHistory' : IDL.Func([IDL.Nat16], [IDL.Vec(UserGameweek)], []),
     'getUserPredictions' : IDL.Func(
         [IDL.Text, IDL.Nat16, IDL.Nat8],
         [IDL.Vec(Prediction)],
