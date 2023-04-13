@@ -23,6 +23,42 @@ module {
       userPredictions := Map.fromIter<Types.PrincipalName, List.List<Types.UserGameweek>>(
             stable_predictions.vals(), stable_predictions.size(), Text.equal, Text.hash);
     };
+
+    public func getPredictions(principalName: Text, seasonId: Nat16, gameweekNumber: Nat8) : [Types.Prediction] {
+      let userGameweeks = userPredictions.get(principalName);
+
+      switch userGameweeks {
+        case (null) { return []; };
+        case (?gameweeks) {
+          let gameweek = List.find<Types.UserGameweek>(gameweeks, func (ugw: Types.UserGameweek) : Bool {
+            return ugw.seasonId == seasonId and ugw.gameweekNumber == gameweekNumber;
+          });
+
+          switch gameweek {
+            case (null) { return []; };
+            case (?gw) { return List.toArray<Types.Prediction>(gw.predictions); };
+          };
+        };
+      };
+    };
+
+    public func checkSweepstakePaid(principalName: Text, seasonId: Nat16, gameweekNumber: Nat8) : Bool {
+      let userGameweeks = userPredictions.get(principalName);
+
+      switch userGameweeks {
+        case (null) { return false; };
+        case (?gameweeks) {
+          let gameweek = List.find<Types.UserGameweek>(gameweeks, func (ugw: Types.UserGameweek) : Bool {
+            return ugw.seasonId == seasonId and ugw.gameweekNumber == gameweekNumber;
+          });
+
+          switch gameweek {
+            case (null) { return false; };
+            case (?gw) { return gw.enteredSweepstake; };
+          };
+        };
+      };
+    };
    
     public func submitPredictions(principalName: Text, seasonId: Nat16, gameweekNumber: Nat8, predictions: [DTOs.FixtureDTO], enterSweepstake: Bool) : Result.Result<(), Types.Error> {
       
@@ -83,26 +119,11 @@ module {
 
 
 
+
+
+
     public func getUserPredictions() : [(Types.PrincipalName, List.List<Types.UserGameweek>)] {
       return Iter.toArray(userPredictions.entries());
-    };
-
-    public func getPredictions(principalName: Text, seasonId: Nat16, gameweekNumber: Nat8) : [Types.Prediction] {
-      let userGameweeks = userPredictions.get(principalName);
-
-      switch userGameweeks {
-        case (null) { return []; };
-        case (?gameweeks) {
-          let gameweek = List.find<Types.UserGameweek>(gameweeks, func (ugw: Types.UserGameweek) : Bool {
-            return ugw.seasonId == seasonId and ugw.gameweekNumber == gameweekNumber;
-          });
-
-          switch gameweek {
-            case (null) { return []; };
-            case (?gw) { return List.toArray<Types.Prediction>(gw.predictions); };
-          };
-        };
-      };
     };
 
     public func getCorrectPredictions(seasonId: Nat16, gameweekNumber: Nat8, fixture: Types.Fixture, start: Nat, count: Nat) : Types.CorrectPredictions {
@@ -150,23 +171,6 @@ module {
     };
 
 
-    public func checkSweepstakePaid(principalName: Text, seasonId: Nat16, gameweekNumber: Nat8) : Bool {
-      let userGameweeks = userPredictions.get(principalName);
-
-      switch userGameweeks {
-        case (null) { return false; };
-        case (?gameweeks) {
-          let gameweek = List.find<Types.UserGameweek>(gameweeks, func (ugw: Types.UserGameweek) : Bool {
-            return ugw.seasonId == seasonId and ugw.gameweekNumber == gameweekNumber;
-          });
-
-          switch gameweek {
-            case (null) { return false; };
-            case (?gw) { return gw.enteredSweepstake; };
-          };
-        };
-      };
-    };
 
 /*
     public func enterSweepstake(principalName: Text, seasonId: Nat16, gameweekNumber: Nat8) : Result.Result<(), Types.Error> {

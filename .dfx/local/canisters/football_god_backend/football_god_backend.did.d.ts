@@ -67,6 +67,7 @@ export type List_2 = [] | [[Fixture, List_2]];
 export interface PayoutData { 'totalPot' : bigint, 'winners' : bigint }
 export interface PlayDTO {
   'activeGameweekNumber' : number,
+  'userId' : string,
   'sweepstakePaid' : boolean,
   'accountBalance' : bigint,
   'activeSeasonId' : number,
@@ -111,6 +112,13 @@ export interface UserGameweek {
   'enteredSweepstake' : boolean,
   'gameweekNumber' : number,
 }
+export interface ViewPredictionDTO {
+  'totalFixtures' : number,
+  'playerName' : string,
+  'correstScores' : number,
+  'seasonName' : string,
+  'fixtures' : Array<FixtureDTO>,
+}
 export interface _SERVICE {
   'addFixtureToGameweek' : ActorMethod<
     [number, number, number, number],
@@ -148,6 +156,10 @@ export interface _SERVICE {
     Array<Prediction>
   >,
   'getUsersWithBalances' : ActorMethod<[bigint, bigint], [] | [UserBalances]>,
+  'getViewPredictionDTO' : ActorMethod<
+    [string, number, number],
+    ViewPredictionDTO
+  >,
   'isAdmin' : ActorMethod<[], boolean>,
   'isDisplayNameValid' : ActorMethod<[string], boolean>,
   'isWalletValid' : ActorMethod<[string], boolean>,

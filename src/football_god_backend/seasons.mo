@@ -25,7 +25,75 @@ module {
         return List.toArray(seasons);
     };
 
+    public func getSeason(seasonId: Nat16) : ?Types.Season {
+        let foundSeason = List.find<Types.Season>(seasons, func (season: Types.Season): Bool {
+            return season.id == seasonId;
+        });
 
+        switch (foundSeason) {
+            case (null) { return null; };
+            case (?season) {
+                let seasonInfo = {
+                    id = season.id;
+                    name = season.name;
+                    year = season.year;
+                    gameweeks = List.nil<Types.Gameweek>();
+                };
+                return ?seasonInfo;
+            };
+        };
+    };
+    
+    public func getGameweek(seasonId: Nat16, gameweekNumber: Nat8) : ?Types.Gameweek {
+        let foundSeason = List.find<Types.Season>(seasons, func (season: Types.Season): Bool {
+            return season.id == seasonId;
+        });
+
+        switch (foundSeason) {
+            case (null) { return null; };
+            case (?season) {
+                let foundGameweek = List.find<Types.Gameweek>(season.gameweeks, func (gameweek: Types.Gameweek): Bool {
+                    return gameweek.number == gameweekNumber;
+                });
+
+                switch(foundGameweek){
+                    case (null) { return null; };
+                    case (?gameweek) {
+                        let gameweekInfo = {
+                            number = gameweek.number;
+                            status = gameweek.status;
+                            fixtureCount = Nat8.fromNat(0);
+                            fixtures = List.nil<Types.Fixture>();
+                        };
+                        return ?gameweekInfo;
+                    };
+                };
+                
+            };
+        };    
+    };
+
+    public func getFixtures(seasonId: Nat16, gameweekNumber: Nat8) : ?List.List<Types.Fixture> {
+      let foundSeason = List.find<Types.Season>(seasons, func (season: Types.Season): Bool {
+          return season.id == seasonId;
+      });
+
+      switch (foundSeason) {
+          case (null) { return null; };
+          case (?season) {
+              let foundGameweek = List.find<Types.Gameweek>(season.gameweeks, func (gameweek: Types.Gameweek): Bool {
+                  return gameweek.number == gameweekNumber;
+              });
+
+              switch (foundGameweek) {
+                  case (null) { return null; };
+                  case (?gameweek) {
+                      return ?gameweek.fixtures;
+                  };
+              };
+          };
+      };    
+    };
 
     public func checkValidPredictions(seasonId: Nat16, gameweekNumber: Nat8, predictions: [DTOs.FixtureDTO]) : Bool {
         
@@ -76,25 +144,6 @@ module {
         return nextFixtureId;
     };
 
-    public func getSeason(seasonId: Nat16) : ?Types.Season {
-        let foundSeason = List.find<Types.Season>(seasons, func (season: Types.Season): Bool {
-            return season.id == seasonId;
-        });
-
-        switch (foundSeason) {
-            case (null) { return null; };
-            case (?season) {
-                let seasonInfo = {
-                    id = season.id;
-                    name = season.name;
-                    year = season.year;
-                    gameweeks = List.nil<Types.Gameweek>();
-                };
-                return ?seasonInfo;
-            };
-        };
-    };
-
     public func getGameweeks(seasonId: Nat16) : [Types.Gameweek] {
         let foundSeason = List.find<Types.Season>(seasons, func (season: Types.Season): Bool {
             return season.id == seasonId;
@@ -115,35 +164,6 @@ module {
                 }));
             };
         };
-    };
-    
-    public func getGameweek(seasonId: Nat16, gameweekNumber: Nat8) : ?Types.Gameweek {
-        let foundSeason = List.find<Types.Season>(seasons, func (season: Types.Season): Bool {
-            return season.id == seasonId;
-        });
-
-        switch (foundSeason) {
-            case (null) { return null; };
-            case (?season) {
-                let foundGameweek = List.find<Types.Gameweek>(season.gameweeks, func (gameweek: Types.Gameweek): Bool {
-                    return gameweek.number == gameweekNumber;
-                });
-
-                switch(foundGameweek){
-                    case (null) { return null; };
-                    case (?gameweek) {
-                        let gameweekInfo = {
-                            number = gameweek.number;
-                            status = gameweek.status;
-                            fixtureCount = Nat8.fromNat(0);
-                            fixtures = List.nil<Types.Fixture>();
-                        };
-                        return ?gameweekInfo;
-                    };
-                };
-                
-            };
-        };    
     };
 
     public func createSeason(name : Text, year : Nat16) : Result.Result<(), Types.Error> {
@@ -235,27 +255,6 @@ module {
     };
 
 
-    public func getFixtures(seasonId: Nat16, gameweekNumber: Nat8) : ?List.List<Types.Fixture> {
-      let foundSeason = List.find<Types.Season>(seasons, func (season: Types.Season): Bool {
-          return season.id == seasonId;
-      });
-
-      switch (foundSeason) {
-          case (null) { return null; };
-          case (?season) {
-              let foundGameweek = List.find<Types.Gameweek>(season.gameweeks, func (gameweek: Types.Gameweek): Bool {
-                  return gameweek.number == gameweekNumber;
-              });
-
-              switch (foundGameweek) {
-                  case (null) { return null; };
-                  case (?gameweek) {
-                      return ?gameweek.fixtures;
-                  };
-              };
-          };
-      };    
-    };
 
     public func getFixture(seasonId: Nat16, gameweekNumber: Nat8, fixtureId: Nat32) : ?Types.Fixture {
         let foundSeason = List.find<Types.Season>(seasons, func (season: Types.Season): Bool {

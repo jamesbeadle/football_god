@@ -79,6 +79,7 @@ export const idlFactory = ({ IDL }) => {
   });
   const PlayDTO = IDL.Record({
     'activeGameweekNumber' : IDL.Nat8,
+    'userId' : IDL.Text,
     'sweepstakePaid' : IDL.Bool,
     'accountBalance' : IDL.Nat64,
     'activeSeasonId' : IDL.Nat16,
@@ -111,6 +112,13 @@ export const idlFactory = ({ IDL }) => {
   const UserBalances = IDL.Record({
     'totalEntries' : IDL.Nat32,
     'entries' : IDL.Vec(Profile),
+  });
+  const ViewPredictionDTO = IDL.Record({
+    'totalFixtures' : IDL.Nat8,
+    'playerName' : IDL.Text,
+    'correstScores' : IDL.Nat8,
+    'seasonName' : IDL.Text,
+    'fixtures' : IDL.Vec(FixtureDTO),
   });
   const SubmitPlayDTO = IDL.Record({
     'enterSweepstake' : IDL.Bool,
@@ -178,6 +186,11 @@ export const idlFactory = ({ IDL }) => {
     'getUsersWithBalances' : IDL.Func(
         [IDL.Nat, IDL.Nat],
         [IDL.Opt(UserBalances)],
+        [],
+      ),
+    'getViewPredictionDTO' : IDL.Func(
+        [IDL.Text, IDL.Nat16, IDL.Nat8],
+        [ViewPredictionDTO],
         [],
       ),
     'isAdmin' : IDL.Func([], [IDL.Bool], ['query']),

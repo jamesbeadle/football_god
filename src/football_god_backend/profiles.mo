@@ -33,6 +33,41 @@ module {
         }));
     };
 
+    public func getProfile(principalName: Text) : ?Types.Profile {
+        let foundProfile = List.find<Types.Profile>(userProfiles, func (profile: Types.Profile): Bool {
+            return profile.principalName == principalName;
+        });
+
+        switch (foundProfile) {
+            case (null) { return null; };
+            case (?profile) { return ?profile; };
+        };
+    };
+
+    public func createProfile(principalName: Types.PrincipalName, displayName: Text, wallet: Text, depositAddress: Account.AccountIdentifier) : () {
+        
+        let updatedProfile: Types.Profile = {
+            principalName = principalName;
+            displayName = displayName;
+            wallet = wallet;
+            depositAddress = depositAddress;
+            balance = 0;
+        };
+        
+        let existingProfile = List.find<Types.Profile>(userProfiles, func (profile: Types.Profile): Bool {
+            return profile.principalName == principalName;
+        });
+
+        switch (existingProfile) {
+            case (null) { 
+                var newProfilesList = List.nil<Types.Profile>();
+                newProfilesList := List.push(updatedProfile, newProfilesList);
+                userProfiles := List.append(userProfiles, newProfilesList);
+                };
+            case (?existingProfile) { };
+        };
+    };
+
     public func getProfilesByPage(page: Int, pageSize: Int) : Types.UserBalances {
         let startIndex = (page - 1) * pageSize;
         let endIndex = page * pageSize;
@@ -63,29 +98,6 @@ module {
     };
 
     
-    public func createProfile(principalName: Types.PrincipalName, displayName: Text, wallet: Text, depositAddress: Account.AccountIdentifier) : () {
-        
-        let updatedProfile: Types.Profile = {
-            principalName = principalName;
-            displayName = displayName;
-            wallet = wallet;
-            depositAddress = depositAddress;
-            balance = 0;
-        };
-        
-        let existingProfile = List.find<Types.Profile>(userProfiles, func (profile: Types.Profile): Bool {
-            return profile.principalName == principalName;
-        });
-
-        switch (existingProfile) {
-            case (null) { 
-                var newProfilesList = List.nil<Types.Profile>();
-                newProfilesList := List.push(updatedProfile, newProfilesList);
-                userProfiles := List.append(userProfiles, newProfilesList);
-             };
-            case (?existingProfile) { };
-        };
-    };
 
     public func updateDisplayName(principalName: Types.PrincipalName, displayName: Text) : Result.Result<(), Types.Error> {
         
@@ -167,17 +179,6 @@ module {
         switch (existingProfile) {
             case null { return false };
             case _ { return true };
-        };
-    };
-
-    public func getProfile(principalName: Text) : ?Types.Profile {
-        let foundProfile = List.find<Types.Profile>(userProfiles, func (profile: Types.Profile): Bool {
-            return profile.principalName == principalName;
-        });
-
-        switch (foundProfile) {
-            case (null) { return null; };
-            case (?profile) { return ?profile; };
         };
     };
 

@@ -16,6 +16,7 @@ module DTOs {
         fixtures: [FixtureDTO];
         sweepstakePaid: Bool;
         accountBalance: Nat64;
+        userId: Text;
     };
 
     public type SubmitPlayDTO = {

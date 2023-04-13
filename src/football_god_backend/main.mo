@@ -22,7 +22,7 @@ import DTOs "DTOs";
 actor Self {
   
   let admins : [Principal] = [
-    Principal.fromText("5mdop-qg5yr-jbxve-kwibd-vzckf-zauna-bi6g3-53zd4-szfl3-lohay-2ae")
+    Principal.fromText("ld6pc-7sgvt-fs7gg-fvsih-gspgy-34ikk-wrwl6-ixrkc-k54er-7ivom-wae")
   ];
 
   let profilesInstance = Profiles.Profiles();
@@ -208,6 +208,7 @@ actor Self {
       fixtures = fixtures;
       sweepstakePaid = sweepstakePaid;
       accountBalance = accountBalance;
+      userId = principalName;
     };
 
     return playDTO;
@@ -260,7 +261,91 @@ actor Self {
   };
 
 
+  public shared ({caller}) func getViewPredictionDTO(principalName: Text, seasonId: Nat16, gameweekNumber: Nat8) : async DTOs.ViewPredictionDTO {
+      
+      var seasonName = "";
+      var fixtures: [DTOs.FixtureDTO] = [];
+      var playerName = "";
+      var correstScores = Nat8.fromNat(0);
+      var totalFixtures = Nat8.fromNat(0);
 
+      let season = seasonsInstance.getSeason(seasonId);
+      switch(season){
+        case (null) {};
+        case (?s) {
+          seasonName := s.name;
+        };
+      };
+
+      let profile = profilesInstance.getProfile(principalName);
+    
+      switch profile {
+        case (null) { };
+        case (?p) {
+          playerName := p.displayName;
+        };
+      };
+      
+      let fixturesBuffer = Buffer.fromArray<DTOs.FixtureDTO>(fixtures);
+      let gameweekFixtures = seasonsInstance.getFixtures(seasonId, gameweekNumber);
+      let existingPredictions = predictionsInstance.getPredictions(principalName, seasonId, gameweekNumber); 
+
+      switch (gameweekFixtures) {
+        case (null) { };
+        case (?fixtures) {
+          for (fixture in Iter.fromList<Types.Fixture>(fixtures)) {
+            
+            var predictedHomeGoals = Nat8.fromNat(0);
+            var predictedAwayGoals = Nat8.fromNat(0);
+
+            let existingPrediction = Array.find<Types.Prediction>(existingPredictions, func (prediction: Types.Prediction) : Bool {
+              return prediction.fixtureId == fixture.id;
+            });
+
+            switch(existingPrediction){
+              case (null) { };
+              case (?prediction){
+                predictedHomeGoals := prediction.homeGoals;
+                predictedAwayGoals := prediction.awayGoals;
+              };
+            };
+
+            totalFixtures += 1;
+            let correctPrediction = (fixture.homeGoals == predictedHomeGoals and fixture.awayGoals == predictedAwayGoals);
+            if(correctPrediction){
+              correstScores += 1;
+            };
+
+            let fixtureDTO: DTOs.FixtureDTO = {
+              fixtureId = fixture.id;
+              homeTeamId = 0;
+              awayTeamId = 0;
+              homeTeamName = teamsInstance.getTeamName(fixture.homeTeamId);
+              awayTeamName = teamsInstance.getTeamName(fixture.awayTeamId);
+              homeTeamGoals = fixture.homeGoals;
+              awayTeamGoals = fixture.awayGoals;
+              homeTeamPrediction = predictedHomeGoals;
+              awayTeamPrediction = predictedAwayGoals;
+              correct = correctPrediction;
+              status = fixture.status;
+            };
+            fixturesBuffer.add(fixtureDTO);
+
+          };
+        };
+      };
+      fixtures := Buffer.toArray(fixturesBuffer);
+
+      let viewPredictionDTO: DTOs.ViewPredictionDTO = {
+        seasonName = seasonName;
+        playerName = playerName;
+        fixtures = fixtures;
+        correstScores = correstScores;
+        totalFixtures = totalFixtures;
+      };
+
+      return viewPredictionDTO;
+    };
 
 
 

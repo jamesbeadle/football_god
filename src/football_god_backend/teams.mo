@@ -33,6 +33,11 @@ module {
         };
     };
 
+
+
+
+    
+
     private func bubbleSort(list: List.List<Types.Team>, n: Nat): List.List<Types.Team> {
         if (n <= 1) {
             return list;

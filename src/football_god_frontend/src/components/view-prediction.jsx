@@ -7,141 +7,51 @@ const ViewPrediction = () => {
   const { userId, seasonId, gameweekNumber } = useParams();
 
   const [isLoading, setIsLoading] = useState(true);
-  const [loadingText, setLoadingText] = useState('');
-  const [seasonName, setSeasonName] = useState('');
-  const [displayName, setDisplayName] = useState('');
-  const [teams, setTeamsData] = useState([]);
-  const [fixtures, setFixtures] = useState([]);
-  const [totalCorrect, setTotalCorrect] = useState(0);
-  const [totalFixtures, setTotalFixtures] = useState(0);
-  const [predictions, setPredictions] = useState([]);
-
-  useEffect(() => {
+  const [viewData, setViewData] = useState(null);
   
+  useEffect(() => {
     const fetchData = async () => {
-      await fetchSeason();
-      await fetchTeams();
-      await fetchFixtures();
-      await fetchProfile();
-      await fetchPredictions();
+      await fetchViewData();
+      setIsLoading(false);
     };
     fetchData();
   }, []);
 
-  
-  useEffect(() => {
-    if (fixtures.length > 0 && predictions.length > 0) {
-      calculateTotals();
-      setIsLoading(false);
-    }
-  }, [fixtures, predictions]);
-
-  const fetchSeason = async () => {
-    const seasonData = await football_god_backend_actor.getSeason(Number(seasonId));
-    setSeasonName(seasonData[0].name);
+  const fetchViewData = async () => {
+    const data = await football_god_backend_actor.getViewPredictionDTO(userId, Number(seasonId), Number(gameweekNumber));
+    console.log(data)
+    setViewData(data);
   };
-  
-  const fetchTeams = async () => {
-    const teamsData = await football_god_backend_actor.getTeams();
-    setTeamsData(teamsData);
-  };
-
-  const fetchFixtures = async () => {
-    const fixturesData = await football_god_backend_actor.getFixtures(Number(seasonId), Number(gameweekNumber));
-    setFixtures(fixturesData);
-  };
-
-  const fetchProfile = async () => {
-    const profileData = await football_god_backend_actor.getPublicProfile(userId);
-    setDisplayName(profileData[0].displayName);
-  };
-  
-  const fetchPredictions = async () => {
-    const predictionsData = await football_god_backend_actor.getUserPredictions(userId, Number(seasonId), Number(gameweekNumber));
-    setPredictions(predictionsData);
-  };
-
-  const calculateTotals = async () => {
-    let correctCount = 0;
-  
-    predictions.forEach((prediction) => {
-      const fixture = fixtures.find(
-        (fixture) =>
-          fixture.homeTeam === prediction.homeTeam &&
-          fixture.awayTeam === prediction.awayTeam
-      );
-  
-      if (fixture && fixture.status > 0) {
-        if (
-          prediction.homeGoals === fixture.homeGoals &&
-          prediction.awayGoals === fixture.awayGoals
-        ) {
-          correctCount++;
-        }
-      }
-    });
-    
-    setTotalCorrect(correctCount);
-    setTotalFixtures(fixtures.length);
-  };
-  
-  const getPredictionStatus = (prediction) => {
-    const fixture = fixtures.find((fixture) => fixture.id === prediction.fixtureId);
-      
-    if (!fixture || fixture.status < 2) {
-      return 'unplayed';
-    }
-  
-    const correct =
-      prediction.homeGoals === fixture.homeGoals &&
-      prediction.awayGoals === fixture.awayGoals;
-  
-    if (correct) {
-      return 'correct';
-    } else {
-      return 'incorrect';
-    }
-  };
-
-  const getTeamName = (fixture, teamType) => {
-    if (!fixture) return '';
-  
-    const teamId = teamType === 'home' ? fixture.homeTeamId : fixture.awayTeamId;
-    const team = teams.find((team) => team.id === teamId);
-  
-    return team ? team.name : '';
-  };
-  
 
   return (
     <Container>
       {isLoading ? (
         <div className="customOverlay d-flex flex-column align-items-center justify-content-center">
           <Spinner animation="border" />
-          <p className='text-center mt-1'>{loadingText}</p>
+          <p className='text-center mt-1'>Loading Prediction</p>
         </div>
       ) : (
       <Row className="justify-content-md-center">
         <Col md={8}>
           <Card className="mt-4">
             <Card.Header className="text-center">
-              <h2>View Predictions</h2>
+              <h2>View Prediction</h2>
             </Card.Header>
             <Card.Body>
-              <p>Player: {displayName}</p>
-              <p>Season: {seasonName}</p>
+              <p>Player: {viewData.playerName}</p>
+              <p>Season: {viewData.seasonName}</p>
               <p>Gameweek: {gameweekNumber}</p>
               <p>
-                Total Correct: {totalCorrect} / {totalFixtures}
+                Total Correct: {viewData.correctScores} / {viewData.totalFixtures}
               </p>
               <ListGroup>
-                {predictions.map((prediction) =>{ 
-                  const fixture = fixtures.find((fixture) => fixture.id === prediction.fixtureId);
+                {viewData.fixtures.map((prediction) =>{ 
+                  const cssClass = prediction.status == 0 ? 'unplayed' : prediction.correct ? 'correct' : 'incorrect';
                   return (
-                  <ListGroup.Item key={prediction.fixtureId} className={`prediction-${getPredictionStatus(prediction)}`}>
-                    <div>{getTeamName(fixture, 'home')} vs {getTeamName(fixture, 'away')}</div>
-                    <div>Prediction: {prediction.homeGoals} - {prediction.awayGoals}</div>
-                    {prediction.played && <div>Actual Score: {prediction.actualHomeGoals} - {prediction.actualAwayGoals}</div>}
+                  <ListGroup.Item key={prediction.fixtureId} className={`prediction-${cssClass}`}>
+                    <div>{prediction.homeTeamName} vs {prediction.awayTeamName}</div>
+                    <div>Prediction: {prediction.homeTeamPrediction} - {prediction.awayTeamPrediction}</div>
+                    {prediction.status > 0 && <div>Actual Score: {prediction.homeTeamGoals} - {prediction.awayTeamGoals}</div>}
                   </ListGroup.Item>
                 )})}
               </ListGroup>

@@ -22,11 +22,6 @@ module {
     let entry_fee: Nat64 = 100_000_000;
     let icp_fee: Nat64 = 10_000;
    
-    public func getTotalBalance(defaultSubAccount: Account.AccountIdentifier) : async Nat64 {
-        let balance = await Ledger.account_balance({ account = defaultSubAccount });
-        return balance.e8s;
-    };
-   
     public func getGameweekPotBalance(defaultSubAccount: Account.AccountIdentifier) : async Nat64 {
         let balance = await Ledger.account_balance({ account = defaultSubAccount });
         return Int64.toNat64(Float.toInt64(Float.fromInt64(Int64.fromNat64(balance.e8s)) * 0.95));
@@ -36,22 +31,6 @@ module {
         let source_account = Account.accountIdentifier(defaultAccount, Account.principalToSubaccount(user));
         let balance = await Ledger.account_balance({ account = source_account });
         return balance.e8s;
-    };
-
-    public func transferWinnings(defaultAccount: Principal, user: Principal, amount: Float) : async () {
-
-        Debug.print(debug_show(user));
-        Debug.print(debug_show(amount));
-
-        let result = await Ledger.transfer({
-          memo = 0;
-          from_subaccount = null;
-          to = Account.accountIdentifier(defaultAccount, Account.principalToSubaccount(user));
-          amount = { e8s = Int64.toNat64(Float.toInt64(amount)) };
-          fee = { e8s = icp_fee };
-          created_at_time = ?{ timestamp_nanos = Nat64.fromNat(Int.abs(Time.now())) };
-        });
-        Debug.print(debug_show(result));
     };
 
     public func canAffordEntry(defaultAccount: Principal, user: Principal) : async Bool {
@@ -70,6 +49,30 @@ module {
           fee = { e8s = icp_fee };
           created_at_time = ?{ timestamp_nanos = Nat64.fromNat(Int.abs(Time.now())) };
         });
+    };
+   
+
+
+   
+    public func getTotalBalance(defaultSubAccount: Account.AccountIdentifier) : async Nat64 {
+        let balance = await Ledger.account_balance({ account = defaultSubAccount });
+        return balance.e8s;
+    };
+
+    public func transferWinnings(defaultAccount: Principal, user: Principal, amount: Float) : async () {
+
+        Debug.print(debug_show(user));
+        Debug.print(debug_show(amount));
+
+        let result = await Ledger.transfer({
+          memo = 0;
+          from_subaccount = null;
+          to = Account.accountIdentifier(defaultAccount, Account.principalToSubaccount(user));
+          amount = { e8s = Int64.toNat64(Float.toInt64(amount)) };
+          fee = { e8s = icp_fee };
+          created_at_time = ?{ timestamp_nanos = Nat64.fromNat(Int.abs(Time.now())) };
+        });
+        Debug.print(debug_show(result));
     };
 
     //withdraw ICP

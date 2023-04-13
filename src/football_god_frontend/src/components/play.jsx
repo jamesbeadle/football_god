@@ -91,7 +91,7 @@ const Play = () => {
     await football_god_backend_actor.submitPlayDTO(submitPlayDTO);
   
     setIsLoading(false);
-    navigate(`/view-submission/${viewData.activeSeasonId}/${viewData.activeGameweekNumber}`);
+    navigate(`/view-prediction/${viewData.userId}/${viewData.activeSeasonId}/${viewData.activeGameweekNumber}`);
   };
 
   return (

@@ -1,3 +1,11 @@
+type ViewPredictionDTO = 
+ record {
+   correstScores: nat8;
+   fixtures: vec FixtureDTO;
+   playerName: text;
+   seasonName: text;
+   totalFixtures: nat8;
+ };
 type UserGameweek = 
  record {
    correctScores: nat8;
@@ -57,6 +65,7 @@ type PlayDTO =
    activeSeasonName: text;
    fixtures: vec FixtureDTO;
    sweepstakePaid: bool;
+   userId: text;
  };
 type PayoutData = 
  record {
@@ -178,6 +187,7 @@ service : {
   getUserHistory: (nat16) -> (vec UserGameweek);
   getUserPredictions: (text, nat16, nat8) -> (vec Prediction);
   getUsersWithBalances: (nat, nat) -> (opt UserBalances);
+  getViewPredictionDTO: (text, nat16, nat8) -> (ViewPredictionDTO);
   isAdmin: () -> (bool) query;
   isDisplayNameValid: (text) -> (bool);
   isWalletValid: (text) -> (bool);
