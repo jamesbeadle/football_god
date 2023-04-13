@@ -65,6 +65,14 @@ export type List = [] | [[Prediction, List]];
 export type List_1 = [] | [[Gameweek, List_1]];
 export type List_2 = [] | [[Fixture, List_2]];
 export interface PayoutData { 'totalPot' : bigint, 'winners' : bigint }
+export interface PlayDTO {
+  'activeGameweekNumber' : number,
+  'sweepstakePaid' : boolean,
+  'accountBalance' : bigint,
+  'activeSeasonId' : number,
+  'activeSeasonName' : string,
+  'fixtures' : Array<FixtureDTO>,
+}
 export interface Prediction {
   'fixtureId' : number,
   'homeGoals' : number,
@@ -84,6 +92,10 @@ export interface Season {
   'name' : string,
   'year' : number,
   'gameweeks' : List_1,
+}
+export interface SubmitPlayDTO {
+  'enterSweepstake' : boolean,
+  'fixtures' : Array<FixtureDTO>,
 }
 export interface Team { 'id' : number, 'name' : string }
 export interface UserBalances {
@@ -110,7 +122,6 @@ export interface _SERVICE {
   'deleteFixture' : ActorMethod<[number, number, number], Result>,
   'deleteSeason' : ActorMethod<[number], Result>,
   'deleteTeam' : ActorMethod<[number], Result>,
-  'enterSweepstake' : ActorMethod<[number, number], Result>,
   'getActiveGameweek' : ActorMethod<[], [] | [Gameweek]>,
   'getActiveSeason' : ActorMethod<[], [] | [Season]>,
   'getCorrectPredictions' : ActorMethod<
@@ -123,6 +134,7 @@ export interface _SERVICE {
   'getHomeDTO' : ActorMethod<[], HomeDTO>,
   'getLeaderboard' : ActorMethod<[number, number, bigint, bigint], Leaderboard>,
   'getPayoutData' : ActorMethod<[number, number], [] | [PayoutData]>,
+  'getPlayDTO' : ActorMethod<[], PlayDTO>,
   'getPredictions' : ActorMethod<[number, number], Array<Prediction>>,
   'getProfile' : ActorMethod<[], [] | [Profile]>,
   'getPublicProfile' : ActorMethod<[string], [] | [Profile]>,
@@ -142,10 +154,7 @@ export interface _SERVICE {
   'payoutSweepstake' : ActorMethod<[number, number], Result>,
   'setActiveGameweek' : ActorMethod<[number], Result>,
   'setActiveSeason' : ActorMethod<[number], Result>,
-  'submitPredictions' : ActorMethod<
-    [number, number, Array<Prediction>],
-    Result
-  >,
+  'submitPlayDTO' : ActorMethod<[SubmitPlayDTO], Result>,
   'unsetActiveState' : ActorMethod<[], Result>,
   'updateDisplayName' : ActorMethod<[string], Result>,
   'updateFixture' : ActorMethod<

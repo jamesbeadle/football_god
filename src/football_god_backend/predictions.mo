@@ -11,6 +11,7 @@ import Nat64 "mo:base/Nat64";
 import Debug "mo:base/Debug";
 import Buffer "mo:base/Buffer";
 import Nat "mo:base/Nat";
+import DTOs "DTOs";
 
 module {
     
@@ -22,56 +23,68 @@ module {
       userPredictions := Map.fromIter<Types.PrincipalName, List.List<Types.UserGameweek>>(
             stable_predictions.vals(), stable_predictions.size(), Text.equal, Text.hash);
     };
+   
+    public func submitPredictions(principalName: Text, seasonId: Nat16, gameweekNumber: Nat8, predictions: [DTOs.FixtureDTO], enterSweepstake: Bool) : Result.Result<(), Types.Error> {
+      
+      let predictionsArray = Array.map<DTOs.FixtureDTO, Types.Prediction>(predictions, func (prediction: DTOs.FixtureDTO) : Types.Prediction {
+          let userPrediction = {
+            fixtureId = prediction.fixtureId;
+            homeGoals = prediction.homeTeamPrediction;
+            awayGoals = prediction.awayTeamPrediction;
+          };
+          return userPrediction;
+        });
+
+      let userGameweek: Types.UserGameweek = {
+        seasonId = seasonId;
+        gameweekNumber = gameweekNumber;
+        predictions = List.fromArray<Types.Prediction>(predictionsArray);
+        enteredSweepstake = enterSweepstake;
+        correctScores = 0;
+        predictionCount = Nat8.fromNat(Array.size<Types.Prediction>(predictionsArray));
+        winnings = 0;
+      }; 
+    
+      let updatedUserGameweeks = switch (userPredictions.get(principalName)) {  
+          case (null) { List.push<Types.UserGameweek>(userGameweek, List.nil<Types.UserGameweek>()) };
+          case (?userGameweeks) {
+            let alreadyExists = List.some(userGameweeks, func (ugw: Types.UserGameweek) : Bool {
+              return ugw.seasonId == seasonId and ugw.gameweekNumber == gameweekNumber;
+            });
+
+            if (alreadyExists) {
+              List.map<Types.UserGameweek, Types.UserGameweek>(userGameweeks, func (ugw: Types.UserGameweek) : Types.UserGameweek {
+                if (ugw.seasonId == seasonId and ugw.gameweekNumber == gameweekNumber) {
+                  let updatedUserGameweek = {
+                    seasonId = userGameweek.seasonId;
+                    gameweekNumber = userGameweek.gameweekNumber;
+                    predictions = userGameweek.predictions;
+                    enteredSweepstake = ugw.enteredSweepstake;
+                    correctScores = userGameweek.correctScores;
+                    predictionCount = userGameweek.predictionCount;
+                    winnings = userGameweek.winnings;
+                  };
+                  return updatedUserGameweek;
+                } else {
+                  return ugw;
+                };
+              });
+            } else {
+              List.push<Types.UserGameweek>(userGameweek, userGameweeks);
+            }
+          };
+      };
+
+      userPredictions.put(principalName, updatedUserGameweeks);
+      return #ok(());
+    };
+
+
+
+
 
     public func getUserPredictions() : [(Types.PrincipalName, List.List<Types.UserGameweek>)] {
       return Iter.toArray(userPredictions.entries());
-    };
-   
-    public func submitPredictions(principalName: Text, seasonId: Nat16, gameweekNumber: Nat8, predictions: [Types.Prediction]) : Result.Result<(), Types.Error> {
-        
-        let userGameweek: Types.UserGameweek = {
-          seasonId = seasonId;
-          gameweekNumber = gameweekNumber;
-          predictions = List.fromArray<Types.Prediction>(predictions);
-          enteredSweepstake = false;
-          correctScores = 0;
-          predictionCount = Nat8.fromNat(Array.size<Types.Prediction>(predictions));
-          winnings = 0;
-        }; 
-
-        let updatedUserGameweeks = switch (userPredictions.get(principalName)) {  
-            case (null) { List.push<Types.UserGameweek>(userGameweek, List.nil<Types.UserGameweek>()) };
-            case (?userGameweeks) {
-              let alreadyExists = List.some(userGameweeks, func (ugw: Types.UserGameweek) : Bool {
-                return ugw.seasonId == seasonId and ugw.gameweekNumber == gameweekNumber;
-              });
-
-              if (alreadyExists) {
-                List.map<Types.UserGameweek, Types.UserGameweek>(userGameweeks, func (ugw: Types.UserGameweek) : Types.UserGameweek {
-                  if (ugw.seasonId == seasonId and ugw.gameweekNumber == gameweekNumber) {
-                    let updatedUserGameweek = {
-                      seasonId = userGameweek.seasonId;
-                      gameweekNumber = userGameweek.gameweekNumber;
-                      predictions = userGameweek.predictions;
-                      enteredSweepstake = ugw.enteredSweepstake;
-                      correctScores = userGameweek.correctScores;
-                      predictionCount = userGameweek.predictionCount;
-                      winnings = userGameweek.winnings;
-                    };
-                    return updatedUserGameweek;
-                  } else {
-                    return ugw;
-                  };
-                });
-              } else {
-                List.push<Types.UserGameweek>(userGameweek, userGameweeks);
-              }
-            };
-        };
-
-        userPredictions.put(principalName, updatedUserGameweeks);
-
-        return #ok(());
     };
 
     public func getPredictions(principalName: Text, seasonId: Nat16, gameweekNumber: Nat8) : [Types.Prediction] {
@@ -155,6 +168,7 @@ module {
       };
     };
 
+/*
     public func enterSweepstake(principalName: Text, seasonId: Nat16, gameweekNumber: Nat8) : Result.Result<(), Types.Error> {
       let userGameweeks = userPredictions.get(principalName);
 
@@ -183,6 +197,7 @@ module {
         };
       };
     };
+    */
     
     public func getUserHistory(principalName: Text, seasonId: Nat16) : [Types.UserGameweek] {
       let userHistory = userPredictions.get(principalName);

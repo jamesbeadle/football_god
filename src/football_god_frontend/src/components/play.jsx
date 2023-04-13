@@ -9,195 +9,89 @@ const Play = () => {
   
   const { authClient } = useContext(AuthContext);
   const navigate = useNavigate();
-
   const [isLoading, setIsLoading] = useState(true);
-  const [loadingText, setLoadingText] = useState('');
-  const [activeSeason, setActiveSeason] = useState(null);
-  const [activeGameweek, setActiveGameweek] = useState(null);
-  const [teams, setTeamsData] = useState([]);
-  const [fixtures, setFixtures] = useState([]);
-  const [scores, setScores] = useState({});
-  const [hasPaid, setHasPaid] = useState(false);
-  const [balance, setBalance] = useState(0);
+  const [loadingText, setLoadingText] = useState('Loading Play');
+  const [viewData, setViewData] = useState(null);
 
   useEffect(() => {
-      const fetchData = async () => {
-        await checkProfile();
-        await fetchActiveSeason();
-        await fetchActiveGameweek();
-      };
-      fetchData();
-  }, []);
-
-  useEffect(() => {
-    if (!activeSeason || !activeGameweek) {
-      return;
-    }
-  
     const fetchData = async () => {
-      await fetchTeams();
-      const fetchedFixtures = await fetchFixtures();
-      await fetchExistingPredictions(fetchedFixtures);
+      await fetchViewData();
       setIsLoading(false);
     };
     fetchData();
-  }, [activeSeason, activeGameweek]);
+  }, []);
 
-  const checkProfile = async () => {
-    if(authClient == null){
-      return;
-    }
-    const identity = authClient.getIdentity();
-    Actor.agentOf(football_god_backend_actor).replaceIdentity(identity);
-    const profile = await football_god_backend_actor.getProfile();
-    if(profile == null){
-      navigate('/');
-    }
-  };
-
-  const fetchActiveSeason = async () => {
-    const season = await football_god_backend_actor.getActiveSeason();
-    setActiveSeason(season[0]);
-  };
-
-  const fetchActiveGameweek = async () => {
-    const gameweek = await football_god_backend_actor.getActiveGameweek();
-    setActiveGameweek(gameweek[0]);
-  };
-  
-  const fetchTeams = async () => {
-    const teamsData = await football_god_backend_actor.getTeams();
-    setTeamsData(teamsData);
-  };
-
-  const fetchFixtures = async () => {
-    if (activeSeason && activeGameweek) {
-      const fetchedFixtures = await football_god_backend_actor.getFixtures(activeSeason.id, activeGameweek.number);
-      setFixtures(fetchedFixtures);
-      return fetchedFixtures;
-    }
-  };
-
-  const fetchExistingPredictions = async (fixtures) => {
-    const identity = authClient.getIdentity();
-    Actor.agentOf(football_god_backend_actor).replaceIdentity(identity);
-    const fetchedPredictions = await football_god_backend_actor.getPredictions(activeSeason.id, activeGameweek.number);
-    const existingScores = fetchedPredictions.reduce((acc, prediction) => {
-      acc[prediction.fixtureId] = { home: prediction.homeGoals, away: prediction.awayGoals };
-      return acc;
-    }, {});
-  
-    // Set initial score values for all fixtures
-    fixtures.forEach(fixture => {
-      if (!existingScores[fixture.id]) {
-        existingScores[fixture.id] = { home: 0, away: 0 };
-      }
-    });
-  
-    setScores(existingScores);
-    if (existingScores) {
-      await checkSweepstakePaid();
-    }
-  };
-
-  const checkSweepstakePaid = async () => {
-    const identity = authClient.getIdentity();
-    Actor.agentOf(football_god_backend_actor).replaceIdentity(identity);
-    const paid = await football_god_backend_actor.checkSweepstakePaid(Number(activeSeason.id), Number(activeGameweek.number));
-    setHasPaid(paid);
-    if(!paid){
-      await fetchBalance();
-    }
-  };
-  
-  const fetchBalance = async () => {
-    const identity = authClient.getIdentity();
-    Actor.agentOf(football_god_backend_actor).replaceIdentity(identity);
-    const userBalance = await football_god_backend_actor.getUserAccountBalance();
-    setBalance((Number(userBalance) / 1e8));
+  const fetchViewData = async () => {
+    const data = await football_god_backend_actor.getPlayDTO();
+    setViewData(data);
   };
 
   const handleChange = (event, fixtureId, team) => {
-    const updatedScores = { ...scores };
-    if (!updatedScores[fixtureId]) {
-      updatedScores[fixtureId] = {};
-    }
-    updatedScores[fixtureId][team] = parseInt(event.target.value);
-    setScores(updatedScores);
+    setViewData((prevViewData) => {
+      const updatedFixtures = prevViewData.fixtures.map((fixture) =>
+        fixture.fixtureId === fixtureId
+          ? {
+              ...fixture,
+              [team === "home" ? "homeTeamPrediction" : "awayTeamPrediction"]: parseInt(
+                event.target.value
+              ),
+            }
+          : fixture
+      );
+      return { ...prevViewData, fixtures: updatedFixtures };
+    });
   };
   
-  const handlePlayForFreeSubmit = async (event) => {
-    event.preventDefault();
-    setIsLoading(true);
-
-    const predictions = Object.entries(scores).map(([fixtureId, score]) => ({
-      fixtureId: Number(fixtureId),
-      homeGoals: Number(score.home),
-      awayGoals: Number(score.away)
-    }));
-
-    const identity = authClient.getIdentity();
-    Actor.agentOf(football_god_backend_actor).replaceIdentity(identity);
-    let result = await football_god_backend_actor.submitPredictions(
-      Number(activeSeason.id),
-      Number(activeGameweek.number),
-      predictions
-    );
-    console.log(result);
-    setIsLoading(false);
-    navigate(`/view-submission/${Number(activeSeason.id)}/${Number(activeGameweek.number)}`);
-    
-  };
-
-  const handleSweepstakeSubmit = async (event) => {
-    event.preventDefault();
-    setIsLoading(true);
-    
-    const predictions = Object.entries(scores).map(([fixtureId, score]) => ({
-      fixtureId: Number(fixtureId),
-      homeGoals: Number(score.home),
-      awayGoals: Number(score.away)
-    }));
-
-    const identity = authClient.getIdentity();
-    Actor.agentOf(football_god_backend_actor).replaceIdentity(identity);
-    await football_god_backend_actor.submitPredictions(
-      Number(activeSeason.id),
-      Number(activeGameweek.number),
-      predictions
-    );
-
-    let result = await football_god_backend_actor.enterSweepstake(Number(activeSeason.id), Number(activeGameweek.number));
-    console.log(result)
-    setIsLoading(false);
-    navigate(`/view-submission/${Number(activeSeason.id)}/${Number(activeGameweek.number)}`);
-  };
-
-  const getTeamNameById = (teamId) => {
-    const team = teams.find((team) => team.id === teamId);
-    return team ? team.name : '';
-  };
   
   const incrementScore = (fixtureId, team) => {
-    setScores((prevScores) => {
-      const updatedScores = { ...prevScores };
-      if (!updatedScores[fixtureId]) {
-        updatedScores[fixtureId] = { home: 0, away: 0 };
-      }
-      updatedScores[fixtureId][team] += 1;
-      return updatedScores;
+    setViewData((prevViewData) => {
+      const updatedFixtures = prevViewData.fixtures.map((fixture) =>
+        fixture.fixtureId === fixtureId
+          ? {
+              ...fixture,
+              [team === "home" ? "homeTeamPrediction" : "awayTeamPrediction"]:
+                fixture[team === "home" ? "homeTeamPrediction" : "awayTeamPrediction"] + 1,
+            }
+          : fixture
+      );
+      return { ...prevViewData, fixtures: updatedFixtures };
     });
   };
   
   const decrementScore = (fixtureId, team) => {
-    setScores((prevScores) => {
-      const updatedScores = { ...prevScores };
-      if (!updatedScores[fixtureId]) {
-        updatedScores[fixtureId] = { home: 0, away: 0 };
-      }
-      updatedScores[fixtureId][team] = Math.max(0, updatedScores[fixtureId][team] - 1);
-      return updatedScores;
+    setViewData((prevViewData) => {
+      const updatedFixtures = prevViewData.fixtures.map((fixture) =>
+        fixture.fixtureId === fixtureId
+          ? {
+              ...fixture,
+              [team === "home" ? "homeTeamPrediction" : "awayTeamPrediction"]:
+                Math.max(
+                  0,
+                  fixture[team === "home" ? "homeTeamPrediction" : "awayTeamPrediction"] - 1
+                ),
+            }
+          : fixture
+      );
+      return { ...prevViewData, fixtures: updatedFixtures };
     });
+  };
+  
+
+  const submitScores = async (enterSweepstake) => {
+    setLoadingText("Submitting");
+    setIsLoading(true);
+    const submitPlayDTO = {
+      fixtures: viewData.fixtures,
+      enterSweepstake,
+    };
+  
+    const identity = authClient.getIdentity();
+    Actor.agentOf(football_god_backend_actor).replaceIdentity(identity);
+  
+    await football_god_backend_actor.submitPlayDTO(submitPlayDTO);
+  
+    setIsLoading(false);
+    navigate(`/view-submission/${viewData.activeSeasonId}/${viewData.activeGameweekNumber}`);
   };
 
   return (
@@ -215,7 +109,7 @@ const Play = () => {
               <h2>Play</h2>
             </Card.Header>
             <Card.Body>
-              <Form onSubmit={handlePlayForFreeSubmit}>
+              <Form onSubmit={(e) => { e.preventDefault(); submitScores(false); }}>
                 <Form.Row className="mb-2">
                   <Col xs={4} className="text-center font-weight-bold">
                     Home Score
@@ -227,41 +121,41 @@ const Play = () => {
                     Away Score
                   </Col>
                 </Form.Row>
-                {fixtures.map((fixture) => (
-                   <Form.Group key={fixture.id} as={Row} className="mb-3 fixture-row">
+                {viewData.fixtures.map((fixture) => (
+                   <Form.Group key={fixture.fixtureId} as={Row} className="mb-3 fixture-row">
                    <Col xs={4} className="text-center button-column">
                      <Form.Group className="w-100 d-flex flex-column">
-                       <Button onClick={() => incrementScore(fixture.id, 'home')} style={{width: '100%', padding: '0', height: '3rem'}}>+</Button>
+                       <Button onClick={() => incrementScore(fixture.fixtureId, 'home')} style={{width: '100%', padding: '0', height: '3rem'}}>+</Button>
                        <Form.Control
                          style={{height: '3rem', textAlign: 'center'}}
                          type="number"
                          min="0"
                          placeholder=""
-                         value={scores[fixture.id]?.home}
-                         onChange={(event) => handleChange(event, fixture.id, 'home')}
+                         value={fixture.homeTeamPrediction}
+                         onChange={(event) => handleChange(event, fixture.fixtureId, 'home')}
                          className="d-block mx-auto custom-number-input w-100"
                        />
-                       <Button onClick={() => decrementScore(fixture.id, 'home')} style={{width: '100%', padding: '0', height: '3rem'}}>-</Button>
+                       <Button onClick={() => decrementScore(fixture.fixtureId, 'home')} style={{width: '100%', padding: '0', height: '3rem'}}>-</Button>
                      </Form.Group>
                    </Col>
                    <Col xs={4} className="text-center d-flex align-items-center justify-content-center flex-column column-border">
-                     <span>{getTeamNameById(fixture.homeTeamId)}</span>
+                     <span>{fixture.homeTeamName}</span>
                      <span>vs</span>
-                     <span>{getTeamNameById(fixture.awayTeamId)}</span>
+                     <span>{fixture.awayTeamName}</span>
                    </Col>
                    <Col xs={4} className="text-center button-column">
                      <Form.Group className="w-100 d-flex flex-column">
-                       <Button onClick={() => incrementScore(fixture.id, 'away')} style={{width: '100%', padding: '0', height: '3rem'}}>+</Button>
+                       <Button onClick={() => incrementScore(fixture.fixtureId, 'away')} style={{width: '100%', padding: '0', height: '3rem'}}>+</Button>
                        <Form.Control
                          style={{height: '3rem', textAlign: 'center'}}
                          type="number"
                          min="0"
                          placeholder=""
-                         value={scores[fixture.id]?.away}
-                         onChange={(event) => handleChange(event, fixture.id, 'away')}
+                         value={fixture.awayTeamPrediction}
+                         onChange={(event) => handleChange(event, fixture.fixtureId, 'away')}
                          className="d-block mx-auto custom-number-input w-100"
                        />
-                       <Button onClick={() => decrementScore(fixture.id, 'away')} style={{width: '100%', padding: '0', height: '3rem'}}>-</Button>
+                       <Button onClick={() => decrementScore(fixture.fixtureId, 'away')} style={{width: '100%', padding: '0', height: '3rem'}}>-</Button>
                      </Form.Group>
                    </Col>
                  </Form.Group>
@@ -269,12 +163,12 @@ const Play = () => {
                 ))}
                 <div className="text-center">
                   <Button type="submit" variant="primary">Save Scores</Button>
-                  {hasPaid ? (
+                  {viewData.sweepstakePaid ? (
                     <p className="mt-2">You have already paid for the sweepstake.</p>
                     ) : (
                     <div className="mt-2">
-                      {balance >= 1 ? (
-                        <Button variant="success" onClick={handleSweepstakeSubmit}>Save & Enter Sweepstake</Button>
+                      { (Number(viewData.accountBalance) / 1e8) >= 1 ? (
+                        <Button variant="success" onClick={() => submitScores(true)}>Save & Enter Sweepstake</Button>
                       ) : (
                         <p>You do not have enough ICP to enter the sweepstake.</p>
                       )}

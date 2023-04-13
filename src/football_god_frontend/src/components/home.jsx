@@ -9,27 +9,15 @@ const Home = () => {
   
   const [isLoading, setIsLoading] = useState(true);
   const { isAuthenticated, login } = useContext(AuthContext);
-  
   const [viewData, setViewData] = useState(null);
-  const [isGameweekPlayable, setIsGameweekPlayable] = useState(false);
-  const [isGameweekClosed, setIsGameweekClosed] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
       await fetchViewData();
+      setIsLoading(false);
     };
     fetchData();
   }, []);
-
-  useEffect(() => {
-    if(!viewData){
-      return;
-    }
-    setIsGameweekPlayable(viewData.gameweekStatus === 1);
-    setIsGameweekClosed(viewData.gameweekStatus === 2 || viewData.gameweekStatus === 3);
-    setIsLoading(false);
-
-  }, [viewData]);
 
   const fetchViewData = async () => {
     const data = await football_god_backend_actor.getHomeDTO();
@@ -64,12 +52,12 @@ const Home = () => {
               {!isAuthenticated && (
                   <Button onClick={() => { login(); }} variant="primary" className="w-100 mb-3" size="lg">Sign In To Play</Button>
               )}
-              {isGameweekPlayable && isAuthenticated && (
+              {viewData.gameweekStatus === 1 && isAuthenticated && (
                 <LinkContainer to="/play">
                   <Button variant="primary" className="w-100 mb-3" size="lg">Play</Button>
                 </LinkContainer>
               )}
-              {isGameweekClosed && (
+              {(viewData.gameweekStatus === 2 || viewData.gameweekStatus === 3) && (
                 <LinkContainer to="/leaderboard">
                   <Button variant="primary" className="w-100" size="lg">Leaderboard</Button>
                 </LinkContainer>

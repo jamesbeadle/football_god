@@ -128,9 +128,136 @@ actor Self {
     return homeDTO;
   };
 
+  public shared ({caller}) func getPlayDTO() : async DTOs.PlayDTO {
+    
+    assert not Principal.isAnonymous(caller);
+    let principalName = Principal.toText(caller);
+    let systemUpdating = (activeSeason == 0) or (activeGameweek == 0);
+    var activeSeasonName = "";
+    var activeGameweekNumber = activeGameweek;
+    var fixtures: [DTOs.FixtureDTO] = [];
+    var sweepstakePaid = false;
+    var accountBalance = Nat64.fromNat(0);
 
 
+    if(not systemUpdating){
 
+      let season = seasonsInstance.getSeason(activeSeason);
+      switch(season){
+        case (null) {};
+        case (?s) {
+          activeSeasonName := s.name;
+        };
+      };
+    
+      let fixturesBuffer = Buffer.fromArray<DTOs.FixtureDTO>(fixtures);
+      let gameweekFixtures = seasonsInstance.getFixtures(activeSeason, activeGameweek);
+      let existingPredictions = predictionsInstance.getPredictions(principalName, activeSeason, activeGameweek); 
+      switch (gameweekFixtures) {
+        case (null) { };
+        case (?fixtures) {
+          for (fixture in Iter.fromList<Types.Fixture>(fixtures)) {
+
+            var predictedHomeGoals = Nat8.fromNat(0);
+            var predictedAwayGoals = Nat8.fromNat(0);
+
+            let existingPrediction = Array.find<Types.Prediction>(existingPredictions, func (prediction: Types.Prediction) : Bool {
+              return prediction.fixtureId == fixture.id;
+            });
+
+            switch(existingPrediction){
+              case (null) { };
+              case (?prediction){
+                predictedHomeGoals := prediction.homeGoals;
+                predictedAwayGoals := prediction.awayGoals;
+                sweepstakePaid := predictionsInstance.checkSweepstakePaid(principalName, activeSeason, activeGameweek);
+
+                if(not sweepstakePaid){
+                  accountBalance := await bookInstance.getUserAccountBalance(Principal.fromActor(Self), caller);
+                };
+
+              };
+            };
+
+            let fixtureDTO: DTOs.FixtureDTO = {
+              fixtureId = fixture.id;
+              homeTeamId = fixture.homeTeamId;
+              awayTeamId = fixture.awayTeamId;
+              homeTeamName = teamsInstance.getTeamName(fixture.homeTeamId);
+              awayTeamName = teamsInstance.getTeamName(fixture.awayTeamId);
+              homeTeamGoals = fixture.homeGoals;
+              awayTeamGoals = fixture.awayGoals;
+              homeTeamPrediction = predictedHomeGoals;
+              awayTeamPrediction = predictedAwayGoals;
+              correct = false;
+              status = fixture.status;
+            };
+            fixturesBuffer.add(fixtureDTO);
+
+          };
+        };
+      };
+      fixtures := Buffer.toArray(fixturesBuffer);
+    };
+
+
+    let playDTO: DTOs.PlayDTO = {
+      activeSeasonId = activeSeason;
+      activeSeasonName = activeSeasonName;
+      activeGameweekNumber = activeGameweekNumber;
+      fixtures = fixtures;
+      sweepstakePaid = sweepstakePaid;
+      accountBalance = accountBalance;
+    };
+
+    return playDTO;
+  };
+
+  
+  public shared ({caller}) func submitPlayDTO(playDTO: DTOs.SubmitPlayDTO) : async Result.Result<(), Types.Error> {
+    
+    assert not Principal.isAnonymous(caller);
+    let principalName = Principal.toText(caller);
+    let profile = profilesInstance.getProfile(principalName);
+    
+    if(profile == null){
+      profilesInstance.createProfile(Principal.toText(caller), Principal.toText(caller), "", getUserDepositAccount(caller));
+    };
+
+    let currentSeason = switch (await getActiveSeason()) {  
+        case null { return #err(#NotAllowed) };
+        case (?season) { season }
+    };
+
+    let currentGameweek = switch (await getActiveGameweek()) {  
+        case null { return #err(#NotAllowed) };
+        case (?gameweek) { gameweek }
+    };
+
+    if(currentGameweek.status != 1){
+      return #err(#NotAllowed);
+    };
+
+    let validPredictions = seasonsInstance.checkValidPredictions(activeSeason, activeGameweek, playDTO.fixtures);
+    
+    if(not validPredictions){
+      return #err(#NotAllowed);
+    };
+
+    let paidForSweepstake = predictionsInstance.checkSweepstakePaid(Principal.toText(caller), activeSeason, activeGameweek);
+
+    if(playDTO.enterSweepstake and not paidForSweepstake){
+      let canAffordEntry = await bookInstance.canAffordEntry(Principal.fromActor(Self), caller);
+
+      if(not canAffordEntry){
+        return #err(#NotAllowed);
+      };
+
+      await bookInstance.transferEntryFee(Principal.fromActor(Self), caller);
+    };
+
+    return predictionsInstance.submitPredictions(principalName, activeSeason, activeGameweek, playDTO.fixtures, playDTO.enterSweepstake);
+  };
 
 
 
@@ -167,11 +294,8 @@ actor Self {
     let profile = profilesInstance.getProfile(Principal.toText(caller));
     
     if(profile == null){
-      let result = profilesInstance.createProfile(Principal.toText(caller), Principal.toText(caller), "", getUserDepositAccount(caller));
-      
-      if(result == #ok(())){
-        return profilesInstance.getProfile(Principal.toText(caller));
-      };
+      profilesInstance.createProfile(Principal.toText(caller), Principal.toText(caller), "", getUserDepositAccount(caller));
+      return profilesInstance.getProfile(Principal.toText(caller));
     };
 
     return profile;
@@ -402,7 +526,7 @@ actor Self {
   };
 
   //prediction functions
-
+  /*
   public shared ({caller}) func submitPredictions(seasonId: Nat16, gameweekNumber: Nat8, predictions: [Types.Prediction]) : async Result.Result<(), Types.Error> {
     assert not Principal.isAnonymous(caller);
 
@@ -444,7 +568,7 @@ actor Self {
     let principalName = Principal.toText(caller); 
     return predictionsInstance.submitPredictions(principalName, seasonId, gameweekNumber, predictions);
   };
-
+*/
   /*
   private func checkValidPredictions(seasonId: Nat16, gameweekNumber: Nat8, predictions: [Types.Prediction]) : Bool {
       
@@ -591,6 +715,7 @@ actor Self {
     return await bookInstance.transferAdminFee(Principal.fromActor(Self), adminAccount);
   };
 
+/*
   public shared ({caller}) func enterSweepstake(seasonId : Nat16, gameweekNumber: Nat8) : async Result.Result<(), Types.Error> {
     assert not Principal.isAnonymous(caller);
     
@@ -609,7 +734,7 @@ actor Self {
 
     return predictionsInstance.enterSweepstake(Principal.toText(caller), seasonId, gameweekNumber);
   };
-
+*/
   public shared ({caller}) func withdrawICP(amount: Float) : async Result.Result<(), Types.Error> {
     assert not Principal.isAnonymous(caller);
     

@@ -11,6 +11,7 @@ module DTOs {
 
     public type PlayDTO = {
         activeSeasonName: Text;
+        activeSeasonId: Nat16;
         activeGameweekNumber: Nat8;
         fixtures: [FixtureDTO];
         sweepstakePaid: Bool;

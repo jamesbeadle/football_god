@@ -18,6 +18,11 @@ type Team =
    id: nat16;
    name: text;
  };
+type SubmitPlayDTO = 
+ record {
+   enterSweepstake: bool;
+   fixtures: vec FixtureDTO;
+ };
 type Season = 
  record {
    gameweeks: List_1;
@@ -43,6 +48,15 @@ type Prediction =
    awayGoals: nat8;
    fixtureId: nat32;
    homeGoals: nat8;
+ };
+type PlayDTO = 
+ record {
+   accountBalance: nat64;
+   activeGameweekNumber: nat8;
+   activeSeasonId: nat16;
+   activeSeasonName: text;
+   fixtures: vec FixtureDTO;
+   sweepstakePaid: bool;
  };
 type PayoutData = 
  record {
@@ -143,7 +157,6 @@ service : {
   deleteFixture: (nat16, nat8, nat32) -> (Result);
   deleteSeason: (nat16) -> (Result);
   deleteTeam: (nat16) -> (Result);
-  enterSweepstake: (nat16, nat8) -> (Result);
   getActiveGameweek: () -> (opt Gameweek) query;
   getActiveSeason: () -> (opt Season) query;
   getCorrectPredictions: (nat16, nat8, nat32, nat, nat) ->
@@ -154,6 +167,7 @@ service : {
   getHomeDTO: () -> (HomeDTO);
   getLeaderboard: (nat16, nat8, nat, nat) -> (Leaderboard);
   getPayoutData: (nat16, nat8) -> (opt PayoutData);
+  getPlayDTO: () -> (PlayDTO);
   getPredictions: (nat16, nat8) -> (vec Prediction);
   getProfile: () -> (opt Profile);
   getPublicProfile: (text) -> (opt Profile);
@@ -170,7 +184,7 @@ service : {
   payoutSweepstake: (nat16, nat8) -> (Result);
   setActiveGameweek: (nat8) -> (Result);
   setActiveSeason: (nat16) -> (Result);
-  submitPredictions: (nat16, nat8, vec Prediction) -> (Result);
+  submitPlayDTO: (SubmitPlayDTO) -> (Result);
   unsetActiveState: () -> (Result);
   updateDisplayName: (text) -> (Result);
   updateFixture: (nat16, nat8, nat32, nat16, nat16, nat8, nat8, nat8) ->

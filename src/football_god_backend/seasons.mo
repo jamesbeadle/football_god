@@ -2,8 +2,10 @@ import List "mo:base/List";
 import Result "mo:base/Result";
 import Iter "mo:base/Iter";
 import Nat8 "mo:base/Nat8";
+import Array "mo:base/Array";
 
 import Types "types";
+import DTOs "DTOs";
 
 module {
     
@@ -22,6 +24,38 @@ module {
     public func getAllData() : [Types.Season] {
         return List.toArray(seasons);
     };
+
+
+
+    public func checkValidPredictions(seasonId: Nat16, gameweekNumber: Nat8, predictions: [DTOs.FixtureDTO]) : Bool {
+        
+        var fixturesCount = 0;
+        var predictionsCount = Array.size<DTOs.FixtureDTO>(predictions);
+
+        let fixtures = getFixtures(seasonId, gameweekNumber);
+        switch(fixtures){
+            case (null) { return false; };
+            case (?f){  
+                fixturesCount := List.size<Types.Fixture>(f);
+
+                if (fixturesCount != predictionsCount) {
+                    return false;
+                };
+
+                let fixturesWithPredictions = Array.filter<Types.Fixture>(List.toArray(f), func (fixture: Types.Fixture) : Bool {
+                    return Array.find<DTOs.FixtureDTO>(predictions, func (prediction: DTOs.FixtureDTO) : Bool {
+                        return prediction.fixtureId == fixture.id;
+                    }) != null;
+                });
+
+                return Array.size<Types.Fixture>(fixturesWithPredictions) == fixturesCount;
+            };
+        };
+    };
+
+
+
+
 
     public func getSeasons() : [Types.Season] {
         return List.toArray(List.map<Types.Season, Types.Season>(seasons, func (season: Types.Season): Types.Season {

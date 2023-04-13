@@ -63,7 +63,7 @@ module {
     };
 
     
-    public func createProfile(principalName: Types.PrincipalName, displayName: Text, wallet: Text, depositAddress: Account.AccountIdentifier) : Result.Result<(), Types.Error> {
+    public func createProfile(principalName: Types.PrincipalName, displayName: Text, wallet: Text, depositAddress: Account.AccountIdentifier) : () {
         
         let updatedProfile: Types.Profile = {
             principalName = principalName;
@@ -83,12 +83,8 @@ module {
                 newProfilesList := List.push(updatedProfile, newProfilesList);
                 userProfiles := List.append(userProfiles, newProfilesList);
              };
-            case (?existingProfile) {
-                return #err(#NotAllowed);
-            };
+            case (?existingProfile) { };
         };
-        return #ok(());
-
     };
 
     public func updateDisplayName(principalName: Types.PrincipalName, displayName: Text) : Result.Result<(), Types.Error> {
@@ -164,7 +160,7 @@ module {
         };
     };
 
-    public func checkForProfile(principalName: Text) : Bool {
+    public func setProfile(principalName: Text) : Bool {
         let existingProfile = List.find<Types.Profile>(userProfiles, func (profile: Types.Profile): Bool {
             return profile.principalName == principalName;
         });

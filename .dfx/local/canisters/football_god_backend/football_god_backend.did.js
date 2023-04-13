@@ -77,6 +77,14 @@ export const idlFactory = ({ IDL }) => {
     'totalPot' : IDL.Nat64,
     'winners' : IDL.Nat,
   });
+  const PlayDTO = IDL.Record({
+    'activeGameweekNumber' : IDL.Nat8,
+    'sweepstakePaid' : IDL.Bool,
+    'accountBalance' : IDL.Nat64,
+    'activeSeasonId' : IDL.Nat16,
+    'activeSeasonName' : IDL.Text,
+    'fixtures' : IDL.Vec(FixtureDTO),
+  });
   const Prediction = IDL.Record({
     'fixtureId' : IDL.Nat32,
     'homeGoals' : IDL.Nat8,
@@ -104,6 +112,10 @@ export const idlFactory = ({ IDL }) => {
     'totalEntries' : IDL.Nat32,
     'entries' : IDL.Vec(Profile),
   });
+  const SubmitPlayDTO = IDL.Record({
+    'enterSweepstake' : IDL.Bool,
+    'fixtures' : IDL.Vec(FixtureDTO),
+  });
   return IDL.Service({
     'addFixtureToGameweek' : IDL.Func(
         [IDL.Nat16, IDL.Nat8, IDL.Nat16, IDL.Nat16],
@@ -116,7 +128,6 @@ export const idlFactory = ({ IDL }) => {
     'deleteFixture' : IDL.Func([IDL.Nat16, IDL.Nat8, IDL.Nat32], [Result], []),
     'deleteSeason' : IDL.Func([IDL.Nat16], [Result], []),
     'deleteTeam' : IDL.Func([IDL.Nat16], [Result], []),
-    'enterSweepstake' : IDL.Func([IDL.Nat16, IDL.Nat8], [Result], []),
     'getActiveGameweek' : IDL.Func([], [IDL.Opt(Gameweek)], ['query']),
     'getActiveSeason' : IDL.Func([], [IDL.Opt(Season)], ['query']),
     'getCorrectPredictions' : IDL.Func(
@@ -146,6 +157,7 @@ export const idlFactory = ({ IDL }) => {
         [IDL.Opt(PayoutData)],
         [],
       ),
+    'getPlayDTO' : IDL.Func([], [PlayDTO], []),
     'getPredictions' : IDL.Func(
         [IDL.Nat16, IDL.Nat8],
         [IDL.Vec(Prediction)],
@@ -174,11 +186,7 @@ export const idlFactory = ({ IDL }) => {
     'payoutSweepstake' : IDL.Func([IDL.Nat16, IDL.Nat8], [Result], []),
     'setActiveGameweek' : IDL.Func([IDL.Nat8], [Result], []),
     'setActiveSeason' : IDL.Func([IDL.Nat16], [Result], []),
-    'submitPredictions' : IDL.Func(
-        [IDL.Nat16, IDL.Nat8, IDL.Vec(Prediction)],
-        [Result],
-        [],
-      ),
+    'submitPlayDTO' : IDL.Func([SubmitPlayDTO], [Result], []),
     'unsetActiveState' : IDL.Func([], [Result], []),
     'updateDisplayName' : IDL.Func([IDL.Text], [Result], []),
     'updateFixture' : IDL.Func(
