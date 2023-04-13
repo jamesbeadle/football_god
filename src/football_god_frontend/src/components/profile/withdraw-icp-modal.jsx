@@ -8,7 +8,6 @@ const WithdrawICPModal = ({ show, onHide, balance, wallet }) => {
   
   const { authClient } = useContext(AuthContext);
   const [isLoading, setIsLoading] = useState(false);
-  const [loadingText, setLoadingText] = useState('');
   const [withdrawAmount, setWithdrawAmount] = useState(0);
   const [withdrawError, setWithdrawError] = useState(null);
   const withdrawalFee = 0.0001; 
@@ -21,6 +20,13 @@ const WithdrawICPModal = ({ show, onHide, balance, wallet }) => {
     let validWithdrawal = await isWithdrawalAmountValid();
     
     if (!validWithdrawal) {
+        setIsLoading(false);
+        return;
+    }
+
+    let validWithdrawalWallet = await isWithdrawalWalletValid();
+    
+    if (!validWithdrawalWallet) {
         setIsLoading(false);
         return;
     }
@@ -56,6 +62,23 @@ const WithdrawICPModal = ({ show, onHide, balance, wallet }) => {
     return true;
   };
 
+  const isWithdrawalWalletValid = async () => {
+    if(authClient == null){
+      return;
+    }
+    const identity = authClient.getIdentity();
+    Actor.agentOf(football_god_backend_actor).replaceIdentity(identity);
+    const isValid = await football_god_backend_actor.isWalletValid(wallet);
+  
+    if (isValid) {
+      setWithdrawError(null);
+    } else {
+      setWithdrawError('Invalid wallet address.');
+    }
+  
+    return isValid;
+  };
+
   const hideModal = () => {
     setWithdrawAmount(0);
     setWithdrawError(null);
@@ -67,7 +90,7 @@ const WithdrawICPModal = ({ show, onHide, balance, wallet }) => {
       {isLoading && (
         <div className="customOverlay d-flex flex-column align-items-center justify-content-center">
           <Spinner animation="border" />
-          <p className='text-center mt-1'>{loadingText}</p>
+          <p className='text-center mt-1'>Withdrawing ICP</p>
         </div>
       )}
       <Modal.Header closeButton>

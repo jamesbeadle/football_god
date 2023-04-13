@@ -8,7 +8,6 @@ const UpdateNameModal = ({ show, onHide, displayName }) => {
   
   const { authClient } = useContext(AuthContext);
   const [isLoading, setIsLoading] = useState(false);
-  const [loadingText, setLoadingText] = useState('');
   const [newDisplayName, setNewDisplayName] = useState(displayName);
   const [displayNameError, setDisplayNameError] = useState(null);
 
@@ -66,7 +65,7 @@ const UpdateNameModal = ({ show, onHide, displayName }) => {
       {isLoading && (
         <div className="customOverlay d-flex flex-column align-items-center justify-content-center">
           <Spinner animation="border" />
-          <p className='text-center mt-1'>{loadingText}</p>
+          <p className='text-center mt-1'>Saving Display Name</p>
         </div>
       )}
       <Modal.Header closeButton>

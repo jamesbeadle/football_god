@@ -7,7 +7,6 @@ import { AuthContext } from "../../contexts/AuthContext";
 const UpdateNameModal = ({ show, onHide, wallet }) => {
   const { authClient } = useContext(AuthContext);
   const [isLoading, setIsLoading] = useState(false);
-  const [loadingText, setLoadingText] = useState('');
   const [newWallet, setNewWallet] = useState(wallet);
   const [walletError, setWalletError] = useState(null);
 
@@ -65,7 +64,7 @@ const UpdateNameModal = ({ show, onHide, wallet }) => {
       {isLoading && (
         <div className="customOverlay d-flex flex-column align-items-center justify-content-center">
           <Spinner animation="border" />
-          <p className='text-center mt-1'>{loadingText}</p>
+          <p className='text-center mt-1'>Saving Wallet Address</p>
         </div>
       )}
       <Modal.Header closeButton>

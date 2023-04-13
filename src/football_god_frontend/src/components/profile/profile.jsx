@@ -93,7 +93,7 @@ const Profile = () => {
                     <ListGroup.Item>
                       <h6>Deposit Address:</h6>
                       <p><small>{toHexString(viewData.depositAddress)}{' '}
-                      <CopyIcon onClick={() => {navigator.clipboard.writeText(toHexString(depositAddress)); setCopied(true); }} /></small></p>
+                      <CopyIcon onClick={() => {navigator.clipboard.writeText(toHexString(viewData.depositAddress)); setCopied(true); }} /></small></p>
                       {copied && <p className="text-primary"><small>Copied to clipboard.</small></p>}
                     </ListGroup.Item>
 

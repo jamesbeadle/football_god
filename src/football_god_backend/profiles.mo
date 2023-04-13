@@ -226,26 +226,6 @@ module {
             case _ { return true };
         };
     };
-
-    public func getPublicProfile(principalName: Text) : ?Types.Profile {
-        let foundProfile = List.find<Types.Profile>(userProfiles, func (profile: Types.Profile): Bool {
-            return profile.principalName == principalName;
-        });
-
-        switch (foundProfile) {
-            case (null) { return null; };
-            case (?profile) { 
-                let profileInfo = {
-                    principalName = "";
-                    displayName = profile.displayName;
-                    wallet = "";
-                    depositAddress = Blob.fromArrayMut(Array.init(32, 0 : Nat8));
-                    balance = Nat64.fromNat(0);
-                };
-                return ?profileInfo;
-            };
-        };
-    };
     
     public func isDisplayNameValid(displayName: Text) : Bool {
         

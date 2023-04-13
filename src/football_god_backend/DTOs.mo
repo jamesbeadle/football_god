@@ -71,24 +71,6 @@ module DTOs {
         count: Nat16;
     };
 
-    public type UpdateProfileNameDTO = {
-        principalName: Text;
-        displayName: Text;
-    };
-
-    public type ValidateProfileNameDTO = UpdateProfileNameDTO;
-
-    public type UpdateProfileWalletDTO = {
-        principalName: Text;
-        walletAddress: Text;
-    };
-
-    public type ValidateProfileWalletDTO = UpdateProfileWalletDTO;
-
-    public type WithdrawICPDTO = {
-        withdrawalAmount: Nat64;
-    };
-
     public type AdminDTO = {
         activeSeasonId: Nat16;
         activeSeasonName: Text;

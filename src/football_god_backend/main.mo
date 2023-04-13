@@ -480,8 +480,40 @@ actor Self {
     
   };
 
+  public shared ({caller}) func isDisplayNameValid(displayName: Text) : async Bool {
+    assert not Principal.isAnonymous(caller);
+    return profilesInstance.isDisplayNameValid(displayName);
+  };
 
+  public shared ({caller}) func updateDisplayName(displayName :Text) : async Result.Result<(), Types.Error> {
+    assert not Principal.isAnonymous(caller);
+    return profilesInstance.updateDisplayName(Principal.toText(caller), displayName);
+  };
 
+  public shared ({caller}) func updateWalletAddress(walletAddress :Text) : async Result.Result<(), Types.Error> {
+    assert not Principal.isAnonymous(caller);
+    return profilesInstance.updateWalletAddress(Principal.toText(caller), walletAddress);
+  };
+
+  public shared ({caller}) func isWalletValid(walletAddress: Text) : async Bool {
+    assert not Principal.isAnonymous(caller);
+    return profilesInstance.isWalletValid(walletAddress);
+  };
+
+  public shared ({caller}) func withdrawICP(amount: Float) : async Result.Result<(), Types.Error> {
+    assert not Principal.isAnonymous(caller);
+    
+    let userProfile = profilesInstance.getProfile(Principal.toText(caller));
+    
+    switch userProfile {
+      case (null) {
+        return #err(#NotFound);
+      };
+      case (?profile) {
+        return await bookInstance.withdrawICP(Principal.fromActor(Self), caller, amount, profile.wallet);
+      };
+    };
+  };
 
 
 
@@ -542,32 +574,6 @@ actor Self {
     return profile;
   };
   */
-  
-  public shared ({caller}) func getPublicProfile(principalName: Text) : async ?Types.Profile {
-    let profile = profilesInstance.getPublicProfile(principalName);
-    
-    return profile;
-  };
-
-  public shared ({caller}) func isDisplayNameValid(displayName: Text) : async Bool {
-    assert not Principal.isAnonymous(caller);
-    return profilesInstance.isDisplayNameValid(displayName);
-  };
-
-  public shared ({caller}) func updateDisplayName(displayName :Text) : async Result.Result<(), Types.Error> {
-    assert not Principal.isAnonymous(caller);
-    return profilesInstance.updateDisplayName(Principal.toText(caller), displayName);
-  };
-
-  public shared ({caller}) func updateWalletAddress(walletAddress :Text) : async Result.Result<(), Types.Error> {
-    assert not Principal.isAnonymous(caller);
-    return profilesInstance.updateWalletAddress(Principal.toText(caller), walletAddress);
-  };
-
-  public shared ({caller}) func isWalletValid(walletAddress: Text) : async Bool {
-    assert not Principal.isAnonymous(caller);
-    return profilesInstance.isWalletValid(walletAddress);
-  };
 
   //system state functions
 
@@ -979,20 +985,6 @@ actor Self {
     return predictionsInstance.enterSweepstake(Principal.toText(caller), seasonId, gameweekNumber);
   };
 */
-  public shared ({caller}) func withdrawICP(amount: Float) : async Result.Result<(), Types.Error> {
-    assert not Principal.isAnonymous(caller);
-    
-    let userProfile = profilesInstance.getProfile(Principal.toText(caller));
-    
-    switch userProfile {
-      case (null) {
-        return #err(#NotFound);
-      };
-      case (?profile) {
-        return await bookInstance.withdrawICP(Principal.fromActor(Self), caller, amount, profile.wallet);
-      };
-    };
-  };
 
   public shared ({caller}) func getUsersWithBalances(page: Nat, pageSize: Nat) : async ?Types.UserBalances {
     let isCallerAdmin = isAdminForCaller(caller);
