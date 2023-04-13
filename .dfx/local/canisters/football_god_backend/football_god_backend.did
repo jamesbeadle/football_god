@@ -40,6 +40,14 @@ type Result =
    err: Error;
    ok;
  };
+type ProfileDTO = 
+ record {
+   balance: nat64;
+   depositAddress: blob;
+   displayName: text;
+   principalName: text;
+   walletAddress: text;
+ };
 type Profile = 
  record {
    balance: nat64;
@@ -189,11 +197,11 @@ service : {
   getGameweeks: (nat16) -> (vec Gameweek) query;
   getHistoryDTO: (nat16) -> (HistoryDTO);
   getHomeDTO: () -> (HomeDTO);
-  getLeaderboard: (nat16, nat8, nat, nat) -> (LeaderBoardDTO);
+  getLeaderboardDTO: (nat16, nat8, nat, nat) -> (LeaderBoardDTO);
   getPayoutData: (nat16, nat8) -> (opt PayoutData);
   getPlayDTO: () -> (PlayDTO);
   getPredictions: (nat16, nat8) -> (vec Prediction);
-  getProfile: () -> (opt Profile);
+  getProfileDTO: () -> (ProfileDTO);
   getPublicProfile: (text) -> (opt Profile);
   getSeason: (nat16) -> (opt Season) query;
   getSeasons: () -> (vec Season) query;

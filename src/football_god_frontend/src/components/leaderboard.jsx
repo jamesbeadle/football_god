@@ -37,7 +37,7 @@ const Leaderboard = () => {
   }, [selectedSeason, selectedGameweek, page]);
 
   const fetchViewData = async () => {
-    const data = await football_god_backend_actor.getLeaderboard(Number(selectedSeason), Number(selectedGameweek), Number(page), Number(count));
+    const data = await football_god_backend_actor.getLeaderboardDTO(Number(selectedSeason), Number(selectedGameweek), Number(page), Number(count));
     console.log(data)
     setViewData(data);
     setIsLoading(false);

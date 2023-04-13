@@ -105,6 +105,13 @@ export interface Profile {
   'principalName' : string,
   'wallet' : string,
 }
+export interface ProfileDTO {
+  'balance' : bigint,
+  'displayName' : string,
+  'walletAddress' : string,
+  'depositAddress' : Uint8Array | number[],
+  'principalName' : string,
+}
 export type Result = { 'ok' : null } |
   { 'err' : Error };
 export interface Season {
@@ -157,14 +164,14 @@ export interface _SERVICE {
   'getGameweeks' : ActorMethod<[number], Array<Gameweek>>,
   'getHistoryDTO' : ActorMethod<[number], HistoryDTO>,
   'getHomeDTO' : ActorMethod<[], HomeDTO>,
-  'getLeaderboard' : ActorMethod<
+  'getLeaderboardDTO' : ActorMethod<
     [number, number, bigint, bigint],
     LeaderBoardDTO
   >,
   'getPayoutData' : ActorMethod<[number, number], [] | [PayoutData]>,
   'getPlayDTO' : ActorMethod<[], PlayDTO>,
   'getPredictions' : ActorMethod<[number, number], Array<Prediction>>,
-  'getProfile' : ActorMethod<[], [] | [Profile]>,
+  'getProfileDTO' : ActorMethod<[], ProfileDTO>,
   'getPublicProfile' : ActorMethod<[string], [] | [Profile]>,
   'getSeason' : ActorMethod<[number], [] | [Season]>,
   'getSeasons' : ActorMethod<[], Array<Season>>,

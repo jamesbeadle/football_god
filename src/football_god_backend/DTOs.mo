@@ -262,9 +262,10 @@ module DTOs {
 
     public type ProfileDTO = {
         principalName: Text;
-        depositAddress: Text;
+        depositAddress: Blob;
         displayName: Text;
         walletAddress: Text;
+        balance: Nat64;
     };
 
     public type TeamDTO = {

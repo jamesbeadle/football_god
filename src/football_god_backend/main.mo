@@ -9,6 +9,7 @@ import Principal "mo:base/Principal";
 import Result "mo:base/Result";
 import Debug "mo:base/Debug";
 import Buffer "mo:base/Buffer";
+import Blob "mo:base/Blob";
 
 import Types "types";
 import Seasons "seasons";
@@ -392,7 +393,7 @@ actor Self {
     return historyDTO;
   };
 
-  public shared ({caller}) func getLeaderboard(seasonId: Nat16, gameweekNumber: Nat8, page: Nat, count: Nat) : async DTOs.LeaderBoardDTO {
+  public shared ({caller}) func getLeaderboardDTO(seasonId: Nat16, gameweekNumber: Nat8, page: Nat, count: Nat) : async DTOs.LeaderBoardDTO {
 
     var activeSeasonId = seasonId;
     var activeGameweekNumber = gameweekNumber;
@@ -444,6 +445,48 @@ actor Self {
     return leaderboard; 
   };
 
+  public shared ({caller}) func getProfileDTO() : async DTOs.ProfileDTO {
+    assert not Principal.isAnonymous(caller);
+    let principalName = Principal.toText(caller);
+    var depositAddress = Blob.fromArray([]);
+    var displayName = "";
+    var walletAddress = "";
+
+    var profile = profilesInstance.getProfile(Principal.toText(caller));
+    
+    if(profile == null){
+      profilesInstance.createProfile(Principal.toText(caller), Principal.toText(caller), "", getUserDepositAccount(caller));
+      profile := profilesInstance.getProfile(Principal.toText(caller));
+    };
+    
+    switch(profile){
+      case (null){};
+      case (?p){
+        depositAddress := p.depositAddress;
+        displayName := p.displayName;
+        walletAddress := p.wallet;
+      };
+    };
+
+    let balance = await bookInstance.getUserAccountBalance(Principal.fromActor(Self), caller);
+
+    let profileDTO: DTOs.ProfileDTO = {
+      principalName = principalName;
+      depositAddress = depositAddress;
+      displayName = displayName;
+      walletAddress = walletAddress;
+      balance = balance;
+    };
+    
+  };
+
+
+
+
+
+
+
+
 
 //should be able to delete the others:
 
@@ -486,7 +529,7 @@ actor Self {
   
   
   //profile functions
-  
+  /*
   public shared ({caller}) func getProfile() : async ?Types.Profile {
     assert not Principal.isAnonymous(caller);
     let profile = profilesInstance.getProfile(Principal.toText(caller));
@@ -498,6 +541,7 @@ actor Self {
 
     return profile;
   };
+  */
   
   public shared ({caller}) func getPublicProfile(principalName: Text) : async ?Types.Profile {
     let profile = profilesInstance.getPublicProfile(principalName);

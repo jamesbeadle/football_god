@@ -116,6 +116,13 @@ export const idlFactory = ({ IDL }) => {
     'homeGoals' : IDL.Nat8,
     'awayGoals' : IDL.Nat8,
   });
+  const ProfileDTO = IDL.Record({
+    'balance' : IDL.Nat64,
+    'displayName' : IDL.Text,
+    'walletAddress' : IDL.Text,
+    'depositAddress' : IDL.Vec(IDL.Nat8),
+    'principalName' : IDL.Text,
+  });
   const Profile = IDL.Record({
     'balance' : IDL.Nat64,
     'displayName' : IDL.Text,
@@ -171,7 +178,7 @@ export const idlFactory = ({ IDL }) => {
     'getGameweeks' : IDL.Func([IDL.Nat16], [IDL.Vec(Gameweek)], ['query']),
     'getHistoryDTO' : IDL.Func([IDL.Nat16], [HistoryDTO], []),
     'getHomeDTO' : IDL.Func([], [HomeDTO], []),
-    'getLeaderboard' : IDL.Func(
+    'getLeaderboardDTO' : IDL.Func(
         [IDL.Nat16, IDL.Nat8, IDL.Nat, IDL.Nat],
         [LeaderBoardDTO],
         [],
@@ -187,7 +194,7 @@ export const idlFactory = ({ IDL }) => {
         [IDL.Vec(Prediction)],
         [],
       ),
-    'getProfile' : IDL.Func([], [IDL.Opt(Profile)], []),
+    'getProfileDTO' : IDL.Func([], [ProfileDTO], []),
     'getPublicProfile' : IDL.Func([IDL.Text], [IDL.Opt(Profile)], []),
     'getSeason' : IDL.Func([IDL.Nat16], [IDL.Opt(Season)], ['query']),
     'getSeasons' : IDL.Func([], [IDL.Vec(Season)], ['query']),

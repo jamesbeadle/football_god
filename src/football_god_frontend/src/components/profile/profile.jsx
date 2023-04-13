@@ -13,18 +13,27 @@ const Profile = () => {
 
   const { authClient } = useContext(AuthContext);
   const [isLoading, setIsLoading] = useState(true);
-  const [loadingText, setLoadingText] = useState('');
-  const [copied, setCopied] = useState(false);
-  
-  const [principalName, setPrincipalName] = useState('');
-  const [displayName, setDisplayName] = useState('');
-  const [depositAddress, setDepositAddress] = useState('');
-  const [wallet, setWallet] = useState('');
-  const [balance, setBalance] = useState(0);
-
   const [showUpdateNameModal, setShowUpdateNameModal] = useState(false);
   const [showUpdateWalletModal, setShowUpdateWalletModal] = useState(false);
   const [showWithdrawICPModal, setShowWithdrawICPModal] = useState(false);
+
+  const [viewData, setViewData] = useState(null);
+  const [copied, setCopied] = useState(false);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      await fetchViewData();
+      setIsLoading(false);
+    };
+    fetchData();
+  }, []);
+
+  const fetchViewData = async () => {
+    const identity = authClient.getIdentity();
+    Actor.agentOf(football_god_backend_actor).replaceIdentity(identity);
+    const data = await football_god_backend_actor.getProfileDTO();
+    setViewData(data);
+  };
 
   const hideUpdateNameModal = async (changed) => {
     if(!changed){
@@ -33,7 +42,7 @@ const Profile = () => {
     }
     setIsLoading(true);
     setShowUpdateNameModal(false); 
-    await fetchProfile();
+    await fetchViewData();
     setIsLoading(false);
   };
 
@@ -44,7 +53,7 @@ const Profile = () => {
     }
     setIsLoading(true);
     setShowUpdateWalletModal(false); 
-    await fetchProfile();
+    await fetchViewData();
     setIsLoading(false);
   };
 
@@ -55,122 +64,88 @@ const Profile = () => {
     }
     setIsLoading(true);
     setShowWithdrawICPModal(false); 
-    await fetchBalance();
+    await fetchViewData();
     setIsLoading(false);
   };
-  
-  const fetchProfile = async () => {
-    if(authClient == null){
-      return;
-    }
-    const identity = authClient.getIdentity();
-    Actor.agentOf(football_god_backend_actor).replaceIdentity(identity);
-    const profile = await football_god_backend_actor.getProfile();
-    if(profile && Object.keys(profile).length > 0){
-      setPrincipalName(profile[0].principalName);
-      setDisplayName(profile[0].displayName);
-      setDepositAddress(profile[0].depositAddress);
-      setWallet(profile[0].wallet);
-    }
-  };
-  
-  const fetchBalance = async () => {
-    if(authClient == null){
-      return;
-    }
-    const identity = authClient.getIdentity();
-    Actor.agentOf(football_god_backend_actor).replaceIdentity(identity);
-    const userBalance = await football_god_backend_actor.getUserAccountBalance();
-    setBalance(userBalance);
-  };
-
-  useEffect(() => {
-    const fetchData = async () => {
-      await fetchProfile();
-      await fetchBalance();
-      setIsLoading(false);
-    };
-    fetchData();
-  }, []);
 
   return (
       isLoading ? (
         <div className="customOverlay d-flex flex-column align-items-center justify-content-center">
           <Spinner animation="border" />
-          <p className='text-center mt-1'>{loadingText}</p>
+          <p className='text-center mt-1'>Loading Profile</p>
         </div>
       ) : (
         <Container>
-        <Row className="justify-content-md-center">
-          <Col md={8}>
-            <Card className="mt-4">
-              <Card.Header className="text-center">
-                <h2>Profile</h2>
-              </Card.Header>
-              <Card.Body>
-                <ListGroup variant="flush">
+          <Row className="justify-content-md-center">
+            <Col md={8}>
+              <Card className="mt-4">
+                <Card.Header className="text-center">
+                  <h2>Profile</h2>
+                </Card.Header>
+                <Card.Body>
+                  <ListGroup variant="flush">
 
-                  <ListGroup.Item>
-                    <h6>Principal Id:</h6>
-                    <p><small>{principalName}</small></p>
-                  </ListGroup.Item>
+                    <ListGroup.Item>
+                      <h6>Principal Id:</h6>
+                      <p><small>{viewData.principalName}</small></p>
+                    </ListGroup.Item>
 
-                  <ListGroup.Item>
-                    <h6>Deposit Address:</h6>
-                    <p><small>{toHexString(depositAddress)}{' '}
-                    <CopyIcon onClick={() => {navigator.clipboard.writeText(toHexString(depositAddress)); setCopied(true); }} /></small></p>
-                    {copied && <p className="text-primary"><small>Copied to clipboard.</small></p>}
-                  </ListGroup.Item>
+                    <ListGroup.Item>
+                      <h6>Deposit Address:</h6>
+                      <p><small>{toHexString(viewData.depositAddress)}{' '}
+                      <CopyIcon onClick={() => {navigator.clipboard.writeText(toHexString(depositAddress)); setCopied(true); }} /></small></p>
+                      {copied && <p className="text-primary"><small>Copied to clipboard.</small></p>}
+                    </ListGroup.Item>
 
-                  <ListGroup.Item>
-                    <h6>Display Name:</h6>
-                    <p>
-                      <small>{displayName}</small>
-                      <Button className="btn btn-primary btn-sm ml-3" onClick={() => setShowUpdateNameModal(true)}>Update</Button>
-                    </p>
-                  </ListGroup.Item>
+                    <ListGroup.Item>
+                      <h6>Display Name:</h6>
+                      <p>
+                        <small>{viewData.displayName}</small>
+                        <Button className="btn btn-primary btn-sm ml-3" onClick={() => setShowUpdateNameModal(true)}>Update</Button>
+                      </p>
+                    </ListGroup.Item>
 
-                  <ListGroup.Item>
-                    <h6>Account Balance:</h6>
-                    <p>
-                      <small>{(Number(balance) / 1e8).toFixed(4)} ICP</small>
-                      <Button className="btn btn-primary btn-sm ml-3" onClick={() => setShowWithdrawICPModal(true)}>Withdraw</Button>
-                    </p>
-                  </ListGroup.Item>
+                    <ListGroup.Item>
+                      <h6>Account Balance:</h6>
+                      <p>
+                        <small>{(Number(viewData.balance) / 1e8).toFixed(4)} ICP</small>
+                        <Button className="btn btn-primary btn-sm ml-3" onClick={() => setShowWithdrawICPModal(true)}>Withdraw</Button>
+                      </p>
+                    </ListGroup.Item>
 
-                  <ListGroup.Item>
-                    <h6>Withdraw Wallet Address:</h6>
-                    <p>
-                      <small>{wallet ? wallet : 'Not Set'}</small>
-                      <Button className="btn btn-primary btn-sm ml-3" onClick={() => setShowUpdateWalletModal(true)}>Update</Button>
-                    </p>
-                  </ListGroup.Item>
-                </ListGroup>
-                
-              </Card.Body>
-            </Card>
-          </Col>
-        </Row>
+                    <ListGroup.Item>
+                      <h6>Withdraw Wallet Address:</h6>
+                      <p>
+                        <small>{viewData.walletAddress != "" ? viewData.walletAddress : 'Not Set'}</small>
+                        <Button className="btn btn-primary btn-sm ml-3" onClick={() => setShowUpdateWalletModal(true)}>Update</Button>
+                      </p>
+                    </ListGroup.Item>
+                  </ListGroup>
+                  
+                </Card.Body>
+              </Card>
+            </Col>
+          </Row>
 
-        <UpdateNameModal
-          show={showUpdateNameModal}
-          onHide={hideUpdateNameModal}
-          displayName={displayName}
-        />
+          <UpdateNameModal
+            show={showUpdateNameModal}
+            onHide={hideUpdateNameModal}
+            displayName={viewData.displayName}
+          />
 
-        <UpdateWalletModal
-          show={showUpdateWalletModal}
-          onHide={hideUpdateWalletModal}
-          wallet={wallet}
-        />
+          <UpdateWalletModal
+            show={showUpdateWalletModal}
+            onHide={hideUpdateWalletModal}
+            wallet={viewData.walletAddress}
+          />
 
-        <WithdrawICPModal
-          show={showWithdrawICPModal}
-          onHide={hideWithdrawICPModal}
-          balance={balance}
-          wallet={wallet}
-        />
-      </Container>
+          <WithdrawICPModal
+            show={showWithdrawICPModal}
+            onHide={hideWithdrawICPModal}
+            balance={viewData.balance}
+            wallet={viewData.walletAddress}
+          />
+        </Container>
     )
   );
 };
