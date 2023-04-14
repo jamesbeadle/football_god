@@ -1,8 +1,10 @@
 import React, { useState, useContext, useEffect  } from "react";
 import { AuthContext } from "../../contexts/AuthContext";
-import { Navbar, Nav, NavDropdown, Button } from "react-bootstrap";
+import { Navbar, Nav, Button } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 import Logo from '../../../assets/logo.png';
+import { LogoutIcon, ProfileIcon, HistoryIcon } from '../icons';
+
 
 const MyNavbar = () => {
   const { isAdmin, isAuthenticated, login, logout } = useContext(AuthContext);
@@ -26,9 +28,18 @@ const MyNavbar = () => {
           {isAuthenticated ? (
             <>
               {isAdmin && <Nav.Link as={Link} to="/admin" onClick={() => setExpanded(false)} className="custom-nav-link">Admin</Nav.Link>}
-              <Nav.Link as={Link} to="/history" onClick={() => setExpanded(false)} className="custom-nav-link">History</Nav.Link>
-              <Nav.Link as={Link} to="/profile" onClick={() => setExpanded(false)} className="custom-nav-link">Profile</Nav.Link>
-              <Nav.Link onClick={() => {logout(); setExpanded(false);}} className="custom-nav-link">Disconnect</Nav.Link>    
+              <Nav.Link as={Link} to="/history" onClick={() => setExpanded(false)} className="custom-nav-link">
+                History
+                <HistoryIcon className="icon-logout" ></HistoryIcon>
+              </Nav.Link>
+              <Nav.Link as={Link} to="/profile" onClick={() => setExpanded(false)} className="custom-nav-link">
+                Profile
+                <ProfileIcon className="icon-logout" ></ProfileIcon>
+              </Nav.Link>
+              <Nav.Link onClick={() => {logout(); setExpanded(false);}} className="custom-nav-link">
+                Disconnect
+                <LogoutIcon className="icon-logout" ></LogoutIcon>
+              </Nav.Link>    
             </>
           ) : (
             <Button className="custom-button" onClick={() => { login(); setExpanded(false); }}>Connect</Button>

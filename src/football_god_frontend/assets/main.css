@@ -122,3 +122,8 @@ body {
 .navbar-light .navbar-nav .nav-link {
   color: white !important;
 }
+
+.custom-nav-link .icon-logout {
+  margin-left: 8px;
+  vertical-align: middle;
+}

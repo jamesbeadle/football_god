@@ -7,7 +7,7 @@ import { toHexString } from '../helpers';
 import UpdateNameModal from './update-name-modal';
 import UpdateWalletModal from './update-wallet-modal';
 import WithdrawICPModal from './withdraw-icp-modal';
-import CopyIcon from '../icons';
+import { CopyIcon } from '../icons';
 
 const Profile = () => {
 
