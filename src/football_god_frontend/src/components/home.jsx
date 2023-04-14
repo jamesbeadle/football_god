@@ -71,20 +71,22 @@ const Home = () => {
             <br />
           </Col>
           <Col sm={12} md={8}>
-            <h2 className="text-center mb-3">Fixtures</h2>
-            <ListGroup>
+            <h2 className="text-center mb-3 mt-2 mt-md-3">Fixtures</h2>
+            <div>
               {viewData.fixtures.map((fixture, index) => (
-                <ListGroup.Item key={index} className="text-center">
-                  {fixture.homeTeamName} vs {fixture.awayTeamName}
-                  {fixture.status === 2 && (
-                    <span>
-                      <br />
-                      {fixture.homeTeamGoals}-{fixture.awayTeamGoals}
-                    </span>
-                  )}
-                </ListGroup.Item>
+                <Row key={index} className={`text-center fixture-row ml-3 mr-3${index !== 0 ? ' mt-2' : ''}`}>
+                  <Col>
+                    {fixture.homeTeamName} v {fixture.awayTeamName}
+                    {fixture.status === 2 && (
+                      <span>
+                        <br />
+                        {fixture.homeTeamGoals}-{fixture.awayTeamGoals}
+                      </span>
+                    )}
+                  </Col>
+                </Row>
               ))}
-            </ListGroup>
+            </div>
           </Col>
         </Row>
       </Container>

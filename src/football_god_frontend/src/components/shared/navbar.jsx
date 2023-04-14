@@ -16,7 +16,7 @@ const MyNavbar = () => {
   }, [isAuthenticated]);
 
   return (
-    <Navbar bg="primary" variant="dark" expand="lg" expanded={expanded} onToggle={() => setExpanded(!expanded)}>
+    <Navbar className="custom-nav" expand="lg" expanded={expanded} onToggle={() => setExpanded(!expanded)}>
       <Navbar.Brand as={Link} to="/" onClick={() => setExpanded(false)}>
         <img src={Logo} alt="footballgod" style={{ maxWidth: '200px', maxHeight: '100%' }} />
       </Navbar.Brand>

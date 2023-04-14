@@ -7,7 +7,7 @@
 
 
 body {
-  background-color: #19033D;
+  background-color: #150333;
   color: white;
   font-family: 'Comfortaa', sans-serif;
 }
@@ -85,3 +85,16 @@ body {
 .gold-bg td {
   color: black !important;
 }
+
+.fixture-row{
+  background-color: #30014A;
+  border: solid;
+  border-color: #570339;
+  padding: 5px;
+  border-radius: 5px;
+}
+
+.custom-nav{
+  background-color: #310480;
+}
+
