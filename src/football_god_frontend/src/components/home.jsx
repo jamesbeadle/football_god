@@ -64,7 +64,7 @@ const Home = () => {
               )}
               {isAuthenticated && viewData.hasPredictions && (viewData.gameweekStatus === 2 || viewData.gameweekStatus === 3) && (
                 <LinkContainer className="mt-3" to={`/view-prediction/${viewData.principalName}/${viewData.activeSeasonId}/${viewData.activeGameweekNumber}`}>
-                  <Button variant="primary" className="w-100" size="lg">View My Predictions</Button>
+                  <Button variant="primary" className="w-100" size="lg">View Current Prediction</Button>
                 </LinkContainer>
               )}
               

@@ -93,9 +93,7 @@ type LeaderBoardDTO =
    activeGameweekNumber: nat8;
    activeSeasonId: nat16;
    activeSeasonName: text;
-   count: nat;
    leaderboardEntries: vec LeaderboardEntryDTO;
-   page: nat;
    seasons: vec SeasonDTO;
    totalEntries: nat64;
  };
@@ -118,11 +116,6 @@ type HistoryDTO =
    seasonGameweeks: vec GameweekDTO;
    seasons: vec SeasonDTO;
    userId: text;
- };
-type GameweekSummary = 
- record {
-   displayName: text;
-   principalName: text;
  };
 type GameweekDTO = 
  record {
@@ -170,10 +163,22 @@ type Error =
    NotAuthorized;
    NotFound;
  };
-type CorrectPredictions = 
+type CorrectPredictionsDTO = 
  record {
-   entries: vec GameweekSummary;
-   totalEntries: nat32;
+   awayTeamGoals: nat8;
+   awayTeamName: text;
+   gameweekNumber: nat8;
+   homeTeamGoals: nat8;
+   homeTeamName: text;
+   predictions: vec CorrectPredictionDTO;
+   seasonId: nat16;
+   seasonName: text;
+   totalEntries: nat64;
+ };
+type CorrectPredictionDTO = 
+ record {
+   displayName: text;
+   principalName: text;
  };
 type BalancesDTO = 
  record {
@@ -197,8 +202,8 @@ service : {
   deleteSeason: (nat16) -> (Result);
   deleteTeam: (nat16) -> (Result);
   getAdminDTO: () -> (AdminDTO);
-  getCorrectPredictions: (nat16, nat8, nat32, nat, nat) ->
-   (opt CorrectPredictions);
+  getCorrectPredictionsDTO: (nat16, nat8, nat32, nat, nat) ->
+   (CorrectPredictionsDTO);
   getFixture: (nat16, nat8, nat32) -> (opt Fixture) query;
   getFixtures: (nat16, nat8) -> (vec Fixture) query;
   getGameweeks: (nat16) -> (vec Gameweek) query;

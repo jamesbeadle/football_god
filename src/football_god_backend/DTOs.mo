@@ -50,8 +50,6 @@ module DTOs {
         activeGameweekNumber: Nat8;
         leaderboardEntries: [LeaderboardEntryDTO];
         totalEntries: Nat64;
-        page: Nat;
-        count: Nat;
     };
 
     public type LeaderboardEntryDTO = {
@@ -128,6 +126,23 @@ module DTOs {
         displayName: Text;
         walletAddress: Text;
         balance: Nat64;
+    };
+
+    public type CorrectPredictionsDTO = {
+        seasonName: Text;
+        seasonId: Nat16;
+        gameweekNumber: Nat8;
+        homeTeamName: Text;
+        awayTeamName: Text;
+        homeTeamGoals: Nat8;
+        awayTeamGoals: Nat8;
+        predictions: [CorrectPredictionDTO];
+        totalEntries: Nat64;
+    };
+
+    public type CorrectPredictionDTO = {
+        principalName: Text;
+        displayName: Text;
     };
 
 }

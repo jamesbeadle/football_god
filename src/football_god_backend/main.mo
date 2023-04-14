@@ -2,6 +2,7 @@ import List "mo:base/List";
 import Array "mo:base/Array";
 import Iter "mo:base/Iter";
 import Nat8 "mo:base/Nat8";
+import Nat16 "mo:base/Nat16";
 import Nat64 "mo:base/Nat64";
 import Int64 "mo:base/Int64";
 import Float "mo:base/Float";
@@ -865,23 +866,61 @@ actor Self {
     return teamsInstance.deleteTeam(id);
   };
 
-  public shared ({caller}) func getCorrectPredictions(seasonId: Nat16, gameweekNumber: Nat8, fixtureId: Nat32, start: Nat, count: Nat) : async ?Types.CorrectPredictions {
+  public shared ({caller}) func getCorrectPredictionsDTO(seasonId: Nat16, gameweekNumber: Nat8, fixtureId: Nat32, start: Nat, count: Nat) : async DTOs.CorrectPredictionsDTO {
     let isCallerAdmin = isAdminForCaller(caller);
+
+    let emptyPredictions: DTOs.CorrectPredictionsDTO = {
+        seasonName = "";
+        seasonId = Nat16.fromNat(0);
+        gameweekNumber = 0;
+        homeTeamName = "";
+        awayTeamName = "";
+        homeTeamGoals = 0;
+        awayTeamGoals = 0;
+        predictions = [];
+        totalEntries = 0;
+      };
+
     if(isCallerAdmin == false){
-      return null;
+      return emptyPredictions;
     };
 
     let fixture = seasonsInstance.getFixture(seasonId, gameweekNumber, fixtureId);
     switch fixture {
-      case (null) { return null; };
+      case (null) { return emptyPredictions; };
       case (?foundFixture) {
         
         let predictions = ?predictionsInstance.getCorrectPredictions(seasonId, gameweekNumber, foundFixture, start, count); 
         switch predictions {
-          case (null) { return null; };
+          case (null) { return emptyPredictions; };
           case (?foundPredictions) {
             let predictionsWithNames = profilesInstance.getPredictionNames(foundPredictions);
-            return ?predictionsWithNames;
+
+            var seasonName = "";
+            let season = seasonsInstance.getSeason(seasonId);
+            switch(season){
+              case (null) {};
+              case (?s) {
+                seasonName := s.name;
+              };
+            };
+            
+            var homeTeamName = teamsInstance.getTeamName(foundFixture.homeTeamId);
+            var awayTeamName = teamsInstance.getTeamName(foundFixture.awayTeamId);
+            
+            let populatedPredictions: DTOs.CorrectPredictionsDTO = {
+              seasonName = seasonName;
+              seasonId = predictionsWithNames.seasonId;
+              gameweekNumber = predictionsWithNames.gameweekNumber;
+              homeTeamName = homeTeamName;
+              awayTeamName = awayTeamName;
+              homeTeamGoals = predictionsWithNames.homeTeamGoals;
+              awayTeamGoals = predictionsWithNames.awayTeamGoals;
+              predictions = predictionsWithNames.predictions;
+              totalEntries = predictionsWithNames.totalEntries;
+            };
+
+            return populatedPredictions;
           };
         };
       };

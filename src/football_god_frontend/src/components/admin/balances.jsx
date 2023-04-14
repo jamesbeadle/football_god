@@ -3,11 +3,9 @@ import { Container, Row, Col, Card, Table, Button, ButtonGroup, Spinner } from '
 import { football_god_backend as football_god_backend_actor } from '../../../../declarations/football_god_backend';
 import { Actor } from "@dfinity/agent";
 import { AuthContext } from "../../contexts/AuthContext";
-import { toHexString } from '../helpers';
 
 const Balances = () => {
   const { authClient } = useContext(AuthContext);
-
   const [isLoading, setIsLoading] = useState(true);
   const [viewData, setViewData] = useState(null);
   const [page, setPage] = useState(1);
@@ -26,7 +24,6 @@ const Balances = () => {
     
     const fetchData = async () => {
         await fetchViewData();
-        setIsLoading(false);
     };
     fetchData();
     
@@ -85,6 +82,9 @@ const Balances = () => {
                       <Button onClick={() => handlePageChange(-1)} variant="primary" disabled={page === 1}>
                         Prior
                       </Button>
+                      <div className="d-flex align-items-center mr-3 ml-3">
+                        <p className="mb-0">Page {page}</p>
+                      </div>
                       <Button onClick={() => handlePageChange(1)} variant="primary" disabled={(page + 1) * count >= viewData.totalEntries}>
                         Next
                       </Button>

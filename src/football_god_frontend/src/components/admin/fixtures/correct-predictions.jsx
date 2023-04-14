@@ -1,70 +1,44 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { Container, Row, Col, Card, Button, ButtonGroup, Table, Spinner } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
 import "../../../../assets/main.css";
 import { football_god_backend as football_god_backend_actor } from '../../../../../declarations/football_god_backend';
+import { Actor } from "@dfinity/agent";
+import { AuthContext } from "../../../contexts/AuthContext";
 import { useParams } from 'react-router-dom';
 
 const CorrectPredictions = () => {
   const { seasonId, gameweekNumber, fixtureId } = useParams();
-
+  const { authClient } = useContext(AuthContext);
   const [isLoading, setIsLoading] = useState(true);
-  const [loadingText, setLoadingText] = useState('');
-  const [teams, setTeamsData] = useState([]);
-  const [season, setSeasonData] = useState([]);
-  const [fixture, setFixtureData] = useState([]);
-  const [predictions, setPredictionsData] = useState(null);
+  const [viewData, setViewData] = useState(null);
   const [page, setPage] = useState(0);
-  const resultsPerPage = 25;
+  const count = 25;
 
-  const fetchTeams = async () => {
-    const teamsData = await football_god_backend_actor.getTeams();
-    setTeamsData(teamsData);
-  };
-  
-  const fetchSeason = async () => {
-    const seasonData = await football_god_backend_actor.getSeason(Number(seasonId));
-    setSeasonData(seasonData[0]);
-  };
-
-  const fetchFixture = async () => {
-    const fixtureData = await football_god_backend_actor.getFixture(Number(seasonId), Number(gameweekNumber), Number(fixtureId));
-    setFixtureData(fixtureData[0]);
-  };
-
-  const fetchPredictionsData = async () => {
-    setIsLoading(true);
-    const predictionsData = await football_god_backend_actor.getCorrectPredictions(Number(seasonId), Number(gameweekNumber), Number(fixtureId), page, resultsPerPage);
-    setPredictionsData(predictionsData[0]);
-  };
-  
   useEffect(() => {
     const fetchData = async () => {
-      await fetchTeams();
-      await fetchSeason();
+      await fetchViewData();
     };
     fetchData();
   }, []);
 
   useEffect(() => {
+
+    setIsLoading(true);
+    
     const fetchData = async () => {
-      if(teams.length > 0){
-        await fetchFixture();
-        await fetchPredictionsData();
-      }
+        await fetchViewData();
     };
     fetchData();
-  }, [teams, page]);
+    
+  }, [page]);
 
-  useEffect(() => {
-    if(fixture && predictions){
-      setIsLoading(false);
-    }
-  }, [fixture, predictions]);
-
-  const getTeamNameById = (teamId) => {
-    const team = teams.find((team) => team.id === teamId);
-    return team ? team.name : '';
+  const fetchViewData = async () => {
+    const identity = authClient.getIdentity();
+    Actor.agentOf(football_god_backend_actor).replaceIdentity(identity);
+    const data = await football_god_backend_actor.getCorrectPredictionsDTO(Number(seasonId), Number(gameweekNumber), Number(fixtureId), Number(page), Number(count));
+    setViewData(data);
+    setIsLoading(false);
   };
 
   const handlePageChange = (change) => {
@@ -76,7 +50,7 @@ const CorrectPredictions = () => {
       {isLoading ? (
         <div className="customOverlay d-flex flex-column align-items-center justify-content-center">
           <Spinner animation="border" />
-          <p className='text-center mt-1'>{loadingText}</p>
+          <p className='text-center mt-1'>Loading Correct Predictions</p>
         </div>
       ) : 
       <Row className="justify-content-md-center">
@@ -87,13 +61,16 @@ const CorrectPredictions = () => {
             </Card.Header>
             <Card.Body>
                 <p className="mt-3">
-                    <strong>Season:</strong> {season.name}
+                    <strong>Season:</strong> {viewData.seasonName}
                 </p>
                 <p className="mt-3">
-                    <strong>Fixture:</strong> {getTeamNameById(fixture.homeTeamId)} v {getTeamNameById(fixture.awayTeamId)}
+                    <strong>Gameweek:</strong> {viewData.gameweekNumber}
                 </p>
                 <p className="mt-3">
-                    <strong>Result:</strong> {fixture.homeGoals} - {fixture.awayGoals}
+                    <strong>Fixture:</strong> {viewData.homeTeamName} v {viewData.awayTeamName}
+                </p>
+                <p className="mt-3">
+                    <strong>Result:</strong> {viewData.homeTeamGoals} - {viewData.awayTeamGoals}
                 </p>
                 
                 <div className="table-responsive">
@@ -106,12 +83,12 @@ const CorrectPredictions = () => {
                           </tr>
                       </thead>
                       <tbody>
-                          {predictions && predictions.entries.map((submission) => (
+                          {viewData.predictions.map((submission) => (
                           <tr key={submission.principalName}>
                               <td>{submission.principalName}</td>
                               <td>{submission.displayName}</td>
                               <td>
-                                  <LinkContainer to={`/view-prediction/${submission.principalName}/${seasonId}/${gameweekNumber}`}>
+                                  <LinkContainer to={`/view-prediction/${submission.principalName}/${viewData.seasonId}/${viewData.gameweekNumber}`}>
                                       <Button variant="primary" className="mb-4 w-100">
                                           View
                                       </Button>
@@ -126,7 +103,10 @@ const CorrectPredictions = () => {
                       <Button onClick={() => handlePageChange(-1)} variant="primary" disabled={page === 0}>
                         Prior
                       </Button>
-                      <Button onClick={() => handlePageChange(1)} variant="primary" disabled={(page + 1) * resultsPerPage >= predictions.totalEntries}>
+                      <div className="d-flex align-items-center mr-3 ml-3">
+                        <p className="mb-0">Page {page + 1}</p>
+                      </div>
+                      <Button onClick={() => handlePageChange(1)} variant="primary" disabled={(page + 1) * count >= viewData.totalEntries}>
                         Next
                       </Button>
                     </ButtonGroup>

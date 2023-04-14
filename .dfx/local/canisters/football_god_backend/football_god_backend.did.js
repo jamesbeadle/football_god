@@ -29,13 +29,20 @@ export const idlFactory = ({ IDL }) => {
     'activeSeasonId' : IDL.Nat16,
     'activeSeasonName' : IDL.Text,
   });
-  const GameweekSummary = IDL.Record({
+  const CorrectPredictionDTO = IDL.Record({
     'displayName' : IDL.Text,
     'principalName' : IDL.Text,
   });
-  const CorrectPredictions = IDL.Record({
-    'totalEntries' : IDL.Nat32,
-    'entries' : IDL.Vec(GameweekSummary),
+  const CorrectPredictionsDTO = IDL.Record({
+    'totalEntries' : IDL.Nat64,
+    'predictions' : IDL.Vec(CorrectPredictionDTO),
+    'awayTeamName' : IDL.Text,
+    'seasonId' : IDL.Nat16,
+    'homeTeamName' : IDL.Text,
+    'homeTeamGoals' : IDL.Nat8,
+    'seasonName' : IDL.Text,
+    'gameweekNumber' : IDL.Nat8,
+    'awayTeamGoals' : IDL.Nat8,
   });
   const Fixture = IDL.Record({
     'id' : IDL.Nat32,
@@ -95,8 +102,6 @@ export const idlFactory = ({ IDL }) => {
     'activeGameweekNumber' : IDL.Nat8,
     'totalEntries' : IDL.Nat64,
     'seasons' : IDL.Vec(SeasonDTO),
-    'page' : IDL.Nat,
-    'count' : IDL.Nat,
     'leaderboardEntries' : IDL.Vec(LeaderboardEntryDTO),
     'activeSeasonId' : IDL.Nat16,
     'activeSeasonName' : IDL.Text,
@@ -167,9 +172,9 @@ export const idlFactory = ({ IDL }) => {
     'deleteSeason' : IDL.Func([IDL.Nat16], [Result], []),
     'deleteTeam' : IDL.Func([IDL.Nat16], [Result], []),
     'getAdminDTO' : IDL.Func([], [AdminDTO], []),
-    'getCorrectPredictions' : IDL.Func(
+    'getCorrectPredictionsDTO' : IDL.Func(
         [IDL.Nat16, IDL.Nat8, IDL.Nat32, IDL.Nat, IDL.Nat],
-        [IDL.Opt(CorrectPredictions)],
+        [CorrectPredictionsDTO],
         [],
       ),
     'getFixture' : IDL.Func(

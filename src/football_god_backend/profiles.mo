@@ -92,8 +92,6 @@ module {
             activeGameweekNumber = leaderboard.activeGameweekNumber;
             leaderboardEntries = List.toArray(populatedEntries);
             totalEntries = leaderboard.totalEntries;
-            page = leaderboard.page;
-            count = leaderboard.count;
         };
     };
 
@@ -244,8 +242,8 @@ module {
         return false;
     };
 
-    public func getPredictionNames(predictions: Types.CorrectPredictions) : Types.CorrectPredictions {
-        let populatedEntries = List.map<Types.GameweekSummary, Types.GameweekSummary>(List.fromArray(predictions.entries), func(entry: Types.GameweekSummary): Types.GameweekSummary {
+    public func getPredictionNames(predictions: DTOs.CorrectPredictionsDTO) : DTOs.CorrectPredictionsDTO {
+        let populatedEntries = List.map<DTOs.CorrectPredictionDTO, DTOs.CorrectPredictionDTO>(List.fromArray(predictions.predictions), func(entry: DTOs.CorrectPredictionDTO): DTOs.CorrectPredictionDTO {
             let profile = getProfile(entry.principalName);
             switch (profile) {
                 case (null) {
@@ -260,8 +258,15 @@ module {
             };
         });
         return {
-            entries = List.toArray(populatedEntries);
+            predictions = List.toArray(populatedEntries);
             totalEntries = predictions.totalEntries;
+            seasonId = predictions.seasonId;
+            seasonName = predictions.seasonName;
+            gameweekNumber = predictions.gameweekNumber;
+            homeTeamName = predictions.homeTeamName;
+            awayTeamName = predictions.awayTeamName;
+            homeTeamGoals = predictions.homeTeamGoals;
+            awayTeamGoals = predictions.awayTeamGoals;
         };
     };
 

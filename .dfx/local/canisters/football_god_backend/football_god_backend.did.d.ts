@@ -13,9 +13,20 @@ export interface BalancesDTO {
   'potAccountBalance' : bigint,
   'userBalances' : Array<UserBalanceDTO>,
 }
-export interface CorrectPredictions {
-  'totalEntries' : number,
-  'entries' : Array<GameweekSummary>,
+export interface CorrectPredictionDTO {
+  'displayName' : string,
+  'principalName' : string,
+}
+export interface CorrectPredictionsDTO {
+  'totalEntries' : bigint,
+  'predictions' : Array<CorrectPredictionDTO>,
+  'awayTeamName' : string,
+  'seasonId' : number,
+  'homeTeamName' : string,
+  'homeTeamGoals' : number,
+  'seasonName' : string,
+  'gameweekNumber' : number,
+  'awayTeamGoals' : number,
 }
 export type Error = { 'DecodeError' : null } |
   { 'NotAllowed' : null } |
@@ -56,10 +67,6 @@ export interface GameweekDTO {
   'sweepstakeEntered' : boolean,
   'gameweekNumber' : number,
 }
-export interface GameweekSummary {
-  'displayName' : string,
-  'principalName' : string,
-}
 export interface HistoryDTO {
   'seasons' : Array<SeasonDTO>,
   'seasonGameweeks' : Array<GameweekDTO>,
@@ -82,8 +89,6 @@ export interface LeaderBoardDTO {
   'activeGameweekNumber' : number,
   'totalEntries' : bigint,
   'seasons' : Array<SeasonDTO>,
-  'page' : bigint,
-  'count' : bigint,
   'leaderboardEntries' : Array<LeaderboardEntryDTO>,
   'activeSeasonId' : number,
   'activeSeasonName' : string,
@@ -165,9 +170,9 @@ export interface _SERVICE {
   'deleteSeason' : ActorMethod<[number], Result>,
   'deleteTeam' : ActorMethod<[number], Result>,
   'getAdminDTO' : ActorMethod<[], AdminDTO>,
-  'getCorrectPredictions' : ActorMethod<
+  'getCorrectPredictionsDTO' : ActorMethod<
     [number, number, number, bigint, bigint],
-    [] | [CorrectPredictions]
+    CorrectPredictionsDTO
   >,
   'getFixture' : ActorMethod<[number, number, number], [] | [Fixture]>,
   'getFixtures' : ActorMethod<[number, number], Array<Fixture>>,

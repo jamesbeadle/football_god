@@ -67,11 +67,6 @@ module Types {
         awayGoals: Nat8;
     };
 
-    public type CorrectPredictions = {
-        entries: [GameweekSummary];
-        totalEntries: Nat32;
-    };
-
     public type PrincipalName = Text;
 
 }

@@ -29,7 +29,6 @@ const Leaderboard = () => {
     
     const fetchData = async () => {
         await fetchViewData();
-        setIsLoading(false);
     };
     fetchData();
     
@@ -37,6 +36,7 @@ const Leaderboard = () => {
 
   const fetchViewData = async () => {
     const data = await football_god_backend_actor.getLeaderboardDTO(Number(selectedSeason), Number(selectedGameweek), Number(page), Number(count));
+    console.log(data)
     setViewData(data);
     setIsLoading(false);
   };
@@ -51,7 +51,7 @@ const Leaderboard = () => {
     if (selectedGameweek == 0) {
       gameweekNumber = viewData.activeGameweekNumber;
     }
-    navigate(`/view-prediction/${userId}/${seasonId}/${gameweekNumber}`);
+    navigate(`/view-prediction/${userId}/${Number(seasonId)}/${Number(gameweekNumber)}`);
   };
 
   const handlePageChange = (change) => {
@@ -123,6 +123,9 @@ const Leaderboard = () => {
               <Button onClick={() => handlePageChange(-1)} variant="primary" disabled={page === 0}>
                 Prior
               </Button>
+              <div className="d-flex align-items-center mr-3 ml-3">
+                <p className="mb-0">Page {page + 1}</p>
+              </div>
               <Button onClick={() => handlePageChange(1)} variant="primary" disabled={(page + 1) * count >= viewData.totalEntries}>
                 Next
               </Button>

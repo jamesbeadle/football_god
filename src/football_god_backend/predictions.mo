@@ -196,9 +196,9 @@ module {
       return Iter.toArray(userPredictions.entries());
     };
 
-    public func getCorrectPredictions(seasonId: Nat16, gameweekNumber: Nat8, fixture: Types.Fixture, start: Nat, count: Nat) : Types.CorrectPredictions {
+    public func getCorrectPredictions(seasonId: Nat16, gameweekNumber: Nat8, fixture: Types.Fixture, start: Nat, count: Nat) : DTOs.CorrectPredictionsDTO {
       let iter = userPredictions.entries();
-      var correctPredictions: [Types.GameweekSummary] = [];
+      var correctPredictions: [DTOs.CorrectPredictionDTO] = [];
 
       for ((principalName, userGameweeks) in iter) {
         let gameweek = List.find<Types.UserGameweek>(userGameweeks, func (ugw: Types.UserGameweek) : Bool {
@@ -215,8 +215,8 @@ module {
             });
 
             if (isPredictionCorrect) {
-              let buffer = Buffer.fromArray<Types.GameweekSummary>(correctPredictions);
-              let summary: Types.GameweekSummary = {
+              let buffer = Buffer.fromArray<DTOs.CorrectPredictionDTO>(correctPredictions);
+              let summary: DTOs.CorrectPredictionDTO = {
                 principalName = principalName;
                 displayName = "";
               };
@@ -232,9 +232,16 @@ module {
       var totalEntries: Nat = List.size(predictionsList);
       let paginatedCorrectPredictions = List.take(List.drop(predictionsList, start), count);
 
-      let correctPredictionsSummary: Types.CorrectPredictions = {
-        entries = List.toArray(paginatedCorrectPredictions);
-        totalEntries = Nat32.fromNat(totalEntries);
+      let correctPredictionsSummary: DTOs.CorrectPredictionsDTO = {
+        seasonName = "";
+        seasonId = seasonId;
+        gameweekNumber = gameweekNumber;
+        homeTeamName = "";
+        awayTeamName = "";
+        homeTeamGoals = fixture.homeGoals;
+        awayTeamGoals = fixture.awayGoals;
+        predictions = List.toArray(paginatedCorrectPredictions);
+        totalEntries = Nat64.fromNat(totalEntries);
       };
 
       return correctPredictionsSummary;
