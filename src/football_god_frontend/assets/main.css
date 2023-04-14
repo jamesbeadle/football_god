@@ -111,9 +111,10 @@ body {
   background-color: #8B50F2;
 }
 
-.custom-button:focus {background-color: #8C04D9 !important;}   /* link has focus */
-.custom-button:active {background-color: #8C04D9 !important;}  /* selected link */
-.custom-button:visited {background-color: #8C04D9 !important;} /* visited link */
+.custom-button:focus {background-color: #8C04D9 !important;}   
+.custom-button:active {background-color: #8C04D9 !important;}  
+.custom-button:visited {background-color: #412570 !important;} 
+.custom-button:disabled {background-color: #412570 !important;} 
 
 .custom-nav-link{
   color: white !important;
@@ -123,7 +124,32 @@ body {
   color: white !important;
 }
 
-.custom-nav-link .icon-logout {
+.custom-nav-link .custom-icon {
   margin-left: 8px;
   vertical-align: middle;
+}
+
+
+.play-button{
+  background-color: #3C700F;
+  border:none;
+}
+
+.play-button:hover{
+  background-color: #6EBD2B;
+}
+
+.play-button:focus {background-color: #6EBD2B !important;}   
+.play-button:active {background-color: #6EBD2B !important;}  
+.play-button:visited {background-color: #45701F !important;} 
+.play-button:disabled {background-color: #45701F !important;} 
+
+.custom-card{
+  background-color: #310480;
+}
+
+.custom-input{
+  background-color: #150333;
+  color: white;
+  border: none;
 }

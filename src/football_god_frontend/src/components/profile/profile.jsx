@@ -78,7 +78,7 @@ const Profile = () => {
         <Container>
           <Row className="justify-content-md-center">
             <Col md={8}>
-              <Card className="mt-4">
+              <Card className="mt-4 custom-card mb-4">
                 <Card.Header className="text-center">
                   <h2>Profile</h2>
                 </Card.Header>

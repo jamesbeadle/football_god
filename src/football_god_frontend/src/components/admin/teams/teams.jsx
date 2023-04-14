@@ -68,7 +68,7 @@ const Teams = () => {
       )}
       <Row className="justify-content-md-center">
         <Col md={12}>
-          <Card className="mt-4">
+          <Card className="mt-4 custom-card mb-4">
             <Card.Header className="text-center">
               <h2>Teams</h2>
             </Card.Header>

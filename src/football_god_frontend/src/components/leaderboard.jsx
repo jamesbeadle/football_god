@@ -123,7 +123,7 @@ const Leaderboard = () => {
                   <td>{entry.principalName == entry.displayName ? "Unknown" : entry.displayName}</td>
                   <td>{entry.correctScores} / {entry.totalFixtures}</td>
                   <td>
-                    <Button onClick={() => handleViewPrediction(entry.principalName)} variant="primary">
+                    <Button className="custom-button" onClick={() => handleViewPrediction(entry.principalName)} variant="primary">
                       View
                     </Button>
                   </td>
@@ -133,13 +133,13 @@ const Leaderboard = () => {
           </Table>
           <div className="d-flex justify-content-center mt-3">
             <ButtonGroup>
-              <Button onClick={() => handlePageChange(-1)} variant="primary" disabled={page === 0}>
+              <Button className="custom-button" onClick={() => handlePageChange(-1)} disabled={page === 0}>
                 Prior
               </Button>
               <div className="d-flex align-items-center mr-3 ml-3">
                 <p className="mb-0">Page {page + 1}</p>
               </div>
-              <Button onClick={() => handlePageChange(1)} variant="primary" disabled={(page + 1) * count >= viewData.totalEntries}>
+              <Button className="custom-button" onClick={() => handlePageChange(1)} disabled={(page + 1) * count >= viewData.totalEntries}>
                 Next
               </Button>
             </ButtonGroup>

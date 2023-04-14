@@ -65,7 +65,7 @@ const EditFixtures = () => {
       )}
       <Row className="justify-content-md-center">
         <Col md={12}>
-          <Card className="mt-4">
+          <Card className="mt-4 custom-card mb-4">
             <Card.Header className="text-center">
               <h2>Edit Fixtures</h2>
             </Card.Header>

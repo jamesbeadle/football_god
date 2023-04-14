@@ -30,15 +30,15 @@ const MyNavbar = () => {
               {isAdmin && <Nav.Link as={Link} to="/admin" onClick={() => setExpanded(false)} className="custom-nav-link">Admin</Nav.Link>}
               <Nav.Link as={Link} to="/history" onClick={() => setExpanded(false)} className="custom-nav-link">
                 History
-                <HistoryIcon className="icon-logout" ></HistoryIcon>
+                <HistoryIcon className="custom-icon" ></HistoryIcon>
               </Nav.Link>
               <Nav.Link as={Link} to="/profile" onClick={() => setExpanded(false)} className="custom-nav-link">
                 Profile
-                <ProfileIcon className="icon-logout" ></ProfileIcon>
+                <ProfileIcon className="custom-icon" ></ProfileIcon>
               </Nav.Link>
               <Nav.Link onClick={() => {logout(); setExpanded(false);}} className="custom-nav-link">
                 Disconnect
-                <LogoutIcon className="icon-logout" ></LogoutIcon>
+                <LogoutIcon className="custom-icon" ></LogoutIcon>
               </Nav.Link>    
             </>
           ) : (

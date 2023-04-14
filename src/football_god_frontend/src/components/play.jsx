@@ -104,7 +104,7 @@ const Play = () => {
       ) : (
         <Row className="justify-content-md-center">
         <Col md={8}>
-          <Card className="mt-4">
+          <Card className="mt-4 custom-card mb-4">
             <Card.Header className="text-center">
               <h2>Play</h2>
             </Card.Header>
@@ -125,7 +125,7 @@ const Play = () => {
                    <Form.Group key={fixture.fixtureId} as={Row} className="mb-3 fixture-row">
                    <Col xs={4} className="text-center button-column">
                      <Form.Group className="w-100 d-flex flex-column">
-                       <Button onClick={() => incrementScore(fixture.fixtureId, 'home')} style={{width: '100%', padding: '0', height: '3rem'}}>+</Button>
+                       <Button className="custom-button" onClick={() => incrementScore(fixture.fixtureId, 'home')} style={{width: '100%', padding: '0', height: '3rem'}}>+</Button>
                        <Form.Control
                          style={{height: '3rem', textAlign: 'center'}}
                          type="number"
@@ -133,19 +133,19 @@ const Play = () => {
                          placeholder=""
                          value={fixture.homeTeamPrediction}
                          onChange={(event) => handleChange(event, fixture.fixtureId, 'home')}
-                         className="d-block mx-auto custom-number-input w-100"
+                         className="d-block mx-auto custom-number-input w-100 custom-input"
                        />
-                       <Button onClick={() => decrementScore(fixture.fixtureId, 'home')} style={{width: '100%', padding: '0', height: '3rem'}}>-</Button>
+                       <Button className="custom-button" onClick={() => decrementScore(fixture.fixtureId, 'home')} style={{width: '100%', padding: '0', height: '3rem'}}>-</Button>
                      </Form.Group>
                    </Col>
                    <Col xs={4} className="text-center d-flex align-items-center justify-content-center flex-column column-border">
                      <span>{fixture.homeTeamName}</span>
-                     <span>vs</span>
+                     <span>v</span>
                      <span>{fixture.awayTeamName}</span>
                    </Col>
                    <Col xs={4} className="text-center button-column">
                      <Form.Group className="w-100 d-flex flex-column">
-                       <Button onClick={() => incrementScore(fixture.fixtureId, 'away')} style={{width: '100%', padding: '0', height: '3rem'}}>+</Button>
+                       <Button className="custom-button" onClick={() => incrementScore(fixture.fixtureId, 'away')} style={{width: '100%', padding: '0', height: '3rem'}}>+</Button>
                        <Form.Control
                          style={{height: '3rem', textAlign: 'center'}}
                          type="number"
@@ -153,22 +153,22 @@ const Play = () => {
                          placeholder=""
                          value={fixture.awayTeamPrediction}
                          onChange={(event) => handleChange(event, fixture.fixtureId, 'away')}
-                         className="d-block mx-auto custom-number-input w-100"
+                         className="d-block mx-auto custom-number-input w-100 custom-input"
                        />
-                       <Button onClick={() => decrementScore(fixture.fixtureId, 'away')} style={{width: '100%', padding: '0', height: '3rem'}}>-</Button>
+                       <Button className="custom-button" onClick={() => decrementScore(fixture.fixtureId, 'away')} style={{width: '100%', padding: '0', height: '3rem'}}>-</Button>
                      </Form.Group>
                    </Col>
                  </Form.Group>
                  
                 ))}
                 <div className="text-center">
-                  <Button type="submit" variant="primary">Save Scores</Button>
+                  <Button className="custom-button" type="submit">Save Scores</Button>
                   {viewData.sweepstakePaid ? (
                     <p className="mt-2">You have already paid for the sweepstake.</p>
                     ) : (
                     <div className="mt-2">
                       { (Number(viewData.accountBalance) / 1e8) >= 1 ? (
-                        <Button variant="success" onClick={() => submitScores(true)}>Save & Enter Sweepstake</Button>
+                        <Button className="play-button" onClick={() => submitScores(true)}>Save & Enter Sweepstake</Button>
                       ) : (
                         <p>You do not have enough ICP to enter the sweepstake.</p>
                       )}
