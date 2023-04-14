@@ -226,6 +226,7 @@ service : {
   isAdmin: () -> (bool) query;
   isDisplayNameValid: (text) -> (bool);
   isWalletValid: (text) -> (bool);
+  payoutSweepstake: () -> (Result);
   setSystemState: (nat16, nat8) -> (Result);
   submitPlayDTO: (SubmitPlayDTO) -> (Result);
   unsetActiveState: () -> (Result);

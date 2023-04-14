@@ -204,6 +204,7 @@ export interface _SERVICE {
   'isAdmin' : ActorMethod<[], boolean>,
   'isDisplayNameValid' : ActorMethod<[string], boolean>,
   'isWalletValid' : ActorMethod<[string], boolean>,
+  'payoutSweepstake' : ActorMethod<[], Result>,
   'setSystemState' : ActorMethod<[number, number], Result>,
   'submitPlayDTO' : ActorMethod<[SubmitPlayDTO], Result>,
   'unsetActiveState' : ActorMethod<[], Result>,

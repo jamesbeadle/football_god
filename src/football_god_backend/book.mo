@@ -125,6 +125,10 @@ module {
         
         let source_account = Account.accountIdentifier(defaultAccount, Account.defaultSubaccount());
         let balance = await Ledger.account_balance({ account = source_account });
+
+        if(balance.e8s <= icp_fee){
+            return #err(#NotAllowed);
+        };
         
         let account_id = Account.decode(walletAddress);
         switch account_id {

@@ -79,7 +79,7 @@ type PayoutDTO =
    adminFee: nat64;
    gameweekPot: nat64;
    potAccountBalance: nat64;
-   winnerCount: nat32;
+   winnerCount: nat64;
    winnerShare: nat64;
  };
 type List_1 = 
@@ -226,6 +226,7 @@ service : {
   isAdmin: () -> (bool) query;
   isDisplayNameValid: (text) -> (bool);
   isWalletValid: (text) -> (bool);
+  payoutSweepstake: () -> (Result);
   setSystemState: (nat16, nat8) -> (Result);
   submitPlayDTO: (SubmitPlayDTO) -> (Result);
   unsetActiveState: () -> (Result);

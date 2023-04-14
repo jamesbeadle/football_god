@@ -654,10 +654,32 @@ actor Self {
     
   };
 
+  public shared ({caller}) func payoutSweepstake() : async Result.Result<(), Types.Error> {
+    let isCallerAdmin = isAdminForCaller(caller);
+    if(isCallerAdmin == false){
+      return #err(#NotAuthorized);
+    };
+
+    let defaultSubAccount = getDefaultAccount();
+    let potBalance = await bookInstance.getGameweekPotBalance(defaultSubAccount);
+    let winningPrincipals = predictionsInstance.getWinnerPrincipalIds(activeSeason, activeGameweek);
+    let winnersCount = Int64.fromNat64(Nat64.fromNat(winningPrincipals.size()));
+    
+    var winnerShare: Float = 0.0;
+    if(winnersCount > 0){
+      winnerShare := Float.fromInt64(Int64.fromNat64(potBalance)) / Float.fromInt64(winnersCount);
+    };
+
+    for (i in Iter.range(0, winningPrincipals.size() - 1)) {
+      await bookInstance.transferWinnings(Principal.fromActor(Self), Principal.fromText(winningPrincipals[i]), winnerShare);
+      let result = predictionsInstance.updateWinnings(activeSeason, activeGameweek, winningPrincipals[i], Int64.toNat64(Float.toInt64(winnerShare)));
+    };
+
+    return await bookInstance.transferAdminFee(Principal.fromActor(Self), adminAccount);
+  };
+
 
 //should be able to delete the others:
-
-
 
 
 

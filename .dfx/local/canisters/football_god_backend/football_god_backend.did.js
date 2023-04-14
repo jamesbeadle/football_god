@@ -226,6 +226,7 @@ export const idlFactory = ({ IDL }) => {
     'isAdmin' : IDL.Func([], [IDL.Bool], ['query']),
     'isDisplayNameValid' : IDL.Func([IDL.Text], [IDL.Bool], []),
     'isWalletValid' : IDL.Func([IDL.Text], [IDL.Bool], []),
+    'payoutSweepstake' : IDL.Func([], [Result], []),
     'setSystemState' : IDL.Func([IDL.Nat16, IDL.Nat8], [Result], []),
     'submitPlayDTO' : IDL.Func([SubmitPlayDTO], [Result], []),
     'unsetActiveState' : IDL.Func([], [Result], []),
