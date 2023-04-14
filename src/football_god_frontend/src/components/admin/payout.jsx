@@ -8,58 +8,21 @@ const Payout = () => {
   const { authClient } = useContext(AuthContext);
 
   const [isLoading, setIsLoading] = useState(true);
-  const [loadingText, setLoadingText] = useState('');
-  const [season, setSeason] = useState(null);
-  const [gameweek, setGameweek] = useState(null);
-  const [totalPot, setTotalPot] = useState(0);
-  const [adminFee, setAdminFee] = useState(0);
-  const [totalPayout, setTotalPayout] = useState(0);
-  const [numWinners, setNumWinners] = useState(0);
-  const [sharePerWinner, setSharePerWinner] = useState(0);
-
+  const [viewData, setViewData] = useState(null);
+  
   useEffect(() => {
     const fetchData = async () => {
-      await fetchActiveSeason();
-      await fetchActiveGameweek();
+      await fetchViewData();
     };
     fetchData();
   }, []);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      if (!season || !gameweek) {
-        return;
-      }
-      await fetchPayoutData();
-      setIsLoading(false);
-    };
-    fetchData();
-  }, [season, gameweek]);
-
-  const fetchActiveSeason = async () => {
-    const fetchedSeason = await football_god_backend_actor.getActiveSeason();
-    setSeason(fetchedSeason[0]);
-  };
-
-  const fetchActiveGameweek = async () => {
-    const fetchedGameweek = await football_god_backend_actor.getActiveGameweek();
-    setGameweek(fetchedGameweek[0]);
-  };
-
-  const fetchPayoutData = async () => {
-    if (season && gameweek) {
-      const identity = authClient.getIdentity();
-      Actor.agentOf(football_god_backend_actor).replaceIdentity(identity);
-      const payoutData = await football_god_backend_actor.getPayoutData(season.id, gameweek.number);
-
-      var totalPot = (Number(payoutData[0].totalPot) / 1e8).toFixed(4);
-
-      setTotalPot(totalPot);
-      setAdminFee(totalPot * 0.05);
-      setTotalPayout(totalPot * 0.95);
-      setNumWinners(Number(payoutData[0].winners));
-      setSharePerWinner(totalPot / Number(payoutData[0].winners));
-    }
+  const fetchViewData = async () => {
+    const identity = authClient.getIdentity();
+    Actor.agentOf(football_god_backend_actor).replaceIdentity(identity);
+    const data = await football_god_backend_actor.getPayoutDTO();
+    setViewData(data);
+    setIsLoading(false);
   };
 
   const handlePayout = async () => {
@@ -76,7 +39,7 @@ const Payout = () => {
       {isLoading ? (
         <div className="customOverlay d-flex flex-column align-items-center justify-content-center">
           <Spinner animation="border" />
-          <p className='text-center mt-1'>{loadingText}</p>
+          <p className='text-center mt-1'>Loading Payout</p>
         </div>
       ) : (
       <Row className="justify-content-md-center">
@@ -86,13 +49,13 @@ const Payout = () => {
               <h2>Payout</h2>
             </Card.Header>
             <Card.Body>
-              <p>Current Season: {season && season.name}</p>
-              <p>Current Gameweek: {gameweek && gameweek.number}</p>
-              <p>Total Pot: {totalPot} ICP</p>
-              <p>Admin Fee (5%): {adminFee.toFixed(2)} ICP</p>
-              <p>Total Payout (95%): {totalPayout.toFixed(2)} ICP</p>
-              <p>Number of Winners: {numWinners}</p>
-              <p>Share per Winner: {sharePerWinner.toFixed(2)} ICP</p>
+              <p>Current Season: {viewData.activeSeasonName}</p>
+              <p>Current Gameweek: {viewData.activeGameweekNumber}</p>
+              <p>Total Pot: {(Number(viewData.potAccountBalance) / 1e8)} ICP</p>
+              <p>Admin Fee (5%): {(Number(viewData.adminFee) / 1e8)} ICP</p>
+              <p>Total Payout (95%): {(Number(viewData.gameweekPot) / 1e8)} ICP</p>
+              <p>Number of Winners: {viewData.winnerCount}</p>
+              <p>Share per Winner: {(Number(viewData.winnerShare) / 1e8)} ICP</p>
               <div className="text-center mt-3">
                 <Button onClick={handlePayout} variant="primary">
                   Pay Out

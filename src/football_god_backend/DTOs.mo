@@ -120,7 +120,7 @@ module DTOs {
         potAccountBalance: Nat64;
         adminFee: Nat64;
         gameweekPot: Nat64;
-        winnerCount: Nat32;
+        winnerCount: Nat64;
         winnerShare: Nat64;
     };
 

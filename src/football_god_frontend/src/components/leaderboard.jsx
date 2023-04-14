@@ -44,7 +44,17 @@ const Leaderboard = () => {
   };
 
   const handleViewPrediction = (userId) => {
-    navigate(`/view-prediction/${userId}/${Number(selectedSeason)}/${Number(selectedGameweek)}`);
+    var seasonId = Number(selectedSeason);
+    var gameweekNumber = Number(selectedGameweek);
+
+    if (selectedSeason == 0 ) {
+      seasonId = viewData.activeSeasonId;
+    }
+    if (selectedGameweek == 0) {
+      gameweekNumber = viewData.activeGameweekNumber;
+    }
+    console.log(selectedSeason)
+    navigate(`/view-prediction/${userId}/${seasonId}/${gameweekNumber}`);
   };
 
   const handlePageChange = (change) => {

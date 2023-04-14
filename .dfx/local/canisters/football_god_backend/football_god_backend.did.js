@@ -105,9 +105,14 @@ export const idlFactory = ({ IDL }) => {
     'activeSeasonId' : IDL.Nat16,
     'activeSeasonName' : IDL.Text,
   });
-  const PayoutData = IDL.Record({
-    'totalPot' : IDL.Nat64,
-    'winners' : IDL.Nat,
+  const PayoutDTO = IDL.Record({
+    'winnerShare' : IDL.Nat64,
+    'activeGameweekNumber' : IDL.Nat8,
+    'gameweekPot' : IDL.Nat64,
+    'adminFee' : IDL.Nat64,
+    'potAccountBalance' : IDL.Nat64,
+    'winnerCount' : IDL.Nat64,
+    'activeSeasonName' : IDL.Text,
   });
   const PlayDTO = IDL.Record({
     'activeGameweekNumber' : IDL.Nat8,
@@ -191,11 +196,7 @@ export const idlFactory = ({ IDL }) => {
         [LeaderBoardDTO],
         [],
       ),
-    'getPayoutData' : IDL.Func(
-        [IDL.Nat16, IDL.Nat8],
-        [IDL.Opt(PayoutData)],
-        [],
-      ),
+    'getPayoutDTO' : IDL.Func([], [PayoutDTO], []),
     'getPlayDTO' : IDL.Func([], [PlayDTO], []),
     'getPredictions' : IDL.Func(
         [IDL.Nat16, IDL.Nat8],
@@ -225,7 +226,6 @@ export const idlFactory = ({ IDL }) => {
     'isAdmin' : IDL.Func([], [IDL.Bool], ['query']),
     'isDisplayNameValid' : IDL.Func([IDL.Text], [IDL.Bool], []),
     'isWalletValid' : IDL.Func([IDL.Text], [IDL.Bool], []),
-    'payoutSweepstake' : IDL.Func([IDL.Nat16, IDL.Nat8], [Result], []),
     'setSystemState' : IDL.Func([IDL.Nat16, IDL.Nat8], [Result], []),
     'submitPlayDTO' : IDL.Func([SubmitPlayDTO], [Result], []),
     'unsetActiveState' : IDL.Func([], [Result], []),

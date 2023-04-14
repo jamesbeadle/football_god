@@ -2,6 +2,7 @@ import List "mo:base/List";
 import Array "mo:base/Array";
 import Iter "mo:base/Iter";
 import Nat8 "mo:base/Nat8";
+import Nat32 "mo:base/Nat32";
 import Nat64 "mo:base/Nat64";
 import Int64 "mo:base/Int64";
 import Float "mo:base/Float";
@@ -575,14 +576,15 @@ actor Self {
       };
     };
 
-    let historyDTO: DTOs.AdminDTO = {
+    let adminDTO: DTOs.AdminDTO = {
       activeSeasonId = activeSeasonId; 
       activeSeasonName = activeSeasonName; 
       activeGameweekNumber = activeGameweekNumber; 
       seasons = Buffer.toArray(seasonsBuffer);
       activeGameweekStatus = activeGameweekStatus;
     };
-    
+
+    return adminDTO;
   };
 
   public shared ({caller}) func unsetActiveState() : async Result.Result<(), Types.Error> {
@@ -607,6 +609,49 @@ actor Self {
     activeSeason := seasonId;
     activeGameweek := gameweekNumber;
     return #ok(());
+  };
+
+  public shared ({caller}) func getPayoutDTO() : async DTOs.PayoutDTO {
+    assert not Principal.isAnonymous(caller);
+    let isCallerAdmin = isAdminForCaller(caller);
+    if(isCallerAdmin == false){
+      return { activeSeasonName = ""; activeGameweekNumber = 0; potAccountBalance = 0; adminFee = 0; gameweekPot = 0; winnerCount = 0; winnerShare = 0; };
+    };
+        
+    let defaultSubAccount = getDefaultAccount();
+    let winningPrincipals = predictionsInstance.getWinnerPrincipalIds(activeSeason, activeGameweek);
+
+    var activeSeasonName = "";
+    var activeGameweekNumber = activeGameweek;
+    var potAccountBalance = await bookInstance.getTotalBalance(defaultSubAccount);
+    var adminFee = Int64.toNat64(Float.toInt64(Float.fromInt64(Int64.fromNat64(potAccountBalance)) * 0.05));
+    var gameweekPot = await bookInstance.getGameweekPotBalance(defaultSubAccount);
+    var winnerCount = Nat64.fromNat(predictionsInstance.countWinners(activeSeason, activeGameweek));
+    var winnerShare = Nat64.fromNat(0);
+    if(winnerCount > 0){
+      winnerShare := Int64.toNat64(Float.toInt64(Float.fromInt64(Int64.fromNat64(gameweekPot)) / Float.fromInt64(Int64.fromNat64(winnerCount))));
+    };
+    
+    let season = seasonsInstance.getSeason(activeSeason);
+    switch(season){
+      case (null) {};
+      case (?s) {
+        activeSeasonName := s.name;
+      };
+    };
+
+    let payoutDTO: DTOs.PayoutDTO = {
+      activeSeasonName = activeSeasonName; 
+      activeGameweekNumber = activeGameweekNumber; 
+      potAccountBalance = potAccountBalance; 
+      adminFee = adminFee;
+      gameweekPot = gameweekPot;
+      winnerCount = winnerCount;
+      winnerShare = winnerShare;
+    };
+
+    return payoutDTO;
+    
   };
 
 
@@ -986,6 +1031,7 @@ actor Self {
     
     return await bookInstance.getUserAccountBalance(Principal.fromActor(Self), caller);
   };
+  /*
 
   public shared ({caller}) func getPayoutData(seasonId : Nat16, gameweekNumber: Nat8) : async ?Types.PayoutData {
     let isCallerAdmin = isAdminForCaller(caller);
@@ -1005,7 +1051,8 @@ actor Self {
 
     return ?payoutData;
   };
-
+*/
+/*
   public shared ({caller}) func payoutSweepstake(seasonId : Nat16, gameweekNumber: Nat8) : async Result.Result<(), Types.Error> {
     let isCallerAdmin = isAdminForCaller(caller);
     if(isCallerAdmin == false){
@@ -1024,6 +1071,7 @@ actor Self {
 
     return await bookInstance.transferAdminFee(Principal.fromActor(Self), adminAccount);
   };
+  */
 
 /*
   public shared ({caller}) func enterSweepstake(seasonId : Nat16, gameweekNumber: Nat8) : async Result.Result<(), Types.Error> {

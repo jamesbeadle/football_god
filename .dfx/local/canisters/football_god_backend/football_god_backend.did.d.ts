@@ -90,7 +90,15 @@ export interface LeaderboardEntryDTO {
 }
 export type List = [] | [[Gameweek, List]];
 export type List_1 = [] | [[Fixture, List_1]];
-export interface PayoutData { 'totalPot' : bigint, 'winners' : bigint }
+export interface PayoutDTO {
+  'winnerShare' : bigint,
+  'activeGameweekNumber' : number,
+  'gameweekPot' : bigint,
+  'adminFee' : bigint,
+  'potAccountBalance' : bigint,
+  'winnerCount' : bigint,
+  'activeSeasonName' : string,
+}
 export interface PlayDTO {
   'activeGameweekNumber' : number,
   'userId' : string,
@@ -176,7 +184,7 @@ export interface _SERVICE {
     [number, number, bigint, bigint],
     LeaderBoardDTO
   >,
-  'getPayoutData' : ActorMethod<[number, number], [] | [PayoutData]>,
+  'getPayoutDTO' : ActorMethod<[], PayoutDTO>,
   'getPlayDTO' : ActorMethod<[], PlayDTO>,
   'getPredictions' : ActorMethod<[number, number], Array<Prediction>>,
   'getProfileDTO' : ActorMethod<[], ProfileDTO>,
@@ -196,7 +204,6 @@ export interface _SERVICE {
   'isAdmin' : ActorMethod<[], boolean>,
   'isDisplayNameValid' : ActorMethod<[string], boolean>,
   'isWalletValid' : ActorMethod<[string], boolean>,
-  'payoutSweepstake' : ActorMethod<[number, number], Result>,
   'setSystemState' : ActorMethod<[number, number], Result>,
   'submitPlayDTO' : ActorMethod<[SubmitPlayDTO], Result>,
   'unsetActiveState' : ActorMethod<[], Result>,

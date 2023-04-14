@@ -72,10 +72,15 @@ type PlayDTO =
    sweepstakePaid: bool;
    userId: text;
  };
-type PayoutData = 
+type PayoutDTO = 
  record {
-   totalPot: nat64;
-   winners: nat;
+   activeGameweekNumber: nat8;
+   activeSeasonName: text;
+   adminFee: nat64;
+   gameweekPot: nat64;
+   potAccountBalance: nat64;
+   winnerCount: nat64;
+   winnerShare: nat64;
  };
 type List_1 = 
  opt record {
@@ -207,7 +212,7 @@ service : {
   getHistoryDTO: (nat16) -> (HistoryDTO);
   getHomeDTO: () -> (HomeDTO);
   getLeaderboardDTO: (nat16, nat8, nat, nat) -> (LeaderBoardDTO);
-  getPayoutData: (nat16, nat8) -> (opt PayoutData);
+  getPayoutDTO: () -> (PayoutDTO);
   getPlayDTO: () -> (PlayDTO);
   getPredictions: (nat16, nat8) -> (vec Prediction);
   getProfileDTO: () -> (ProfileDTO);
@@ -221,7 +226,6 @@ service : {
   isAdmin: () -> (bool) query;
   isDisplayNameValid: (text) -> (bool);
   isWalletValid: (text) -> (bool);
-  payoutSweepstake: (nat16, nat8) -> (Result);
   setSystemState: (nat16, nat8) -> (Result);
   submitPlayDTO: (SubmitPlayDTO) -> (Result);
   unsetActiveState: () -> (Result);
