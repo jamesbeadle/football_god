@@ -2,13 +2,11 @@ import List "mo:base/List";
 import Array "mo:base/Array";
 import Iter "mo:base/Iter";
 import Nat8 "mo:base/Nat8";
-import Nat32 "mo:base/Nat32";
 import Nat64 "mo:base/Nat64";
 import Int64 "mo:base/Int64";
 import Float "mo:base/Float";
 import Principal "mo:base/Principal";
 import Result "mo:base/Result";
-import Debug "mo:base/Debug";
 import Buffer "mo:base/Buffer";
 import Blob "mo:base/Blob";
 

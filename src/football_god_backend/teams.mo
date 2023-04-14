@@ -1,6 +1,5 @@
 import List "mo:base/List";
 import Result "mo:base/Result";
-import Iter "mo:base/Iter";
 import Types "types";
 
 module {

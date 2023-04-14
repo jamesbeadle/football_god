@@ -4,10 +4,7 @@ import Text "mo:base/Text";
 import Principal "mo:base/Principal";
 import Nat64 "mo:base/Nat64";
 import Blob "mo:base/Blob";
-import Array "mo:base/Array";
 import Buffer "mo:base/Buffer";
-import Nat32 "mo:base/Nat32";
-
 import Types "types";
 import DTOs "DTOs";
 import Account "Account";

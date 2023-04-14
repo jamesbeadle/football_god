@@ -8,10 +8,7 @@ import Array "mo:base/Array";
 import Nat8 "mo:base/Nat8";
 import Nat32 "mo:base/Nat32";
 import Nat64 "mo:base/Nat64";
-import Debug "mo:base/Debug";
 import Buffer "mo:base/Buffer";
-import Nat "mo:base/Nat";
-import Nat16 "mo:base/Nat16";
 import DTOs "DTOs";
 
 module {
