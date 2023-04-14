@@ -116,6 +116,16 @@ actor Self {
       fixtures := Buffer.toArray(fixturesBuffer);
     };
 
+
+
+    var hasPredictions = false;
+    var principalName = "";
+
+    if(not Principal.isAnonymous(caller)){
+      principalName := Principal.toText(caller);
+      hasPredictions := predictionsInstance.hasPredictions(principalName, activeSeason, activeGameweek);
+    };
+
     let homeDTO: DTOs.HomeDTO = {
       systemUpdating = systemUpdating;
       activeSeasonName = activeSeasonName;
@@ -123,6 +133,9 @@ actor Self {
       gameweekPot = gameweekPot;
       fixtures = fixtures;
       gameweekStatus = gameweekStatus;
+      hasPredictions = hasPredictions;
+      principalName = principalName;
+      activeSeasonId = activeSeason;
     };
 
     return homeDTO;

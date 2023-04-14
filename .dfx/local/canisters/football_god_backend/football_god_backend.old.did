@@ -6,10 +6,11 @@ type ViewPredictionDTO =
    seasonName: text;
    totalFixtures: nat8;
  };
-type UserBalances = 
+type UserBalanceDTO = 
  record {
-   entries: vec Profile;
-   totalEntries: nat32;
+   balance: nat64;
+   displayName: text;
+   principalName: text;
  };
 type Team = 
  record {
@@ -47,14 +48,6 @@ type ProfileDTO =
    displayName: text;
    principalName: text;
    walletAddress: text;
- };
-type Profile = 
- record {
-   balance: nat64;
-   depositAddress: blob;
-   displayName: text;
-   principalName: text;
-   wallet: text;
  };
 type Prediction = 
  record {
@@ -185,6 +178,12 @@ type CorrectPredictions =
    entries: vec GameweekSummary;
    totalEntries: nat32;
  };
+type BalancesDTO = 
+ record {
+   potAccountBalance: nat64;
+   totalEntries: nat64;
+   userBalances: vec UserBalanceDTO;
+ };
 type AdminDTO = 
  record {
    activeGameweekNumber: nat8;
@@ -195,14 +194,11 @@ type AdminDTO =
  };
 service : {
   addFixtureToGameweek: (nat16, nat8, nat16, nat16) -> (Result);
-  checkSweepstakePaid: (nat16, nat8) -> (bool);
   createSeason: (text, nat16) -> (Result);
   createTeam: (text) -> (Result);
   deleteFixture: (nat16, nat8, nat32) -> (Result);
   deleteSeason: (nat16) -> (Result);
   deleteTeam: (nat16) -> (Result);
-  getActiveGameweek: () -> (opt Gameweek) query;
-  getActiveSeason: () -> (opt Season) query;
   getAdminDTO: () -> (AdminDTO);
   getCorrectPredictions: (nat16, nat8, nat32, nat, nat) ->
    (opt CorrectPredictions);
@@ -219,9 +215,8 @@ service : {
   getSeason: (nat16) -> (opt Season) query;
   getSeasons: () -> (vec Season) query;
   getTeams: () -> (vec Team) query;
-  getUserAccountBalance: () -> (nat64);
+  getUserBalancesDTO: (nat, nat) -> (BalancesDTO);
   getUserPredictions: (text, nat16, nat8) -> (vec Prediction);
-  getUsersWithBalances: (nat, nat) -> (opt UserBalances);
   getViewPredictionDTO: (text, nat16, nat8) -> (ViewPredictionDTO);
   isAdmin: () -> (bool) query;
   isDisplayNameValid: (text) -> (bool);

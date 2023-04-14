@@ -456,5 +456,23 @@ module {
       };
     };
 
+    public func hasPredictions(principalName: Text, seasonId: Nat16, gameweekNumber: Nat8) : Bool {
+      let userGameweeks = userPredictions.get(principalName);
+
+      switch userGameweeks {
+        case (null) { return false; };
+        case (?gameweeks) {
+          let gameweek = List.find<Types.UserGameweek>(gameweeks, func (ugw: Types.UserGameweek) : Bool {
+            return ugw.seasonId == seasonId and ugw.gameweekNumber == gameweekNumber;
+          });
+
+          switch gameweek {
+            case (null) { return false; };
+            case (?gw) { return true; };
+          };
+        };
+      };
+    };
+
   }
 }

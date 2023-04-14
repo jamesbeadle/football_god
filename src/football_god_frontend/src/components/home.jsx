@@ -62,6 +62,12 @@ const Home = () => {
                   <Button variant="primary" className="w-100" size="lg">Leaderboard</Button>
                 </LinkContainer>
               )}
+              {isAuthenticated && viewData.hasPredictions && (viewData.gameweekStatus === 2 || viewData.gameweekStatus === 3) && (
+                <LinkContainer className="mt-3" to={`/view-prediction/${viewData.principalName}/${viewData.activeSeasonId}/${viewData.activeGameweekNumber}`}>
+                  <Button variant="primary" className="w-100" size="lg">View My Predictions</Button>
+                </LinkContainer>
+              )}
+              
             <br />
           </Col>
           <Col sm={12} md={8}>

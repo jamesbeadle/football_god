@@ -7,6 +7,9 @@ module DTOs {
         gameweekPot: Nat64;
         fixtures: [FixtureDTO];
         gameweekStatus: Nat8;
+        hasPredictions: Bool;
+        principalName: Text;
+        activeSeasonId: Nat16;
     };
 
     public type PlayDTO = {

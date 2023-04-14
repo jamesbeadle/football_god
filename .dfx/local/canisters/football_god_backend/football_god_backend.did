@@ -49,12 +49,6 @@ type ProfileDTO =
    principalName: text;
    walletAddress: text;
  };
-type Prediction = 
- record {
-   awayGoals: nat8;
-   fixtureId: nat32;
-   homeGoals: nat8;
- };
 type PlayDTO = 
  record {
    accountBalance: nat64;
@@ -108,10 +102,13 @@ type LeaderBoardDTO =
 type HomeDTO = 
  record {
    activeGameweekNumber: nat8;
+   activeSeasonId: nat16;
    activeSeasonName: text;
    fixtures: vec FixtureDTO;
    gameweekPot: nat64;
    gameweekStatus: nat8;
+   hasPredictions: bool;
+   principalName: text;
    systemUpdating: bool;
  };
 type HistoryDTO = 
@@ -210,13 +207,11 @@ service : {
   getLeaderboardDTO: (nat16, nat8, nat, nat) -> (LeaderBoardDTO);
   getPayoutDTO: () -> (PayoutDTO);
   getPlayDTO: () -> (PlayDTO);
-  getPredictions: (nat16, nat8) -> (vec Prediction);
   getProfileDTO: () -> (ProfileDTO);
   getSeason: (nat16) -> (opt Season) query;
   getSeasons: () -> (vec Season) query;
   getTeams: () -> (vec Team) query;
   getUserBalancesDTO: (nat, nat) -> (BalancesDTO);
-  getUserPredictions: (text, nat16, nat8) -> (vec Prediction);
   getViewPredictionDTO: (text, nat16, nat8) -> (ViewPredictionDTO);
   isAdmin: () -> (bool) query;
   isDisplayNameValid: (text) -> (bool);

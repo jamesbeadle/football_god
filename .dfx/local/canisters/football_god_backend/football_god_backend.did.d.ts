@@ -69,9 +69,12 @@ export interface HistoryDTO {
 }
 export interface HomeDTO {
   'activeGameweekNumber' : number,
+  'hasPredictions' : boolean,
   'gameweekPot' : bigint,
   'systemUpdating' : boolean,
   'gameweekStatus' : number,
+  'activeSeasonId' : number,
+  'principalName' : string,
   'activeSeasonName' : string,
   'fixtures' : Array<FixtureDTO>,
 }
@@ -112,11 +115,6 @@ export interface PlayDTO {
   'activeSeasonId' : number,
   'activeSeasonName' : string,
   'fixtures' : Array<FixtureDTO>,
-}
-export interface Prediction {
-  'fixtureId' : number,
-  'homeGoals' : number,
-  'awayGoals' : number,
 }
 export interface ProfileDTO {
   'balance' : bigint,
@@ -182,16 +180,11 @@ export interface _SERVICE {
   >,
   'getPayoutDTO' : ActorMethod<[], PayoutDTO>,
   'getPlayDTO' : ActorMethod<[], PlayDTO>,
-  'getPredictions' : ActorMethod<[number, number], Array<Prediction>>,
   'getProfileDTO' : ActorMethod<[], ProfileDTO>,
   'getSeason' : ActorMethod<[number], [] | [Season]>,
   'getSeasons' : ActorMethod<[], Array<Season>>,
   'getTeams' : ActorMethod<[], Array<Team>>,
   'getUserBalancesDTO' : ActorMethod<[bigint, bigint], BalancesDTO>,
-  'getUserPredictions' : ActorMethod<
-    [string, number, number],
-    Array<Prediction>
-  >,
   'getViewPredictionDTO' : ActorMethod<
     [string, number, number],
     ViewPredictionDTO
