@@ -9,7 +9,6 @@ const Balances = () => {
   const { authClient } = useContext(AuthContext);
 
   const [isLoading, setIsLoading] = useState(true);
-  const [loadingText, setLoadingText] = useState('');
   
   const [potBalance, setPotBalance] = useState(0);
   const [users, setUsers] = useState(null);
@@ -48,7 +47,7 @@ const Balances = () => {
       {isLoading ? (
         <div className="customOverlay d-flex flex-column align-items-center justify-content-center">
           <Spinner animation="border" />
-          <p className='text-center mt-1'>{loadingText}</p>
+          <p className='text-center mt-1'>Loading Balances</p>
         </div>
       ) : 
       

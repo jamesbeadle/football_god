@@ -226,12 +226,12 @@ actor Self {
       profilesInstance.createProfile(Principal.toText(caller), Principal.toText(caller), "", getUserDepositAccount(caller));
     };
 
-    let currentSeason = switch (await getActiveSeason()) {  
+    let currentSeason = switch (seasonsInstance.getSeason(activeSeason)) {  
         case null { return #err(#NotAllowed) };
         case (?season) { season }
     };
 
-    let currentGameweek = switch (await getActiveGameweek()) {  
+    let currentGameweek = switch (seasonsInstance.getGameweek(activeSeason, activeGameweek)) {  
         case null { return #err(#NotAllowed) };
         case (?gameweek) { gameweek }
     };
@@ -679,6 +679,14 @@ actor Self {
   };
 
 
+
+
+
+
+
+
+
+
 //should be able to delete the others:
 
 
@@ -698,52 +706,53 @@ actor Self {
 
 
 
-
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  //profile functions
-  /*
-  public shared ({caller}) func getProfile() : async ?Types.Profile {
-    assert not Principal.isAnonymous(caller);
-    let profile = profilesInstance.getProfile(Principal.toText(caller));
+/*
+  public shared func getGameweekPot() : async Int64 {
+    let defaultSubAccount = getDefaultAccount();
+    let potBalance = await bookInstance.getGameweekPotBalance(defaultSubAccount);
     
-    if(profile == null){
-      profilesInstance.createProfile(Principal.toText(caller), Principal.toText(caller), "", getUserDepositAccount(caller));
-      return profilesInstance.getProfile(Principal.toText(caller));
+    let balanceICP = potBalance / 1e8;
+    return Float.toInt64(Float.nearest(balanceICP));
+  };
+*/
+
+  public shared ({caller}) func getUserAccountBalance() : async Nat64 {
+    assert not Principal.isAnonymous(caller);
+    
+    return await bookInstance.getUserAccountBalance(Principal.fromActor(Self), caller);
+  };
+
+  public shared ({caller}) func getUsersWithBalances(page: Nat, pageSize: Nat) : async ?Types.UserBalances {
+    let isCallerAdmin = isAdminForCaller(caller);
+    if(isCallerAdmin == false){
+      return null;
+    };
+    
+    if(page < 1){
+      return null;
     };
 
-    return profile;
+    let profiles = profilesInstance.getProfilesByPage(page, pageSize);
+    let profilesWithBalances = await bookInstance.getProfileBalances(Principal.fromActor(Self), profiles);
+    
+    return ?profilesWithBalances;
   };
-  */
-
-  //system state functions
-
   
-
-
-  public query func getActiveSeason() : async ?Types.Season {
-    return seasonsInstance.getSeason(activeSeason);
-  };
-
-  public query func getActiveGameweek() : async ?Types.Gameweek {
-    return seasonsInstance.getGameweek(activeSeason, activeGameweek);
-  };
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
 
   //season functions
 
@@ -900,70 +909,17 @@ actor Self {
     return teamsInstance.deleteTeam(id);
   };
 
+
+
+
+
+
+
+
+
+
   //prediction functions
-  /*
-  public shared ({caller}) func submitPredictions(seasonId: Nat16, gameweekNumber: Nat8, predictions: [Types.Prediction]) : async Result.Result<(), Types.Error> {
-    assert not Principal.isAnonymous(caller);
-
-    let hasProfile = profilesInstance.checkForProfile(Principal.toText(caller));
-
-    if (not hasProfile){
-      return #err(#NotAllowed);
-    };
-
-    let currentSeason = switch (await getActiveSeason()) {  
-        case null { return #err(#NotAllowed) };
-        case (?season) { season }
-    };
-
-    let currentGameweek = switch (await getActiveGameweek()) {  
-        case null { return #err(#NotAllowed) };
-        case (?gameweek) { gameweek }
-    };
-
-    if(seasonId != currentSeason.id){
-      return #err(#NotAllowed);
-    };
-
-    if(gameweekNumber != currentGameweek.number){
-      return #err(#NotAllowed);
-    };
-
-    if(currentGameweek.status != 1){
-      return #err(#NotAllowed);
-    };
-
-    //let validPredictions = checkValidPredictions(seasonId, gameweekNumber, predictions);
-    let validPredictions = false;
-
-    if(not validPredictions){
-      return #err(#NotAllowed);
-    };
-
-    let principalName = Principal.toText(caller); 
-    return predictionsInstance.submitPredictions(principalName, seasonId, gameweekNumber, predictions);
-  };
-*/
-  /*
-  private func checkValidPredictions(seasonId: Nat16, gameweekNumber: Nat8, predictions: [Types.Prediction]) : Bool {
-      
-      let fixtures = seasonsInstance.getFixtures(seasonId, gameweekNumber);
-      let fixturesCount = Array.size<Types.Fixture>(fixtures);
-      let predictionsCount = Array.size<Types.Prediction>(predictions);
-
-      if (fixturesCount != predictionsCount) {
-          return false;
-      };
-
-      let fixturesWithPredictions = Array.filter<Types.Fixture>(fixtures, func (fixture: Types.Fixture) : Bool {
-          return Array.find<Types.Prediction>(predictions, func (prediction: Types.Prediction) : Bool {
-              return prediction.fixtureId == fixture.id;
-          }) != null;
-      });
-
-      return Array.size<Types.Fixture>(fixturesWithPredictions) == fixturesCount;
-  };
-  */
+  
 
   public shared ({caller}) func getPredictions(seasonId: Nat16, gameweekNumber: Nat8) : async [Types.Prediction] {
     assert not Principal.isAnonymous(caller);
@@ -1013,12 +969,6 @@ actor Self {
     };
   };
 
-  public shared ({caller}) func checkSweepstakePaid(seasonId: Nat16, gameweekNumber: Nat8) : async Bool {
-    assert not Principal.isAnonymous(caller);
-    let principalName = Principal.toText(caller); 
-    return predictionsInstance.checkSweepstakePaid(principalName, seasonId, gameweekNumber); 
-  };
-
 /*
   public shared ({caller}) func getUserHistory(seasonId: Nat16) : async [Types.UserGameweek] {
     assert not Principal.isAnonymous(caller);
@@ -1026,6 +976,17 @@ actor Self {
    return predictionsInstance.getUserHistory(principalName, seasonId);
   };
   */
+
+
+
+
+
+
+
+
+
+
+
 
 
   // Ledger functions
@@ -1037,104 +998,6 @@ actor Self {
   private func getUserDepositAccount(caller: Principal) : Account.AccountIdentifier {
     Account.accountIdentifier(Principal.fromActor(Self), Account.principalToSubaccount(caller))
   };
-
-/*
-  public shared func getGameweekPot() : async Int64 {
-    let defaultSubAccount = getDefaultAccount();
-    let potBalance = await bookInstance.getGameweekPotBalance(defaultSubAccount);
-    
-    let balanceICP = potBalance / 1e8;
-    return Float.toInt64(Float.nearest(balanceICP));
-  };
-*/
-
-  public shared ({caller}) func getUserAccountBalance() : async Nat64 {
-    assert not Principal.isAnonymous(caller);
-    
-    return await bookInstance.getUserAccountBalance(Principal.fromActor(Self), caller);
-  };
-  /*
-
-  public shared ({caller}) func getPayoutData(seasonId : Nat16, gameweekNumber: Nat8) : async ?Types.PayoutData {
-    let isCallerAdmin = isAdminForCaller(caller);
-    if(isCallerAdmin == false){
-      return null;
-    };
-
-    let defaultSubAccount = getDefaultAccount();
-    let potBalance = await bookInstance.getTotalBalance(defaultSubAccount);
-
-    let winnerCount = predictionsInstance.countWinners(seasonId, gameweekNumber);
-
-    let payoutData: Types.PayoutData = {
-      winners = winnerCount;
-      totalPot = potBalance;
-    };
-
-    return ?payoutData;
-  };
-*/
-/*
-  public shared ({caller}) func payoutSweepstake(seasonId : Nat16, gameweekNumber: Nat8) : async Result.Result<(), Types.Error> {
-    let isCallerAdmin = isAdminForCaller(caller);
-    if(isCallerAdmin == false){
-      return #err(#NotAuthorized);
-    };
-
-    let defaultSubAccount = getDefaultAccount();
-    let potBalance = await bookInstance.getGameweekPotBalance(defaultSubAccount);
-    let winningPrincipals = predictionsInstance.getWinnerPrincipalIds(seasonId, gameweekNumber);
-    let winnerShare = Float.fromInt64(Int64.fromNat64(potBalance)) / Float.fromInt64(Int64.fromNat64(Nat64.fromNat(winningPrincipals.size())));
-
-    for (i in Iter.range(0, winningPrincipals.size() - 1)) {
-      await bookInstance.transferWinnings(Principal.fromActor(Self), Principal.fromText(winningPrincipals[i]), winnerShare);
-      let result = predictionsInstance.updateWinnings(seasonId, gameweekNumber, winningPrincipals[i], Int64.toNat64(Float.toInt64(winnerShare)));
-    };
-
-    return await bookInstance.transferAdminFee(Principal.fromActor(Self), adminAccount);
-  };
-  */
-
-/*
-  public shared ({caller}) func enterSweepstake(seasonId : Nat16, gameweekNumber: Nat8) : async Result.Result<(), Types.Error> {
-    assert not Principal.isAnonymous(caller);
-    
-    let alreadyPaid = predictionsInstance.checkSweepstakePaid(Principal.toText(caller), seasonId, gameweekNumber);
-    if(alreadyPaid){
-      return #err(#NotAllowed);
-    };
-
-    let canAffordEntry = await bookInstance.canAffordEntry(Principal.fromActor(Self), caller);
-
-    if(not canAffordEntry){
-      return #err(#NotAllowed);
-    };
-
-    await bookInstance.transferEntryFee(Principal.fromActor(Self), caller);
-
-    return predictionsInstance.enterSweepstake(Principal.toText(caller), seasonId, gameweekNumber);
-  };
-*/
-
-  public shared ({caller}) func getUsersWithBalances(page: Nat, pageSize: Nat) : async ?Types.UserBalances {
-    let isCallerAdmin = isAdminForCaller(caller);
-    if(isCallerAdmin == false){
-      return null;
-    };
-    
-    if(page < 1){
-      return null;
-    };
-
-    let profiles = profilesInstance.getProfilesByPage(page, pageSize);
-    let profilesWithBalances = await bookInstance.getProfileBalances(Principal.fromActor(Self), profiles);
-    
-    return ?profilesWithBalances;
-  };
-
-  //leaderboard functions
-  
-
 
   system func preupgrade() {
     stable_profiles := profilesInstance.getProfiles();
