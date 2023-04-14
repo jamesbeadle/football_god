@@ -1,3 +1,16 @@
+@font-face {
+  font-family: 'Comfortaa';
+  src: url('Comfortaa.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+
+body {
+  background-color: #19033D;
+  color: white;
+  font-family: 'Comfortaa', sans-serif;
+}
 
 .customOverlay {
     position: fixed;

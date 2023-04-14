@@ -2,6 +2,7 @@ import React, { useState, useContext, useEffect  } from "react";
 import { AuthContext } from "../../contexts/AuthContext";
 import { Navbar, Nav, NavDropdown, Button } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
+import Logo from '../../../assets/logo.png';
 
 const MyNavbar = () => {
   const { isAdmin, isAuthenticated, login, logout } = useContext(AuthContext);
@@ -16,7 +17,9 @@ const MyNavbar = () => {
 
   return (
     <Navbar bg="primary" variant="dark" expand="lg" expanded={expanded} onToggle={() => setExpanded(!expanded)}>
-      <Navbar.Brand as={Link} to="/" onClick={() => setExpanded(false)}>Football God</Navbar.Brand>
+      <Navbar.Brand as={Link} to="/" onClick={() => setExpanded(false)}>
+        <img src={Logo} alt="footballgod" style={{ maxWidth: '200px', maxHeight: '100%' }} />
+      </Navbar.Brand>
       <Navbar.Toggle aria-controls="responsive-navbar-nav" />
       <Navbar.Collapse id="responsive-navbar-nav">
         <Nav className="ml-auto">
