@@ -412,6 +412,9 @@ actor Self {
     var activeGameweekNumber = gameweekNumber;
     var activeSeasonName = "";
     var seasons: [DTOs.SeasonDTO] = [];
+    var totalPot = Nat64.fromNat(0);
+    var winningShare = Nat64.fromNat(0);
+    var status = Nat8.fromNat(0);
 
     if(activeSeasonId == 0){
       activeSeasonId := activeSeason;
@@ -444,6 +447,17 @@ actor Self {
 
     let leaderBoardDTO = predictionsInstance.getLeaderboardDTO(activeSeasonId, activeGameweekNumber, page, count);
     let leaderboardEntriesWithNames = profilesInstance.getLeaderboardEntryNames(leaderBoardDTO);
+
+    //get total pot and winning share
+    let gameweek = seasonsInstance.getGameweek(activeSeasonId, activeGameweekNumber);
+    switch(gameweek){
+      case (null) {};
+      case (?g) {
+        totalPot := g.totalPot;
+        winningShare := g.winningShare;
+        status := g.status;
+      };
+    };
     
     let leaderboard: DTOs.LeaderBoardDTO = {
       seasons = Buffer.toArray(seasonsBuffer);
@@ -452,8 +466,9 @@ actor Self {
       activeGameweekNumber = activeGameweekNumber;
       leaderboardEntries = leaderboardEntriesWithNames.leaderboardEntries;
       totalEntries = leaderboardEntriesWithNames.totalEntries;
-      page = page;
-      count = count;
+      totalPot = totalPot;
+      winningShare = winningShare;
+      status = status;
     };
     return leaderboard; 
   };
@@ -682,6 +697,8 @@ actor Self {
       winnerShare := Float.fromInt64(Int64.fromNat64(potBalance)) / Float.fromInt64(winnersCount);
     };
 
+    seasonsInstance.updatePayoutInfo(activeSeason, activeGameweek, potBalance, Int64.toNat64(Float.toInt64(winnerShare)));
+
     for (i in Iter.range(0, winningPrincipals.size() - 1)) {
       await bookInstance.transferWinnings(Principal.fromActor(Self), Principal.fromText(winningPrincipals[i]), winnerShare);
       predictionsInstance.updateWinnings(activeSeason, activeGameweek, winningPrincipals[i], Int64.toNat64(Float.toInt64(winnerShare)));
@@ -766,7 +783,13 @@ actor Self {
       return #err(#NotAuthorized);
     };
 
-    return seasonsInstance.updateGameweekStatus(seasonId, gameweekNumber, status);
+    var potAccountBalance = Nat64.fromNat(0);
+    if(status == 2){
+      let defaultSubAccount = getDefaultAccount();
+      potAccountBalance := await bookInstance.getGameweekPotBalance(defaultSubAccount);
+    };
+
+    return seasonsInstance.updateGameweekStatus(seasonId, gameweekNumber, status, potAccountBalance);
   };
 
   //fixture functions

@@ -62,6 +62,8 @@ module {
                         let gameweekInfo = {
                             number = gameweek.number;
                             status = gameweek.status;
+                            totalPot = gameweek.totalPot;
+                            winningShare = gameweek.winningShare;
                             fixtureCount = Nat8.fromNat(0);
                             fixtures = List.nil<Types.Fixture>();
                         };
@@ -154,6 +156,8 @@ module {
                     return {
                         number = gameweek.number;
                         status = gameweek.status;
+                        totalPot = gameweek.totalPot;
+                        winningShare = gameweek.winningShare;
                         fixtureCount = Nat8.fromNat(List.size<Types.Fixture>(gameweek.fixtures));
                         fixtures = List.nil<Types.Fixture>();
                     };
@@ -173,6 +177,8 @@ module {
             status = 0; // 0 = Unopened
             fixtureCount = 0;
             fixtures = List.nil<Types.Fixture>();
+            totalPot = 0;
+            winningShare = 0;
           };
 
           initGameweeks := List.push<Types.Gameweek>(gameweek, initGameweeks);
@@ -214,7 +220,7 @@ module {
         return #ok(());
     };
 
-    public func updateGameweekStatus(seasonId: Nat16, gameweekNumber: Nat8, status: Nat8) : Result.Result<(), Types.Error> {
+    public func updateGameweekStatus(seasonId: Nat16, gameweekNumber: Nat8, status: Nat8, totalPot: Nat64) : Result.Result<(), Types.Error> {
         var seasonFound = false;
         var gameweekFound = false;
 
@@ -227,12 +233,19 @@ module {
                     year = season.year;
                     gameweeks = List.map<Types.Gameweek, Types.Gameweek>(season.gameweeks, func (gameweek: Types.Gameweek): Types.Gameweek {
                         if (gameweek.number == gameweekNumber) {
+                            
+                            var totalPot = gameweek.totalPot;
+                            if(status == 2){
+                                totalPot := totalPot;
+                            };
                             gameweekFound := true;
                             return {
                                 number = gameweek.number;
                                 status = status;
                                 fixtures = gameweek.fixtures;
                                 fixtureCount = gameweek.fixtureCount;
+                                totalPot = totalPot;
+                                winningShare = gameweek.winningShare;
                             };
                         } else { return gameweek; }
                     });
@@ -308,6 +321,8 @@ module {
                         return {
                             number = gameweek.number;
                             status = gameweek.status;
+                            totalPot = gameweek.totalPot;
+                            winningShare = gameweek.winningShare;
                             fixtures = List.append(gameweek.fixtures, newFixturesList);
                             fixtureCount = 0;
                         };
@@ -341,6 +356,8 @@ module {
                         return {
                             number = gameweek.number;
                             status = gameweek.status;
+                            totalPot = gameweek.totalPot;
+                            winningShare = gameweek.winningShare;
                             fixtureCount = 0;
                             fixtures = List.map<Types.Fixture, Types.Fixture>(gameweek.fixtures, func (fixture: Types.Fixture): Types.Fixture {
                               if (fixture.id == fixtureId) {
@@ -378,6 +395,8 @@ module {
                             return {
                                 number = gameweek.number;
                                 status = gameweek.status;
+                                totalPot = gameweek.totalPot;
+                                winningShare = gameweek.winningShare;
                                 fixtures = List.filter<Types.Fixture>(gameweek.fixtures, func (fixture: Types.Fixture): Bool {
                                     if (fixture.id == fixtureId) {
                                         return false;
@@ -386,6 +405,30 @@ module {
                                     }
                                 });
                                 fixtureCount = gameweek.fixtureCount;
+                            };
+                        } else { return gameweek; }
+                    });
+                };
+            } else { return season; }
+        });
+    };
+
+    public func updatePayoutInfo(seasonId: Nat16, gameweekNumber: Nat8, potBalance: Nat64, winnerShare: Nat64) : (){
+        seasons := List.map<Types.Season, Types.Season>(seasons, func (season: Types.Season): Types.Season {
+            if (season.id == seasonId) {
+                return {
+                    id = season.id;
+                    name = season.name;
+                    year = season.year;
+                    gameweeks = List.map<Types.Gameweek, Types.Gameweek>(season.gameweeks, func (gameweek: Types.Gameweek): Types.Gameweek {
+                        if (gameweek.number == gameweekNumber) {
+                            return {
+                                number = gameweek.number;
+                                status = gameweek.status;
+                                fixtures = gameweek.fixtures;
+                                fixtureCount = gameweek.fixtureCount;
+                                totalPot = potBalance;
+                                winningShare = winnerShare;
                             };
                         } else { return gameweek; }
                     });

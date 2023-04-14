@@ -92,6 +92,9 @@ module {
             activeGameweekNumber = leaderboard.activeGameweekNumber;
             leaderboardEntries = List.toArray(populatedEntries);
             totalEntries = leaderboard.totalEntries;
+            totalPot = leaderboard.totalPot;
+            winningShare = leaderboard.winningShare;
+            status = leaderboard.status;
         };
     };
 

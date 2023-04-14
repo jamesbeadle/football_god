@@ -27,6 +27,8 @@ module Types {
         status: Nat8; // 0 = Unopened, 1 = Open, 2 = Closed, 3 = Finalised
         fixtures: List.List<Types.Fixture>;
         fixtureCount : Nat8;
+        totalPot: Nat64;
+        winningShare: Nat64;
     };
 
     public type Fixture = {

@@ -50,6 +50,9 @@ module DTOs {
         activeGameweekNumber: Nat8;
         leaderboardEntries: [LeaderboardEntryDTO];
         totalEntries: Nat64;
+        totalPot: Nat64;
+        winningShare: Nat64;
+        status: Nat8;
     };
 
     public type LeaderboardEntryDTO = {

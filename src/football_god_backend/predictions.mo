@@ -185,8 +185,9 @@ module {
         activeGameweekNumber = gameweekNumber;
         leaderboardEntries = List.toArray<DTOs.LeaderboardEntryDTO>(paginatedLeaderboardEntries);
         totalEntries = Nat64.fromNat(totalEntries);
-        page = start;
-        count = count;
+        totalPot = Nat64.fromNat(0);
+        winningShare = Nat64.fromNat(0);
+        status = 0;
       };
       
       return leaderboard;

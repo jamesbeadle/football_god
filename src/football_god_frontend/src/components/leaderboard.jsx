@@ -93,6 +93,16 @@ const Leaderboard = () => {
               ))}
             </Dropdown.Menu>
           </Dropdown>
+          {viewData.status > 1 && (
+            <p className="mt-3">
+              <strong>Total Pot:</strong> {(Number(viewData.totalPot) / 1e8).toFixed(4)} ICP
+            </p>
+          )}
+          {viewData.status == 3 && (
+            <p className="mt-3">
+              <strong>Winners Share:</strong> {(Number(viewData.winningShare) / 1e8).toFixed(4)} ICP
+            </p>
+          )}
           <p className='mt-3'><small>You can update your display name in on your profile page.</small></p>
           <Table striped bordered hover responsive className="mt-1">
             <thead>
