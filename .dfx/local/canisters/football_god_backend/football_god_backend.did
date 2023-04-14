@@ -95,7 +95,10 @@ type LeaderBoardDTO =
    activeSeasonName: text;
    leaderboardEntries: vec LeaderboardEntryDTO;
    seasons: vec SeasonDTO;
+   status: nat8;
    totalEntries: nat64;
+   totalPot: nat64;
+   winningShare: nat64;
  };
 type HomeDTO = 
  record {
@@ -131,6 +134,8 @@ type Gameweek =
    fixtures: List_1;
    number: nat8;
    status: nat8;
+   totalPot: nat64;
+   winningShare: nat64;
  };
 type FixtureDTO = 
  record {

@@ -234,9 +234,9 @@ module {
                     gameweeks = List.map<Types.Gameweek, Types.Gameweek>(season.gameweeks, func (gameweek: Types.Gameweek): Types.Gameweek {
                         if (gameweek.number == gameweekNumber) {
                             
-                            var totalPot = gameweek.totalPot;
+                            var pot = gameweek.totalPot;
                             if(status == 2){
-                                totalPot := totalPot;
+                                pot := totalPot;
                             };
                             gameweekFound := true;
                             return {
@@ -244,7 +244,7 @@ module {
                                 status = status;
                                 fixtures = gameweek.fixtures;
                                 fixtureCount = gameweek.fixtureCount;
-                                totalPot = totalPot;
+                                totalPot = pot;
                                 winningShare = gameweek.winningShare;
                             };
                         } else { return gameweek; }

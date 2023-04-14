@@ -13,7 +13,9 @@ type Gameweek =
     fixtureCount : Nat8;
     fixtures : List<Fixture>;
     number : Nat8;
-    status : Nat8
+    status : Nat8;
+    totalPot : Nat64;
+    winningShare : Nat64
   };
 type List<T> = ?(T, List<T>);
 type Prediction = {awayGoals : Nat8; fixtureId : Nat32; homeGoals : Nat8};

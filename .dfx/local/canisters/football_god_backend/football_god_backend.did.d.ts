@@ -56,6 +56,8 @@ export interface FixtureDTO {
 }
 export interface Gameweek {
   'status' : number,
+  'winningShare' : bigint,
+  'totalPot' : bigint,
   'number' : number,
   'fixtureCount' : number,
   'fixtures' : List_1,
@@ -86,10 +88,13 @@ export interface HomeDTO {
   'fixtures' : Array<FixtureDTO>,
 }
 export interface LeaderBoardDTO {
+  'status' : number,
   'activeGameweekNumber' : number,
   'totalEntries' : bigint,
   'seasons' : Array<SeasonDTO>,
+  'winningShare' : bigint,
   'leaderboardEntries' : Array<LeaderboardEntryDTO>,
+  'totalPot' : bigint,
   'activeSeasonId' : number,
   'activeSeasonName' : string,
 }

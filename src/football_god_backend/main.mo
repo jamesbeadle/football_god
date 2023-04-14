@@ -10,6 +10,7 @@ import Principal "mo:base/Principal";
 import Result "mo:base/Result";
 import Buffer "mo:base/Buffer";
 import Blob "mo:base/Blob";
+import Debug "mo:base/Debug";
 
 import Types "types";
 import Seasons "seasons";
@@ -453,6 +454,7 @@ actor Self {
     switch(gameweek){
       case (null) {};
       case (?g) {
+        Debug.print(debug_show g);
         totalPot := g.totalPot;
         winningShare := g.winningShare;
         status := g.status;

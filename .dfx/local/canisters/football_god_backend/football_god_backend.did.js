@@ -55,6 +55,8 @@ export const idlFactory = ({ IDL }) => {
   List_1.fill(IDL.Opt(IDL.Tuple(Fixture, List_1)));
   const Gameweek = IDL.Record({
     'status' : IDL.Nat8,
+    'winningShare' : IDL.Nat64,
+    'totalPot' : IDL.Nat64,
     'number' : IDL.Nat8,
     'fixtureCount' : IDL.Nat8,
     'fixtures' : List_1,
@@ -99,10 +101,13 @@ export const idlFactory = ({ IDL }) => {
     'position' : IDL.Text,
   });
   const LeaderBoardDTO = IDL.Record({
+    'status' : IDL.Nat8,
     'activeGameweekNumber' : IDL.Nat8,
     'totalEntries' : IDL.Nat64,
     'seasons' : IDL.Vec(SeasonDTO),
+    'winningShare' : IDL.Nat64,
     'leaderboardEntries' : IDL.Vec(LeaderboardEntryDTO),
+    'totalPot' : IDL.Nat64,
     'activeSeasonId' : IDL.Nat16,
     'activeSeasonName' : IDL.Text,
   });
