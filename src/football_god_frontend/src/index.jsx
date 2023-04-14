@@ -23,10 +23,14 @@ import Seasons from "./components/admin/seasons/seasons";
 import ViewPrediction from "./components/view-prediction";
 import CorrectPredictions from "./components/admin/fixtures/correct-predictions";
 
+import Logo from '../assets/logo.png';
+
 const PrivateWindowFallback = () => {
   return (
     <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center" }}>
-      <h1>Please use a non-private window to access this app</h1>
+      <h3 className="text-center">You cannot play from a private browser window.</h3>
+      <img src={Logo} alt="footballgod" style={{ maxWidth: '200px', maxHeight: '100%', marginTop: '50px' }} />
+      
     </div>
   );
 };
@@ -45,7 +49,7 @@ const App = () => {
 
       request.onsuccess = (event) => {
         const db = event.target.result;
-        db.close(); // make sure the db is closed before deleting
+        db.close();
         const deleteRequest = window.indexedDB.deleteDatabase("TestDB");
   
         deleteRequest.onerror = (event) => {
@@ -56,8 +60,6 @@ const App = () => {
           //console.log("TestDB deleted successfully");
         };
       };
-  
-
     } else {
       setIsPrivateWindow(true);
     }
