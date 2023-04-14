@@ -381,7 +381,7 @@ module {
             // Calculate correctScores
             let correctScores = List.foldLeft<Types.Prediction, Nat8>(gw.predictions, 0, func (count: Nat8, prediction: Types.Prediction) : Nat8 {
               let matchingFixture = List.find<Types.Fixture>(List.fromArray<Types.Fixture>(fixtures), func (fixture: Types.Fixture) : Bool {
-                return fixture.id == prediction.fixtureId;
+                return fixture.id == prediction.fixtureId and fixture.status > 0;
               });
 
               switch matchingFixture {
