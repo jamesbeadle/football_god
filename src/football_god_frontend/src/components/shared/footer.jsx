@@ -9,7 +9,7 @@ const MyFooter = () => {
         <Row>
           <Col className="text-center">
           <LinkContainer to="/game-rules">
-            <Button >Rules</Button>
+            <Button className="custom-button">Rules</Button>
           </LinkContainer>
           </Col>
         </Row>

@@ -72,7 +72,7 @@ const Home = () => {
           </Col>
           <Col sm={12} md={8}>
             <h2 className="text-center mb-3 mt-2 mt-md-3">Fixtures</h2>
-            <div>
+            <div className='mb-3'>
               {viewData.fixtures.map((fixture, index) => (
                 <Row key={index} className={`text-center fixture-row ml-3 mr-3${index !== 0 ? ' mt-2' : ''}`}>
                   <Col>
