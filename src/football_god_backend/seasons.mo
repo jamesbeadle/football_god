@@ -121,10 +121,6 @@ module {
         };
     };
 
-
-
-
-
     public func getSeasons() : [Types.Season] {
         return List.toArray(List.map<Types.Season, Types.Season>(seasons, func (season: Types.Season): Types.Season {
             return {
@@ -218,7 +214,6 @@ module {
         return #ok(());
     };
 
-
     public func updateGameweekStatus(seasonId: Nat16, gameweekNumber: Nat8, status: Nat8) : Result.Result<(), Types.Error> {
         var seasonFound = false;
         var gameweekFound = false;
@@ -254,8 +249,6 @@ module {
         }
     };
 
-
-
     public func getFixture(seasonId: Nat16, gameweekNumber: Nat8, fixtureId: Nat32) : ?Types.Fixture {
         let foundSeason = List.find<Types.Season>(seasons, func (season: Types.Season): Bool {
             return season.id == seasonId;
@@ -280,7 +273,6 @@ module {
             };
         };
     };
-
 
     public func addFixtureToGameweek(seasonId: Nat16, gameweekNumber: Nat8, homeTeamId: Nat16, awayTeamId: Nat16) : Result.Result<(), Types.Error>{
         
@@ -336,7 +328,6 @@ module {
       }
     };
 
-    
     public func updateFixture(seasonId: Nat16, gameweekNumber: Nat8, fixtureId: Nat32, homeTeamId: Nat16, awayTeamId: Nat16, fixtureStatus: Nat8, homeGoals: Nat8, awayGoals: Nat8) : Result.Result<(), Types.Error>{
         
         var seasonFound = false;

@@ -72,11 +72,6 @@ module Types {
         totalEntries: Nat32;
     };
 
-    public type PayoutData = {
-        totalPot: Nat64;
-        winners: Nat;
-    };
-
     public type PrincipalName = Text;
 
 }

@@ -140,7 +140,6 @@ module {
         };
     };
 
-
     public func getLeaderboardDTO(seasonId: Nat16, gameweekNumber: Nat8, start: Nat, count: Nat) : DTOs.LeaderBoardDTO {
 
           Debug.print(debug_show seasonId);
@@ -198,17 +197,6 @@ module {
       return leaderboard;
     };
 
-
-
-
-
-
-
-
-
-
-
-
     public func getUserPredictions() : [(Types.PrincipalName, List.List<Types.UserGameweek>)] {
       return Iter.toArray(userPredictions.entries());
     };
@@ -256,41 +244,6 @@ module {
 
       return correctPredictionsSummary;
     };
-
-
-
-/*
-    public func enterSweepstake(principalName: Text, seasonId: Nat16, gameweekNumber: Nat8) : Result.Result<(), Types.Error> {
-      let userGameweeks = userPredictions.get(principalName);
-
-      switch userGameweeks {
-        case (null) { return #err(#NotFound); };
-        case (?gameweeks) {
-          let updatedUserGameweeks = List.map<Types.UserGameweek, Types.UserGameweek>(gameweeks, func (ugw: Types.UserGameweek) : Types.UserGameweek {
-            if (ugw.seasonId == seasonId and ugw.gameweekNumber == gameweekNumber) {
-              return {
-                seasonId = ugw.seasonId;
-                gameweekNumber = ugw.gameweekNumber;
-                predictions = ugw.predictions;
-                enteredSweepstake = true;
-                correctScores = ugw.correctScores;
-                predictionCount = ugw.predictionCount;
-                winnings = ugw.winnings;
-              };
-            } else {
-              return ugw;
-            };
-          });
-
-          userPredictions.put(principalName, updatedUserGameweeks);
-
-          return #ok(());
-        };
-      };
-    };
-    */
-    
-
 
     public func countWinners(seasonId: Nat16, gameweekNumber: Nat8) : Nat {
       let leaderboardEntries = Array.map< (Types.PrincipalName, List.List<Types.UserGameweek>), List.List<DTOs.LeaderboardEntryDTO>>(Iter.toArray(userPredictions.entries()), func ((principal, userGameweeks): (Types.PrincipalName, List.List<Types.UserGameweek>)) : List.List<DTOs.LeaderboardEntryDTO> {
@@ -372,7 +325,6 @@ module {
       return List.toArray<Types.PrincipalName>(winnerPrincipalIds);
     };
 
-
     public func deleteFixture(seasonId: Nat16, gameweekNumber: Nat8, fixtures: [Types.Fixture], fixtureId: Nat32) : Result.Result<(), Types.Error> {
       
       // Iterate through all users
@@ -406,7 +358,6 @@ module {
       // Call updatePredictionsCount
       return updatePredictionsCount(seasonId, gameweekNumber, fixtures);
     };
-
 
     public func updatePredictionsCount(seasonId: Nat16, gameweekNumber: Nat8, fixtures: [Types.Fixture]) : Result.Result<(), Types.Error> {
       
@@ -513,8 +464,6 @@ module {
 
       return #ok(());
     };
-
-
 
   }
 }

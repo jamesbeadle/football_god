@@ -699,79 +699,6 @@ actor Self {
     return balancesDTO;
   };
 
-
-
-
-
-
-
-
-//should be able to delete the others:
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/*
-  public shared func getGameweekPot() : async Int64 {
-    let defaultSubAccount = getDefaultAccount();
-    let potBalance = await bookInstance.getGameweekPotBalance(defaultSubAccount);
-    
-    let balanceICP = potBalance / 1e8;
-    return Float.toInt64(Float.nearest(balanceICP));
-  };
-
-  public shared ({caller}) func getUserAccountBalance() : async Nat64 {
-    assert not Principal.isAnonymous(caller);
-    
-    return await bookInstance.getUserAccountBalance(Principal.fromActor(Self), caller);
-  };
-
-  public shared ({caller}) func getUsersWithBalances(page: Nat, pageSize: Nat) : async ?Types.UserBalances {
-    let isCallerAdmin = isAdminForCaller(caller);
-    if(isCallerAdmin == false){
-      return null;
-    };
-    
-    if(page < 1){
-      return null;
-    };
-
-    let profiles = profilesInstance.getProfilesByPage(page, pageSize);
-    let profilesWithBalances = await bookInstance.getProfileBalances(Principal.fromActor(Self), profiles);
-    
-    return ?profilesWithBalances;
-  };
- */ 
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-
   //season functions
 
   public query func getSeasons() : async [Types.Season] {
@@ -927,43 +854,6 @@ actor Self {
     return teamsInstance.deleteTeam(id);
   };
 
-
-
-
-
-
-
-
-
-
-  //prediction functions
-  
-
-  public shared ({caller}) func getPredictions(seasonId: Nat16, gameweekNumber: Nat8) : async [Types.Prediction] {
-    assert not Principal.isAnonymous(caller);
-    let principalName = Principal.toText(caller); 
-    return predictionsInstance.getPredictions(principalName, seasonId, gameweekNumber); 
-  };
-
-  public shared ({caller}) func getUserPredictions(principalName: Text, seasonId: Nat16, gameweekNumber: Nat8) : async [Types.Prediction] {
-
-    let gameweek = seasonsInstance.getGameweek(activeSeason, activeGameweek);
-    
-    switch gameweek {
-      case (null) {
-        return [];
-      };
-      
-      case (?gw) {
-        if(gw.status == 0 or gw.status == 1){
-          return [];
-        };
-      };
-    };
-
-    return predictionsInstance.getPredictions(principalName, seasonId, gameweekNumber); 
-  };
-
   public shared ({caller}) func getCorrectPredictions(seasonId: Nat16, gameweekNumber: Nat8, fixtureId: Nat32, start: Nat, count: Nat) : async ?Types.CorrectPredictions {
     let isCallerAdmin = isAdminForCaller(caller);
     if(isCallerAdmin == false){
@@ -986,26 +876,6 @@ actor Self {
       };
     };
   };
-
-/*
-  public shared ({caller}) func getUserHistory(seasonId: Nat16) : async [Types.UserGameweek] {
-    assert not Principal.isAnonymous(caller);
-    let principalName = Principal.toText(caller); 
-   return predictionsInstance.getUserHistory(principalName, seasonId);
-  };
-  */
-
-
-
-
-
-
-
-
-
-
-
-
 
   // Ledger functions
 

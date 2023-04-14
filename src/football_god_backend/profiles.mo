@@ -128,20 +128,6 @@ module {
         return profileObject;
     };
 
-
-
-
-
-
-
-
-
-
-
-
-
-    
-
     public func updateDisplayName(principalName: Types.PrincipalName, displayName: Text) : Result.Result<(), Types.Error> {
         
         let existingProfile = List.find<Types.Profile>(userProfiles, func (profile: Types.Profile): Bool {
@@ -180,8 +166,6 @@ module {
         };
     };
 
-    
-
     public func updateWalletAddress(principalName: Types.PrincipalName, walletAddress: Text) : Result.Result<(), Types.Error> {
         
         let existingProfile = List.find<Types.Profile>(userProfiles, func (profile: Types.Profile): Bool {
@@ -212,16 +196,6 @@ module {
 
                 return #ok(());
             };
-        };
-    };
-
-    public func setProfile(principalName: Text) : Bool {
-        let existingProfile = List.find<Types.Profile>(userProfiles, func (profile: Types.Profile): Bool {
-            return profile.principalName == principalName;
-        });
-        switch (existingProfile) {
-            case null { return false };
-            case _ { return true };
         };
     };
     
@@ -272,8 +246,6 @@ module {
 
         return false;
     };
-
-    
 
     public func getPredictionNames(predictions: Types.CorrectPredictions) : Types.CorrectPredictions {
         let populatedEntries = List.map<Types.GameweekSummary, Types.GameweekSummary>(List.fromArray(predictions.entries), func(entry: Types.GameweekSummary): Types.GameweekSummary {

@@ -40,10 +40,6 @@ module DTOs {
         userId: Text;
     };
 
-    public type GetHistoryDTO = {
-        seasonId: Nat16;
-    };
-
     public type LeaderBoardDTO = {
         seasons: [SeasonDTO];
         activeSeasonId: Nat16;
@@ -62,13 +58,6 @@ module DTOs {
         correctScores: Nat8;
         totalFixtures: Nat8;
         enteredSweepstake: Bool;
-    };
-
-    public type GetleaderboardDTO = {
-        seasonId: Nat16;
-        gameweekNumber: Nat16;
-        page: Nat32;
-        count: Nat16;
     };
 
     public type AdminDTO = {
@@ -91,29 +80,6 @@ module DTOs {
         balance: Nat64;
     };
 
-    public type GetBalancesDTO = {
-        page: Nat32;
-        count: Nat16;
-    };
-
-    public type CorrectPredictionsDTO = {
-        seasonName: Text;
-        homeTeamName: Text;
-        awayTeamName: Text;
-        homeGoals: Nat8;
-        awayGoals: Nat8;
-        correctUsers: [ProfileDTO];
-        totalEntries: Nat64;
-    };
-
-    public type GetCorrectPredictionsDTO = {
-        seasonId: Nat16;
-        gameweekNumber: Nat8;
-        fixtureId: Nat32;
-        page: Nat32;
-        count: Nat16;
-    };
-
     public type PayoutDTO = {
         activeSeasonName: Text;
         activeGameweekNumber: Nat8;
@@ -122,67 +88,6 @@ module DTOs {
         gameweekPot: Nat64;
         winnerCount: Nat64;
         winnerShare: Nat64;
-    };
-
-    public type FixturesDTO = {
-        seasonName: Text;
-        fixtures: [FixtureDTO];
-        teams: [TeamDTO];
-    };
-
-    public type GetFixturesDTO = {
-        seasonId: Nat16;
-        gameweekNumber: Nat8;
-    };
-
-    public type AddFixtureDTO = {
-        seasonId: Nat16;
-        gameweekNumber: Nat8;
-        homeTeamId: Nat16;
-        awayTeamId: Nat16;
-    };
-
-    public type GetFixtureDTO = {
-        teams: [TeamDTO];
-        status: Nat8;
-        homeScore: Nat8;
-        awayScore: Nat8;
-    };
-
-    public type UpdateFixtureDTO = {
-        seasonId: Nat16;
-        gameweekNumber: Nat8;
-        fixtureId: Nat32;
-        homeTeamId: Nat16;
-        awayTeamId: Nat16;
-        status: Nat8;
-        homeGoals: Nat8;
-        awayGoals: Nat8;
-    };
-
-    public type DeleteFixtureDTO = {
-        seasonId: Nat16;
-        gameweekNumber: Nat8;
-        fixtureId: Nat32;
-    };
-
-    public type SeasonsDTO = {
-        seasons: [SeasonDTO];
-    };
-
-    public type CreateSeasonDTO = {
-        seasonName: Text;
-        seasonYear: Nat16;
-    };
-
-    public type UpdateSeasonDTO = {
-        seasonId: Nat16;
-        seasonName: Text;
-        seasonYear: Nat16;
-    };
-
-    public type DeleteSeasonDTO = {
-        seasonId: Nat16;
     };
 
     public type FixtureDTO = {
@@ -206,29 +111,6 @@ module DTOs {
         gameweeks: [GameweekDTO];
     };
 
-    public type UpdateGameweekStatusDTO = {
-        seasonId: Nat16;
-        gameweekNumber: Nat8;
-        status: Nat8;
-    };
-
-    public type TeamsDTO = {
-        teams: [TeamDTO];
-    };
-
-    public type CreateTeamDTO = {
-        teamName: Text;
-    };
-
-    public type UpdateTeamDTO = {
-        teamId: Nat16;
-        teamName: Text;
-    };
-
-    public type DeleteTeamDTO = {
-        teamId: Nat16;
-    };
-
     public type GameweekDTO = {
         gameweekNumber: Nat8;
         sweepstakeEntered: Bool;
@@ -243,11 +125,6 @@ module DTOs {
         displayName: Text;
         walletAddress: Text;
         balance: Nat64;
-    };
-
-    public type TeamDTO = {
-        teamId: Nat16;
-        teamName: Text;
     };
 
 }

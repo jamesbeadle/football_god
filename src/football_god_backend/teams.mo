@@ -33,9 +33,42 @@ module {
         };
     };
 
+    public func getNextTeamId() : Nat16{
+        return nextTeamId;
+    };
 
+    public func createTeam(name : Text) : Result.Result<(), Types.Error> {
+        let id = nextTeamId;
+        let newTeam : Types.Team = {
+            id = id;
+            name = name;
+        };
+        
+        var newTeamList = List.nil<Types.Team>();
+        newTeamList := List.push(newTeam, newTeamList);
 
+        teams := List.append(teams, newTeamList);
+        
+        nextTeamId := nextTeamId + 1;
+        return #ok(());
+    };
 
+    public func updateTeam(id : Nat16, newName : Text) : Result.Result<(), Types.Error> {
+        teams := List.map<Types.Team, Types.Team>(teams,
+        func (team: Types.Team): Types.Team {
+            if (team.id == id) {
+            { id = team.id; name = newName; }
+            } 
+            else { team }
+        });
+
+        return #ok(());
+    };
+
+    public func deleteTeam(id : Nat16) : Result.Result<(), Types.Error> {
+        teams := List.filter(teams, func(team: Types.Team): Bool { team.id != id });
+        return #ok(());
+    };
     
 
     private func bubbleSort(list: List.List<Types.Team>, n: Nat): List.List<Types.Team> {
@@ -72,43 +105,6 @@ module {
                 return list;
             };
         };
-    };
-
-    public func getNextTeamId() : Nat16{
-        return nextTeamId;
-    };
-
-    public func createTeam(name : Text) : Result.Result<(), Types.Error> {
-        let id = nextTeamId;
-        let newTeam : Types.Team = {
-            id = id;
-            name = name;
-        };
-        
-        var newTeamList = List.nil<Types.Team>();
-        newTeamList := List.push(newTeam, newTeamList);
-
-        teams := List.append(teams, newTeamList);
-        
-        nextTeamId := nextTeamId + 1;
-        return #ok(());
-    };
-
-    public func updateTeam(id : Nat16, newName : Text) : Result.Result<(), Types.Error> {
-        teams := List.map<Types.Team, Types.Team>(teams,
-        func (team: Types.Team): Types.Team {
-            if (team.id == id) {
-            { id = team.id; name = newName; }
-            } 
-            else { team }
-        });
-
-        return #ok(());
-    };
-
-    public func deleteTeam(id : Nat16) : Result.Result<(), Types.Error> {
-        teams := List.filter(teams, func(team: Types.Team): Bool { team.id != id });
-        return #ok(());
     };
   }
 }
