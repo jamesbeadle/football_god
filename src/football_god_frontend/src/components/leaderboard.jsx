@@ -107,7 +107,7 @@ const Leaderboard = () => {
               {viewData.leaderboardEntries.map((entry, index) => (
                 <tr key={entry.principalName}>
                   <td>{index + 1 + page * count}</td>
-                  <td>{entry.displayName}</td>
+                  <td>{entry.principalName == entry.displayName ? "Unknown" : entry.displayName}</td>
                   <td>{entry.correctScores} / {entry.totalFixtures}</td>
                   <td>
                     <Button onClick={() => handleViewPrediction(entry.principalName)} variant="primary">
