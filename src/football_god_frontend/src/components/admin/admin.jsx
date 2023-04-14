@@ -23,7 +23,6 @@ const Admin = () => {
     const identity = authClient.getIdentity();
     Actor.agentOf(football_god_backend_actor).replaceIdentity(identity);
     const data = await football_god_backend_actor.getAdminDTO();
-    console.log(data)
     setViewData(data);
     setIsLoading(false);
   };

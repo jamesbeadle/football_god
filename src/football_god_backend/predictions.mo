@@ -142,8 +142,6 @@ module {
 
     public func getLeaderboardDTO(seasonId: Nat16, gameweekNumber: Nat8, start: Nat, count: Nat) : DTOs.LeaderBoardDTO {
 
-          Debug.print(debug_show seasonId);
-          Debug.print(debug_show gameweekNumber);
       func compare(leaderboardEntry1: DTOs.LeaderboardEntryDTO, leaderboardEntry2: DTOs.LeaderboardEntryDTO) : Bool {
           return leaderboardEntry1.correctScores >= leaderboardEntry2.correctScores;
       };

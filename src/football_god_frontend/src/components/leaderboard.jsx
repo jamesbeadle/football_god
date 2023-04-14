@@ -51,7 +51,6 @@ const Leaderboard = () => {
     if (selectedGameweek == 0) {
       gameweekNumber = viewData.activeGameweekNumber;
     }
-    console.log(selectedSeason)
     navigate(`/view-prediction/${userId}/${seasonId}/${gameweekNumber}`);
   };
 

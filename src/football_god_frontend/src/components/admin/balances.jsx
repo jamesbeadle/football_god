@@ -36,7 +36,6 @@ const Balances = () => {
     const identity = authClient.getIdentity();
     Actor.agentOf(football_god_backend_actor).replaceIdentity(identity);
     const data = await football_god_backend_actor.getUserBalancesDTO(Number(page), Number(count));
-    console.log(data);
     setViewData(data);
     setIsLoading(false);
   };

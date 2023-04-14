@@ -53,7 +53,7 @@ const App = () => {
         };
   
         deleteRequest.onsuccess = () => {
-          console.log("TestDB deleted successfully");
+          //console.log("TestDB deleted successfully");
         };
       };
   

@@ -19,7 +19,6 @@ const ViewPrediction = () => {
 
   const fetchViewData = async () => {
     const data = await football_god_backend_actor.getViewPredictionDTO(userId, Number(seasonId), Number(gameweekNumber));
-    console.log(data)
     setViewData(data);
   };
 

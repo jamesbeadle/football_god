@@ -136,7 +136,6 @@ module {
                     fee = { e8s = icp_fee };
                     created_at_time = ?{ timestamp_nanos = Nat64.fromNat(Int.abs(Time.now())) };
                 });
-                Debug.print(debug_show(result));
 
                 return #ok(());
             };
