@@ -9,37 +9,41 @@ const Balances = () => {
   const { authClient } = useContext(AuthContext);
 
   const [isLoading, setIsLoading] = useState(true);
-  
-  const [potBalance, setPotBalance] = useState(0);
-  const [users, setUsers] = useState(null);
-  const [currentPage, setCurrentPage] = useState(1);
-  const pageSize = 25;
-
-  const fetchPotBalance = async () => {
-    setIsLoading(true);
-    const balance = await football_god_backend_actor.getGameweekPot();
-    setPotBalance(balance);
-  };
-
-  const fetchUsers = async () => {
-    const identity = authClient.getIdentity();
-    Actor.agentOf(football_god_backend_actor).replaceIdentity(identity);
-    const userList = await football_god_backend_actor.getUsersWithBalances(currentPage, pageSize);
-    setUsers(userList[0]);
-  };
-
-  const handlePageChange = (change) => {
-    setCurrentPage((prevPage) => prevPage + change);
-  };
+  const [viewData, setViewData] = useState(null);
+  const [page, setPage] = useState(1);
+  const count = 25;
 
   useEffect(() => {
     const fetchData = async () => {
-      await fetchPotBalance();
-      await fetchUsers();
-      setIsLoading(false);
+      await fetchViewData();
     };
     fetchData();
-  }, [currentPage]);
+  }, []);
+
+  useEffect(() => {
+
+    setIsLoading(true);
+    
+    const fetchData = async () => {
+        await fetchViewData();
+        setIsLoading(false);
+    };
+    fetchData();
+    
+  }, [page]);
+
+  const fetchViewData = async () => {
+    const identity = authClient.getIdentity();
+    Actor.agentOf(football_god_backend_actor).replaceIdentity(identity);
+    const data = await football_god_backend_actor.getUserBalancesDTO(Number(page), Number(count));
+    console.log(data);
+    setViewData(data);
+    setIsLoading(false);
+  };
+
+  const handlePageChange = (change) => {
+    setPage((prevPage) => prevPage + change);
+  };
 
   return (
     
@@ -58,21 +62,19 @@ const Balances = () => {
               <h2>Admin Balances</h2>
             </Card.Header>
             <Card.Body>
-              <p>Sweepstake Pot Balance: {(Number(potBalance) / 1e8).toFixed(4)} ICP</p>
+              <p>Sweepstake Pot Balance: {(Number(viewData.potAccountBalance) / 1e8).toFixed(4)} ICP</p>
               <div className="table-responsive">
                 <Table striped bordered hover>
                   <thead>
                     <tr>
                       <th>User Principal</th>
-                      <th>Deposit Address</th>
                       <th>Balance (ICP)</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {users && users.entries.map((user) => (
+                    {viewData.userBalances.map((user) => (
                         <tr key={user.principalName}>
                           <td>{user.principalName}</td>
-                          <td>{toHexString(user.depositAddress)}</td>
                           <td>{(Number(user.balance) / 1e8).toFixed(4)} ICP</td>
                         </tr>
                       ))}
@@ -81,10 +83,10 @@ const Balances = () => {
               </div>
               <div className="d-flex justify-content-center mt-3">
                     <ButtonGroup>
-                      <Button onClick={() => handlePageChange(-1)} variant="primary" disabled={currentPage === 0}>
+                      <Button onClick={() => handlePageChange(-1)} variant="primary" disabled={page === 1}>
                         Prior
                       </Button>
-                      <Button onClick={() => handlePageChange(1)} variant="primary" disabled={(currentPage + 1) * pageSize >= users.totalEntries}>
+                      <Button onClick={() => handlePageChange(1)} variant="primary" disabled={(page + 1) * count >= viewData.totalEntries}>
                         Next
                       </Button>
                     </ButtonGroup>

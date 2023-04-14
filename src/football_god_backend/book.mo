@@ -14,6 +14,7 @@ import Buffer "mo:base/Buffer";
 import Text "mo:base/Text";
 import Blob "mo:base/Blob";
 import Debug "mo:base/Debug";
+import DTOs "DTOs";
 
 module {
     
@@ -51,18 +52,12 @@ module {
         });
     };
    
-
-
-   
     public func getTotalBalance(defaultSubAccount: Account.AccountIdentifier) : async Nat64 {
         let balance = await Ledger.account_balance({ account = defaultSubAccount });
         return balance.e8s;
     };
 
     public func transferWinnings(defaultAccount: Principal, user: Principal, amount: Float) : async () {
-
-        Debug.print(debug_show(user));
-        Debug.print(debug_show(amount));
 
         let result = await Ledger.transfer({
           memo = 0;
@@ -72,7 +67,7 @@ module {
           fee = { e8s = icp_fee };
           created_at_time = ?{ timestamp_nanos = Nat64.fromNat(Int.abs(Time.now())) };
         });
-        Debug.print(debug_show(result));
+        
     };
 
     //withdraw ICP
@@ -151,30 +146,29 @@ module {
         };
     };
 
-    public func getProfileBalances(defaultAccount: Principal, profiles: Types.UserBalances) : async Types.UserBalances {
+    public func getProfileBalances(defaultAccount: Principal, profiles: DTOs.BalancesDTO) : async DTOs.BalancesDTO {
         
-        var profileBalances: [Types.Profile] = [];
+        var profileBalances: [DTOs.UserBalanceDTO] = [];
 
-        for (i in Iter.range(0, profiles.entries.size() - 1)) {
-            let source_account = Account.accountIdentifier(defaultAccount, Account.principalToSubaccount(Principal.fromText(profiles.entries[i].principalName)));
+        for (i in Iter.range(0, profiles.userBalances.size() - 1)) {
+            let source_account = Account.accountIdentifier(defaultAccount, Account.principalToSubaccount(Principal.fromText(profiles.userBalances[i].principalName)));
             let balance = await Ledger.account_balance({ account = source_account });
 
             let updatedProfile = {
-                principalName = profiles.entries[i].principalName;
-                displayName = profiles.entries[i].displayName;
-                wallet = profiles.entries[i].wallet;
-                depositAddress = profiles.entries[i].depositAddress;
+                principalName = profiles.userBalances[i].principalName;
+                displayName = profiles.userBalances[i].displayName;
                 balance = balance.e8s;
             };
 
-            let buffer = Buffer.fromArray<Types.Profile>(profileBalances);
+            let buffer = Buffer.fromArray<DTOs.UserBalanceDTO>(profileBalances);
             buffer.add(updatedProfile);
 
             profileBalances := Buffer.toArray(buffer);
         };
 
-        let profilesWithBalances: Types.UserBalances = {
-            entries = profileBalances;
+        let profilesWithBalances: DTOs.BalancesDTO = {
+            potAccountBalance = profiles.potAccountBalance;
+            userBalances = profileBalances;
             totalEntries = profiles.totalEntries;
         };
 

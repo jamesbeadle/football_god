@@ -8,6 +8,11 @@ export interface AdminDTO {
   'activeSeasonId' : number,
   'activeSeasonName' : string,
 }
+export interface BalancesDTO {
+  'totalEntries' : bigint,
+  'potAccountBalance' : bigint,
+  'userBalances' : Array<UserBalanceDTO>,
+}
 export interface CorrectPredictions {
   'totalEntries' : number,
   'entries' : Array<GameweekSummary>,
@@ -113,13 +118,6 @@ export interface Prediction {
   'homeGoals' : number,
   'awayGoals' : number,
 }
-export interface Profile {
-  'balance' : bigint,
-  'displayName' : string,
-  'depositAddress' : Uint8Array | number[],
-  'principalName' : string,
-  'wallet' : string,
-}
 export interface ProfileDTO {
   'balance' : bigint,
   'displayName' : string,
@@ -146,9 +144,10 @@ export interface SubmitPlayDTO {
   'fixtures' : Array<FixtureDTO>,
 }
 export interface Team { 'id' : number, 'name' : string }
-export interface UserBalances {
-  'totalEntries' : number,
-  'entries' : Array<Profile>,
+export interface UserBalanceDTO {
+  'balance' : bigint,
+  'displayName' : string,
+  'principalName' : string,
 }
 export interface ViewPredictionDTO {
   'totalFixtures' : number,
@@ -162,14 +161,11 @@ export interface _SERVICE {
     [number, number, number, number],
     Result
   >,
-  'checkSweepstakePaid' : ActorMethod<[number, number], boolean>,
   'createSeason' : ActorMethod<[string, number], Result>,
   'createTeam' : ActorMethod<[string], Result>,
   'deleteFixture' : ActorMethod<[number, number, number], Result>,
   'deleteSeason' : ActorMethod<[number], Result>,
   'deleteTeam' : ActorMethod<[number], Result>,
-  'getActiveGameweek' : ActorMethod<[], [] | [Gameweek]>,
-  'getActiveSeason' : ActorMethod<[], [] | [Season]>,
   'getAdminDTO' : ActorMethod<[], AdminDTO>,
   'getCorrectPredictions' : ActorMethod<
     [number, number, number, bigint, bigint],
@@ -191,12 +187,11 @@ export interface _SERVICE {
   'getSeason' : ActorMethod<[number], [] | [Season]>,
   'getSeasons' : ActorMethod<[], Array<Season>>,
   'getTeams' : ActorMethod<[], Array<Team>>,
-  'getUserAccountBalance' : ActorMethod<[], bigint>,
+  'getUserBalancesDTO' : ActorMethod<[bigint, bigint], BalancesDTO>,
   'getUserPredictions' : ActorMethod<
     [string, number, number],
     Array<Prediction>
   >,
-  'getUsersWithBalances' : ActorMethod<[bigint, bigint], [] | [UserBalances]>,
   'getViewPredictionDTO' : ActorMethod<
     [string, number, number],
     ViewPredictionDTO

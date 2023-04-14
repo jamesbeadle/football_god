@@ -61,11 +61,6 @@ module Types {
         displayName: Text;
     };
 
-    public type UserBalances = {
-        entries: [Profile];
-        totalEntries: Nat32;
-    };
-
     public type Prediction = {
         fixtureId: Nat32;
         homeGoals: Nat8;

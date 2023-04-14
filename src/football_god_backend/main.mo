@@ -678,7 +678,26 @@ actor Self {
     return await bookInstance.transferAdminFee(Principal.fromActor(Self), adminAccount);
   };
 
+  public shared ({caller}) func getUserBalancesDTO(page: Nat, count: Nat) : async DTOs.BalancesDTO {
+    assert not Principal.isAnonymous(caller);
+    let isCallerAdmin = isAdminForCaller(caller);
+    if(isCallerAdmin == false){
+      return { potAccountBalance = 0; totalEntries = 0; userBalances = []; };
+    };
 
+    let defaultSubAccount = getDefaultAccount();
+    var potAccountBalance = await bookInstance.getTotalBalance(defaultSubAccount);
+
+    let profiles = profilesInstance.getProfilesByPage(page, count);
+    let profilesWithBalances = await bookInstance.getProfileBalances(Principal.fromActor(Self), profiles);
+
+    let balancesDTO: DTOs.BalancesDTO = {
+      potAccountBalance = potAccountBalance;
+      totalEntries = profilesWithBalances.totalEntries;
+      userBalances = profilesWithBalances.userBalances;
+    };
+    return balancesDTO;
+  };
 
 
 
@@ -714,7 +733,6 @@ actor Self {
     let balanceICP = potBalance / 1e8;
     return Float.toInt64(Float.nearest(balanceICP));
   };
-*/
 
   public shared ({caller}) func getUserAccountBalance() : async Nat64 {
     assert not Principal.isAnonymous(caller);
@@ -737,7 +755,7 @@ actor Self {
     
     return ?profilesWithBalances;
   };
-  
+ */ 
   
   
   

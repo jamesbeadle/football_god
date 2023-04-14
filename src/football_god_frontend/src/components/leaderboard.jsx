@@ -21,7 +21,6 @@ const Leaderboard = () => {
   }, []);
 
   useEffect(() => {
-    console.log(selectedGameweek)
     if (selectedSeason == 0 && selectedGameweek == 0) {
       return;
     }
@@ -38,7 +37,6 @@ const Leaderboard = () => {
 
   const fetchViewData = async () => {
     const data = await football_god_backend_actor.getLeaderboardDTO(Number(selectedSeason), Number(selectedGameweek), Number(page), Number(count));
-    console.log(data)
     setViewData(data);
     setIsLoading(false);
   };

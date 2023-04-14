@@ -100,25 +100,12 @@ module {
         };
     };
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-    public func getProfilesByPage(page: Int, pageSize: Int) : Types.UserBalances {
+    public func getProfilesByPage(page: Int, pageSize: Int) : DTOs.BalancesDTO {
         let startIndex = (page - 1) * pageSize;
         let endIndex = page * pageSize;
         var paginatedProfiles : [Types.Profile] = [];
         let totalProfiles = List.size<Types.Profile>(userProfiles);
-        let buffer = Buffer.fromArray<Types.Profile>(paginatedProfiles);
+        let buffer = Buffer.fromArray<DTOs.UserBalanceDTO>(paginatedProfiles);
                 
         var index = 0;
         for (profile in List.toArray(userProfiles).vals()) {
@@ -126,21 +113,32 @@ module {
                 buffer.add({
                     principalName = profile.principalName; 
                     displayName = profile.displayName;
-                    depositAddress = profile.depositAddress;
-                    wallet = ""; 
                     balance = 0;
                 });
             };
             index += 1;
         };
 
-        let profileObject: Types.UserBalances = {
-            totalEntries = Nat32.fromNat(totalProfiles);
-            entries = Buffer.toArray(buffer);
+        let profileObject: DTOs.BalancesDTO = {
+            totalEntries = Nat64.fromNat(totalProfiles);
+            userBalances = Buffer.toArray(buffer);
+            potAccountBalance = Nat64.fromNat(0);
         };
         
         return profileObject;
     };
+
+
+
+
+
+
+
+
+
+
+
+
 
     
 
