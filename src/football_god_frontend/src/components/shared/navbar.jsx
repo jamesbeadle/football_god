@@ -25,16 +25,13 @@ const MyNavbar = () => {
         <Nav className="ml-auto">
           {isAuthenticated ? (
             <>
-              {isAdmin && <Nav.Link as={Link} to="/admin" onClick={() => setExpanded(false)}>Admin</Nav.Link>}
-              <Nav.Link as={Link} to="/history" onClick={() => setExpanded(false)}>History</Nav.Link>
-              <NavDropdown title="My Account" id="basic-nav-dropdown" alignRight>
-                <NavDropdown.Item as={Link} to="/profile" onClick={() => setExpanded(false)}>Profile</NavDropdown.Item>
-                <NavDropdown.Divider />
-                <NavDropdown.Item onClick={() => {logout(); setExpanded(false);}}>Disconnect</NavDropdown.Item>
-              </NavDropdown>
+              {isAdmin && <Nav.Link as={Link} to="/admin" onClick={() => setExpanded(false)} className="custom-nav-link">Admin</Nav.Link>}
+              <Nav.Link as={Link} to="/history" onClick={() => setExpanded(false)} className="custom-nav-link">History</Nav.Link>
+              <Nav.Link as={Link} to="/profile" onClick={() => setExpanded(false)} className="custom-nav-link">Profile</Nav.Link>
+              <Nav.Link onClick={() => {logout(); setExpanded(false);}} className="custom-nav-link">Disconnect</Nav.Link>    
             </>
           ) : (
-            <Button onClick={() => { login(); setExpanded(false); }}>Connect</Button>
+            <Button className="custom-button" onClick={() => { login(); setExpanded(false); }}>Connect</Button>
           )}
         </Nav>
       </Navbar.Collapse>

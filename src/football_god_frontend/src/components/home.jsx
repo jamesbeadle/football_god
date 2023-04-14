@@ -50,21 +50,21 @@ const Home = () => {
             <h2 className="mb-3 text-center">{(Number(viewData.gameweekPot) / 1e8).toFixed(0)} ICP</h2>
             <h2 className="mb-3 text-center">Total Pot</h2>
               {!isAuthenticated && (
-                  <Button onClick={() => { login(); }} variant="primary" className="w-100 mb-3" size="lg">Sign In To Play</Button>
+                  <Button onClick={() => { login(); }} className="w-100 mb-3 custom-button" size="lg">Sign In To Play</Button>
               )}
               {viewData.gameweekStatus === 1 && isAuthenticated && (
                 <LinkContainer to="/play">
-                  <Button variant="primary" className="w-100 mb-3" size="lg">Play</Button>
+                  <Button className="w-100 mb-3 custom-button" size="lg">Play</Button>
                 </LinkContainer>
               )}
               {(viewData.gameweekStatus === 2 || viewData.gameweekStatus === 3) && (
                 <LinkContainer to="/leaderboard">
-                  <Button variant="primary" className="w-100" size="lg">Leaderboard</Button>
+                  <Button className="w-100 custom-button" size="lg">Leaderboard</Button>
                 </LinkContainer>
               )}
               {isAuthenticated && viewData.hasPredictions && (viewData.gameweekStatus === 2 || viewData.gameweekStatus === 3) && (
                 <LinkContainer className="mt-3" to={`/view-prediction/${viewData.principalName}/${viewData.activeSeasonId}/${viewData.activeGameweekNumber}`}>
-                  <Button variant="primary" className="w-100" size="lg">View Current Prediction</Button>
+                  <Button className="w-100  custom-button" size="lg">View Current Predictions</Button>
                 </LinkContainer>
               )}
               

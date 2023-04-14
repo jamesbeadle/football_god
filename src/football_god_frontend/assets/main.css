@@ -98,3 +98,27 @@ body {
   background-color: #310480;
 }
 
+.custom-footer{
+  background-color: #2C1D45;
+}
+
+.custom-button{
+  background-color: #412570;
+  border:none;
+}
+
+.custom-button:hover{
+  background-color: #8B50F2;
+}
+
+.custom-button:focus {background-color: #8C04D9 !important;}   /* link has focus */
+.custom-button:active {background-color: #8C04D9 !important;}  /* selected link */
+.custom-button:visited {background-color: #8C04D9 !important;} /* visited link */
+
+.custom-nav-link{
+  color: white !important;
+}
+
+.navbar-light .navbar-nav .nav-link {
+  color: white !important;
+}

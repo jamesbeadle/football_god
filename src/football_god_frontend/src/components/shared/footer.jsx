@@ -4,7 +4,7 @@ import { LinkContainer } from 'react-router-bootstrap';
 
 const MyFooter = () => {
   return (
-    <footer className="footer mt-auto py-3 bg-light">
+    <footer className="footer mt-auto py-3 custom-footer">
       <Container>
         <Row>
           <Col className="text-center">
