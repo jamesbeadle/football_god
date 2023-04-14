@@ -416,11 +416,11 @@ module {
       return #ok(());
     };
 
-    public func updateWinnings(seasonId: Nat16, gameweekNumber: Nat8, principalName: Text, winnings: Nat64) : Result.Result<(), Types.Error> {
+    public func updateWinnings(seasonId: Nat16, gameweekNumber: Nat8, principalName: Text, winnings: Nat64) : () {
       let userGameweeks = userPredictions.get(principalName);
 
       switch userGameweeks {
-        case (null) { return #err(#NotFound); };
+        case (null) { };
         case (?gameweeks) {
           let updatedUserGameweeks = List.map<Types.UserGameweek, Types.UserGameweek>(gameweeks, func (ugw: Types.UserGameweek) : Types.UserGameweek {
             if (ugw.seasonId == seasonId and ugw.gameweekNumber == gameweekNumber) {
@@ -439,13 +439,11 @@ module {
           });
 
           userPredictions.put(principalName, updatedUserGameweeks);
-
-          return #ok(());
         };
       };
     };
 
-    public func deleteSeason(seasonId: Nat16) : Result.Result<(), Types.Error> {
+    public func deleteSeason(seasonId: Nat16) : () {
       // Iterate through all users
       for ((principalName, userGameweeks) in userPredictions.entries()) {
         // Remove all gameweeks with the given seasonId
@@ -456,8 +454,6 @@ module {
         // Update the user's gameweeks in userPredictions
         userPredictions.put(principalName, updatedUserGameweeks);
       };
-
-      return #ok(());
     };
 
   }

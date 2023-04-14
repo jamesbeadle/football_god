@@ -328,29 +328,22 @@ module {
       }
     };
 
-    public func updateFixture(seasonId: Nat16, gameweekNumber: Nat8, fixtureId: Nat32, homeTeamId: Nat16, awayTeamId: Nat16, fixtureStatus: Nat8, homeGoals: Nat8, awayGoals: Nat8) : Result.Result<(), Types.Error>{
+    public func updateFixture(seasonId: Nat16, gameweekNumber: Nat8, fixtureId: Nat32, homeTeamId: Nat16, awayTeamId: Nat16, fixtureStatus: Nat8, homeGoals: Nat8, awayGoals: Nat8) : (){
         
-        var seasonFound = false;
-        var gameweekFound = false;
-        var fixtureFound = false;
-
         seasons := List.map<Types.Season, Types.Season>(seasons, func (season: Types.Season): Types.Season {
           if (season.id == seasonId) {
-            seasonFound := true;
             return {
                 id = season.id;
                 name = season.name;
                 year = season.year;
                 gameweeks = List.map<Types.Gameweek, Types.Gameweek>(season.gameweeks, func (gameweek: Types.Gameweek): Types.Gameweek {
                     if (gameweek.number == gameweekNumber) {
-                        gameweekFound := true;
                         return {
                             number = gameweek.number;
                             status = gameweek.status;
                             fixtureCount = 0;
                             fixtures = List.map<Types.Fixture, Types.Fixture>(gameweek.fixtures, func (fixture: Types.Fixture): Types.Fixture {
                               if (fixture.id == fixtureId) {
-                                fixtureFound := true;
                                 { 
                                     id = fixture.id; 
                                     seasonId = seasonId; 
@@ -370,39 +363,23 @@ module {
             };
         } else { return season; }
       });
-
-      if (not seasonFound) {
-          return #err(#NotFound);
-      } else if (not gameweekFound) {
-          return #err(#NotFound);
-      } else if (not fixtureFound) {
-          return #err(#NotFound);
-      } else {
-          return #ok(());
-      }
     };
 
-    public func deleteFixture(seasonId: Nat16, gameweekNumber: Nat8, fixtureId: Nat32) : Result.Result<(), Types.Error> {
-        var seasonFound = false;
-        var gameweekFound = false;
-        var fixtureFound = false;
-
+    public func deleteFixture(seasonId: Nat16, gameweekNumber: Nat8, fixtureId: Nat32) : () {
+        
         seasons := List.map<Types.Season, Types.Season>(seasons, func (season: Types.Season): Types.Season {
             if (season.id == seasonId) {
-                seasonFound := true;
                 return {
                     id = season.id;
                     name = season.name;
                     year = season.year;
                     gameweeks = List.map<Types.Gameweek, Types.Gameweek>(season.gameweeks, func (gameweek: Types.Gameweek): Types.Gameweek {
                         if (gameweek.number == gameweekNumber) {
-                            gameweekFound := true;
                             return {
                                 number = gameweek.number;
                                 status = gameweek.status;
                                 fixtures = List.filter<Types.Fixture>(gameweek.fixtures, func (fixture: Types.Fixture): Bool {
                                     if (fixture.id == fixtureId) {
-                                        fixtureFound := true;
                                         return false;
                                     } else {
                                         return true;
@@ -415,16 +392,6 @@ module {
                 };
             } else { return season; }
         });
-
-        if (not seasonFound) {
-            return #err(#NotFound);
-        } else if (not gameweekFound) {
-            return #err(#NotFound);
-        } else if (not fixtureFound) {
-            return #err(#NotFound);
-        } else {
-            return #ok(());
-        }
     };
 
   };

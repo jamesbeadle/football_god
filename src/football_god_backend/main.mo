@@ -670,7 +670,7 @@ actor Self {
 
     for (i in Iter.range(0, winningPrincipals.size() - 1)) {
       await bookInstance.transferWinnings(Principal.fromActor(Self), Principal.fromText(winningPrincipals[i]), winnerShare);
-      let result = predictionsInstance.updateWinnings(activeSeason, activeGameweek, winningPrincipals[i], Int64.toNat64(Float.toInt64(winnerShare)));
+      predictionsInstance.updateWinnings(activeSeason, activeGameweek, winningPrincipals[i], Int64.toNat64(Float.toInt64(winnerShare)));
     };
 
     return await bookInstance.transferAdminFee(Principal.fromActor(Self), adminAccount);
@@ -735,7 +735,7 @@ actor Self {
       activeSeason := 0;
       activeGameweek := 0;
     };
-    let result = predictionsInstance.deleteSeason(id);
+    predictionsInstance.deleteSeason(id);
     return seasonsInstance.deleteSeason(id);
   };
 
@@ -787,7 +787,7 @@ actor Self {
       return #err(#NotAuthorized);
     };
 
-    let result = seasonsInstance.updateFixture(seasonId, gameweekNumber, fixtureId, homeTeamId, awayTeamId, fixtureStatus, homeGoals, awayGoals);
+    seasonsInstance.updateFixture(seasonId, gameweekNumber, fixtureId, homeTeamId, awayTeamId, fixtureStatus, homeGoals, awayGoals);
 
     let fixtures = seasonsInstance.getFixtures(seasonId, gameweekNumber);
     switch(fixtures){
@@ -805,7 +805,7 @@ actor Self {
       return #err(#NotAuthorized);
     };
 
-    let result = seasonsInstance.deleteFixture(seasonId, gameweekNumber, fixtureId);
+    seasonsInstance.deleteFixture(seasonId, gameweekNumber, fixtureId);
 
     let fixtures = seasonsInstance.getFixtures(seasonId, gameweekNumber);
     switch(fixtures){
