@@ -85,7 +85,7 @@ const Leaderboard = () => {
           </Dropdown>
           {viewData.status > 1 && (
             <p className="mt-3">
-              <strong>Total Pot:</strong> {(Number(viewData.totalPot) / 1e8).toFixed(0)} ICP
+              <strong>Total Pot:</strong> {(Number(viewData.totalPot) / 1e8).toFixed(2)} ICP
             </p>
           )}
           {viewData.status == 3 && (

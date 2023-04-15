@@ -566,6 +566,9 @@ actor Self {
         return #err(#NotFound);
       };
       case (?profile) {
+        if(not profilesInstance.isWalletValid(profile.wallet)){
+          return #err(#NotAllowed);
+        };
         return await bookInstance.withdrawICP(Principal.fromActor(Self), caller, amount, profile.wallet);
       };
     };
