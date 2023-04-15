@@ -84,12 +84,12 @@ const EditFixtures = () => {
                     <Table className="custom-table" bordered>
                         <thead>
                             <tr>
-                            <th>Home Team</th>
-                            <th>Away Team</th>
-                            <th>Status</th>
-                            <th>Home Goals</th>
-                            <th>Away Goals</th>
-                            <th>Options</th>
+                            <th><small>Home Team</small></th>
+                            <th><small>Away Team</small></th>
+                            <th><small>Status</small></th>
+                            <th><small>Home Goals</small></th>
+                            <th><small>Away Goals</small></th>
+                            <th><small>Options</small></th>
                             </tr>
                         </thead>
                         <tbody>

@@ -72,51 +72,42 @@ const Season = () => {
           <Card className="mt-4 custom-card mb-4">
             <Card.Header className="text-center">
               <h2>Season: {season.name}</h2>
-            </Card.Header>
-            <Card.Body>
-              <Row className="justify-content-md-center">
-                <Col md={12}>
-                  <Card className="mt-4">
-                    <Card.Header className="text-center">
                       <h2>Gameweeks</h2>
-                    </Card.Header>
-                    <Card.Body>
-                      <div className="table-responsive">
-                        <Table className="custom-table" bordered>
-                          <thead>
-                            <tr>
-                              <th>Number</th>
-                              <th>Status</th>
-                              <th>Fixtures</th>
-                              <th>Options</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {gameweeks.map((gameweek) => (
-                              <tr key={gameweek.number}>
-                                <td>{gameweek.number}</td>
-                                <td>{getGameweekStatus(gameweek.status)}</td>
-                                <td>{gameweek.fixtureCount}</td>
-                                <td>
-                                <Dropdown alignRight className="custom-dropdown">
-                                    <Dropdown.Toggle variant="secondary" id="dropdown-basic">Options</Dropdown.Toggle>
-                                    <Dropdown.Menu>
-                                        <Dropdown.Item href="#" onClick={() => updateStatus(gameweek)}>Update Status</Dropdown.Item>
-                                        <LinkContainer to={`/fixtures/${seasonId}/${gameweek.number}`}>
-                                            <Dropdown.Item>Fixtures</Dropdown.Item>
-                                        </LinkContainer>
-                                    </Dropdown.Menu>
-                                </Dropdown>
-                                </td>
-                              </tr>
-                            ))}
-                          </tbody>
-                        </Table>
-                      </div>
-                    </Card.Body>
-                  </Card>
-                </Col>
-              </Row>
+            </Card.Header>
+            
+            <Card.Body>
+              <div className="table-responsive">
+                <Table className="custom-table" bordered>
+                  <thead>
+                    <tr>
+                      <th><small>No.</small></th>
+                      <th><small>Status</small></th>
+                      <th><small>Fixtures</small></th>
+                      <th><small>Options</small></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {gameweeks.map((gameweek) => (
+                      <tr key={gameweek.number}>
+                        <td>{gameweek.number}</td>
+                        <td>{getGameweekStatus(gameweek.status)}</td>
+                        <td>{gameweek.fixtureCount}</td>
+                        <td>
+                        <Dropdown alignRight className="custom-dropdown">
+                            <Dropdown.Toggle variant="secondary" id="dropdown-basic">Options</Dropdown.Toggle>
+                            <Dropdown.Menu>
+                                <Dropdown.Item href="#" onClick={() => updateStatus(gameweek)}>Update Status</Dropdown.Item>
+                                <LinkContainer to={`/fixtures/${seasonId}/${gameweek.number}`}>
+                                    <Dropdown.Item>Fixtures</Dropdown.Item>
+                                </LinkContainer>
+                            </Dropdown.Menu>
+                        </Dropdown>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </Table>
+              </div>
             </Card.Body>
           </Card>
         </Col>

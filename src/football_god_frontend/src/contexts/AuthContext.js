@@ -10,6 +10,27 @@ export const AuthProvider = ({ children }) => {
   const [isAdmin, setIsAdmin] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loading, setLoading] = useState(true);
+
+  const deleteIndexedDB = (dbName) => {
+    return new Promise((resolve, reject) => {
+      const request = window.indexedDB.deleteDatabase(dbName);
+    
+      request.onsuccess = () => {
+        console.log('IndexedDB successfully deleted');
+        window.location.reload();
+        resolve();
+      };
+  
+      request.onerror = (event) => {
+        console.error('Error deleting IndexedDB:', event);
+        reject(event);
+      };
+  
+      request.onblocked = () => {
+        console.warn('IndexedDB delete request blocked. Please close all other tabs using the database.');
+      };
+    });
+  };
  
   useEffect(() => {
     const initAuthClient = async () => {
@@ -31,7 +52,7 @@ export const AuthProvider = ({ children }) => {
         }
         setAuthClient(authClient);
       }
-      catch{
+      catch (error){
         console.error('Error during AuthClient initialization:', error);
         await deleteIndexedDB('auth-client-db');
       }
