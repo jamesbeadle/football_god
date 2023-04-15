@@ -113,13 +113,13 @@ const Play = () => {
               <Form onSubmit={(e) => { e.preventDefault(); submitScores(false); }}>
                 <Form.Row className="mb-2">
                   <Col xs={4} className="text-center font-weight-bold">
-                    Home Score
+                    <small>Home Score</small>
                   </Col>
                   <Col xs={4} className="text-center font-weight-bold">
-                    Fixture
+                  <small>Fixture</small>
                   </Col>
                   <Col xs={4} className="text-center font-weight-bold">
-                    Away Score
+                  <small>Away Score</small>
                   </Col>
                 </Form.Row>
                 {viewData.fixtures.map((fixture) => (

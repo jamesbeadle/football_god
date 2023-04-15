@@ -69,7 +69,7 @@ const Leaderboard = () => {
         <Col md={8}>
           <h2 className="text-center mt-4">Leaderboard</h2>
           <Dropdown className="mt-3">
-            <Dropdown.Toggle variant="primary" id="season-dropdown">
+            <Dropdown.Toggle id="season-dropdown" className="custom-button">
               {viewData.activeSeasonName}
             </Dropdown.Toggle>
             <Dropdown.Menu>
@@ -81,7 +81,7 @@ const Leaderboard = () => {
             </Dropdown.Menu>
           </Dropdown>
           <Dropdown className="mt-3">
-            <Dropdown.Toggle variant="primary" id="gameweek-dropdown">
+            <Dropdown.Toggle id="gameweek-dropdown"  className="custom-button">
               {`Gameweek ${viewData.activeGameweekNumber}`}
             </Dropdown.Toggle>
             <Dropdown.Menu>
@@ -94,22 +94,22 @@ const Leaderboard = () => {
           </Dropdown>
           {viewData.status > 1 && (
             <p className="mt-3">
-              <strong>Total Pot:</strong> {(Number(viewData.totalPot) / 1e8).toFixed(4)} ICP
+              <strong>Total Pot:</strong> {(Number(viewData.totalPot) / 1e8).toFixed(0)} ICP
             </p>
           )}
           {viewData.status == 3 && (
             <p className="mt-3">
-              <strong>Winners Share:</strong> {(Number(viewData.winningShare) / 1e8).toFixed(4)} ICP
+              <strong>Winners Share:</strong> {(Number(viewData.winningShare) / 1e8).toFixed(2)} ICP
             </p>
           )}
           <p className='mt-3'><small>You can update your display name in on your profile page.</small></p>
           <Table striped bordered hover responsive className="mt-1">
             <thead>
               <tr>
-                <th>Position</th>
-                <th>Name</th>
-                <th>Score</th>
-                <th>View</th>
+                <th><small>Pos</small></th>
+                <th><small>Name</small></th>
+                <th><small>Score</small></th>
+                <th><small>View</small></th>
               </tr>
             </thead>
             <tbody>
