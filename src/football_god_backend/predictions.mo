@@ -5,6 +5,7 @@ import Text "mo:base/Text";
 import List "mo:base/List";
 import Iter "mo:base/Iter";
 import Array "mo:base/Array";
+import Int "mo:base/Int";
 import Nat8 "mo:base/Nat8";
 import Nat32 "mo:base/Nat32";
 import Nat64 "mo:base/Nat64";
@@ -155,6 +156,24 @@ module {
           };
       };
 
+      func generatePositionText(sortedEntries: List.List<DTOs.LeaderboardEntryDTO>) : List.List<DTOs.LeaderboardEntryDTO> {
+        var position = 1;
+        var previousScore: ?Nat8 = null;
+
+        func updatePosition(entry: DTOs.LeaderboardEntryDTO) : DTOs.LeaderboardEntryDTO {
+          if (previousScore == null or previousScore != ?entry.correctScores) {
+            previousScore := ?entry.correctScores;
+            let updatedEntry = {entry with position = Int.toText(position)};
+            position += 1;
+            return updatedEntry;
+          } else {
+            return {entry with position = "-"};
+          }
+        };
+
+        return List.map(sortedEntries, updatePosition);
+      };
+
       let leaderboardEntries = Array.map< (Types.PrincipalName, List.List<Types.UserGameweek>), List.List<DTOs.LeaderboardEntryDTO>>(Iter.toArray(userPredictions.entries()), func ((principal, userGameweeks): (Types.PrincipalName, List.List<Types.UserGameweek>)) : List.List<DTOs.LeaderboardEntryDTO> {
           let filteredGameweeks = List.filter(userGameweeks, func (ugw: Types.UserGameweek) : Bool {
               return ugw.seasonId == seasonId and ugw.gameweekNumber == gameweekNumber;
@@ -175,9 +194,10 @@ module {
 
       let flattenedLeaderboardEntries = List.flatten<DTOs.LeaderboardEntryDTO>(List.fromArray(leaderboardEntries));
       let sortedLeaderboardEntries = mergeSort(flattenedLeaderboardEntries);
-      
-      var totalEntries: Nat = List.size(sortedLeaderboardEntries);
-      let paginatedLeaderboardEntries = List.take(List.drop(sortedLeaderboardEntries, start), count);
+      let positionedLeaderboardEntries = generatePositionText(sortedLeaderboardEntries);
+  
+      var totalEntries: Nat = List.size(positionedLeaderboardEntries);
+      let paginatedLeaderboardEntries = List.take(List.drop(positionedLeaderboardEntries, start), count);
 
       let leaderboard: DTOs.LeaderBoardDTO = {
         seasons = [];

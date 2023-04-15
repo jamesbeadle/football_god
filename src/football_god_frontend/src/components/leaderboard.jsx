@@ -104,12 +104,10 @@ const Leaderboard = () => {
               </tr>
             </thead>
             <tbody>
-              {viewData.leaderboardEntries.map((entry, index) => (
+              {viewData.leaderboardEntries.map((entry) => (
                 <tr key={entry.principalName}>
                   <td>
-                    {index === 0 || entry.correctScores !== viewData.leaderboardEntries[index - 1].correctScores
-                      ? index + 1 + page * count
-                      : "-"}
+                    {entry.position}
                   </td>
                   <td>{entry.principalName == entry.displayName ? "Unknown" : entry.displayName}</td>
                   <td>{entry.correctScores} / {entry.totalFixtures}</td>
