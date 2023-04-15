@@ -89,7 +89,7 @@ const CorrectPredictions = () => {
                               <td>{submission.displayName}</td>
                               <td>
                                   <LinkContainer to={`/view-prediction/${submission.principalName}/${viewData.seasonId}/${viewData.gameweekNumber}`}>
-                                      <Button variant="primary" className="mb-4 w-100">
+                                      <Button className="mb-4 w-100 custom-button">
                                           View
                                       </Button>
                                   </LinkContainer>
@@ -100,13 +100,13 @@ const CorrectPredictions = () => {
                   </Table>
                   <div className="d-flex justify-content-center mt-3">
                     <ButtonGroup>
-                      <Button onClick={() => handlePageChange(-1)} variant="primary" disabled={page === 0}>
+                      <Button onClick={() => handlePageChange(-1)} className="custom-button" disabled={page === 0}>
                         Prior
                       </Button>
                       <div className="d-flex align-items-center mr-3 ml-3">
                         <p className="mb-0">Page {page + 1}</p>
                       </div>
-                      <Button onClick={() => handlePageChange(1)} variant="primary" disabled={(page + 1) * count >= viewData.totalEntries}>
+                      <Button onClick={() => handlePageChange(1)} className="custom-button" disabled={(page + 1) * count >= viewData.totalEntries}>
                         Next
                       </Button>
                     </ButtonGroup>

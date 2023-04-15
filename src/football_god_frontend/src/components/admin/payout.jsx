@@ -57,7 +57,7 @@ const Payout = () => {
               <p>Number of Winners: {viewData.winnerCount}</p>
               <p>Share per Winner: {(Number(viewData.winnerShare) / 1e8)} ICP</p>
               <div className="text-center mt-3">
-                <Button onClick={handlePayout} variant="primary">
+                <Button onClick={handlePayout} className="custom-button">
                   Pay Out
                 </Button>
               </div>

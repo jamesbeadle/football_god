@@ -59,33 +59,33 @@ const Admin = () => {
                 </p>
                 <Row>
                   <LinkContainer to="/teams">
-                    <Button variant="primary" className="mb-4 w-100">
+                    <Button className="mb-4 w-100 custom-button">
                       Manage Teams
                     </Button>
                   </LinkContainer>
                 </Row>
                 <Row>
                   <LinkContainer to="/seasons">
-                    <Button variant="primary" className="mb-4 w-100">
+                    <Button className="mb-4 w-100 custom-button">
                       Manage Seasons
                     </Button>
                   </LinkContainer>
                 </Row>
                 <Row>
-                  <Button variant="primary" onClick={() => { setShowSystemStateModal(true); }} className="mb-4 w-100">
+                  <Button onClick={() => { setShowSystemStateModal(true); }} className="mb-4 w-100 custom-button">
                     Set System State
                   </Button>
                 </Row>
                 <Row>
                   <LinkContainer to="/payout">
-                    <Button variant="primary" className="mb-4 w-100">
+                    <Button className="mb-4 w-100 custom-button">
                       Payout Gameweek
                     </Button>
                   </LinkContainer>
                 </Row>
                 <Row>
                   <LinkContainer to="/balances">
-                    <Button variant="primary" className="mb-4 w-100">
+                    <Button className="mb-4 w-100 custom-button">
                       Account Balances
                     </Button>
                   </LinkContainer>

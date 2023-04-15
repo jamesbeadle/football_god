@@ -77,7 +77,7 @@ const SystemStateModal = ({ show, onHide, setIsLoading, activeSeason, activeGame
                 <Button variant="danger" onClick={unsetSystemState}>
                     Unset System State
                 </Button>
-                <Button variant="primary" onClick={handleSubmit}>
+                <Button className="custom-button" onClick={handleSubmit}>
                     Save
                 </Button>
             </Modal.Footer>

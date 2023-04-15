@@ -19,6 +19,8 @@ const ViewPrediction = () => {
 
   const fetchViewData = async () => {
     const data = await football_god_backend_actor.getViewPredictionDTO(userId, Number(seasonId), Number(gameweekNumber));
+    console.log(data)
+    console.log(data)
     setViewData(data);
   };
 
@@ -37,17 +39,20 @@ const ViewPrediction = () => {
               <h2>View Prediction</h2>
             </Card.Header>
             <Card.Body>
-              <p>Player: {viewData.playerName}</p>
-              <p>Season: {viewData.seasonName}</p>
-              <p>Gameweek: {gameweekNumber}</p>
-              <p>
-                Total Correct: {viewData.correctScores} / {viewData.totalFixtures}
-              </p>
+              <small>Player: {viewData.playerName == userId ? "Unknown" : viewData.displayName}</small>
+              <br />
+              <small>Season: {viewData.seasonName}</small>
+              <br />
+              <small>Gameweek: {gameweekNumber}</small>
+              <br />
+              <small>Total Correct: {viewData.correctScores} / {viewData.totalFixtures}</small>
+              <br />
+              <br />
               <ListGroup>
                 {viewData.fixtures.map((prediction) =>{ 
                   const cssClass = prediction.status == 0 ? 'unplayed' : prediction.correct ? 'correct' : 'incorrect';
                   return (
-                  <ListGroup.Item key={prediction.fixtureId} className={`prediction-${cssClass}`}>
+                  <ListGroup.Item key={prediction.fixtureId} className={`prediction-${cssClass} mt-2`}>
                     <div>{prediction.homeTeamName} vs {prediction.awayTeamName}</div>
                     <div>Prediction: {prediction.homeTeamPrediction} - {prediction.awayTeamPrediction}</div>
                     {prediction.status > 0 && <div>Actual Score: {prediction.homeTeamGoals} - {prediction.awayTeamGoals}</div>}

@@ -77,7 +77,7 @@ const EditFixtures = () => {
                     <strong>Gameweek:</strong> {gameweekNumber}
                 </p>
                 
-                <Button variant="primary" className="mb-3" onClick={addFixture}>
+                <Button className="mb-3 custom-button" onClick={addFixture}>
                     New Fixture
                 </Button>
                 <div className="table-responsive">

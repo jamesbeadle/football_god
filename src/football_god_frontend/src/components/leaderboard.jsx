@@ -123,7 +123,7 @@ const Leaderboard = () => {
                   <td>{entry.principalName == entry.displayName ? "Unknown" : entry.displayName}</td>
                   <td>{entry.correctScores} / {entry.totalFixtures}</td>
                   <td>
-                    <Button className="custom-button" onClick={() => handleViewPrediction(entry.principalName)} variant="primary">
+                    <Button className="custom-button" onClick={() => handleViewPrediction(entry.principalName)}>
                       View
                     </Button>
                   </td>

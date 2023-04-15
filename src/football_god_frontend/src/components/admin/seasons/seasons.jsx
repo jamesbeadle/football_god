@@ -74,7 +74,7 @@ const Seasons = () => {
               <h2>Seasons</h2>
             </Card.Header>
             <Card.Body>
-              <Button variant="primary" className="mb-3" onClick={() => setShowCreateModal(true)}>
+              <Button className="mb-3 custom-button" onClick={() => setShowCreateModal(true)}>
                 Create New Season
               </Button>
               <div className="table-responsive">

@@ -87,7 +87,7 @@ const UpdateNameModal = ({ show, onHide, displayName }) => {
       </Modal.Body>
       <Modal.Footer>
         <Button variant="secondary" onClick={hideModal}>Cancel</Button>
-        <Button variant="primary" onClick={handleSubmit}>Save</Button>
+        <Button className="custom-button" onClick={handleSubmit}>Save</Button>
       </Modal.Footer>
     </Modal>
     

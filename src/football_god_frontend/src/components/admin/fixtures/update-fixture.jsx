@@ -149,7 +149,7 @@ const UpdateFixture = () => {
               </Row>
               <Row>
                 <Col md={4}>
-                  <Button variant="primary" className="mb-3 w-100" onClick={ handleSubmitFixture }>
+                  <Button className="mb-3 w-100 custom-button" onClick={ handleSubmitFixture }>
                     Save Fixture
                   </Button>
                 </Col>

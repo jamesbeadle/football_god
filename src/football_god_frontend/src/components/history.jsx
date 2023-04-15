@@ -81,7 +81,7 @@ const History = () => {
                     <td className="text-center">{entry.correctScores} / {entry.totalFixtures}</td>
                     <td className="text-center">{entry.sweepstakeEntered || Number(entry.winnings) > 0 ? (Number(entry.winnings) / 1e8).toFixed(2) : 'N/A'}</td>
                     <td className="text-center">
-                      <Button className="custom-button" onClick={() => handleViewSubmission(entry.gameweekNumber)} variant="primary">
+                      <Button className="custom-button" onClick={() => handleViewSubmission(entry.gameweekNumber)}>
                         View
                       </Button>
                     </td>

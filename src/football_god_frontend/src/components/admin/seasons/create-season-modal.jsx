@@ -59,7 +59,7 @@ const CreateSeasonModal = ({ show, onHide, setIsLoading }) => {
         </Modal.Body>
         <Modal.Footer>
             <Button variant="secondary" onClick={onHide}>Cancel</Button>
-            <Button variant="primary" onClick={handleSubmit}>Save</Button>
+            <Button className="custom-button" onClick={handleSubmit}>Save</Button>
         </Modal.Footer>
     </Modal>
   );

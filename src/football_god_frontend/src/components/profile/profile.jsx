@@ -101,7 +101,7 @@ const Profile = () => {
                       <h6>Display Name:</h6>
                       <p>
                         <small>{viewData.displayName}</small>
-                        <Button className="btn btn-primary btn-sm ml-3" onClick={() => setShowUpdateNameModal(true)}>Update</Button>
+                        <Button className="btn custom-button btn-sm ml-3" onClick={() => setShowUpdateNameModal(true)}>Update</Button>
                       </p>
                     </ListGroup.Item>
 
@@ -109,7 +109,7 @@ const Profile = () => {
                       <h6>Account Balance:</h6>
                       <p>
                         <small>{(Number(viewData.balance) / 1e8).toFixed(4)} ICP</small>
-                        <Button className="btn btn-primary btn-sm ml-3" onClick={() => setShowWithdrawICPModal(true)}>Withdraw</Button>
+                        <Button className="btn custom-button btn-sm ml-3" onClick={() => setShowWithdrawICPModal(true)}>Withdraw</Button>
                       </p>
                     </ListGroup.Item>
 
@@ -117,7 +117,7 @@ const Profile = () => {
                       <h6>Withdraw Wallet Address:</h6>
                       <p>
                         <small>{viewData.walletAddress != "" ? viewData.walletAddress : 'Not Set'}</small>
-                        <Button className="btn btn-primary btn-sm ml-3" onClick={() => setShowUpdateWalletModal(true)}>Update</Button>
+                        <Button className="btn custom-button btn-sm ml-3" onClick={() => setShowUpdateWalletModal(true)}>Update</Button>
                       </p>
                     </ListGroup.Item>
                   </ListGroup>

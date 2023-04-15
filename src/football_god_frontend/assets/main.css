@@ -38,11 +38,11 @@ body {
 }
 
 .prediction-correct {
-  background-color: #d4edda;
+  background-color: #118026;
 }
 
 .prediction-incorrect {
-  background-color: #f8d7da;
+  background-color: #802C11;
 }
 
 .custom-number-input::-webkit-inner-spin-button,

@@ -148,7 +148,7 @@ const Season = () => {
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={() => { setShowGameweekStatusModal(false); }}>Cancel</Button>
-          <Button variant="primary" onClick={submitUpdateGameweekStatus}>Save</Button>
+          <Button className="custom-button" onClick={submitUpdateGameweekStatus}>Save</Button>
         </Modal.Footer>
       </Modal>
 

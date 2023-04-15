@@ -73,7 +73,7 @@ const Teams = () => {
               <h2>Teams</h2>
             </Card.Header>
             <Card.Body>
-              <Button variant="primary" className="mb-3" onClick={() => setShowCreateModal(true)}>
+              <Button className="mb-3 custom-button" onClick={() => setShowCreateModal(true)}>
                 Create New Team
               </Button>
               <div className="table-responsive">
