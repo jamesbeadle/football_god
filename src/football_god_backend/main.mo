@@ -282,7 +282,27 @@ actor Self {
   };
 
   public shared ({caller}) func getViewPredictionDTO(principalName: Text, seasonId: Nat16, gameweekNumber: Nat8) : async DTOs.ViewPredictionDTO {
-      
+    
+    let activePrincipal = Principal.toText(caller);
+    
+    if(seasonId == activeSeason and gameweekNumber == activeGameweek and activePrincipal != principalName){
+      let gameweek = seasonsInstance.getGameweek(activeSeason, activeGameweek);
+      switch(gameweek){
+        case (null) {};
+        case (?g) {
+          if(g.status < 2){
+            return {
+              seasonName = "";
+              playerName = "";
+              fixtures = [];
+              correctScores = 0;
+              totalFixtures = 0;
+            };
+          };
+        };
+      };
+    };
+
     var seasonName = "";
     var fixtures: [DTOs.FixtureDTO] = [];
     var playerName = "";
