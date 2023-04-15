@@ -13,23 +13,31 @@ export const AuthProvider = ({ children }) => {
  
   useEffect(() => {
     const initAuthClient = async () => {
-      const authClient = await AuthClient.create({
-        idleOptions: {
-          idleTimeout: 1000 * 60 * 60
+      try{
+        const authClient = await AuthClient.create({
+          idleOptions: {
+            idleTimeout: 1000 * 60 * 60
+          }
+        });
+        const isLoggedIn = await checkLoginStatus(authClient);
+        
+        if (isLoggedIn) {
+          const identity = authClient.getIdentity();
+          Actor.agentOf(football_god_backend_actor).replaceIdentity(identity);
+          const userIsAdmin = await football_god_backend_actor.isAdmin();
+          setIsAdmin(userIsAdmin);
+        } else {
+          setIsAdmin(false);
         }
-      });
-      const isLoggedIn = await checkLoginStatus(authClient);
-      
-      if (isLoggedIn) {
-        const identity = authClient.getIdentity();
-        Actor.agentOf(football_god_backend_actor).replaceIdentity(identity);
-        const userIsAdmin = await football_god_backend_actor.isAdmin();
-        setIsAdmin(userIsAdmin);
-      } else {
-        setIsAdmin(false);
+        setAuthClient(authClient);
       }
-      setAuthClient(authClient);
-      setLoading(false);
+      catch{
+        console.error('Error during AuthClient initialization:', error);
+        await deleteIndexedDB('auth-client-db');
+      }
+      finally{
+        setLoading(false);
+      }
     };
     initAuthClient();
   }, []);
