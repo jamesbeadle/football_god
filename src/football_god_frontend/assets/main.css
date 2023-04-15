@@ -33,18 +33,6 @@ body {
     position: absolute;
 }
 
-.prediction-unplayed {
-  background-color: #170733 !important;
-}
-
-.prediction-correct {
-  background-color: #118026 !important;
-}
-
-.prediction-incorrect {
-  background-color: #802C11 !important;
-}
-
 .custom-number-input::-webkit-inner-spin-button,
 .custom-number-input::-webkit-outer-spin-button {
   -webkit-appearance: none;
@@ -54,6 +42,17 @@ body {
 .custom-number-input {
   -moz-appearance: textfield;
   appearance: none;
+}
+
+input[type=number]::-webkit-outer-spin-button,
+input[type=number]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+input[type=number] {
+    -moz-appearance:textfield;
+    appearance: textfield;
 }
 
 .column-border {
@@ -82,6 +81,26 @@ body {
   color: black !important;
 }
 
+.custom-nav{
+  background-color: #310480;
+}
+
+.custom-footer{
+  background-color: #2C1D45;
+}
+
+.prediction-unplayed {
+  background-color: #170733 !important;
+}
+
+.prediction-correct {
+  background-color: #118026 !important;
+}
+
+.prediction-incorrect {
+  background-color: #802C11 !important;
+}
+
 .fixture-row{
   background-color: #30014A;
   border-width: 2px !important;
@@ -91,21 +110,17 @@ body {
   border-radius: 5px;
 }
 
-.custom-nav{
-  background-color: #310480;
-}
-
-.custom-footer{
-  background-color: #2C1D45;
-}
-
 .custom-button{
-  background-color: #412570;
+  background-color: #412570 !important;
   border:none;
 }
 
-.custom-button:hover{
-  background-color: #8B50F2;
+.custom-button:hover, .custom-button:hover:visited {
+  background-color: #8B50F2 !important;
+}
+
+.dropdown-item:hover, .dropdown-item:hover:visited {
+  background-color: #8B50F2 !important;
 }
 
 .custom-button:focus {
@@ -155,16 +170,6 @@ body {
   border: none;
 }
 
-input[type=number]::-webkit-outer-spin-button,
-input[type=number]::-webkit-inner-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
-}
-
-input[type=number] {
-    -moz-appearance:textfield;
-    appearance: textfield;
-}
 
 .readonly-input {
   background-color: inherit !important;
