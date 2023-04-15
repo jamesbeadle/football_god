@@ -11,7 +11,7 @@ const Leaderboard = () => {
   const [selectedSeason, setSelectedSeason] = useState(0);
   const [selectedGameweek, setSelectedGameweek] = useState(0);
   const [page, setPage] = useState(0);
-  const count = 10;
+  const count = 25;
 
   useEffect(() => {
     console.log(page);

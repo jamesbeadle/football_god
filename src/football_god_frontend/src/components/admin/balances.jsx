@@ -85,7 +85,7 @@ const Balances = () => {
                       <div className="d-flex align-items-center mr-3 ml-3">
                         <p className="mb-0">Page {page}</p>
                       </div>
-                      <Button onClick={() => handlePageChange(1)} className="custom-button" disabled={(page + 1) * count >= viewData.totalEntries}>
+                      <Button onClick={() => handlePageChange(1)} className="custom-button" disabled={page * count >= viewData.totalEntries}>
                         Next
                       </Button>
                     </ButtonGroup>
