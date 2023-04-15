@@ -78,7 +78,7 @@ const Seasons = () => {
                 Create New Season
               </Button>
               <div className="table-responsive">
-                <Table striped bordered hover>
+                <Table className="custom-table" bordered>
                   <thead>
                     <tr>
                       <th>ID</th>

@@ -34,15 +34,15 @@ body {
 }
 
 .prediction-unplayed {
-  background-color: #170733;
+  background-color: #170733 !important;
 }
 
 .prediction-correct {
-  background-color: #118026;
+  background-color: #118026 !important;
 }
 
 .prediction-incorrect {
-  background-color: #802C11;
+  background-color: #802C11 !important;
 }
 
 .custom-number-input::-webkit-inner-spin-button,
@@ -174,11 +174,27 @@ input[type=number] {
 }
 
 
-.leaderboard{
+.custom-table{
   background-color: #310480;
   color:white;
 }
 
 .list-group-item{
   background-color: #150333;
+}
+
+
+.modal-content{
+  background-color: #310480 !important;
+  color:white !important;
+}
+
+.dropdown-menu{
+  background-color: #310480 !important;
+  color:white !important;
+}
+
+.dropdown-item{
+  background-color: #310480 !important;
+  color:white !important;
 }

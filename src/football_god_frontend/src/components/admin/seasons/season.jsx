@@ -82,7 +82,7 @@ const Season = () => {
                     </Card.Header>
                     <Card.Body>
                       <div className="table-responsive">
-                        <Table striped bordered hover>
+                        <Table className="custom-table" bordered>
                           <thead>
                             <tr>
                               <th>Number</th>

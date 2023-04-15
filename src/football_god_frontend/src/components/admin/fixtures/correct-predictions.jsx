@@ -74,7 +74,7 @@ const CorrectPredictions = () => {
                 </p>
                 
                 <div className="table-responsive">
-                  <Table striped bordered hover>
+                  <Table className="custom-table" bordered>
                       <thead>
                           <tr>
                               <th>Principal Name</th>

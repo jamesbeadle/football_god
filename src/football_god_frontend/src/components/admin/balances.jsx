@@ -60,7 +60,7 @@ const Balances = () => {
             <Card.Body>
               <p>Sweepstake Pot Balance: {(Number(viewData.potAccountBalance) / 1e8).toFixed(4)} ICP</p>
               <div className="table-responsive">
-                <Table striped bordered hover>
+                <Table className="custom-table" bordered>
                   <thead>
                     <tr>
                       <th>User Principal</th>

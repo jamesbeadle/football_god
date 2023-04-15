@@ -62,7 +62,7 @@ const History = () => {
               ))}
             </Dropdown.Menu>
           </Dropdown>
-          <Table bordered responsive className="mt-4 leaderboard">
+          <Table bordered responsive className="mt-4 custom-table">
               <thead>
                 <tr>
                   <th className="text-center"><small>GW</small></th>

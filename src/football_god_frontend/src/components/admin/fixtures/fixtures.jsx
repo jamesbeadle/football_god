@@ -81,7 +81,7 @@ const EditFixtures = () => {
                     New Fixture
                 </Button>
                 <div className="table-responsive">
-                    <Table striped bordered hover>
+                    <Table className="custom-table" bordered>
                         <thead>
                             <tr>
                             <th>Home Team</th>
