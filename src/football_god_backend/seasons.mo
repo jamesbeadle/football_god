@@ -3,6 +3,7 @@ import Result "mo:base/Result";
 import Iter "mo:base/Iter";
 import Nat8 "mo:base/Nat8";
 import Array "mo:base/Array";
+import Debug "mo:base/Debug";
 
 import Types "types";
 import DTOs "DTOs";

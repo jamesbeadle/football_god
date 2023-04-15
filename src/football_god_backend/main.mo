@@ -481,7 +481,6 @@ actor Self {
     switch(gameweek){
       case (null) {};
       case (?g) {
-        Debug.print(debug_show g);
         totalPot := g.totalPot;
         winningShare := g.winningShare;
         status := g.status;
