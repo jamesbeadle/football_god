@@ -33,7 +33,7 @@ actor Self {
   let predictionsInstance = Predictions.Predictions();
   let bookInstance = Book.Book();
   
-  let adminAccount = "fa8d07c80a2e257cdac33786a99bafc4395ea2c913e0caa4c2d0fff0759b7879";
+  let adminAccount = "24a05e4c2778deeb6bfe2dab4aeabda4d3694806360f2019577c20b174f387c1";
 
   //stable variables populated on pre upgrade
   private stable var activeSeason : Nat16 = 0;

@@ -100,6 +100,7 @@ const Leaderboard = () => {
                 <th><small>Pos</small></th>
                 <th><small>Name</small></th>
                 <th><small>Score</small></th>
+                <th><small>Paid</small></th>
                 <th><small>View</small></th>
               </tr>
             </thead>
@@ -111,6 +112,7 @@ const Leaderboard = () => {
                   </td>
                   <td>{entry.principalName == entry.displayName ? "Unknown" : entry.displayName}</td>
                   <td>{entry.correctScores} / {entry.totalFixtures}</td>
+                  <td>{entry.enteredSweepstake ? "Yes" : "No"}</td>
                   <td>
                     <Button className="custom-button" onClick={() => handleViewPrediction(entry.principalName)}>
                       View

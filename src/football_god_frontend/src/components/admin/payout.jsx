@@ -54,7 +54,7 @@ const Payout = () => {
               <p>Total Pot: {(Number(viewData.potAccountBalance) / 1e8)} ICP</p>
               <p>Admin Fee (5%): {(Number(viewData.adminFee) / 1e8)} ICP</p>
               <p>Total Payout (95%): {(Number(viewData.gameweekPot) / 1e8)} ICP</p>
-              <p>Number of Winners: {viewData.winnerCount}</p>
+              <p>Number of Winners: {Number(viewData.winnerCount)}</p>
               <p>Share per Winner: {(Number(viewData.winnerShare) / 1e8)} ICP</p>
               <div className="text-center mt-3">
                 <Button onClick={handlePayout} className="custom-button">
