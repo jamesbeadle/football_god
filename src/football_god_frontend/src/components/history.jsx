@@ -24,7 +24,6 @@ const History = () => {
     const identity = authClient.getIdentity();
     Actor.agentOf(football_god_backend_actor).replaceIdentity(identity);
     const data = await football_god_backend_actor.getHistoryDTO(Number(selectedSeason));
-    console.log(data)
     setViewData(data);
     setSelectedSeason(data.activeSeasonId);
     setIsLoading(false);
@@ -63,7 +62,7 @@ const History = () => {
               ))}
             </Dropdown.Menu>
           </Dropdown>
-          <Table striped bordered hover responsive className="mt-4">
+          <Table bordered responsive className="mt-4 leaderboard">
               <thead>
                 <tr>
                   <th className="text-center"><small>GW</small></th>

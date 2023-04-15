@@ -34,7 +34,7 @@ body {
 }
 
 .prediction-unplayed {
-  background-color: #f8f9fa;
+  background-color: #170733;
 }
 
 .prediction-correct {
@@ -171,4 +171,14 @@ input[type=number] {
   border: none;
   outline: none;
   cursor: default;
+}
+
+
+.leaderboard{
+  background-color: #310480;
+  color:white;
+}
+
+.list-group-item{
+  background-color: #150333;
 }

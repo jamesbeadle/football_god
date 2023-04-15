@@ -103,7 +103,7 @@ const Leaderboard = () => {
             </p>
           )}
           <p className='mt-3'><small>You can update your display name in on your profile page.</small></p>
-          <Table striped bordered hover responsive className="mt-1">
+          <Table bordered responsive className="mt-1 leaderboard">
             <thead>
               <tr>
                 <th><small>Pos</small></th>

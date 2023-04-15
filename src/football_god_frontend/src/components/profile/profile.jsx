@@ -79,25 +79,23 @@ const Profile = () => {
           <Row className="justify-content-md-center">
             <Col md={8}>
               <Card className="mt-4 custom-card mb-4">
-                <Card.Header className="text-center">
-                  <h2>Profile</h2>
-                </Card.Header>
                 <Card.Body>
-                  <ListGroup variant="flush">
+                  <h2 className="text-center">Profile</h2>
+                  <ListGroup>
 
-                    <ListGroup.Item>
+                    <ListGroup.Item className="mt-1 mb-1">
                       <h6>Principal Id:</h6>
                       <p><small>{viewData.principalName}</small></p>
                     </ListGroup.Item>
 
-                    <ListGroup.Item>
+                    <ListGroup.Item className="mt-1 mb-1">
                       <h6>Deposit Address:</h6>
                       <p><small>{toHexString(viewData.depositAddress)}{' '}
                       <CopyIcon onClick={() => {navigator.clipboard.writeText(toHexString(viewData.depositAddress)); setCopied(true); }} /></small></p>
                       {copied && <p className="text-primary"><small>Copied to clipboard.</small></p>}
                     </ListGroup.Item>
 
-                    <ListGroup.Item>
+                    <ListGroup.Item className="mt-1 mb-1">
                       <h6>Display Name:</h6>
                       <p>
                         <small>{viewData.displayName}</small>
@@ -105,7 +103,7 @@ const Profile = () => {
                       </p>
                     </ListGroup.Item>
 
-                    <ListGroup.Item>
+                    <ListGroup.Item className="mt-1 mb-1">
                       <h6>Account Balance:</h6>
                       <p>
                         <small>{(Number(viewData.balance) / 1e8).toFixed(4)} ICP</small>
@@ -113,7 +111,7 @@ const Profile = () => {
                       </p>
                     </ListGroup.Item>
 
-                    <ListGroup.Item>
+                    <ListGroup.Item className="mt-1 mb-1">
                       <h6>Withdraw Wallet Address:</h6>
                       <p>
                         <small>{viewData.walletAddress != "" ? viewData.walletAddress : 'Not Set'}</small>

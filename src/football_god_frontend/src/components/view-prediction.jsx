@@ -19,8 +19,6 @@ const ViewPrediction = () => {
 
   const fetchViewData = async () => {
     const data = await football_god_backend_actor.getViewPredictionDTO(userId, Number(seasonId), Number(gameweekNumber));
-    console.log(data)
-    console.log(data)
     setViewData(data);
   };
 
@@ -39,7 +37,7 @@ const ViewPrediction = () => {
               <h2>View Prediction</h2>
             </Card.Header>
             <Card.Body>
-              <small>Player: {viewData.playerName == userId ? "Unknown" : viewData.displayName}</small>
+              <small>Player: {viewData.playerName == userId ? "Unknown" : viewData.playerName}</small>
               <br />
               <small>Season: {viewData.seasonName}</small>
               <br />
