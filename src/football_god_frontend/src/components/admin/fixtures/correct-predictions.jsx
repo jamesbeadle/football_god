@@ -98,7 +98,7 @@ const CorrectPredictions = () => {
                           ))}
                       </tbody>
                   </Table>
-                  <div className="d-flex justify-content-center mt-3">
+                  <div className="d-flex justify-content-center mt-3 mb-3">
                     <ButtonGroup>
                       <Button onClick={() => handlePageChange(-1)} className="custom-button" disabled={page === 0}>
                         Prior

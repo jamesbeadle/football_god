@@ -23,7 +23,6 @@ const Play = () => {
 
   const fetchViewData = async () => {
     const data = await football_god_backend_actor.getPlayDTO();
-    console.log(data);
     setViewData(data);
   };
 

@@ -11,20 +11,11 @@ const Leaderboard = () => {
   const [selectedSeason, setSelectedSeason] = useState(0);
   const [selectedGameweek, setSelectedGameweek] = useState(0);
   const [page, setPage] = useState(0);
-  const count = 25;
+  const count = 10;
 
   useEffect(() => {
-    const fetchData = async () => {
-      await fetchViewData();
-    };
-    fetchData();
-  }, []);
-
-  useEffect(() => {
-    if (selectedSeason == 0 && selectedGameweek == 0) {
-      return;
-    }
-
+    console.log(page);
+    
     setIsLoading(true);
     
     const fetchData = async () => {
@@ -131,7 +122,7 @@ const Leaderboard = () => {
               ))}
             </tbody>
           </Table>
-          <div className="d-flex justify-content-center mt-3">
+          <div className="d-flex justify-content-center mt-3 mb-3">
             <ButtonGroup>
               <Button className="custom-button" onClick={() => handlePageChange(-1)} disabled={page === 0}>
                 Prior

@@ -473,7 +473,7 @@ actor Self {
       seasonsBuffer.add(seasonDTO);
     };
 
-    let leaderBoardDTO = predictionsInstance.getLeaderboardDTO(activeSeasonId, activeGameweekNumber, page, count);
+    let leaderBoardDTO = predictionsInstance.getLeaderboardDTO(activeSeasonId, activeGameweekNumber, page * count, count);
     let leaderboardEntriesWithNames = profilesInstance.getLeaderboardEntryNames(leaderBoardDTO);
 
     //get total pot and winning share
