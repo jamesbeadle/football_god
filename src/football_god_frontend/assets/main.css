@@ -56,10 +56,6 @@ body {
   appearance: none;
 }
 
-.fixture-row {
-  border: 1px solid #ccc;
-}
-
 .column-border {
   border-left: 1px solid #ccc;
   border-right: 1px solid #ccc;
@@ -88,6 +84,7 @@ body {
 
 .fixture-row{
   background-color: #30014A;
+  border-width: 2px !important;
   border: solid;
   border-color: #570339;
   padding: 5px;
@@ -111,7 +108,11 @@ body {
   background-color: #8B50F2;
 }
 
-.custom-button:focus {background-color: #8C04D9 !important;}   
+.custom-button:focus {
+  background-color: #412570 !important; 
+  border:none !important;
+  box-shadow: none !important;
+}   
 .custom-button:active {background-color: #8C04D9 !important;}  
 .custom-button:visited {background-color: #412570 !important;} 
 .custom-button:disabled {background-color: #412570 !important;} 
@@ -152,4 +153,22 @@ body {
   background-color: #150333;
   color: white;
   border: none;
+}
+
+input[type=number]::-webkit-outer-spin-button,
+input[type=number]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+input[type=number] {
+    -moz-appearance:textfield;
+    appearance: textfield;
+}
+
+.readonly-input {
+  background-color: inherit !important;
+  border: none;
+  outline: none;
+  cursor: default;
 }

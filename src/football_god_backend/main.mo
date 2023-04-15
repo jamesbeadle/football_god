@@ -159,7 +159,9 @@ actor Self {
 
       let season = seasonsInstance.getSeason(activeSeason);
       switch(season){
-        case (null) {};
+        case (null) {
+          accountBalance := await bookInstance.getUserAccountBalance(Principal.fromActor(Self), caller);
+        };
         case (?s) {
           activeSeasonName := s.name;
         };
@@ -181,7 +183,9 @@ actor Self {
             });
 
             switch(existingPrediction){
-              case (null) { };
+              case (null) { 
+                accountBalance := await bookInstance.getUserAccountBalance(Principal.fromActor(Self), caller);
+              };
               case (?prediction){
                 predictedHomeGoals := prediction.homeGoals;
                 predictedAwayGoals := prediction.awayGoals;
@@ -260,6 +264,7 @@ actor Self {
     };
 
     let paidForSweepstake = predictionsInstance.checkSweepstakePaid(Principal.toText(caller), activeSeason, activeGameweek);
+    var sweepstakeEntered = paidForSweepstake;
 
     if(playDTO.enterSweepstake and not paidForSweepstake){
       let canAffordEntry = await bookInstance.canAffordEntry(Principal.fromActor(Self), caller);
@@ -269,9 +274,11 @@ actor Self {
       };
 
       await bookInstance.transferEntryFee(Principal.fromActor(Self), caller);
+      sweepstakeEntered := true;
     };
 
-    return predictionsInstance.submitPredictions(principalName, activeSeason, activeGameweek, playDTO.fixtures, playDTO.enterSweepstake);
+
+    return predictionsInstance.submitPredictions(principalName, activeSeason, activeGameweek, playDTO.fixtures, sweepstakeEntered);
   };
 
   public shared ({caller}) func getViewPredictionDTO(principalName: Text, seasonId: Nat16, gameweekNumber: Nat8) : async DTOs.ViewPredictionDTO {

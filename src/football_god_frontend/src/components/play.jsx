@@ -23,6 +23,7 @@ const Play = () => {
 
   const fetchViewData = async () => {
     const data = await football_god_backend_actor.getPlayDTO();
+    console.log(data);
     setViewData(data);
   };
 
@@ -133,7 +134,8 @@ const Play = () => {
                          placeholder=""
                          value={fixture.homeTeamPrediction}
                          onChange={(event) => handleChange(event, fixture.fixtureId, 'home')}
-                         className="d-block mx-auto custom-number-input w-100 custom-input"
+                         className="d-block mx-auto custom-number-input w-100 custom-input readonly-input" 
+                         readOnly
                        />
                        <Button className="custom-button" onClick={() => decrementScore(fixture.fixtureId, 'home')} style={{width: '100%', padding: '0', height: '3rem'}}>-</Button>
                      </Form.Group>
@@ -153,7 +155,8 @@ const Play = () => {
                          placeholder=""
                          value={fixture.awayTeamPrediction}
                          onChange={(event) => handleChange(event, fixture.fixtureId, 'away')}
-                         className="d-block mx-auto custom-number-input w-100 custom-input"
+                         className="d-block mx-auto custom-number-input w-100 custom-input readonly-input"
+                         readOnly
                        />
                        <Button className="custom-button" onClick={() => decrementScore(fixture.fixtureId, 'away')} style={{width: '100%', padding: '0', height: '3rem'}}>-</Button>
                      </Form.Group>

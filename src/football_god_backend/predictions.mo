@@ -89,11 +89,12 @@ module {
             if (alreadyExists) {
               List.map<Types.UserGameweek, Types.UserGameweek>(userGameweeks, func (ugw: Types.UserGameweek) : Types.UserGameweek {
                 if (ugw.seasonId == seasonId and ugw.gameweekNumber == gameweekNumber) {
+
                   let updatedUserGameweek = {
                     seasonId = userGameweek.seasonId;
                     gameweekNumber = userGameweek.gameweekNumber;
                     predictions = userGameweek.predictions;
-                    enteredSweepstake = ugw.enteredSweepstake;
+                    enteredSweepstake = enterSweepstake;
                     correctScores = userGameweek.correctScores;
                     predictionCount = userGameweek.predictionCount;
                     winnings = userGameweek.winnings;
