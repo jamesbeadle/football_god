@@ -10,6 +10,8 @@ const Home = () => {
   const [isLoading, setIsLoading] = useState(true);
   const { isAuthenticated, login } = useContext(AuthContext);
   const [viewData, setViewData] = useState(null);
+  const [loadingPotBalance, setLoadingPotBalance] = useState(true);
+  const [balanceData, setBalanceData] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -19,9 +21,25 @@ const Home = () => {
     fetchData();
   }, []);
 
+  useEffect(() => {
+    if(!viewData){
+      return;
+    }
+    const fetchData = async () => {
+      await fetchPotBalance();
+      setLoadingPotBalance(false);
+    };
+    fetchData();
+  }, [viewData]);
+
   const fetchViewData = async () => {
     const data = await football_god_backend_actor.getHomeDTO();
     setViewData(data);
+  };
+
+  const fetchPotBalance = async () => {
+    const data = await football_god_backend_actor.getGameweekPotDTO();
+    setBalanceData(data);
   };
   
   return (
@@ -47,7 +65,14 @@ const Home = () => {
             <div className="d-flex justify-content-center mb-3">
               <img src={ICPImage} alt="ICP" style={{ maxWidth: '100px', maxHeight: '50px' }} />
             </div>
-            <h2 className="mb-3 text-center">{(Number(viewData.gameweekPot) / 1e8).toFixed(0)} ICP</h2>
+            {loadingPotBalance ? (
+              <div className="d-flex flex-column align-items-center justify-content-center">
+                <Spinner animation="border" />
+                <p className='text-center mt-1'>Loading Pot</p>
+              </div>
+            ) : (
+              <h2 className="mb-3 text-center">{(Number(balanceData.gameweekPot) / 1e8).toFixed(0)} ICP</h2>
+            )}
             <h2 className="mb-3 text-center">Total Pot</h2>
               {!isAuthenticated && (
                   <Button onClick={() => { login(); }} className="w-100 mb-3 custom-button" size="lg">Sign In To Play</Button>

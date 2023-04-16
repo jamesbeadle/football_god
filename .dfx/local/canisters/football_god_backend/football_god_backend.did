@@ -43,7 +43,6 @@ type Result =
  };
 type ProfileDTO = 
  record {
-   balance: nat64;
    depositAddress: blob;
    displayName: text;
    principalName: text;
@@ -51,7 +50,6 @@ type ProfileDTO =
  };
 type PlayDTO = 
  record {
-   accountBalance: nat64;
    activeGameweekNumber: nat8;
    activeSeasonId: nat16;
    activeSeasonName: text;
@@ -106,7 +104,6 @@ type HomeDTO =
    activeSeasonId: nat16;
    activeSeasonName: text;
    fixtures: vec FixtureDTO;
-   gameweekPot: nat64;
    gameweekStatus: nat8;
    hasPredictions: bool;
    principalName: text;
@@ -120,6 +117,7 @@ type HistoryDTO =
    seasons: vec SeasonDTO;
    userId: text;
  };
+type GameweekPotDTO = record {gameweekPot: nat64;};
 type GameweekDTO = 
  record {
    correctScores: nat8;
@@ -199,6 +197,7 @@ type AdminDTO =
    activeSeasonName: text;
    seasons: vec SeasonDTO;
  };
+type AccountBalanceDTO = record {accountBalance: nat64;};
 service : {
   addFixtureToGameweek: (nat16, nat8, nat16, nat16) -> (Result);
   createSeason: (text, nat16) -> (Result);
@@ -206,26 +205,28 @@ service : {
   deleteFixture: (nat16, nat8, nat32) -> (Result);
   deleteSeason: (nat16) -> (Result);
   deleteTeam: (nat16) -> (Result);
-  getAdminDTO: () -> (AdminDTO);
+  getAccountBalanceDTO: () -> (AccountBalanceDTO);
+  getAdminDTO: () -> (AdminDTO) query;
   getCorrectPredictionsDTO: (nat16, nat8, nat32, nat, nat) ->
    (CorrectPredictionsDTO);
   getFixture: (nat16, nat8, nat32) -> (opt Fixture) query;
   getFixtures: (nat16, nat8) -> (vec Fixture) query;
+  getGameweekPotDTO: () -> (GameweekPotDTO);
   getGameweeks: (nat16) -> (vec Gameweek) query;
-  getHistoryDTO: (nat16) -> (HistoryDTO);
-  getHomeDTO: () -> (HomeDTO);
-  getLeaderboardDTO: (nat16, nat8, nat, nat) -> (LeaderBoardDTO);
+  getHistoryDTO: (nat16) -> (HistoryDTO) query;
+  getHomeDTO: () -> (HomeDTO) query;
+  getLeaderboardDTO: (nat16, nat8, nat, nat) -> (LeaderBoardDTO) query;
   getPayoutDTO: () -> (PayoutDTO);
-  getPlayDTO: () -> (PlayDTO);
-  getProfileDTO: () -> (ProfileDTO);
+  getPlayDTO: () -> (PlayDTO) query;
+  getProfileDTO: () -> (ProfileDTO) query;
   getSeason: (nat16) -> (opt Season) query;
   getSeasons: () -> (vec Season) query;
   getTeams: () -> (vec Team) query;
   getUserBalancesDTO: (nat, nat) -> (BalancesDTO);
-  getViewPredictionDTO: (text, nat16, nat8) -> (ViewPredictionDTO);
+  getViewPredictionDTO: (text, nat16, nat8) -> (ViewPredictionDTO) query;
   isAdmin: () -> (bool) query;
-  isDisplayNameValid: (text) -> (bool);
-  isWalletValid: (text) -> (bool);
+  isDisplayNameValid: (text) -> (bool) query;
+  isWalletValid: (text) -> (bool) query;
   payoutSweepstake: () -> (Result);
   setSystemState: (nat16, nat8) -> (Result);
   submitPlayDTO: (SubmitPlayDTO) -> (Result);

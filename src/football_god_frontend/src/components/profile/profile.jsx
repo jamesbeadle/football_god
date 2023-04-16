@@ -16,6 +16,8 @@ const Profile = () => {
   const [showUpdateNameModal, setShowUpdateNameModal] = useState(false);
   const [showUpdateWalletModal, setShowUpdateWalletModal] = useState(false);
   const [showWithdrawICPModal, setShowWithdrawICPModal] = useState(false);
+  const [loadingAccountBalance, setLoadingAccountBalance] = useState(true);
+  const [balanceData, setBalanceData] = useState(null);
 
   const [viewData, setViewData] = useState(null);
   const [copied, setCopied] = useState(false);
@@ -28,11 +30,29 @@ const Profile = () => {
     fetchData();
   }, []);
 
+  useEffect(() => {
+    if(!viewData){
+      return;
+    }
+    const fetchData = async () => {
+      await fetchAccountBalance();
+      setLoadingAccountBalance(false);
+    };
+    fetchData();
+  }, [viewData]);
+
   const fetchViewData = async () => {
     const identity = authClient.getIdentity();
     Actor.agentOf(football_god_backend_actor).replaceIdentity(identity);
     const data = await football_god_backend_actor.getProfileDTO();
     setViewData(data);
+  };
+
+  const fetchAccountBalance = async () => {
+    const identity = authClient.getIdentity();
+    Actor.agentOf(football_god_backend_actor).replaceIdentity(identity);
+    const data = await football_god_backend_actor.getAccountBalanceDTO();
+    setBalanceData(data);
   };
 
   const hideUpdateNameModal = async (changed) => {
@@ -91,7 +111,16 @@ const Profile = () => {
                     <ListGroup.Item className="mt-1 mb-1">
                       <h6>Deposit Address:</h6>
                       <p><small>{toHexString(viewData.depositAddress)}{' '}
-                      <CopyIcon onClick={() => {navigator.clipboard.writeText(toHexString(viewData.depositAddress)); setCopied(true); }} /></small></p>
+                      <CopyIcon onClick={async () => {
+                        try {
+                          await navigator.clipboard.writeText(toHexString(viewData.depositAddress));
+                          setCopied(true);
+                        } catch (error) {
+                          console.error('Clipboard API error:', error);
+                          setCopied(false);
+                        }
+                      }} />
+                      </small></p>
                       {copied && <p className="text-primary"><small>Copied to clipboard.</small></p>}
                     </ListGroup.Item>
 
@@ -105,10 +134,17 @@ const Profile = () => {
 
                     <ListGroup.Item className="mt-1 mb-1">
                       <h6>Account Balance:</h6>
-                      <p>
-                        <small>{(Number(viewData.balance) / 1e8).toFixed(4)} ICP</small>
-                        <Button className="btn custom-button btn-sm ml-3" onClick={() => setShowWithdrawICPModal(true)}>Withdraw</Button>
-                      </p>
+                      {loadingAccountBalance ? (
+                        <div className="d-flex flex-column align-items-center justify-content-center mt-3">
+                          <Spinner animation="border" />
+                          <p className='text-center mt-1'><small>Loading Account Balance</small></p>
+                        </div>
+                      ) :  (
+                        <p>
+                          <small>{(Number(balanceData.accountBalance) / 1e8).toFixed(4)} ICP</small>
+                          <Button className="btn custom-button btn-sm ml-3" onClick={() => setShowWithdrawICPModal(true)}>Withdraw</Button>
+                        </p>
+                        )}
                     </ListGroup.Item>
 
                     <ListGroup.Item className="mt-1 mb-1">
@@ -137,12 +173,14 @@ const Profile = () => {
             wallet={viewData.walletAddress}
           />
 
-          <WithdrawICPModal
-            show={showWithdrawICPModal}
-            onHide={hideWithdrawICPModal}
-            balance={viewData.balance}
-            wallet={viewData.walletAddress}
-          />
+          {!loadingAccountBalance && (
+            <WithdrawICPModal
+              show={showWithdrawICPModal}
+              onHide={hideWithdrawICPModal}
+              balance={balanceData.accountBalance}
+              wallet={viewData.walletAddress}
+            />
+          )}
         </Container>
     )
   );

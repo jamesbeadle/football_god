@@ -14,8 +14,6 @@ const Leaderboard = () => {
   const count = 25;
 
   useEffect(() => {
-    console.log(page);
-    
     setIsLoading(true);
     
     const fetchData = async () => {

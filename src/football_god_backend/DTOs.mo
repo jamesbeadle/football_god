@@ -4,12 +4,15 @@ module DTOs {
         systemUpdating: Bool;
         activeSeasonName: Text;
         activeGameweekNumber: Nat8;
-        gameweekPot: Nat64;
         fixtures: [FixtureDTO];
         gameweekStatus: Nat8;
         hasPredictions: Bool;
         principalName: Text;
         activeSeasonId: Nat16;
+    };
+
+    public type GameweekPotDTO = {
+        gameweekPot: Nat64;
     };
 
     public type PlayDTO = {
@@ -18,8 +21,11 @@ module DTOs {
         activeGameweekNumber: Nat8;
         fixtures: [FixtureDTO];
         sweepstakePaid: Bool;
-        accountBalance: Nat64;
         userId: Text;
+    };
+
+    public type AccountBalanceDTO = {
+        accountBalance: Nat64;
     };
 
     public type SubmitPlayDTO = {
@@ -128,7 +134,6 @@ module DTOs {
         depositAddress: Blob;
         displayName: Text;
         walletAddress: Text;
-        balance: Nat64;
     };
 
     public type CorrectPredictionsDTO = {

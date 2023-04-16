@@ -1,6 +1,7 @@
 import type { Principal } from '@dfinity/principal';
 import type { ActorMethod } from '@dfinity/agent';
 
+export interface AccountBalanceDTO { 'accountBalance' : bigint }
 export interface AdminDTO {
   'activeGameweekNumber' : number,
   'seasons' : Array<SeasonDTO>,
@@ -69,6 +70,7 @@ export interface GameweekDTO {
   'sweepstakeEntered' : boolean,
   'gameweekNumber' : number,
 }
+export interface GameweekPotDTO { 'gameweekPot' : bigint }
 export interface HistoryDTO {
   'seasons' : Array<SeasonDTO>,
   'seasonGameweeks' : Array<GameweekDTO>,
@@ -79,7 +81,6 @@ export interface HistoryDTO {
 export interface HomeDTO {
   'activeGameweekNumber' : number,
   'hasPredictions' : boolean,
-  'gameweekPot' : bigint,
   'systemUpdating' : boolean,
   'gameweekStatus' : number,
   'activeSeasonId' : number,
@@ -121,13 +122,11 @@ export interface PlayDTO {
   'activeGameweekNumber' : number,
   'userId' : string,
   'sweepstakePaid' : boolean,
-  'accountBalance' : bigint,
   'activeSeasonId' : number,
   'activeSeasonName' : string,
   'fixtures' : Array<FixtureDTO>,
 }
 export interface ProfileDTO {
-  'balance' : bigint,
   'displayName' : string,
   'walletAddress' : string,
   'depositAddress' : Uint8Array | number[],
@@ -174,6 +173,7 @@ export interface _SERVICE {
   'deleteFixture' : ActorMethod<[number, number, number], Result>,
   'deleteSeason' : ActorMethod<[number], Result>,
   'deleteTeam' : ActorMethod<[number], Result>,
+  'getAccountBalanceDTO' : ActorMethod<[], AccountBalanceDTO>,
   'getAdminDTO' : ActorMethod<[], AdminDTO>,
   'getCorrectPredictionsDTO' : ActorMethod<
     [number, number, number, bigint, bigint],
@@ -181,6 +181,7 @@ export interface _SERVICE {
   >,
   'getFixture' : ActorMethod<[number, number, number], [] | [Fixture]>,
   'getFixtures' : ActorMethod<[number, number], Array<Fixture>>,
+  'getGameweekPotDTO' : ActorMethod<[], GameweekPotDTO>,
   'getGameweeks' : ActorMethod<[number], Array<Gameweek>>,
   'getHistoryDTO' : ActorMethod<[number], HistoryDTO>,
   'getHomeDTO' : ActorMethod<[], HomeDTO>,

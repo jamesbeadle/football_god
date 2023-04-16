@@ -9,6 +9,7 @@ export const idlFactory = ({ IDL }) => {
     'AlreadyExists' : IDL.Null,
   });
   const Result = IDL.Variant({ 'ok' : IDL.Null, 'err' : Error });
+  const AccountBalanceDTO = IDL.Record({ 'accountBalance' : IDL.Nat64 });
   const GameweekDTO = IDL.Record({
     'totalFixtures' : IDL.Nat8,
     'correctScores' : IDL.Nat8,
@@ -52,6 +53,7 @@ export const idlFactory = ({ IDL }) => {
     'homeGoals' : IDL.Nat8,
     'awayGoals' : IDL.Nat8,
   });
+  const GameweekPotDTO = IDL.Record({ 'gameweekPot' : IDL.Nat64 });
   List_1.fill(IDL.Opt(IDL.Tuple(Fixture, List_1)));
   const Gameweek = IDL.Record({
     'status' : IDL.Nat8,
@@ -84,7 +86,6 @@ export const idlFactory = ({ IDL }) => {
   const HomeDTO = IDL.Record({
     'activeGameweekNumber' : IDL.Nat8,
     'hasPredictions' : IDL.Bool,
-    'gameweekPot' : IDL.Nat64,
     'systemUpdating' : IDL.Bool,
     'gameweekStatus' : IDL.Nat8,
     'activeSeasonId' : IDL.Nat16,
@@ -124,13 +125,11 @@ export const idlFactory = ({ IDL }) => {
     'activeGameweekNumber' : IDL.Nat8,
     'userId' : IDL.Text,
     'sweepstakePaid' : IDL.Bool,
-    'accountBalance' : IDL.Nat64,
     'activeSeasonId' : IDL.Nat16,
     'activeSeasonName' : IDL.Text,
     'fixtures' : IDL.Vec(FixtureDTO),
   });
   const ProfileDTO = IDL.Record({
-    'balance' : IDL.Nat64,
     'displayName' : IDL.Text,
     'walletAddress' : IDL.Text,
     'depositAddress' : IDL.Vec(IDL.Nat8),
@@ -176,7 +175,8 @@ export const idlFactory = ({ IDL }) => {
     'deleteFixture' : IDL.Func([IDL.Nat16, IDL.Nat8, IDL.Nat32], [Result], []),
     'deleteSeason' : IDL.Func([IDL.Nat16], [Result], []),
     'deleteTeam' : IDL.Func([IDL.Nat16], [Result], []),
-    'getAdminDTO' : IDL.Func([], [AdminDTO], []),
+    'getAccountBalanceDTO' : IDL.Func([], [AccountBalanceDTO], []),
+    'getAdminDTO' : IDL.Func([], [AdminDTO], ['query']),
     'getCorrectPredictionsDTO' : IDL.Func(
         [IDL.Nat16, IDL.Nat8, IDL.Nat32, IDL.Nat, IDL.Nat],
         [CorrectPredictionsDTO],
@@ -192,17 +192,18 @@ export const idlFactory = ({ IDL }) => {
         [IDL.Vec(Fixture)],
         ['query'],
       ),
+    'getGameweekPotDTO' : IDL.Func([], [GameweekPotDTO], []),
     'getGameweeks' : IDL.Func([IDL.Nat16], [IDL.Vec(Gameweek)], ['query']),
-    'getHistoryDTO' : IDL.Func([IDL.Nat16], [HistoryDTO], []),
-    'getHomeDTO' : IDL.Func([], [HomeDTO], []),
+    'getHistoryDTO' : IDL.Func([IDL.Nat16], [HistoryDTO], ['query']),
+    'getHomeDTO' : IDL.Func([], [HomeDTO], ['query']),
     'getLeaderboardDTO' : IDL.Func(
         [IDL.Nat16, IDL.Nat8, IDL.Nat, IDL.Nat],
         [LeaderBoardDTO],
-        [],
+        ['query'],
       ),
     'getPayoutDTO' : IDL.Func([], [PayoutDTO], []),
-    'getPlayDTO' : IDL.Func([], [PlayDTO], []),
-    'getProfileDTO' : IDL.Func([], [ProfileDTO], []),
+    'getPlayDTO' : IDL.Func([], [PlayDTO], ['query']),
+    'getProfileDTO' : IDL.Func([], [ProfileDTO], ['query']),
     'getSeason' : IDL.Func([IDL.Nat16], [IDL.Opt(Season)], ['query']),
     'getSeasons' : IDL.Func([], [IDL.Vec(Season)], ['query']),
     'getTeams' : IDL.Func([], [IDL.Vec(Team)], ['query']),
@@ -210,11 +211,11 @@ export const idlFactory = ({ IDL }) => {
     'getViewPredictionDTO' : IDL.Func(
         [IDL.Text, IDL.Nat16, IDL.Nat8],
         [ViewPredictionDTO],
-        [],
+        ['query'],
       ),
     'isAdmin' : IDL.Func([], [IDL.Bool], ['query']),
-    'isDisplayNameValid' : IDL.Func([IDL.Text], [IDL.Bool], []),
-    'isWalletValid' : IDL.Func([IDL.Text], [IDL.Bool], []),
+    'isDisplayNameValid' : IDL.Func([IDL.Text], [IDL.Bool], ['query']),
+    'isWalletValid' : IDL.Func([IDL.Text], [IDL.Bool], ['query']),
     'payoutSweepstake' : IDL.Func([], [Result], []),
     'setSystemState' : IDL.Func([IDL.Nat16, IDL.Nat8], [Result], []),
     'submitPlayDTO' : IDL.Func([SubmitPlayDTO], [Result], []),

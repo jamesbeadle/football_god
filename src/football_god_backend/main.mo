@@ -24,7 +24,8 @@ import DTOs "DTOs";
 actor Self {
   
   let admins : [Principal] = [
-    Principal.fromText("ld6pc-7sgvt-fs7gg-fvsih-gspgy-34ikk-wrwl6-ixrkc-k54er-7ivom-wae")
+    Principal.fromText("eqlhf-ppkq7-roa5i-4wu6r-jumy3-g2xrc-vfdd5-wtoeu-n7xre-vsktn-lqe")
+    //Principal.fromText("ld6pc-7sgvt-fs7gg-fvsih-gspgy-34ikk-wrwl6-ixrkc-k54er-7ivom-wae")
   ];
 
   let profilesInstance = Profiles.Profiles();
@@ -33,7 +34,7 @@ actor Self {
   let predictionsInstance = Predictions.Predictions();
   let bookInstance = Book.Book();
   
-  let adminAccount = "24a05e4c2778deeb6bfe2dab4aeabda4d3694806360f2019577c20b174f387c1";
+  let adminAccount = "66d542934fd0be74eaef2f5542b14832799be9f85d256555927a9760dcf2ac96";
 
   //stable variables populated on pre upgrade
   private stable var activeSeason : Nat16 = 0;
@@ -61,12 +62,11 @@ actor Self {
 
 
 
-  public shared ({caller}) func getHomeDTO() : async DTOs.HomeDTO {
+  public shared query ({caller}) func getHomeDTO() : async DTOs.HomeDTO {
 
     let systemUpdating = (activeSeason == 0) or (activeGameweek == 0);
     var activeSeasonName = "";
     var activeGameweekNumber = activeGameweek;
-    var gameweekPot = Nat64.fromNat(0);
     var fixtures: [DTOs.FixtureDTO] = [];
     var gameweekStatus = Nat8.fromNat(0);
 
@@ -88,9 +88,6 @@ actor Self {
         };
       };
     
-      let defaultSubAccount = getDefaultAccount();
-      gameweekPot := await bookInstance.getGameweekPotBalance(defaultSubAccount);
-
       let fixturesBuffer = Buffer.fromArray<DTOs.FixtureDTO>(fixtures);
       let gameweekFixtures = seasonsInstance.getFixtures(activeSeason, activeGameweek);
       switch (gameweekFixtures) {
@@ -118,8 +115,6 @@ actor Self {
       fixtures := Buffer.toArray(fixturesBuffer);
     };
 
-
-
     var hasPredictions = false;
     var principalName = "";
 
@@ -132,7 +127,6 @@ actor Self {
       systemUpdating = systemUpdating;
       activeSeasonName = activeSeasonName;
       activeGameweekNumber = activeGameweekNumber;
-      gameweekPot = gameweekPot;
       fixtures = fixtures;
       gameweekStatus = gameweekStatus;
       hasPredictions = hasPredictions;
@@ -143,7 +137,25 @@ actor Self {
     return homeDTO;
   };
 
-  public shared ({caller}) func getPlayDTO() : async DTOs.PlayDTO {
+  public shared ({caller}) func getGameweekPotDTO() : async DTOs.GameweekPotDTO {
+
+    var gameweekPot = Nat64.fromNat(0);
+    let systemUpdating = (activeSeason == 0) or (activeGameweek == 0);
+    
+    if(not systemUpdating){
+      let defaultSubAccount = getDefaultAccount();
+      gameweekPot := await bookInstance.getGameweekPotBalance(defaultSubAccount);
+    };
+
+
+    let gamweekPotDTO: DTOs.GameweekPotDTO = {
+      gameweekPot = gameweekPot;
+    };
+
+    return gamweekPotDTO;
+  };
+
+  public shared query ({caller}) func getPlayDTO() : async DTOs.PlayDTO {
     
     assert not Principal.isAnonymous(caller);
     let principalName = Principal.toText(caller);
@@ -154,14 +166,11 @@ actor Self {
     var sweepstakePaid = false;
     var accountBalance = Nat64.fromNat(0);
 
-
     if(not systemUpdating){
 
       let season = seasonsInstance.getSeason(activeSeason);
       switch(season){
-        case (null) {
-          accountBalance := await bookInstance.getUserAccountBalance(Principal.fromActor(Self), caller);
-        };
+        case (null) { };
         case (?s) {
           activeSeasonName := s.name;
         };
@@ -183,18 +192,11 @@ actor Self {
             });
 
             switch(existingPrediction){
-              case (null) { 
-                accountBalance := await bookInstance.getUserAccountBalance(Principal.fromActor(Self), caller);
-              };
+              case (null) { };
               case (?prediction){
                 predictedHomeGoals := prediction.homeGoals;
                 predictedAwayGoals := prediction.awayGoals;
                 sweepstakePaid := predictionsInstance.checkSweepstakePaid(principalName, activeSeason, activeGameweek);
-
-                if(not sweepstakePaid){
-                  accountBalance := await bookInstance.getUserAccountBalance(Principal.fromActor(Self), caller);
-                };
-
               };
             };
 
@@ -226,11 +228,28 @@ actor Self {
       activeGameweekNumber = activeGameweekNumber;
       fixtures = fixtures;
       sweepstakePaid = sweepstakePaid;
-      accountBalance = accountBalance;
       userId = principalName;
     };
 
     return playDTO;
+  };
+
+  public shared ({caller}) func getAccountBalanceDTO() : async DTOs.AccountBalanceDTO {
+    
+    assert not Principal.isAnonymous(caller);
+    let principalName = Principal.toText(caller);
+    let systemUpdating = (activeSeason == 0) or (activeGameweek == 0);
+    var accountBalance = Nat64.fromNat(0);
+
+    if(not systemUpdating){
+      accountBalance := await bookInstance.getUserAccountBalance(Principal.fromActor(Self), caller);
+    };
+
+    let accountBalanceDTO: DTOs.AccountBalanceDTO = {
+      accountBalance = accountBalance;
+    };
+
+    return accountBalanceDTO;
   };
 
   public shared ({caller}) func submitPlayDTO(playDTO: DTOs.SubmitPlayDTO) : async Result.Result<(), Types.Error> {
@@ -281,7 +300,7 @@ actor Self {
     return predictionsInstance.submitPredictions(principalName, activeSeason, activeGameweek, playDTO.fixtures, sweepstakeEntered);
   };
 
-  public shared ({caller}) func getViewPredictionDTO(principalName: Text, seasonId: Nat16, gameweekNumber: Nat8) : async DTOs.ViewPredictionDTO {
+  public shared query ({caller}) func getViewPredictionDTO(principalName: Text, seasonId: Nat16, gameweekNumber: Nat8) : async DTOs.ViewPredictionDTO {
     
     let activePrincipal = Principal.toText(caller);
     
@@ -387,7 +406,7 @@ actor Self {
     return viewPredictionDTO;
   };
 
-  public shared ({caller}) func getHistoryDTO(seasonId: Nat16) : async DTOs.HistoryDTO {
+  public shared query ({caller}) func getHistoryDTO(seasonId: Nat16) : async DTOs.HistoryDTO {
     assert not Principal.isAnonymous(caller);
     let principalName = Principal.toText(caller);
 
@@ -434,7 +453,7 @@ actor Self {
     return historyDTO;
   };
 
-  public shared ({caller}) func getLeaderboardDTO(seasonId: Nat16, gameweekNumber: Nat8, page: Nat, count: Nat) : async DTOs.LeaderBoardDTO {
+  public shared query ({caller}) func getLeaderboardDTO(seasonId: Nat16, gameweekNumber: Nat8, page: Nat, count: Nat) : async DTOs.LeaderBoardDTO {
 
     var activeSeasonId = seasonId;
     var activeGameweekNumber = gameweekNumber;
@@ -501,7 +520,7 @@ actor Self {
     return leaderboard; 
   };
 
-  public shared ({caller}) func getProfileDTO() : async DTOs.ProfileDTO {
+  public shared query ({caller}) func getProfileDTO() : async DTOs.ProfileDTO {
     assert not Principal.isAnonymous(caller);
     let principalName = Principal.toText(caller);
     var depositAddress = Blob.fromArray([]);
@@ -524,19 +543,16 @@ actor Self {
       };
     };
 
-    let balance = await bookInstance.getUserAccountBalance(Principal.fromActor(Self), caller);
-
     let profileDTO: DTOs.ProfileDTO = {
       principalName = principalName;
       depositAddress = depositAddress;
       displayName = displayName;
       walletAddress = walletAddress;
-      balance = balance;
     };
     
   };
 
-  public shared ({caller}) func isDisplayNameValid(displayName: Text) : async Bool {
+  public shared query ({caller}) func isDisplayNameValid(displayName: Text) : async Bool {
     assert not Principal.isAnonymous(caller);
     return profilesInstance.isDisplayNameValid(displayName);
   };
@@ -551,7 +567,7 @@ actor Self {
     return profilesInstance.updateWalletAddress(Principal.toText(caller), walletAddress);
   };
 
-  public shared ({caller}) func isWalletValid(walletAddress: Text) : async Bool {
+  public shared query ({caller}) func isWalletValid(walletAddress: Text) : async Bool {
     assert not Principal.isAnonymous(caller);
     return profilesInstance.isWalletValid(walletAddress);
   };
@@ -574,7 +590,7 @@ actor Self {
     };
   };
 
-  public shared ({caller}) func getAdminDTO() : async DTOs.AdminDTO {
+  public shared query ({caller}) func getAdminDTO() : async DTOs.AdminDTO {
     assert not Principal.isAnonymous(caller);
     let isCallerAdmin = isAdminForCaller(caller);
     if(isCallerAdmin == false){

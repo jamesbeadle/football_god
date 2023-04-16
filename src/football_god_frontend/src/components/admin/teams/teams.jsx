@@ -50,7 +50,6 @@ const Teams = () => {
 
   const fetchTeams = async () => {
     const teams = await football_god_backend_actor.getTeams();
-    console.log(teams)
     setTeamsData(teams);
     setIsLoading(false);
   };

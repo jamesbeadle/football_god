@@ -12,6 +12,8 @@ const Play = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [loadingText, setLoadingText] = useState('Loading Play');
   const [viewData, setViewData] = useState(null);
+  const [loadingAccountBalance, setLoadingAccountBalance] = useState(true);
+  const [balanceData, setBalanceData] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -21,9 +23,29 @@ const Play = () => {
     fetchData();
   }, []);
 
+  useEffect(() => {
+    if(!viewData){
+      return;
+    }
+    const fetchData = async () => {
+      await fetchAccountBalance();
+      setLoadingAccountBalance(false);
+    };
+    fetchData();
+  }, [viewData]);
+
   const fetchViewData = async () => {
+    const identity = authClient.getIdentity();
+    Actor.agentOf(football_god_backend_actor).replaceIdentity(identity);
     const data = await football_god_backend_actor.getPlayDTO();
     setViewData(data);
+  };
+
+  const fetchAccountBalance = async () => {
+    const identity = authClient.getIdentity();
+    Actor.agentOf(football_god_backend_actor).replaceIdentity(identity);
+    const data = await football_god_backend_actor.getAccountBalanceDTO();
+    setBalanceData(data);
   };
 
   const handleChange = (event, fixtureId, team) => {
@@ -168,13 +190,20 @@ const Play = () => {
                   {viewData.sweepstakePaid ? (
                     <p className="mt-2">You have already paid for the sweepstake.</p>
                     ) : (
-                    <div className="mt-2">
-                      { (Number(viewData.accountBalance) / 1e8) >= 1 ? (
-                        <Button className="play-button" onClick={() => submitScores(true)}>Save & Enter Sweepstake</Button>
+                      loadingAccountBalance ? (
+                        <div className="d-flex flex-column align-items-center justify-content-center mt-3">
+                          <Spinner animation="border" />
+                          <p className='text-center mt-1'><small>Checking Account Balance</small></p>
+                        </div>
                       ) : (
-                        <p>You do not have enough ICP to enter the sweepstake.</p>
-                      )}
+                      <div className="mt-2">
+                        { (Number(balanceData.accountBalance) / 1e8) >= 1 ? (
+                          <Button className="play-button" onClick={() => submitScores(true)}>Save & Enter Sweepstake</Button>
+                        ) : (
+                          <p>You do not have enough ICP to enter the sweepstake.</p>
+                        )}
                       </div>
+                      )
                     )}
                 </div>
               </Form>
