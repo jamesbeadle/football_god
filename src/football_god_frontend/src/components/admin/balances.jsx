@@ -3,15 +3,20 @@ import { Container, Row, Col, Card, Table, Button, ButtonGroup, Spinner } from '
 import { football_god_backend as football_god_backend_actor } from '../../../../declarations/football_god_backend';
 import { Actor } from "@dfinity/agent";
 import { AuthContext } from "../../contexts/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 const Balances = () => {
-  const { authClient } = useContext(AuthContext);
+  const { authClient, isAdmin } = useContext(AuthContext);
+  const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(true);
   const [viewData, setViewData] = useState(null);
   const [page, setPage] = useState(1);
   const count = 25;
 
   useEffect(() => {
+    if(!isAdmin){
+      navigate("/");
+    }
     const fetchData = async () => {
       await fetchViewData();
     };

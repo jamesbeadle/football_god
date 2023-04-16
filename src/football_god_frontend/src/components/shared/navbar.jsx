@@ -3,7 +3,7 @@ import { AuthContext } from "../../contexts/AuthContext";
 import { Navbar, Nav, Button } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 import Logo from '../../../assets/logo.png';
-import { LogoutIcon, ProfileIcon, HistoryIcon } from '../icons';
+import { LogoutIcon, ProfileIcon, HistoryIcon, LeaderboardIcon } from '../icons';
 
 
 const MyNavbar = () => {
@@ -28,6 +28,10 @@ const MyNavbar = () => {
           {isAuthenticated ? (
             <>
               {isAdmin && <Nav.Link as={Link} to="/admin" onClick={() => setExpanded(false)} className="custom-nav-link">Admin</Nav.Link>}
+              <Nav.Link as={Link} to="/leaderboard" onClick={() => setExpanded(false)} className="custom-nav-link">
+                Leaderboards
+                <LeaderboardIcon className="custom-icon" ></LeaderboardIcon>
+              </Nav.Link>
               <Nav.Link as={Link} to="/history" onClick={() => setExpanded(false)} className="custom-nav-link">
                 History
                 <HistoryIcon className="custom-icon" ></HistoryIcon>

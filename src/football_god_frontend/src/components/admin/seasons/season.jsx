@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { Container, Row, Col, Card, Button, Table, Dropdown, Modal, Spinner, Form } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
 import { getGameweekStatus } from '../../helpers';
@@ -9,7 +9,8 @@ import { Actor } from "@dfinity/agent";
 
 const Season = () => {
   
-  const { authClient } = useContext(AuthContext);
+  const { authClient, isAdmin } = useContext(AuthContext);
+  const navigate = useNavigate();
   const { seasonId } = useParams();
   const [isLoading, setIsLoading] = useState(true);
   const [loadingText, setLoadingText] = useState('');
@@ -51,6 +52,9 @@ const Season = () => {
   };
   
   useEffect(() => {
+    if(!isAdmin){
+      navigate("/");
+    }
     const fetchData = async () => {
       await fetchSeason();
       await fetchGameweeks();

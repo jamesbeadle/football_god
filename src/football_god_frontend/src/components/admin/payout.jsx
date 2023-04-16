@@ -3,14 +3,19 @@ import { Container, Row, Col, Card, Button, Spinner } from 'react-bootstrap';
 import { football_god_backend as football_god_backend_actor } from '../../../../declarations/football_god_backend';
 import { Actor } from "@dfinity/agent";
 import { AuthContext } from "../../contexts/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 const Payout = () => {
-  const { authClient } = useContext(AuthContext);
+  const { authClient, isAdmin } = useContext(AuthContext);
+  const navigate = useNavigate();
 
   const [isLoading, setIsLoading] = useState(true);
   const [viewData, setViewData] = useState(null);
   
   useEffect(() => {
+    if(!isAdmin){
+      navigate("/");
+    }
     const fetchData = async () => {
       await fetchViewData();
     };

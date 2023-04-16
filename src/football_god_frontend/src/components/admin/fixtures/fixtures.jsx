@@ -1,13 +1,16 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { Container, Row, Col, Card, Button, Table, Spinner, Dropdown } from 'react-bootstrap';
 import { Link } from "react-router-dom";
 import "../../../../assets/main.css";
 import { football_god_backend as football_god_backend_actor } from '../../../../../declarations/football_god_backend';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { getFixtureStatus } from '../../helpers';
 import CreateFixtureModal from './create-fixture-modal';
+import { AuthContext } from "../../../contexts/AuthContext";
 
 const EditFixtures = () => {
+  const { isAdmin } = useContext(AuthContext);
+  const navigate = useNavigate();
   const { seasonId, gameweekNumber } = useParams();
 
   const [isLoading, setIsLoading] = useState(true);
@@ -41,6 +44,9 @@ const EditFixtures = () => {
   };
   
   useEffect(() => {
+    if(!isAdmin){
+      navigate("/");
+    }
     const fetchData = async () => {
       await fetchTeams();
       await fetchSeason();

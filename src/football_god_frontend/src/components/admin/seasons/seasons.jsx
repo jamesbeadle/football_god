@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { Container, Row, Col, Card, Button, Table, Spinner, Dropdown  } from 'react-bootstrap';
 import { Link } from "react-router-dom";
 import "../../../../assets/main.css"; 
@@ -6,8 +6,12 @@ import { football_god_backend as football_god_backend_actor } from '../../../../
 import CreateSeasonModal from './create-season-modal';
 import EditSeasonModal from './edit-season-modal';
 import DeleteSeasonModal from './delete-season-modal';
+import { useNavigate } from "react-router-dom";
+import { AuthContext } from "../../../contexts/AuthContext";
 
 const Seasons = () => {
+  const { isAdmin } = useContext(AuthContext);
+  const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(true);
   const [loadingText, setLoadingText] = useState('');
   const [seasonsData, setSeasonsData] = useState([]);
@@ -56,6 +60,9 @@ const Seasons = () => {
   };
 
   useEffect(() => {
+    if(!isAdmin){
+      navigate("/");
+    }
     fetchSeasons();
   }, []);
 

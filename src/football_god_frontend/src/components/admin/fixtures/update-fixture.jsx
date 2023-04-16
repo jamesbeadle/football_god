@@ -10,7 +10,7 @@ const UpdateFixture = () => {
   const { seasonId, gameweekNumber, fixtureId } = useParams();
   const navigate = useNavigate();
 
-  const { authClient } = useContext(AuthContext);
+  const { authClient, isAdmin } = useContext(AuthContext);
   const [isLoading, setIsLoading] = useState(false);
   const [loadingText, setLoadingText] = useState('');
   const [teams, setTeamsData] = useState([]);
@@ -57,6 +57,9 @@ const UpdateFixture = () => {
   };
 
   useEffect(() => {
+    if(!isAdmin){
+      navigate("/");
+    }
     const fetchData = async () => {
       await fetchFixture();
       await fetchTeams();
