@@ -198,7 +198,7 @@ const Play = () => {
                       ) : (
                       <div className="mt-2">
                         { (Number(balanceData.accountBalance) / 1e8) >= 1 ? (
-                          <Button className="play-button" onClick={() => submitScores(true)}>Save & Enter Sweepstake</Button>
+                          <Button className="play-button" onClick={() => submitScores(true)}>Save & Enter Sweepstake - 1 ICP</Button>
                         ) : (
                           <p>You do not have enough ICP to enter the sweepstake.</p>
                         )}
