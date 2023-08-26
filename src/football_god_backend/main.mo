@@ -60,8 +60,6 @@ actor Self {
     return isAdminForCaller(caller);
   };
 
-
-
   public shared query ({caller}) func getHomeDTO() : async DTOs.HomeDTO {
 
     let systemUpdating = (activeSeason == 0) or (activeGameweek == 0);
@@ -520,7 +518,7 @@ actor Self {
     return leaderboard; 
   };
 
-  public shared query ({caller}) func getProfileDTO() : async DTOs.ProfileDTO {
+  public shared ({caller}) func getProfileDTO() : async DTOs.ProfileDTO {
     assert not Principal.isAnonymous(caller);
     let principalName = Principal.toText(caller);
     var depositAddress = Blob.fromArray([]);

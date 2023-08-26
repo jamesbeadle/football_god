@@ -218,7 +218,7 @@ service : {
   getLeaderboardDTO: (nat16, nat8, nat, nat) -> (LeaderBoardDTO) query;
   getPayoutDTO: () -> (PayoutDTO);
   getPlayDTO: () -> (PlayDTO) query;
-  getProfileDTO: () -> (ProfileDTO) query;
+  getProfileDTO: () -> (ProfileDTO);
   getSeason: (nat16) -> (opt Season) query;
   getSeasons: () -> (vec Season) query;
   getTeams: () -> (vec Team) query;

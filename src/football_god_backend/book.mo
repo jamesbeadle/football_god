@@ -1,5 +1,5 @@
 import Account "Account";
-import Ledger "canister:ledger";
+import ICPLedger "Ledger";
 import Float "mo:base/Float";
 import Int "mo:base/Int";
 import Int64 "mo:base/Int64";
@@ -18,29 +18,30 @@ module {
     
   public class Book(){
     
+    private let ledger  : ICPLedger.Interface = actor(ICPLedger.CANISTER_ID);
     let entry_fee: Nat64 = 100_000_000;
     let icp_fee: Nat64 = 10_000;
    
     public func getGameweekPotBalance(defaultSubAccount: Account.AccountIdentifier) : async Nat64 {
-        let balance = await Ledger.account_balance({ account = defaultSubAccount });
+        let balance = await ledger.account_balance({ account = defaultSubAccount });
         return Int64.toNat64(Float.toInt64(Float.fromInt64(Int64.fromNat64(balance.e8s)) * 0.95));
     };
 
     public func getUserAccountBalance(defaultAccount: Principal, user: Principal) : async Nat64 {
         let source_account = Account.accountIdentifier(defaultAccount, Account.principalToSubaccount(user));
-        let balance = await Ledger.account_balance({ account = source_account });
+        let balance = await ledger.account_balance({ account = source_account });
         return balance.e8s;
     };
 
     public func canAffordEntry(defaultAccount: Principal, user: Principal) : async Bool {
         let source_account = Account.accountIdentifier(defaultAccount, Account.principalToSubaccount(user));
-        let balance = await Ledger.account_balance({ account = source_account });
+        let balance = await ledger.account_balance({ account = source_account });
         
         return balance.e8s >= entry_fee;
     };
 
     public func transferEntryFee(defaultAccount: Principal, user: Principal) : async () {
-        let result = await Ledger.transfer({
+        let result = await ledger.transfer({
           memo = 0;
           from_subaccount = ?Account.principalToSubaccount(user);
           to = Account.accountIdentifier(defaultAccount, Account.defaultSubaccount());
@@ -51,13 +52,13 @@ module {
     };
    
     public func getTotalBalance(defaultSubAccount: Account.AccountIdentifier) : async Nat64 {
-        let balance = await Ledger.account_balance({ account = defaultSubAccount });
+        let balance = await ledger.account_balance({ account = defaultSubAccount });
         return balance.e8s;
     };
 
     public func transferWinnings(defaultAccount: Principal, user: Principal, amount: Float) : async () {
 
-        let result = await Ledger.transfer({
+        let result = await ledger.transfer({
           memo = 0;
           from_subaccount = null;
           to = Account.accountIdentifier(defaultAccount, Account.principalToSubaccount(user));
@@ -77,7 +78,7 @@ module {
 
         let e8Amount = Int64.toNat64(Float.toInt64(amount * 1e8));
         let source_account = Account.accountIdentifier(defaultAccount, Account.principalToSubaccount(user));
-        let balance = await Ledger.account_balance({ account = source_account });
+        let balance = await ledger.account_balance({ account = source_account });
         
         if(balance.e8s < icp_fee){
             return #err(#NotAllowed);
@@ -97,7 +98,7 @@ module {
                     return #err(#NotAllowed);
                 };
 
-                let result = await Ledger.transfer({
+                let result = await ledger.transfer({
                     memo: Nat64    = 0;
                     from_subaccount = ?Account.principalToSubaccount(user);
                     to = Blob.fromArray(array);
@@ -117,7 +118,7 @@ module {
     public func transferAdminFee(defaultAccount: Principal, walletAddress: Text) : async Result.Result<(), Types.Error> {
         
         let source_account = Account.accountIdentifier(defaultAccount, Account.defaultSubaccount());
-        let balance = await Ledger.account_balance({ account = source_account });
+        let balance = await ledger.account_balance({ account = source_account });
 
         if(balance.e8s <= icp_fee){
             return #err(#NotAllowed);
@@ -126,7 +127,7 @@ module {
         let account_id = Account.decode(walletAddress);
         switch account_id {
             case (#ok array) {
-                let result = await Ledger.transfer({
+                let result = await ledger.transfer({
                     memo: Nat64    = 0;
                     from_subaccount = null;
                     to = Blob.fromArray(array);
@@ -149,7 +150,7 @@ module {
 
         for (i in Iter.range(0, profiles.userBalances.size() - 1)) {
             let source_account = Account.accountIdentifier(defaultAccount, Account.principalToSubaccount(Principal.fromText(profiles.userBalances[i].principalName)));
-            let balance = await Ledger.account_balance({ account = source_account });
+            let balance = await ledger.account_balance({ account = source_account });
 
             let updatedProfile = {
                 principalName = profiles.userBalances[i].principalName;

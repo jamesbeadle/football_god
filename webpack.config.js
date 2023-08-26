@@ -120,10 +120,20 @@ module.exports = {
     new CopyPlugin({
       patterns: [
         {
-          from: `src/${frontendDirectory}/src/.ic-assets.json*`,
-          to: ".ic-assets.json5",
+          from: `src/${frontendDirectory}/assets/.ic-assets.json*`,
+          to: ".ic-assets.json",
           noErrorOnMissing: true
         },
+        {
+          from: `src/${frontendDirectory}/assets/.well-known/ic-domains`,
+          to: ".well-known/ic-domains",
+          noErrorOnMissing: true
+        },
+        {
+          from: `src/${frontendDirectory}/assets/.well-known/ii-alternative-origins`,
+          to: ".well-known/ii-alternative-origins",
+          noErrorOnMissing: true
+        }
       ],
     }),
   ],
