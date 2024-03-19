@@ -41,7 +41,7 @@ module {
     };
 
     public func transferEntryFee(defaultAccount : Principal, user : Principal) : async () {
-      let result = await ledger.transfer({
+      let _ = await ledger.transfer({
         memo = 0;
         from_subaccount = ?Account.principalToSubaccount(user);
         to = Account.accountIdentifier(defaultAccount, Account.defaultSubaccount());
@@ -60,7 +60,7 @@ module {
 
     public func transferWinnings(defaultAccount : Principal, user : Principal, amount : Float) : async () {
 
-      let result = await ledger.transfer({
+      let _ = await ledger.transfer({
         memo = 0;
         from_subaccount = null;
         to = Account.accountIdentifier(defaultAccount, Account.principalToSubaccount(user));
@@ -102,7 +102,7 @@ module {
             return #err(#NotAllowed);
           };
 
-          let result = await ledger.transfer({
+          let _ = await ledger.transfer({
             memo : Nat64 = 0;
             from_subaccount = ?Account.principalToSubaccount(user);
             to = Blob.fromArray(array);
@@ -133,7 +133,7 @@ module {
       let account_id = Account.decode(walletAddress);
       switch account_id {
         case (#ok array) {
-          let result = await ledger.transfer({
+          let _ = await ledger.transfer({
             memo : Nat64 = 0;
             from_subaccount = null;
             to = Blob.fromArray(array);

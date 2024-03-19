@@ -10,7 +10,6 @@ import Principal "mo:base/Principal";
 import Result "mo:base/Result";
 import Buffer "mo:base/Buffer";
 import Blob "mo:base/Blob";
-import Debug "mo:base/Debug";
 
 import Types "types";
 import Seasons "seasons";
@@ -134,7 +133,7 @@ actor Self {
     return homeDTO;
   };
 
-  public shared ({ caller }) func getGameweekPotDTO() : async DTOs.GameweekPotDTO {
+  public shared func getGameweekPotDTO() : async DTOs.GameweekPotDTO {
 
     var gameweekPot = Nat64.fromNat(0);
     let systemUpdating = (activeSeason == 0) or (activeGameweek == 0);
@@ -160,7 +159,6 @@ actor Self {
     var activeGameweekNumber = activeGameweek;
     var fixtures : [DTOs.FixtureDTO] = [];
     var sweepstakePaid = false;
-    var accountBalance = Nat64.fromNat(0);
 
     if (not systemUpdating) {
 
@@ -235,7 +233,6 @@ actor Self {
   public shared ({ caller }) func getAccountBalanceDTO() : async DTOs.AccountBalanceDTO {
 
     assert not Principal.isAnonymous(caller);
-    let principalName = Principal.toText(caller);
     let systemUpdating = (activeSeason == 0) or (activeGameweek == 0);
     var accountBalance = Nat64.fromNat(0);
 
@@ -258,11 +255,6 @@ actor Self {
 
     if (profile == null) {
       profilesInstance.createProfile(Principal.toText(caller), Principal.toText(caller), "", getUserDepositAccount(caller));
-    };
-
-    let currentSeason = switch (seasonsInstance.getSeason(activeSeason)) {
-      case null { return #err(#NotAllowed) };
-      case (?season) { season };
     };
 
     let currentGameweek = switch (seasonsInstance.getGameweek(activeSeason, activeGameweek)) {
@@ -412,7 +404,6 @@ actor Self {
 
     var activeSeasonName = "";
     var seasons : [DTOs.SeasonDTO] = [];
-    var seasonGameweeks : [DTOs.GameweekDTO] = [];
     var activeSeasonId = seasonId;
 
     if (activeSeasonId == 0) {
@@ -453,7 +444,7 @@ actor Self {
     return historyDTO;
   };
 
-  public shared query ({ caller }) func getLeaderboardDTO(seasonId : Nat16, gameweekNumber : Nat8, page : Nat, count : Nat) : async DTOs.LeaderBoardDTO {
+  public shared query func getLeaderboardDTO(seasonId : Nat16, gameweekNumber : Nat8, page : Nat, count : Nat) : async DTOs.LeaderBoardDTO {
 
     var activeSeasonId = seasonId;
     var activeGameweekNumber = gameweekNumber;
@@ -543,7 +534,7 @@ actor Self {
       };
     };
 
-    let profileDTO : DTOs.ProfileDTO = {
+    let _ : DTOs.ProfileDTO = {
       principalName = principalName;
       depositAddress = depositAddress;
       displayName = displayName;

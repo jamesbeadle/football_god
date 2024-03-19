@@ -1,6 +1,4 @@
 <script>
-  import JunoIcon from "$lib/icons/JunoIcon.svelte";
-  import OpenFplIcon from "$lib/icons/OpenFPLIcon.svelte";
 </script>
 
 <footer class="bg-gray-900 text-white py-3">
@@ -21,13 +19,6 @@
               alt="OpenChat"
             />
           </a>
-          <a
-            href="https://github.com/jamesbeadle/OpenFPL"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <img src="/github.png" class="h-4 w-auto mb-2" alt="GitHub" />
-          </a>
         </div>
       </div>
       <div class="flex justify-start">
@@ -47,13 +38,6 @@
         </div>
       </div>
     </div>
-    <div class="flex-0">
-      <a href="/">
-        <b class="px-4 mt-2 md:mt-0 md:px-10 flex items-center"
-          ><OpenFplIcon className="h-6 w-auto mr-2" />OpenFPL</b
-        >
-      </a>
-    </div>
     <div class="flex-1">
       <div class="flex justify-end">
         <div class="text-right px-4 md:px-0 mt-1 md:mt-0 md:mr-4">
@@ -63,7 +47,6 @@
             class="hover:text-gray-300 flex items-center"
           >
             Sponsored By juno.build
-            <JunoIcon className="h-8 w-auto ml-2" />
           </a>
         </div>
       </div>

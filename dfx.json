@@ -9,12 +9,9 @@
     "football_god_frontend": {
       "dependencies": ["football_god_backend"],
       "frontend": {
-        "entrypoint": "src/football_god_frontend/src/index.html"
+        "entrypoint": "build/index.html"
       },
-      "source": [
-        "src/football_god_frontend/assets",
-        "dist/football_god_frontend/"
-      ],
+      "source": ["build/"],
       "type": "assets"
     },
     "internet_identity": {
@@ -47,5 +44,5 @@
     }
   },
   "output_env_file": ".env",
-  "version": 1
+  "version": 2
 }

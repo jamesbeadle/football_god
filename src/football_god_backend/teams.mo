@@ -1,7 +1,6 @@
 import List "mo:base/List";
 import Result "mo:base/Result";
 import Types "types";
-import Debug "mo:base/Debug";
 import Array "mo:base/Array";
 import Order "mo:base/Order";
 
@@ -27,7 +26,6 @@ module {
           return #greater;
         },
       );
-      let sortedTeams = List.fromArray(sortedArray);
       return sortedArray;
     };
 

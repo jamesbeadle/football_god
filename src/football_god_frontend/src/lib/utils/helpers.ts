@@ -11,7 +11,7 @@ import type {
   PlayerDTO,
   PlayerEventType,
   PlayerPosition,
-} from "../../../../declarations/OpenFPL_backend/OpenFPL_backend.did";
+} from "../../../../declarations/football_god_backend/football_god_backend.did";
 
 export function uint8ArrayToBase64(bytes: Uint8Array): string {
   const binary = Array.from(bytes)

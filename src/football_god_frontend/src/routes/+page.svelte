@@ -12,10 +12,6 @@
     formatUnixTimeToTime,
     getCountdownTime,
   } from "../lib/utils/Helpers";
-  import type {
-    LeaderboardEntry,
-    ClubDTO,
-  } from "../../../declarations/OpenFPL_backend/OpenFPL_backend.did";
   import Layout from "./Layout.svelte";
   import FixturesComponent from "$lib/components/fixtures.svelte";
   import GamweekPointsComponents from "$lib/components/gameweek-points.svelte";
@@ -24,7 +20,6 @@
   import BadgeIcon from "$lib/icons/BadgeIcon.svelte";
   import { Spinner } from "@dfinity/gix-components";
   import { weeklyLeaderboardStore } from "$lib/stores/weekly-leaderboard-store";
-  import OpenFplIcon from "$lib/icons/OpenFPLIcon.svelte";
 
   let activeTab: string = "fixtures";
   let managerCount = 0;
@@ -162,11 +157,6 @@
       <div
         class="flex flex-col items-center text-center p-4 lg:p-8 rounded-lg shadow-lg bg-panel-color w-full mx-2 lg:mx-16"
       >
-        <OpenFplIcon className="h-16 lg:h-64 w-auto mb-2 lg:mb-4" />
-        <div class="text-xl lg:text-3xl font-bold my-2 lg:my-4">
-          {countdown}
-        </div>
-        <h2 class="text-md lg:text-xl my-2 lg:my-4">Until OpenFPL Begins</h2>
         <div class="horizontal-divider my-2 lg:my-4" />
         <h2 class="text-md lg:text-xl">2024/25 Prize Pool:</h2>
         <h2 class="text-lg lg:text-2xl font-bold">1,875,000 $FPL</h2>

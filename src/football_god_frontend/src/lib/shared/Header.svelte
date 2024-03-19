@@ -10,7 +10,6 @@
   import { playerEventsStore } from "$lib/stores/player-events-store";
   import { userStore } from "$lib/stores/user-store";
   import { toastsError } from "$lib/stores/toasts-store";
-  import OpenFPLIcon from "$lib/icons/OpenFPLIcon.svelte";
   import WalletIcon from "$lib/icons/WalletIcon.svelte";
   import { onMount, onDestroy } from "svelte";
   import { goto } from "$app/navigation";
@@ -114,7 +113,7 @@
   <nav class="text-white">
     <div class="px-4 h-16 flex justify-between items-center w-full">
       <a href="/" class="hover:text-gray-400 flex items-center">
-        <OpenFPLIcon className="h-8 w-auto" /><b class="ml-2">OpenFPL</b>
+        <b class="ml-2">FootballGod</b>
       </a>
       <button
         class="menu-toggle md:hidden focus:outline-none"
