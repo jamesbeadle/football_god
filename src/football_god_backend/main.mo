@@ -691,7 +691,6 @@ actor Self {
     };
         
     let defaultSubAccount = getDefaultAccount();
-    let winningPrincipals = predictionsInstance.getWinnerPrincipalIds(activeSeason, activeGameweek);
 
     var activeSeasonName = "";
     var activeGameweekNumber = activeGameweek;

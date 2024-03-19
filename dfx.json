@@ -5,7 +5,8 @@
         "ledger"
       ],
       "main": "src/football_god_backend/main.mo",
-      "type": "motoko"
+      "type": "motoko",
+      "optimize": "cycles"
     },
     "football_god_frontend": {
       "dependencies": [
