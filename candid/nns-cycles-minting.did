@@ -20,7 +20,7 @@ type NotifyCreateCanisterArg = record {
 
   // An optional subnet type that, if set, determines what type of subnet
   // the new canister will be created on.
-  subnet_type: opt text;
+  subnet_type : opt text;
 };
 
 type NotifyError = variant {
@@ -73,7 +73,6 @@ type IcpXdrConversionRate = record {
   xdr_permyriad_per_icp : nat64;
 };
 
-
 type IcpXdrConversionRateResponse = record {
   // The latest ICP/XDR conversion rate.
   data : IcpXdrConversionRate;
@@ -96,7 +95,7 @@ type IcpXdrConversionRateResponse = record {
 };
 
 type SubnetTypesToSubnetsResponse = record {
-  data: vec record { text; vec principal };
+  data : vec record { text; vec principal };
 }
 
 service : {
@@ -112,4 +111,4 @@ service : {
 
   // Returns the current mapping of subnet types to subnets.
   get_subnet_types_to_subnets : () -> (SubnetTypesToSubnetsResponse) query;
-}
+};

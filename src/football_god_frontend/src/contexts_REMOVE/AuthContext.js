@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import { AuthClient } from "@dfinity/auth-client";
 import { Actor } from "@dfinity/agent";
-import { football_god_backend as football_god_backend_actor } from '../../../declarations/football_god_backend';
+import { AuthClient } from "@dfinity/auth-client";
+import React, { useEffect, useState } from "react";
+import { football_god_backend as football_god_backend_actor } from "../../../declarations/football_god_backend";
 
 export const AuthContext = React.createContext();
 
@@ -13,8 +13,9 @@ export const AuthProvider = ({ children }) => {
 
   const OLD_MAINNET_IDENTITY_SERVICE_URL = "https://identity.ic0.app";
   const NNS_IC_ORG_ALTERNATIVE_ORIGIN = "https://footballgod.xyz";
-  const NNS_IC_APP_DERIVATION_ORIGIN = "https://43loz-3yaaa-aaaal-qbxrq-cai.icp0.io";
-  
+  const NNS_IC_APP_DERIVATION_ORIGIN =
+    "https://43loz-3yaaa-aaaal-qbxrq-cai.icp0.io";
+
   const getIdentityProvider = () => {
     if (location.host === "nns.ic0.app") {
       return OLD_MAINNET_IDENTITY_SERVICE_URL;
@@ -29,34 +30,36 @@ export const AuthProvider = ({ children }) => {
   const deleteIndexedDB = (dbName) => {
     return new Promise((resolve, reject) => {
       const request = window.indexedDB.deleteDatabase(dbName);
-    
+
       request.onsuccess = () => {
-        console.log('IndexedDB successfully deleted');
+        console.log("IndexedDB successfully deleted");
         window.location.reload();
         resolve();
       };
-  
+
       request.onerror = (event) => {
-        console.error('Error deleting IndexedDB:', event);
+        console.error("Error deleting IndexedDB:", event);
         reject(event);
       };
-  
+
       request.onblocked = () => {
-        console.warn('IndexedDB delete request blocked. Please close all other tabs using the database.');
+        console.warn(
+          "IndexedDB delete request blocked. Please close all other tabs using the database."
+        );
       };
     });
   };
- 
+
   useEffect(() => {
     const initAuthClient = async () => {
-      try{
+      try {
         const authClient = await AuthClient.create({
           idleOptions: {
-            idleTimeout: 1000 * 60 * 60
-          }
+            idleTimeout: 1000 * 60 * 60,
+          },
         });
         const isLoggedIn = await checkLoginStatus(authClient);
-        
+
         if (isLoggedIn) {
           const identity = authClient.getIdentity();
           Actor.agentOf(football_god_backend_actor).replaceIdentity(identity);
@@ -66,12 +69,10 @@ export const AuthProvider = ({ children }) => {
           setIsAdmin(false);
         }
         setAuthClient(authClient);
-      }
-      catch (error){
-        console.error('Error during AuthClient initialization:', error);
-        await deleteIndexedDB('auth-client-db');
-      }
-      finally{
+      } catch (error) {
+        console.error("Error during AuthClient initialization:", error);
+        await deleteIndexedDB("auth-client-db");
+      } finally {
         setLoading(false);
       }
     };
@@ -103,7 +104,7 @@ export const AuthProvider = ({ children }) => {
         Actor.agentOf(football_god_backend_actor).replaceIdentity(identity);
         const userIsAdmin = await football_god_backend_actor.isAdmin();
         setIsAdmin(userIsAdmin);
-      }
+      },
     });
   };
 
@@ -114,7 +115,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   const checkLoginStatus = async (client) => {
-    if(client == null){
+    if (client == null) {
       return false;
     }
     const isLoggedIn = await client.isAuthenticated();
@@ -125,12 +126,16 @@ export const AuthProvider = ({ children }) => {
       return false;
     }
   };
-  
 
   const isTokenValid = (client) => {
     try {
       const identity = client.getIdentity();
-      if (!identity || !identity._delegation || !identity._delegation.delegations) return false;
+      if (
+        !identity ||
+        !identity._delegation ||
+        !identity._delegation.delegations
+      )
+        return false;
 
       const delegation = identity._delegation.delegations[0];
       if (!delegation) return false;
@@ -143,9 +148,18 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-
   return (
-    <AuthContext.Provider value={ { authClient, isAdmin, isAuthenticated, setIsAdmin, setIsAuthenticated, login, logout }}>
+    <AuthContext.Provider
+      value={{
+        authClient,
+        isAdmin,
+        isAuthenticated,
+        setIsAdmin,
+        setIsAuthenticated,
+        login,
+        logout,
+      }}
+    >
       {!loading && children}
     </AuthContext.Provider>
   );

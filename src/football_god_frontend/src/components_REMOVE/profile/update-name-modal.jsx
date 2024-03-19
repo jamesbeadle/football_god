@@ -1,11 +1,10 @@
-import React, { useState, useContext } from 'react';
-import { Modal, Button, Form, Spinner } from 'react-bootstrap';
-import { football_god_backend as football_god_backend_actor } from '../../../../declarations/football_god_backend';
 import { Actor } from "@dfinity/agent";
+import { useContext, useState } from "react";
+import { Button, Form, Modal, Spinner } from "react-bootstrap";
+import { football_god_backend as football_god_backend_actor } from "../../../../declarations/football_god_backend";
 import { AuthContext } from "../../contexts_REMOVE/AuthContext";
 
 const UpdateNameModal = ({ show, onHide, displayName }) => {
-  
   const { authClient } = useContext(AuthContext);
   const [isLoading, setIsLoading] = useState(false);
   const [newDisplayName, setNewDisplayName] = useState(displayName);
@@ -14,43 +13,46 @@ const UpdateNameModal = ({ show, onHide, displayName }) => {
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    if(displayName == newDisplayName){
+    if (displayName == newDisplayName) {
       hideModal();
       return;
     }
-    
+
     setIsLoading(true);
     let validName = await isDisplayNameValid();
-    
+
     if (!validName) {
-        setIsLoading(false);
-        return;
+      setIsLoading(false);
+      return;
     }
-    
+
     const identity = authClient.getIdentity();
     Actor.agentOf(football_god_backend_actor).replaceIdentity(identity);
     await football_god_backend_actor.updateDisplayName(newDisplayName);
-    
-    
-    setNewDisplayName('');
+
+    setNewDisplayName("");
     setDisplayNameError(null);
     onHide(true);
   };
 
   const isDisplayNameValid = async () => {
-    if(authClient == null){
+    if (authClient == null) {
       return;
     }
     const identity = authClient.getIdentity();
     Actor.agentOf(football_god_backend_actor).replaceIdentity(identity);
-    const isValid = await football_god_backend_actor.isDisplayNameValid(newDisplayName);
-  
+    const isValid = await football_god_backend_actor.isDisplayNameValid(
+      newDisplayName
+    );
+
     if (isValid) {
       setDisplayNameError(null);
     } else {
-      setDisplayNameError('Display name must be between 3 and 20 characters long, no special characters and not already taken.');
+      setDisplayNameError(
+        "Display name must be between 3 and 20 characters long, no special characters and not already taken."
+      );
     }
-  
+
     return isValid;
   };
 
@@ -65,7 +67,7 @@ const UpdateNameModal = ({ show, onHide, displayName }) => {
       {isLoading && (
         <div className="customOverlay d-flex flex-column align-items-center justify-content-center">
           <Spinner animation="border" />
-          <p className='text-center mt-1'>Saving Display Name</p>
+          <p className="text-center mt-1">Saving Display Name</p>
         </div>
       )}
       <Modal.Header closeButton>
@@ -73,24 +75,29 @@ const UpdateNameModal = ({ show, onHide, displayName }) => {
       </Modal.Header>
       <Modal.Body>
         <Form onSubmit={handleSubmit}>
-        <Form.Group className="mb-3">
+          <Form.Group className="mb-3">
             <Form.Label>Display Name</Form.Label>
-                <Form.Control
-                    type="text"
-                    placeholder="Enter display name"
-                    value={newDisplayName}
-                    onChange={(event) => setNewDisplayName(event.target.value)}
-                />
-                {displayNameError && <Form.Text className="text-danger">{displayNameError}</Form.Text>}
-            </Form.Group>
+            <Form.Control
+              type="text"
+              placeholder="Enter display name"
+              value={newDisplayName}
+              onChange={(event) => setNewDisplayName(event.target.value)}
+            />
+            {displayNameError && (
+              <Form.Text className="text-danger">{displayNameError}</Form.Text>
+            )}
+          </Form.Group>
         </Form>
       </Modal.Body>
       <Modal.Footer>
-        <Button variant="secondary" onClick={hideModal}>Cancel</Button>
-        <Button className="custom-button" onClick={handleSubmit}>Save</Button>
+        <Button variant="secondary" onClick={hideModal}>
+          Cancel
+        </Button>
+        <Button className="custom-button" onClick={handleSubmit}>
+          Save
+        </Button>
       </Modal.Footer>
     </Modal>
-    
   );
 };
 

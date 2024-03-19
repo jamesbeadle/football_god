@@ -1,27 +1,26 @@
-import React, { useState, useContext } from 'react';
-import { Modal, Button, Form } from 'react-bootstrap';
-import { football_god_backend as football_god_backend_actor } from '../../../../../declarations/football_god_backend';
 import { Actor } from "@dfinity/agent";
+import { useContext, useState } from "react";
+import { Button, Form, Modal } from "react-bootstrap";
+import { football_god_backend as football_god_backend_actor } from "../../../../../declarations/football_god_backend";
 import { AuthContext } from "../../../contexts_REMOVE/AuthContext";
 
 const CreateTeamModal = ({ show, onHide, setIsLoading }) => {
-  
   const { authClient } = useContext(AuthContext);
-  const [teamName, setTeamName] = useState('');
+  const [teamName, setTeamName] = useState("");
 
   const handleSubmit = async (event) => {
     event.preventDefault();
     setIsLoading(true);
-    
+
     const identity = authClient.getIdentity();
     Actor.agentOf(football_god_backend_actor).replaceIdentity(identity);
     await football_god_backend_actor.createTeam(teamName);
-    
+
     hideModal();
   };
 
   const hideModal = () => {
-    setTeamName('');
+    setTeamName("");
     onHide();
   };
 
@@ -44,8 +43,12 @@ const CreateTeamModal = ({ show, onHide, setIsLoading }) => {
         </Form>
       </Modal.Body>
       <Modal.Footer>
-        <Button variant="secondary" onClick={onHide}>Cancel</Button>
-        <Button className="custom-button" onClick={handleSubmit}>Save</Button>
+        <Button variant="secondary" onClick={onHide}>
+          Cancel
+        </Button>
+        <Button className="custom-button" onClick={handleSubmit}>
+          Save
+        </Button>
       </Modal.Footer>
     </Modal>
   );

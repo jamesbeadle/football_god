@@ -1,10 +1,19 @@
-import React, { useState, useEffect, useContext } from 'react';
-import { Container, Row, Col, Card, Button, Modal, Form, Spinner } from 'react-bootstrap';
-import { football_god_backend as football_god_backend_actor } from '../../../../../declarations/football_god_backend';
 import { Actor } from "@dfinity/agent";
-import { AuthContext } from "../../../contexts_REMOVE/AuthContext";
-import "../../../../assets/main.css";
+import { useContext, useEffect, useState } from "react";
+import {
+  Button,
+  Card,
+  Col,
+  Container,
+  Form,
+  Modal,
+  Row,
+  Spinner,
+} from "react-bootstrap";
 import { useNavigate, useParams } from "react-router-dom";
+import { football_god_backend as football_god_backend_actor } from "../../../../../declarations/football_god_backend";
+import "../../../../assets/main.css";
+import { AuthContext } from "../../../contexts_REMOVE/AuthContext";
 
 const UpdateFixture = () => {
   const { seasonId, gameweekNumber, fixtureId } = useParams();
@@ -12,7 +21,7 @@ const UpdateFixture = () => {
 
   const { authClient, isAdmin } = useContext(AuthContext);
   const [isLoading, setIsLoading] = useState(false);
-  const [loadingText, setLoadingText] = useState('');
+  const [loadingText, setLoadingText] = useState("");
   const [teams, setTeamsData] = useState([]);
   const [fixture, setFixtureData] = useState([]);
   const [showDeleteConfirmModal, setShowDeleteConfirmModal] = useState(false);
@@ -22,7 +31,7 @@ const UpdateFixture = () => {
   const [fixtureStatus, setFixtureStatus] = useState(null);
   const [homeGoals, setHomeGoals] = useState(0);
   const [awayGoals, setAwayGoals] = useState(0);
-  
+
   const handleSubmitFixture = async (event) => {
     event.preventDefault();
     setIsLoading(true);
@@ -30,7 +39,16 @@ const UpdateFixture = () => {
     const identity = authClient.getIdentity();
     Actor.agentOf(football_god_backend_actor).replaceIdentity(identity);
 
-    await football_god_backend_actor.updateFixture(Number(seasonId), Number(gameweekNumber), Number(fixtureId), Number(homeTeam), Number(awayTeam), Number(fixtureStatus), Number(homeGoals), Number(awayGoals));
+    await football_god_backend_actor.updateFixture(
+      Number(seasonId),
+      Number(gameweekNumber),
+      Number(fixtureId),
+      Number(homeTeam),
+      Number(awayTeam),
+      Number(fixtureStatus),
+      Number(homeGoals),
+      Number(awayGoals)
+    );
 
     navigate(`/fixtures/${seasonId}/${gameweekNumber}`);
     setIsLoading(false);
@@ -40,24 +58,32 @@ const UpdateFixture = () => {
     setIsLoading(true);
     const identity = authClient.getIdentity();
     Actor.agentOf(football_god_backend_actor).replaceIdentity(identity);
-    await football_god_backend_actor.deleteFixture(Number(seasonId), Number(gameweekNumber), Number(fixtureId));
+    await football_god_backend_actor.deleteFixture(
+      Number(seasonId),
+      Number(gameweekNumber),
+      Number(fixtureId)
+    );
     setShowDeleteConfirmModal(false);
     setIsLoading(false);
     navigate(`/fixtures/${seasonId}/${gameweekNumber}`);
   };
-  
+
   const fetchFixture = async () => {
-    const fixtureData = await football_god_backend_actor.getFixture(Number(seasonId), Number(gameweekNumber), Number(fixtureId));
+    const fixtureData = await football_god_backend_actor.getFixture(
+      Number(seasonId),
+      Number(gameweekNumber),
+      Number(fixtureId)
+    );
     setFixtureData(fixtureData[0]);
   };
-  
+
   const fetchTeams = async () => {
     const teamsData = await football_god_backend_actor.getTeams();
     setTeamsData(teamsData);
   };
 
   useEffect(() => {
-    if(!isAdmin){
+    if (!isAdmin) {
       navigate("/");
     }
     const fetchData = async () => {
@@ -82,7 +108,7 @@ const UpdateFixture = () => {
       {isLoading && (
         <div className="customOverlay d-flex flex-column align-items-center justify-content-center">
           <Spinner animation="border" />
-          <p className='text-center mt-1'>{loadingText}</p>
+          <p className="text-center mt-1">{loadingText}</p>
         </div>
       )}
       <Row className="justify-content-md-center">
@@ -93,74 +119,100 @@ const UpdateFixture = () => {
             </Card.Header>
             <Card.Body>
               <Row className="mb-3">
-                <Form onSubmit={handleSubmitFixture} >
-                    <Form.Group controlId="homeTeam">
-                        <Form.Label>Home Team</Form.Label>
-                        <Form.Control as="select" value={homeTeam || ''} onChange={(e) => setHomeTeam(e.target.value)}>
-                            <option value="">Select Home Team</option>
-                            {teams.map((team) => (
-                            <option key={team.id} value={team.id}>
-                                {team.name}
-                            </option>
-                            ))}
-                        </Form.Control>
-                    </Form.Group>
-                    <Form.Group controlId="awayTeam">
-                        <Form.Label>Away Team</Form.Label>
-                        <Form.Control as="select" value={awayTeam || ''} onChange={(e) => setAwayTeam(e.target.value)}>
-                            <option value="">Select Away Team</option>
-                            {teams.map((team) => (
-                            <option key={team.id} value={team.id}>
-                                {team.name}
-                            </option>
-                            ))}
-                        </Form.Control>
-                    </Form.Group>
-                    <Form.Group controlId="fixtureStatus">
-                        <Form.Label>Status</Form.Label>
-                        <Form.Control as="select" value={fixtureStatus === null ? '' : fixtureStatus} onChange={(e) => setFixtureStatus(e.target.value)}>
-                            <option value="">Select status</option>
-                            <option key="0" value="0">Unplayed</option>
-                            <option key="1" value="1">Active</option>
-                            <option key="2" value="2">Finished</option>
-                        </Form.Control>
-                    </Form.Group>
-                    <Form.Group controlId="homeGoals">
-                      <Form.Label>Home Score</Form.Label>
-                      <Form.Control
-                          className="w-100"
-                          type="number"
-                          min="0"
-                          placeholder="Home Score"
-                          value={homeGoals === null ? '' : homeGoals}
-                          onChange={(event) => setHomeGoals(event.target.value)}
-                        />
-                    </Form.Group>
-                    
-                    <Form.Group controlId="awayGoals">
-                      <Form.Label>Away Score</Form.Label>
-                      <Form.Control
-                          className="w-100"
-                          type="number"
-                          min="0"
-                          placeholder="Away Score"
-                          value={awayGoals === null ? '' : awayGoals}
-                          onChange={(event) => setAwayGoals(event.target.value)}
-                        />
-                    </Form.Group>
+                <Form onSubmit={handleSubmitFixture}>
+                  <Form.Group controlId="homeTeam">
+                    <Form.Label>Home Team</Form.Label>
+                    <Form.Control
+                      as="select"
+                      value={homeTeam || ""}
+                      onChange={(e) => setHomeTeam(e.target.value)}
+                    >
+                      <option value="">Select Home Team</option>
+                      {teams.map((team) => (
+                        <option key={team.id} value={team.id}>
+                          {team.name}
+                        </option>
+                      ))}
+                    </Form.Control>
+                  </Form.Group>
+                  <Form.Group controlId="awayTeam">
+                    <Form.Label>Away Team</Form.Label>
+                    <Form.Control
+                      as="select"
+                      value={awayTeam || ""}
+                      onChange={(e) => setAwayTeam(e.target.value)}
+                    >
+                      <option value="">Select Away Team</option>
+                      {teams.map((team) => (
+                        <option key={team.id} value={team.id}>
+                          {team.name}
+                        </option>
+                      ))}
+                    </Form.Control>
+                  </Form.Group>
+                  <Form.Group controlId="fixtureStatus">
+                    <Form.Label>Status</Form.Label>
+                    <Form.Control
+                      as="select"
+                      value={fixtureStatus === null ? "" : fixtureStatus}
+                      onChange={(e) => setFixtureStatus(e.target.value)}
+                    >
+                      <option value="">Select status</option>
+                      <option key="0" value="0">
+                        Unplayed
+                      </option>
+                      <option key="1" value="1">
+                        Active
+                      </option>
+                      <option key="2" value="2">
+                        Finished
+                      </option>
+                    </Form.Control>
+                  </Form.Group>
+                  <Form.Group controlId="homeGoals">
+                    <Form.Label>Home Score</Form.Label>
+                    <Form.Control
+                      className="w-100"
+                      type="number"
+                      min="0"
+                      placeholder="Home Score"
+                      value={homeGoals === null ? "" : homeGoals}
+                      onChange={(event) => setHomeGoals(event.target.value)}
+                    />
+                  </Form.Group>
+
+                  <Form.Group controlId="awayGoals">
+                    <Form.Label>Away Score</Form.Label>
+                    <Form.Control
+                      className="w-100"
+                      type="number"
+                      min="0"
+                      placeholder="Away Score"
+                      value={awayGoals === null ? "" : awayGoals}
+                      onChange={(event) => setAwayGoals(event.target.value)}
+                    />
+                  </Form.Group>
                 </Form>
               </Row>
               <Row>
                 <Col md={4}>
-                  <Button className="mb-3 w-100 custom-button" onClick={ handleSubmitFixture }>
+                  <Button
+                    className="mb-3 w-100 custom-button"
+                    onClick={handleSubmitFixture}
+                  >
                     Save Fixture
                   </Button>
                 </Col>
-                
               </Row>
               <Row>
                 <Col md={4}>
-                  <Button variant="danger" className="mb-3 w-100" onClick={() => { setShowDeleteConfirmModal(true); }}>
+                  <Button
+                    variant="danger"
+                    className="mb-3 w-100"
+                    onClick={() => {
+                      setShowDeleteConfirmModal(true);
+                    }}
+                  >
                     Delete Fixture
                   </Button>
                 </Col>
@@ -170,7 +222,12 @@ const UpdateFixture = () => {
         </Col>
       </Row>
 
-      <Modal show={showDeleteConfirmModal} onHide={() => { setShowDeleteConfirmModal(false); }}>
+      <Modal
+        show={showDeleteConfirmModal}
+        onHide={() => {
+          setShowDeleteConfirmModal(false);
+        }}
+      >
         <Modal.Header closeButton>
           <Modal.Title>Delete Fixture</Modal.Title>
         </Modal.Header>
@@ -189,7 +246,6 @@ const UpdateFixture = () => {
           </Button>
         </Modal.Footer>
       </Modal>
-
     </Container>
   );
 };

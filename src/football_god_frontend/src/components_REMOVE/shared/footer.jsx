@@ -1,6 +1,5 @@
-import React from 'react';
-import { Container, Row, Col, Button } from 'react-bootstrap';
-import { LinkContainer } from 'react-router-bootstrap';
+import { Button, Col, Container, Row } from "react-bootstrap";
+import { LinkContainer } from "react-router-bootstrap";
 
 const MyFooter = () => {
   return (
@@ -8,9 +7,9 @@ const MyFooter = () => {
       <Container>
         <Row>
           <Col className="text-center">
-          <LinkContainer to="/game-rules">
-            <Button className="custom-button">Rules</Button>
-          </LinkContainer>
+            <LinkContainer to="/game-rules">
+              <Button className="custom-button">Rules</Button>
+            </LinkContainer>
           </Col>
         </Row>
       </Container>

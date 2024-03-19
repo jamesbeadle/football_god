@@ -1,17 +1,13 @@
 {
   "canisters": {
     "football_god_backend": {
-      "dependencies": [
-        "ledger"
-      ],
+      "dependencies": ["ledger"],
       "main": "src/football_god_backend/main.mo",
       "type": "motoko",
       "optimize": "cycles"
     },
     "football_god_frontend": {
-      "dependencies": [
-        "football_god_backend"
-      ],
+      "dependencies": ["football_god_backend"],
       "frontend": {
         "entrypoint": "src/football_god_frontend/src/index.html"
       },
@@ -22,7 +18,7 @@
       "type": "assets"
     },
     "internet_identity": {
-      "candid": "https://github.com/dfinity/internet-identity/releases/latest/download/internet_identity.did",
+      "candid": "candid/internet_identity.did",
       "remote": {
         "id": {
           "ic": "rdmx6-jaaaa-aaaaa-aaadq-cai",
@@ -30,7 +26,7 @@
         }
       },
       "type": "custom",
-      "wasm": "https://github.com/dfinity/internet-identity/releases/latest/download/internet_identity_dev.wasm"
+      "wasm": ""
     },
     "ledger": {
       "candid": "candid/nns-ledger.did",
@@ -47,10 +43,7 @@
   "defaults": {
     "build": {
       "args": "",
-      "packtool": ""
-    },
-    "replica": {
-      "subnet_type": "system"
+      "packtool": "mops sources"
     }
   },
   "output_env_file": ".env",

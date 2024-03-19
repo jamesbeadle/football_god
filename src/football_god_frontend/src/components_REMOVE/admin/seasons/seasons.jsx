@@ -1,28 +1,36 @@
-import React, { useState, useEffect, useContext } from 'react';
-import { Container, Row, Col, Card, Button, Table, Spinner, Dropdown  } from 'react-bootstrap';
-import { Link } from "react-router-dom";
-import "../../../../assets/main.css"; 
-import { football_god_backend as football_god_backend_actor } from '../../../../../declarations/football_god_backend';
-import CreateSeasonModal from './create-season-modal';
-import EditSeasonModal from './edit-season-modal';
-import DeleteSeasonModal from './delete-season-modal';
-import { useNavigate } from "react-router-dom";
+import { useContext, useEffect, useState } from "react";
+import {
+  Button,
+  Card,
+  Col,
+  Container,
+  Dropdown,
+  Row,
+  Spinner,
+  Table,
+} from "react-bootstrap";
+import { Link, useNavigate } from "react-router-dom";
+import { football_god_backend as football_god_backend_actor } from "../../../../../declarations/football_god_backend";
+import "../../../../assets/main.css";
 import { AuthContext } from "../../../contexts_REMOVE/AuthContext";
+import CreateSeasonModal from "./create-season-modal";
+import DeleteSeasonModal from "./delete-season-modal";
+import EditSeasonModal from "./edit-season-modal";
 
 const Seasons = () => {
   const { isAdmin } = useContext(AuthContext);
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(true);
-  const [loadingText, setLoadingText] = useState('');
+  const [loadingText, setLoadingText] = useState("");
   const [seasonsData, setSeasonsData] = useState([]);
-  
+
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [showDeleteConfirmModal, setShowDeleteConfirmModal] = useState(false);
 
   const [editedSeason, setEditedSeason] = useState(null);
   const [seasonToDelete, setSeasonToDelete] = useState(null);
-  
+
   const editSeason = async (season) => {
     setEditedSeason(season);
     setShowEditModal(true);
@@ -31,23 +39,23 @@ const Seasons = () => {
   const deleteSeason = async (seasonId) => {
     setSeasonToDelete(seasonId);
     setShowDeleteConfirmModal(true);
-  };  
+  };
 
   const hideCreateModal = async () => {
-    setShowCreateModal(false); 
+    setShowCreateModal(false);
     fetchSeasons();
     setIsLoading(false);
   };
 
   const hideEditModal = async () => {
-    setShowEditModal(false); 
+    setShowEditModal(false);
     setEditedSeason(null);
     fetchSeasons();
     setIsLoading(false);
   };
 
   const hideDeleteModal = async () => {
-    setShowDeleteConfirmModal(false); 
+    setShowDeleteConfirmModal(false);
     setSeasonToDelete(null);
     fetchSeasons();
     setIsLoading(false);
@@ -60,7 +68,7 @@ const Seasons = () => {
   };
 
   useEffect(() => {
-    if(!isAdmin){
+    if (!isAdmin) {
       navigate("/");
     }
     fetchSeasons();
@@ -69,10 +77,10 @@ const Seasons = () => {
   return (
     <Container>
       {isLoading && (
-       <div className="customOverlay d-flex flex-column align-items-center justify-content-center">
-        <Spinner animation="border" />
-        <p className='text-center mt-1'>{loadingText}</p>
-      </div>
+        <div className="customOverlay d-flex flex-column align-items-center justify-content-center">
+          <Spinner animation="border" />
+          <p className="text-center mt-1">{loadingText}</p>
+        </div>
       )}
       <Row className="justify-content-md-center">
         <Col md={12}>
@@ -81,7 +89,10 @@ const Seasons = () => {
               <h2>Seasons</h2>
             </Card.Header>
             <Card.Body>
-              <Button className="mb-3 custom-button" onClick={() => setShowCreateModal(true)}>
+              <Button
+                className="mb-3 custom-button"
+                onClick={() => setShowCreateModal(true)}
+              >
                 Create New Season
               </Button>
               <div className="table-responsive">
@@ -101,12 +112,32 @@ const Seasons = () => {
                         <td>{season.name}</td>
                         <td>{season.year}</td>
                         <td>
-                        <Dropdown alignRight className="custom-dropdown">
-                            <Dropdown.Toggle variant="secondary" id="dropdown-basic">Options</Dropdown.Toggle>
+                          <Dropdown alignRight className="custom-dropdown">
+                            <Dropdown.Toggle
+                              variant="secondary"
+                              id="dropdown-basic"
+                            >
+                              Options
+                            </Dropdown.Toggle>
                             <Dropdown.Menu>
-                                <Dropdown.Item as={Link} to={`/season/${season.id}`}>View</Dropdown.Item>
-                                <Dropdown.Item href="#" onClick={() => editSeason(season)}>Edit</Dropdown.Item>
-                                <Dropdown.Item href="#" onClick={() => deleteSeason(season.id)}>Delete</Dropdown.Item>
+                              <Dropdown.Item
+                                as={Link}
+                                to={`/season/${season.id}`}
+                              >
+                                View
+                              </Dropdown.Item>
+                              <Dropdown.Item
+                                href="#"
+                                onClick={() => editSeason(season)}
+                              >
+                                Edit
+                              </Dropdown.Item>
+                              <Dropdown.Item
+                                href="#"
+                                onClick={() => deleteSeason(season.id)}
+                              >
+                                Delete
+                              </Dropdown.Item>
                             </Dropdown.Menu>
                           </Dropdown>
                         </td>
@@ -131,15 +162,14 @@ const Seasons = () => {
         onHide={hideEditModal}
         setIsLoading={setIsLoading}
         editedSeason={editedSeason}
-      />        
-      
+      />
+
       <DeleteSeasonModal
         show={showDeleteConfirmModal}
         onHide={hideDeleteModal}
         setIsLoading={setIsLoading}
         seasonToDelete={seasonToDelete}
       />
-
     </Container>
   );
 };
