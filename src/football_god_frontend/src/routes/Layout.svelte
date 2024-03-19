@@ -3,7 +3,7 @@
   import { fade } from "svelte/transition";
   import { browser } from "$app/environment";
   import { authStore, type AuthStoreData } from "$lib/stores/auth.store";
-  import { toastsError } from "$lib/stores/toasts-store";
+  import { toastsError } from "$lib/stores/toasts.store";
   import Header from "$lib/shared/Header.svelte";
   import Footer from "$lib/shared/Footer.svelte";
   import "../app.css";

@@ -3,7 +3,7 @@ import type { AuthStore } from "$lib/stores/auth.store";
 import type { OptionIdentity } from "$lib/types/identity";
 import { Actor, HttpAgent } from "@dfinity/agent";
 import type { Unsubscriber } from "svelte/store";
-import { idlFactory as canister } from "../../../declarations/football_god_backend";
+import { idlFactory as canister } from "../../../../declarations/football_god_backend";
 
 export class ActorFactory {
   static createActor(

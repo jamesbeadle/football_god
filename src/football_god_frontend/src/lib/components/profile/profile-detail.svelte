@@ -1,39 +1,23 @@
 <script lang="ts">
   import { onMount } from "svelte";
-  import { writable, type Writable } from "svelte/store";
-  import { userStore } from "$lib/stores/user-store";
-  import { teamStore } from "$lib/stores/team-store";
-  import { systemStore } from "$lib/stores/system-store";
-  import { toastsError, toastsShow } from "$lib/stores/toasts-store";
-  import type { ProfileDTO } from "../../../../../declarations/football_god_backend/football_god_backend.did";
+  import { userStore } from "$lib/stores/user.store";
+  import { toastsError, toastsShow } from "$lib/stores/toasts.store";
   import UpdateUsernameModal from "$lib/components/profile/update-username-modal.svelte";
-  import UpdateFavouriteTeamModal from "./update-favourite-team-modal.svelte";
   import { busyStore, Spinner } from "@dfinity/gix-components";
-  import { getDateFromBigInt } from "$lib/utils/Helpers";
+  import { getDateFromBigInt } from "$lib/utils/helpers";
   import CopyIcon from "$lib/icons/CopyIcon.svelte";
-  import { authStore } from "$lib/stores/auth.store";
   import { userGetProfilePicture } from "$lib/derived/user.derived";
 
   let showUsernameModal: boolean = false;
-  let showFavouriteTeamModal: boolean = false;
   let fileInput: HTMLInputElement;
-  let gameweek: number = 1;
   let joinedDate = "";
 
   let unsubscribeUserProfile: () => void;
-
-  $: gameweek = $systemStore?.calculationGameweek ?? 1;
-
-  $: teamName =
-    $teamStore.find((x) => x.id == $userStore?.favouriteClubId)?.friendlyName ??
-    "";
 
   let isLoading = true;
 
   onMount(async () => {
     try {
-      await teamStore.sync();
-      await systemStore.sync();
       await userStore.sync();
 
       unsubscribeUserProfile = userStore.subscribe((value) => {
@@ -64,19 +48,6 @@
 
   function cancelUsernameModal() {
     showUsernameModal = false;
-  }
-
-  function displayFavouriteTeamModal(): void {
-    showFavouriteTeamModal = true;
-  }
-
-  async function closeFavouriteTeamModal() {
-    await userStore.cacheProfile();
-    showFavouriteTeamModal = false;
-  }
-
-  function cancelFavouriteTeamModal() {
-    showFavouriteTeamModal = false;
   }
 
   function clickFileInput() {
@@ -147,12 +118,6 @@
     closeModal={closeUsernameModal}
     cancelModal={cancelUsernameModal}
   />
-  <UpdateFavouriteTeamModal
-    newFavouriteTeam={$userStore ? $userStore.favouriteClubId : 0}
-    visible={showFavouriteTeamModal}
-    closeModal={closeFavouriteTeamModal}
-    cancelModal={cancelFavouriteTeamModal}
-  />
   <div class="container mx-auto p-4">
     <div class="flex flex-wrap">
       <div class="w-full md:w-1/2 lg:w-1/3 xl:w-1/4 px-2">
@@ -188,21 +153,6 @@
           <button
             class="text-sm md:text-sm p-1 md:p-2 px-2 md:px-4 rounded fpl-button"
             on:click={displayUsernameModal}
-          >
-            Update
-          </button>
-          <p class="mb-1 mt-4">Favourite Team:</p>
-          <h2 class="default-header mb-1 md:mb-2">
-            {teamName == "" ? "Not Set" : teamName}
-          </h2>
-          <button
-            class={`p-1 md:p-2 px-2 md:px-4 ${
-              gameweek > 1 && ($userStore?.favouriteClubId ?? 0) > 0
-                ? "bg-gray-500"
-                : "fpl-button"
-            } rounded`}
-            on:click={displayFavouriteTeamModal}
-            disabled={gameweek > 1 && ($userStore?.favouriteClubId ?? 0) > 0}
           >
             Update
           </button>

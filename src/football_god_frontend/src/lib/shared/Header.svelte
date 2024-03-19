@@ -1,15 +1,8 @@
 <script lang="ts">
   import { page } from "$app/stores";
   import { authStore, type AuthSignInParams } from "$lib/stores/auth.store";
-  import { systemStore } from "$lib/stores/system-store";
-  import { countriesStore } from "$lib/stores/country-store";
-  import { fixtureStore } from "$lib/stores/fixture-store";
-  import { teamStore } from "$lib/stores/team-store";
-  import { weeklyLeaderboardStore } from "$lib/stores/weekly-leaderboard-store";
-  import { playerStore } from "$lib/stores/player-store";
-  import { playerEventsStore } from "$lib/stores/player-events-store";
-  import { userStore } from "$lib/stores/user-store";
-  import { toastsError } from "$lib/stores/toasts-store";
+  import { userStore } from "$lib/stores/user.store";
+  import { toastsError } from "$lib/stores/toasts.store";
   import WalletIcon from "$lib/icons/WalletIcon.svelte";
   import { onMount, onDestroy } from "svelte";
   import { goto } from "$app/navigation";
@@ -27,21 +20,6 @@
     try {
       await userStore.sync();
       await authStore.sync();
-      await systemStore.sync();
-      await countriesStore.sync();
-      await fixtureStore.sync($systemStore?.calculationSeasonId ?? 1);
-
-      if ($fixtureStore.length == 0) {
-        return;
-      }
-
-      await teamStore.sync();
-      await playerStore.sync();
-      await playerEventsStore.sync();
-      await weeklyLeaderboardStore.sync(
-        $systemStore?.calculationSeasonId ?? 0,
-        $systemStore?.calculationGameweek ?? 0
-      );
     } catch (error) {
       toastsError({
         msg: { text: "Error syncing authentication." },
@@ -143,20 +121,6 @@
               <span class="flex items-center h-full px-4">Home</span>
             </a>
           </li>
-
-          <!-- Todo: Pick Team will be added back in when the game begins -->
-          <!--
-          <li class="mx-2 flex items-center h-16">
-            <a
-              href="/pick-team"
-              class="flex items-center h-full nav-underline hover:text-gray-400 ${currentClass(
-                '/pick-team'
-              )}"
-            >
-              <span class="flex items-center h-full px-4">Squad Selection</span>
-            </a>
-          </li>
-          -->
           <li class="mx-2 flex items-center h-16">
             <a
               href="/governance"

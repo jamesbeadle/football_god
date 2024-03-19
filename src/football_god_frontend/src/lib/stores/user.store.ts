@@ -1,7 +1,7 @@
 import { authStore } from "$lib/stores/auth.store";
-import { isError } from "$lib/utils/Helpers";
+import { ActorFactory } from "$lib/utils/actor.factory";
+import { isError } from "$lib/utils/helpers";
 import { writable } from "svelte/store";
-import { ActorFactory } from "../../utils/ActorFactory";
 
 function createUserStore() {
   const { subscribe, set } = writable<any>(null);

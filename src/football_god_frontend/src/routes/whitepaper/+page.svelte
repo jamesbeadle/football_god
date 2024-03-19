@@ -1,7 +1,6 @@
 <script lang="ts">
   import Architecture from "$lib/components/whitepaper/architecture.svelte";
   import Dao from "$lib/components/whitepaper/dao.svelte";
-  import Gameplay from "$lib/components/whitepaper/gameplay.svelte";
   import Marketing from "$lib/components/whitepaper/marketing.svelte";
   import Revenue from "$lib/components/whitepaper/revenue.svelte";
   import Roadmap from "$lib/components/whitepaper/roadmap.svelte";
@@ -29,16 +28,6 @@
           on:click={() => setActiveTab("vision")}
         >
           Vision
-        </button>
-      </li>
-      <li class={`mr-4 ${activeTab === "gameplay" ? "active-tab" : ""}`}>
-        <button
-          class={`p-2 ${
-            activeTab === "gameplay" ? "text-white" : "text-gray-400"
-          }`}
-          on:click={() => setActiveTab("gameplay")}
-        >
-          Gameplay
         </button>
       </li>
       <li class={`mr-4 ${activeTab === "dao" ? "active-tab" : ""}`}>
@@ -103,8 +92,6 @@
 
     {#if activeTab === "vision"}
       <Vision />
-    {:else if activeTab === "gameplay"}
-      <Gameplay />
     {:else if activeTab === "roadmap"}
       <Roadmap />
     {:else if activeTab === "revenue"}
