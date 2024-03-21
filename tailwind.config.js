@@ -37,7 +37,7 @@ export default {
     },
     extend: {
       colors: {
-        BRAND: "#2ce3a6",
+        GRAY: "#242529",
       },
     },
   },
