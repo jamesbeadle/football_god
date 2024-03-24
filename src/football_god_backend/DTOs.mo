@@ -195,6 +195,7 @@ module DTOs {
   };
 
   public type Euro2024PredictionDTO = {
+    enterSweepstake: Bool;
     groupAWinnerTeamId: T.TeamId;
     groupALoserTeamId: T.TeamId;
     groupAGoalscorer: T.PlayerId;
@@ -265,12 +266,6 @@ module DTOs {
     finalYellowCard: T.PlayerId;
     finalRedCard: T.PlayerId;
 
-  };
-
-  public type PlayEuro2024DTO = {
-    prediction : Euro2024PredictionDTO;
-    sweepstakePaid : Bool;
-    userId : Text;
   };
 
   public type Euro2024FixtureDTO = {

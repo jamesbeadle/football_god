@@ -2,7 +2,7 @@ import T "../types";
 
 module {
 
-  public class Fixtures() {
+  public class Euro2024Fixtures() {
     public let fixtures : [T.Euro2024Fixture] = [
       {
         id = 1;

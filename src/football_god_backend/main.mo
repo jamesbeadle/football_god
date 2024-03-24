@@ -20,6 +20,9 @@ import Profiles "profiles";
 import Book "book";
 import Account "Account";
 import DTOs "DTOs";
+import Euro2024Fixtures "./data/euro2024_fixtures";
+import Euro2024Players "./data/euro2024_players";
+import Euro2024Teams "./data/euro2024_teams";
 
 actor Self {
 
@@ -47,7 +50,7 @@ actor Self {
   private stable var stable_nextSeasonId : Nat16 = 0;
   private stable var stable_nextFixtureId : Nat32 = 0;
   private stable var stable_nextTeamId : Nat16 = 0;
-  private stable var stable_euro2024_predictions : [(T.PrincipalName, List.List<T.Euro2024Prediction>)] = [];
+  private stable var stable_euro2024_predictions : [(T.PrincipalName, T.Euro2024Prediction)] = [];
 
   //admin functions
   private func isAdminForCaller(caller : Principal) : Bool {
@@ -1016,22 +1019,92 @@ actor Self {
   };
 
   
-  public shared query ({ caller }) func getEuro2024DTO() : async DTOs.PlayEuro2024DTO {
+  public shared query ({ caller }) func getEuro2024DTO() : async Result.Result<DTOs.Euro2024PredictionDTO, T.Error> {
 
     assert not Principal.isAnonymous(caller);
     let principalName = Principal.toText(caller);
+    let fixturesData = Euro2024Fixtures.Euro2024Fixtures();
     
-    var fixtures : [DTOs.Euro2024FixtureDTO] = EURO2024_DATA.fixtures;
-    var sweepstakePaid = false;
-    let existingPredictions = euro2024Instance.getPredictions(principalName);
-    
-    let playDTO : DTOs.PlayEuro2024DTO = {
-      fixtures = fixtures;
-      sweepstakePaid = sweepstakePaid;
-      userId = principalName;
-    };
+    let prediction = euro2024Instance.getPredictions(principalName);
+    switch(prediction){
+      case (null) {
+        return #err(#NotFound);
+      };
+      case (?foundPrediction){
+        let playDTO : DTOs.Euro2024PredictionDTO = {
+          enterSweepstake = foundPrediction.sweepstakePaid;
+          groupAWinnerTeamId = foundPrediction.groupAWinnerTeamId;
+          groupALoserTeamId = foundPrediction.groupALoserTeamId;
+          groupAGoalscorer = foundPrediction.groupAGoalscorer;
+          groupAGoalAssister = foundPrediction.groupAGoalAssister;
+          groupAYellowCard = foundPrediction.groupAYellowCard;
+          groupARedCard = foundPrediction.groupARedCard;
 
-    return playDTO;
+          groupBWinnerTeamId = foundPrediction.groupBWinnerTeamId;
+          groupBLoserTeamId = foundPrediction.groupBLoserTeamId;
+          groupBGoalscorer = foundPrediction.groupBGoalscorer;
+          groupBGoalAssister = foundPrediction.groupBGoalAssister;
+          groupBYellowCard = foundPrediction.groupBYellowCard;
+          groupBRedCard = foundPrediction.groupBRedCard;
+
+          groupCWinnerTeamId = foundPrediction.groupCWinnerTeamId;
+          groupCLoserTeamId = foundPrediction.groupCLoserTeamId;
+          groupCGoalscorer = foundPrediction.groupCGoalscorer;
+          groupCGoalAssister = foundPrediction.groupCGoalAssister;
+          groupCYellowCard = foundPrediction.groupCYellowCard;
+          groupCRedCard = foundPrediction.groupCRedCard;
+
+          groupDWinnerTeamId = foundPrediction.groupDWinnerTeamId;
+          groupDLoserTeamId = foundPrediction.groupDLoserTeamId;
+          groupDGoalscorer = foundPrediction.groupDGoalscorer;
+          groupDGoalAssister = foundPrediction.groupDGoalAssister;
+          groupDYellowCard = foundPrediction.groupDYellowCard;
+          groupDRedCard = foundPrediction.groupDRedCard;
+
+          groupEWinnerTeamId = foundPrediction.groupEWinnerTeamId;
+          groupELoserTeamId = foundPrediction.groupELoserTeamId;
+          groupEGoalscorer = foundPrediction.groupEGoalscorer;
+          groupEGoalAssister = foundPrediction.groupEGoalAssister;
+          groupEYellowCard = foundPrediction.groupEYellowCard;
+          groupERedCard = foundPrediction.groupERedCard;
+
+          groupFWinnerTeamId = foundPrediction.groupFWinnerTeamId;
+          groupFLoserTeamId = foundPrediction.groupFLoserTeamId;
+          groupFGoalscorer = foundPrediction.groupFGoalscorer;
+          groupFGoalAssister = foundPrediction.groupFGoalAssister;
+          groupFYellowCard = foundPrediction.groupFYellowCard;
+          groupFRedCard = foundPrediction.groupFRedCard;
+
+          roundOf16Winner = foundPrediction.roundOf16Winner;
+          roundOf16Loser = foundPrediction.roundOf16Loser;
+          roundOf16Goalscorer = foundPrediction.roundOf16Goalscorer;
+          roundOf16GoalAssister = foundPrediction.roundOf16GoalAssister;
+          roundOf16YellowCard = foundPrediction.roundOf16YellowCard;
+          roundOf16RedCard = foundPrediction.roundOf16RedCard;
+
+          quarterFinalWinner = foundPrediction.quarterFinalWinner;
+          quarterFinalLoser = foundPrediction.quarterFinalLoser;
+          quarterFinalGoalscorer = foundPrediction.quarterFinalGoalscorer;
+          quarterFinalGoalAssister = foundPrediction.quarterFinalGoalAssister;
+          quarterFinalYellowCard = foundPrediction.quarterFinalYellowCard;
+          quarterFinalRedCard = foundPrediction.quarterFinalRedCard;
+
+          semiFinalWinner = foundPrediction.semiFinalWinner;
+          semiFinalLoser = foundPrediction.semiFinalLoser;
+          semiFinalGoalscorer = foundPrediction.semiFinalGoalscorer;
+          semiFinalGoalAssister = foundPrediction.semiFinalGoalAssister;
+          semiFinalYellowCard = foundPrediction.semiFinalYellowCard;
+          semiFinalRedCard = foundPrediction.semiFinalRedCard;
+
+          finalWinner = foundPrediction.finalWinner;
+          finalGoalscorer = foundPrediction.finalGoalscorer;
+          finalGoalAssister = foundPrediction.finalGoalAssister;
+          finalYellowCard = foundPrediction.finalYellowCard;
+          finalRedCard = foundPrediction.finalRedCard;
+        };
+        return #ok(playDTO);
+      }
+    };
   };
 
   public shared ({ caller }) func submitEuro2024Prediction(euro2024PredictionDTO : DTOs.Euro2024PredictionDTO) : async Result.Result<(), T.Error> {
@@ -1053,7 +1126,7 @@ actor Self {
     let paidForSweepstake = euro2024Instance.checkSweepstakePaid(Principal.toText(caller));
     var sweepstakeEntered = paidForSweepstake;
 
-    if (playDTO.enterSweepstake and not paidForSweepstake) {
+    if (euro2024PredictionDTO.enterSweepstake and not paidForSweepstake) {
       let canAffordEntry = await bookInstance.canAffordEntry(Principal.fromActor(Self), caller);
 
       if (not canAffordEntry) {
