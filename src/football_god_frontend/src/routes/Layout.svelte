@@ -4,13 +4,16 @@
   import { browser } from "$app/environment";
   import { authStore, type AuthStoreData } from "$lib/stores/auth.store";
   import { toastsError } from "$lib/stores/toasts.store";
-  import Header from "$lib/shared/Header.svelte";
-  import Footer from "$lib/shared/Footer.svelte";
   import "../app.css";
 
   import { BusyScreen, Spinner, Toasts } from "@dfinity/gix-components";
   import { initAuthWorker } from "$lib/services/worker.auth.services";
     import LogoIcon from "$lib/icons/LogoIcon.svelte";
+    import HomeIcon from "$lib/icons/HomeIcon.svelte";
+    import BettingIcon from "$lib/icons/BettingIcon.svelte";
+    import GamesIcon from "$lib/icons/GamesIcon.svelte";
+    import StarIcon from "$lib/icons/StarIcon.svelte";
+    import RulesIcon from "$lib/icons/RulesIcon.svelte";
 
   const init = async () => await Promise.all([syncAuthStore()]);
 
@@ -87,7 +90,6 @@
       <button
         class="p-4 text-xl leading-none text-white bg-transparent border border-transparent rounded focus:outline-none lg:hidden"
         on:click={toggleSidebar}>
-        <!-- Ensure you have the icon library loaded -->
         <i class="fas fa-bars"></i>
       </button>
     {/if}
@@ -96,22 +98,40 @@
       class={`fixed top-0 left-0 w-64 bg-GRAY text-white h-full overflow-auto transition-transform duration-300 ease-in-out z-30 ${
         sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
       }`}>
-      <div class="p-5">
-        <div class="flex flex-row text-xl items-center">
+      <div class="p-5 text-gray-400">
+        <div class="flex flex-row text-xl items-center text-white">
           <LogoIcon className="w-6 mr-2 my-4" /> FootballGod
         </div>
-        <a href="/" class="block mt-4 text-lg">Home</a>
-        <a href="/" class="block mt-4 text-lg">Match Betting</a>
-        <a href="/" class="block mt-4 text-lg">Mini Games</a>
-        <a href="/" class="block mt-4 text-lg">Euro 2024</a>
-        <a href="/" class="block mt-4 text-lg">Rules</a>
+        <a href="/" class="block mt-4 text-lg">
+          <div class="flex flex-row items-center">
+            <HomeIcon className="w-6 mr-2" /> Home
+          </div>
+        </a>
+        <a href="/" class="block mt-4 text-lg">
+          <div class="flex flex-row items-center">
+            <BettingIcon className="w-6 mr-2" /> Match Betting
+          </div>
+        </a>
+        <a href="/" class="block mt-4 text-lg">
+          <div class="flex flex-row items-center">
+            <GamesIcon className="w-6 mr-2" /> Mini Games
+          </div>
+        </a>
+        <a href="/" class="block mt-4 text-lg">
+          <div class="flex flex-row items-center">
+            <StarIcon className="w-6 mr-2" /> Euro 2024
+          </div>
+        </a>
+        <a href="/" class="block mt-4 text-lg">
+          <div class="flex flex-row items-center">
+            <RulesIcon className="w-6 mr-2" /> Rules
+          </div>
+        </a>
       </div>
     </aside>
 
-    <!-- Main content -->
     <div class="flex flex-col w-full">
 
-      <!-- Profile Icon (visible only on desktop) -->
       <div class="absolute top-0 right-0 p-4 hidden lg:block">
         <button class="focus:outline-none">
           <div class="w-10 h-10 bg-gray-300 rounded-full"></div>

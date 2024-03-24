@@ -11,7 +11,7 @@ import Result "mo:base/Result";
 import Buffer "mo:base/Buffer";
 import Blob "mo:base/Blob";
 
-import Types "types";
+import T "types";
 import Seasons "seasons";
 import Teams "teams";
 import Predictions "predictions";
@@ -38,10 +38,10 @@ actor Self {
   //stable variables populated on pre upgrade
   private stable var activeSeason : Nat16 = 0;
   private stable var activeGameweek : Nat8 = 0;
-  private stable var stable_profiles : [Types.Profile] = [];
-  private stable var stable_predictions : [(Types.PrincipalName, List.List<Types.UserGameweek>)] = [];
-  private stable var stable_seasons : [Types.Season] = [];
-  private stable var stable_teams : [Types.Team] = [];
+  private stable var stable_profiles : [T.Profile] = [];
+  private stable var stable_predictions : [(T.PrincipalName, List.List<T.UserGameweek>)] = [];
+  private stable var stable_seasons : [T.Season] = [];
+  private stable var stable_teams : [T.Team] = [];
   private stable var stable_nextSeasonId : Nat16 = 0;
   private stable var stable_nextFixtureId : Nat32 = 0;
   private stable var stable_nextTeamId : Nat16 = 0;
@@ -89,7 +89,7 @@ actor Self {
       switch (gameweekFixtures) {
         case (null) {};
         case (?fixtures) {
-          for (fixture in Iter.fromList<Types.Fixture>(fixtures)) {
+          for (fixture in Iter.fromList<T.Fixture>(fixtures)) {
             let fixtureDTO : DTOs.FixtureDTO = {
               fixtureId = 0;
               homeTeamId = 0;
@@ -176,14 +176,14 @@ actor Self {
       switch (gameweekFixtures) {
         case (null) {};
         case (?fixtures) {
-          for (fixture in Iter.fromList<Types.Fixture>(fixtures)) {
+          for (fixture in Iter.fromList<T.Fixture>(fixtures)) {
 
             var predictedHomeGoals = Nat8.fromNat(0);
             var predictedAwayGoals = Nat8.fromNat(0);
 
-            let existingPrediction = Array.find<Types.Prediction>(
+            let existingPrediction = Array.find<T.Prediction>(
               existingPredictions,
-              func(prediction : Types.Prediction) : Bool {
+              func(prediction : T.Prediction) : Bool {
                 return prediction.fixtureId == fixture.id;
               },
             );
@@ -247,7 +247,7 @@ actor Self {
     return accountBalanceDTO;
   };
 
-  public shared ({ caller }) func submitPlayDTO(playDTO : DTOs.SubmitPlayDTO) : async Result.Result<(), Types.Error> {
+  public shared ({ caller }) func submitPlayDTO(playDTO : DTOs.SubmitPlayDTO) : async Result.Result<(), T.Error> {
 
     assert not Principal.isAnonymous(caller);
     let principalName = Principal.toText(caller);
@@ -341,14 +341,14 @@ actor Self {
     switch (gameweekFixtures) {
       case (null) {};
       case (?fixtures) {
-        for (fixture in Iter.fromList<Types.Fixture>(fixtures)) {
+        for (fixture in Iter.fromList<T.Fixture>(fixtures)) {
 
           var predictedHomeGoals = Nat8.fromNat(0);
           var predictedAwayGoals = Nat8.fromNat(0);
 
-          let existingPrediction = Array.find<Types.Prediction>(
+          let existingPrediction = Array.find<T.Prediction>(
             existingPredictions,
-            func(prediction : Types.Prediction) : Bool {
+            func(prediction : T.Prediction) : Bool {
               return prediction.fixtureId == fixture.id;
             },
           );
@@ -421,7 +421,7 @@ actor Self {
     let seasonsBuffer = Buffer.fromArray<DTOs.SeasonDTO>(seasons);
     let allSeasons = seasonsInstance.getSeasons();
 
-    for (season in Iter.fromArray<Types.Season>(allSeasons)) {
+    for (season in Iter.fromArray<T.Season>(allSeasons)) {
       let seasonDTO : DTOs.SeasonDTO = {
         seasonId = season.id;
         seasonName = season.name;
@@ -473,7 +473,7 @@ actor Self {
     let seasonsBuffer = Buffer.fromArray<DTOs.SeasonDTO>(seasons);
     let allSeasons = seasonsInstance.getSeasons();
 
-    for (season in Iter.fromArray<Types.Season>(allSeasons)) {
+    for (season in Iter.fromArray<T.Season>(allSeasons)) {
       let seasonDTO : DTOs.SeasonDTO = {
         seasonId = season.id;
         seasonName = season.name;
@@ -548,12 +548,12 @@ actor Self {
     return profilesInstance.isDisplayNameValid(displayName);
   };
 
-  public shared ({ caller }) func updateDisplayName(displayName : Text) : async Result.Result<(), Types.Error> {
+  public shared ({ caller }) func updateDisplayName(displayName : Text) : async Result.Result<(), T.Error> {
     assert not Principal.isAnonymous(caller);
     return profilesInstance.updateDisplayName(Principal.toText(caller), displayName);
   };
 
-  public shared ({ caller }) func updateWalletAddress(walletAddress : Text) : async Result.Result<(), Types.Error> {
+  public shared ({ caller }) func updateWalletAddress(walletAddress : Text) : async Result.Result<(), T.Error> {
     assert not Principal.isAnonymous(caller);
     return profilesInstance.updateWalletAddress(Principal.toText(caller), walletAddress);
   };
@@ -563,7 +563,7 @@ actor Self {
     return profilesInstance.isWalletValid(walletAddress);
   };
 
-  public shared ({ caller }) func withdrawICP(amount : Float) : async Result.Result<(), Types.Error> {
+  public shared ({ caller }) func withdrawICP(amount : Float) : async Result.Result<(), T.Error> {
     assert not Principal.isAnonymous(caller);
 
     let userProfile = profilesInstance.getProfile(Principal.toText(caller));
@@ -611,7 +611,7 @@ actor Self {
     let seasonsBuffer = Buffer.fromArray<DTOs.SeasonDTO>(seasons);
     let allSeasons = seasonsInstance.getSeasons();
 
-    for (season in Iter.fromArray<Types.Season>(allSeasons)) {
+    for (season in Iter.fromArray<T.Season>(allSeasons)) {
       let seasonDTO : DTOs.SeasonDTO = {
         seasonId = season.id;
         seasonName = season.name;
@@ -658,7 +658,7 @@ actor Self {
     return adminDTO;
   };
 
-  public shared ({ caller }) func unsetActiveState() : async Result.Result<(), Types.Error> {
+  public shared ({ caller }) func unsetActiveState() : async Result.Result<(), T.Error> {
 
     let isCallerAdmin = isAdminForCaller(caller);
     if (isCallerAdmin == false) {
@@ -670,7 +670,7 @@ actor Self {
     return #ok(());
   };
 
-  public shared ({ caller }) func setSystemState(seasonId : Nat16, gameweekNumber : Nat8) : async Result.Result<(), Types.Error> {
+  public shared ({ caller }) func setSystemState(seasonId : Nat16, gameweekNumber : Nat8) : async Result.Result<(), T.Error> {
 
     let isCallerAdmin = isAdminForCaller(caller);
     if (isCallerAdmin == false) {
@@ -732,7 +732,7 @@ actor Self {
 
   };
 
-  public shared ({ caller }) func payoutSweepstake() : async Result.Result<(), Types.Error> {
+  public shared ({ caller }) func payoutSweepstake() : async Result.Result<(), T.Error> {
     let isCallerAdmin = isAdminForCaller(caller);
     if (isCallerAdmin == false) {
       return #err(#NotAuthorized);
@@ -781,15 +781,15 @@ actor Self {
 
   //season functions
 
-  public query func getSeasons() : async [Types.Season] {
+  public query func getSeasons() : async [T.Season] {
     return seasonsInstance.getSeasons();
   };
 
-  public query func getSeason(seasonId : Nat16) : async ?Types.Season {
+  public query func getSeason(seasonId : Nat16) : async ?T.Season {
     return seasonsInstance.getSeason(seasonId);
   };
 
-  public shared ({ caller }) func createSeason(name : Text, year : Nat16) : async Result.Result<(), Types.Error> {
+  public shared ({ caller }) func createSeason(name : Text, year : Nat16) : async Result.Result<(), T.Error> {
 
     let isCallerAdmin = isAdminForCaller(caller);
     if (isCallerAdmin == false) {
@@ -799,7 +799,7 @@ actor Self {
     return seasonsInstance.createSeason(name, year);
   };
 
-  public shared ({ caller }) func updateSeason(id : Nat16, newName : Text, newYear : Nat16) : async Result.Result<(), Types.Error> {
+  public shared ({ caller }) func updateSeason(id : Nat16, newName : Text, newYear : Nat16) : async Result.Result<(), T.Error> {
     let isCallerAdmin = isAdminForCaller(caller);
     if (isCallerAdmin == false) {
       return #err(#NotAuthorized);
@@ -808,7 +808,7 @@ actor Self {
     return seasonsInstance.updateSeason(id, newName, newYear);
   };
 
-  public shared ({ caller }) func deleteSeason(id : Nat16) : async Result.Result<(), Types.Error> {
+  public shared ({ caller }) func deleteSeason(id : Nat16) : async Result.Result<(), T.Error> {
     let isCallerAdmin = isAdminForCaller(caller);
     if (isCallerAdmin == false) {
       return #err(#NotAuthorized);
@@ -823,11 +823,11 @@ actor Self {
 
   //gameweek functions
 
-  public query func getGameweeks(seasonId : Nat16) : async [Types.Gameweek] {
+  public query func getGameweeks(seasonId : Nat16) : async [T.Gameweek] {
     return seasonsInstance.getGameweeks(seasonId);
   };
 
-  public shared ({ caller }) func updateGameweekStatus(seasonId : Nat16, gameweekNumber : Nat8, status : Nat8) : async Result.Result<(), Types.Error> {
+  public shared ({ caller }) func updateGameweekStatus(seasonId : Nat16, gameweekNumber : Nat8, status : Nat8) : async Result.Result<(), T.Error> {
 
     let isCallerAdmin = isAdminForCaller(caller);
     if (isCallerAdmin == false) {
@@ -845,7 +845,7 @@ actor Self {
 
   //fixture functions
 
-  public query func getFixtures(seasonId : Nat16, gameweekNumber : Nat8) : async [Types.Fixture] {
+  public query func getFixtures(seasonId : Nat16, gameweekNumber : Nat8) : async [T.Fixture] {
 
     let fixtures = seasonsInstance.getFixtures(seasonId, gameweekNumber);
     switch (fixtures) {
@@ -854,11 +854,11 @@ actor Self {
     };
   };
 
-  public query func getFixture(seasonId : Nat16, gameweekNumber : Nat8, fixtureId : Nat32) : async ?Types.Fixture {
+  public query func getFixture(seasonId : Nat16, gameweekNumber : Nat8, fixtureId : Nat32) : async ?T.Fixture {
     return seasonsInstance.getFixture(seasonId, gameweekNumber, fixtureId);
   };
 
-  public shared ({ caller }) func addFixtureToGameweek(seasonId : Nat16, gameweekNumber : Nat8, homeTeamId : Nat16, awayTeamId : Nat16) : async Result.Result<(), Types.Error> {
+  public shared ({ caller }) func addFixtureToGameweek(seasonId : Nat16, gameweekNumber : Nat8, homeTeamId : Nat16, awayTeamId : Nat16) : async Result.Result<(), T.Error> {
 
     let isCallerAdmin = isAdminForCaller(caller);
     if (isCallerAdmin == false) {
@@ -868,7 +868,7 @@ actor Self {
     return seasonsInstance.addFixtureToGameweek(seasonId, gameweekNumber, homeTeamId, awayTeamId);
   };
 
-  public shared ({ caller }) func updateFixture(seasonId : Nat16, gameweekNumber : Nat8, fixtureId : Nat32, homeTeamId : Nat16, awayTeamId : Nat16, fixtureStatus : Nat8, homeGoals : Nat8, awayGoals : Nat8) : async Result.Result<(), Types.Error> {
+  public shared ({ caller }) func updateFixture(seasonId : Nat16, gameweekNumber : Nat8, fixtureId : Nat32, homeTeamId : Nat16, awayTeamId : Nat16, fixtureStatus : Nat8, homeGoals : Nat8, awayGoals : Nat8) : async Result.Result<(), T.Error> {
 
     let isCallerAdmin = isAdminForCaller(caller);
     if (isCallerAdmin == false) {
@@ -887,7 +887,7 @@ actor Self {
 
   };
 
-  public shared ({ caller }) func deleteFixture(seasonId : Nat16, gameweekNumber : Nat8, fixtureId : Nat32) : async Result.Result<(), Types.Error> {
+  public shared ({ caller }) func deleteFixture(seasonId : Nat16, gameweekNumber : Nat8, fixtureId : Nat32) : async Result.Result<(), T.Error> {
     let isCallerAdmin = isAdminForCaller(caller);
     if (isCallerAdmin == false) {
       return #err(#NotAuthorized);
@@ -907,11 +907,11 @@ actor Self {
 
   //team functions
 
-  public query func getTeams() : async [Types.Team] {
+  public query func getTeams() : async [T.Team] {
     return teamsInstance.getTeams();
   };
 
-  public shared ({ caller }) func createTeam(name : Text) : async Result.Result<(), Types.Error> {
+  public shared ({ caller }) func createTeam(name : Text) : async Result.Result<(), T.Error> {
 
     let isCallerAdmin = isAdminForCaller(caller);
     if (isCallerAdmin == false) {
@@ -921,7 +921,7 @@ actor Self {
     return teamsInstance.createTeam(name);
   };
 
-  public shared ({ caller }) func updateTeam(id : Nat16, newName : Text) : async Result.Result<(), Types.Error> {
+  public shared ({ caller }) func updateTeam(id : Nat16, newName : Text) : async Result.Result<(), T.Error> {
     let isCallerAdmin = isAdminForCaller(caller);
     if (isCallerAdmin == false) {
       return #err(#NotAuthorized);
@@ -930,7 +930,7 @@ actor Self {
     return teamsInstance.updateTeam(id, newName);
   };
 
-  public shared ({ caller }) func deleteTeam(id : Nat16) : async Result.Result<(), Types.Error> {
+  public shared ({ caller }) func deleteTeam(id : Nat16) : async Result.Result<(), T.Error> {
     let isCallerAdmin = isAdminForCaller(caller);
     if (isCallerAdmin == false) {
       return #err(#NotAuthorized);
@@ -1009,6 +1009,46 @@ actor Self {
   private func getUserDepositAccount(caller : Principal) : Account.AccountIdentifier {
     Account.accountIdentifier(Principal.fromActor(Self), Account.principalToSubaccount(caller));
   };
+
+  public shared ({ caller }) func submitEuro2024Prediction(euro2024PredictionDTO : DTOs.Euro2024PredictionDTO) : async Result.Result<(), T.Error> {
+
+    assert not Principal.isAnonymous(caller);
+    let principalName = Principal.toText(caller);
+    let profile = profilesInstance.getProfile(principalName);
+
+    if (profile == null) {
+      profilesInstance.createProfile(Principal.toText(caller), Principal.toText(caller), "", getUserDepositAccount(caller));
+    };
+
+    let validPredictions = euro2024Instance.checkValidPredictions(euro2024PredictionDTO);
+
+    if (not validPredictions) {
+      return #err(#NotAllowed);
+    };
+
+    let paidForSweepstake = euro2024Instance.checkSweepstakePaid(Principal.toText(caller));
+    var sweepstakeEntered = paidForSweepstake;
+
+    if (playDTO.enterSweepstake and not paidForSweepstake) {
+      let canAffordEntry = await bookInstance.canAffordEntry(Principal.fromActor(Self), caller);
+
+      if (not canAffordEntry) {
+        return #err(#NotAllowed);
+      };
+
+      await bookInstance.transferEntryFee(Principal.fromActor(Self), caller);
+      sweepstakeEntered := true;
+    };
+
+    return predictionsInstance.submitPredictions(principalName, activeSeason, activeGameweek, playDTO.fixtures, sweepstakeEntered);
+  };
+
+/*
+  //New functions for betting
+  public shared func getEventOdds(eventId: T.EventId) : async DTOs.LiveOddsDTO {
+    //return oddsManager.getEventOdds(eventId);
+  };
+*/
 
   system func preupgrade() {
     stable_profiles := profilesInstance.getProfiles();

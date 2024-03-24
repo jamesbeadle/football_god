@@ -71,4 +71,25 @@ module Types {
 
   public type PrincipalName = Text;
 
+
+  //Types for new betting features
+
+  public type EventId = Nat16;
+  public type PlayerId = Nat16;
+  public type TeamId = Nat16;
+  
+  public type BettingMarket = {
+    #CorrectResult;
+    #CorrectScore;
+    #FirstGoalScorer;
+    #AnytimeGoalScorer;
+    #Score2OrMore;
+    #Score3OrMore;
+    #ScoreFreekick;
+    #MissPenalty;
+    #YellowCard;
+    #RedCard;
+    #Scorecast;
+  };
+
 };

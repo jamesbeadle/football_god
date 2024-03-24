@@ -1,3 +1,5 @@
+import T "types";
+
 module DTOs {
 
   public type HomeDTO = {
@@ -152,5 +154,83 @@ module DTOs {
     principalName : Text;
     displayName : Text;
   };
+
+  public type LiveOddsDTO = {
+    eventId: T.EventId;
+    correctResultOdds: ResultOddsDTO;
+    correctScoreOdds: [ScoreOddsDTO];
+    firstGoalScorerOdds: [PlayerOddsDTO];
+    anytimeGoalScorerOdds: [PlayerOddsDTO];
+    score2OrMoreOdds:  [PlayerOddsDTO];
+    score3OrMoreOdds:  [PlayerOddsDTO];
+    scoreFreekickOdds:  [PlayerOddsDTO];
+    missPenaltyOdds:  [PlayerOddsDTO];
+    yellowCardOdds:  [PlayerOddsDTO];
+    redCardOdds: [PlayerOddsDTO];
+    scorecastOdds: [ScorecastOddsDTO];
+  };
+
+  public type ResultOddsDTO = {
+    homeOdds: Float;
+    drawOdds: Float;
+    awayOdds: Float;
+  };
+
+  public type ScoreOddsDTO = {
+    homeScore: Nat8;
+    awayScore: Nat8;
+    odds: Float;
+  };
+
+  public type PlayerOddsDTO = {
+    playerId: T.PlayerId;
+    odds: Float;
+  };
+
+  public type ScorecastOddsDTO = {
+    playerId: T.PlayerId;
+    homeGoals: Nat8;
+    awayGoals: Nat8;
+    odds: Float;
+  };
+
+  public type Euro2024PredictionDTO = {
+    groupAWinnerTeamId: T.TeamId;
+    groupALoserTeamId: T.TeamId;
+    groupAGoalscorer: T.PlayerId;
+    groupAGoalAssister: T.PlayerId;
+    groupAYellowCard: T.PlayerId;
+    groupARedCard: T.PlayerId;
+
+    roundOf16Winner: T.TeamId;
+    roundOf16Loser: T.TeamId;
+    roundOf16Goalscorer: T.PlayerId;
+    roundOf16GoalAssister: T.PlayerId;
+    roundOf16YellowCard: T.PlayerId;
+    roundOf16RedCard: T.PlayerId;
+
+    quarterFinalWinner: T.TeamId;
+    quarterFinalLoser: T.TeamId;
+    quarterFinalGoalscorer: T.PlayerId;
+    quarterFinalGoalAssister: T.PlayerId;
+    quarterFinalYellowCard: T.PlayerId;
+    quarterFinalRedCard: T.PlayerId;
+
+    semiFinalWinner: T.TeamId;
+    semiFinalLoser: T.TeamId;
+    semiFinalGoalscorer: T.PlayerId;
+    semiFinalGoalAssister: T.PlayerId;
+    semiFinalYellowCard: T.PlayerId;
+    semiFinalRedCard: T.PlayerId;
+
+    finalWinner: T.TeamId;
+    finalLoser: T.TeamId;
+    finalGoalscorer: T.PlayerId;
+    finalGoalAssister: T.PlayerId;
+    finalYellowCard: T.PlayerId;
+    finalRedCard: T.PlayerId;
+
+  }
+  
 
 };
