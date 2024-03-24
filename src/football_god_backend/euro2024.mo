@@ -6,10 +6,7 @@ import List "mo:base/List";
 import Iter "mo:base/Iter";
 import Array "mo:base/Array";
 import Int "mo:base/Int";
-import Nat8 "mo:base/Nat8";
-import Nat32 "mo:base/Nat32";
 import Nat64 "mo:base/Nat64";
-import Buffer "mo:base/Buffer";
 import DTOs "DTOs";
 
 module {
@@ -115,6 +112,8 @@ module {
         finalGoalAssister = predictions.prediction.finalGoalAssister;
         finalYellowCard = predictions.prediction.finalYellowCard;
         finalRedCard = predictions.prediction.finalRedCard;
+        totalScore = 0;
+        winnings = 0;
       });
 
       return #ok(());
@@ -222,137 +221,50 @@ module {
     };
 
     public func getWinnerPrincipalIds() : [Types.PrincipalName] {
-      let leaderboardEntries = Array.map<(Types.PrincipalName, List.List<Types.UserGameweek>), List.List<DTOs.LeaderboardEntryDTO>>(
-        Iter.toArray(userPredictions.entries()),
-        func((principal, userGameweeks) : (Types.PrincipalName, List.List<Types.UserGameweek>)) : List.List<DTOs.LeaderboardEntryDTO> {
-          let filteredGameweeks = List.filter(
-            userGameweeks,
-            func(ugw : Types.UserGameweek) : Bool {
-              return ugw.seasonId == seasonId and ugw.gameweekNumber == gameweekNumber;
-            },
-          );
-
-          return List.map<Types.UserGameweek, DTOs.LeaderboardEntryDTO>(
-            filteredGameweeks,
-            func(ugw : Types.UserGameweek) : DTOs.LeaderboardEntryDTO {
-              return {
-                position = "";
-                principalName = principal;
-                displayName = principal;
-                correctScores = ugw.correctScores;
-                totalFixtures = ugw.predictionCount;
-                enteredSweepstake = ugw.enteredSweepstake;
-              };
-            },
-          );
-        },
+      let leaderboardEntries = List.fromArray(
+        Array.map<(Types.PrincipalName, Types.Euro2024Prediction), DTOs.Euro2024LeaderboardEntryDTO>(
+          Iter.toArray(userPredictions.entries()),
+          func((principal, userPrediction) : (Types.PrincipalName, Types.Euro2024Prediction)) : DTOs.Euro2024LeaderboardEntryDTO {
+            let dto: DTOs.Euro2024LeaderboardEntryDTO = {
+              position = "";
+              principalName = principal;
+              displayName = principal;
+              totalScore = userPrediction.totalScore;
+              enteredSweepstake = userPrediction.sweepstakePaid;
+              winnings = userPrediction.winnings;
+            };
+            return dto;
+          },
+        )
       );
-
-      let flattenedLeaderboardEntries = List.flatten<DTOs.LeaderboardEntryDTO>(List.fromArray(leaderboardEntries));
-
-      let highestCorrectScores = List.foldLeft<DTOs.LeaderboardEntryDTO, Nat8>(
-        flattenedLeaderboardEntries,
+      
+      let highestCorrectScore = List.foldLeft<DTOs.Euro2024LeaderboardEntryDTO, Nat16>(
+        leaderboardEntries,
         0,
-        func(highest : Nat8, entry : DTOs.LeaderboardEntryDTO) : Nat8 {
-          if (entry.correctScores > highest) {
-            return entry.correctScores;
+        func(highest : Nat16, entry : DTOs.Euro2024LeaderboardEntryDTO) : Nat16 {
+          if (entry.totalScore > highest) {
+            return entry.totalScore;
           } else {
             return highest;
           };
         },
       );
 
-      let winners = List.filter<DTOs.LeaderboardEntryDTO>(
-        flattenedLeaderboardEntries,
-        func(entry : DTOs.LeaderboardEntryDTO) : Bool {
-          let perfectScore = entry.correctScores == entry.totalFixtures and entry.totalFixtures > 0;
-          return (entry.correctScores == highestCorrectScores and entry.enteredSweepstake) or (perfectScore and not entry.enteredSweepstake);
+      let winners = List.filter<DTOs.Euro2024LeaderboardEntryDTO>(
+        leaderboardEntries,
+        func(entry : DTOs.Euro2024LeaderboardEntryDTO) : Bool {
+          return (entry.totalScore == highestCorrectScore and entry.enteredSweepstake);
         },
       );
 
-      let winnerPrincipalIds = List.map<DTOs.LeaderboardEntryDTO, Types.PrincipalName>(
+      let winnerPrincipalIds = List.map<DTOs.Euro2024LeaderboardEntryDTO, Types.PrincipalName>(
         winners,
-        func(entry : DTOs.LeaderboardEntryDTO) : Types.PrincipalName {
+        func(entry : DTOs.Euro2024LeaderboardEntryDTO) : Types.PrincipalName {
           return entry.principalName;
         },
       );
 
       return List.toArray<Types.PrincipalName>(winnerPrincipalIds);
-    };
-
-    public func updatePredictionsCount(fixtures : [Types.Fixture]) : Result.Result<(), Types.Error> {
-
-      // Iterate through all users
-      for ((principalName, userGameweeks) in userPredictions.entries()) {
-
-        // Find the user's gameweek for the given season and gameweek number
-        let gameweek = List.find<Types.UserGameweek>(
-          userGameweeks,
-          func(ugw : Types.UserGameweek) : Bool {
-            return ugw.seasonId == seasonId and ugw.gameweekNumber == gameweekNumber;
-          },
-        );
-
-        // If the user has a gameweek, update the predictionCount and correctScores
-        switch gameweek {
-          case (null) {}; // Do nothing if the user has no gameweek
-          case (?gw) {
-            // Update predictionCount
-            let predictionCount = List.size<Types.Prediction>(gw.predictions);
-
-            // Calculate correctScores
-            let correctScores = List.foldLeft<Types.Prediction, Nat8>(
-              gw.predictions,
-              0,
-              func(count : Nat8, prediction : Types.Prediction) : Nat8 {
-                let matchingFixture = List.find<Types.Fixture>(
-                  List.fromArray<Types.Fixture>(fixtures),
-                  func(fixture : Types.Fixture) : Bool {
-                    return fixture.id == prediction.fixtureId and fixture.status > 0;
-                  },
-                );
-
-                switch matchingFixture {
-                  case (null) { return count };
-                  case (?fixture) {
-                    let isCorrect = fixture.homeGoals == prediction.homeGoals and fixture.awayGoals == prediction.awayGoals;
-                    if (isCorrect) {
-                      return count + 1;
-                    };
-                    return count;
-                  };
-                };
-              },
-            );
-
-            // Update the user's gameweek
-            let updatedUserGameweek = {
-              seasonId = gw.seasonId;
-              gameweekNumber = gw.gameweekNumber;
-              predictions = gw.predictions;
-              enteredSweepstake = gw.enteredSweepstake;
-              correctScores = correctScores;
-              predictionCount = Nat8.fromNat(predictionCount);
-              winnings = gw.winnings;
-            };
-
-            let updatedUserGameweeks = List.map<Types.UserGameweek, Types.UserGameweek>(
-              userGameweeks,
-              func(ugw : Types.UserGameweek) : Types.UserGameweek {
-                if (ugw.seasonId == seasonId and ugw.gameweekNumber == gameweekNumber) {
-                  return updatedUserGameweek;
-                } else {
-                  return ugw;
-                };
-              },
-            );
-
-            userPredictions.put(principalName, updatedUserGameweeks);
-          };
-        };
-      };
-
-      return #ok(());
     };
 
     public func updateWinnings(principalName : Text, winnings : Nat64) : () {
@@ -453,6 +365,16 @@ module {
           return true;
         };
       };
+    };
+
+    
+    public func checkValidPredictions(predictions : DTOs.Euro2024PredictionDTO) : Bool {
+      
+      //make sure all the teams are valid international teams
+      //make sure all the players are valid international players
+      
+      
+      return true;
     };
 
   };

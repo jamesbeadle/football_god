@@ -170,6 +170,57 @@ module Types {
     finalYellowCard: PlayerId;
     finalRedCard: PlayerId;
 
-  }
+  };
+
+  public type InternationalTeam = {
+    players: [InternationalPlayer];
+    countryName: Text;
+    countryCode: Text;
+  };
+
+  public type InternationalPlayer = {
+    id : PlayerId;
+    firstName: Text;
+    lastName: Text;
+    nickname: Text;
+    position: Position;
+    qualifyingAppearances: Nat8;
+    qualifyingGoals: Nat8;
+    qualifyingAssists: Nat8;
+    teamId : TeamId;
+    shirtNumber : Nat8;
+    dateOfBirth : Int;
+    nationality : CountryId;
+  };
+
+  public type CountryId = Nat8;
+
+  public type Position = {
+    #Goalkeeper;
+    #Defender;
+    #Midfielder;
+    #Foward;
+  };
+
+  public type Euro2024Fixture = {
+    id : Nat8;
+    homeTeamId : TeamId;
+    awayTeamId : TeamId;
+    homeGoals : Nat8;
+    awayGoals : Nat8;
+    status : Nat8; // 0 = Unplayed, 1 = Active, 2 = Finished
+    stage: Euro2024Stage;
+    group: ?Euro2024Group;
+  };
+
+  public type Euro2024Stage = {
+    #GroupStage;
+    #RoundOf16;
+    #QuarterFinals;
+    #SemiFinals;
+    #Final;
+  };
+
+  public type Euro2024Group = { #A; #B; #C; #D; #E; #F}
 
 };
