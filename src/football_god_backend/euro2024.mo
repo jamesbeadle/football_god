@@ -155,29 +155,16 @@ module {
         return List.map(sortedEntries, updatePosition);
       };
 
-      let leaderboardEntries = Array.map<(Types.PrincipalName, List.List<Types.UserGameweek>), List.List<DTOs.LeaderboardEntryDTO>>(
+      let leaderboardEntries = Array.map<(Types.PrincipalName, Types.Euro2024Prediction), List.List<DTOs.LeaderboardEntryDTO>>(
         Iter.toArray(userPredictions.entries()),
-        func((principal, userGameweeks) : (Types.PrincipalName, List.List<Types.UserGameweek>)) : List.List<DTOs.LeaderboardEntryDTO> {
-          let filteredGameweeks = List.filter(
-            userGameweeks,
-            func(ugw : Types.UserGameweek) : Bool {
-              return ugw.seasonId == seasonId and ugw.gameweekNumber == gameweekNumber;
-            },
-          );
-
-          return List.map<Types.UserGameweek, DTOs.LeaderboardEntryDTO>(
-            filteredGameweeks,
-            func(ugw : Types.UserGameweek) : DTOs.LeaderboardEntryDTO {
-              return {
-                position = "";
-                principalName = principal;
-                displayName = principal;
-                correctScores = ugw.correctScores;
-                totalFixtures = ugw.predictionCount;
-                enteredSweepstake = ugw.enteredSweepstake;
-              };
-            },
-          );
+        func((principal, userPrediction) : (Types.PrincipalName, Types.Euro2024Prediction)) : List.List<DTOs.LeaderboardEntryDTO> {
+          return {
+            position = "";
+            principalName = principal;
+            displayName = principal;
+            totalScore = userPrediction.totalScore;
+            enteredSweepstake = userPrediction.sweepstakePaid;
+          };
         },
       );
 
@@ -189,10 +176,6 @@ module {
       let paginatedLeaderboardEntries = List.take(List.drop(positionedLeaderboardEntries, start), count);
 
       let leaderboard : DTOs.LeaderBoardDTO = {
-        seasons = [];
-        activeSeasonId = seasonId;
-        activeSeasonName = "";
-        activeGameweekNumber = gameweekNumber;
         leaderboardEntries = List.toArray<DTOs.LeaderboardEntryDTO>(paginatedLeaderboardEntries);
         totalEntries = Nat64.fromNat(totalEntries);
         totalPot = Nat64.fromNat(0);
@@ -454,9 +437,9 @@ module {
     };
 
     public func updateWinnings(principalName : Text, winnings : Nat64) : () {
-      let userGameweeks = userPredictions.get(principalName);
+      let userPrediction = userPredictions.get(principalName);
 
-      switch userGameweeks {
+      switch userPrediction {
         case (null) {};
         case (?gameweeks) {
           let updatedUserGameweeks = List.map<Types.UserGameweek, Types.UserGameweek>(
@@ -484,22 +467,12 @@ module {
     };
 
     public func hasPredictions(principalName : Text) : Bool {
-      let userGameweeks = userPredictions.get(principalName);
+      let userPrediction = userPredictions.get(principalName);
 
-      switch userGameweeks {
+      switch userPrediction {
         case (null) { return false };
-        case (?gameweeks) {
-          let gameweek = List.find<Types.UserGameweek>(
-            gameweeks,
-            func(ugw : Types.UserGameweek) : Bool {
-              return ugw.seasonId == seasonId and ugw.gameweekNumber == gameweekNumber;
-            },
-          );
-
-          switch gameweek {
-            case (null) { return false };
-            case (?gw) { return true };
-          };
+        case (?prediction) {
+          return true;
         };
       };
     };

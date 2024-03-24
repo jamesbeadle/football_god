@@ -67,8 +67,7 @@ module DTOs {
     principalName : Text;
     position : Text;
     displayName : Text;
-    correctScores : Nat8;
-    totalFixtures : Nat8;
+    totalScore : Nat8;
     enteredSweepstake : Bool;
   };
 

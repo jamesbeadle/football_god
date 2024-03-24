@@ -98,6 +98,8 @@ module Types {
   public type Euro2024Prediction = {
 
     sweepstakePaid: Bool;
+    totalScore: Nat16;
+    winnings: Nat64;
     groupAWinnerTeamId: TeamId;
     groupALoserTeamId: TeamId;
     groupAGoalscorer: PlayerId;
