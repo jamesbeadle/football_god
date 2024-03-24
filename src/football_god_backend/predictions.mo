@@ -5,11 +5,11 @@ import Text "mo:base/Text";
 import List "mo:base/List";
 import Iter "mo:base/Iter";
 import Array "mo:base/Array";
-import Int "mo:base/Int";
 import Nat8 "mo:base/Nat8";
 import Nat32 "mo:base/Nat32";
 import Nat64 "mo:base/Nat64";
 import Buffer "mo:base/Buffer";
+import Int "mo:base/Int";
 import DTOs "DTOs";
 
 module {

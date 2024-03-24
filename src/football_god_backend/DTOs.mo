@@ -67,7 +67,8 @@ module DTOs {
     principalName : Text;
     position : Text;
     displayName : Text;
-    totalScore : Nat8;
+    correctScores : Nat8;
+    totalFixtures : Nat8;
     enteredSweepstake : Bool;
   };
 
@@ -283,5 +284,20 @@ module DTOs {
     status : Nat8;
   };
   
+  public type Euro2024LeaderboardEntryDTO = {
+    principalName : Text;
+    position : Text;
+    displayName : Text;
+    totalScore : Nat16;
+    enteredSweepstake : Bool;
+  };
+
+  public type Euro2024LeaderBoardDTO = {
+    leaderboardEntries : [Euro2024LeaderboardEntryDTO];
+    totalEntries : Nat64;
+    totalPot : Nat64;
+    winningShare : Nat64;
+    status : Nat8;
+  };
 
 };

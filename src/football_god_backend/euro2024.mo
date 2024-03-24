@@ -120,13 +120,13 @@ module {
       return #ok(());
     };
 
-    public func getLeaderboardDTO(start : Nat, count : Nat) : DTOs.LeaderBoardDTO {
+    public func getLeaderboardDTO(start : Nat, count : Nat) : DTOs.Euro2024LeaderBoardDTO {
 
-      func compare(leaderboardEntry1 : DTOs.LeaderboardEntryDTO, leaderboardEntry2 : DTOs.LeaderboardEntryDTO) : Bool {
-        return leaderboardEntry1.correctScores >= leaderboardEntry2.correctScores;
+      func compare(leaderboardEntry1 : DTOs.Euro2024LeaderboardEntryDTO, leaderboardEntry2 : DTOs.Euro2024LeaderboardEntryDTO) : Bool {
+        return leaderboardEntry1.totalScore >= leaderboardEntry2.totalScore;
       };
 
-      func mergeSort(entries : List.List<DTOs.LeaderboardEntryDTO>) : List.List<DTOs.LeaderboardEntryDTO> {
+      func mergeSort(entries : List.List<DTOs.Euro2024LeaderboardEntryDTO>) : List.List<DTOs.Euro2024LeaderboardEntryDTO> {
         let len = List.size(entries);
 
         if (len <= 1) {
@@ -137,13 +137,13 @@ module {
         };
       };
 
-      func generatePositionText(sortedEntries : List.List<DTOs.LeaderboardEntryDTO>) : List.List<DTOs.LeaderboardEntryDTO> {
+      func generatePositionText(sortedEntries : List.List<DTOs.Euro2024LeaderboardEntryDTO>) : List.List<DTOs.Euro2024LeaderboardEntryDTO> {
         var position = 1;
-        var previousScore : ?Nat8 = null;
+        var previousScore : ?Nat16 = null;
 
-        func updatePosition(entry : DTOs.LeaderboardEntryDTO) : DTOs.LeaderboardEntryDTO {
-          if (previousScore == null or previousScore != ?entry.correctScores) {
-            previousScore := ?entry.correctScores;
+        func updatePosition(entry : DTOs.Euro2024LeaderboardEntryDTO) : DTOs.Euro2024LeaderboardEntryDTO {
+          if (previousScore == null or previousScore != ?entry.totalScore) {
+            previousScore := ?entry.totalScore;
             let updatedEntry = { entry with position = Int.toText(position) };
             position += 1;
             return updatedEntry;
@@ -155,28 +155,30 @@ module {
         return List.map(sortedEntries, updatePosition);
       };
 
-      let leaderboardEntries = Array.map<(Types.PrincipalName, Types.Euro2024Prediction), List.List<DTOs.LeaderboardEntryDTO>>(
-        Iter.toArray(userPredictions.entries()),
-        func((principal, userPrediction) : (Types.PrincipalName, Types.Euro2024Prediction)) : List.List<DTOs.LeaderboardEntryDTO> {
-          return {
-            position = "";
-            principalName = principal;
-            displayName = principal;
-            totalScore = userPrediction.totalScore;
-            enteredSweepstake = userPrediction.sweepstakePaid;
-          };
-        },
+      let leaderboardEntries = List.fromArray(
+        Array.map<(Types.PrincipalName, Types.Euro2024Prediction), DTOs.Euro2024LeaderboardEntryDTO>(
+          Iter.toArray(userPredictions.entries()),
+          func((principal, userPrediction) : (Types.PrincipalName, Types.Euro2024Prediction)) : DTOs.Euro2024LeaderboardEntryDTO {
+            let dto: DTOs.Euro2024LeaderboardEntryDTO = {
+              position = "";
+              principalName = principal;
+              displayName = principal;
+              totalScore = userPrediction.totalScore;
+              enteredSweepstake = userPrediction.sweepstakePaid;
+              winnings = userPrediction.winnings;
+            };
+            return dto;
+          },
+        )
       );
-
-      let flattenedLeaderboardEntries = List.flatten<DTOs.LeaderboardEntryDTO>(List.fromArray(leaderboardEntries));
-      let sortedLeaderboardEntries = mergeSort(flattenedLeaderboardEntries);
+      let sortedLeaderboardEntries = mergeSort(leaderboardEntries);
       let positionedLeaderboardEntries = generatePositionText(sortedLeaderboardEntries);
 
       var totalEntries : Nat = List.size(positionedLeaderboardEntries);
       let paginatedLeaderboardEntries = List.take(List.drop(positionedLeaderboardEntries, start), count);
 
-      let leaderboard : DTOs.LeaderBoardDTO = {
-        leaderboardEntries = List.toArray<DTOs.LeaderboardEntryDTO>(paginatedLeaderboardEntries);
+      let leaderboard : DTOs.Euro2024LeaderBoardDTO = {
+        leaderboardEntries = List.toArray<DTOs.Euro2024LeaderboardEntryDTO>(paginatedLeaderboardEntries);
         totalEntries = Nat64.fromNat(totalEntries);
         totalPot = Nat64.fromNat(0);
         winningShare = Nat64.fromNat(0);
@@ -186,112 +188,29 @@ module {
       return leaderboard;
     };
 
-    public func getUserPredictions() : [(Types.PrincipalName, List.List<Types.UserGameweek>)] {
+    public func getUserPredictions() : [(Types.PrincipalName, Types.Euro2024Prediction)] {
       return Iter.toArray(userPredictions.entries());
     };
 
-    public func getCorrectPredictions(start : Nat, count : Nat) : DTOs.CorrectPredictionsDTO {
-      let iter = userPredictions.entries();
-      var correctPredictions : [DTOs.CorrectPredictionDTO] = [];
-
-      for ((principalName, userGameweeks) in iter) {
-        let gameweek = List.find<Types.UserGameweek>(
-          userGameweeks,
-          func(ugw : Types.UserGameweek) : Bool {
-            return ugw.seasonId == seasonId and ugw.gameweekNumber == gameweekNumber;
-          },
-        );
-
-        switch gameweek {
-          case (null) {};
-          case (?gw) {
-            let isPredictionCorrect = List.some<Types.Prediction>(
-              gw.predictions,
-              func(prediction : Types.Prediction) : Bool {
-                return prediction.fixtureId == fixture.id and prediction.homeGoals == fixture.homeGoals and prediction.awayGoals == fixture.awayGoals;
-              },
-            );
-
-            if (isPredictionCorrect) {
-              let buffer = Buffer.fromArray<DTOs.CorrectPredictionDTO>(correctPredictions);
-              let summary : DTOs.CorrectPredictionDTO = {
-                principalName = principalName;
-                displayName = "";
-              };
-              buffer.add(summary);
-
-              correctPredictions := Buffer.toArray(buffer);
-            };
-          };
-        };
-      };
-
-      let predictionsList = List.fromArray(correctPredictions);
-      var totalEntries : Nat = List.size(predictionsList);
-      let paginatedCorrectPredictions = List.take(List.drop(predictionsList, start), count);
-
-      let correctPredictionsSummary : DTOs.CorrectPredictionsDTO = {
-        seasonName = "";
-        seasonId = seasonId;
-        gameweekNumber = gameweekNumber;
-        homeTeamName = "";
-        awayTeamName = "";
-        homeTeamGoals = fixture.homeGoals;
-        awayTeamGoals = fixture.awayGoals;
-        predictions = List.toArray(paginatedCorrectPredictions);
-        totalEntries = Nat64.fromNat(totalEntries);
-      };
-
-      return correctPredictionsSummary;
-    };
-
     public func countWinners() : Nat {
-      let leaderboardEntries = Array.map<(Types.PrincipalName, List.List<Types.UserGameweek>), List.List<DTOs.LeaderboardEntryDTO>>(
-        Iter.toArray(userPredictions.entries()),
-        func((principal, userGameweeks) : (Types.PrincipalName, List.List<Types.UserGameweek>)) : List.List<DTOs.LeaderboardEntryDTO> {
-          let filteredGameweeks = List.filter(
-            userGameweeks,
-            func(ugw : Types.UserGameweek) : Bool {
-              return ugw.seasonId == seasonId and ugw.gameweekNumber == gameweekNumber;
-            },
-          );
-
-          return List.map<Types.UserGameweek, DTOs.LeaderboardEntryDTO>(
-            filteredGameweeks,
-            func(ugw : Types.UserGameweek) : DTOs.LeaderboardEntryDTO {
-              return {
-                position = "";
-                principalName = principal;
-                displayName = principal;
-                correctScores = ugw.correctScores;
-                totalFixtures = ugw.predictionCount;
-                enteredSweepstake = ugw.enteredSweepstake;
-              };
-            },
-          );
-        },
-      );
-
-      let flattenedLeaderboardEntries = List.flatten<DTOs.LeaderboardEntryDTO>(List.fromArray(leaderboardEntries));
-
-      let highestCorrectScores = List.foldLeft<DTOs.LeaderboardEntryDTO, Nat8>(
-        flattenedLeaderboardEntries,
+      let leaderboardDTO = getLeaderboardDTO(0, Iter.size(userPredictions.entries()));
+      let highestCorrectScores = List.foldLeft<DTOs.Euro2024LeaderboardEntryDTO, Nat16>(
+        List.fromArray(leaderboardDTO.leaderboardEntries),
         0,
-        func(highest : Nat8, entry : DTOs.LeaderboardEntryDTO) : Nat8 {
-          if (entry.correctScores > highest) {
-            return entry.correctScores;
+        func(highest : Nat16, entry : DTOs.Euro2024LeaderboardEntryDTO) : Nat16 {
+          if (entry.totalScore > highest) {
+            return entry.totalScore;
           } else {
             return highest;
           };
         },
       );
 
-      let winnerCount = List.foldLeft<DTOs.LeaderboardEntryDTO, Nat>(
-        flattenedLeaderboardEntries,
+      let winnerCount = List.foldLeft<DTOs.Euro2024LeaderboardEntryDTO, Nat>(
+        List.fromArray(leaderboardDTO.leaderboardEntries),
         0,
-        func(count : Nat, entry : DTOs.LeaderboardEntryDTO) : Nat {
-          let perfectScore = entry.correctScores == entry.totalFixtures and entry.totalFixtures > 0;
-          if ((entry.correctScores == highestCorrectScores and entry.enteredSweepstake) or (perfectScore and not entry.enteredSweepstake)) {
+        func(count : Nat, entry : DTOs.Euro2024LeaderboardEntryDTO) : Nat {
+          if ((entry.totalScore == highestCorrectScores and entry.enteredSweepstake)) {
             return count + 1;
           } else {
             return count;
@@ -441,27 +360,86 @@ module {
 
       switch userPrediction {
         case (null) {};
-        case (?gameweeks) {
-          let updatedUserGameweeks = List.map<Types.UserGameweek, Types.UserGameweek>(
-            gameweeks,
-            func(ugw : Types.UserGameweek) : Types.UserGameweek {
-              if (ugw.seasonId == seasonId and ugw.gameweekNumber == gameweekNumber) {
-                return {
-                  seasonId = ugw.seasonId;
-                  gameweekNumber = ugw.gameweekNumber;
-                  predictions = ugw.predictions;
-                  enteredSweepstake = ugw.enteredSweepstake;
-                  correctScores = ugw.correctScores;
-                  predictionCount = ugw.predictionCount;
-                  winnings = winnings;
-                };
-              } else {
-                return ugw;
-              };
-            },
-          );
+        case (?prediction) {
+          
+          let updatedPrediction: Types.Euro2024Prediction = {
 
-          userPredictions.put(principalName, updatedUserGameweeks);
+            sweepstakePaid = prediction.sweepstakePaid;
+            totalScore = prediction.totalScore;
+            winnings = winnings;
+            groupAWinnerTeamId = prediction.groupAWinnerTeamId;
+            groupALoserTeamId = prediction.groupALoserTeamId;
+            groupAGoalscorer = prediction.groupAGoalscorer;
+            groupAGoalAssister = prediction.groupAGoalAssister;
+            groupAYellowCard = prediction.groupAYellowCard;
+            groupARedCard = prediction.groupARedCard;
+
+            groupBWinnerTeamId = prediction.groupBWinnerTeamId;
+            groupBLoserTeamId = prediction.groupBLoserTeamId;
+            groupBGoalscorer = prediction.groupBGoalscorer;
+            groupBGoalAssister = prediction.groupBGoalAssister;
+            groupBYellowCard = prediction.groupBYellowCard;
+            groupBRedCard = prediction.groupBRedCard;
+
+            groupCWinnerTeamId = prediction.groupCWinnerTeamId;
+            groupCLoserTeamId = prediction.groupCLoserTeamId;
+            groupCGoalscorer = prediction.groupCGoalscorer;
+            groupCGoalAssister = prediction.groupCGoalAssister;
+            groupCYellowCard = prediction.groupCYellowCard;
+            groupCRedCard = prediction.groupCRedCard;
+
+            groupDWinnerTeamId = prediction.groupDWinnerTeamId;
+            groupDLoserTeamId = prediction.groupDLoserTeamId;
+            groupDGoalscorer = prediction.groupDGoalscorer;
+            groupDGoalAssister = prediction.groupDGoalAssister;
+            groupDYellowCard = prediction.groupDYellowCard;
+            groupDRedCard = prediction.groupDRedCard;
+
+            groupEWinnerTeamId = prediction.groupEWinnerTeamId;
+            groupELoserTeamId = prediction.groupELoserTeamId;
+            groupEGoalscorer = prediction.groupEGoalscorer;
+            groupEGoalAssister = prediction.groupEGoalAssister;
+            groupEYellowCard = prediction.groupEYellowCard;
+            groupERedCard = prediction.groupERedCard;
+
+            groupFWinnerTeamId = prediction.groupFWinnerTeamId;
+            groupFLoserTeamId = prediction.groupFLoserTeamId;
+            groupFGoalscorer = prediction.groupFGoalscorer;
+            groupFGoalAssister = prediction.groupFGoalAssister;
+            groupFYellowCard = prediction.groupFYellowCard;
+            groupFRedCard = prediction.groupFRedCard;
+
+            roundOf16Winner = prediction.roundOf16Winner;
+            roundOf16Loser = prediction.roundOf16Loser;
+            roundOf16Goalscorer = prediction.roundOf16Goalscorer;
+            roundOf16GoalAssister = prediction.roundOf16GoalAssister;
+            roundOf16YellowCard = prediction.roundOf16YellowCard;
+            roundOf16RedCard = prediction.roundOf16RedCard;
+
+            quarterFinalWinner = prediction.quarterFinalWinner;
+            quarterFinalLoser = prediction.quarterFinalLoser;
+            quarterFinalGoalscorer = prediction.quarterFinalGoalscorer;
+            quarterFinalGoalAssister = prediction.quarterFinalGoalAssister;
+            quarterFinalYellowCard = prediction.quarterFinalYellowCard;
+            quarterFinalRedCard = prediction.quarterFinalRedCard;
+
+            semiFinalWinner = prediction.semiFinalWinner;
+            semiFinalLoser = prediction.semiFinalLoser;
+            semiFinalGoalscorer = prediction.semiFinalGoalscorer;
+            semiFinalGoalAssister = prediction.semiFinalGoalAssister;
+            semiFinalYellowCard = prediction.semiFinalYellowCard;
+            semiFinalRedCard = prediction.semiFinalRedCard;
+
+            finalWinner = prediction.finalWinner;
+            finalLoser = prediction.finalLoser;
+            finalGoalscorer = prediction.finalGoalscorer;
+            finalGoalAssister = prediction.finalGoalAssister;
+            finalYellowCard = prediction.finalYellowCard;
+            finalRedCard = prediction.finalRedCard;
+          };
+          
+          userPredictions.put(principalName, updatedPrediction);
+
         };
       };
     };
