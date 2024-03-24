@@ -39,79 +39,79 @@ module {
       };
     };
 
-    public func submitPredictions(principalName : Text, predictions : DTOs.PlayEuro2024DTO) : Result.Result<(), Types.Error> {
+    public func submitPredictions(principalName : Text, predictions : DTOs.Euro2024PredictionDTO, sweepstakeEntered: Bool) : Result.Result<(), Types.Error> {
 
       userPredictions.put(principalName, {
-        sweepstakePaid = predictions.sweepstakePaid;
-        groupAWinnerTeamId = predictions.prediction.groupAWinnerTeamId;
-        groupALoserTeamId = predictions.prediction.groupALoserTeamId;
-        groupAGoalscorer = predictions.prediction.groupAGoalscorer;
-        groupAGoalAssister = predictions.prediction.groupAGoalAssister;
-        groupAYellowCard = predictions.prediction.groupAYellowCard;
-        groupARedCard = predictions.prediction.groupARedCard;
+        sweepstakePaid = sweepstakeEntered;
+        groupAWinnerTeamId = predictions.groupAWinnerTeamId;
+        groupALoserTeamId = predictions.groupALoserTeamId;
+        groupAGoalscorer = predictions.groupAGoalscorer;
+        groupAGoalAssister = predictions.groupAGoalAssister;
+        groupAYellowCard = predictions.groupAYellowCard;
+        groupARedCard = predictions.groupARedCard;
 
-        groupBWinnerTeamId = predictions.prediction.groupBWinnerTeamId;
-        groupBLoserTeamId = predictions.prediction.groupBLoserTeamId;
-        groupBGoalscorer = predictions.prediction.groupBGoalscorer;
-        groupBGoalAssister = predictions.prediction.groupBGoalAssister;
-        groupBYellowCard = predictions.prediction.groupBYellowCard;
-        groupBRedCard = predictions.prediction.groupBRedCard;
+        groupBWinnerTeamId = predictions.groupBWinnerTeamId;
+        groupBLoserTeamId = predictions.groupBLoserTeamId;
+        groupBGoalscorer = predictions.groupBGoalscorer;
+        groupBGoalAssister = predictions.groupBGoalAssister;
+        groupBYellowCard = predictions.groupBYellowCard;
+        groupBRedCard = predictions.groupBRedCard;
 
-        groupCWinnerTeamId = predictions.prediction.groupCWinnerTeamId;
-        groupCLoserTeamId = predictions.prediction.groupCLoserTeamId;
-        groupCGoalscorer = predictions.prediction.groupCGoalscorer;
-        groupCGoalAssister = predictions.prediction.groupCGoalAssister;
-        groupCYellowCard = predictions.prediction.groupCYellowCard;
-        groupCRedCard = predictions.prediction.groupCRedCard;
+        groupCWinnerTeamId = predictions.groupCWinnerTeamId;
+        groupCLoserTeamId = predictions.groupCLoserTeamId;
+        groupCGoalscorer = predictions.groupCGoalscorer;
+        groupCGoalAssister = predictions.groupCGoalAssister;
+        groupCYellowCard = predictions.groupCYellowCard;
+        groupCRedCard = predictions.groupCRedCard;
 
-        groupDWinnerTeamId = predictions.prediction.groupDWinnerTeamId;
-        groupDLoserTeamId = predictions.prediction.groupDLoserTeamId;
-        groupDGoalscorer = predictions.prediction.groupDGoalscorer;
-        groupDGoalAssister = predictions.prediction.groupDGoalAssister;
-        groupDYellowCard = predictions.prediction.groupDYellowCard;
-        groupDRedCard = predictions.prediction.groupDRedCard;
+        groupDWinnerTeamId = predictions.groupDWinnerTeamId;
+        groupDLoserTeamId = predictions.groupDLoserTeamId;
+        groupDGoalscorer = predictions.groupDGoalscorer;
+        groupDGoalAssister = predictions.groupDGoalAssister;
+        groupDYellowCard = predictions.groupDYellowCard;
+        groupDRedCard = predictions.groupDRedCard;
 
-        groupEWinnerTeamId = predictions.prediction.groupEWinnerTeamId;
-        groupELoserTeamId = predictions.prediction.groupELoserTeamId;
-        groupEGoalscorer = predictions.prediction.groupEGoalscorer;
-        groupEGoalAssister = predictions.prediction.groupEGoalAssister;
-        groupEYellowCard = predictions.prediction.groupEYellowCard;
-        groupERedCard = predictions.prediction.groupERedCard;
+        groupEWinnerTeamId = predictions.groupEWinnerTeamId;
+        groupELoserTeamId = predictions.groupELoserTeamId;
+        groupEGoalscorer = predictions.groupEGoalscorer;
+        groupEGoalAssister = predictions.groupEGoalAssister;
+        groupEYellowCard = predictions.groupEYellowCard;
+        groupERedCard = predictions.groupERedCard;
 
-        groupFWinnerTeamId = predictions.prediction.groupFWinnerTeamId;
-        groupFLoserTeamId = predictions.prediction.groupFLoserTeamId;
-        groupFGoalscorer = predictions.prediction.groupFGoalscorer;
-        groupFGoalAssister = predictions.prediction.groupFGoalAssister;
-        groupFYellowCard = predictions.prediction.groupFYellowCard;
-        groupFRedCard = predictions.prediction.groupFRedCard;
+        groupFWinnerTeamId = predictions.groupFWinnerTeamId;
+        groupFLoserTeamId = predictions.groupFLoserTeamId;
+        groupFGoalscorer = predictions.groupFGoalscorer;
+        groupFGoalAssister = predictions.groupFGoalAssister;
+        groupFYellowCard = predictions.groupFYellowCard;
+        groupFRedCard = predictions.groupFRedCard;
 
-        roundOf16Winner = predictions.prediction.roundOf16Winner;
-        roundOf16Loser = predictions.prediction.roundOf16Loser;
-        roundOf16Goalscorer = predictions.prediction.roundOf16Goalscorer;
-        roundOf16GoalAssister = predictions.prediction.roundOf16GoalAssister;
-        roundOf16YellowCard = predictions.prediction.roundOf16YellowCard;
-        roundOf16RedCard = predictions.prediction.roundOf16RedCard;
+        roundOf16Winner = predictions.roundOf16Winner;
+        roundOf16Loser = predictions.roundOf16Loser;
+        roundOf16Goalscorer = predictions.roundOf16Goalscorer;
+        roundOf16GoalAssister = predictions.roundOf16GoalAssister;
+        roundOf16YellowCard = predictions.roundOf16YellowCard;
+        roundOf16RedCard = predictions.roundOf16RedCard;
 
-        quarterFinalWinner = predictions.prediction.quarterFinalWinner;
-        quarterFinalLoser = predictions.prediction.quarterFinalLoser;
-        quarterFinalGoalscorer = predictions.prediction.quarterFinalGoalscorer;
-        quarterFinalGoalAssister = predictions.prediction.quarterFinalGoalAssister;
-        quarterFinalYellowCard = predictions.prediction.quarterFinalYellowCard;
-        quarterFinalRedCard = predictions.prediction.quarterFinalRedCard;
+        quarterFinalWinner = predictions.quarterFinalWinner;
+        quarterFinalLoser = predictions.quarterFinalLoser;
+        quarterFinalGoalscorer = predictions.quarterFinalGoalscorer;
+        quarterFinalGoalAssister = predictions.quarterFinalGoalAssister;
+        quarterFinalYellowCard = predictions.quarterFinalYellowCard;
+        quarterFinalRedCard = predictions.quarterFinalRedCard;
 
-        semiFinalWinner = predictions.prediction.semiFinalWinner;
-        semiFinalLoser = predictions.prediction.semiFinalLoser;
-        semiFinalGoalscorer = predictions.prediction.semiFinalGoalscorer;
-        semiFinalGoalAssister = predictions.prediction.semiFinalGoalAssister;
-        semiFinalYellowCard = predictions.prediction.semiFinalYellowCard;
-        semiFinalRedCard = predictions.prediction.semiFinalRedCard;
+        semiFinalWinner = predictions.semiFinalWinner;
+        semiFinalLoser = predictions.semiFinalLoser;
+        semiFinalGoalscorer = predictions.semiFinalGoalscorer;
+        semiFinalGoalAssister = predictions.semiFinalGoalAssister;
+        semiFinalYellowCard = predictions.semiFinalYellowCard;
+        semiFinalRedCard = predictions.semiFinalRedCard;
 
-        finalWinner = predictions.prediction.finalWinner;
-        finalLoser = predictions.prediction.finalLoser;
-        finalGoalscorer = predictions.prediction.finalGoalscorer;
-        finalGoalAssister = predictions.prediction.finalGoalAssister;
-        finalYellowCard = predictions.prediction.finalYellowCard;
-        finalRedCard = predictions.prediction.finalRedCard;
+        finalWinner = predictions.finalWinner;
+        finalLoser = predictions.finalLoser;
+        finalGoalscorer = predictions.finalGoalscorer;
+        finalGoalAssister = predictions.finalGoalAssister;
+        finalYellowCard = predictions.finalYellowCard;
+        finalRedCard = predictions.finalRedCard;
         totalScore = 0;
         winnings = 0;
       });

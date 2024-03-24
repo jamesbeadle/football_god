@@ -1097,6 +1097,7 @@ actor Self {
           semiFinalRedCard = foundPrediction.semiFinalRedCard;
 
           finalWinner = foundPrediction.finalWinner;
+          finalLoser = foundPrediction.finalLoser;
           finalGoalscorer = foundPrediction.finalGoalscorer;
           finalGoalAssister = foundPrediction.finalGoalAssister;
           finalYellowCard = foundPrediction.finalYellowCard;
@@ -1137,7 +1138,7 @@ actor Self {
       sweepstakeEntered := true;
     };
 
-    return predictionsInstance.submitPredictions(principalName, activeSeason, activeGameweek, playDTO.fixtures, sweepstakeEntered);
+    return euro2024Instance.submitPredictions(principalName, euro2024PredictionDTO, sweepstakeEntered);
   };
 
 /*
