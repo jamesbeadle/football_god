@@ -77,6 +77,7 @@ module Types {
   public type EventId = Nat16;
   public type PlayerId = Nat16;
   public type TeamId = Nat16;
+  public type FixtureId = Nat32;
   
   public type BettingMarket = {
     #CorrectResult;
@@ -91,5 +92,82 @@ module Types {
     #RedCard;
     #Scorecast;
   };
+
+  //Euro 2024 types
+  
+  public type Euro2024Prediction = {
+
+    sweepstakePaid: Bool;
+    groupAWinnerTeamId: TeamId;
+    groupALoserTeamId: TeamId;
+    groupAGoalscorer: PlayerId;
+    groupAGoalAssister: PlayerId;
+    groupAYellowCard: PlayerId;
+    groupARedCard: PlayerId;
+
+    groupBWinnerTeamId: TeamId;
+    groupBLoserTeamId: TeamId;
+    groupBGoalscorer: PlayerId;
+    groupBGoalAssister: PlayerId;
+    groupBYellowCard: PlayerId;
+    groupBRedCard: PlayerId;
+
+    groupCWinnerTeamId: TeamId;
+    groupCLoserTeamId: TeamId;
+    groupCGoalscorer: PlayerId;
+    groupCGoalAssister: PlayerId;
+    groupCYellowCard: PlayerId;
+    groupCRedCard: PlayerId;
+
+    groupDWinnerTeamId: TeamId;
+    groupDLoserTeamId: TeamId;
+    groupDGoalscorer: PlayerId;
+    groupDGoalAssister: PlayerId;
+    groupDYellowCard: PlayerId;
+    groupDRedCard: PlayerId;
+
+    groupEWinnerTeamId: TeamId;
+    groupELoserTeamId: TeamId;
+    groupEGoalscorer: PlayerId;
+    groupEGoalAssister: PlayerId;
+    groupEYellowCard: PlayerId;
+    groupERedCard: PlayerId;
+
+    groupFWinnerTeamId: TeamId;
+    groupFLoserTeamId: TeamId;
+    groupFGoalscorer: PlayerId;
+    groupFGoalAssister: PlayerId;
+    groupFYellowCard: PlayerId;
+    groupFRedCard: PlayerId;
+
+    roundOf16Winner: TeamId;
+    roundOf16Loser: TeamId;
+    roundOf16Goalscorer: PlayerId;
+    roundOf16GoalAssister: PlayerId;
+    roundOf16YellowCard: PlayerId;
+    roundOf16RedCard: PlayerId;
+
+    quarterFinalWinner: TeamId;
+    quarterFinalLoser: TeamId;
+    quarterFinalGoalscorer: PlayerId;
+    quarterFinalGoalAssister: PlayerId;
+    quarterFinalYellowCard: PlayerId;
+    quarterFinalRedCard: PlayerId;
+
+    semiFinalWinner: TeamId;
+    semiFinalLoser: TeamId;
+    semiFinalGoalscorer: PlayerId;
+    semiFinalGoalAssister: PlayerId;
+    semiFinalYellowCard: PlayerId;
+    semiFinalRedCard: PlayerId;
+
+    finalWinner: TeamId;
+    finalLoser: TeamId;
+    finalGoalscorer: PlayerId;
+    finalGoalAssister: PlayerId;
+    finalYellowCard: PlayerId;
+    finalRedCard: PlayerId;
+
+  }
 
 };

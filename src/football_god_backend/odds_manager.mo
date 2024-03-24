@@ -5,6 +5,7 @@ module {
 
   public class OddsManager() {
 
+    /*
     public func getEventOdds(eventId: T.EventId, homeTeamData: T.HomeTeamData, awayTeamData: T.AwayTeamData) : async DTOs.LiveOddsDTO {
       
       //CORRECT RESULT CALCS:
@@ -49,5 +50,6 @@ module {
         scorecastOdds: [ScorecastOddsDTO];
       };
     };
+    */
   }
 };

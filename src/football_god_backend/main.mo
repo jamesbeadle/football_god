@@ -15,6 +15,7 @@ import T "types";
 import Seasons "seasons";
 import Teams "teams";
 import Predictions "predictions";
+import Euro2024 "euro2024";
 import Profiles "profiles";
 import Book "book";
 import Account "Account";
@@ -32,6 +33,7 @@ actor Self {
   let teamsInstance = Teams.Teams();
   let predictionsInstance = Predictions.Predictions();
   let bookInstance = Book.Book();
+  let euro2024Instance = Euro2024.Euro2024();
 
   let adminAccount = "66d542934fd0be74eaef2f5542b14832799be9f85d256555927a9760dcf2ac96";
 
@@ -45,6 +47,7 @@ actor Self {
   private stable var stable_nextSeasonId : Nat16 = 0;
   private stable var stable_nextFixtureId : Nat32 = 0;
   private stable var stable_nextTeamId : Nat16 = 0;
+  private stable var stable_euro2024_predictions : [(T.PrincipalName, List.List<T.Euro2024Prediction>)] = [];
 
   //admin functions
   private func isAdminForCaller(caller : Principal) : Bool {
@@ -58,6 +61,7 @@ actor Self {
     return isAdminForCaller(caller);
   };
 
+  //OLD HOMEPAGE
   public shared query ({ caller }) func getHomeDTO() : async DTOs.HomeDTO {
 
     let systemUpdating = (activeSeason == 0) or (activeGameweek == 0);
@@ -133,6 +137,7 @@ actor Self {
     return homeDTO;
   };
 
+  //POSSIBLY NOT USED IF FOOTBALL TOKEN
   public shared func getGameweekPotDTO() : async DTOs.GameweekPotDTO {
 
     var gameweekPot = Nat64.fromNat(0);
@@ -1010,6 +1015,25 @@ actor Self {
     Account.accountIdentifier(Principal.fromActor(Self), Account.principalToSubaccount(caller));
   };
 
+  
+  public shared query ({ caller }) func getEuro2024DTO() : async DTOs.PlayEuro2024DTO {
+
+    assert not Principal.isAnonymous(caller);
+    let principalName = Principal.toText(caller);
+    
+    var fixtures : [DTOs.Euro2024FixtureDTO] = EURO2024_DATA.fixtures;
+    var sweepstakePaid = false;
+    let existingPredictions = euro2024Instance.getPredictions(principalName);
+    
+    let playDTO : DTOs.PlayEuro2024DTO = {
+      fixtures = fixtures;
+      sweepstakePaid = sweepstakePaid;
+      userId = principalName;
+    };
+
+    return playDTO;
+  };
+
   public shared ({ caller }) func submitEuro2024Prediction(euro2024PredictionDTO : DTOs.Euro2024PredictionDTO) : async Result.Result<(), T.Error> {
 
     assert not Principal.isAnonymous(caller);
@@ -1058,6 +1082,7 @@ actor Self {
     stable_nextFixtureId := seasonsInstance.getNextFixtureId();
     stable_teams := teamsInstance.getTeams();
     stable_nextTeamId := teamsInstance.getNextTeamId();
+    stable_euro2024_predictions := euro2024Instance.getUserPredictions();
   };
 
   system func postupgrade() {
@@ -1065,6 +1090,7 @@ actor Self {
     predictionsInstance.setData(stable_predictions);
     seasonsInstance.setData(stable_seasons, stable_nextSeasonId, stable_nextFixtureId);
     teamsInstance.setData(stable_teams, stable_nextTeamId);
+    euro2024Instance.setData(stable_euro2024_predictions);
   };
 
 };

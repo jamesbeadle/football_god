@@ -202,6 +202,41 @@ module DTOs {
     groupAYellowCard: T.PlayerId;
     groupARedCard: T.PlayerId;
 
+    groupBWinnerTeamId: T.TeamId;
+    groupBLoserTeamId: T.TeamId;
+    groupBGoalscorer: T.PlayerId;
+    groupBGoalAssister: T.PlayerId;
+    groupBYellowCard: T.PlayerId;
+    groupBRedCard: T.PlayerId;
+
+    groupCWinnerTeamId: T.TeamId;
+    groupCLoserTeamId: T.TeamId;
+    groupCGoalscorer: T.PlayerId;
+    groupCGoalAssister: T.PlayerId;
+    groupCYellowCard: T.PlayerId;
+    groupCRedCard: T.PlayerId;
+
+    groupDWinnerTeamId: T.TeamId;
+    groupDLoserTeamId: T.TeamId;
+    groupDGoalscorer: T.PlayerId;
+    groupDGoalAssister: T.PlayerId;
+    groupDYellowCard: T.PlayerId;
+    groupDRedCard: T.PlayerId;
+
+    groupEWinnerTeamId: T.TeamId;
+    groupELoserTeamId: T.TeamId;
+    groupEGoalscorer: T.PlayerId;
+    groupEGoalAssister: T.PlayerId;
+    groupEYellowCard: T.PlayerId;
+    groupERedCard: T.PlayerId;
+
+    groupFWinnerTeamId: T.TeamId;
+    groupFLoserTeamId: T.TeamId;
+    groupFGoalscorer: T.PlayerId;
+    groupFGoalAssister: T.PlayerId;
+    groupFYellowCard: T.PlayerId;
+    groupFRedCard: T.PlayerId;
+
     roundOf16Winner: T.TeamId;
     roundOf16Loser: T.TeamId;
     roundOf16Goalscorer: T.PlayerId;
@@ -230,7 +265,24 @@ module DTOs {
     finalYellowCard: T.PlayerId;
     finalRedCard: T.PlayerId;
 
-  }
+  };
+
+  public type PlayEuro2024DTO = {
+    prediction : Euro2024PredictionDTO;
+    sweepstakePaid : Bool;
+    userId : Text;
+  };
+
+  public type Euro2024FixtureDTO = {
+    fixtureId : T.FixtureId;
+    homeTeamId : T.TeamId;
+    awayTeamId : T.TeamId;
+    homeTeamName : Text;
+    awayTeamName : Text;
+    homeTeamGoals : Nat8;
+    awayTeamGoals : Nat8;
+    status : Nat8;
+  };
   
 
 };
