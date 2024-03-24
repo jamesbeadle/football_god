@@ -370,6 +370,7 @@ module {
     
     public func checkValidPredictions(predictions : DTOs.Euro2024PredictionDTO) : Bool {
       
+      //TODO
       //make sure all the teams are valid international teams
       //make sure all the players are valid international players
       
