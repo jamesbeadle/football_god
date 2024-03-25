@@ -18,7 +18,8 @@
     content: string,
     link: string,
     image?: string,
-    icon?: any
+    icon?: any,
+    buttonText: string
   };
 
   onMount(async () => {
@@ -59,22 +60,25 @@
   let tiles: TileData[] = [
     {
       title: 'Whitepaper',
-      content: 'Explore our comprehensive guide to understand the technology.',
+      content: 'Read the FootballGod whitepaper.',
       link: '/whitepaper',
       icon: null,
-      image: 'whitepaper.jpg'
+      image: 'whitepaper.jpg',
+      buttonText: 'Read'
     },
     {
       title: 'Join our OpenChat Community',
-      content: 'Connect and engage with our community members.',
+      content: 'Stay up to date with FootballGod developments through our OpenChat community.',
       link: 'https://oc.app/community/ji74r-lqaaa-aaaar-ayhoq-cai/?ref=zv6hh-xaaaa-aaaar-ac35q-cai',
-      icon: OpenChatIcon
+      icon: OpenChatIcon,
+      buttonText: 'Join'
     },
     {
-      title: 'Play OpenFPL',
-      content: 'Join the fantasy league and manage your dream team.',
-      link: 'openfpl',
-      icon: OpenFPLIcon
+      title: 'OpenFPL',
+      content: 'Play decentralised fantasy football for your chance to win $FPL tokens for free.',
+      link: 'https://openfpl.xyz',
+      image: 'openfpl.png',
+      buttonText: 'Play'
     }
   ];
 </script>
@@ -105,19 +109,19 @@
         {#each tiles as tile}
       <div class="flex flex-col bg-gray-700 rounded-lg overflow-hidden">
         {#if tile.image}
-          <img class="w-full h-32 object-cover" src={tile.image} alt={tile.title} />
+          <img class="w-full h-96 object-cover" src={tile.image} alt={tile.title} />
           <div class="p-4 flex flex-col justify-between h-full">
             <p><b>{tile.title}: </b>{tile.content}</p>
-            <a href={tile.link} class="self-end btn bg-blue-500 text-white px-4 py-2 rounded mt-4">Read More</a>
+            <a href={tile.link} class="self-end btn bg-blue-500 text-white px-4 py-2 rounded mt-4">{tile.buttonText}</a>
           </div>
         {:else if tile.icon}
           <div class="flex flex-row items-center">
-            <svelte:component this={tile.icon} className="h-32 p-8" />
+            <svelte:component this={tile.icon} className="h-96 p-8" />
             <h3 class="text-xl font-bold">{tile.title}</h3>
           </div>
           <div class="p-4 flex flex-col justify-between h-full">
             <p>{tile.content}</p>
-            <a href={tile.link} class="self-end btn bg-blue-500 text-white px-4 py-2 rounded mt-4">Read More</a>
+            <a href={tile.link} class="self-end btn bg-blue-500 text-white px-4 py-2 rounded mt-4">{tile.buttonText}</a>
           </div>
         {/if}
       </div>
