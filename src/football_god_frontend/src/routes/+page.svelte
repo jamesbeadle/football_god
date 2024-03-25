@@ -13,6 +13,14 @@
   let isLoading = true;
   const countdown = writable('');
 
+  type TileData = {
+    title: string,
+    content: string,
+    link: string,
+    image?: string,
+    icon?: any
+  };
+
   onMount(async () => {
     try {
       await authStore.sync();
@@ -47,49 +55,75 @@
       isLoading = false;
     }
   });
+
+  let tiles: TileData[] = [
+    {
+      title: 'Whitepaper',
+      content: 'Explore our comprehensive guide to understand the technology.',
+      link: '/whitepaper',
+      icon: null,
+      image: 'whitepaper.jpg'
+    },
+    {
+      title: 'Join our OpenChat Community',
+      content: 'Connect and engage with our community members.',
+      link: 'https://oc.app/community/ji74r-lqaaa-aaaar-ayhoq-cai/?ref=zv6hh-xaaaa-aaaar-ac35q-cai',
+      icon: OpenChatIcon
+    },
+    {
+      title: 'Play OpenFPL',
+      content: 'Join the fantasy league and manage your dream team.',
+      link: 'openfpl',
+      icon: OpenFPLIcon
+    }
+  ];
 </script>
 
 <Layout>
   {#if isLoading}
     <Spinner />
   {:else}
-  
-  <div class="relative bg-gray-800 text-white mt-2 mr-2 rounded-lg">
-    <div class="bg-cover bg-center bg-no-repeat py-20 px-4"
-        style="background-image: url('banner.jpg');">
-      <div class="container ml-4 flex flex-col justify-between">
-        <p class="text-xl">$ICP Prediction Sweepstake</p>
-        <p class="text-4xl font-bold">Euro 2024</p>
-        <p class="text-xl">Enter up until Friday 14th June 2024</p>
-        <button class="btn bg-DARK mt-4 py-4 w-48 rounded-md">Enter Now</button>
-        <div class="overlay-panel h-10 rounded-tl-lg w-96 bg-DARK flex items-center px-4">
-          <FootballIcon className="w-6 mr-2"  />
-          <p class="text-white text-sm font-bold">Euro2024&nbsp;</p>
-          <p class="text-white text-sm">| {$countdown}</p>
+    
+    <div class="relative bg-gray-800 text-white mt-2 mr-2 rounded-lg">
+      <div class="bg-cover bg-center bg-no-repeat py-20 px-4"
+          style="background-image: url('banner.jpg');">
+        <div class="container ml-4 flex flex-col justify-between">
+          <p class="text-xl">$ICP Prediction Sweepstake</p>
+          <p class="text-4xl font-bold">Euro 2024</p>
+          <p class="text-xl">Enter up until Friday 14th June 2024</p>
+          <button class="btn bg-DARK mt-4 py-4 w-48 rounded-md">Enter Now</button>
+          <div class="overlay-panel h-10 rounded-tl-lg w-11/12 md:w-1/4 bg-DARK flex items-center px-1 md:px-4">
+            <FootballIcon className="w-6 mr-2"  />
+            <p class="text-white text-sm font-bold">Euro2024&nbsp;</p>
+            <p class="text-white text-sm">| {$countdown}</p>
+          </div>
         </div>
       </div>
     </div>
-  </div>
-  <div class="text-white p-4">
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-      <div class="bg-GRAY rounded-lg p-4">
-        <h3 class="text-xl font-bold mb-2">Whitepaper</h3>
-        <img alt="whitepaper" src="whitepaper.jpg" />
-        <p>Content goes here...</p>
+    <div class="px-4 py-2">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {#each tiles as tile}
+      <div class="flex flex-col bg-gray-700 rounded-lg overflow-hidden">
+        {#if tile.image}
+          <img class="w-full h-32 object-cover" src={tile.image} alt={tile.title} />
+          <div class="p-4 flex flex-col justify-between h-full">
+            <p><b>{tile.title}: </b>{tile.content}</p>
+            <a href={tile.link} class="self-end btn bg-blue-500 text-white px-4 py-2 rounded mt-4">Read More</a>
+          </div>
+        {:else if tile.icon}
+          <div class="flex flex-row items-center">
+            <svelte:component this={tile.icon} className="h-32 p-8" />
+            <h3 class="text-xl font-bold">{tile.title}</h3>
+          </div>
+          <div class="p-4 flex flex-col justify-between h-full">
+            <p>{tile.content}</p>
+            <a href={tile.link} class="self-end btn bg-blue-500 text-white px-4 py-2 rounded mt-4">Read More</a>
+          </div>
+        {/if}
       </div>
-      <div class="bg-GRAY rounded-lg p-4">
-        <div class="flex flex-rpw"></div>
-        <h3 class="text-xl font-bold mb-2">Join our OpenChat Community</h3>
-        <OpenChatIcon className="w-16 m-6" />
-        <a href="https://oc.app/community/ji74r-lqaaa-aaaar-ayhoq-cai/?ref=zv6hh-xaaaa-aaaar-ac35q-cai">Here</a>
-      </div>
-      <div class="bg-GRAY rounded-lg p-4 md:col-span-2 lg:col-span-1">
-        <h3 class="text-xl font-bold mb-2">Play OpenFPL</h3>
-        <OpenFPLIcon />
-        <p>Content goes here...</p>
+    {/each}
       </div>
     </div>
-  </div>
 
   {/if}
 </Layout>
