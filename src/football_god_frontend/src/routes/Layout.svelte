@@ -75,21 +75,19 @@
 
 <div class="flex h-screen">
   <div
-    class="bg-gray-800 text-white flex flex-col justify-between transition-width duration-300 p-5"
+    class="bg-GRAY text-white flex flex-col justify-between transition-width duration-300 p-5"
     style="width: {$isExpanded ? '16rem' : '4rem'}">
       <div>
         <button on:click={() => $isExpanded = !$isExpanded} class="mb-4">
           <span>{$isExpanded ? '<<' : '>>'}</span>
         </button>
   
-        <div class="text-gray-400">
-          <a href="/" class="block mt-4 text-lg">
+        <div class="text-gray-400 flex flex-col">
+          <a href="/" class="block mt-4 text-lg my-4">
             <div class="flex flex-row items-center">
+              <LogoIcon className="w-6 mr-2" />
               {#if $isExpanded}
-                <LogoIcon className="w-6 mr-2" />
-                <span in:fade={{ delay: 100, duration: 200 }} out:fade={{ delay: 0, duration: 100 }}>FootballGod</span>
-              {:else}
-                <LogoIcon className="w-6 mr-2" />
+                <span in:fade={{ duration: 200 }} out:fade={{ delay: 0, duration: 100 }}>FootballGod</span>
               {/if}
             </div>
           </a>
@@ -101,7 +99,7 @@
               <div class="flex flex-row items-center">
                 <svelte:component this={link.icon} className="w-6 mr-2" fill="{activeRoute === link.href ? "white" : "gray"}" />
                 {#if $isExpanded}
-                  <span in:fade={{ delay: 100, duration: 200 }} out:fade={{ delay: 0, duration: 100 }}>{link.name}</span>
+                  <span in:fade={{ duration: 200 }} out:fade={{ delay: 0, duration: 100 }}>{link.name}</span>
                 {/if}
               </div>
             </a>
@@ -112,7 +110,7 @@
   
       <div class="mb-4">
         {#if $isExpanded}
-          <span in:fade={{ delay: 100, duration: 200 }} out:fade={{ delay: 0, duration: 100 }}>User</span>
+          <span in:fade={{ duration: 200 }} out:fade={{ delay: 0, duration: 100 }}>User</span>
         {/if}
       </div>
     </div>
@@ -128,7 +126,7 @@
 
 <style>
   .transition-width {
-    transition: width 300ms;
+    transition: width 200ms;
   }
   a.active {
     color: white !important;
