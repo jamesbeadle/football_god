@@ -1,19 +1,8 @@
 <div class="m-4">
   <h1 class="default-header">Our Vision</h1>
-  <p class="my-4">OpenFPL was created as our answer to the question:</p>
-  <p class="my-2">
-    <i
-      >"How do you introduce the most new users to the Internet Computer
-      Blockchain?"</i
-    >.
-  </p>
+  <p class="my-4">FootballGod was created to provide a much needed fixed-odds betting platform to the Internet Computer whilst utilising it's unique framework to manage risk through the power of tokenomics.</p>
   <p class="my-4">
-    Football is the most popular sport in the world, with billions of fans, the
-    leading fantasy football game engages over 10 million players a season.
-    OpenFPL is a better, more equitable, decentralised fantasy football platform
-    for football fans worldwide. We have used our football knowledge to create a
-    more engaging game, coupled with token distribution to ensure users are more
-    equitably rewarded for their successful pariticipation.
+    FootballGod will provide this facility using deflationary tokenomics, proving the viability of these tokenomics in it's Euro2024 beta.
   </p>
   <p class="my-4 default-header">Why The Internet Computer?</p>
   <p>
@@ -24,37 +13,34 @@
     providing decentralised services. The IC not only has the capabilities to
     shift power structures in the tech world, it is built with its own
     decentralised service creation infrastructure that allow services like
-    OpenFPL to become Decentralised Autonomous Organisations (DAOs). OpenFPL
-    will transform fantasy Premier League football using this DAO architecture
-    into a decentralised service that is more engaging for its users, rewarding
-    football fans for their insight and participation in football.
+    FootballGod to become Decentralised Autonomous Organisations (DAOs). FootballGod will 
+    enable gamblers to build a betting platform to suit them, allowing them to design the games 
+    and features they want to see but also define the control measures put in place to ensure gambling
+    is done responsibly.
   </p>
   <p class="my-4">
-    OpenFPL is more than a decentralised service, it is a brand that has
-    multiple viable revenue streams. The ICPFA will distribute this value to
-    token holders through inflation resistant tokenomics. Through a
-    mechanisation of purchasing & burning exchange $FPL, we aim to keep the
-    total supply at 100 million, while building up a healthy treasury for the
-    DAO to utilise as it wishes.
+    
+    The online sports betting market was valued at more than $50bn in 2023. FootballGod aims to provide a 
+    superior, decentralised service for football fans using it's utility token, $FOOTBALL. With all bets being placed 
+    with the $FOOTBALL token we are able to manage the token supply, aiming to keep it at the starting amount of 1 billion tokens. 
+    The DAO's treasury and overall value will increase as deposits are made within the platforms cashier.
   </p>
   <p class="my-4">
-    OpenFPL will create a platform Premier League fans feel at home using, with
-    their input shaping the service. Our features are designed to enhance user
-    engagement on the platform. These include more detailed and varied gameplay,
-    community-based player valuations, customisable private leagues, and
-    collaborations with football content creators. As we attract more users,
-    engagement within the OpenFPL ecosystem will grow, which should contribute
-    to the growth and value of the $FPL governance token.
+    We aim to phase in our betting services and mini games. During our Euro2024 sweepstake game, 
+    match betting will be enabled throughout the tournament and into the start of the Premier League season.
+    We aim to provide reliable fixed-odds betting markets for every major football league in the world but also mini games for major events like international football tournaments.
   </p>
   <p class="my-4">
-    Our vision for OpenFPL encompasses a commitment to societal impact,
+    We will phase in markets and features like building accumulators, building out a completely decentralised live odds manager built from algorithms managed by the FootballGod DAO.
+  </p>
+  <p class="my-4">
+    Our vision for FootballGod encompasses a commitment to societal impact,
     specifically through our organisation, the ICPFA. The ICPFA will be focused
     on supporting grassroots football initiatives, demonstrating our belief in
-    OpenFPL's ability to bring about positive change in the football community
+    FootballGod's ability to bring about positive change in the football community
     using the IC.
   </p>
   <p class="my-4 mb-4">
-    In essence OpenFPL will be the world's game on the world's computer. A truly
-    decentralised service, the fans home for Premier League football.
+    We aim for FootballGod to be the home of Football betting, providing the high quality application expected in today's modern betting landscape.
   </p>
 </div>
