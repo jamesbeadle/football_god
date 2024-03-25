@@ -38,6 +38,7 @@ export default {
     extend: {
       colors: {
         GRAY: "#242529",
+        BLACK: "#101111"
       },
     },
   },

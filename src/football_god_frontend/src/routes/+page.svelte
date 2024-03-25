@@ -30,8 +30,17 @@
   {#if isLoading}
     <Spinner />
   {:else}
-  <div class="bg-panel rounded-md p-4 mt-4 text-white">
-    <h1 class="default-header">Welcome</h1>
-  </div>
+  
+    <div class="relative bg-gray-800 text-white mt-2 mr-2 rounded-lg">
+      <div class="bg-cover bg-center bg-no-repeat py-20 px-4"
+          style="background-image: url('banner.jpg');">
+        <div class="container ml-4 flex flex-col justify-between">
+          <p class="text-xl">$ICP Prediction Sweepstake</p>
+          <p class="text-4xl">Euro 2024</p>
+          <p class="text-xl">Enter up until Friday 14th June 2024</p>
+          <button class="btn bg-BLACK mt-4 py-4 w-48 rounded-md">Enter Now</button>
+        </div>
+      </div>
+</div>
   {/if}
 </Layout>

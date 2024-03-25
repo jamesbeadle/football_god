@@ -75,7 +75,7 @@
 
 <div class="flex h-screen">
   <div
-    class="bg-GRAY text-white flex flex-col justify-between transition-width duration-300 p-5"
+    class="bg-GRAY text-white flex flex-col justify-between transition-width duration-300 p-5 rounded-lg m-2"
     style="width: {$isExpanded ? '16rem' : '4rem'}">
       <div>
         <button on:click={() => $isExpanded = !$isExpanded} class="mb-4">
