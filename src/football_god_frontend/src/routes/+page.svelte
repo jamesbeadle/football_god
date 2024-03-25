@@ -30,8 +30,8 @@
   {#if isLoading}
     <Spinner />
   {:else}
-    <div class="flex flex-col lg:flex-row w-full mt-4">
-      <p>Homepage</p>
-    </div>
+  <div class="bg-panel rounded-md p-4 mt-4 text-white">
+    <h1 class="default-header">Welcome</h1>
+  </div>
   {/if}
 </Layout>

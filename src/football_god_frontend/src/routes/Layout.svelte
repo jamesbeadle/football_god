@@ -14,10 +14,20 @@
   import RulesIcon from "$lib/icons/RulesIcon.svelte";
   import { fade } from "svelte/transition";
   import "../app.css";
-  
-  const init = async () => await Promise.all([syncAuthStore()]);
+  import { page } from '$app/stores';
 
   let isExpanded = writable(false);
+  let links = [
+    { name: 'Home', icon: HomeIcon, href: '/' },
+    { name: 'Match Betting', icon: BettingIcon, href: '/betting' },
+    { name: 'Mini Games', icon: GamesIcon, href: '/games' },
+    { name: 'Euro 2024', icon: StarIcon, href: '/euro2024' },
+    { name: 'Rules', icon: RulesIcon, href: '/rules' },
+  ];
+
+  let worker: { syncAuthIdle: (auth: AuthStoreData) => void } | undefined;
+
+  const init = async () => await Promise.all([syncAuthStore()]);
 
   const syncAuthStore = async () => {
     if (!browser) {
@@ -36,9 +46,9 @@
     }
   };
 
-  let worker: { syncAuthIdle: (auth: AuthStoreData) => void } | undefined;
 
   onMount(async () => (worker = await initAuthWorker()));
+  $: activeRoute = $page.url.pathname;
 
   $: worker, $authStore, (() => worker?.syncAuthIdle($authStore))();
 
@@ -73,55 +83,30 @@
         </button>
   
         <div class="text-gray-400">
-          <!-- The logo will be here, right below the expand button -->
-          <div class="flex flex-row text-xl items-center text-white">
-            <LogoIcon className="w-6 mr-2 my-4" />
-            {#if $isExpanded}
-              <span in:fade={{ delay: 100, duration: 200 }} out:fade={{ delay: 0, duration: 100 }}>FootballGod</span>
-            {/if}
-          </div>
-  
-          <!-- The rest of the navigation links -->
           <a href="/" class="block mt-4 text-lg">
             <div class="flex flex-row items-center">
-              <HomeIcon className="w-6 mr-2" />
               {#if $isExpanded}
-                <span in:fade={{ delay: 100, duration: 200 }} out:fade={{ delay: 0, duration: 100 }}>Home</span>
+                <LogoIcon className="w-6 mr-2" />
+                <span in:fade={{ delay: 100, duration: 200 }} out:fade={{ delay: 0, duration: 100 }}>FootballGod</span>
+              {:else}
+                <LogoIcon className="w-6 mr-2" />
               {/if}
             </div>
           </a>
-          <a href="/" class="block mt-4 text-lg">
-            <div class="flex flex-row items-center">
-              <BettingIcon className="w-6 mr-2" /> 
-              {#if $isExpanded}
-              <span in:fade={{ delay: 100, duration: 200 }} out:fade={{ delay: 0, duration: 100 }}>Match Betting</span>
-              {/if}
-            </div>
-          </a>
-          <a href="/" class="block mt-4 text-lg">
-            <div class="flex flex-row items-center">
-              <GamesIcon className="w-6 mr-2" /> 
-              {#if $isExpanded}
-              <span in:fade={{ delay: 100, duration: 200 }} out:fade={{ delay: 0, duration: 100 }}>Mini Games</span>
-              {/if}
-            </div>
-          </a>
-          <a href="/euro2024" class="block mt-4 text-lg">
-            <div class="flex flex-row items-center">
-              <StarIcon className="w-6 mr-2" /> 
-              {#if $isExpanded}
-              <span in:fade={{ delay: 100, duration: 200 }} out:fade={{ delay: 0, duration: 100 }}>Euro 2024</span>
-              {/if}
-            </div>
-          </a>
-          <a href="/" class="block mt-4 text-lg">
-            <div class="flex flex-row items-center">
-              <RulesIcon className="w-6 mr-2" /> 
-              {#if $isExpanded}
-              <span in:fade={{ delay: 100, duration: 200 }} out:fade={{ delay: 0, duration: 100 }}>Rules</span>
-              {/if}
-            </div>
-          </a>
+          {#each links as link}
+            <a href="{link.href}" 
+              class:active="{activeRoute === link.href}"
+              rel="prefetch"
+              class="block mt-4 text-lg">
+              <div class="flex flex-row items-center">
+                <svelte:component this={link.icon} className="w-6 mr-2" fill="{activeRoute === link.href ? "white" : "gray"}" />
+                {#if $isExpanded}
+                  <span in:fade={{ delay: 100, duration: 200 }} out:fade={{ delay: 0, duration: 100 }}>{link.name}</span>
+                {/if}
+              </div>
+            </a>
+          {/each}
+
         </div>
       </div>
   
@@ -133,7 +118,7 @@
     </div>
     
     <div class="flex-1">
-      <p>Main content goes here. Click icons to navigate.</p>
+      <slot />
     </div>
 </div>
 {/await}
@@ -144,5 +129,8 @@
 <style>
   .transition-width {
     transition: width 300ms;
+  }
+  a.active {
+    color: white !important;
   }
 </style>
