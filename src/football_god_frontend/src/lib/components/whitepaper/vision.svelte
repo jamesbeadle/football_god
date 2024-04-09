@@ -2,8 +2,14 @@
   <h1 class="default-header">Our Vision</h1>
   <p class="my-4">FootballGod was created to provide a much needed fixed-odds betting platform to the Internet Computer whilst utilising it's unique framework to manage risk through the power of tokenomics.</p>
   <p class="my-4">
-    FootballGod will provide this facility using deflationary tokenomics, proving the viability of these tokenomics in it's Euro2024 beta.
+    FootballGod will provide this facility using its deflationary utility token, $FOOTBALL. Betting platforms are very profitable, we aim to use the reality of more losing bets than winning bets to control the token supply. 
+    When a bet loses, the stake is burned, decreasing the circlulating supply. This is offset by more infrequent winning scenarios, minting winnings, allowing the DAO to always have the liquidity required to cover winning bets.
   </p>
+
+  <p>FootballGod will bring all the functionality users of betting platforms are familiar with. 
+    This will include betting across different in game categories, like goalscorer and scoreline markets. 
+    Users will be able to build accumulators within specific game markets in addition to multiple games.</p>
+
   <p class="my-4 default-header">Why The Internet Computer?</p>
   <p>
     The Internet Computer (IC) is the only computer system in the world that
@@ -23,7 +29,7 @@
     The online sports betting market was valued at more than $50bn in 2023. FootballGod aims to provide a 
     superior, decentralised service for football fans using it's utility token, $FOOTBALL. With all bets being placed 
     with the $FOOTBALL token we are able to manage the token supply, aiming to keep it at the starting amount of 1 billion tokens. 
-    The DAO's treasury and overall value will increase as deposits are made within the platforms cashier.
+    The DAO's treasury and overall value will increase as deposits are made within the platform's cashier.
   </p>
   <p class="my-4">
     We aim to phase in our betting services and mini games. During our Euro2024 sweepstake game, 

@@ -1,43 +1,19 @@
 <div class="m-4">
-  <h1 class="default-header my-4">$FPL Utility Token</h1>
+  <h1 class="default-header my-4">$FOOTBALL Utility Token</h1>
 
   <h2 class="default-sub-header">Utility and Functionality</h2>
   <p class="my-2">
-    OpenFPL will be revenue generating and the most important role of the $FPL
-    utility token is to manage the OpenFPL treasury. The token is also used
-    throughout the OpenFPL ecosystem:
+    All bets and entry fees for mini games will be paid in $FOOTBALL, giving the token direct utility.
   </p>
-
-  <ul class="list-disc ml-4">
-    <li>
-      Rewarding users for gameplay achievements on weekly, monthly, and annual
-      bases.
-    </li>
-    <li>
-      Facilitating participation in DAO governance, like raising proposals for
-      player revaluation and team detail updates.
-    </li>
-    <li>Rewarding neuron holders upon maturity.</li>
-    <li>Accepting bids for season site sponsorship from organisations.</li>
-    <li>
-      Used for customisable entry fee (along with any ICRC-1 token) requirements
-      for private leagues.
-    </li>
-    <li>Purchase of merchandise from the ICPFA shop.</li>
-    <li>Reward content creators for engagement on a football video reel.</li>
-    <li>
-      Facilitate subscriptions to access premium football content from creators.
-    </li>
-  </ul>
 
   <h2 class="default-sub-header mt-4">Genesis Token Allocation</h2>
   <p class="my-2">
-    At the outset, OpenFPL's token allocation will be as follows:
+    At the outset, FootballGod's token allocation will be as follows:
   </p>
 
   <ul class="list-disc ml-4">
     <li>ICPFA: 12%</li>
-    <li>Funded NFT Holders: 12%</li>
+    <li>Presale: 12%</li>
     <li>SNS Decentralisation Sale: 25%</li>
     <li>DAO Treasury: 51%</li>
   </ul>
@@ -57,315 +33,16 @@
   </ul>
 
   <p class="my-2">
-    Due to an upper limit of 100 neurons being specified when creating a DAO
-    each ICPFA team member and funded NFT holder will receive their $FPL within
-    a single neuron with a 1 month dissolve delay.
+    The FootballGod presale will be used as a demonstration of the tokenomics in use within the DAO. For this purpose 12m $PRESALE tokens will be minted, 
+    with 6m available to purchase through the FootballGod Cashier. Bets will be placeable on certain markets throughout Euro2024, to demonstrate the nature of burning losing bets and minting winning bets.
+    In the case of the presale beta tokens will not be minted, just assigned from the remaining 6m available, giving users a chance to win more of the presale through placing bets but equally lose their presale investment through betting.
   </p>
 
   <p class="my-2">
     The OpenFPL founder, James Beadle, will receive his neuron locked for 4
     years with a 2 year dissolve delay.
   </p>
-
-  <h2 class="default-sub-header mt-4">DAO Valuation</h2>
-  <p class="my-4">
-    We have used the discounted cashflow method to value the DAO:
-  </p>
-  <p class="text-xs">The financials below are in ICP(ICP/USD = ~$13.50):</p>
-  <div class="hidden md:flex">
-    <table
-      class="w-full text-right border-collapse striped mb-8 mt-4 text-xs lg:text-base"
-    >
-      <tr class="text-right">
-        <th class="text-left px-4">Year</th>
-        <th>1</th>
-        <th>2</th>
-        <th>3</th>
-        <th>4</th>
-        <th>5</th>
-        <th>6</th>
-        <th>7</th>
-        <th>8</th>
-      </tr>
-      <tr>
-        <td class="h-6"><span /></td>
-      </tr>
-      <tr>
-        <td class="text-left px-4">Managers</td>
-        <td>10,000</td>
-        <td>50,000</td>
-        <td>250,000</td>
-        <td>1,000,000</td>
-        <td>2,500,000</td>
-        <td>5,000,000</td>
-        <td>7,500,000</td>
-        <td>10,000,000</td>
-      </tr>
-      <tr>
-        <td class="h-6"><span /></td>
-      </tr>
-      <tr>
-        <td class="text-left px-4" colspan="9">Revenue:</td>
-      </tr>
-      <tr>
-        <td class="text-left px-4">Private Leagues</td>
-        <td>500</td>
-        <td>2,500</td>
-        <td>12,500</td>
-        <td>50,000</td>
-        <td>125,000</td>
-        <td>250,000</td>
-        <td>375,000</td>
-        <td>500,000</td>
-      </tr>
-
-      <tr>
-        <td class="text-left px-4">Merchandising</td>
-        <td>5,000</td>
-        <td>25,000</td>
-        <td>125,000</td>
-        <td>500,000</td>
-        <td>1,250,000</td>
-        <td>2,500,000</td>
-        <td>3,750,000</td>
-        <td>5,000,000</td>
-      </tr>
-
-      <tr>
-        <td class="text-left px-4">Content Subscriptions</td>
-        <td>10</td>
-        <td>50</td>
-        <td>250</td>
-        <td>1,000</td>
-        <td>2,500</td>
-        <td>5,000</td>
-        <td>7,500</td>
-        <td>10,000</td>
-      </tr>
-
-      <tr>
-        <td class="text-left px-4">Advertising</td>
-        <td>1,930</td>
-        <td>9,648</td>
-        <td>48,241</td>
-        <td>192,963</td>
-        <td>482,407</td>
-        <td>964,815</td>
-        <td>1,447,222</td>
-        <td>1,929,630</td>
-      </tr>
-
-      <tr>
-        <td class="text-left px-4">API Data Feed Subscriptions</td>
-        <td>370</td>
-        <td>1,850</td>
-        <td>9,250</td>
-        <td>37,000</td>
-        <td>92,500</td>
-        <td>185,000</td>
-        <td>277,500</td>
-        <td>370,000</td>
-      </tr>
-      <tr>
-        <td colspan="9" class="h-6"><span /></td>
-      </tr>
-
-      <tr class="font-bold">
-        <td class="text-left px-4">Total Revenue</td>
-        <td>7,810</td>
-        <td>39,048</td>
-        <td>195,241</td>
-        <td>780,963</td>
-        <td>1,952,407</td>
-        <td>3,904,815</td>
-        <td>5,857,222</td>
-        <td>7,809,630</td>
-      </tr>
-
-      <tr>
-        <td colspan="9" class="h-6"><span /></td>
-      </tr>
-
-      <tr class="font-bold">
-        <td class="text-left px-4" colspan="8">DAO Valuation:</td>
-        <td><b>10,834,969 ICP</b></td>
-      </tr>
-    </table>
-  </div>
-  <p>The following assumptions have been made:</p>
-  <ul class="list-disc ml-4 text-xs">
-    <li>We can grow to the size of our Web2 competitor over 8 years.</li>
-    <li>Assumed 5% user conversion, each setting up a league at 1 ICP.</li>
-    <li>
-      Estimated 5% user content subscription rate at 5 ICP/month with 5% of this
-      revenue going to the DAO.
-    </li>
-    <li>Estimated 5% users spending 10ICP per year on merchandise.</li>
-    <li>In game advertising charged at $0.50 cost per mile.</li>
-  </ul>
-  <table class="w-full text-right border-collapse striped mb-8 mt-4 md:hidden">
-    <tr class="text-right">
-      <th class="text-left">Year</th>
-      <th>1</th>
-      <th>2</th>
-      <th>3</th>
-      <th>4</th>
-    </tr>
-    <tr>
-      <td class="h-6"><span /></td>
-    </tr>
-    <tr>
-      <td class="text-left">Managers</td>
-      <td>10,000</td>
-      <td>50,000</td>
-      <td>250,000</td>
-      <td>1,000,000</td>
-    </tr>
-    <tr>
-      <td class="h-6"><span /></td>
-    </tr>
-    <tr>
-      <td class="text-left" colspan="5">Revenue:</td>
-    </tr>
-    <tr>
-      <td class="text-left">Private Leagues</td>
-      <td>500</td>
-      <td>2,500</td>
-      <td>12,500</td>
-      <td>50,000</td>
-    </tr>
-
-    <tr>
-      <td class="text-left">Merchandising</td>
-      <td>5,000</td>
-      <td>25,000</td>
-      <td>125,000</td>
-      <td>500,000</td>
-    </tr>
-
-    <tr>
-      <td class="text-left">Content Subscriptions</td>
-      <td>10</td>
-      <td>50</td>
-      <td>250</td>
-      <td>1,000</td>
-    </tr>
-
-    <tr>
-      <td class="text-left">Advertising</td>
-      <td>482,407</td>
-      <td>964,815</td>
-      <td>1,447,222</td>
-      <td>1,929,630</td>
-    </tr>
-
-    <tr>
-      <td class="text-left">API Data Feed Subscriptions</td>
-      <td>370</td>
-      <td>1,850</td>
-      <td>9,250</td>
-      <td>37,000</td>
-    </tr>
-
-    <tr>
-      <td colspan="5" class="h-6"><span /></td>
-    </tr>
-
-    <tr class="font-bold">
-      <td class="text-left">Total</td>
-      <td>~0.007m</td>
-      <td>~0.039m</td>
-      <td>~0.19m</td>
-      <td>~0.78m</td>
-    </tr>
-  </table>
-
-  <table class="w-full text-right border-collapse striped mb-8 mt-4 md:hidden">
-    <tr class="text-right">
-      <th class="text-left">Year</th>
-      <th>5</th>
-      <th>6</th>
-      <th>7</th>
-      <th>8</th>
-    </tr>
-    <tr>
-      <td class="h-6"><span /></td>
-    </tr>
-    <tr>
-      <td class="text-left">Managers</td>
-      <td>2.5m</td>
-      <td>5.0m</td>
-      <td>7,5m</td>
-      <td>10m</td>
-    </tr>
-    <tr>
-      <td class="h-6"><span /></td>
-    </tr>
-    <tr>
-      <td class="text-left" colspan="5">Revenue:</td>
-    </tr>
-    <tr>
-      <td class="text-left">Private Leagues</td>
-      <td>0.125m</td>
-      <td>0.25m</td>
-      <td>0.375m</td>
-      <td>0.5m</td>
-    </tr>
-
-    <tr>
-      <td class="text-left">Merchandising</td>
-      <td>1.25m</td>
-      <td>2.5m</td>
-      <td>3.75m</td>
-      <td>5m</td>
-    </tr>
-
-    <tr>
-      <td class="text-left">Content Subscriptions</td>
-      <td>2,500</td>
-      <td>5,000</td>
-      <td>7,500</td>
-      <td>10,000</td>
-    </tr>
-
-    <tr>
-      <td class="text-left">Advertising</td>
-      <td>0.48m</td>
-      <td>0.96m</td>
-      <td>1.44m</td>
-      <td>1.92m</td>
-    </tr>
-
-    <tr>
-      <td class="text-left">API Data Feed Subscriptions</td>
-      <td>0.09m</td>
-      <td>0.18m</td>
-      <td>0.27m</td>
-      <td>0.37m</td>
-    </tr>
-
-    <tr>
-      <td colspan="5" class="h-6"><span /></td>
-    </tr>
-
-    <tr class="font-bold">
-      <td class="text-left">Total</td>
-      <td>~1.95m</td>
-      <td>~3.9m</td>
-      <td>~5.8m</td>
-      <td>~7.8m</td>
-    </tr>
-
-    <tr>
-      <td colspan="5" class="h-6"><span /></td>
-    </tr>
-
-    <tr class="font-bold">
-      <td class="text-left" colspan="4">SNS Value (25%)</td>
-      <td>1,531,250</td>
-    </tr>
-  </table>
-
+  
   <h2 class="default-sub-header mt-4">
     SNS Decentralisation Sale Configuration
   </h2>
@@ -378,7 +55,7 @@
       <td class="h-6"><span /></td>
     </tr>
     <tr>
-      <td>The total number of FPL tokens to be sold.</td>
+      <td>The total number of FOOTBALL tokens to be sold.</td>
       <td>25,000,000 (25%)</td>
     </tr>
     <tr>
@@ -447,26 +124,16 @@
     </li>
   </ul>
 
-  <p class="my-2">
-    This treasury balance will be topped up with the DAO's revenue, with 50%
-    being use to buy back & burn $FPL with any excess balance can available for
-    the DAO to use.
-  </p>
-
   <h2 class="default-sub-header mt-4">Tokenomics</h2>
   <p class="my-2">
-    Each season, 1.875% of the total $FPL supply will be minted for gameplay
-    rewards. It will be ICPFA policy to raise proposals to use up to 50% of the
-    revenue deposited into the DAO's treasury to purchase $FPL from exchanges.
-    Using this available ICP, the DAO will purchase $FPL up to an amount that
-    would burn the total supply back to 100m $FPL.
+    With a deflationary tokenomics model the DAO will require deposits from customers to mint more tokens. Increasing the asset value the tokens protect.
   </p>
 
   <h2 class="default-sub-header mt-4">ICPFA Overview</h2>
   <p class="my-2">
-    The ICPFA oversees the development, marketing, and management of OpenFPL.
-    The aim is to build a strong team to guide OpenFPL's growth and bring new
-    users to the ICP blockchain. Additionally, 25% of the ICPFA's earned
+    The ICPFA oversees the development, marketing, and management of FootballGod.
+    The aim is to build a platform that delivers the familiar fixed-odds betting experience people are used to.
+    To ensure the platform gives back, 25% of the ICPFA's earned
     maturity interest will contribute to the ICPFA Community Fund, supporting
     grassroots football projects. Maturity interest will be claimed
     retrospectively after it has been earned by the ICPFA.
@@ -480,17 +147,8 @@
 
   <ul class="list-disc ml-4">
     <li>
-      The ongoing promotion and marketing of OpenFPL both online and offline.
+      The ongoing promotion and marketing of FootballGod both online and offline.
     </li>
-    <li>
-      Hiring of a frontend and backend developer to assist the founder with the
-      development on the private leagues and mobile app features.
-    </li>
-    <li>
-      Hiring of a UAT Test Engineer to ensure all ICPFA products are of the
-      highest quality.
-    </li>
-    <li>Hiring of a Marketing Manager.</li>
   </ul>
 
   <p class="my-2">Along with paying the founding team members:</p>
