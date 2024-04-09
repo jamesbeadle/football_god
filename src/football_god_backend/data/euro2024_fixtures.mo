@@ -10,9 +10,8 @@ module {
         awayTeamId = 2;
         homeGoals  = 0;
         awayGoals = 0;
-        status = 0;
-        stage = #GroupStage;
-        group = ?#A;
+        status = #Unplayed;
+        stage = #GroupA;
       }
     ];
   };

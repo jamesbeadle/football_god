@@ -97,9 +97,7 @@ module Types {
   
   public type Euro2024Prediction = {
 
-    sweepstakePaid: Bool;
     totalScore: Nat16;
-    winnings: Nat64;
 
     groupAPrediction: PredictionSet;
     groupBPrediction: PredictionSet;
@@ -141,6 +139,7 @@ module Types {
     players: [InternationalPlayer];
     countryName: Text;
     countryCode: Text;
+    shirtColour: Text;
   };
 
   public type InternationalPlayer = {
@@ -173,19 +172,60 @@ module Types {
     awayTeamId : TeamId;
     homeGoals : Nat8;
     awayGoals : Nat8;
-    status : Nat8; // 0 = Unplayed, 1 = Active, 2 = Finished
-    stage: Euro2024Stage;
-    group: ?Euro2024Group;
+    status : FixtureStatus;
+    stage: TournamentStage;
   };
 
-  public type Euro2024Stage = {
-    #GroupStage;
-    #RoundOf16;
-    #QuarterFinals;
-    #SemiFinals;
-    #Final;
+  public type FixtureStatus = {
+    #Unplayed;
+    #Active;
+    #Finished;
   };
 
-  public type Euro2024Group = { #A; #B; #C; #D; #E; #F}
+  public type Bet = {
+    betType: BetType;
+    stake: Nat64;
+    returns: Nat64;
+    status: BetStatus;
+  };
 
+  public type BetStatus = {
+    #Open;
+    #Settled;
+    #Void;
+  };  
+
+  public type BetType = {
+    #CorrectResult : CorrectResultOptions;
+  };
+
+  public type CorrectResultOptions = {
+    #HomeWin;
+    #Draw;
+    #AwayWin;
+  };
+
+  public type EuroProfile = {
+    principalName : Text;
+    displayName : Text;
+    wallet : Text;
+    depositAddress : Blob;
+    euroPrediction: Euro2024Prediction;
+    ogGameweeks: [Types.UserGameweek];
+    bets: [Bet];
+    termsAccepted: Bool;
+  };
+
+  public type Leaderboard = {
+    entries : List.List<LeaderboardEntry>;
+    totalEntries : Nat;
+  };
+
+  public type LeaderboardEntry = {
+    principalName : Text;
+    position: Nat;
+    positionText: Text;
+  };
+
+  
 };

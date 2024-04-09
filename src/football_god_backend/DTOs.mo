@@ -195,77 +195,18 @@ module DTOs {
   };
 
   public type Euro2024PredictionDTO = {
-    enterSweepstake: Bool;
-    groupAWinnerTeamId: T.TeamId;
-    groupALoserTeamId: T.TeamId;
-    groupAGoalscorer: T.PlayerId;
-    groupAGoalAssister: T.PlayerId;
-    groupAYellowCard: T.PlayerId;
-    groupARedCard: T.PlayerId;
+    
 
-    groupBWinnerTeamId: T.TeamId;
-    groupBLoserTeamId: T.TeamId;
-    groupBGoalscorer: T.PlayerId;
-    groupBGoalAssister: T.PlayerId;
-    groupBYellowCard: T.PlayerId;
-    groupBRedCard: T.PlayerId;
-
-    groupCWinnerTeamId: T.TeamId;
-    groupCLoserTeamId: T.TeamId;
-    groupCGoalscorer: T.PlayerId;
-    groupCGoalAssister: T.PlayerId;
-    groupCYellowCard: T.PlayerId;
-    groupCRedCard: T.PlayerId;
-
-    groupDWinnerTeamId: T.TeamId;
-    groupDLoserTeamId: T.TeamId;
-    groupDGoalscorer: T.PlayerId;
-    groupDGoalAssister: T.PlayerId;
-    groupDYellowCard: T.PlayerId;
-    groupDRedCard: T.PlayerId;
-
-    groupEWinnerTeamId: T.TeamId;
-    groupELoserTeamId: T.TeamId;
-    groupEGoalscorer: T.PlayerId;
-    groupEGoalAssister: T.PlayerId;
-    groupEYellowCard: T.PlayerId;
-    groupERedCard: T.PlayerId;
-
-    groupFWinnerTeamId: T.TeamId;
-    groupFLoserTeamId: T.TeamId;
-    groupFGoalscorer: T.PlayerId;
-    groupFGoalAssister: T.PlayerId;
-    groupFYellowCard: T.PlayerId;
-    groupFRedCard: T.PlayerId;
-
-    roundOf16Winner: T.TeamId;
-    roundOf16Loser: T.TeamId;
-    roundOf16Goalscorer: T.PlayerId;
-    roundOf16GoalAssister: T.PlayerId;
-    roundOf16YellowCard: T.PlayerId;
-    roundOf16RedCard: T.PlayerId;
-
-    quarterFinalWinner: T.TeamId;
-    quarterFinalLoser: T.TeamId;
-    quarterFinalGoalscorer: T.PlayerId;
-    quarterFinalGoalAssister: T.PlayerId;
-    quarterFinalYellowCard: T.PlayerId;
-    quarterFinalRedCard: T.PlayerId;
-
-    semiFinalWinner: T.TeamId;
-    semiFinalLoser: T.TeamId;
-    semiFinalGoalscorer: T.PlayerId;
-    semiFinalGoalAssister: T.PlayerId;
-    semiFinalYellowCard: T.PlayerId;
-    semiFinalRedCard: T.PlayerId;
-
-    finalWinner: T.TeamId;
-    finalLoser: T.TeamId;
-    finalGoalscorer: T.PlayerId;
-    finalGoalAssister: T.PlayerId;
-    finalYellowCard: T.PlayerId;
-    finalRedCard: T.PlayerId;
-
+    groupAPrediction: T.PredictionSet;
+    groupBPrediction: T.PredictionSet;
+    groupCPrediction: T.PredictionSet;
+    groupDPrediction: T.PredictionSet;
+    groupEPrediction: T.PredictionSet;
+    groupFPrediction: T.PredictionSet;
+    r16Prediction: T.PredictionSet;
+    qfPrediction: T.PredictionSet;
+    sfPrediction: T.PredictionSet;
+    fPrediction: T.PredictionSet;
   };
 
   public type Euro2024FixtureDTO = {
@@ -284,7 +225,6 @@ module DTOs {
     position : Text;
     displayName : Text;
     totalScore : Nat16;
-    enteredSweepstake : Bool;
   };
 
   public type Euro2024LeaderBoardDTO = {

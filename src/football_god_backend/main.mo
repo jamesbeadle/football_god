@@ -1018,7 +1018,39 @@ actor Self {
     Account.accountIdentifier(Principal.fromActor(Self), Account.principalToSubaccount(caller));
   };
 
-  
+  public shared ({ caller }) func submitEuro2024Prediction(euro2024PredictionDTO : DTOs.Euro2024PredictionDTO) : async Result.Result<(), T.Error> {
+
+    assert not Principal.isAnonymous(caller);
+    let principalName = Principal.toText(caller);
+    let profile = profilesInstance.getProfile(principalName);
+
+    if (profile == null) {
+      profilesInstance.createProfile(Principal.toText(caller), Principal.toText(caller), "", getUserDepositAccount(caller));
+    };
+
+    let validPredictions = euro2024Instance.checkValidPredictions(euro2024PredictionDTO);
+
+    if (not validPredictions) {
+      return #err(#NotAllowed);
+    };
+
+    let paidForSweepstake = euro2024Instance.checkSweepstakePaid(Principal.toText(caller));
+    var sweepstakeEntered = paidForSweepstake;
+
+    if (euro2024PredictionDTO.enterSweepstake and not paidForSweepstake) {
+      let canAffordEntry = await bookInstance.canAffordEntry(Principal.fromActor(Self), caller);
+
+      if (not canAffordEntry) {
+        return #err(#NotAllowed);
+      };
+
+      await bookInstance.transferEntryFee(Principal.fromActor(Self), caller);
+      sweepstakeEntered := true;
+    };
+
+    return euro2024Instance.submitPredictions(principalName, euro2024PredictionDTO, sweepstakeEntered);
+  };
+
   public shared query ({ caller }) func getEuro2024DTO() : async Result.Result<DTOs.Euro2024PredictionDTO, T.Error> {
 
     assert not Principal.isAnonymous(caller);
@@ -1108,38 +1140,46 @@ actor Self {
     };
   };
 
-  public shared ({ caller }) func submitEuro2024Prediction(euro2024PredictionDTO : DTOs.Euro2024PredictionDTO) : async Result.Result<(), T.Error> {
+  //get paginated leaderboard
+  public shared query func getEuroLeaderboardDTO() : async Result.Result<DTOs.LeaderBoardDTO, T.Error> {
+    let leaderboardDTO: T.LeaderBoardDTO  = {
 
-    assert not Principal.isAnonymous(caller);
-    let principalName = Principal.toText(caller);
-    let profile = profilesInstance.getProfile(principalName);
-
-    if (profile == null) {
-      profilesInstance.createProfile(Principal.toText(caller), Principal.toText(caller), "", getUserDepositAccount(caller));
-    };
-
-    let validPredictions = euro2024Instance.checkValidPredictions(euro2024PredictionDTO);
-
-    if (not validPredictions) {
-      return #err(#NotAllowed);
-    };
-
-    let paidForSweepstake = euro2024Instance.checkSweepstakePaid(Principal.toText(caller));
-    var sweepstakeEntered = paidForSweepstake;
-
-    if (euro2024PredictionDTO.enterSweepstake and not paidForSweepstake) {
-      let canAffordEntry = await bookInstance.canAffordEntry(Principal.fromActor(Self), caller);
-
-      if (not canAffordEntry) {
-        return #err(#NotAllowed);
-      };
-
-      await bookInstance.transferEntryFee(Principal.fromActor(Self), caller);
-      sweepstakeEntered := true;
-    };
-
-    return euro2024Instance.submitPredictions(principalName, euro2024PredictionDTO, sweepstakeEntered);
+    }
   };
+
+
+  //get user euro 2024 leaderboard position
+  public shared query ({ caller }) func getUserLeaderboardPosition() : async Result.Result<DTOs.LeaderBoardDTO, T.Error> {
+    let leaderboardDTO: T.LeaderBoardDTO  = {
+
+    }
+  };
+
+  //search username euro 2024 position
+
+  public shared query func getPrincipalIdLeaderboardPosition(principalId: Text) : async Result.Result<DTOs.LeaderboardEntry, T.Error> {
+
+  };
+
+  //participate in presale
+
+  public shared ({ caller }) func participateInPresale(icp_amount: Nat64) : async Result.Result<Text, T.Error> {
+    //check the user has the amount in their wallet
+    //if they do note their participation
+  };
+
+  
+
+
+
+
+
+
+
+
+
+
+  
 
 /*
   //New functions for betting
