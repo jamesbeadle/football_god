@@ -100,79 +100,44 @@ module Types {
     sweepstakePaid: Bool;
     totalScore: Nat16;
     winnings: Nat64;
-    groupAWinnerTeamId: TeamId;
-    groupALoserTeamId: TeamId;
-    groupAGoalscorer: PlayerId;
-    groupAGoalAssister: PlayerId;
-    groupAYellowCard: PlayerId;
-    groupARedCard: PlayerId;
 
-    groupBWinnerTeamId: TeamId;
-    groupBLoserTeamId: TeamId;
-    groupBGoalscorer: PlayerId;
-    groupBGoalAssister: PlayerId;
-    groupBYellowCard: PlayerId;
-    groupBRedCard: PlayerId;
+    groupAPrediction: PredictionSet;
+    groupBPrediction: PredictionSet;
+    groupCPrediction: PredictionSet;
+    groupDPrediction: PredictionSet;
+    groupEPrediction: PredictionSet;
+    groupFPrediction: PredictionSet;
+    r16Prediction: PredictionSet;
+    qfPrediction: PredictionSet;
+    sfPrediction: PredictionSet;
+    fPrediction: PredictionSet;
+  };
 
-    groupCWinnerTeamId: TeamId;
-    groupCLoserTeamId: TeamId;
-    groupCGoalscorer: PlayerId;
-    groupCGoalAssister: PlayerId;
-    groupCYellowCard: PlayerId;
-    groupCRedCard: PlayerId;
+  public type PredictionSet = {
+    stage: TournamentStage;
+    winner: TeamId;
+    loser: TeamId;
+    goalScorer: PlayerId;
+    goalAssister: PlayerId;
+    yellowCard: PlayerId;
+    redCard: PlayerId;
+  };
 
-    groupDWinnerTeamId: TeamId;
-    groupDLoserTeamId: TeamId;
-    groupDGoalscorer: PlayerId;
-    groupDGoalAssister: PlayerId;
-    groupDYellowCard: PlayerId;
-    groupDRedCard: PlayerId;
-
-    groupEWinnerTeamId: TeamId;
-    groupELoserTeamId: TeamId;
-    groupEGoalscorer: PlayerId;
-    groupEGoalAssister: PlayerId;
-    groupEYellowCard: PlayerId;
-    groupERedCard: PlayerId;
-
-    groupFWinnerTeamId: TeamId;
-    groupFLoserTeamId: TeamId;
-    groupFGoalscorer: PlayerId;
-    groupFGoalAssister: PlayerId;
-    groupFYellowCard: PlayerId;
-    groupFRedCard: PlayerId;
-
-    roundOf16Winner: TeamId;
-    roundOf16Loser: TeamId;
-    roundOf16Goalscorer: PlayerId;
-    roundOf16GoalAssister: PlayerId;
-    roundOf16YellowCard: PlayerId;
-    roundOf16RedCard: PlayerId;
-
-    quarterFinalWinner: TeamId;
-    quarterFinalLoser: TeamId;
-    quarterFinalGoalscorer: PlayerId;
-    quarterFinalGoalAssister: PlayerId;
-    quarterFinalYellowCard: PlayerId;
-    quarterFinalRedCard: PlayerId;
-
-    semiFinalWinner: TeamId;
-    semiFinalLoser: TeamId;
-    semiFinalGoalscorer: PlayerId;
-    semiFinalGoalAssister: PlayerId;
-    semiFinalYellowCard: PlayerId;
-    semiFinalRedCard: PlayerId;
-
-    finalWinner: TeamId;
-    finalLoser: TeamId;
-    finalGoalscorer: PlayerId;
-    finalGoalAssister: PlayerId;
-    finalYellowCard: PlayerId;
-    finalRedCard: PlayerId;
-
+  public type TournamentStage = {
+    #GroupA;
+    #GroupB;
+    #GroupC;
+    #GroupD;
+    #GroupE;
+    #GroupF;
+    #RoundOf16;
+    #QuarterFinal;
+    #SemiFinal;
+    #Final;
   };
 
   public type InternationalTeam = {
+    id: TeamId;
     players: [InternationalPlayer];
     countryName: Text;
     countryCode: Text;
