@@ -71,14 +71,13 @@ module Types {
 
   public type PrincipalName = Text;
 
-
   //Types for new betting features
 
   public type EventId = Nat16;
   public type PlayerId = Nat16;
   public type TeamId = Nat16;
   public type FixtureId = Nat32;
-  
+
   public type BettingMarket = {
     #CorrectResult;
     #CorrectScore;
@@ -94,31 +93,31 @@ module Types {
   };
 
   //Euro 2024 types
-  
+
   public type Euro2024Prediction = {
 
-    totalScore: Nat16;
+    totalScore : Nat16;
 
-    groupAPrediction: PredictionSet;
-    groupBPrediction: PredictionSet;
-    groupCPrediction: PredictionSet;
-    groupDPrediction: PredictionSet;
-    groupEPrediction: PredictionSet;
-    groupFPrediction: PredictionSet;
-    r16Prediction: PredictionSet;
-    qfPrediction: PredictionSet;
-    sfPrediction: PredictionSet;
-    fPrediction: PredictionSet;
+    groupAPrediction : PredictionSet;
+    groupBPrediction : PredictionSet;
+    groupCPrediction : PredictionSet;
+    groupDPrediction : PredictionSet;
+    groupEPrediction : PredictionSet;
+    groupFPrediction : PredictionSet;
+    r16Prediction : PredictionSet;
+    qfPrediction : PredictionSet;
+    sfPrediction : PredictionSet;
+    fPrediction : PredictionSet;
   };
 
   public type PredictionSet = {
-    stage: TournamentStage;
-    winner: TeamId;
-    loser: TeamId;
-    goalScorer: PlayerId;
-    goalAssister: PlayerId;
-    yellowCard: PlayerId;
-    redCard: PlayerId;
+    stage : TournamentStage;
+    winner : TeamId;
+    loser : TeamId;
+    goalScorer : PlayerId;
+    goalAssister : PlayerId;
+    yellowCard : PlayerId;
+    redCard : PlayerId;
   };
 
   public type TournamentStage = {
@@ -135,22 +134,22 @@ module Types {
   };
 
   public type InternationalTeam = {
-    id: TeamId;
-    players: [InternationalPlayer];
-    countryName: Text;
-    countryCode: Text;
-    shirtColour: Text;
+    id : TeamId;
+    players : [InternationalPlayer];
+    countryName : Text;
+    countryCode : Text;
+    shirtColour : Text;
   };
 
   public type InternationalPlayer = {
     id : PlayerId;
-    firstName: Text;
-    lastName: Text;
-    nickname: Text;
-    position: Position;
-    qualifyingAppearances: Nat8;
-    qualifyingGoals: Nat8;
-    qualifyingAssists: Nat8;
+    firstName : Text;
+    lastName : Text;
+    nickname : Text;
+    position : Position;
+    qualifyingAppearances : Nat8;
+    qualifyingGoals : Nat8;
+    qualifyingAssists : Nat8;
     teamId : TeamId;
     shirtNumber : Nat8;
     dateOfBirth : Int;
@@ -173,7 +172,7 @@ module Types {
     homeGoals : Nat8;
     awayGoals : Nat8;
     status : FixtureStatus;
-    stage: TournamentStage;
+    stage : TournamentStage;
   };
 
   public type FixtureStatus = {
@@ -183,17 +182,17 @@ module Types {
   };
 
   public type Bet = {
-    betType: BetType;
-    stake: Nat64;
-    returns: Nat64;
-    status: BetStatus;
+    betType : BetType;
+    stake : Nat64;
+    returns : Nat64;
+    status : BetStatus;
   };
 
   public type BetStatus = {
     #Open;
     #Settled;
     #Void;
-  };  
+  };
 
   public type BetType = {
     #CorrectResult : CorrectResultOptions;
@@ -210,10 +209,10 @@ module Types {
     displayName : Text;
     wallet : Text;
     depositAddress : Blob;
-    euroPrediction: Euro2024Prediction;
-    ogGameweeks: [Types.UserGameweek];
-    bets: [Bet];
-    termsAccepted: Bool;
+    euroPrediction : Euro2024Prediction;
+    ogGameweeks : [Types.UserGameweek];
+    bets : [Bet];
+    termsAccepted : Bool;
   };
 
   public type Leaderboard = {
@@ -223,9 +222,8 @@ module Types {
 
   public type LeaderboardEntry = {
     principalName : Text;
-    position: Nat;
-    positionText: Text;
+    position : Nat;
+    positionText : Text;
   };
 
-  
 };

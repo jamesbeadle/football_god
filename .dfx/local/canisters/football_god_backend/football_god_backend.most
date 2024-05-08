@@ -1,4 +1,18 @@
 // Version: 1.0.0
+type Euro2024Prediction =
+  {
+    fPrediction : PredictionSet;
+    groupAPrediction : PredictionSet;
+    groupBPrediction : PredictionSet;
+    groupCPrediction : PredictionSet;
+    groupDPrediction : PredictionSet;
+    groupEPrediction : PredictionSet;
+    groupFPrediction : PredictionSet;
+    qfPrediction : PredictionSet;
+    r16Prediction : PredictionSet;
+    sfPrediction : PredictionSet;
+    totalScore : Nat16
+  };
 type Fixture =
   {
     awayGoals : Nat8;
@@ -18,7 +32,18 @@ type Gameweek =
     winningShare : Nat64
   };
 type List<T> = ?(T, List<T>);
+type PlayerId = Nat16;
 type Prediction = {awayGoals : Nat8; fixtureId : Nat32; homeGoals : Nat8};
+type PredictionSet =
+  {
+    goalAssister : PlayerId;
+    goalScorer : PlayerId;
+    loser : TeamId;
+    redCard : PlayerId;
+    stage : TournamentStage;
+    winner : TeamId;
+    yellowCard : PlayerId
+  };
 type PrincipalName = Text;
 type Profile =
   {
@@ -31,6 +56,20 @@ type Profile =
 type Season =
   {gameweeks : List<Gameweek>; id : Nat16; name : Text; year : Nat16};
 type Team = {id : Nat16; name : Text};
+type TeamId = Nat16;
+type TournamentStage =
+  {
+    #Final;
+    #GroupA;
+    #GroupB;
+    #GroupC;
+    #GroupD;
+    #GroupE;
+    #GroupF;
+    #QuarterFinal;
+    #RoundOf16;
+    #SemiFinal
+  };
 type UserGameweek =
   {
     correctScores : Nat8;
@@ -44,6 +83,8 @@ type UserGameweek =
 actor {
   stable var activeGameweek : Nat8;
   stable var activeSeason : Nat16;
+  stable var stable_euro2024_predictions :
+    [(PrincipalName, Euro2024Prediction)];
   stable var stable_nextFixtureId : Nat32;
   stable var stable_nextSeasonId : Nat16;
   stable var stable_nextTeamId : Nat16;

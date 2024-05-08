@@ -39,7 +39,7 @@ export default {
       colors: {
         GRAY: "#242529",
         BLACK: "#101111",
-        DARK: "#1a1a1d"
+        DARK: "#1a1a1d",
       },
     },
   },

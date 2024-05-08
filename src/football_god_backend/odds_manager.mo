@@ -50,6 +50,6 @@ module {
         scorecastOdds: [ScorecastOddsDTO];
       };
     };
-    */
-  }
+    */;
+  };
 };

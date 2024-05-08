@@ -14,16 +14,9 @@
       "source": ["build/"],
       "type": "assets"
     },
-    "internet_identity": {
-      "candid": "candid/internet_identity.did",
-      "remote": {
-        "id": {
-          "ic": "rdmx6-jaaaa-aaaaa-aaadq-cai",
-          "local": "rdmx6-jaaaa-aaaaa-aaadq-cai"
-        }
-      },
-      "type": "custom",
-      "wasm": ""
+    "internet-identity": {
+      "type": "pull",
+      "id": "rdmx6-jaaaa-aaaaa-aaadq-cai"
     },
     "ledger": {
       "candid": "candid/nns-ledger.did",

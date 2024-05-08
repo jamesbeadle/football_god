@@ -20,6 +20,7 @@ import Profiles "profiles";
 import Book "book";
 import Account "Account";
 import DTOs "DTOs";
+
 import Euro2024Fixtures "./data/euro2024_fixtures";
 import Euro2024Players "./data/euro2024_players";
 import Euro2024Teams "./data/euro2024_teams";
@@ -1018,6 +1019,15 @@ actor Self {
     Account.accountIdentifier(Principal.fromActor(Self), Account.principalToSubaccount(caller));
   };
 
+
+  //euro 2024 functions
+
+
+
+
+
+
+
   public shared ({ caller }) func submitEuro2024Prediction(euro2024PredictionDTO : DTOs.Euro2024PredictionDTO) : async Result.Result<(), T.Error> {
 
     assert not Principal.isAnonymous(caller);
@@ -1034,130 +1044,91 @@ actor Self {
       return #err(#NotAllowed);
     };
 
-    let paidForSweepstake = euro2024Instance.checkSweepstakePaid(Principal.toText(caller));
-    var sweepstakeEntered = paidForSweepstake;
+    return euro2024Instance.submitPredictions(principalName, euro2024PredictionDTO);
+  };
+  
+  public shared ({ caller }) func payAndSubmitEuro2024Prediction(euro2024PredictionDTO : DTOs.Euro2024PredictionDTO) : async Result.Result<(), T.Error> {
 
-    if (euro2024PredictionDTO.enterSweepstake and not paidForSweepstake) {
-      let canAffordEntry = await bookInstance.canAffordEntry(Principal.fromActor(Self), caller);
+    assert not Principal.isAnonymous(caller);
+    let principalName = Principal.toText(caller);
+    let profile = profilesInstance.getProfile(principalName);
 
-      if (not canAffordEntry) {
-        return #err(#NotAllowed);
-      };
-
-      await bookInstance.transferEntryFee(Principal.fromActor(Self), caller);
-      sweepstakeEntered := true;
+    if (profile == null) {
+      profilesInstance.createProfile(Principal.toText(caller), Principal.toText(caller), "", getUserDepositAccount(caller));
     };
 
-    return euro2024Instance.submitPredictions(principalName, euro2024PredictionDTO, sweepstakeEntered);
+    let validPredictions = euro2024Instance.checkValidPredictions(euro2024PredictionDTO);
+
+    if (not validPredictions) {
+      return #err(#NotAllowed);
+    };
+
+    return euro2024Instance.submitPredictions(principalName, euro2024PredictionDTO);
   };
 
   public shared query ({ caller }) func getEuro2024DTO() : async Result.Result<DTOs.Euro2024PredictionDTO, T.Error> {
 
     assert not Principal.isAnonymous(caller);
     let principalName = Principal.toText(caller);
-    let fixturesData = Euro2024Fixtures.Euro2024Fixtures();
-    
+
     let prediction = euro2024Instance.getPredictions(principalName);
-    switch(prediction){
+    switch (prediction) {
       case (null) {
         return #err(#NotFound);
       };
-      case (?foundPrediction){
+      case (?foundPrediction) {
         let playDTO : DTOs.Euro2024PredictionDTO = {
-          enterSweepstake = foundPrediction.sweepstakePaid;
-          groupAWinnerTeamId = foundPrediction.groupAWinnerTeamId;
-          groupALoserTeamId = foundPrediction.groupALoserTeamId;
-          groupAGoalscorer = foundPrediction.groupAGoalscorer;
-          groupAGoalAssister = foundPrediction.groupAGoalAssister;
-          groupAYellowCard = foundPrediction.groupAYellowCard;
-          groupARedCard = foundPrediction.groupARedCard;
-
-          groupBWinnerTeamId = foundPrediction.groupBWinnerTeamId;
-          groupBLoserTeamId = foundPrediction.groupBLoserTeamId;
-          groupBGoalscorer = foundPrediction.groupBGoalscorer;
-          groupBGoalAssister = foundPrediction.groupBGoalAssister;
-          groupBYellowCard = foundPrediction.groupBYellowCard;
-          groupBRedCard = foundPrediction.groupBRedCard;
-
-          groupCWinnerTeamId = foundPrediction.groupCWinnerTeamId;
-          groupCLoserTeamId = foundPrediction.groupCLoserTeamId;
-          groupCGoalscorer = foundPrediction.groupCGoalscorer;
-          groupCGoalAssister = foundPrediction.groupCGoalAssister;
-          groupCYellowCard = foundPrediction.groupCYellowCard;
-          groupCRedCard = foundPrediction.groupCRedCard;
-
-          groupDWinnerTeamId = foundPrediction.groupDWinnerTeamId;
-          groupDLoserTeamId = foundPrediction.groupDLoserTeamId;
-          groupDGoalscorer = foundPrediction.groupDGoalscorer;
-          groupDGoalAssister = foundPrediction.groupDGoalAssister;
-          groupDYellowCard = foundPrediction.groupDYellowCard;
-          groupDRedCard = foundPrediction.groupDRedCard;
-
-          groupEWinnerTeamId = foundPrediction.groupEWinnerTeamId;
-          groupELoserTeamId = foundPrediction.groupELoserTeamId;
-          groupEGoalscorer = foundPrediction.groupEGoalscorer;
-          groupEGoalAssister = foundPrediction.groupEGoalAssister;
-          groupEYellowCard = foundPrediction.groupEYellowCard;
-          groupERedCard = foundPrediction.groupERedCard;
-
-          groupFWinnerTeamId = foundPrediction.groupFWinnerTeamId;
-          groupFLoserTeamId = foundPrediction.groupFLoserTeamId;
-          groupFGoalscorer = foundPrediction.groupFGoalscorer;
-          groupFGoalAssister = foundPrediction.groupFGoalAssister;
-          groupFYellowCard = foundPrediction.groupFYellowCard;
-          groupFRedCard = foundPrediction.groupFRedCard;
-
-          roundOf16Winner = foundPrediction.roundOf16Winner;
-          roundOf16Loser = foundPrediction.roundOf16Loser;
-          roundOf16Goalscorer = foundPrediction.roundOf16Goalscorer;
-          roundOf16GoalAssister = foundPrediction.roundOf16GoalAssister;
-          roundOf16YellowCard = foundPrediction.roundOf16YellowCard;
-          roundOf16RedCard = foundPrediction.roundOf16RedCard;
-
-          quarterFinalWinner = foundPrediction.quarterFinalWinner;
-          quarterFinalLoser = foundPrediction.quarterFinalLoser;
-          quarterFinalGoalscorer = foundPrediction.quarterFinalGoalscorer;
-          quarterFinalGoalAssister = foundPrediction.quarterFinalGoalAssister;
-          quarterFinalYellowCard = foundPrediction.quarterFinalYellowCard;
-          quarterFinalRedCard = foundPrediction.quarterFinalRedCard;
-
-          semiFinalWinner = foundPrediction.semiFinalWinner;
-          semiFinalLoser = foundPrediction.semiFinalLoser;
-          semiFinalGoalscorer = foundPrediction.semiFinalGoalscorer;
-          semiFinalGoalAssister = foundPrediction.semiFinalGoalAssister;
-          semiFinalYellowCard = foundPrediction.semiFinalYellowCard;
-          semiFinalRedCard = foundPrediction.semiFinalRedCard;
-
-          finalWinner = foundPrediction.finalWinner;
-          finalLoser = foundPrediction.finalLoser;
-          finalGoalscorer = foundPrediction.finalGoalscorer;
-          finalGoalAssister = foundPrediction.finalGoalAssister;
-          finalYellowCard = foundPrediction.finalYellowCard;
-          finalRedCard = foundPrediction.finalRedCard;
+          groupAPrediction = foundPrediction.groupAPrediction;
+          groupBPrediction = foundPrediction.groupBPrediction;
+          groupCPrediction = foundPrediction.groupCPrediction;
+          groupDPrediction = foundPrediction.groupDPrediction;
+          groupEPrediction = foundPrediction.groupEPrediction;
+          groupFPrediction = foundPrediction.groupFPrediction;
+          r16Prediction = foundPrediction.r16Prediction;
+          qfPrediction = foundPrediction.qfPrediction;
+          sfPrediction = foundPrediction.sfPrediction;
+          fPrediction = foundPrediction.fPrediction;
         };
         return #ok(playDTO);
-      }
+      };
     };
   };
 
+  public shared query func getEuro2024Teams() : async Result.Result<[T.InternationalTeam], T.Error> {
+    return #ok([]);
+  };
+
+  public shared query func getEuro2024Players() : async Result.Result<[T.InternationalPlayer], T.Error> {
+    return #ok([]);
+  };
+
+  //submit fixture data
+    //should calculate team scores
+    //calculate leaderboard
+  
+  //pay winners
+    //check all results in and list winners to pay
+
+
   //get paginated leaderboard
-  public shared query func getEuroLeaderboardDTO() : async Result.Result<DTOs.LeaderBoardDTO, T.Error> {
-    let leaderboardDTO: T.LeaderBoardDTO  = {
+  /*
+  public shared query func getEuroLeaderboardDTO() : async Result.Result<DTOs.Euro2024LeaderBoardDTO, T.Error> {
+    let leaderboardDTO: DTOs.Euro2024LeaderBoardDTO = {
 
     }
   };
 
 
   //get user euro 2024 leaderboard position
-  public shared query ({ caller }) func getUserLeaderboardPosition() : async Result.Result<DTOs.LeaderBoardDTO, T.Error> {
-    let leaderboardDTO: T.LeaderBoardDTO  = {
+  public shared query ({ caller }) func getUserLeaderboardEntry() : async Result.Result<DTOs.LeaderBoardDTO, T.Error> {
+    let leaderboardDTO: DTOs.LeaderBoardDTO  = {
 
     }
   };
 
   //search username euro 2024 position
 
-  public shared query func getPrincipalIdLeaderboardPosition(principalId: Text) : async Result.Result<DTOs.LeaderboardEntry, T.Error> {
+  public shared query func getLeaderboardEntryById(principalId: Text) : async Result.Result<DTOs.LeaderboardEntryDTO, T.Error> {
 
   };
 
@@ -1167,26 +1138,7 @@ actor Self {
     //check the user has the amount in their wallet
     //if they do note their participation
   };
-
-  
-
-
-
-
-
-
-
-
-
-
-  
-
-/*
-  //New functions for betting
-  public shared func getEventOdds(eventId: T.EventId) : async DTOs.LiveOddsDTO {
-    //return oddsManager.getEventOdds(eventId);
-  };
-*/
+  */
 
   system func preupgrade() {
     stable_profiles := profilesInstance.getProfiles();

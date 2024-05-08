@@ -3410,7 +3410,7 @@ const options = {
   root: Root,
   service_worker: false,
   templates: {
-    app: ({ head, body: body2, assets: assets2, nonce, env }) => '<!DOCTYPE html>\n<html lang="en">\n  <head>\n    <meta charset="utf-8" />\n    <meta content="width=device-width, initial-scale=1" name="viewport" />\n\n    <title>FootballGod</title>\n    <link href="https://footballgod.xyz" rel="canonical" />\n    <meta\n      content="FootballGod is a tokenised betting platform on the Internet Computer blockchain."\n      name="description"\n    />\n    <meta content="FootballGod" property="og:title" />\n    <meta\n      content="FootballGod is a tokenised betting platform on the Internet Computer blockchain."\n      property="og:description"\n    />\n    <meta content="website" property="og:type" />\n    <meta content="https://footballgod.xyz" property="og:url" />\n    <meta\n      content="https://footballgod.xyz/meta-share.jpg"\n      property="og:image"\n    />\n    <meta content="summary_large_image" name="twitter:card" />\n    <meta content="FootballGod" name="twitter:title" />\n    <meta\n      content="FootballGod is a tokenised betting platform on the Internet Computer blockchain."\n      name="twitter:description"\n    />\n    <meta\n      content="https://footballgod.xyz/meta-share.jpg"\n      name="twitter:image"\n    />\n    <meta content="@beadle1989" name="twitter:creator" />\n\n    <link crossorigin="anonymous" href="/manifest.webmanifest" rel="manifest" />\n\n    <!-- Favicon -->\n    <link\n      rel="icon"\n      type="image/png"\n      sizes="32x32"\n      href="' + assets2 + '/favicons/favicon-32x32.png"\n    />\n    <link\n      rel="icon"\n      type="image/png"\n      sizes="16x16"\n      href="' + assets2 + '/favicons/favicon-16x16.png"\n    />\n    <link rel="shortcut icon" href="' + assets2 + '/favicons/favicon.ico" />\n\n    <!-- iOS meta tags & icons -->\n    <meta name="apple-mobile-web-app-capable" content="yes" />\n    <meta name="apple-mobile-web-app-status-bar-style" content="#2CE3A6" />\n    <meta name="apple-mobile-web-app-title" content="FootballGod" />\n    <link\n      rel="apple-touch-icon"\n      href="' + assets2 + '/favicons/apple-touch-icon.png"\n    />\n    <link\n      rel="mask-icon"\n      href="' + assets2 + '/favicons/safari-pinned-tab.svg"\n      color="#2CE3A6"\n    />\n\n    <!-- MS -->\n    <meta name="msapplication-TileColor" content="#2CE3A6" />\n    <meta\n      name="msapplication-config"\n      content="' + assets2 + '/favicons/browserconfig.xml"\n    />\n\n    <meta content="#2CE3A6" name="theme-color" />\n    ' + head + '\n\n    <style>\n      html,\n      body {\n        height: 100%;\n        margin: 0;\n      }\n\n      @font-face {\n        font-display: swap;\n        font-family: "Poppins";\n        font-style: normal;\n        font-weight: 400;\n        src: url("' + assets2 + '/poppins-regular-webfont.woff2")\n          format("woff2");\n      }\n\n      @font-face {\n        font-display: swap;\n        font-family: "Manrope";\n        font-style: normal;\n        font-weight: 400;\n        src: url("' + assets2 + '/Manrope-Regular.woff2") format("woff2");\n      }\n      body {\n        font-family: "Poppins", sans-serif !important;\n        color: white !important;\n        background-color: #1a1a1d;\n        height: 100vh;\n        margin: 0;\n        background-image: url("' + assets2 + '/background.jpg");\n        background-size: cover;\n        background-position: center;\n        background-repeat: no-repeat;\n        background-attachment: fixed;\n      }\n\n      #app-spinner {\n        --spinner-size: 30px;\n\n        width: var(--spinner-size);\n        height: var(--spinner-size);\n\n        animation: app-spinner-linear-rotate 2000ms linear infinite;\n\n        position: absolute;\n        top: calc(50% - (var(--spinner-size) / 2));\n        left: calc(50% - (var(--spinner-size) / 2));\n\n        --radius: 45px;\n        --circumference: calc(3.14159265359 * var(--radius) * 2);\n\n        --start: calc((1 - 0.05) * var(--circumference));\n        --end: calc((1 - 0.8) * var(--circumference));\n      }\n\n      #app-spinner circle {\n        stroke-dasharray: var(--circumference);\n        stroke-width: 10%;\n        transform-origin: 50% 50% 0;\n\n        transition-property: stroke;\n\n        animation-name: app-spinner-stroke-rotate-100;\n        animation-duration: 4000ms;\n        animation-timing-function: cubic-bezier(0.35, 0, 0.25, 1);\n        animation-iteration-count: infinite;\n\n        fill: transparent;\n        stroke: currentColor;\n\n        transition: stroke-dashoffset 225ms linear;\n      }\n\n      @keyframes app-spinner-linear-rotate {\n        0% {\n          transform: rotate(0deg);\n        }\n        100% {\n          transform: rotate(360deg);\n        }\n      }\n\n      @keyframes app-spinner-stroke-rotate-100 {\n        0% {\n          stroke-dashoffset: var(--start);\n          transform: rotate(0);\n        }\n        12.5% {\n          stroke-dashoffset: var(--end);\n          transform: rotate(0);\n        }\n        12.5001% {\n          stroke-dashoffset: var(--end);\n          transform: rotateX(180deg) rotate(72.5deg);\n        }\n        25% {\n          stroke-dashoffset: var(--start);\n          transform: rotateX(180deg) rotate(72.5deg);\n        }\n\n        25.0001% {\n          stroke-dashoffset: var(--start);\n          transform: rotate(270deg);\n        }\n        37.5% {\n          stroke-dashoffset: var(--end);\n          transform: rotate(270deg);\n        }\n        37.5001% {\n          stroke-dashoffset: var(--end);\n          transform: rotateX(180deg) rotate(161.5deg);\n        }\n        50% {\n          stroke-dashoffset: var(--start);\n          transform: rotateX(180deg) rotate(161.5deg);\n        }\n\n        50.0001% {\n          stroke-dashoffset: var(--start);\n          transform: rotate(180deg);\n        }\n        62.5% {\n          stroke-dashoffset: var(--end);\n          transform: rotate(180deg);\n        }\n        62.5001% {\n          stroke-dashoffset: var(--end);\n          transform: rotateX(180deg) rotate(251.5deg);\n        }\n        75% {\n          stroke-dashoffset: var(--start);\n          transform: rotateX(180deg) rotate(251.5deg);\n        }\n\n        75.0001% {\n          stroke-dashoffset: var(--start);\n          transform: rotate(90deg);\n        }\n        87.5% {\n          stroke-dashoffset: var(--end);\n          transform: rotate(90deg);\n        }\n        87.5001% {\n          stroke-dashoffset: var(--end);\n          transform: rotateX(180deg) rotate(341.5deg);\n        }\n        100% {\n          stroke-dashoffset: var(--start);\n          transform: rotateX(180deg) rotate(341.5deg);\n        }\n      }\n    </style>\n  </head>\n  <body data-sveltekit-preload-data="hover">\n    <div style="display: contents">' + body2 + '</div>\n\n    <svg\n      id="app-spinner"\n      preserveAspectRatio="xMidYMid meet"\n      focusable="false"\n      aria-hidden="true"\n      data-tid="spinner"\n      viewBox="0 0 100 100"\n    >\n      <circle cx="50%" cy="50%" r="45" />\n    </svg>\n  </body>\n</html>\n',
+    app: ({ head, body: body2, assets: assets2, nonce, env }) => '<!DOCTYPE html>\n<html lang="en">\n  <head>\n    <meta charset="utf-8" />\n    <meta content="width=device-width, initial-scale=1" name="viewport" />\n\n    <title>FootballGod</title>\n    <link href="https://footballgod.xyz" rel="canonical" />\n    <meta\n      content="FootballGod is a tokenised betting platform on the Internet Computer blockchain."\n      name="description"\n    />\n    <meta content="FootballGod" property="og:title" />\n    <meta\n      content="FootballGod is a tokenised betting platform on the Internet Computer blockchain."\n      property="og:description"\n    />\n    <meta content="website" property="og:type" />\n    <meta content="https://footballgod.xyz" property="og:url" />\n    <meta\n      content="https://footballgod.xyz/meta-share.jpg"\n      property="og:image"\n    />\n    <meta content="summary_large_image" name="twitter:card" />\n    <meta content="FootballGod" name="twitter:title" />\n    <meta\n      content="FootballGod is a tokenised betting platform on the Internet Computer blockchain."\n      name="twitter:description"\n    />\n    <meta\n      content="https://footballgod.xyz/meta-share.jpg"\n      name="twitter:image"\n    />\n    <meta content="@beadle1989" name="twitter:creator" />\n\n    <link crossorigin="anonymous" href="/manifest.webmanifest" rel="manifest" />\n\n    <!-- Favicon -->\n    <link\n      rel="icon"\n      type="image/png"\n      sizes="32x32"\n      href="' + assets2 + '/favicons/favicon-32x32.png"\n    />\n    <link\n      rel="icon"\n      type="image/png"\n      sizes="16x16"\n      href="' + assets2 + '/favicons/favicon-16x16.png"\n    />\n    <link rel="shortcut icon" href="' + assets2 + '/favicons/favicon.ico" />\n\n    <!-- iOS meta tags & icons -->\n    <meta name="apple-mobile-web-app-capable" content="yes" />\n    <meta name="apple-mobile-web-app-status-bar-style" content="#2CE3A6" />\n    <meta name="apple-mobile-web-app-title" content="FootballGod" />\n    <link\n      rel="apple-touch-icon"\n      href="' + assets2 + '/favicons/apple-touch-icon.png"\n    />\n    <link\n      rel="mask-icon"\n      href="' + assets2 + '/favicons/safari-pinned-tab.svg"\n      color="#2CE3A6"\n    />\n\n    <!-- MS -->\n    <meta name="msapplication-TileColor" content="#2CE3A6" />\n    <meta\n      name="msapplication-config"\n      content="' + assets2 + '/favicons/browserconfig.xml"\n    />\n\n    <meta content="#2CE3A6" name="theme-color" />\n    ' + head + '\n\n    <style>\n      html,\n      body {\n        height: 100%;\n        margin: 0;\n      }\n\n      @font-face {\n        font-display: swap;\n        font-family: "Poppins";\n        font-style: normal;\n        font-weight: 400;\n        src: url("' + assets2 + '/poppins-regular-webfont.woff2")\n          format("woff2");\n      }\n\n      @font-face {\n        font-display: swap;\n        font-family: "Manrope";\n        font-style: normal;\n        font-weight: 400;\n        src: url("' + assets2 + '/Manrope-Regular.woff2") format("woff2");\n      }\n      body {\n        font-family: "Poppins", sans-serif !important;\n        color: white !important;\n        background-color: #1a1a1d;\n        height: 100vh;\n        margin: 0;\n      }\n\n      #app-spinner {\n        --spinner-size: 30px;\n\n        width: var(--spinner-size);\n        height: var(--spinner-size);\n\n        animation: app-spinner-linear-rotate 2000ms linear infinite;\n\n        position: absolute;\n        top: calc(50% - (var(--spinner-size) / 2));\n        left: calc(50% - (var(--spinner-size) / 2));\n\n        --radius: 45px;\n        --circumference: calc(3.14159265359 * var(--radius) * 2);\n\n        --start: calc((1 - 0.05) * var(--circumference));\n        --end: calc((1 - 0.8) * var(--circumference));\n      }\n\n      #app-spinner circle {\n        stroke-dasharray: var(--circumference);\n        stroke-width: 10%;\n        transform-origin: 50% 50% 0;\n\n        transition-property: stroke;\n\n        animation-name: app-spinner-stroke-rotate-100;\n        animation-duration: 4000ms;\n        animation-timing-function: cubic-bezier(0.35, 0, 0.25, 1);\n        animation-iteration-count: infinite;\n\n        fill: transparent;\n        stroke: currentColor;\n\n        transition: stroke-dashoffset 225ms linear;\n      }\n\n      @keyframes app-spinner-linear-rotate {\n        0% {\n          transform: rotate(0deg);\n        }\n        100% {\n          transform: rotate(360deg);\n        }\n      }\n\n      @keyframes app-spinner-stroke-rotate-100 {\n        0% {\n          stroke-dashoffset: var(--start);\n          transform: rotate(0);\n        }\n        12.5% {\n          stroke-dashoffset: var(--end);\n          transform: rotate(0);\n        }\n        12.5001% {\n          stroke-dashoffset: var(--end);\n          transform: rotateX(180deg) rotate(72.5deg);\n        }\n        25% {\n          stroke-dashoffset: var(--start);\n          transform: rotateX(180deg) rotate(72.5deg);\n        }\n\n        25.0001% {\n          stroke-dashoffset: var(--start);\n          transform: rotate(270deg);\n        }\n        37.5% {\n          stroke-dashoffset: var(--end);\n          transform: rotate(270deg);\n        }\n        37.5001% {\n          stroke-dashoffset: var(--end);\n          transform: rotateX(180deg) rotate(161.5deg);\n        }\n        50% {\n          stroke-dashoffset: var(--start);\n          transform: rotateX(180deg) rotate(161.5deg);\n        }\n\n        50.0001% {\n          stroke-dashoffset: var(--start);\n          transform: rotate(180deg);\n        }\n        62.5% {\n          stroke-dashoffset: var(--end);\n          transform: rotate(180deg);\n        }\n        62.5001% {\n          stroke-dashoffset: var(--end);\n          transform: rotateX(180deg) rotate(251.5deg);\n        }\n        75% {\n          stroke-dashoffset: var(--start);\n          transform: rotateX(180deg) rotate(251.5deg);\n        }\n\n        75.0001% {\n          stroke-dashoffset: var(--start);\n          transform: rotate(90deg);\n        }\n        87.5% {\n          stroke-dashoffset: var(--end);\n          transform: rotate(90deg);\n        }\n        87.5001% {\n          stroke-dashoffset: var(--end);\n          transform: rotateX(180deg) rotate(341.5deg);\n        }\n        100% {\n          stroke-dashoffset: var(--start);\n          transform: rotateX(180deg) rotate(341.5deg);\n        }\n      }\n    </style>\n  </head>\n  <body data-sveltekit-preload-data="hover">\n    <div style="display: contents">' + body2 + '</div>\n\n    <svg\n      id="app-spinner"\n      preserveAspectRatio="xMidYMid meet"\n      focusable="false"\n      aria-hidden="true"\n      data-tid="spinner"\n      viewBox="0 0 100 100"\n    >\n      <circle cx="50%" cy="50%" r="45" />\n    </svg>\n  </body>\n</html>\n',
     error: ({ status, message }) => '<!doctype html>\n<html lang="en">\n	<head>\n		<meta charset="utf-8" />\n		<title>' + message + `</title>
 
 		<style>
@@ -3482,7 +3482,7 @@ const options = {
 		<div class="error">
 			<span class="status">` + status + '</span>\n			<div class="message">\n				<h1>' + message + "</h1>\n			</div>\n		</div>\n	</body>\n</html>\n"
   },
-  version_hash: "gb5q4y"
+  version_hash: "l5kim6"
 };
 async function get_hooks() {
   return {};
@@ -3993,6 +3993,261 @@ const Toasts = create_ssr_component(($$result, $$props, $$bindings, slots) => {
     return `${validate_component(Toast, "Toast").$$render($$result, { msg }, {}, {})}`;
   })}</div>` : ``}`;
 });
+const LogoIcon = create_ssr_component(($$result, $$props, $$bindings, slots) => {
+  let { className = "" } = $$props;
+  let { fill = "white" } = $$props;
+  if ($$props.className === void 0 && $$bindings.className && className !== void 0)
+    $$bindings.className(className);
+  if ($$props.fill === void 0 && $$bindings.fill && fill !== void 0)
+    $$bindings.fill(fill);
+  return `<svg xmlns="http://www.w3.org/2000/svg"${add_attribute("class", className, 0)} fill="currentColor" viewBox="0 0 30 32"><g clip-path="url(#clip0_32_590)"><path d="M30 1.83089V5.46025C30 6.47291 29.1951 7.29114 28.199 7.29114H10.2045C8.53101 7.29114 7.17227 8.67241 7.17227 10.3737V30.1691C7.17227 31.1818 6.36738 32 5.37123 32H1.80104C0.804888 32 0 31.1818 0 30.1691V10.3939C0 4.65418 4.5783 0 10.2245 0H28.199C29.1951 0 30 0.818228 30 1.83089Z"${add_attribute("fill", fill, 0)}></path><path d="M30 13.6992V24.7169C30 28.7392 26.7924 32.004 22.8317 32.004H13.6432C12.914 32.004 12.3203 31.4005 12.3203 30.6592V26.0537C12.3203 25.3124 12.914 24.7088 13.6432 24.7088H21.5048C22.234 24.7088 22.8277 24.1053 22.8277 23.364V20.9863C22.8277 20.245 22.234 19.6415 21.5048 19.6415H13.6432C12.914 19.6415 12.3203 19.038 12.3203 18.2967V13.6911C12.3203 12.9499 12.914 12.3463 13.6432 12.3463H28.6771C29.4062 12.3463 30 12.9499 30 13.6911V13.6992Z"${add_attribute("fill", fill, 0)}></path></g><defs><clipPath id="clip0_32_590"><rect width="30" height="32"${add_attribute("fill", fill, 0)}></rect></clipPath></defs></svg>`;
+});
+const HomeIcon = create_ssr_component(($$result, $$props, $$bindings, slots) => {
+  let { className = "" } = $$props;
+  let { fill = "white" } = $$props;
+  if ($$props.className === void 0 && $$bindings.className && className !== void 0)
+    $$bindings.className(className);
+  if ($$props.fill === void 0 && $$bindings.fill && fill !== void 0)
+    $$bindings.fill(fill);
+  return `<svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true"${add_attribute("class", className, 0)} fill="currentColor" viewBox="0 0 24 24"><path d="M21 10C21.1313 10 21.2614 9.97419 21.3827 9.92395C21.5041 9.8737 21.6143 9.80005 21.7072 9.70718C21.8 9.61432 21.8737 9.50406 21.9239 9.38272C21.9742 9.26138 22 9.13133 22 9V6C22.0001 5.79017 21.9341 5.58565 21.8114 5.41544C21.6887 5.24524 21.5155 5.11799 21.3164 5.05176L12.3164 2.05176C12.111 1.9834 11.889 1.9834 11.6836 2.05176L2.68359 5.05176C2.48449 5.11799 2.31131 5.24524 2.18861 5.41544C2.0659 5.58565 1.99991 5.79017 2 6V9C1.99997 9.13133 2.02581 9.26138 2.07605 9.38272C2.12629 9.50406 2.19995 9.61432 2.29282 9.70718C2.38568 9.80005 2.49594 9.8737 2.61728 9.92395C2.73862 9.97419 2.86867 10 3 10H4V17.1843C3.41674 17.3897 2.91137 17.7707 2.55327 18.2748C2.19517 18.779 2.0019 19.3816 2 20V22C1.99997 22.1313 2.02581 22.2614 2.07605 22.3827C2.12629 22.5041 2.19995 22.6143 2.29282 22.7072C2.38568 22.8 2.49594 22.8737 2.61728 22.9239C2.73862 22.9742 2.86867 23 3 23H21C21.1313 23 21.2614 22.9742 21.3827 22.9239C21.5041 22.8737 21.6143 22.8 21.7072 22.7072C21.8 22.6143 21.8737 22.5041 21.9239 22.3827C21.9742 22.2614 22 22.1313 22 22V20C21.9981 19.3816 21.8048 18.779 21.4467 18.2748C21.0886 17.7707 20.5833 17.3897 20 17.1843V10H21ZM20 21H4V20C4.00026 19.7349 4.10571 19.4807 4.29319 19.2932C4.48066 19.1057 4.73486 19.0003 5 19H19C19.2651 19.0003 19.5193 19.1057 19.7068 19.2932C19.8943 19.4807 19.9997 19.7349 20 20V21ZM6 17V10H8V17H6ZM10 17V10H14V17H10ZM16 17V10H18V17H16ZM4 8V6.7207L12 4.0537L20 6.7207V8H4Z"${add_attribute("fill", fill, 0)}></path></svg>`;
+});
+const BettingIcon = create_ssr_component(($$result, $$props, $$bindings, slots) => {
+  let { className = "" } = $$props;
+  let { fill = "white" } = $$props;
+  if ($$props.className === void 0 && $$bindings.className && className !== void 0)
+    $$bindings.className(className);
+  if ($$props.fill === void 0 && $$bindings.fill && fill !== void 0)
+    $$bindings.fill(fill);
+  return `<svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true"${add_attribute("class", className, 0)} fill="currentColor" viewBox="0 0 24 24"><path d="M22 17H2C1.73478 17 1.48043 17.1054 1.29289 17.2929C1.10536 17.4804 1 17.7348 1 18C1 18.2652 1.10536 18.5196 1.29289 18.7071C1.48043 18.8946 1.73478 19 2 19H22C22.2652 19 22.5196 18.8946 22.7071 18.7071C22.8946 18.5196 23 18.2652 23 18C23 17.7348 22.8946 17.4804 22.7071 17.2929C22.5196 17.1054 22.2652 17 22 17ZM22 21H2C1.73478 21 1.48043 21.1054 1.29289 21.2929C1.10536 21.4804 1 21.7348 1 22C1 22.2652 1.10536 22.5196 1.29289 22.7071C1.48043 22.8946 1.73478 23 2 23H22C22.2652 23 22.5196 22.8946 22.7071 22.7071C22.8946 22.5196 23 22.2652 23 22C23 21.7348 22.8946 21.4804 22.7071 21.2929C22.5196 21.1054 22.2652 21 22 21ZM6 7C5.80222 7 5.60888 7.05865 5.44443 7.16853C5.27998 7.27841 5.15181 7.43459 5.07612 7.61732C5.00043 7.80004 4.98063 8.00111 5.01921 8.19509C5.0578 8.38907 5.15304 8.56725 5.29289 8.70711C5.43275 8.84696 5.61093 8.9422 5.80491 8.98079C5.99889 9.01937 6.19996 8.99957 6.38268 8.92388C6.56541 8.84819 6.72159 8.72002 6.83147 8.55557C6.94135 8.39112 7 8.19778 7 8C7 7.73478 6.89464 7.48043 6.70711 7.29289C6.51957 7.10536 6.26522 7 6 7ZM20 1H4C3.20435 1 2.44129 1.31607 1.87868 1.87868C1.31607 2.44129 1 3.20435 1 4V12C1 12.7956 1.31607 13.5587 1.87868 14.1213C2.44129 14.6839 3.20435 15 4 15H20C20.7956 15 21.5587 14.6839 22.1213 14.1213C22.6839 13.5587 23 12.7956 23 12V4C23 3.20435 22.6839 2.44129 22.1213 1.87868C21.5587 1.31607 20.7956 1 20 1ZM21 12C21 12.2652 20.8946 12.5196 20.7071 12.7071C20.5196 12.8946 20.2652 13 20 13H4C3.73478 13 3.48043 12.8946 3.29289 12.7071C3.10536 12.5196 3 12.2652 3 12V4C3 3.73478 3.10536 3.48043 3.29289 3.29289C3.48043 3.10536 3.73478 3 4 3H20C20.2652 3 20.5196 3.10536 20.7071 3.29289C20.8946 3.48043 21 3.73478 21 4V12ZM12 5C11.4067 5 10.8266 5.17595 10.3333 5.50559C9.83994 5.83524 9.45542 6.30377 9.22836 6.85195C9.0013 7.40013 8.94189 8.00333 9.05764 8.58527C9.1734 9.16721 9.45912 9.70176 9.87868 10.1213C10.2982 10.5409 10.8328 10.8266 11.4147 10.9424C11.9967 11.0581 12.5999 10.9987 13.1481 10.7716C13.6962 10.5446 14.1648 10.1601 14.4944 9.66671C14.8241 9.17336 15 8.59334 15 8C15 7.20435 14.6839 6.44129 14.1213 5.87868C13.5587 5.31607 12.7956 5 12 5ZM12 9C11.8022 9 11.6089 8.94135 11.4444 8.83147C11.28 8.72159 11.1518 8.56541 11.0761 8.38268C11.0004 8.19996 10.9806 7.99889 11.0192 7.80491C11.0578 7.61093 11.153 7.43275 11.2929 7.29289C11.4327 7.15304 11.6109 7.0578 11.8049 7.01921C11.9989 6.98063 12.2 7.00043 12.3827 7.07612C12.5654 7.15181 12.7216 7.27998 12.8315 7.44443C12.9414 7.60888 13 7.80222 13 8C13 8.26522 12.8946 8.51957 12.7071 8.70711C12.5196 8.89464 12.2652 9 12 9ZM18 7C17.8022 7 17.6089 7.05865 17.4444 7.16853C17.28 7.27841 17.1518 7.43459 17.0761 7.61732C17.0004 7.80004 16.9806 8.00111 17.0192 8.19509C17.0578 8.38907 17.153 8.56725 17.2929 8.70711C17.4327 8.84696 17.6109 8.9422 17.8049 8.98079C17.9989 9.01937 18.2 8.99957 18.3827 8.92388C18.5654 8.84819 18.7216 8.72002 18.8315 8.55557C18.9414 8.39112 19 8.19778 19 8C19 7.73478 18.8946 7.48043 18.7071 7.29289C18.5196 7.10536 18.2652 7 18 7Z"${add_attribute("fill", fill, 0)}></path></svg>`;
+});
+const GamesIcon = create_ssr_component(($$result, $$props, $$bindings, slots) => {
+  let { className = "" } = $$props;
+  let { fill = "white" } = $$props;
+  if ($$props.className === void 0 && $$bindings.className && className !== void 0)
+    $$bindings.className(className);
+  if ($$props.fill === void 0 && $$bindings.fill && fill !== void 0)
+    $$bindings.fill(fill);
+  return `<svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true"${add_attribute("class", className, 0)} fill="currentColor" viewBox="0 0 24 24"><path d="M10 13H3C2.73478 13 2.48043 13.1054 2.29289 13.2929C2.10536 13.4804 2 13.7348 2 14V21C2 21.2652 2.10536 21.5196 2.29289 21.7071C2.48043 21.8946 2.73478 22 3 22H10C10.2652 22 10.5196 21.8946 10.7071 21.7071C10.8946 21.5196 11 21.2652 11 21V14C11 13.7348 10.8946 13.4804 10.7071 13.2929C10.5196 13.1054 10.2652 13 10 13ZM9 20H4V15H9V20ZM21 2H14C13.7348 2 13.4804 2.10536 13.2929 2.29289C13.1054 2.48043 13 2.73478 13 3V10C13 10.2652 13.1054 10.5196 13.2929 10.7071C13.4804 10.8946 13.7348 11 14 11H21C21.2652 11 21.5196 10.8946 21.7071 10.7071C21.8946 10.5196 22 10.2652 22 10V3C22 2.73478 21.8946 2.48043 21.7071 2.29289C21.5196 2.10536 21.2652 2 21 2ZM20 9H15V4H20V9ZM21 13H14C13.7348 13 13.4804 13.1054 13.2929 13.2929C13.1054 13.4804 13 13.7348 13 14V21C13 21.2652 13.1054 21.5196 13.2929 21.7071C13.4804 21.8946 13.7348 22 14 22H21C21.2652 22 21.5196 21.8946 21.7071 21.7071C21.8946 21.5196 22 21.2652 22 21V14C22 13.7348 21.8946 13.4804 21.7071 13.2929C21.5196 13.1054 21.2652 13 21 13ZM20 20H15V15H20V20ZM10 2H3C2.73478 2 2.48043 2.10536 2.29289 2.29289C2.10536 2.48043 2 2.73478 2 3V10C2 10.2652 2.10536 10.5196 2.29289 10.7071C2.48043 10.8946 2.73478 11 3 11H10C10.2652 11 10.5196 10.8946 10.7071 10.7071C10.8946 10.5196 11 10.2652 11 10V3C11 2.73478 10.8946 2.48043 10.7071 2.29289C10.5196 2.10536 10.2652 2 10 2ZM9 9H4V4H9V9Z"${add_attribute("fill", fill, 0)}></path></svg>`;
+});
+const StarIcon = create_ssr_component(($$result, $$props, $$bindings, slots) => {
+  let { className = "" } = $$props;
+  let { fill = "white" } = $$props;
+  if ($$props.className === void 0 && $$bindings.className && className !== void 0)
+    $$bindings.className(className);
+  if ($$props.fill === void 0 && $$bindings.fill && fill !== void 0)
+    $$bindings.fill(fill);
+  return `<svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true"${add_attribute("class", className, 0)} fill="currentColor" viewBox="0 0 24 24"><path d="M22 9.6699C21.9368 9.48699 21.822 9.32633 21.6693 9.2074C21.5167 9.08848 21.3328 9.0164 21.14 8.9999L15.45 8.1699L12.9 2.9999C12.8181 2.83083 12.6902 2.68824 12.5311 2.58847C12.3719 2.48871 12.1878 2.43579 12 2.43579C11.8121 2.43579 11.6281 2.48871 11.4689 2.58847C11.3097 2.68824 11.1819 2.83083 11.1 2.9999L8.54998 8.1599L2.85998 8.9999C2.6749 9.02621 2.5009 9.10386 2.35773 9.22406C2.21455 9.34425 2.10794 9.50218 2.04998 9.6799C1.99692 9.85358 1.99216 10.0384 2.03621 10.2146C2.08025 10.3908 2.17144 10.5516 2.29998 10.6799L6.42998 14.6799L5.42998 20.3599C5.39428 20.5474 5.41297 20.7412 5.48385 20.9184C5.55473 21.0955 5.67483 21.2488 5.82998 21.3599C5.98119 21.468 6.15955 21.5318 6.34503 21.5442C6.5305 21.5566 6.71575 21.517 6.87998 21.4299L12 18.7599L17.1 21.4399C17.2403 21.5191 17.3988 21.5604 17.56 21.5599C17.7718 21.5607 17.9784 21.4941 18.15 21.3699C18.3051 21.2588 18.4252 21.1055 18.4961 20.9284C18.567 20.7512 18.5857 20.5574 18.55 20.3699L17.55 14.6899L21.68 10.6899C21.8244 10.5676 21.9311 10.4068 21.9877 10.2262C22.0444 10.0457 22.0486 9.85278 22 9.6699ZM15.85 13.6699C15.7327 13.7833 15.645 13.9237 15.5944 14.0789C15.5439 14.234 15.532 14.3992 15.56 14.5599L16.28 18.7499L12.52 16.7499C12.3753 16.6729 12.2139 16.6326 12.05 16.6326C11.8861 16.6326 11.7247 16.6729 11.58 16.7499L7.81998 18.7499L8.53998 14.5599C8.56791 14.3992 8.55609 14.234 8.50554 14.0789C8.45499 13.9237 8.36725 13.7833 8.24998 13.6699L5.24998 10.6699L9.45998 10.0599C9.62198 10.0374 9.77598 9.97544 9.90848 9.87955C10.041 9.78366 10.1479 9.65674 10.22 9.5099L12 5.6999L13.88 9.5199C13.952 9.66674 14.059 9.79366 14.1915 9.88955C14.324 9.98544 14.478 10.0474 14.64 10.0699L18.85 10.6799L15.85 13.6699Z"${add_attribute("fill", fill, 0)}></path></svg>`;
+});
+const RulesIcon = create_ssr_component(($$result, $$props, $$bindings, slots) => {
+  let { className = "" } = $$props;
+  let { fill = "white" } = $$props;
+  if ($$props.className === void 0 && $$bindings.className && className !== void 0)
+    $$bindings.className(className);
+  if ($$props.fill === void 0 && $$bindings.fill && fill !== void 0)
+    $$bindings.fill(fill);
+  return `<svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true"${add_attribute("class", className, 0)} fill="currentColor" viewBox="0 0 24 24"><path d="M22.9642 13.8226C22.9603 13.7638 22.9508 13.7055 22.936 13.6484L20.6313 7.51135C21.0508 7.24006 21.3957 6.86818 21.6347 6.42956C21.8738 5.99095 21.9993 5.49952 22 5C22 4.73478 21.8946 4.48043 21.7071 4.29289C21.5196 4.10536 21.2652 4 21 4C20.7348 4 20.4804 4.10536 20.2929 4.29289C20.1054 4.48043 20 4.73478 20 5C19.9999 5.22285 19.9254 5.43929 19.7884 5.61499C19.6513 5.79069 19.4595 5.91559 19.2433 5.96987C19.0272 6.02416 18.7991 6.00472 18.5953 5.91465C18.3915 5.82457 18.2235 5.66902 18.1182 5.47266C17.8616 5.01717 17.4863 4.63972 17.0324 4.38042C16.5784 4.12111 16.0627 3.98965 15.54 4H13V3C13 2.73478 12.8946 2.48043 12.7071 2.29289C12.5196 2.10536 12.2652 2 12 2C11.7348 2 11.4804 2.10536 11.2929 2.29289C11.1054 2.48043 11 2.73478 11 3V4H8.46C7.93731 3.98965 7.42158 4.12111 6.96762 4.38042C6.51366 4.63972 6.13844 5.01717 5.88184 5.47266C5.77647 5.66902 5.60855 5.82457 5.40471 5.91465C5.20088 6.00472 4.97281 6.02416 4.75668 5.96987C4.54054 5.91559 4.34872 5.79069 4.21165 5.61499C4.07457 5.43929 4.00008 5.22285 4 5C4 4.73478 3.89464 4.48043 3.70711 4.29289C3.51957 4.10536 3.26522 4 3 4C2.73478 4 2.48043 4.10536 2.29289 4.29289C2.10536 4.48043 2 4.73478 2 5C2.00065 5.49952 2.12621 5.99095 2.36525 6.42956C2.60429 6.86818 2.94922 7.24006 3.36865 7.51135L1.064 13.6484C1.04921 13.7055 1.03977 13.7638 1.03581 13.8226C1.01825 13.8805 1.00626 13.9399 1 14C1 14.0093 1.00269 14.0178 1.00275 14.0271C1.00305 14.0403 1.00575 14.0524 1.00665 14.0655C1.02222 15.1144 1.4498 16.115 2.197 16.8512C2.94421 17.5874 3.95105 18.0001 5 18.0001C6.04895 18.0001 7.05579 17.5874 7.803 16.8512C8.5502 16.115 8.97778 15.1144 8.99335 14.0655C8.9942 14.0524 8.99695 14.0403 8.99725 14.0271C8.99731 14.0178 9 14.0093 9 14C8.99376 13.9399 8.98178 13.8805 8.96423 13.8226C8.96027 13.7638 8.95083 13.7055 8.93604 13.6484L6.62866 7.50421C7.05242 7.23377 7.40114 6.86085 7.64258 6.41992C7.72984 6.2842 7.85137 6.1739 7.99489 6.10017C8.13841 6.02644 8.29885 5.99189 8.46 6H11V20H8C7.73478 20 7.48043 20.1054 7.29289 20.2929C7.10536 20.4804 7 20.7348 7 21C7 21.2652 7.10536 21.5196 7.29289 21.7071C7.48043 21.8946 7.73478 22 8 22H16C16.2652 22 16.5196 21.8946 16.7071 21.7071C16.8946 21.5196 17 21.2652 17 21C17 20.7348 16.8946 20.4804 16.7071 20.2929C16.5196 20.1054 16.2652 20 16 20H13V6H15.54C15.7011 5.9919 15.8616 6.02646 16.0051 6.10018C16.1486 6.17391 16.2701 6.2842 16.3574 6.41992C16.5988 6.86085 16.9475 7.23377 17.3713 7.50421L15.064 13.6484C15.0492 13.7055 15.0398 13.7638 15.0358 13.8226C15.0182 13.8805 15.0063 13.9399 15 14C15 14.0093 15.0027 14.0178 15.0028 14.0271C15.0031 14.0403 15.0057 14.0524 15.0066 14.0655C15.0222 15.1144 15.4498 16.115 16.197 16.8512C16.9442 17.5874 17.951 18.0001 19 18.0001C20.049 18.0001 21.0558 17.5874 21.803 16.8512C22.5502 16.115 22.9778 15.1144 22.9933 14.0655C22.9942 14.0524 22.997 14.0403 22.9972 14.0271C22.9973 14.0178 23 14.0093 23 14C22.9938 13.9399 22.9818 13.8805 22.9642 13.8226ZM5 8.85553L6.5564 13H3.4436L5 8.85553ZM6.72266 15C6.54618 15.3011 6.29479 15.5515 5.99293 15.7267C5.69107 15.9019 5.34901 15.9961 5 16C4.64903 15.9999 4.30428 15.9074 4.00036 15.7319C3.69644 15.5563 3.44405 15.3039 3.26855 15H6.72266ZM19 8.85553L20.5564 13H17.4436L19 8.85553ZM19 16C18.649 15.9999 18.3043 15.9074 18.0004 15.7319C17.6964 15.5563 17.4441 15.3039 17.2686 15H20.7227C20.5462 15.3011 20.2948 15.5515 19.9929 15.7267C19.6911 15.9019 19.349 15.9961 19 16Z"${add_attribute("fill", fill, 0)}></path></svg>`;
+});
+const css$1 = {
+  code: ".transition-width.svelte-frwh1m{transition:width 200ms}a.active.svelte-frwh1m{color:white !important}",
+  map: null
+};
+const Layout = create_ssr_component(($$result, $$props, $$bindings, slots) => {
+  let activeRoute;
+  let $$unsubscribe_authStore;
+  let $page, $$unsubscribe_page;
+  let $isExpanded, $$unsubscribe_isExpanded;
+  $$unsubscribe_authStore = subscribe(authStore, (value) => value);
+  $$unsubscribe_page = subscribe(page, (value) => $page = value);
+  let isExpanded = writable(false);
+  $$unsubscribe_isExpanded = subscribe(isExpanded, (value) => $isExpanded = value);
+  let links = [
+    { name: "Home", icon: HomeIcon, href: "/" },
+    {
+      name: "Match Betting",
+      icon: BettingIcon,
+      href: "/betting"
+    },
+    {
+      name: "Mini Games",
+      icon: GamesIcon,
+      href: "/games"
+    },
+    {
+      name: "Euro 2024",
+      icon: StarIcon,
+      href: "/euro2024"
+    },
+    {
+      name: "Rules",
+      icon: RulesIcon,
+      href: "/rules"
+    }
+  ];
+  const init2 = async () => await Promise.all([syncAuthStore()]);
+  const syncAuthStore = async () => {
+    {
+      return;
+    }
+  };
+  $$result.css.add(css$1);
+  activeRoute = $page.url.pathname;
+  $$unsubscribe_authStore();
+  $$unsubscribe_page();
+  $$unsubscribe_isExpanded();
+  return ` ${function(__value) {
+    if (is_promise(__value)) {
+      __value.then(null, noop);
+      return ` <div>${validate_component(Spinner, "Spinner").$$render($$result, {}, {}, {})}</div> `;
+    }
+    return function(_) {
+      return ` <div class="flex h-screen"><div class="bg-GRAY text-white flex flex-col justify-between transition-width duration-300 p-5 rounded-lg m-2 svelte-frwh1m" style="${"width: " + escape($isExpanded ? "16rem" : "4rem", true)}"><div><button class="mb-4"><span>${escape($isExpanded ? "<<" : ">>")}</span></button> <div class="text-gray-400 flex flex-col"><a href="/" class="block mt-4 text-lg my-4"><div class="flex flex-row items-center">${validate_component(LogoIcon, "LogoIcon").$$render($$result, { className: "w-6 mr-2" }, {}, {})} ${$isExpanded ? `<span data-svelte-h="svelte-judcsy">FootballGod</span>` : ``}</div></a> ${each(links, (link) => {
+        return `<a${add_attribute("href", link.href, 0)} rel="prefetch" class="${[
+          "block mt-4 text-lg svelte-frwh1m",
+          activeRoute === link.href ? "active" : ""
+        ].join(" ").trim()}"><div class="flex flex-row items-center">${validate_component(link.icon || missing_component, "svelte:component").$$render(
+          $$result,
+          {
+            className: "w-6 mr-2",
+            fill: activeRoute === link.href ? "white" : "gray"
+          },
+          {},
+          {}
+        )} ${$isExpanded ? `<span>${escape(link.name)}</span>` : ``}</div> </a>`;
+      })}</div></div> <div class="mb-4">${$isExpanded ? `<span data-svelte-h="svelte-7dzgx6">User</span>` : ``}</div></div> <div class="flex-1">${slots.default ? slots.default({}) : ``}</div></div> `;
+    }();
+  }(init2())} ${validate_component(Toasts, "Toasts").$$render($$result, {}, {}, {})} ${validate_component(BusyScreen, "BusyScreen").$$render($$result, {}, {}, {})}`;
+});
+const css = {
+  code: ".overlay-container.svelte-a3qity{position:relative}.overlay-panel.svelte-a3qity{position:absolute;bottom:0;right:0}",
+  map: null
+};
+const Page$6 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
+  let $$unsubscribe_countdown;
+  const countdown = writable("");
+  $$unsubscribe_countdown = subscribe(countdown, (value) => value);
+  let interval;
+  onDestroy(() => {
+    clearInterval(interval);
+  });
+  $$result.css.add(css);
+  $$unsubscribe_countdown();
+  return `${validate_component(Layout, "Layout").$$render($$result, {}, {}, {
+    default: () => {
+      return `${`${validate_component(Spinner, "Spinner").$$render($$result, {}, {}, {})}`}`;
+    }
+  })}`;
+});
+const Page$5 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
+  let teams = [];
+  let players = [];
+  return `${validate_component(Layout, "Layout").$$render($$result, {}, {}, {
+    default: () => {
+      return `<div class="bg-panel rounded-md p-4 mt-4"><h1 class="default-header py-4" data-svelte-h="svelte-rrdabx">Euro 2024</h1> <div class="flex flex-row"><div class="w-1/6" data-svelte-h="svelte-ej44ib"><div class="flex-col"><p> </p> <p>Group A</p> <p>Group B</p> <p>Group C</p> <p>Group D</p> <p>Group E</p> <p>Group F</p> <p>Round of 16</p> <p>Quarter Final</p> <p>Semi Final</p> <p>Final</p></div></div> <div class="w-5/6"><div class="flex flex-row flex-wrap" data-svelte-h="svelte-c12f2v"><div class="w-1/6">Winner</div> <div class="w-1/6">Loser</div> <div class="w-1/6">Goal Scored</div> <div class="w-1/6">Goal Assisted</div> <div class="w-1/6">Yellow Card</div> <div class="w-1/6">Red Card</div></div> <div class="flex flex-row flex-wrap"><div class="w-1/6"><select id="GAWinner" class="flex-1 block w-full rounded-none rounded-r-md sm:text-sm bg-gray-800 py-2"><option value="" data-svelte-h="svelte-13lkvb0">Select a Team</option>${each(teams, (team) => {
+        return `<option${add_attribute("value", team, 0)}>${escape(team)}</option>`;
+      })}</select></div> <div class="w-1/6"><select id="GAWinner" class="flex-1 block w-full rounded-none rounded-r-md sm:text-sm bg-gray-800 py-2"><option value="" data-svelte-h="svelte-13lkvb0">Select a Team</option>${each(teams, (team) => {
+        return `<option${add_attribute("value", team, 0)}>${escape(team)}</option>`;
+      })}</select></div> <div class="w-1/6"><select id="GAWinner" class="flex-1 block w-full rounded-none rounded-r-md sm:text-sm bg-gray-800 py-2"><option value="" data-svelte-h="svelte-12dm910">Select a Player</option>${each(players, (player) => {
+        return `<option${add_attribute("value", player, 0)}>${escape(player.firstName)} ${escape(player.lastName)}</option>`;
+      })}</select></div> <div class="w-1/6"><select id="GAWinner" class="flex-1 block w-full rounded-none rounded-r-md sm:text-sm bg-gray-800 py-2"><option value="" data-svelte-h="svelte-12dm910">Select a Player</option>${each(players, (player) => {
+        return `<option${add_attribute("value", player, 0)}>${escape(player.firstName)} ${escape(player.lastName)}</option>`;
+      })}</select></div> <div class="w-1/6"><select id="GAWinner" class="flex-1 block w-full rounded-none rounded-r-md sm:text-sm bg-gray-800 py-2"><option value="" data-svelte-h="svelte-12dm910">Select a Player</option>${each(players, (player) => {
+        return `<option${add_attribute("value", player, 0)}>${escape(player.firstName)} ${escape(player.lastName)}</option>`;
+      })}</select></div> <div class="w-1/6"><select id="GAWinner" class="flex-1 block w-full rounded-none rounded-r-md sm:text-sm bg-gray-800 py-2"><option value="" data-svelte-h="svelte-12dm910">Select a Player</option>${each(players, (player) => {
+        return `<option${add_attribute("value", player, 0)}>${escape(player.firstName)} ${escape(player.lastName)}</option>`;
+      })}</select></div></div> <div class="flex flex-row flex-wrap"><div class="w-1/6"><select id="GAWinner" class="flex-1 block w-full rounded-none rounded-r-md sm:text-sm bg-gray-800 py-2"><option value="" data-svelte-h="svelte-13lkvb0">Select a Team</option>${each(teams, (team) => {
+        return `<option${add_attribute("value", team, 0)}>${escape(team)}</option>`;
+      })}</select></div> <div class="w-1/6"><select id="GAWinner" class="flex-1 block w-full rounded-none rounded-r-md sm:text-sm bg-gray-800 py-2"><option value="" data-svelte-h="svelte-13lkvb0">Select a Team</option>${each(teams, (team) => {
+        return `<option${add_attribute("value", team, 0)}>${escape(team)}</option>`;
+      })}</select></div> <div class="w-1/6"><select id="GAWinner" class="flex-1 block w-full rounded-none rounded-r-md sm:text-sm bg-gray-800 py-2"><option value="" data-svelte-h="svelte-12dm910">Select a Player</option>${each(players, (player) => {
+        return `<option${add_attribute("value", player, 0)}>${escape(player.firstName)} ${escape(player.lastName)}</option>`;
+      })}</select></div> <div class="w-1/6"><select id="GAWinner" class="flex-1 block w-full rounded-none rounded-r-md sm:text-sm bg-gray-800 py-2"><option value="" data-svelte-h="svelte-12dm910">Select a Player</option>${each(players, (player) => {
+        return `<option${add_attribute("value", player, 0)}>${escape(player.firstName)} ${escape(player.lastName)}</option>`;
+      })}</select></div> <div class="w-1/6"><select id="GAWinner" class="flex-1 block w-full rounded-none rounded-r-md sm:text-sm bg-gray-800 py-2"><option value="" data-svelte-h="svelte-12dm910">Select a Player</option>${each(players, (player) => {
+        return `<option${add_attribute("value", player, 0)}>${escape(player.firstName)} ${escape(player.lastName)}</option>`;
+      })}</select></div> <div class="w-1/6"><select id="GAWinner" class="flex-1 block w-full rounded-none rounded-r-md sm:text-sm bg-gray-800 py-2"><option value="" data-svelte-h="svelte-12dm910">Select a Player</option>${each(players, (player) => {
+        return `<option${add_attribute("value", player, 0)}>${escape(player.firstName)} ${escape(player.lastName)}</option>`;
+      })}</select></div></div> <div class="flex flex-row flex-wrap"><div class="w-1/6"><select id="GAWinner" class="flex-1 block w-full rounded-none rounded-r-md sm:text-sm bg-gray-800 py-2"><option value="" data-svelte-h="svelte-13lkvb0">Select a Team</option>${each(teams, (team) => {
+        return `<option${add_attribute("value", team, 0)}>${escape(team)}</option>`;
+      })}</select></div> <div class="w-1/6"><select id="GAWinner" class="flex-1 block w-full rounded-none rounded-r-md sm:text-sm bg-gray-800 py-2"><option value="" data-svelte-h="svelte-13lkvb0">Select a Team</option>${each(teams, (team) => {
+        return `<option${add_attribute("value", team, 0)}>${escape(team)}</option>`;
+      })}</select></div> <div class="w-1/6"><select id="GAWinner" class="flex-1 block w-full rounded-none rounded-r-md sm:text-sm bg-gray-800 py-2"><option value="" data-svelte-h="svelte-12dm910">Select a Player</option>${each(players, (player) => {
+        return `<option${add_attribute("value", player, 0)}>${escape(player.firstName)} ${escape(player.lastName)}</option>`;
+      })}</select></div> <div class="w-1/6"><select id="GAWinner" class="flex-1 block w-full rounded-none rounded-r-md sm:text-sm bg-gray-800 py-2"><option value="" data-svelte-h="svelte-12dm910">Select a Player</option>${each(players, (player) => {
+        return `<option${add_attribute("value", player, 0)}>${escape(player.firstName)} ${escape(player.lastName)}</option>`;
+      })}</select></div> <div class="w-1/6"><select id="GAWinner" class="flex-1 block w-full rounded-none rounded-r-md sm:text-sm bg-gray-800 py-2"><option value="" data-svelte-h="svelte-12dm910">Select a Player</option>${each(players, (player) => {
+        return `<option${add_attribute("value", player, 0)}>${escape(player.firstName)} ${escape(player.lastName)}</option>`;
+      })}</select></div> <div class="w-1/6"><select id="GAWinner" class="flex-1 block w-full rounded-none rounded-r-md sm:text-sm bg-gray-800 py-2"><option value="" data-svelte-h="svelte-12dm910">Select a Player</option>${each(players, (player) => {
+        return `<option${add_attribute("value", player, 0)}>${escape(player.firstName)} ${escape(player.lastName)}</option>`;
+      })}</select></div></div> <div class="flex flex-row flex-wrap"><div class="w-1/6"><select id="GAWinner" class="flex-1 block w-full rounded-none rounded-r-md sm:text-sm bg-gray-800 py-2"><option value="" data-svelte-h="svelte-13lkvb0">Select a Team</option>${each(teams, (team) => {
+        return `<option${add_attribute("value", team, 0)}>${escape(team)}</option>`;
+      })}</select></div> <div class="w-1/6"><select id="GAWinner" class="flex-1 block w-full rounded-none rounded-r-md sm:text-sm bg-gray-800 py-2"><option value="" data-svelte-h="svelte-13lkvb0">Select a Team</option>${each(teams, (team) => {
+        return `<option${add_attribute("value", team, 0)}>${escape(team)}</option>`;
+      })}</select></div> <div class="w-1/6"><select id="GAWinner" class="flex-1 block w-full rounded-none rounded-r-md sm:text-sm bg-gray-800 py-2"><option value="" data-svelte-h="svelte-12dm910">Select a Player</option>${each(players, (player) => {
+        return `<option${add_attribute("value", player, 0)}>${escape(player.firstName)} ${escape(player.lastName)}</option>`;
+      })}</select></div> <div class="w-1/6"><select id="GAWinner" class="flex-1 block w-full rounded-none rounded-r-md sm:text-sm bg-gray-800 py-2"><option value="" data-svelte-h="svelte-12dm910">Select a Player</option>${each(players, (player) => {
+        return `<option${add_attribute("value", player, 0)}>${escape(player.firstName)} ${escape(player.lastName)}</option>`;
+      })}</select></div> <div class="w-1/6"><select id="GAWinner" class="flex-1 block w-full rounded-none rounded-r-md sm:text-sm bg-gray-800 py-2"><option value="" data-svelte-h="svelte-12dm910">Select a Player</option>${each(players, (player) => {
+        return `<option${add_attribute("value", player, 0)}>${escape(player.firstName)} ${escape(player.lastName)}</option>`;
+      })}</select></div> <div class="w-1/6"><select id="GAWinner" class="flex-1 block w-full rounded-none rounded-r-md sm:text-sm bg-gray-800 py-2"><option value="" data-svelte-h="svelte-12dm910">Select a Player</option>${each(players, (player) => {
+        return `<option${add_attribute("value", player, 0)}>${escape(player.firstName)} ${escape(player.lastName)}</option>`;
+      })}</select></div></div> <div class="flex flex-row flex-wrap"><div class="w-1/6"><select id="GAWinner" class="flex-1 block w-full rounded-none rounded-r-md sm:text-sm bg-gray-800 py-2"><option value="" data-svelte-h="svelte-13lkvb0">Select a Team</option>${each(teams, (team) => {
+        return `<option${add_attribute("value", team, 0)}>${escape(team)}</option>`;
+      })}</select></div> <div class="w-1/6"><select id="GAWinner" class="flex-1 block w-full rounded-none rounded-r-md sm:text-sm bg-gray-800 py-2"><option value="" data-svelte-h="svelte-13lkvb0">Select a Team</option>${each(teams, (team) => {
+        return `<option${add_attribute("value", team, 0)}>${escape(team)}</option>`;
+      })}</select></div> <div class="w-1/6"><select id="GAWinner" class="flex-1 block w-full rounded-none rounded-r-md sm:text-sm bg-gray-800 py-2"><option value="" data-svelte-h="svelte-12dm910">Select a Player</option>${each(players, (player) => {
+        return `<option${add_attribute("value", player, 0)}>${escape(player.firstName)} ${escape(player.lastName)}</option>`;
+      })}</select></div> <div class="w-1/6"><select id="GAWinner" class="flex-1 block w-full rounded-none rounded-r-md sm:text-sm bg-gray-800 py-2"><option value="" data-svelte-h="svelte-12dm910">Select a Player</option>${each(players, (player) => {
+        return `<option${add_attribute("value", player, 0)}>${escape(player.firstName)} ${escape(player.lastName)}</option>`;
+      })}</select></div> <div class="w-1/6"><select id="GAWinner" class="flex-1 block w-full rounded-none rounded-r-md sm:text-sm bg-gray-800 py-2"><option value="" data-svelte-h="svelte-12dm910">Select a Player</option>${each(players, (player) => {
+        return `<option${add_attribute("value", player, 0)}>${escape(player.firstName)} ${escape(player.lastName)}</option>`;
+      })}</select></div> <div class="w-1/6"><select id="GAWinner" class="flex-1 block w-full rounded-none rounded-r-md sm:text-sm bg-gray-800 py-2"><option value="" data-svelte-h="svelte-12dm910">Select a Player</option>${each(players, (player) => {
+        return `<option${add_attribute("value", player, 0)}>${escape(player.firstName)} ${escape(player.lastName)}</option>`;
+      })}</select></div></div> <div class="flex flex-row flex-wrap"><div class="w-1/6"><select id="GAWinner" class="flex-1 block w-full rounded-none rounded-r-md sm:text-sm bg-gray-800 py-2"><option value="" data-svelte-h="svelte-13lkvb0">Select a Team</option>${each(teams, (team) => {
+        return `<option${add_attribute("value", team, 0)}>${escape(team)}</option>`;
+      })}</select></div> <div class="w-1/6"><select id="GAWinner" class="flex-1 block w-full rounded-none rounded-r-md sm:text-sm bg-gray-800 py-2"><option value="" data-svelte-h="svelte-13lkvb0">Select a Team</option>${each(teams, (team) => {
+        return `<option${add_attribute("value", team, 0)}>${escape(team)}</option>`;
+      })}</select></div> <div class="w-1/6"><select id="GAWinner" class="flex-1 block w-full rounded-none rounded-r-md sm:text-sm bg-gray-800 py-2"><option value="" data-svelte-h="svelte-12dm910">Select a Player</option>${each(players, (player) => {
+        return `<option${add_attribute("value", player, 0)}>${escape(player.firstName)} ${escape(player.lastName)}</option>`;
+      })}</select></div> <div class="w-1/6"><select id="GAWinner" class="flex-1 block w-full rounded-none rounded-r-md sm:text-sm bg-gray-800 py-2"><option value="" data-svelte-h="svelte-12dm910">Select a Player</option>${each(players, (player) => {
+        return `<option${add_attribute("value", player, 0)}>${escape(player.firstName)} ${escape(player.lastName)}</option>`;
+      })}</select></div> <div class="w-1/6"><select id="GAWinner" class="flex-1 block w-full rounded-none rounded-r-md sm:text-sm bg-gray-800 py-2"><option value="" data-svelte-h="svelte-12dm910">Select a Player</option>${each(players, (player) => {
+        return `<option${add_attribute("value", player, 0)}>${escape(player.firstName)} ${escape(player.lastName)}</option>`;
+      })}</select></div> <div class="w-1/6"><select id="GAWinner" class="flex-1 block w-full rounded-none rounded-r-md sm:text-sm bg-gray-800 py-2"><option value="" data-svelte-h="svelte-12dm910">Select a Player</option>${each(players, (player) => {
+        return `<option${add_attribute("value", player, 0)}>${escape(player.firstName)} ${escape(player.lastName)}</option>`;
+      })}</select></div></div> <div class="flex flex-row flex-wrap"><div class="w-1/6"><select id="GAWinner" class="flex-1 block w-full rounded-none rounded-r-md sm:text-sm bg-gray-800 py-2"><option value="" data-svelte-h="svelte-13lkvb0">Select a Team</option>${each(teams, (team) => {
+        return `<option${add_attribute("value", team, 0)}>${escape(team)}</option>`;
+      })}</select></div> <div class="w-1/6"><select id="GAWinner" class="flex-1 block w-full rounded-none rounded-r-md sm:text-sm bg-gray-800 py-2"><option value="" data-svelte-h="svelte-13lkvb0">Select a Team</option>${each(teams, (team) => {
+        return `<option${add_attribute("value", team, 0)}>${escape(team)}</option>`;
+      })}</select></div> <div class="w-1/6"><select id="GAWinner" class="flex-1 block w-full rounded-none rounded-r-md sm:text-sm bg-gray-800 py-2"><option value="" data-svelte-h="svelte-12dm910">Select a Player</option>${each(players, (player) => {
+        return `<option${add_attribute("value", player, 0)}>${escape(player.firstName)} ${escape(player.lastName)}</option>`;
+      })}</select></div> <div class="w-1/6"><select id="GAWinner" class="flex-1 block w-full rounded-none rounded-r-md sm:text-sm bg-gray-800 py-2"><option value="" data-svelte-h="svelte-12dm910">Select a Player</option>${each(players, (player) => {
+        return `<option${add_attribute("value", player, 0)}>${escape(player.firstName)} ${escape(player.lastName)}</option>`;
+      })}</select></div> <div class="w-1/6"><select id="GAWinner" class="flex-1 block w-full rounded-none rounded-r-md sm:text-sm bg-gray-800 py-2"><option value="" data-svelte-h="svelte-12dm910">Select a Player</option>${each(players, (player) => {
+        return `<option${add_attribute("value", player, 0)}>${escape(player.firstName)} ${escape(player.lastName)}</option>`;
+      })}</select></div> <div class="w-1/6"><select id="GAWinner" class="flex-1 block w-full rounded-none rounded-r-md sm:text-sm bg-gray-800 py-2"><option value="" data-svelte-h="svelte-12dm910">Select a Player</option>${each(players, (player) => {
+        return `<option${add_attribute("value", player, 0)}>${escape(player.firstName)} ${escape(player.lastName)}</option>`;
+      })}</select></div></div> <div class="flex flex-row flex-wrap"><div class="w-1/6"><select id="GAWinner" class="flex-1 block w-full rounded-none rounded-r-md sm:text-sm bg-gray-800 py-2"><option value="" data-svelte-h="svelte-13lkvb0">Select a Team</option>${each(teams, (team) => {
+        return `<option${add_attribute("value", team, 0)}>${escape(team)}</option>`;
+      })}</select></div> <div class="w-1/6"><select id="GAWinner" class="flex-1 block w-full rounded-none rounded-r-md sm:text-sm bg-gray-800 py-2"><option value="" data-svelte-h="svelte-13lkvb0">Select a Team</option>${each(teams, (team) => {
+        return `<option${add_attribute("value", team, 0)}>${escape(team)}</option>`;
+      })}</select></div> <div class="w-1/6"><select id="GAWinner" class="flex-1 block w-full rounded-none rounded-r-md sm:text-sm bg-gray-800 py-2"><option value="" data-svelte-h="svelte-12dm910">Select a Player</option>${each(players, (player) => {
+        return `<option${add_attribute("value", player, 0)}>${escape(player.firstName)} ${escape(player.lastName)}</option>`;
+      })}</select></div> <div class="w-1/6"><select id="GAWinner" class="flex-1 block w-full rounded-none rounded-r-md sm:text-sm bg-gray-800 py-2"><option value="" data-svelte-h="svelte-12dm910">Select a Player</option>${each(players, (player) => {
+        return `<option${add_attribute("value", player, 0)}>${escape(player.firstName)} ${escape(player.lastName)}</option>`;
+      })}</select></div> <div class="w-1/6"><select id="GAWinner" class="flex-1 block w-full rounded-none rounded-r-md sm:text-sm bg-gray-800 py-2"><option value="" data-svelte-h="svelte-12dm910">Select a Player</option>${each(players, (player) => {
+        return `<option${add_attribute("value", player, 0)}>${escape(player.firstName)} ${escape(player.lastName)}</option>`;
+      })}</select></div> <div class="w-1/6"><select id="GAWinner" class="flex-1 block w-full rounded-none rounded-r-md sm:text-sm bg-gray-800 py-2"><option value="" data-svelte-h="svelte-12dm910">Select a Player</option>${each(players, (player) => {
+        return `<option${add_attribute("value", player, 0)}>${escape(player.firstName)} ${escape(player.lastName)}</option>`;
+      })}</select></div></div> <div class="py-3 text-right" data-svelte-h="svelte-w4b2oa"><button type="submit" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Submit Predictions</button> <button type="submit" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 opacity-50 cursor-not-allowed">Submit &amp; Enter Sweepstake (100 $FPL)</button></div></div></div></div>`;
+    }
+  })}`;
+});
+const Page$4 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
+  return ``;
+});
+const Page$3 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
+  return ``;
+});
 const idlFactory = ({ IDL }) => {
   const List = IDL.Rec();
   const List_1 = IDL.Rec();
@@ -4039,6 +4294,78 @@ const idlFactory = ({ IDL }) => {
     seasonName: IDL.Text,
     gameweekNumber: IDL.Nat8,
     awayTeamGoals: IDL.Nat8
+  });
+  const PlayerId = IDL.Nat16;
+  const TeamId = IDL.Nat16;
+  const TournamentStage = IDL.Variant({
+    RoundOf16: IDL.Null,
+    SemiFinal: IDL.Null,
+    GroupA: IDL.Null,
+    GroupB: IDL.Null,
+    GroupC: IDL.Null,
+    GroupD: IDL.Null,
+    GroupE: IDL.Null,
+    GroupF: IDL.Null,
+    Final: IDL.Null,
+    QuarterFinal: IDL.Null
+  });
+  const PredictionSet = IDL.Record({
+    goalAssister: PlayerId,
+    winner: TeamId,
+    loser: TeamId,
+    stage: TournamentStage,
+    goalScorer: PlayerId,
+    redCard: PlayerId,
+    yellowCard: PlayerId
+  });
+  const Euro2024PredictionDTO = IDL.Record({
+    sfPrediction: PredictionSet,
+    groupAPrediction: PredictionSet,
+    groupCPrediction: PredictionSet,
+    groupEPrediction: PredictionSet,
+    fPrediction: PredictionSet,
+    qfPrediction: PredictionSet,
+    groupBPrediction: PredictionSet,
+    groupDPrediction: PredictionSet,
+    groupFPrediction: PredictionSet,
+    r16Prediction: PredictionSet
+  });
+  const Result_3 = IDL.Variant({ ok: Euro2024PredictionDTO, err: Error2 });
+  const CountryId = IDL.Nat8;
+  const Position = IDL.Variant({
+    Goalkeeper: IDL.Null,
+    Foward: IDL.Null,
+    Midfielder: IDL.Null,
+    Defender: IDL.Null
+  });
+  const InternationalPlayer = IDL.Record({
+    id: PlayerId,
+    nickname: IDL.Text,
+    dateOfBirth: IDL.Int,
+    qualifyingAppearances: IDL.Nat8,
+    nationality: CountryId,
+    shirtNumber: IDL.Nat8,
+    qualifyingAssists: IDL.Nat8,
+    qualifyingGoals: IDL.Nat8,
+    teamId: TeamId,
+    position: Position,
+    lastName: IDL.Text,
+    firstName: IDL.Text
+  });
+  const Result_2 = IDL.Variant({
+    ok: IDL.Vec(InternationalPlayer),
+    err: Error2
+  });
+  const InternationalTeam = IDL.Record({
+    id: TeamId,
+    countryCode: IDL.Text,
+    countryName: IDL.Text,
+    players: IDL.Vec(InternationalPlayer),
+    shirtColour: IDL.Text
+  });
+  const Result_1 = IDL.Variant({
+    ok: IDL.Vec(InternationalTeam),
+    err: Error2
   });
   const Fixture = IDL.Record({
     id: IDL.Nat32,
@@ -4177,6 +4504,9 @@ const idlFactory = ({ IDL }) => {
       [CorrectPredictionsDTO],
       []
     ),
+    getEuro2024DTO: IDL.Func([], [Result_3], ["query"]),
+    getEuro2024Players: IDL.Func([], [Result_2], ["query"]),
+    getEuro2024Teams: IDL.Func([], [Result_1], ["query"]),
     getFixture: IDL.Func(
       [IDL.Nat16, IDL.Nat8, IDL.Nat32],
       [IDL.Opt(Fixture)],
@@ -4209,6 +4539,7 @@ const idlFactory = ({ IDL }) => {
     isWalletValid: IDL.Func([IDL.Text], [IDL.Bool], ["query"]),
     payoutSweepstake: IDL.Func([], [Result], []),
     setSystemState: IDL.Func([IDL.Nat16, IDL.Nat8], [Result], []),
+    submitEuro2024Prediction: IDL.Func([Euro2024PredictionDTO], [Result], []),
     submitPlayDTO: IDL.Func([SubmitPlayDTO], [Result], []),
     unsetActiveState: IDL.Func([], [Result], []),
     updateDisplayName: IDL.Func([IDL.Text], [Result], []),
@@ -4237,7 +4568,7 @@ const idlFactory = ({ IDL }) => {
     withdrawICP: IDL.Func([IDL.Float64], [Result], [])
   });
 };
-var define_process_env_default$1 = { FOOTBALL_GOD_BACKEND_CANISTER_ID: "br5f7-7uaaa-aaaaa-qaaca-cai", FOOTBALL_GOD_FRONTEND_CANISTER_ID: "bw4dl-smaaa-aaaaa-qaacq-cai", DFX_NETWORK: "local" };
+var define_process_env_default$1 = { FOOTBALL_GOD_BACKEND_CANISTER_ID: "bkyz2-fmaaa-aaaaa-qaaaq-cai", FOOTBALL_GOD_FRONTEND_CANISTER_ID: "bd3sg-teaaa-aaaaa-qaaba-cai", DFX_NETWORK: "local" };
 const canisterId = define_process_env_default$1.CANISTER_ID_FOOTBALL_GOD_BACKEND;
 const createActor = (canisterId2, options2 = {}) => {
   const agent = options2.agent || new HttpAgent({ ...options2.agentOptions });
@@ -4341,7 +4672,7 @@ function uint8ArrayToBase64(bytes) {
 function isError(response) {
   return response && response.err !== void 0;
 }
-var define_process_env_default = { FOOTBALL_GOD_BACKEND_CANISTER_ID: "br5f7-7uaaa-aaaaa-qaaca-cai", FOOTBALL_GOD_FRONTEND_CANISTER_ID: "bw4dl-smaaa-aaaaa-qaacq-cai", DFX_NETWORK: "local" };
+var define_process_env_default = { FOOTBALL_GOD_BACKEND_CANISTER_ID: "bkyz2-fmaaa-aaaaa-qaaaq-cai", FOOTBALL_GOD_FRONTEND_CANISTER_ID: "bd3sg-teaaa-aaaaa-qaaba-cai", DFX_NETWORK: "local" };
 function createUserStore() {
   const { subscribe: subscribe2, set } = writable(null);
   async function sync() {
@@ -4467,17 +4798,7 @@ function createUserStore() {
   };
 }
 const userStore = createUserStore();
-const WalletIcon = create_ssr_component(($$result, $$props, $$bindings, slots) => {
-  let { className = "" } = $$props;
-  if ($$props.className === void 0 && $$bindings.className && className !== void 0)
-    $$bindings.className(className);
-  return `<svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true"${add_attribute("class", className, 0)} fill="currentColor" viewBox="0 0 24 24"><path d="M12.136.326A1.5 1.5 0 0 1 14 1.78V3h.5A1.5 1.5 0 0 1 16 4.5v9a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 0 13.5v-9a1.5 1.5 0 0 1 1.432-1.499L12.136.326zM5.562 3H13V1.78a.5.5 0 0 0-.621-.484L5.562 3zM1.5 4a.5.5 0 0 0-.5.5v9a.5.5 0 0 0 .5.5h13a.5.5 0 0 0 .5-.5v-9a.5.5 0 0 0-.5-.5h-13z"></path><path d="M15.5,6.5v3a1,1,0,0,1-1,1h-3.5v-5H14.5A1,1,0,0,1,15.5,6.5Z"></path><path d="M12,8a.5,.5 0,1,1,.001,0Z"></path></svg>`;
-});
-const authSignedInStore = derived(
-  authStore,
-  ({ identity }) => identity !== null && identity !== void 0
-);
-const userGetProfilePicture = derived(
+derived(
   userStore,
   ($user) => {
     try {
@@ -4511,80 +4832,6 @@ derived(
   userStore,
   (user) => user !== null && user !== void 0 ? user.favouriteTeamId : 0
 );
-const css$1 = {
-  code: 'header.svelte-tlhn8x{background-color:rgba(36, 37, 41, 0.9)}.nav-underline.svelte-tlhn8x{position:relative;display:inline-block;color:white}.nav-underline.svelte-tlhn8x::after{content:"";position:absolute;width:100%;height:2px;background-color:#2ce3a6;bottom:0;left:0;transform:scaleX(0);transition:transform 0.3s ease-in-out;color:#2ce3a6}.nav-underline.svelte-tlhn8x:hover::after,.nav-underline.active.svelte-tlhn8x::after{transform:scaleX(1);color:#2ce3a6}.nav-underline.svelte-tlhn8x:hover::after{transform:scaleX(1);background-color:gray}.nav-button.svelte-tlhn8x{background-color:transparent}.nav-button.svelte-tlhn8x:hover{background-color:transparent;color:#2ce3a6;border:none}',
-  map: null
-};
-const Header = create_ssr_component(($$result, $$props, $$bindings, slots) => {
-  let currentClass;
-  let currentBorder;
-  let $page, $$unsubscribe_page;
-  let $authSignedInStore, $$unsubscribe_authSignedInStore;
-  let $userGetProfilePicture, $$unsubscribe_userGetProfilePicture;
-  $$unsubscribe_page = subscribe(page, (value) => $page = value);
-  $$unsubscribe_authSignedInStore = subscribe(authSignedInStore, (value) => $authSignedInStore = value);
-  $$unsubscribe_userGetProfilePicture = subscribe(userGetProfilePicture, (value) => $userGetProfilePicture = value);
-  let showProfileDropdown = false;
-  onDestroy(() => {
-    if (typeof window !== "undefined") {
-      document.removeEventListener("click", closeDropdownOnClickOutside);
-    }
-  });
-  function closeDropdownOnClickOutside(event) {
-    const target = event.target;
-    if (target instanceof Element) {
-      if (!target.closest(".profile-dropdown") && !target.closest(".profile-pic")) {
-        showProfileDropdown = false;
-      }
-    }
-  }
-  $$result.css.add(css$1);
-  currentClass = (route) => $page.url.pathname === route ? "text-blue-500 nav-underline active" : "nav-underline";
-  currentBorder = (route) => $page.url.pathname === route ? "active-border" : "";
-  $$unsubscribe_page();
-  $$unsubscribe_authSignedInStore();
-  $$unsubscribe_userGetProfilePicture();
-  return `<header class="svelte-tlhn8x"><nav class="text-white"><div class="px-4 h-16 flex justify-between items-center w-full"><a href="/" class="hover:text-gray-400 flex items-center" data-svelte-h="svelte-g16cvw"><b class="ml-2">FootballGod</b></a> <button class="menu-toggle md:hidden focus:outline-none" data-svelte-h="svelte-1xcvmve"><svg width="24" height="18" viewBox="0 0 24 18" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="24" height="2" rx="1" fill="currentColor"></rect><rect y="8" width="24" height="2" rx="1" fill="currentColor"></rect><rect y="16" width="24" height="2" rx="1" fill="currentColor"></rect></svg></button> ${$authSignedInStore ? `<ul class="hidden md:flex h-16"><li class="mx-2 flex items-center h-16"><a href="/" class="${"flex items-center h-full nav-underline hover:text-gray-400 $" + escape(currentClass("/"), true) + " svelte-tlhn8x"}"><span class="flex items-center h-full px-4" data-svelte-h="svelte-fx32ra">Home</span></a></li> <li class="mx-2 flex items-center h-16"><a href="/governance" class="${"flex items-center h-full nav-underline hover:text-gray-400 $" + escape(currentClass("/governance"), true) + " svelte-tlhn8x"}"><span class="flex items-center h-full px-4" data-svelte-h="svelte-qfd2bh">Governance</span></a></li> <li class="flex flex-1 items-center"><div class="relative inline-block"><button class="${escape(null_to_empty(`h-full flex items-center rounded-sm ${currentBorder("/profile")}`), true) + " svelte-tlhn8x"}"><img${add_attribute("src", $userGetProfilePicture, 0)} alt="Profile" class="h-12 rounded-sm profile-pic" aria-label="Toggle Profile"></button> <div class="${escape(null_to_empty(`absolute right-0 top-full w-48 bg-black rounded-b-md rounded-l-md shadow-lg z-50 profile-dropdown ${showProfileDropdown ? "block" : "hidden"}`), true) + " svelte-tlhn8x"}"><ul class="text-gray-700"><li><a href="/profile" class="flex items-center h-full w-full nav-underline hover:text-gray-400 svelte-tlhn8x"><span class="flex items-center h-full w-full"><img${add_attribute("src", $userGetProfilePicture, 0)} alt="logo" class="h-8 my-2 ml-4 mr-2"> <p class="w-full min-w-[125px] max-w-[125px] truncate" data-svelte-h="svelte-1mjctb">Profile</p></span></a></li> <li><button class="flex items-center justify-center px-4 pb-2 pt-1 text-white rounded-md shadow focus:outline-none focus:ring-2 focus:ring-blue-300 focus:ring-opacity-50 nav-button svelte-tlhn8x">Disconnect
-                      ${validate_component(WalletIcon, "WalletIcon").$$render($$result, { className: "ml-2 h-6 w-6 mt-1" }, {}, {})}</button></li></ul></div></div></li></ul> <div class="${escape(null_to_empty(`mobile-menu-panel absolute top-12 right-2.5 bg-black rounded-lg shadow-md z-10 p-2 ${"hidden"} md:hidden`), true) + " svelte-tlhn8x"}"><ul class="flex flex-col"><li class="p-2"><a href="/" class="${escape(null_to_empty(`nav-underline hover:text-gray-400 ${currentClass("/")}`), true) + " svelte-tlhn8x"}">Home</a></li> <li class="p-2"><a href="/pick-team" class="${escape(null_to_empty(currentClass("/pick-team")), true) + " svelte-tlhn8x"}">Squad Selection</a></li> <li class="p-2"><a href="/governance" class="${escape(null_to_empty(currentClass("/governance")), true) + " svelte-tlhn8x"}">Governance</a></li> <li class="p-2"><a href="/profile" class="${"flex h-full w-full nav-underline hover:text-gray-400 w-full $" + escape(currentClass("/profile"), true) + " svelte-tlhn8x"}"><span class="flex items-center h-full w-full"><img${add_attribute("src", $userGetProfilePicture, 0)} alt="logo" class="w-8 h-8 rounded-sm"> <p class="w-full min-w-[100px] max-w-[100px] truncate p-2" data-svelte-h="svelte-f2gegq">Profile</p></span></a></li> <li class="px-2"><button class="flex h-full w-full hover:text-gray-400 w-full items-center">Disconnect
-                ${validate_component(WalletIcon, "WalletIcon").$$render($$result, { className: "ml-2 h-6 w-6 mt-1" }, {}, {})}</button></li></ul></div>` : `<ul class="hidden md:flex"><li class="mx-2 flex items-center h-16"><button class="flex items-center justify-center px-4 py-2 bg-blue-500 text-white rounded-md shadow hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300 focus:ring-opacity-50 nav-button svelte-tlhn8x">Connect
-              ${validate_component(WalletIcon, "WalletIcon").$$render($$result, { className: "ml-2 h-6 w-6 mt-1" }, {}, {})}</button></li></ul> <div class="${escape(null_to_empty(`mobile-menu-panel absolute top-12 right-2.5 bg-black rounded-lg shadow-md z-10 p-2 ${"hidden"} md:hidden`), true) + " svelte-tlhn8x"}"><ul class="flex flex-col"><li class="p-2"><button class="flex items-center justify-center px-4 py-2 bg-blue-500 text-white rounded-md shadow hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300 focus:ring-opacity-50 nav-button svelte-tlhn8x">Connect
-                ${validate_component(WalletIcon, "WalletIcon").$$render($$result, { className: "ml-2 h-6 w-6 mt-1" }, {}, {})}</button></li></ul></div>`}</div></nav> </header>`;
-});
-const Footer = create_ssr_component(($$result, $$props, $$bindings, slots) => {
-  return `<footer class="bg-gray-900 text-white py-3" data-svelte-h="svelte-deiluq"><div class="container mx-1 xs:mx-2 md:mx-auto flex flex-col md:flex-row items-start md:items-center justify-between text-xs"><div class="flex-1"><div class="flex justify-start"><div class="flex flex-row pl-4"><a href="https://oc.app/community/uf3iv-naaaa-aaaar-ar3ta-cai/?ref=zv6hh-xaaaa-aaaar-ac35q-cai" target="_blank" rel="noopener noreferrer"><img src="/openchat.png" class="h-4 w-auto mb-2 mr-2" alt="OpenChat"></a></div></div> <div class="flex justify-start"><div class="flex flex-col md:flex-row md:space-x-2 pl-4"><a href="/whitepaper" class="hover:text-gray-300">Whitepaper</a> <span class="hidden md:flex">|</span> <a href="/gameplay-rules" class="hover:text-gray-300 md:hidden lg:block">Gameplay Rules</a> <a href="/gameplay-rules" class="hover:text-gray-300 hidden md:block lg:hidden">Rules</a> <span class="hidden md:flex">|</span> <a href="/terms" class="hover:text-gray-300">Terms &amp; Conditions</a></div></div></div> <div class="flex-1"><div class="flex justify-end"><div class="text-right px-4 md:px-0 mt-1 md:mt-0 md:mr-4"><a href="https://juno.build" target="_blank" class="hover:text-gray-300 flex items-center">Sponsored By juno.build</a></div></div></div></div></footer>`;
-});
-const css = {
-  code: "main.svelte-cbh2q9{flex:1;display:flex;flex-direction:column}",
-  map: null
-};
-const Layout = create_ssr_component(($$result, $$props, $$bindings, slots) => {
-  let $$unsubscribe_authStore;
-  $$unsubscribe_authStore = subscribe(authStore, (value) => value);
-  const init2 = async () => await Promise.all([syncAuthStore()]);
-  const syncAuthStore = async () => {
-    {
-      return;
-    }
-  };
-  $$result.css.add(css);
-  $$unsubscribe_authStore();
-  return ` ${function(__value) {
-    if (is_promise(__value)) {
-      __value.then(null, noop);
-      return ` <div>${validate_component(Spinner, "Spinner").$$render($$result, {}, {}, {})}</div> `;
-    }
-    return function(_) {
-      return ` <div class="flex flex-col h-screen justify-between default-text">${validate_component(Header, "Header").$$render($$result, {}, {}, {})} <main class="page-wrapper svelte-cbh2q9">${slots.default ? slots.default({}) : ``}</main> ${validate_component(Toasts, "Toasts").$$render($$result, {}, {}, {})} ${validate_component(Footer, "Footer").$$render($$result, {}, {}, {})}</div> `;
-    }();
-  }(init2())} ${validate_component(BusyScreen, "BusyScreen").$$render($$result, {}, {}, {})}`;
-});
-const Page$3 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
-  return `${validate_component(Layout, "Layout").$$render($$result, {}, {}, {
-    default: () => {
-      return `${`${validate_component(Spinner, "Spinner").$$render($$result, {}, {}, {})}`}`;
-    }
-  })}`;
-});
 const Page$2 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
   return `${validate_component(Layout, "Layout").$$render($$result, {}, {}, {
     default: () => {
@@ -4610,39 +4857,46 @@ const Page$1 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
   })}`;
 });
 const Vision = create_ssr_component(($$result, $$props, $$bindings, slots) => {
-  return `<div class="m-4" data-svelte-h="svelte-nvmvhm"><h1 class="default-header">Our Vision</h1> <p class="my-4">OpenFPL was created as our answer to the question:</p> <p class="my-2"><i>&quot;How do you introduce the most new users to the Internet Computer
-      Blockchain?&quot;</i>.</p> <p class="my-4">Football is the most popular sport in the world, with billions of fans, the
-    leading fantasy football game engages over 10 million players a season.
-    OpenFPL is a better, more equitable, decentralised fantasy football platform
-    for football fans worldwide. We have used our football knowledge to create a
-    more engaging game, coupled with token distribution to ensure users are more
-    equitably rewarded for their successful pariticipation.</p> <p class="my-4 default-header">Why The Internet Computer?</p> <p>The Internet Computer (IC) is the only computer system in the world that
+  return `<div class="m-4" data-svelte-h="svelte-x9qk2m"><h1 class="default-header">Our Vision</h1> <p class="my-4">FootballGod was created to provide a much needed fixed-odds betting platform
+    to the Internet Computer whilst utilising it&#39;s unique framework to manage
+    risk through the power of tokenomics.</p> <p class="my-4">FootballGod will provide this facility using its deflationary utility token,
+    $FOOTBALL. Betting platforms are very profitable, we aim to use the reality
+    of more losing bets than winning bets to control the token supply. When a
+    bet loses, the stake is burned, decreasing the circlulating supply. This is
+    offset by more infrequent winning scenarios, minting winnings, allowing the
+    DAO to always have the liquidity required to cover winning bets.</p> <p>FootballGod will bring all the functionality users of betting platforms are
+    familiar with. This will include betting across different in game
+    categories, like goalscorer and scoreline markets. Users will be able to
+    build accumulators within specific game markets in addition to multiple
+    games.</p> <p class="my-4 default-header">Why The Internet Computer?</p> <p>The Internet Computer (IC) is the only computer system in the world that
     allows users of an online service to truly own that service. The IC&#39;s unique
     architecture allows the interface the user engages with to be stored on the
     network, bypassing the big tech companies who do not have an interest in
     providing decentralised services. The IC not only has the capabilities to
     shift power structures in the tech world, it is built with its own
     decentralised service creation infrastructure that allow services like
-    OpenFPL to become Decentralised Autonomous Organisations (DAOs). OpenFPL
-    will transform fantasy Premier League football using this DAO architecture
-    into a decentralised service that is more engaging for its users, rewarding
-    football fans for their insight and participation in football.</p> <p class="my-4">OpenFPL is more than a decentralised service, it is a brand that has
-    multiple viable revenue streams. The ICPFA will distribute this value to
-    token holders through inflation resistant tokenomics. Through a
-    mechanisation of purchasing &amp; burning exchange $FPL, we aim to keep the
-    total supply at 100 million, while building up a healthy treasury for the
-    DAO to utilise as it wishes.</p> <p class="my-4">OpenFPL will create a platform Premier League fans feel at home using, with
-    their input shaping the service. Our features are designed to enhance user
-    engagement on the platform. These include more detailed and varied gameplay,
-    community-based player valuations, customisable private leagues, and
-    collaborations with football content creators. As we attract more users,
-    engagement within the OpenFPL ecosystem will grow, which should contribute
-    to the growth and value of the $FPL governance token.</p> <p class="my-4">Our vision for OpenFPL encompasses a commitment to societal impact,
+    FootballGod to become Decentralised Autonomous Organisations (DAOs).
+    FootballGod will enable gamblers to build a betting platform to suit them,
+    allowing them to design the games and features they want to see but also
+    define the control measures put in place to ensure gambling is done
+    responsibly.</p> <p class="my-4">The online sports betting market was valued at more than $50bn in 2023.
+    FootballGod aims to provide a superior, decentralised service for football
+    fans using it&#39;s utility token, $FOOTBALL. With all bets being placed with
+    the $FOOTBALL token we are able to manage the token supply, aiming to keep
+    it at the starting amount of 1 billion tokens. The DAO&#39;s treasury and
+    overall value will increase as deposits are made within the platform&#39;s
+    cashier.</p> <p class="my-4">We aim to phase in our betting services and mini games. We have applied for
+    a gambling licence in the UK and will keep the community updated on the
+    application&#39;s progress. We aim to provide reliable fixed-odds betting
+    markets for every major football league in the world but also mini games for
+    major events like international football tournaments.</p> <p class="my-4">We will phase in markets and features like building accumulators, building
+    out a completely decentralised live odds manager built from algorithms
+    managed by the FootballGod DAO.</p> <p class="my-4">Our vision for FootballGod encompasses a commitment to societal impact,
     specifically through our organisation, the ICPFA. The ICPFA will be focused
     on supporting grassroots football initiatives, demonstrating our belief in
-    OpenFPL&#39;s ability to bring about positive change in the football community
-    using the IC.</p> <p class="my-4 mb-4">In essence OpenFPL will be the world&#39;s game on the world&#39;s computer. A truly
-    decentralised service, the fans home for Premier League football.</p></div>`;
+    FootballGod&#39;s ability to bring about positive change in the football
+    community using the IC.</p> <p class="my-4 mb-4">We aim for FootballGod to be the home of Football betting, providing the
+    high quality application expected in today&#39;s modern betting landscape.</p></div>`;
 });
 const Page = create_ssr_component(($$result, $$props, $$bindings, slots) => {
   return `${validate_component(Layout, "Layout").$$render($$result, {}, {}, {
@@ -4666,7 +4920,7 @@ const Page = create_ssr_component(($$result, $$props, $$bindings, slots) => {
 export {
   Error$1 as E,
   Layout$1 as L,
-  Page$3 as P,
+  Page$6 as P,
   Server as S,
   set_building as a,
   set_manifest as b,
@@ -4676,9 +4930,12 @@ export {
   set_read_implementation as f,
   get_hooks as g,
   set_safe_public_env as h,
-  Page$2 as i,
-  Page$1 as j,
-  Page as k,
+  Page$5 as i,
+  Page$4 as j,
+  Page$3 as k,
+  Page$2 as l,
+  Page$1 as m,
+  Page as n,
   options as o,
   set_assets as s
 };

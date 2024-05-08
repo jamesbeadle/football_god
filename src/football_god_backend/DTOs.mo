@@ -156,57 +156,56 @@ module DTOs {
   };
 
   public type LiveOddsDTO = {
-    eventId: T.EventId;
-    correctResultOdds: ResultOddsDTO;
-    correctScoreOdds: [ScoreOddsDTO];
-    firstGoalScorerOdds: [PlayerOddsDTO];
-    anytimeGoalScorerOdds: [PlayerOddsDTO];
-    score2OrMoreOdds:  [PlayerOddsDTO];
-    score3OrMoreOdds:  [PlayerOddsDTO];
-    scoreFreekickOdds:  [PlayerOddsDTO];
-    missPenaltyOdds:  [PlayerOddsDTO];
-    yellowCardOdds:  [PlayerOddsDTO];
-    redCardOdds: [PlayerOddsDTO];
-    scorecastOdds: [ScorecastOddsDTO];
+    eventId : T.EventId;
+    correctResultOdds : ResultOddsDTO;
+    correctScoreOdds : [ScoreOddsDTO];
+    firstGoalScorerOdds : [PlayerOddsDTO];
+    anytimeGoalScorerOdds : [PlayerOddsDTO];
+    score2OrMoreOdds : [PlayerOddsDTO];
+    score3OrMoreOdds : [PlayerOddsDTO];
+    scoreFreekickOdds : [PlayerOddsDTO];
+    missPenaltyOdds : [PlayerOddsDTO];
+    yellowCardOdds : [PlayerOddsDTO];
+    redCardOdds : [PlayerOddsDTO];
+    scorecastOdds : [ScorecastOddsDTO];
   };
 
   public type ResultOddsDTO = {
-    homeOdds: Float;
-    drawOdds: Float;
-    awayOdds: Float;
+    homeOdds : Float;
+    drawOdds : Float;
+    awayOdds : Float;
   };
 
   public type ScoreOddsDTO = {
-    homeScore: Nat8;
-    awayScore: Nat8;
-    odds: Float;
+    homeScore : Nat8;
+    awayScore : Nat8;
+    odds : Float;
   };
 
   public type PlayerOddsDTO = {
-    playerId: T.PlayerId;
-    odds: Float;
+    playerId : T.PlayerId;
+    odds : Float;
   };
 
   public type ScorecastOddsDTO = {
-    playerId: T.PlayerId;
-    homeGoals: Nat8;
-    awayGoals: Nat8;
-    odds: Float;
+    playerId : T.PlayerId;
+    homeGoals : Nat8;
+    awayGoals : Nat8;
+    odds : Float;
   };
 
   public type Euro2024PredictionDTO = {
-    
 
-    groupAPrediction: T.PredictionSet;
-    groupBPrediction: T.PredictionSet;
-    groupCPrediction: T.PredictionSet;
-    groupDPrediction: T.PredictionSet;
-    groupEPrediction: T.PredictionSet;
-    groupFPrediction: T.PredictionSet;
-    r16Prediction: T.PredictionSet;
-    qfPrediction: T.PredictionSet;
-    sfPrediction: T.PredictionSet;
-    fPrediction: T.PredictionSet;
+    groupAPrediction : T.PredictionSet;
+    groupBPrediction : T.PredictionSet;
+    groupCPrediction : T.PredictionSet;
+    groupDPrediction : T.PredictionSet;
+    groupEPrediction : T.PredictionSet;
+    groupFPrediction : T.PredictionSet;
+    r16Prediction : T.PredictionSet;
+    qfPrediction : T.PredictionSet;
+    sfPrediction : T.PredictionSet;
+    fPrediction : T.PredictionSet;
   };
 
   public type Euro2024FixtureDTO = {
@@ -219,7 +218,7 @@ module DTOs {
     awayTeamGoals : Nat8;
     status : Nat8;
   };
-  
+
   public type Euro2024LeaderboardEntryDTO = {
     principalName : Text;
     position : Text;

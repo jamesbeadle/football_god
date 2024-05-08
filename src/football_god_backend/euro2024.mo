@@ -14,8 +14,8 @@ module {
 
   public class Euro2024() {
 
-    private var players: List.List<T.InternationalPlayer> = List.fromArray([]);
-    private var teams: List.List<T.InternationalTeam> = List.fromArray([]);
+    private var players : List.List<T.InternationalPlayer> = List.fromArray([]);
+    private var teams : List.List<T.InternationalTeam> = List.fromArray([]);
 
     private var userPredictions = Map.HashMap<T.PrincipalName, T.Euro2024Prediction>(0, Text.equal, Text.hash);
 
@@ -33,20 +33,23 @@ module {
     };
 
     public func submitPredictions(principalName : Text, predictions : DTOs.Euro2024PredictionDTO) : Result.Result<(), T.Error> {
-      userPredictions.put(principalName, {
-        groupAPrediction = predictions.groupAPrediction;
-        groupBPrediction = predictions.groupBPrediction;
-        groupCPrediction = predictions.groupCPrediction;
-        groupDPrediction = predictions.groupDPrediction;
-        groupEPrediction = predictions.groupEPrediction;
-        groupFPrediction = predictions.groupFPrediction;
-        r16Prediction = predictions.r16Prediction;
-        qfPrediction = predictions.qfPrediction;
-        sfPrediction = predictions.sfPrediction;
-        fPrediction = predictions.fPrediction;
-        totalScore = 0;
-        winnings = 0;
-      });
+      userPredictions.put(
+        principalName,
+        {
+          groupAPrediction = predictions.groupAPrediction;
+          groupBPrediction = predictions.groupBPrediction;
+          groupCPrediction = predictions.groupCPrediction;
+          groupDPrediction = predictions.groupDPrediction;
+          groupEPrediction = predictions.groupEPrediction;
+          groupFPrediction = predictions.groupFPrediction;
+          r16Prediction = predictions.r16Prediction;
+          qfPrediction = predictions.qfPrediction;
+          sfPrediction = predictions.sfPrediction;
+          fPrediction = predictions.fPrediction;
+          totalScore = 0;
+          winnings = 0;
+        },
+      );
 
       return #ok(());
     };
@@ -90,7 +93,7 @@ module {
         Array.map<(T.PrincipalName, T.Euro2024Prediction), DTOs.Euro2024LeaderboardEntryDTO>(
           Iter.toArray(userPredictions.entries()),
           func((principal, userPrediction) : (T.PrincipalName, T.Euro2024Prediction)) : DTOs.Euro2024LeaderboardEntryDTO {
-            let dto: DTOs.Euro2024LeaderboardEntryDTO = {
+            let dto : DTOs.Euro2024LeaderboardEntryDTO = {
               position = "";
               principalName = principal;
               displayName = principal;
@@ -98,7 +101,7 @@ module {
             };
             return dto;
           },
-        )
+        ),
       );
       let sortedLeaderboardEntries = mergeSort(leaderboardEntries);
       let positionedLeaderboardEntries = generatePositionText(sortedLeaderboardEntries);
@@ -132,9 +135,8 @@ module {
       };
     };
 
-    
     public func checkValidPredictions(predictions : DTOs.Euro2024PredictionDTO) : Bool {
-      
+
       let allTeamIds = Buffer.fromArray<T.TeamId>([]);
       allTeamIds.add(predictions.groupAPrediction.winner);
       allTeamIds.add(predictions.groupAPrediction.loser);
@@ -156,9 +158,9 @@ module {
       allTeamIds.add(predictions.sfPrediction.loser);
       allTeamIds.add(predictions.fPrediction.winner);
       allTeamIds.add(predictions.fPrediction.loser);
-      
+
       let allPlayerIds = Buffer.fromArray<T.PlayerId>([]);
-      
+
       allPlayerIds.add(predictions.groupAPrediction.goalScorer);
       allPlayerIds.add(predictions.groupAPrediction.goalAssister);
       allPlayerIds.add(predictions.groupAPrediction.yellowCard);
@@ -204,8 +206,8 @@ module {
       allPlayerIds.add(predictions.fPrediction.yellowCard);
       allPlayerIds.add(predictions.fPrediction.redCard);
 
-      for(playerId in Iter.fromArray(Buffer.toArray(allPlayerIds))){
-        
+      for (playerId in Iter.fromArray(Buffer.toArray(allPlayerIds))) {
+
         let existingPlayer = List.find<T.InternationalPlayer>(
           players,
           func(p : T.InternationalPlayer) : Bool {
@@ -213,18 +215,16 @@ module {
           },
         );
 
-        switch(existingPlayer){
-          case (null){
+        switch (existingPlayer) {
+          case (null) {
             return false;
           };
           case _ {};
         };
       };
 
+      for (teamId in Iter.fromArray(Buffer.toArray(allTeamIds))) {
 
-
-      for(teamId in Iter.fromArray(Buffer.toArray(allTeamIds))){
-        
         let existingTeam = List.find<T.InternationalTeam>(
           teams,
           func(t : T.InternationalTeam) : Bool {
@@ -232,14 +232,14 @@ module {
           },
         );
 
-        switch(existingTeam){
-          case (null){
+        switch (existingTeam) {
+          case (null) {
             return false;
           };
           case _ {};
         };
       };
-      
+
       return true;
     };
 
