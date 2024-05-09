@@ -139,6 +139,25 @@
   const handlePredictionSubmit = () => {
     // TODO: Submit the prediction to the backend
   };
+
+  function selectWinner(stage: number){
+
+  };
+  function selectLoser(stage: number){
+
+  };
+  function selectScorer(stage: number){
+
+  };
+  function selectAssister(stage: number){
+
+  };
+  function selectYellowCard(stage: number){
+
+  };
+  function selectRedCard(stage: number){
+
+  };
 </script>
 
 <Layout>
@@ -148,7 +167,9 @@
     
       <div class="flex flex-col bg-gray-700 rounded-lg overflow-hidden">
           <div class="p-4 flex flex-col justify-between h-full">
-            <p class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm font-bold rounded-md text-white">
+            
+            <p class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm font-bold rounded-md text-white items-center">
+              <img src="FPLCoin.png" alt="fpl" class="w-8 h-8 mr-2 mb-1" />
               Prize Pool: 0.00 $FPL
             </p>
           </div>
@@ -174,894 +195,575 @@
       </div>
     </div>
 
-    <p class="my-4">Make your selections below and enter the sweepstake to be in with a chance of winning $FPL:</p>
+    <p class="my-4">Make your selections below and enter the sweepstake to be in with a chance of winning $FPL:</p>   
     
-
     <div class="flex flex-row items-center bg-gray-800 p-4">
-      <div class="w-1/12 text-2xl">Group A</div>
+    
+      <div class="w-1/12 text-lg"></div>
       <div class="w-11/12 flex flex-row space-x-4">
         <div class="w-1/6">
-          <select id="GAWinner" class="flex-1 block w-full rounded-sm sm:text-sm bg-gray-400 p-2">
-            <option value="">Select a Team</option>
-            {#each teams as team}
-              <option value={team}>{team}</option>
-            {/each}
-          </select>
+          Winner
+        </div>
+        <div class="w-1/6">
+          Loser
+        </div>
+        <div class="w-1/6">
+          To Score
+        </div>
+        <div class="w-1/6">
+          To Assist
+        </div>
+        <div class="w-1/6">
+          Yellow Card
+        </div>
+        <div class="w-1/6">
+          Red Card
+        </div>
+      </div>
+    </div>
+
+    <div class="flex flex-row items-center bg-gray-800 p-4">
+      <div class="w-1/12 text-lg">Group A</div>
+      <div class="w-11/12 flex flex-row space-x-4">
+        <div class="w-1/6">
+          <button on:click={() => selectWinner(0)} class="flex-1 block w-full rounded-sm sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2">Select a Team</button>
           <div class="text-right">
             <p class="text-xs mt-1">5 Points</p>
           </div>
         </div>
         <div class="w-1/6">
-          <select id="GAWinner" class="flex-1 block w-full rounded-sm sm:text-sm bg-gray-400 p-2">
-            <option value="">Select a Team</option>
-            {#each teams as team}
-              <option value={team}>{team}</option>
-            {/each}
-          </select>
+          <button on:click={() => selectLoser(0)} class="flex-1 block w-full rounded-sm sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2">Select a Team</button>
           <div class="text-right">
             <p class="text-xs mt-1">5 Points</p>
           </div>
         </div>
-        <div class="w-1/6">1</div>
-        <div class="w-1/6">1</div>
-        <div class="w-1/6">1</div>
-        <div class="w-1/6">1</div>
-      </div>
-      
-    </div>
-
-
-    <div class="flex flex-row">
-      <div class="w-1/12">
-        <div class="flex-col my-4">
-          <p class="mt-4">&nbsp;</p>
-          <p class="mt-5">Group A</p>
-          <p class="mt-14">Group B</p>
-          <p class="mt-14">Group C</p>
-          <p class="mt-6">Group D</p>
-          <p class="mt-6">Group E</p>
-          <p class="mt-6">Group F</p>
-          <p class="mt-6">Bonuses</p>
-          <p class="mt-6">Round of 16</p>
-          <p class="mt-6">Quarter Final</p>
-          <p class="mt-6">Semi Final</p>
-          <p class="mt-6">Final</p>
-        </div>
-      </div>
-      <div class="w-11/12">
-        <div class="flex flex-row flex-wrap my-4">
-          <div class="w-1/6">Winner</div>
-          <div class="w-1/6">Loser</div>
-          <div class="w-1/6">Goal Scored</div>
-          <div class="w-1/6">Goal Assisted</div>
-          <div class="w-1/6">Yellow Card</div>
-          <div class="w-1/6">Red Card</div>
-        </div>
-
-        <div class="flex flex-row my-4 space-x-2">
-          <div class="w-1/6">
-            <select
-              id="GAWinner"
-              class="flex-1 block w-full rounded-none rounded-r-md sm:text-sm bg-gray-800 p-2"
-            >
-              <option value="">Select a Team</option>
-              {#each teams as team}
-                <option value={team}>{team}</option>
-              {/each}
-            </select>
-            <div class="text-right">
-              <p class="text-xs p-1">5 Points</p>
-            </div>
-          </div>
-          <div class="w-1/6">
-            <select
-              id="GAWinner"
-              class="flex-1 block w-full rounded-none rounded-r-md sm:text-sm bg-gray-800 p-2"
-            >
-              <option value="">Select a Team</option>
-              {#each teams as team}
-                <option value={team}>{team}</option>
-              {/each}
-            </select>
-            <div class="text-right">
-              <p class="text-xs p-1">5 Points</p>
-            </div>
-          </div>
-          <div class="w-1/6">
-            <select
-              id="GAWinner"
-              class="flex-1 block w-full rounded-none rounded-r-md sm:text-sm bg-gray-800 p-2"
-            >
-              <option value="">Select a Player</option>
-              {#each players as player}
-                <option value={player}
-                  >{player.firstName} {player.lastName}</option
-                >
-              {/each}
-            </select>
-            <div class="text-right">
-              <p class="text-xs p-1">10 Points</p>
-            </div>
-          </div>
-          <div class="w-1/6">
-            <select
-              id="GAWinner"
-              class="flex-1 block w-full rounded-none rounded-r-md sm:text-sm bg-gray-800 p-2"
-            >
-              <option value="">Select a Player</option>
-              {#each players as player}
-                <option value={player}
-                  >{player.firstName} {player.lastName}</option
-                >
-              {/each}
-            </select>
-            <div class="text-right">
-              <p class="text-xs p-1">10 Points</p>
-            </div>
-          </div>
-          <div class="w-1/6">
-            <select
-              id="GAWinner"
-              class="flex-1 block w-full rounded-none rounded-r-md sm:text-sm bg-gray-800 p-2"
-            >
-              <option value="">Select a Player</option>
-              {#each players as player}
-                <option value={player}
-                  >{player.firstName} {player.lastName}</option
-                >
-              {/each}
-            </select>
-            <div class="text-right">
-              <p class="text-xs p-1">5 Points</p>
-            </div>
-          </div>
-          <div class="w-1/6">
-            <select
-              id="GAWinner"
-              class="flex-1 block w-full rounded-none rounded-r-md sm:text-sm bg-gray-800 p-2"
-            >
-              <option value="">Select a Player</option>
-              {#each players as player}
-                <option value={player}
-                  >{player.firstName} {player.lastName}</option
-                >
-              {/each}
-            </select>
-            <div class="text-right">
-              <p class="text-xs p-1">10 Points</p>
-            </div>
+        <div class="w-1/6">
+          <button on:click={() => selectScorer(0)} class="flex-1 block w-full rounded-sm sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2">Select a Player</button>
+          <div class="text-right">
+            <p class="text-xs mt-1">10 Points</p>
           </div>
         </div>
-
-        <div class="flex flex-row space-x-2 my-4">
-          <div class="w-1/6">
-            <select
-              id="GAWinner"
-              class="flex-1 block w-full rounded-none rounded-r-md sm:text-sm bg-gray-800 p-2"
-            >
-              <option value="">Select a Team</option>
-              {#each teams as team}
-                <option value={team}>{team}</option>
-              {/each}
-            </select>
-            <div class="text-right">
-              <p class="text-xs p-1">5 Points</p>
-            </div>
-          </div>
-          <div class="w-1/6">
-            <select
-              id="GAWinner"
-              class="flex-1 block w-full rounded-none rounded-r-md sm:text-sm bg-gray-800 p-2"
-            >
-              <option value="">Select a Team</option>
-              {#each teams as team}
-                <option value={team}>{team}</option>
-              {/each}
-            </select>
-          </div>
-          <div class="w-1/6">
-            <select
-              id="GAWinner"
-              class="flex-1 block w-full rounded-none rounded-r-md sm:text-sm bg-gray-800 p-2"
-            >
-              <option value="">Select a Player</option>
-              {#each players as player}
-                <option value={player}
-                  >{player.firstName} {player.lastName}</option
-                >
-              {/each}
-            </select>
-          </div>
-          <div class="w-1/6">
-            <select
-              id="GAWinner"
-              class="flex-1 block w-full rounded-none rounded-r-md sm:text-sm bg-gray-800 p-2"
-            >
-              <option value="">Select a Player</option>
-              {#each players as player}
-                <option value={player}
-                  >{player.firstName} {player.lastName}</option
-                >
-              {/each}
-            </select>
-          </div>
-          <div class="w-1/6">
-            <select
-              id="GAWinner"
-              class="flex-1 block w-full rounded-none rounded-r-md sm:text-sm bg-gray-800 p-2"
-            >
-              <option value="">Select a Player</option>
-              {#each players as player}
-                <option value={player}
-                  >{player.firstName} {player.lastName}</option
-                >
-              {/each}
-            </select>
-          </div>
-          <div class="w-1/6">
-            <select
-              id="GAWinner"
-              class="flex-1 block w-full rounded-none rounded-r-md sm:text-sm bg-gray-800 p-2"
-            >
-              <option value="">Select a Player</option>
-              {#each players as player}
-                <option value={player}
-                  >{player.firstName} {player.lastName}</option
-                >
-              {/each}
-            </select>
+        <div class="w-1/6">
+          <button on:click={() => selectAssister(0)} class="flex-1 block w-full rounded-sm sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2">Select a Player</button>
+          <div class="text-right">
+            <p class="text-xs mt-1">10 Points</p>
           </div>
         </div>
-
-        <div class="flex flex-row space-x-2 my-4">
-          <div class="w-1/6">
-            <select
-              id="GAWinner"
-              class="flex-1 block w-full rounded-none rounded-r-md sm:text-sm bg-gray-800 p-2"
-            >
-              <option value="">Select a Team</option>
-              {#each teams as team}
-                <option value={team}>{team}</option>
-              {/each}
-            </select>
-          </div>
-          <div class="w-1/6">
-            <select
-              id="GAWinner"
-              class="flex-1 block w-full rounded-none rounded-r-md sm:text-sm bg-gray-800 p-2"
-            >
-              <option value="">Select a Team</option>
-              {#each teams as team}
-                <option value={team}>{team}</option>
-              {/each}
-            </select>
-          </div>
-          <div class="w-1/6">
-            <select
-              id="GAWinner"
-              class="flex-1 block w-full rounded-none rounded-r-md sm:text-sm bg-gray-800 p-2"
-            >
-              <option value="">Select a Player</option>
-              {#each players as player}
-                <option value={player}
-                  >{player.firstName} {player.lastName}</option
-                >
-              {/each}
-            </select>
-          </div>
-          <div class="w-1/6">
-            <select
-              id="GAWinner"
-              class="flex-1 block w-full rounded-none rounded-r-md sm:text-sm bg-gray-800 p-2"
-            >
-              <option value="">Select a Player</option>
-              {#each players as player}
-                <option value={player}
-                  >{player.firstName} {player.lastName}</option
-                >
-              {/each}
-            </select>
-          </div>
-          <div class="w-1/6">
-            <select
-              id="GAWinner"
-              class="flex-1 block w-full rounded-none rounded-r-md sm:text-sm bg-gray-800 p-2"
-            >
-              <option value="">Select a Player</option>
-              {#each players as player}
-                <option value={player}
-                  >{player.firstName} {player.lastName}</option
-                >
-              {/each}
-            </select>
-          </div>
-          <div class="w-1/6">
-            <select
-              id="GAWinner"
-              class="flex-1 block w-full rounded-none rounded-r-md sm:text-sm bg-gray-800 p-2"
-            >
-              <option value="">Select a Player</option>
-              {#each players as player}
-                <option value={player}
-                  >{player.firstName} {player.lastName}</option
-                >
-              {/each}
-            </select>
+        <div class="w-1/6">
+          <button on:click={() => selectYellowCard(0)} class="flex-1 block w-full rounded-sm sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2">Select a Player</button>
+          <div class="text-right">
+            <p class="text-xs mt-1">5 Points</p>
           </div>
         </div>
-
-        <div class="flex flex-row space-x-2 my-4">
-          <div class="w-1/6">
-            <select
-              id="GAWinner"
-              class="flex-1 block w-full rounded-none rounded-r-md sm:text-sm bg-gray-800 p-2"
-            >
-              <option value="">Select a Team</option>
-              {#each teams as team}
-                <option value={team}>{team}</option>
-              {/each}
-            </select>
+        <div class="w-1/6">
+          <button on:click={() => selectRedCard(0)} class="flex-1 block w-full rounded-sm sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2">Select a Player</button>
+          <div class="text-right">
+            <p class="text-xs mt-1">10 Points</p>
           </div>
-          <div class="w-1/6">
-            <select
-              id="GAWinner"
-              class="flex-1 block w-full rounded-none rounded-r-md sm:text-sm bg-gray-800 p-2"
-            >
-              <option value="">Select a Team</option>
-              {#each teams as team}
-                <option value={team}>{team}</option>
-              {/each}
-            </select>
-          </div>
-          <div class="w-1/6">
-            <select
-              id="GAWinner"
-              class="flex-1 block w-full rounded-none rounded-r-md sm:text-sm bg-gray-800 p-2"
-            >
-              <option value="">Select a Player</option>
-              {#each players as player}
-                <option value={player}
-                  >{player.firstName} {player.lastName}</option
-                >
-              {/each}
-            </select>
-          </div>
-          <div class="w-1/6">
-            <select
-              id="GAWinner"
-              class="flex-1 block w-full rounded-none rounded-r-md sm:text-sm bg-gray-800 p-2"
-            >
-              <option value="">Select a Player</option>
-              {#each players as player}
-                <option value={player}
-                  >{player.firstName} {player.lastName}</option
-                >
-              {/each}
-            </select>
-          </div>
-          <div class="w-1/6">
-            <select
-              id="GAWinner"
-              class="flex-1 block w-full rounded-none rounded-r-md sm:text-sm bg-gray-800 p-2"
-            >
-              <option value="">Select a Player</option>
-              {#each players as player}
-                <option value={player}
-                  >{player.firstName} {player.lastName}</option
-                >
-              {/each}
-            </select>
-          </div>
-          <div class="w-1/6">
-            <select
-              id="GAWinner"
-              class="flex-1 block w-full rounded-none rounded-r-md sm:text-sm bg-gray-800 p-2"
-            >
-              <option value="">Select a Player</option>
-              {#each players as player}
-                <option value={player}
-                  >{player.firstName} {player.lastName}</option
-                >
-              {/each}
-            </select>
-          </div>
-        </div>
-
-        <div class="flex flex-row space-x-2 my-4">
-          <div class="w-1/6">
-            <select
-              id="GAWinner"
-              class="flex-1 block w-full rounded-none rounded-r-md sm:text-sm bg-gray-800 p-2"
-            >
-              <option value="">Select a Team</option>
-              {#each teams as team}
-                <option value={team}>{team}</option>
-              {/each}
-            </select>
-          </div>
-          <div class="w-1/6">
-            <select
-              id="GAWinner"
-              class="flex-1 block w-full rounded-none rounded-r-md sm:text-sm bg-gray-800 p-2"
-            >
-              <option value="">Select a Team</option>
-              {#each teams as team}
-                <option value={team}>{team}</option>
-              {/each}
-            </select>
-          </div>
-          <div class="w-1/6">
-            <select
-              id="GAWinner"
-              class="flex-1 block w-full rounded-none rounded-r-md sm:text-sm bg-gray-800 p-2"
-            >
-              <option value="">Select a Player</option>
-              {#each players as player}
-                <option value={player}
-                  >{player.firstName} {player.lastName}</option
-                >
-              {/each}
-            </select>
-          </div>
-          <div class="w-1/6">
-            <select
-              id="GAWinner"
-              class="flex-1 block w-full rounded-none rounded-r-md sm:text-sm bg-gray-800 p-2"
-            >
-              <option value="">Select a Player</option>
-              {#each players as player}
-                <option value={player}
-                  >{player.firstName} {player.lastName}</option
-                >
-              {/each}
-            </select>
-          </div>
-          <div class="w-1/6">
-            <select
-              id="GAWinner"
-              class="flex-1 block w-full rounded-none rounded-r-md sm:text-sm bg-gray-800 p-2"
-            >
-              <option value="">Select a Player</option>
-              {#each players as player}
-                <option value={player}
-                  >{player.firstName} {player.lastName}</option
-                >
-              {/each}
-            </select>
-          </div>
-          <div class="w-1/6">
-            <select
-              id="GAWinner"
-              class="flex-1 block w-full rounded-none rounded-r-md sm:text-sm bg-gray-800 p-2"
-            >
-              <option value="">Select a Player</option>
-              {#each players as player}
-                <option value={player}
-                  >{player.firstName} {player.lastName}</option
-                >
-              {/each}
-            </select>
-          </div>
-        </div>
-
-        <div class="flex flex-row space-x-2 my-4">
-          <div class="w-1/6">
-            <select
-              id="GAWinner"
-              class="flex-1 block w-full rounded-none rounded-r-md sm:text-sm bg-gray-800 p-2"
-            >
-              <option value="">Select a Team</option>
-              {#each teams as team}
-                <option value={team}>{team}</option>
-              {/each}
-            </select>
-          </div>
-          <div class="w-1/6">
-            <select
-              id="GAWinner"
-              class="flex-1 block w-full rounded-none rounded-r-md sm:text-sm bg-gray-800 p-2"
-            >
-              <option value="">Select a Team</option>
-              {#each teams as team}
-                <option value={team}>{team}</option>
-              {/each}
-            </select>
-          </div>
-          <div class="w-1/6">
-            <select
-              id="GAWinner"
-              class="flex-1 block w-full rounded-none rounded-r-md sm:text-sm bg-gray-800 p-2"
-            >
-              <option value="">Select a Player</option>
-              {#each players as player}
-                <option value={player}
-                  >{player.firstName} {player.lastName}</option
-                >
-              {/each}
-            </select>
-          </div>
-          <div class="w-1/6">
-            <select
-              id="GAWinner"
-              class="flex-1 block w-full rounded-none rounded-r-md sm:text-sm bg-gray-800 p-2"
-            >
-              <option value="">Select a Player</option>
-              {#each players as player}
-                <option value={player}
-                  >{player.firstName} {player.lastName}</option
-                >
-              {/each}
-            </select>
-          </div>
-          <div class="w-1/6">
-            <select
-              id="GAWinner"
-              class="flex-1 block w-full rounded-none rounded-r-md sm:text-sm bg-gray-800 p-2"
-            >
-              <option value="">Select a Player</option>
-              {#each players as player}
-                <option value={player}
-                  >{player.firstName} {player.lastName}</option
-                >
-              {/each}
-            </select>
-          </div>
-          <div class="w-1/6">
-            <select
-              id="GAWinner"
-              class="flex-1 block w-full rounded-none rounded-r-md sm:text-sm bg-gray-800 p-2"
-            >
-              <option value="">Select a Player</option>
-              {#each players as player}
-                <option value={player}
-                  >{player.firstName} {player.lastName}</option
-                >
-              {/each}
-            </select>
-          </div>
-        </div>
-
-        <div class="flex flex-row my-4 space-x-2">
-          <div class="w-full">
-            <p class="flex-1 block w-full rounded-none rounded-r-md sm:text-sm bg-gray-800 p-2 text-center">
-              Receive double points for each category you make 3 or more correct selections.
-            </p>
-          </div>
-        </div>
-
-        <div class="flex flex-row space-x-2 my-4">
-          <div class="w-1/6">
-            <select
-              id="GAWinner"
-              class="flex-1 block w-full rounded-none rounded-r-md sm:text-sm bg-gray-800 p-2"
-            >
-              <option value="">Select a Team</option>
-              {#each teams as team}
-                <option value={team}>{team}</option>
-              {/each}
-            </select>
-          </div>
-          <div class="w-1/6">
-            <select
-              id="GAWinner"
-              class="flex-1 block w-full rounded-none rounded-r-md sm:text-sm bg-gray-800 p-2"
-            >
-              <option value="">Select a Team</option>
-              {#each teams as team}
-                <option value={team}>{team}</option>
-              {/each}
-            </select>
-          </div>
-          <div class="w-1/6">
-            <select
-              id="GAWinner"
-              class="flex-1 block w-full rounded-none rounded-r-md sm:text-sm bg-gray-800 p-2"
-            >
-              <option value="">Select a Player</option>
-              {#each players as player}
-                <option value={player}
-                  >{player.firstName} {player.lastName}</option
-                >
-              {/each}
-            </select>
-          </div>
-          <div class="w-1/6">
-            <select
-              id="GAWinner"
-              class="flex-1 block w-full rounded-none rounded-r-md sm:text-sm bg-gray-800 p-2"
-            >
-              <option value="">Select a Player</option>
-              {#each players as player}
-                <option value={player}
-                  >{player.firstName} {player.lastName}</option
-                >
-              {/each}
-            </select>
-          </div>
-          <div class="w-1/6">
-            <select
-              id="GAWinner"
-              class="flex-1 block w-full rounded-none rounded-r-md sm:text-sm bg-gray-800 p-2"
-            >
-              <option value="">Select a Player</option>
-              {#each players as player}
-                <option value={player}
-                  >{player.firstName} {player.lastName}</option
-                >
-              {/each}
-            </select>
-          </div>
-          <div class="w-1/6">
-            <select
-              id="GAWinner"
-              class="flex-1 block w-full rounded-none rounded-r-md sm:text-sm bg-gray-800 p-2"
-            >
-              <option value="">Select a Player</option>
-              {#each players as player}
-                <option value={player}
-                  >{player.firstName} {player.lastName}</option
-                >
-              {/each}
-            </select>
-          </div>
-        </div>
-
-        <div class="flex flex-row my-4 space-x-2">
-          <div class="w-2/6">
-            <p class="flex-1 block w-full rounded-none rounded-r-md sm:text-sm bg-gray-800 p-2 text-center">
-              Receive double points for each category you make 3 or more correct selections.
-            </p>
-          </div>
-        </div>
-
-        <div class="flex flex-row space-x-2 my-4">
-          <div class="w-1/6">
-            <select
-              id="GAWinner"
-              class="flex-1 block w-full rounded-none rounded-r-md sm:text-sm bg-gray-800 p-2"
-            >
-              <option value="">Select a Team</option>
-              {#each teams as team}
-                <option value={team}>{team}</option>
-              {/each}
-            </select>
-          </div>
-          <div class="w-1/6">
-            <select
-              id="GAWinner"
-              class="flex-1 block w-full rounded-none rounded-r-md sm:text-sm bg-gray-800 p-2"
-            >
-              <option value="">Select a Team</option>
-              {#each teams as team}
-                <option value={team}>{team}</option>
-              {/each}
-            </select>
-          </div>
-          <div class="w-1/6">
-            <select
-              id="GAWinner"
-              class="flex-1 block w-full rounded-none rounded-r-md sm:text-sm bg-gray-800 p-2"
-            >
-              <option value="">Select a Player</option>
-              {#each players as player}
-                <option value={player}
-                  >{player.firstName} {player.lastName}</option
-                >
-              {/each}
-            </select>
-          </div>
-          <div class="w-1/6">
-            <select
-              id="GAWinner"
-              class="flex-1 block w-full rounded-none rounded-r-md sm:text-sm bg-gray-800 p-2"
-            >
-              <option value="">Select a Player</option>
-              {#each players as player}
-                <option value={player}
-                  >{player.firstName} {player.lastName}</option
-                >
-              {/each}
-            </select>
-          </div>
-          <div class="w-1/6">
-            <select
-              id="GAWinner"
-              class="flex-1 block w-full rounded-none rounded-r-md sm:text-sm bg-gray-800 p-2"
-            >
-              <option value="">Select a Player</option>
-              {#each players as player}
-                <option value={player}
-                  >{player.firstName} {player.lastName}</option
-                >
-              {/each}
-            </select>
-          </div>
-          <div class="w-1/6">
-            <select
-              id="GAWinner"
-              class="flex-1 block w-full rounded-none rounded-r-md sm:text-sm bg-gray-800 p-2"
-            >
-              <option value="">Select a Player</option>
-              {#each players as player}
-                <option value={player}
-                  >{player.firstName} {player.lastName}</option
-                >
-              {/each}
-            </select>
-          </div>
-        </div>
-
-        <div class="flex flex-row space-x-2 my-4">
-          <div class="w-1/6">
-            <select
-              id="GAWinner"
-              class="flex-1 block w-full rounded-none rounded-r-md sm:text-sm bg-gray-800 p-2"
-            >
-              <option value="">Select a Team</option>
-              {#each teams as team}
-                <option value={team}>{team}</option>
-              {/each}
-            </select>
-          </div>
-          <div class="w-1/6">
-            <select
-              id="GAWinner"
-              class="flex-1 block w-full rounded-none rounded-r-md sm:text-sm bg-gray-800 p-2"
-            >
-              <option value="">Select a Team</option>
-              {#each teams as team}
-                <option value={team}>{team}</option>
-              {/each}
-            </select>
-          </div>
-          <div class="w-1/6">
-            <select
-              id="GAWinner"
-              class="flex-1 block w-full rounded-none rounded-r-md sm:text-sm bg-gray-800 p-2"
-            >
-              <option value="">Select a Player</option>
-              {#each players as player}
-                <option value={player}
-                  >{player.firstName} {player.lastName}</option
-                >
-              {/each}
-            </select>
-          </div>
-          <div class="w-1/6">
-            <select
-              id="GAWinner"
-              class="flex-1 block w-full rounded-none rounded-r-md sm:text-sm bg-gray-800 p-2"
-            >
-              <option value="">Select a Player</option>
-              {#each players as player}
-                <option value={player}
-                  >{player.firstName} {player.lastName}</option
-                >
-              {/each}
-            </select>
-          </div>
-          <div class="w-1/6">
-            <select
-              id="GAWinner"
-              class="flex-1 block w-full rounded-none rounded-r-md sm:text-sm bg-gray-800 p-2"
-            >
-              <option value="">Select a Player</option>
-              {#each players as player}
-                <option value={player}
-                  >{player.firstName} {player.lastName}</option
-                >
-              {/each}
-            </select>
-          </div>
-          <div class="w-1/6">
-            <select
-              id="GAWinner"
-              class="flex-1 block w-full rounded-none rounded-r-md sm:text-sm bg-gray-800 p-2"
-            >
-              <option value="">Select a Player</option>
-              {#each players as player}
-                <option value={player}
-                  >{player.firstName} {player.lastName}</option
-                >
-              {/each}
-            </select>
-          </div>
-        </div>
-
-        <div class="flex flex-row space-x-2 my-4">
-          <div class="w-1/6">
-            <select
-              id="GAWinner"
-              class="flex-1 block w-full rounded-none rounded-r-md sm:text-sm bg-gray-800 p-2"
-            >
-              <option value="">Select a Team</option>
-              {#each teams as team}
-                <option value={team}>{team}</option>
-              {/each}
-            </select>
-          </div>
-          <div class="w-1/6">
-            <select
-              id="GAWinner"
-              class="flex-1 block w-full rounded-none rounded-r-md sm:text-sm bg-gray-800 p-2"
-            >
-              <option value="">Select a Team</option>
-              {#each teams as team}
-                <option value={team}>{team}</option>
-              {/each}
-            </select>
-          </div>
-          <div class="w-1/6">
-            <select
-              id="GAWinner"
-              class="flex-1 block w-full rounded-none rounded-r-md sm:text-sm bg-gray-800 p-2"
-            >
-              <option value="">Select a Player</option>
-              {#each players as player}
-                <option value={player}
-                  >{player.firstName} {player.lastName}</option
-                >
-              {/each}
-            </select>
-          </div>
-          <div class="w-1/6">
-            <select
-              id="GAWinner"
-              class="flex-1 block w-full rounded-none rounded-r-md sm:text-sm bg-gray-800 p-2"
-            >
-              <option value="">Select a Player</option>
-              {#each players as player}
-                <option value={player}
-                  >{player.firstName} {player.lastName}</option
-                >
-              {/each}
-            </select>
-          </div>
-          <div class="w-1/6">
-            <select
-              id="GAWinner"
-              class="flex-1 block w-full rounded-none rounded-r-md sm:text-sm bg-gray-800 p-2"
-            >
-              <option value="">Select a Player</option>
-              {#each players as player}
-                <option value={player}
-                  >{player.firstName} {player.lastName}</option
-                >
-              {/each}
-            </select>
-          </div>
-          <div class="w-1/6">
-            <select
-              id="GAWinner"
-              class="flex-1 block w-full rounded-none rounded-r-md sm:text-sm bg-gray-800 p-2"
-            >
-              <option value="">Select a Player</option>
-              {#each players as player}
-                <option value={player}
-                  >{player.firstName} {player.lastName}</option
-                >
-              {/each}
-            </select>
-          </div>
-        </div>
-
-        <div class="py-3 text-right">
-          <button
-            type="submit"
-            class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-          >
-            Submit Predictions
-          </button>
-
-          <button
-            type="submit"
-            class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 opacity-50 cursor-not-allowed"
-          >
-            Submit & Enter Sweepstake (100 $FPL)
-          </button>
-          <p class="text-sm my-4">95% of your entry is used for the prize pool, 5% is burned.</p>
         </div>
       </div>
     </div>
+
+    <div class="flex flex-row items-center bg-gray-800 p-4">
+      <div class="w-1/12 text-lg">Group B</div>
+      <div class="w-11/12 flex flex-row space-x-4">
+        <div class="w-1/6">
+          <button on:click={() => selectWinner(1)} class="flex-1 block w-full rounded-sm sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2">Select a Team</button>
+          <div class="text-right">
+            <p class="text-xs mt-1">5 Points</p>
+          </div>
+        </div>
+        <div class="w-1/6">
+          <button on:click={() => selectLoser(1)} class="flex-1 block w-full rounded-sm sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2">Select a Team</button>
+          <div class="text-right">
+            <p class="text-xs mt-1">5 Points</p>
+          </div>
+        </div>
+        <div class="w-1/6">
+          <button on:click={() => selectScorer(1)} class="flex-1 block w-full rounded-sm sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2">Select a Player</button>
+          <div class="text-right">
+            <p class="text-xs mt-1">10 Points</p>
+          </div>
+        </div>
+        <div class="w-1/6">
+          <button on:click={() => selectAssister(1)} class="flex-1 block w-full rounded-sm sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2">Select a Player</button>
+          <div class="text-right">
+            <p class="text-xs mt-1">10 Points</p>
+          </div>
+        </div>
+        <div class="w-1/6">
+          <button on:click={() => selectYellowCard(1)} class="flex-1 block w-full rounded-sm sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2">Select a Player</button>
+          <div class="text-right">
+            <p class="text-xs mt-1">5 Points</p>
+          </div>
+        </div>
+        <div class="w-1/6">
+          <button on:click={() => selectRedCard(1)} class="flex-1 block w-full rounded-sm sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2">Select a Player</button>
+          <div class="text-right">
+            <p class="text-xs mt-1">10 Points</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="flex flex-row items-center bg-gray-800 p-4">
+      <div class="w-1/12 text-lg">Group C</div>
+      <div class="w-11/12 flex flex-row space-x-4">
+        <div class="w-1/6">
+          <button on:click={() => selectWinner(2)} class="flex-1 block w-full rounded-sm sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2">Select a Team</button>
+          <div class="text-right">
+            <p class="text-xs mt-1">5 Points</p>
+          </div>
+        </div>
+        <div class="w-1/6">
+          <button on:click={() => selectLoser(2)} class="flex-1 block w-full rounded-sm sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2">Select a Team</button>
+          <div class="text-right">
+            <p class="text-xs mt-1">5 Points</p>
+          </div>
+        </div>
+        <div class="w-1/6">
+          <button on:click={() => selectScorer(2)} class="flex-1 block w-full rounded-sm sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2">Select a Player</button>
+          <div class="text-right">
+            <p class="text-xs mt-1">10 Points</p>
+          </div>
+        </div>
+        <div class="w-1/6">
+          <button on:click={() => selectAssister(2)} class="flex-1 block w-full rounded-sm sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2">Select a Player</button>
+          <div class="text-right">
+            <p class="text-xs mt-1">10 Points</p>
+          </div>
+        </div>
+        <div class="w-1/6">
+          <button on:click={() => selectYellowCard(2)} class="flex-1 block w-full rounded-sm sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2">Select a Player</button>
+          <div class="text-right">
+            <p class="text-xs mt-1">5 Points</p>
+          </div>
+        </div>
+        <div class="w-1/6">
+          <button on:click={() => selectRedCard(2)} class="flex-1 block w-full rounded-sm sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2">Select a Player</button>
+          <div class="text-right">
+            <p class="text-xs mt-1">10 Points</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="flex flex-row items-center bg-gray-800 p-4">
+      <div class="w-1/12 text-lg">Group D</div>
+      <div class="w-11/12 flex flex-row space-x-4">
+        <div class="w-1/6">
+          <button on:click={() => selectWinner(3)} class="flex-1 block w-full rounded-sm sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2">Select a Team</button>
+          <div class="text-right">
+            <p class="text-xs mt-1">5 Points</p>
+          </div>
+        </div>
+        <div class="w-1/6">
+          <button on:click={() => selectLoser(3)} class="flex-1 block w-full rounded-sm sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2">Select a Team</button>
+          <div class="text-right">
+            <p class="text-xs mt-1">5 Points</p>
+          </div>
+        </div>
+        <div class="w-1/6">
+          <button on:click={() => selectScorer(3)} class="flex-1 block w-full rounded-sm sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2">Select a Player</button>
+          <div class="text-right">
+            <p class="text-xs mt-1">10 Points</p>
+          </div>
+        </div>
+        <div class="w-1/6">
+          <button on:click={() => selectAssister(3)} class="flex-1 block w-full rounded-sm sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2">Select a Player</button>
+          <div class="text-right">
+            <p class="text-xs mt-1">10 Points</p>
+          </div>
+        </div>
+        <div class="w-1/6">
+          <button on:click={() => selectYellowCard(3)} class="flex-1 block w-full rounded-sm sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2">Select a Player</button>
+          <div class="text-right">
+            <p class="text-xs mt-1">5 Points</p>
+          </div>
+        </div>
+        <div class="w-1/6">
+          <button on:click={() => selectRedCard(3)} class="flex-1 block w-full rounded-sm sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2">Select a Player</button>
+          <div class="text-right">
+            <p class="text-xs mt-1">10 Points</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="flex flex-row items-center bg-gray-800 p-4">
+      <div class="w-1/12 text-lg">Group E</div>
+      <div class="w-11/12 flex flex-row space-x-4">
+        <div class="w-1/6">
+          <button on:click={() => selectWinner(4)} class="flex-1 block w-full rounded-sm sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2">Select a Team</button>
+          <div class="text-right">
+            <p class="text-xs mt-1">5 Points</p>
+          </div>
+        </div>
+        <div class="w-1/6">
+          <button on:click={() => selectLoser(4)} class="flex-1 block w-full rounded-sm sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2">Select a Team</button>
+          <div class="text-right">
+            <p class="text-xs mt-1">5 Points</p>
+          </div>
+        </div>
+        <div class="w-1/6">
+          <button on:click={() => selectScorer(4)} class="flex-1 block w-full rounded-sm sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2">Select a Player</button>
+          <div class="text-right">
+            <p class="text-xs mt-1">10 Points</p>
+          </div>
+        </div>
+        <div class="w-1/6">
+          <button on:click={() => selectAssister(4)} class="flex-1 block w-full rounded-sm sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2">Select a Player</button>
+          <div class="text-right">
+            <p class="text-xs mt-1">10 Points</p>
+          </div>
+        </div>
+        <div class="w-1/6">
+          <button on:click={() => selectYellowCard(4)} class="flex-1 block w-full rounded-sm sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2">Select a Player</button>
+          <div class="text-right">
+            <p class="text-xs mt-1">5 Points</p>
+          </div>
+        </div>
+        <div class="w-1/6">
+          <button on:click={() => selectRedCard(4)} class="flex-1 block w-full rounded-sm sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2">Select a Player</button>
+          <div class="text-right">
+            <p class="text-xs mt-1">10 Points</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="flex flex-row items-center bg-gray-800 p-4">
+      <div class="w-1/12 text-lg">Group F</div>
+      <div class="w-11/12 flex flex-row space-x-4">
+        <div class="w-1/6">
+          <button on:click={() => selectWinner(5)} class="flex-1 block w-full rounded-sm sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2">Select a Team</button>
+          <div class="text-right">
+            <p class="text-xs mt-1">5 Points</p>
+          </div>
+        </div>
+        <div class="w-1/6">
+          <button on:click={() => selectLoser(5)} class="flex-1 block w-full rounded-sm sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2">Select a Team</button>
+          <div class="text-right">
+            <p class="text-xs mt-1">5 Points</p>
+          </div>
+        </div>
+        <div class="w-1/6">
+          <button on:click={() => selectScorer(5)} class="flex-1 block w-full rounded-sm sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2">Select a Player</button>
+          <div class="text-right">
+            <p class="text-xs mt-1">10 Points</p>
+          </div>
+        </div>
+        <div class="w-1/6">
+          <button on:click={() => selectAssister(5)} class="flex-1 block w-full rounded-sm sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2">Select a Player</button>
+          <div class="text-right">
+            <p class="text-xs mt-1">10 Points</p>
+          </div>
+        </div>
+        <div class="w-1/6">
+          <button on:click={() => selectYellowCard(5)} class="flex-1 block w-full rounded-sm sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2">Select a Player</button>
+          <div class="text-right">
+            <p class="text-xs mt-1">5 Points</p>
+          </div>
+        </div>
+        <div class="w-1/6">
+          <button on:click={() => selectRedCard(5)} class="flex-1 block w-full rounded-sm sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2">Select a Player</button>
+          <div class="text-right">
+            <p class="text-xs mt-1">10 Points</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    
+    <div class="flex flex-row my-4 space-x-2">
+      <div class="w-1/12 text-lg"></div>
+      <div class="w-11/12 flex flex-row space-x-4">
+        <div class="w-full">
+          <p class="flex-1 block w-full rounded-none rounded-r-md bg-gray-800 p-2 text-center">
+            Receive double points for each group stage category you make 3 or more correct selections.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    
+    <div class="flex flex-row items-center bg-gray-800 p-4">
+    
+      <div class="w-1/12 text-lg"></div>
+      <div class="w-11/12 flex flex-row space-x-4">
+        <div class="w-1/6">
+          Winner
+        </div>
+        <div class="w-1/6">
+          Loser
+        </div>
+        <div class="w-1/6">
+          To Score
+        </div>
+        <div class="w-1/6">
+          To Assist
+        </div>
+        <div class="w-1/6">
+          Yellow Card
+        </div>
+        <div class="w-1/6">
+          Red Card
+        </div>
+      </div>
+    </div>
+
+    <div class="flex flex-row items-center bg-gray-800 p-4">
+      <div class="w-1/12 text-lg">Round of 16</div>
+      <div class="w-11/12 flex flex-row space-x-4">
+        <div class="w-1/6">
+          <button on:click={() => selectWinner(6)} class="flex-1 block w-full rounded-sm sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2">Select a Team</button>
+          <div class="text-right">
+            <p class="text-xs mt-1">10 Points</p>
+          </div>
+        </div>
+        <div class="w-1/6">
+          <button on:click={() => selectLoser(6)} class="flex-1 block w-full rounded-sm sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2">Select a Team</button>
+          <div class="text-right">
+            <p class="text-xs mt-1">10 Points</p>
+          </div>
+        </div>
+        <div class="w-1/6">
+          <button on:click={() => selectScorer(6)} class="flex-1 block w-full rounded-sm sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2">Select a Player</button>
+          <div class="text-right">
+            <p class="text-xs mt-1">20 Points</p>
+          </div>
+        </div>
+        <div class="w-1/6">
+          <button on:click={() => selectAssister(6)} class="flex-1 block w-full rounded-sm sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2">Select a Player</button>
+          <div class="text-right">
+            <p class="text-xs mt-1">20 Points</p>
+          </div>
+        </div>
+        <div class="w-1/6">
+          <button on:click={() => selectYellowCard(6)} class="flex-1 block w-full rounded-sm sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2">Select a Player</button>
+          <div class="text-right">
+            <p class="text-xs mt-1">10 Points</p>
+          </div>
+        </div>
+        <div class="w-1/6">
+          <button on:click={() => selectRedCard(6)} class="flex-1 block w-full rounded-sm sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2">Select a Player</button>
+          <div class="text-right">
+            <p class="text-xs mt-1">20 Points</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="flex flex-row my-4 space-x-2">
+      <div class="w-1/12 text-lg"></div>
+      <div class="w-11/12 flex flex-row space-x-4">
+        <div class="w-1/3">
+          <p class="flex-1 block w-full rounded-none rounded-r-md bg-gray-800 p-2 text-center">
+            Both Correct Bonus: 40 Points
+          </p>
+        </div>
+        <div class="w-1/3">
+          <p class="flex-1 block w-full rounded-none rounded-r-md bg-gray-800 p-2 text-center">
+            Both Correct Bonus: 80 Points
+          </p>
+        </div>
+        <div class="w-1/3">
+          <p class="flex-1 block w-full rounded-none rounded-r-md bg-gray-800 p-2 text-center">
+            Both Correct Bonus: 60 Points
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="flex flex-row items-center bg-gray-800 p-4">
+      <div class="w-1/12 text-lg">Quarter Final</div>
+      <div class="w-11/12 flex flex-row space-x-4">
+        <div class="w-1/6">
+          <button on:click={() => selectWinner(7)} class="flex-1 block w-full rounded-sm sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2">Select a Team</button>
+          <div class="text-right">
+            <p class="text-xs mt-1">15 Points</p>
+          </div>
+        </div>
+        <div class="w-1/6">
+          <button on:click={() => selectLoser(7)} class="flex-1 block w-full rounded-sm sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2">Select a Team</button>
+          <div class="text-right">
+            <p class="text-xs mt-1">15 Points</p>
+          </div>
+        </div>
+        <div class="w-1/6">
+          <button on:click={() => selectScorer(7)} class="flex-1 block w-full rounded-sm sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2">Select a Player</button>
+          <div class="text-right">
+            <p class="text-xs mt-1">30 Points</p>
+          </div>
+        </div>
+        <div class="w-1/6">
+          <button on:click={() => selectAssister(7)} class="flex-1 block w-full rounded-sm sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2">Select a Player</button>
+          <div class="text-right">
+            <p class="text-xs mt-1">30 Points</p>
+          </div>
+        </div>
+        <div class="w-1/6">
+          <button on:click={() => selectYellowCard(7)} class="flex-1 block w-full rounded-sm sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2">Select a Player</button>
+          <div class="text-right">
+            <p class="text-xs mt-1">15 Points</p>
+          </div>
+        </div>
+        <div class="w-1/6">
+          <button on:click={() => selectRedCard(7)} class="flex-1 block w-full rounded-sm sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2">Select a Player</button>
+          <div class="text-right">
+            <p class="text-xs mt-1">30 Points</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="flex flex-row my-4 space-x-2">
+      <div class="w-1/12 text-lg"></div>
+      <div class="w-11/12 flex flex-row space-x-4">
+        <div class="w-1/3">
+          <p class="flex-1 block w-full rounded-none rounded-r-md bg-gray-800 p-2 text-center">
+            Both Correct Bonus: 60 Points
+          </p>
+        </div>
+        <div class="w-1/3">
+          <p class="flex-1 block w-full rounded-none rounded-r-md bg-gray-800 p-2 text-center">
+            Both Correct Bonus: 120 Points
+          </p>
+        </div>
+        <div class="w-1/3">
+          <p class="flex-1 block w-full rounded-none rounded-r-md bg-gray-800 p-2 text-center">
+            Both Correct Bonus: 90 Points
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="flex flex-row items-center bg-gray-800 p-4">
+      <div class="w-1/12 text-lg">Semi Final</div>
+      <div class="w-11/12 flex flex-row space-x-4">
+        <div class="w-1/6">
+          <button on:click={() => selectWinner(8)} class="flex-1 block w-full rounded-sm sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2">Select a Team</button>
+          <div class="text-right">
+            <p class="text-xs mt-1">20 Points</p>
+          </div>
+        </div>
+        <div class="w-1/6">
+          <button on:click={() => selectLoser(8)} class="flex-1 block w-full rounded-sm sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2">Select a Team</button>
+          <div class="text-right">
+            <p class="text-xs mt-1">20 Points</p>
+          </div>
+        </div>
+        <div class="w-1/6">
+          <button on:click={() => selectScorer(8)} class="flex-1 block w-full rounded-sm sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2">Select a Player</button>
+          <div class="text-right">
+            <p class="text-xs mt-1">40 Points</p>
+          </div>
+        </div>
+        <div class="w-1/6">
+          <button on:click={() => selectAssister(8)} class="flex-1 block w-full rounded-sm sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2">Select a Player</button>
+          <div class="text-right">
+            <p class="text-xs mt-1">40 Points</p>
+          </div>
+        </div>
+        <div class="w-1/6">
+          <button on:click={() => selectYellowCard(8)} class="flex-1 block w-full rounded-sm sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2">Select a Player</button>
+          <div class="text-right">
+            <p class="text-xs mt-1">10 Points</p>
+          </div>
+        </div>
+        <div class="w-1/6">
+          <button on:click={() => selectRedCard(8)} class="flex-1 block w-full rounded-sm sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2">Select a Player</button>
+          <div class="text-right">
+            <p class="text-xs mt-1">40 Points</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="flex flex-row my-4 space-x-2">
+      <div class="w-1/12 text-lg"></div>
+      <div class="w-11/12 flex flex-row space-x-4">
+        <div class="w-1/3">
+          <p class="flex-1 block w-full rounded-none rounded-r-md bg-gray-800 p-2 text-center">
+            Both Correct Bonus: 80 Points
+          </p>
+        </div>
+        <div class="w-1/3">
+          <p class="flex-1 block w-full rounded-none rounded-r-md bg-gray-800 p-2 text-center">
+            Both Correct Bonus: 160 Points
+          </p>
+        </div>
+        <div class="w-1/3">
+          <p class="flex-1 block w-full rounded-none rounded-r-md bg-gray-800 p-2 text-center">
+            Both Correct Bonus: 120 Points
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="flex flex-row items-center bg-gray-800 p-4">
+      <div class="w-1/12 text-lg">Final</div>
+      <div class="w-11/12 flex flex-row space-x-4">
+        <div class="w-1/6">
+          <button on:click={() => selectWinner(9)} class="flex-1 block w-full rounded-sm sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2">Select a Team</button>
+          <div class="text-right">
+            <p class="text-xs mt-1">25 Points</p>
+          </div>
+        </div>
+        <div class="w-1/6">
+          <button on:click={() => selectLoser(9)} class="flex-1 block w-full rounded-sm sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2">Select a Team</button>
+          <div class="text-right">
+            <p class="text-xs mt-1">25 Points</p>
+          </div>
+        </div>
+        <div class="w-1/6">
+          <button on:click={() => selectScorer(9)} class="flex-1 block w-full rounded-sm sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2">Select a Player</button>
+          <div class="text-right">
+            <p class="text-xs mt-1">50 Points</p>
+          </div>
+        </div>
+        <div class="w-1/6">
+          <button on:click={() => selectAssister(9)} class="flex-1 block w-full rounded-sm sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2">Select a Player</button>
+          <div class="text-right">
+            <p class="text-xs mt-1">50 Points</p>
+          </div>
+        </div>
+        <div class="w-1/6">
+          <button on:click={() => selectYellowCard(9)} class="flex-1 block w-full rounded-sm sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2">Select a Player</button>
+          <div class="text-right">
+            <p class="text-xs mt-1">25 Points</p>
+          </div>
+        </div>
+        <div class="w-1/6">
+          <button on:click={() => selectRedCard(9)} class="flex-1 block w-full rounded-sm sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2">Select a Player</button>
+          <div class="text-right">
+            <p class="text-xs mt-1">50 Points</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="flex flex-row my-4 space-x-2">
+      <div class="w-1/12 text-lg"></div>
+      <div class="w-11/12 flex flex-row space-x-4">
+        <div class="w-1/3">
+          <p class="flex-1 block w-full rounded-none rounded-r-md bg-gray-800 p-2 text-center">
+            Both Correct Bonus: 100 Points
+          </p>
+        </div>
+        <div class="w-1/3">
+          <p class="flex-1 block w-full rounded-none rounded-r-md bg-gray-800 p-2 text-center">
+            Both Correct Bonus: 200 Points
+          </p>
+        </div>
+        <div class="w-1/3">
+          <p class="flex-1 block w-full rounded-none rounded-r-md bg-gray-800 p-2 text-center">
+            Both Correct Bonus: 150 Points
+          </p>
+        </div>
+      </div>
+    </div>
+
+
   </div>
 </Layout>
