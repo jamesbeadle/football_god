@@ -6,6 +6,8 @@
   } from "../../../../declarations/football_god_backend/football_god_backend.did";
   import Layout from "../Layout.svelte";
   import { onMount } from "svelte";
+  import SelectTeamComponent from "$lib/components/euro2024/select-team-modal.svelte";
+  import SelectPlayerComponent from "$lib/components/euro2024/select-player-modal.svelte";
 
   let teams: InternationalTeam[] = [];
   let players: InternationalPlayer[] = [];
@@ -13,6 +15,11 @@
 
   let canEnterSweepstake = false; // TODO Update UI to use
   let sweepstakePaid = false; // TODO Update UI to use
+  
+  let selectedStage = -1;
+  let predictionType = -1;
+  let showSelectTeamModal = false;
+  let showSelectPlayerModal = false;
 
   const fetchPrediction = async (): Promise<
     Euro2024PredictionDTO | undefined
@@ -141,26 +148,80 @@
   };
 
   function selectWinner(stage: number){
-
+    predictionType = 0;
+    selectedStage = stage;
+    showSelectTeamModal = true;
   };
   function selectLoser(stage: number){
-
+    predictionType = 1;
+    selectedStage = stage;
+    showSelectTeamModal = true;
   };
   function selectScorer(stage: number){
-
+    predictionType = 2;
+    selectedStage = stage;
+    showSelectPlayerModal = true;
   };
   function selectAssister(stage: number){
-
+    predictionType = 3;
+    selectedStage = stage;
+    showSelectPlayerModal = true;
   };
   function selectYellowCard(stage: number){
-
+    predictionType = 4;
+    selectedStage = stage;
+    showSelectPlayerModal = true;
   };
   function selectRedCard(stage: number){
-
+    predictionType = 5;
+    selectedStage = stage;
+    showSelectPlayerModal = true;
   };
+
+  function confirmTeamSelection(teamId: number) {
+    switch (selectedStage) {
+      case 0:
+        switch (predictionType) {
+          case 0:
+            // Ensure that prediction.groupAPrediction is initialized
+            if (!prediction?.groupAPrediction) {
+              prediction = {
+                ...prediction!,
+                groupAPrediction: { ...prediction?.groupAPrediction!, winner: teamId }
+              };
+            } else {
+              // Update winner safely using spread to avoid direct mutation
+              prediction.groupAPrediction = {
+                ...prediction.groupAPrediction,
+                winner: teamId
+              };
+            }
+            break;
+        }
+        break;
+    }
+  }
+
+
+  function confirmPlayerSelection(playerId: number){
+    
+  }
+
+  function closeTeamModal(){
+
+  }
 </script>
 
 <Layout>
+  
+  {#if showSelectPlayerModal}
+    <SelectPlayerComponent {confirmPlayerSelection} />
+  {/if}
+  
+  {#if showSelectTeamModal}
+    <SelectTeamComponent {confirmTeamSelection} />
+  {/if}
+  
   <div class="bg-panel rounded-md p-4 mt-4">
     <p class="my-4 text-xl">Welcome to the FootballGod Euro 2024 prediction game.</p>
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
