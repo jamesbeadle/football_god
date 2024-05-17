@@ -2,28 +2,22 @@
   <h1 class="default-header my-4">System Architecture</h1>
 
   <p class="my-2">
-    OpenFPL is a progressive web application, built with Svelte and Motoko. The
-    Github is publicly available <a
+    FootballGod is a progressive web application, built with Svelte and Motoko.
+    The Github is publicly available <a
       class="underline"
-      href="github.com/jamesbeadle/openfpl">here</a
-    >. OpenFPL's architecture is designed for scalability and efficiency,
+      href="github.com/jamesbeadle/footballgod">here</a
+    >. FootballGod's architecture is designed for scalability and efficiency,
     ensuring robust performance even as user numbers grow. Here's how the system
     is structured:
   </p>
 
   <h2 class="default-sub-header mt-4">Main Backend Canister</h2>
   <p class="my-2">
-    OpenFPL' Main Backend Canister stores indexes for a manager's principal and
-    canister Id for efficient data retrieval. The Main Backend Canister also
-    stores a dictionary of each users principal and username for efficient
-    existing username checks.
-  </p>
-  <p class="my-2">
-    The Main Backend canister also stores a list of each unique manager canister
-    to enable efficient grouped lookups. Even with 10m users the Main Backend
-    Canister only uses 2GB of its available storage, however it is likely that
-    the players and user indexes are refactored into their own canisters after
-    the SNS sale but before the season starts.
+    FootballGod's Main Backend Canister contains a reference to the betting
+    canister, the canister that stores a reference to every bet made. This
+    canister archives bets at the end of each season as no bets can be made
+    across season. At the end of the season summary information if collated for
+    a user.
   </p>
 
   <h2 class="default-sub-header mt-4">Manager Data</h2>

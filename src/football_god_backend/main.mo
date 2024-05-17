@@ -1019,14 +1019,7 @@ actor Self {
     Account.accountIdentifier(Principal.fromActor(Self), Account.principalToSubaccount(caller));
   };
 
-
   //euro 2024 functions
-
-
-
-
-
-
 
   public shared ({ caller }) func submitEuro2024Prediction(euro2024PredictionDTO : DTOs.Euro2024PredictionDTO) : async Result.Result<(), T.Error> {
 
@@ -1046,7 +1039,7 @@ actor Self {
 
     return euro2024Instance.submitPredictions(principalName, euro2024PredictionDTO);
   };
-  
+
   public shared ({ caller }) func payAndSubmitEuro2024Prediction(euro2024PredictionDTO : DTOs.Euro2024PredictionDTO) : async Result.Result<(), T.Error> {
 
     assert not Principal.isAnonymous(caller);
@@ -1103,12 +1096,11 @@ actor Self {
   };
 
   //submit fixture data
-    //should calculate team scores
-    //calculate leaderboard
-  
-  //pay winners
-    //check all results in and list winners to pay
+  //should calculate team scores
+  //calculate leaderboard
 
+  //pay winners
+  //check all results in and list winners to pay
 
   //get paginated leaderboard
   /*

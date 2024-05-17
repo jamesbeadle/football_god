@@ -58,3 +58,14 @@
   --dialog-max-height: 80vh !important;
   --dialog-border-radius: 1px !important;
 }
+
+.horizontal-divider {
+  min-height: 2px;
+  @apply flex-shrink-0 h-px bg-gray-400 self-stretch;
+}
+
+.vertical-divider {
+  min-width: 2px;
+  min-height: 50px;
+  @apply flex-shrink-0 w-px bg-gray-400 self-stretch;
+}

@@ -279,6 +279,7 @@ service : {
   isAdmin : () -> (bool) query;
   isDisplayNameValid : (text) -> (bool) query;
   isWalletValid : (text) -> (bool) query;
+  payAndSubmitEuro2024Prediction : (Euro2024PredictionDTO) -> (Result);
   payoutSweepstake : () -> (Result);
   setSystemState : (nat16, nat8) -> (Result);
   submitEuro2024Prediction : (Euro2024PredictionDTO) -> (Result);

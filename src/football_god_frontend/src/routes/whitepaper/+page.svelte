@@ -1,8 +1,5 @@
 <script lang="ts">
   import Architecture from "$lib/components/whitepaper/architecture.svelte";
-  import Dao from "$lib/components/whitepaper/dao.svelte";
-  import Marketing from "$lib/components/whitepaper/marketing.svelte";
-  import Revenue from "$lib/components/whitepaper/revenue.svelte";
   import Roadmap from "$lib/components/whitepaper/roadmap.svelte";
   import Tokenomics from "$lib/components/whitepaper/tokenomics.svelte";
   import Vision from "$lib/components/whitepaper/vision.svelte";
@@ -30,14 +27,6 @@
           Vision
         </button>
       </li>
-      <li class={`mr-4 ${activeTab === "dao" ? "active-tab" : ""}`}>
-        <button
-          class={`p-2 ${activeTab === "dao" ? "text-white" : "text-gray-400"}`}
-          on:click={() => setActiveTab("dao")}
-        >
-          DAO
-        </button>
-      </li>
       <li class={`mr-4 ${activeTab === "tokenomics" ? "active-tab" : ""}`}>
         <button
           class={`p-2 ${
@@ -46,26 +35,6 @@
           on:click={() => setActiveTab("tokenomics")}
         >
           Tokenomics
-        </button>
-      </li>
-      <li class={`mr-4 ${activeTab === "revenue" ? "active-tab" : ""}`}>
-        <button
-          class={`p-2 ${
-            activeTab === "revenue" ? "text-white" : "text-gray-400"
-          }`}
-          on:click={() => setActiveTab("revenue")}
-        >
-          Revenue
-        </button>
-      </li>
-      <li class={`mr-4 ${activeTab === "marketing" ? "active-tab" : ""}`}>
-        <button
-          class={`p-2 ${
-            activeTab === "marketing" ? "text-white" : "text-gray-400"
-          }`}
-          on:click={() => setActiveTab("marketing")}
-        >
-          Marketing
         </button>
       </li>
       <li class={`mr-4 ${activeTab === "architecture" ? "active-tab" : ""}`}>
@@ -78,7 +47,7 @@
           Architecture
         </button>
       </li>
-      <li class={`mr-4 ${activeTab === "roadmap" ? "active-tab" : ""}`}>
+      <li class={`mr-4 ${activeTab === "roa map" ? "active-tab" : ""}`}>
         <button
           class={`p-2 ${
             activeTab === "roadmap" ? "text-white" : "text-gray-400"
@@ -94,12 +63,6 @@
       <Vision />
     {:else if activeTab === "roadmap"}
       <Roadmap />
-    {:else if activeTab === "revenue"}
-      <Revenue />
-    {:else if activeTab === "marketing"}
-      <Marketing />
-    {:else if activeTab === "dao"}
-      <Dao />
     {:else if activeTab === "tokenomics"}
       <Tokenomics />
     {:else if activeTab === "architecture"}

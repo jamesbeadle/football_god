@@ -7,6 +7,3 @@
 <!-- Euro 2024 Winners - only show if complete -->
 
 <!-- Button to pay winners -->
-
-
-

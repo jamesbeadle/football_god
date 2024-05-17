@@ -15,7 +15,7 @@
 
   let canEnterSweepstake = false; // TODO Update UI to use
   let sweepstakePaid = false; // TODO Update UI to use
-  
+
   let selectedStage = -1;
   let predictionType = -1;
   let showSelectTeamModal = false;
@@ -147,489 +147,1266 @@
     // TODO: Submit the prediction to the backend
   };
 
-  function selectWinner(stage: number){
+  function selectWinner(stage: number) {
     predictionType = 0;
     selectedStage = stage;
     showSelectTeamModal = true;
-  };
-  function selectLoser(stage: number){
+  }
+  function selectLoser(stage: number) {
     predictionType = 1;
     selectedStage = stage;
     showSelectTeamModal = true;
-  };
-  function selectScorer(stage: number){
+  }
+  function selectScorer(stage: number) {
     predictionType = 2;
     selectedStage = stage;
     showSelectPlayerModal = true;
-  };
-  function selectAssister(stage: number){
+  }
+  function selectAssister(stage: number) {
     predictionType = 3;
     selectedStage = stage;
     showSelectPlayerModal = true;
-  };
-  function selectYellowCard(stage: number){
+  }
+  function selectYellowCard(stage: number) {
     predictionType = 4;
     selectedStage = stage;
     showSelectPlayerModal = true;
-  };
-  function selectRedCard(stage: number){
+  }
+  function selectRedCard(stage: number) {
     predictionType = 5;
     selectedStage = stage;
     showSelectPlayerModal = true;
-  };
+  }
 
   function confirmTeamSelection(teamId: number) {
     switch (selectedStage) {
       case 0:
         switch (predictionType) {
           case 0:
-            // Ensure that prediction.groupAPrediction is initialized
-            if (!prediction?.groupAPrediction) {
-              prediction = {
-                ...prediction!,
-                groupAPrediction: { ...prediction?.groupAPrediction!, winner: teamId }
-              };
-            } else {
-              // Update winner safely using spread to avoid direct mutation
-              prediction.groupAPrediction = {
-                ...prediction.groupAPrediction,
-                winner: teamId
-              };
-            }
+            prediction = {
+              ...prediction!,
+              groupAPrediction: {
+                ...prediction?.groupAPrediction!,
+                winner: teamId,
+              },
+            };
+            break;
+          case 1:
+            prediction = {
+              ...prediction!,
+              groupAPrediction: {
+                ...prediction?.groupAPrediction!,
+                loser: teamId,
+              },
+            };
+            break;
+        }
+        break;
+      case 1:
+        switch (predictionType) {
+          case 0:
+            prediction = {
+              ...prediction!,
+              groupBPrediction: {
+                ...prediction?.groupBPrediction!,
+                winner: teamId,
+              },
+            };
+            break;
+          case 1:
+            prediction = {
+              ...prediction!,
+              groupBPrediction: {
+                ...prediction?.groupBPrediction!,
+                loser: teamId,
+              },
+            };
+            break;
+        }
+        break;
+      case 2:
+        switch (predictionType) {
+          case 0:
+            prediction = {
+              ...prediction!,
+              groupCPrediction: {
+                ...prediction?.groupCPrediction!,
+                winner: teamId,
+              },
+            };
+            break;
+          case 1:
+            prediction = {
+              ...prediction!,
+              groupCPrediction: {
+                ...prediction?.groupCPrediction!,
+                loser: teamId,
+              },
+            };
+            break;
+        }
+        break;
+      case 3:
+        switch (predictionType) {
+          case 0:
+            prediction = {
+              ...prediction!,
+              groupDPrediction: {
+                ...prediction?.groupDPrediction!,
+                winner: teamId,
+              },
+            };
+            break;
+          case 1:
+            prediction = {
+              ...prediction!,
+              groupDPrediction: {
+                ...prediction?.groupDPrediction!,
+                loser: teamId,
+              },
+            };
+            break;
+        }
+        break;
+      case 4:
+        switch (predictionType) {
+          case 0:
+            prediction = {
+              ...prediction!,
+              groupEPrediction: {
+                ...prediction?.groupEPrediction!,
+                winner: teamId,
+              },
+            };
+            break;
+          case 1:
+            prediction = {
+              ...prediction!,
+              groupEPrediction: {
+                ...prediction?.groupEPrediction!,
+                loser: teamId,
+              },
+            };
+            break;
+        }
+        break;
+      case 5:
+        switch (predictionType) {
+          case 0:
+            prediction = {
+              ...prediction!,
+              groupFPrediction: {
+                ...prediction?.groupFPrediction!,
+                winner: teamId,
+              },
+            };
+            break;
+          case 1:
+            prediction = {
+              ...prediction!,
+              groupFPrediction: {
+                ...prediction?.groupFPrediction!,
+                loser: teamId,
+              },
+            };
+            break;
+        }
+        break;
+      case 6:
+        switch (predictionType) {
+          case 0:
+            prediction = {
+              ...prediction!,
+              r16Prediction: {
+                ...prediction?.r16Prediction!,
+                winner: teamId,
+              },
+            };
+            break;
+          case 1:
+            prediction = {
+              ...prediction!,
+              r16Prediction: {
+                ...prediction?.r16Prediction!,
+                loser: teamId,
+              },
+            };
+            break;
+        }
+        break;
+      case 7:
+        switch (predictionType) {
+          case 0:
+            prediction = {
+              ...prediction!,
+              qfPrediction: {
+                ...prediction?.qfPrediction!,
+                winner: teamId,
+              },
+            };
+            break;
+          case 1:
+            prediction = {
+              ...prediction!,
+              qfPrediction: {
+                ...prediction?.qfPrediction!,
+                loser: teamId,
+              },
+            };
+            break;
+        }
+        break;
+      case 8:
+        switch (predictionType) {
+          case 0:
+            prediction = {
+              ...prediction!,
+              sfPrediction: {
+                ...prediction?.sfPrediction!,
+                winner: teamId,
+              },
+            };
+            break;
+          case 1:
+            prediction = {
+              ...prediction!,
+              sfPrediction: {
+                ...prediction?.sfPrediction!,
+                loser: teamId,
+              },
+            };
+            break;
+        }
+        break;
+      case 9:
+        switch (predictionType) {
+          case 0:
+            prediction = {
+              ...prediction!,
+              fPrediction: {
+                ...prediction?.fPrediction!,
+                winner: teamId,
+              },
+            };
+            break;
+          case 1:
+            prediction = {
+              ...prediction!,
+              fPrediction: {
+                ...prediction?.fPrediction!,
+                loser: teamId,
+              },
+            };
             break;
         }
         break;
     }
   }
 
-
-  function confirmPlayerSelection(playerId: number){
-    
+  function confirmPlayerSelection(playerId: number) {
+    switch (selectedStage) {
+      case 0:
+        switch (predictionType) {
+          case 2:
+            prediction = {
+              ...prediction!,
+              groupAPrediction: {
+                ...prediction?.groupAPrediction!,
+                goalScorer: playerId,
+              },
+            };
+            break;
+          case 3:
+            prediction = {
+              ...prediction!,
+              groupAPrediction: {
+                ...prediction?.groupAPrediction!,
+                goalAssister: playerId,
+              },
+            };
+            break;
+          case 4:
+            prediction = {
+              ...prediction!,
+              groupAPrediction: {
+                ...prediction?.groupAPrediction!,
+                yellowCard: playerId,
+              },
+            };
+            break;
+          case 5:
+            prediction = {
+              ...prediction!,
+              groupAPrediction: {
+                ...prediction?.groupAPrediction!,
+                redCard: playerId,
+              },
+            };
+            break;
+        }
+        break;
+      case 1:
+        switch (predictionType) {
+          case 2:
+            prediction = {
+              ...prediction!,
+              groupBPrediction: {
+                ...prediction?.groupBPrediction!,
+                goalScorer: playerId,
+              },
+            };
+            break;
+          case 3:
+            prediction = {
+              ...prediction!,
+              groupBPrediction: {
+                ...prediction?.groupBPrediction!,
+                goalAssister: playerId,
+              },
+            };
+            break;
+          case 4:
+            prediction = {
+              ...prediction!,
+              groupBPrediction: {
+                ...prediction?.groupBPrediction!,
+                yellowCard: playerId,
+              },
+            };
+            break;
+          case 5:
+            prediction = {
+              ...prediction!,
+              groupBPrediction: {
+                ...prediction?.groupBPrediction!,
+                redCard: playerId,
+              },
+            };
+            break;
+        }
+        break;
+      case 2:
+        switch (predictionType) {
+          case 2:
+            prediction = {
+              ...prediction!,
+              groupCPrediction: {
+                ...prediction?.groupCPrediction!,
+                goalScorer: playerId,
+              },
+            };
+            break;
+          case 3:
+            prediction = {
+              ...prediction!,
+              groupCPrediction: {
+                ...prediction?.groupCPrediction!,
+                goalAssister: playerId,
+              },
+            };
+            break;
+          case 4:
+            prediction = {
+              ...prediction!,
+              groupCPrediction: {
+                ...prediction?.groupCPrediction!,
+                yellowCard: playerId,
+              },
+            };
+            break;
+          case 5:
+            prediction = {
+              ...prediction!,
+              groupCPrediction: {
+                ...prediction?.groupCPrediction!,
+                redCard: playerId,
+              },
+            };
+            break;
+        }
+        break;
+      case 3:
+        switch (predictionType) {
+          case 2:
+            prediction = {
+              ...prediction!,
+              groupDPrediction: {
+                ...prediction?.groupDPrediction!,
+                goalScorer: playerId,
+              },
+            };
+            break;
+          case 3:
+            prediction = {
+              ...prediction!,
+              groupDPrediction: {
+                ...prediction?.groupDPrediction!,
+                goalAssister: playerId,
+              },
+            };
+            break;
+          case 4:
+            prediction = {
+              ...prediction!,
+              groupDPrediction: {
+                ...prediction?.groupDPrediction!,
+                yellowCard: playerId,
+              },
+            };
+            break;
+          case 5:
+            prediction = {
+              ...prediction!,
+              groupDPrediction: {
+                ...prediction?.groupDPrediction!,
+                redCard: playerId,
+              },
+            };
+            break;
+        }
+        break;
+      case 4:
+        switch (predictionType) {
+          case 2:
+            prediction = {
+              ...prediction!,
+              groupEPrediction: {
+                ...prediction?.groupEPrediction!,
+                goalScorer: playerId,
+              },
+            };
+            break;
+          case 3:
+            prediction = {
+              ...prediction!,
+              groupEPrediction: {
+                ...prediction?.groupEPrediction!,
+                goalAssister: playerId,
+              },
+            };
+            break;
+          case 4:
+            prediction = {
+              ...prediction!,
+              groupEPrediction: {
+                ...prediction?.groupEPrediction!,
+                yellowCard: playerId,
+              },
+            };
+            break;
+          case 5:
+            prediction = {
+              ...prediction!,
+              groupEPrediction: {
+                ...prediction?.groupEPrediction!,
+                redCard: playerId,
+              },
+            };
+            break;
+        }
+        break;
+      case 5:
+        switch (predictionType) {
+          case 2:
+            prediction = {
+              ...prediction!,
+              groupFPrediction: {
+                ...prediction?.groupFPrediction!,
+                goalScorer: playerId,
+              },
+            };
+            break;
+          case 3:
+            prediction = {
+              ...prediction!,
+              groupFPrediction: {
+                ...prediction?.groupFPrediction!,
+                goalAssister: playerId,
+              },
+            };
+            break;
+          case 4:
+            prediction = {
+              ...prediction!,
+              groupFPrediction: {
+                ...prediction?.groupFPrediction!,
+                yellowCard: playerId,
+              },
+            };
+            break;
+          case 5:
+            prediction = {
+              ...prediction!,
+              groupFPrediction: {
+                ...prediction?.groupFPrediction!,
+                redCard: playerId,
+              },
+            };
+            break;
+        }
+        break;
+      case 6:
+        switch (predictionType) {
+          case 2:
+            prediction = {
+              ...prediction!,
+              r16Prediction: {
+                ...prediction?.r16Prediction!,
+                goalScorer: playerId,
+              },
+            };
+            break;
+          case 3:
+            prediction = {
+              ...prediction!,
+              r16Prediction: {
+                ...prediction?.r16Prediction!,
+                goalAssister: playerId,
+              },
+            };
+            break;
+          case 4:
+            prediction = {
+              ...prediction!,
+              r16Prediction: {
+                ...prediction?.r16Prediction!,
+                yellowCard: playerId,
+              },
+            };
+            break;
+          case 5:
+            prediction = {
+              ...prediction!,
+              r16Prediction: {
+                ...prediction?.r16Prediction!,
+                redCard: playerId,
+              },
+            };
+            break;
+        }
+        break;
+      case 7:
+        switch (predictionType) {
+          case 2:
+            prediction = {
+              ...prediction!,
+              qfPrediction: {
+                ...prediction?.qfPrediction!,
+                goalScorer: playerId,
+              },
+            };
+            break;
+          case 3:
+            prediction = {
+              ...prediction!,
+              qfPrediction: {
+                ...prediction?.qfPrediction!,
+                goalAssister: playerId,
+              },
+            };
+            break;
+          case 4:
+            prediction = {
+              ...prediction!,
+              qfPrediction: {
+                ...prediction?.qfPrediction!,
+                yellowCard: playerId,
+              },
+            };
+            break;
+          case 5:
+            prediction = {
+              ...prediction!,
+              qfPrediction: {
+                ...prediction?.qfPrediction!,
+                redCard: playerId,
+              },
+            };
+            break;
+        }
+        break;
+      case 8:
+        switch (predictionType) {
+          case 2:
+            prediction = {
+              ...prediction!,
+              sfPrediction: {
+                ...prediction?.sfPrediction!,
+                goalScorer: playerId,
+              },
+            };
+            break;
+          case 3:
+            prediction = {
+              ...prediction!,
+              sfPrediction: {
+                ...prediction?.sfPrediction!,
+                goalAssister: playerId,
+              },
+            };
+            break;
+          case 4:
+            prediction = {
+              ...prediction!,
+              sfPrediction: {
+                ...prediction?.sfPrediction!,
+                yellowCard: playerId,
+              },
+            };
+            break;
+          case 5:
+            prediction = {
+              ...prediction!,
+              sfPrediction: {
+                ...prediction?.sfPrediction!,
+                redCard: playerId,
+              },
+            };
+            break;
+        }
+        break;
+      case 9:
+        switch (predictionType) {
+          case 2:
+            prediction = {
+              ...prediction!,
+              fPrediction: {
+                ...prediction?.fPrediction!,
+                goalScorer: playerId,
+              },
+            };
+            break;
+          case 3:
+            prediction = {
+              ...prediction!,
+              fPrediction: {
+                ...prediction?.fPrediction!,
+                goalAssister: playerId,
+              },
+            };
+            break;
+          case 4:
+            prediction = {
+              ...prediction!,
+              fPrediction: {
+                ...prediction?.fPrediction!,
+                yellowCard: playerId,
+              },
+            };
+            break;
+          case 5:
+            prediction = {
+              ...prediction!,
+              fPrediction: {
+                ...prediction?.fPrediction!,
+                redCard: playerId,
+              },
+            };
+            break;
+        }
+        break;
+    }
   }
 
-  function closeTeamModal(){
-
-  }
+  function closeTeamSelectionModal() {}
 </script>
 
 <Layout>
-  
   {#if showSelectPlayerModal}
     <SelectPlayerComponent {confirmPlayerSelection} />
   {/if}
-  
+
   {#if showSelectTeamModal}
-    <SelectTeamComponent {confirmTeamSelection} />
+    <SelectTeamComponent {confirmTeamSelection} visible={showSelectTeamModal} {closeTeamSelectionModal} />
   {/if}
-  
-  <div class="bg-panel rounded-md p-4 mt-4">
-    <p class="my-4 text-xl">Welcome to the FootballGod Euro 2024 prediction game.</p>
+
+  <div class="bg-panel rounded-md p-4">
+    <p class="text-xl my-2 mb-4">
+      Welcome to the FootballGod Euro 2024 prediction game.
+    </p>
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
-    
-      <div class="flex flex-col bg-gray-700 rounded-lg overflow-hidden">
-          <div class="p-4 flex flex-col justify-between h-full">
-            
-            <p class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm font-bold rounded-md text-white items-center">
-              <img src="FPLCoin.png" alt="fpl" class="w-8 h-8 mr-2 mb-1" />
-              Prize Pool: 0.00 $FPL
-            </p>
-          </div>
-      </div>
-    
       <div class="flex flex-col bg-gray-700 rounded-lg overflow-hidden">
         <div class="p-4 flex flex-col justify-between h-full">
-          <p class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm font-bold rounded-md text-white">
+          <p
+            class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm font-bold rounded-md text-white items-center"
+          >
+            <img src="FPLCoin.png" alt="fpl" class="w-8 h-8 mr-2 mb-1" />
+            Prize Pool: 0.00 $FPL
+          </p>
+        </div>
+      </div>
+
+      <div class="flex flex-col bg-gray-700 rounded-lg overflow-hidden">
+        <div class="flex flex-col justify-center h-full">
+          <p
+            class="inline-flex justify-center py-2 px-4 mx-2 border border-transparent shadow-sm font-bold rounded-md text-white"
+          >
             Total Entries: 0
           </p>
         </div>
       </div>
-    
+
       <div class="flex flex-col bg-gray-700 rounded-lg overflow-hidden">
-          <div class="p-4 flex flex-col justify-between h-full">
-            <button
+        <div class="flex flex-col justify-center h-full">
+          <button
             type="submit"
-            class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm font-bold rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+            class="inline-flex justify-center py-2 px-4 mx-2 border border-transparent shadow-sm font-bold rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
           >
             View Leaderboard
           </button>
-          </div>
+        </div>
       </div>
     </div>
 
-    <p class="my-4">Make your selections below and enter the sweepstake to be in with a chance of winning $FPL:</p>   
-    
-    <div class="flex flex-row items-center bg-gray-800 p-4">
-    
-      <div class="w-1/12 text-lg"></div>
+    <p class="my-4">
+      Make your selections below and enter the sweepstake to be in with a chance
+      of winning $FPL.
+    </p>
+
+    <div class="horizontal-divider my-4 mb-8" />
+
+    <div class="flex flex-row items-center bg-black border rounded-md p-4 m-4">
+      <div class="w-1/12" />
+      <div class="w-11/12 flex flex-row space-x-4">
+        <div class="w-1/6 flex">
+          <p class="w-full text-center border-x">Winner</p>
+        </div>
+        <div class="w-1/6 flex">
+          <p class="w-full text-center border-x">Loser</p>
+        </div>
+        <div class="w-1/6 flex">
+          <p class="w-full text-center border-x">To Score</p>
+        </div>
+        <div class="w-1/6 flex">
+          <p class="w-full text-center border-x">To Assist</p>
+        </div>
+        <div class="w-1/6 flex">
+          <p class="w-full text-center border-x">Yellow Card</p>
+        </div>
+        <div class="w-1/6 flex">
+          <p class="w-full text-center border-x">Red Card</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="flex flex-row items-center bg-gray-400 p-4 m-4 rounded-md">
+      <div class="w-1/12">Group A</div>
       <div class="w-11/12 flex flex-row space-x-4">
         <div class="w-1/6">
-          Winner
+          <button
+            on:click={() => selectWinner(0)}
+            class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2"
+            >Select a Team</button
+          >
+          <div class="text-right">
+            <p class="text-xs mt-4">5 Points</p>
+          </div>
         </div>
         <div class="w-1/6">
-          Loser
+          <button
+            on:click={() => selectLoser(0)}
+            class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2"
+            >Select a Team</button
+          >
+          <div class="text-right">
+            <p class="text-xs mt-4">5 Points</p>
+          </div>
         </div>
         <div class="w-1/6">
-          To Score
+          <button
+            on:click={() => selectScorer(0)}
+            class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2"
+            >Select a Player</button
+          >
+          <div class="text-right">
+            <p class="text-xs mt-4">10 Points</p>
+          </div>
         </div>
         <div class="w-1/6">
-          To Assist
+          <button
+            on:click={() => selectAssister(0)}
+            class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2"
+            >Select a Player</button
+          >
+          <div class="text-right">
+            <p class="text-xs mt-4">10 Points</p>
+          </div>
         </div>
         <div class="w-1/6">
-          Yellow Card
+          <button
+            on:click={() => selectYellowCard(0)}
+            class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2"
+            >Select a Player</button
+          >
+          <div class="text-right">
+            <p class="text-xs mt-4">5 Points</p>
+          </div>
         </div>
         <div class="w-1/6">
-          Red Card
+          <button
+            on:click={() => selectRedCard(0)}
+            class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2"
+            >Select a Player</button
+          >
+          <div class="text-right">
+            <p class="text-xs mt-4">10 Points</p>
+          </div>
         </div>
       </div>
     </div>
 
-    <div class="flex flex-row items-center bg-gray-800 p-4">
-      <div class="w-1/12 text-lg">Group A</div>
+    <div class="flex flex-row items-center bg-gray-500 p-4 m-4 rounded-md">
+      <div class="w-1/12">Group B</div>
       <div class="w-11/12 flex flex-row space-x-4">
         <div class="w-1/6">
-          <button on:click={() => selectWinner(0)} class="flex-1 block w-full rounded-sm sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2">Select a Team</button>
+          <button
+            on:click={() => selectWinner(1)}
+            class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2"
+            >Select a Team</button
+          >
           <div class="text-right">
-            <p class="text-xs mt-1">5 Points</p>
+            <p class="text-xs mt-4">5 Points</p>
           </div>
         </div>
         <div class="w-1/6">
-          <button on:click={() => selectLoser(0)} class="flex-1 block w-full rounded-sm sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2">Select a Team</button>
+          <button
+            on:click={() => selectLoser(1)}
+            class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2"
+            >Select a Team</button
+          >
           <div class="text-right">
-            <p class="text-xs mt-1">5 Points</p>
+            <p class="text-xs mt-4">5 Points</p>
           </div>
         </div>
         <div class="w-1/6">
-          <button on:click={() => selectScorer(0)} class="flex-1 block w-full rounded-sm sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2">Select a Player</button>
+          <button
+            on:click={() => selectScorer(1)}
+            class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2"
+            >Select a Player</button
+          >
           <div class="text-right">
-            <p class="text-xs mt-1">10 Points</p>
+            <p class="text-xs mt-4">10 Points</p>
           </div>
         </div>
         <div class="w-1/6">
-          <button on:click={() => selectAssister(0)} class="flex-1 block w-full rounded-sm sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2">Select a Player</button>
+          <button
+            on:click={() => selectAssister(1)}
+            class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2"
+            >Select a Player</button
+          >
           <div class="text-right">
-            <p class="text-xs mt-1">10 Points</p>
+            <p class="text-xs mt-4">10 Points</p>
           </div>
         </div>
         <div class="w-1/6">
-          <button on:click={() => selectYellowCard(0)} class="flex-1 block w-full rounded-sm sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2">Select a Player</button>
+          <button
+            on:click={() => selectYellowCard(1)}
+            class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2"
+            >Select a Player</button
+          >
           <div class="text-right">
-            <p class="text-xs mt-1">5 Points</p>
+            <p class="text-xs mt-4">5 Points</p>
           </div>
         </div>
         <div class="w-1/6">
-          <button on:click={() => selectRedCard(0)} class="flex-1 block w-full rounded-sm sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2">Select a Player</button>
+          <button
+            on:click={() => selectRedCard(1)}
+            class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2"
+            >Select a Player</button
+          >
           <div class="text-right">
-            <p class="text-xs mt-1">10 Points</p>
+            <p class="text-xs mt-4">10 Points</p>
           </div>
         </div>
       </div>
     </div>
 
-    <div class="flex flex-row items-center bg-gray-800 p-4">
-      <div class="w-1/12 text-lg">Group B</div>
+    <div class="flex flex-row items-center bg-gray-400 p-4 m-4 rounded-md">
+      <div class="w-1/12">Group C</div>
       <div class="w-11/12 flex flex-row space-x-4">
         <div class="w-1/6">
-          <button on:click={() => selectWinner(1)} class="flex-1 block w-full rounded-sm sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2">Select a Team</button>
+          <button
+            on:click={() => selectWinner(2)}
+            class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2"
+            >Select a Team</button
+          >
           <div class="text-right">
-            <p class="text-xs mt-1">5 Points</p>
+            <p class="text-xs mt-4">5 Points</p>
           </div>
         </div>
         <div class="w-1/6">
-          <button on:click={() => selectLoser(1)} class="flex-1 block w-full rounded-sm sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2">Select a Team</button>
+          <button
+            on:click={() => selectLoser(2)}
+            class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2"
+            >Select a Team</button
+          >
           <div class="text-right">
-            <p class="text-xs mt-1">5 Points</p>
+            <p class="text-xs mt-4">5 Points</p>
           </div>
         </div>
         <div class="w-1/6">
-          <button on:click={() => selectScorer(1)} class="flex-1 block w-full rounded-sm sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2">Select a Player</button>
+          <button
+            on:click={() => selectScorer(2)}
+            class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2"
+            >Select a Player</button
+          >
           <div class="text-right">
-            <p class="text-xs mt-1">10 Points</p>
+            <p class="text-xs mt-4">10 Points</p>
           </div>
         </div>
         <div class="w-1/6">
-          <button on:click={() => selectAssister(1)} class="flex-1 block w-full rounded-sm sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2">Select a Player</button>
+          <button
+            on:click={() => selectAssister(2)}
+            class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2"
+            >Select a Player</button
+          >
           <div class="text-right">
-            <p class="text-xs mt-1">10 Points</p>
+            <p class="text-xs mt-4">10 Points</p>
           </div>
         </div>
         <div class="w-1/6">
-          <button on:click={() => selectYellowCard(1)} class="flex-1 block w-full rounded-sm sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2">Select a Player</button>
+          <button
+            on:click={() => selectYellowCard(2)}
+            class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2"
+            >Select a Player</button
+          >
           <div class="text-right">
-            <p class="text-xs mt-1">5 Points</p>
+            <p class="text-xs mt-4">5 Points</p>
           </div>
         </div>
         <div class="w-1/6">
-          <button on:click={() => selectRedCard(1)} class="flex-1 block w-full rounded-sm sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2">Select a Player</button>
+          <button
+            on:click={() => selectRedCard(2)}
+            class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2"
+            >Select a Player</button
+          >
           <div class="text-right">
-            <p class="text-xs mt-1">10 Points</p>
+            <p class="text-xs mt-4">10 Points</p>
           </div>
         </div>
       </div>
     </div>
 
-    <div class="flex flex-row items-center bg-gray-800 p-4">
-      <div class="w-1/12 text-lg">Group C</div>
+    <div class="flex flex-row items-center bg-gray-500 p-4 m-4 rounded-md">
+      <div class="w-1/12">Group D</div>
       <div class="w-11/12 flex flex-row space-x-4">
         <div class="w-1/6">
-          <button on:click={() => selectWinner(2)} class="flex-1 block w-full rounded-sm sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2">Select a Team</button>
+          <button
+            on:click={() => selectWinner(3)}
+            class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2"
+            >Select a Team</button
+          >
           <div class="text-right">
-            <p class="text-xs mt-1">5 Points</p>
+            <p class="text-xs mt-4">5 Points</p>
           </div>
         </div>
         <div class="w-1/6">
-          <button on:click={() => selectLoser(2)} class="flex-1 block w-full rounded-sm sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2">Select a Team</button>
+          <button
+            on:click={() => selectLoser(3)}
+            class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2"
+            >Select a Team</button
+          >
           <div class="text-right">
-            <p class="text-xs mt-1">5 Points</p>
+            <p class="text-xs mt-4">5 Points</p>
           </div>
         </div>
         <div class="w-1/6">
-          <button on:click={() => selectScorer(2)} class="flex-1 block w-full rounded-sm sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2">Select a Player</button>
+          <button
+            on:click={() => selectScorer(3)}
+            class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2"
+            >Select a Player</button
+          >
           <div class="text-right">
-            <p class="text-xs mt-1">10 Points</p>
+            <p class="text-xs mt-4">10 Points</p>
           </div>
         </div>
         <div class="w-1/6">
-          <button on:click={() => selectAssister(2)} class="flex-1 block w-full rounded-sm sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2">Select a Player</button>
+          <button
+            on:click={() => selectAssister(3)}
+            class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2"
+            >Select a Player</button
+          >
           <div class="text-right">
-            <p class="text-xs mt-1">10 Points</p>
+            <p class="text-xs mt-4">10 Points</p>
           </div>
         </div>
         <div class="w-1/6">
-          <button on:click={() => selectYellowCard(2)} class="flex-1 block w-full rounded-sm sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2">Select a Player</button>
+          <button
+            on:click={() => selectYellowCard(3)}
+            class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2"
+            >Select a Player</button
+          >
           <div class="text-right">
-            <p class="text-xs mt-1">5 Points</p>
+            <p class="text-xs mt-4">5 Points</p>
           </div>
         </div>
         <div class="w-1/6">
-          <button on:click={() => selectRedCard(2)} class="flex-1 block w-full rounded-sm sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2">Select a Player</button>
+          <button
+            on:click={() => selectRedCard(3)}
+            class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2"
+            >Select a Player</button
+          >
           <div class="text-right">
-            <p class="text-xs mt-1">10 Points</p>
+            <p class="text-xs mt-4">10 Points</p>
           </div>
         </div>
       </div>
     </div>
 
-    <div class="flex flex-row items-center bg-gray-800 p-4">
-      <div class="w-1/12 text-lg">Group D</div>
+    <div class="flex flex-row items-center bg-gray-400 p-4 m-4 rounded-md">
+      <div class="w-1/12">Group E</div>
       <div class="w-11/12 flex flex-row space-x-4">
         <div class="w-1/6">
-          <button on:click={() => selectWinner(3)} class="flex-1 block w-full rounded-sm sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2">Select a Team</button>
+          <button
+            on:click={() => selectWinner(4)}
+            class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2"
+            >Select a Team</button
+          >
           <div class="text-right">
-            <p class="text-xs mt-1">5 Points</p>
+            <p class="text-xs mt-4">5 Points</p>
           </div>
         </div>
         <div class="w-1/6">
-          <button on:click={() => selectLoser(3)} class="flex-1 block w-full rounded-sm sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2">Select a Team</button>
+          <button
+            on:click={() => selectLoser(4)}
+            class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2"
+            >Select a Team</button
+          >
           <div class="text-right">
-            <p class="text-xs mt-1">5 Points</p>
+            <p class="text-xs mt-4">5 Points</p>
           </div>
         </div>
         <div class="w-1/6">
-          <button on:click={() => selectScorer(3)} class="flex-1 block w-full rounded-sm sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2">Select a Player</button>
+          <button
+            on:click={() => selectScorer(4)}
+            class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2"
+            >Select a Player</button
+          >
           <div class="text-right">
-            <p class="text-xs mt-1">10 Points</p>
+            <p class="text-xs mt-4">10 Points</p>
           </div>
         </div>
         <div class="w-1/6">
-          <button on:click={() => selectAssister(3)} class="flex-1 block w-full rounded-sm sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2">Select a Player</button>
+          <button
+            on:click={() => selectAssister(4)}
+            class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2"
+            >Select a Player</button
+          >
           <div class="text-right">
-            <p class="text-xs mt-1">10 Points</p>
+            <p class="text-xs mt-4">10 Points</p>
           </div>
         </div>
         <div class="w-1/6">
-          <button on:click={() => selectYellowCard(3)} class="flex-1 block w-full rounded-sm sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2">Select a Player</button>
+          <button
+            on:click={() => selectYellowCard(4)}
+            class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2"
+            >Select a Player</button
+          >
           <div class="text-right">
-            <p class="text-xs mt-1">5 Points</p>
+            <p class="text-xs mt-4">5 Points</p>
           </div>
         </div>
         <div class="w-1/6">
-          <button on:click={() => selectRedCard(3)} class="flex-1 block w-full rounded-sm sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2">Select a Player</button>
+          <button
+            on:click={() => selectRedCard(4)}
+            class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2"
+            >Select a Player</button
+          >
           <div class="text-right">
-            <p class="text-xs mt-1">10 Points</p>
+            <p class="text-xs mt-4">10 Points</p>
           </div>
         </div>
       </div>
     </div>
 
-    <div class="flex flex-row items-center bg-gray-800 p-4">
-      <div class="w-1/12 text-lg">Group E</div>
+    <div class="flex flex-row items-center bg-gray-500 p-4 m-4 rounded-md">
+      <div class="w-1/12">Group F</div>
       <div class="w-11/12 flex flex-row space-x-4">
         <div class="w-1/6">
-          <button on:click={() => selectWinner(4)} class="flex-1 block w-full rounded-sm sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2">Select a Team</button>
+          <button
+            on:click={() => selectWinner(5)}
+            class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2"
+            >Select a Team</button
+          >
           <div class="text-right">
-            <p class="text-xs mt-1">5 Points</p>
+            <p class="text-xs mt-4">5 Points</p>
           </div>
         </div>
         <div class="w-1/6">
-          <button on:click={() => selectLoser(4)} class="flex-1 block w-full rounded-sm sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2">Select a Team</button>
+          <button
+            on:click={() => selectLoser(5)}
+            class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2"
+            >Select a Team</button
+          >
           <div class="text-right">
-            <p class="text-xs mt-1">5 Points</p>
+            <p class="text-xs mt-4">5 Points</p>
           </div>
         </div>
         <div class="w-1/6">
-          <button on:click={() => selectScorer(4)} class="flex-1 block w-full rounded-sm sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2">Select a Player</button>
+          <button
+            on:click={() => selectScorer(5)}
+            class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2"
+            >Select a Player</button
+          >
           <div class="text-right">
-            <p class="text-xs mt-1">10 Points</p>
+            <p class="text-xs mt-4">10 Points</p>
           </div>
         </div>
         <div class="w-1/6">
-          <button on:click={() => selectAssister(4)} class="flex-1 block w-full rounded-sm sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2">Select a Player</button>
+          <button
+            on:click={() => selectAssister(5)}
+            class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2"
+            >Select a Player</button
+          >
           <div class="text-right">
-            <p class="text-xs mt-1">10 Points</p>
+            <p class="text-xs mt-4">10 Points</p>
           </div>
         </div>
         <div class="w-1/6">
-          <button on:click={() => selectYellowCard(4)} class="flex-1 block w-full rounded-sm sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2">Select a Player</button>
+          <button
+            on:click={() => selectYellowCard(5)}
+            class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2"
+            >Select a Player</button
+          >
           <div class="text-right">
-            <p class="text-xs mt-1">5 Points</p>
+            <p class="text-xs mt-4">5 Points</p>
           </div>
         </div>
         <div class="w-1/6">
-          <button on:click={() => selectRedCard(4)} class="flex-1 block w-full rounded-sm sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2">Select a Player</button>
+          <button
+            on:click={() => selectRedCard(5)}
+            class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2"
+            >Select a Player</button
+          >
           <div class="text-right">
-            <p class="text-xs mt-1">10 Points</p>
+            <p class="text-xs mt-4">10 Points</p>
           </div>
         </div>
       </div>
     </div>
 
-    <div class="flex flex-row items-center bg-gray-800 p-4">
-      <div class="w-1/12 text-lg">Group F</div>
-      <div class="w-11/12 flex flex-row space-x-4">
-        <div class="w-1/6">
-          <button on:click={() => selectWinner(5)} class="flex-1 block w-full rounded-sm sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2">Select a Team</button>
-          <div class="text-right">
-            <p class="text-xs mt-1">5 Points</p>
-          </div>
-        </div>
-        <div class="w-1/6">
-          <button on:click={() => selectLoser(5)} class="flex-1 block w-full rounded-sm sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2">Select a Team</button>
-          <div class="text-right">
-            <p class="text-xs mt-1">5 Points</p>
-          </div>
-        </div>
-        <div class="w-1/6">
-          <button on:click={() => selectScorer(5)} class="flex-1 block w-full rounded-sm sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2">Select a Player</button>
-          <div class="text-right">
-            <p class="text-xs mt-1">10 Points</p>
-          </div>
-        </div>
-        <div class="w-1/6">
-          <button on:click={() => selectAssister(5)} class="flex-1 block w-full rounded-sm sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2">Select a Player</button>
-          <div class="text-right">
-            <p class="text-xs mt-1">10 Points</p>
-          </div>
-        </div>
-        <div class="w-1/6">
-          <button on:click={() => selectYellowCard(5)} class="flex-1 block w-full rounded-sm sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2">Select a Player</button>
-          <div class="text-right">
-            <p class="text-xs mt-1">5 Points</p>
-          </div>
-        </div>
-        <div class="w-1/6">
-          <button on:click={() => selectRedCard(5)} class="flex-1 block w-full rounded-sm sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2">Select a Player</button>
-          <div class="text-right">
-            <p class="text-xs mt-1">10 Points</p>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    
     <div class="flex flex-row my-4 space-x-2">
-      <div class="w-1/12 text-lg"></div>
+      <div class="w-full mx-4">
+        <p class="flex-1 block w-full bg-gray-800 p-2 text-center rounded-md">
+          Receive double points for each group stage category you make 3 or more
+          correct selections.
+        </p>
+      </div>
+    </div>
+
+    <div class="horizontal-divider my-8" />
+
+    <div class="flex flex-row items-center bg-black border rounded-md p-4 m-4">
+      <div class="w-1/12" />
       <div class="w-11/12 flex flex-row space-x-4">
-        <div class="w-full">
-          <p class="flex-1 block w-full rounded-none rounded-r-md bg-gray-800 p-2 text-center">
-            Receive double points for each group stage category you make 3 or more correct selections.
-          </p>
+        <div class="w-1/6 flex">
+          <p class="w-full text-center border-x">Winner</p>
+        </div>
+        <div class="w-1/6 flex">
+          <p class="w-full text-center border-x">Loser</p>
+        </div>
+        <div class="w-1/6 flex">
+          <p class="w-full text-center border-x">To Score</p>
+        </div>
+        <div class="w-1/6 flex">
+          <p class="w-full text-center border-x">To Assist</p>
+        </div>
+        <div class="w-1/6 flex">
+          <p class="w-full text-center border-x">Yellow Card</p>
+        </div>
+        <div class="w-1/6 flex">
+          <p class="w-full text-center border-x">Red Card</p>
         </div>
       </div>
     </div>
 
-    
-    <div class="flex flex-row items-center bg-gray-800 p-4">
-    
-      <div class="w-1/12 text-lg"></div>
+    <div class="flex flex-row items-center bg-green-700 p-4">
+      <div class="w-1/12">Round of 16</div>
       <div class="w-11/12 flex flex-row space-x-4">
         <div class="w-1/6">
-          Winner
-        </div>
-        <div class="w-1/6">
-          Loser
-        </div>
-        <div class="w-1/6">
-          To Score
-        </div>
-        <div class="w-1/6">
-          To Assist
-        </div>
-        <div class="w-1/6">
-          Yellow Card
-        </div>
-        <div class="w-1/6">
-          Red Card
-        </div>
-      </div>
-    </div>
-
-    <div class="flex flex-row items-center bg-gray-800 p-4">
-      <div class="w-1/12 text-lg">Round of 16</div>
-      <div class="w-11/12 flex flex-row space-x-4">
-        <div class="w-1/6">
-          <button on:click={() => selectWinner(6)} class="flex-1 block w-full rounded-sm sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2">Select a Team</button>
+          <button
+            on:click={() => selectWinner(6)}
+            class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2"
+            >Select a Team</button
+          >
           <div class="text-right">
-            <p class="text-xs mt-1">10 Points</p>
+            <p class="text-xs mt-4">10 Points</p>
           </div>
         </div>
         <div class="w-1/6">
-          <button on:click={() => selectLoser(6)} class="flex-1 block w-full rounded-sm sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2">Select a Team</button>
+          <button
+            on:click={() => selectLoser(6)}
+            class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2"
+            >Select a Team</button
+          >
           <div class="text-right">
-            <p class="text-xs mt-1">10 Points</p>
+            <p class="text-xs mt-4">10 Points</p>
           </div>
         </div>
         <div class="w-1/6">
-          <button on:click={() => selectScorer(6)} class="flex-1 block w-full rounded-sm sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2">Select a Player</button>
+          <button
+            on:click={() => selectScorer(6)}
+            class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2"
+            >Select a Player</button
+          >
           <div class="text-right">
-            <p class="text-xs mt-1">20 Points</p>
+            <p class="text-xs mt-4">20 Points</p>
           </div>
         </div>
         <div class="w-1/6">
-          <button on:click={() => selectAssister(6)} class="flex-1 block w-full rounded-sm sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2">Select a Player</button>
+          <button
+            on:click={() => selectAssister(6)}
+            class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2"
+            >Select a Player</button
+          >
           <div class="text-right">
-            <p class="text-xs mt-1">20 Points</p>
+            <p class="text-xs mt-4">20 Points</p>
           </div>
         </div>
         <div class="w-1/6">
-          <button on:click={() => selectYellowCard(6)} class="flex-1 block w-full rounded-sm sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2">Select a Player</button>
+          <button
+            on:click={() => selectYellowCard(6)}
+            class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2"
+            >Select a Player</button
+          >
           <div class="text-right">
-            <p class="text-xs mt-1">10 Points</p>
+            <p class="text-xs mt-4">10 Points</p>
           </div>
         </div>
         <div class="w-1/6">
-          <button on:click={() => selectRedCard(6)} class="flex-1 block w-full rounded-sm sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2">Select a Player</button>
+          <button
+            on:click={() => selectRedCard(6)}
+            class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2"
+            >Select a Player</button
+          >
           <div class="text-right">
-            <p class="text-xs mt-1">20 Points</p>
+            <p class="text-xs mt-4">20 Points</p>
           </div>
         </div>
       </div>
     </div>
 
     <div class="flex flex-row my-4 space-x-2">
-      <div class="w-1/12 text-lg"></div>
+      <div class="w-1/12" />
       <div class="w-11/12 flex flex-row space-x-4">
         <div class="w-1/3">
-          <p class="flex-1 block w-full rounded-none rounded-r-md bg-gray-800 p-2 text-center">
+          <p
+            class="flex-1 block w-full rounded-none rounded-r-md bg-gray-800 p-2 text-center"
+          >
             Both Correct Bonus: 40 Points
           </p>
         </div>
         <div class="w-1/3">
-          <p class="flex-1 block w-full rounded-none rounded-r-md bg-gray-800 p-2 text-center">
+          <p
+            class="flex-1 block w-full rounded-none rounded-r-md bg-gray-800 p-2 text-center"
+          >
             Both Correct Bonus: 80 Points
           </p>
         </div>
         <div class="w-1/3">
-          <p class="flex-1 block w-full rounded-none rounded-r-md bg-gray-800 p-2 text-center">
+          <p
+            class="flex-1 block w-full rounded-none rounded-r-md bg-gray-800 p-2 text-center"
+          >
             Both Correct Bonus: 60 Points
           </p>
         </div>
@@ -637,194 +1414,295 @@
     </div>
 
     <div class="flex flex-row items-center bg-gray-800 p-4">
-      <div class="w-1/12 text-lg">Quarter Final</div>
+      <div class="w-1/12">Quarter Final</div>
       <div class="w-11/12 flex flex-row space-x-4">
         <div class="w-1/6">
-          <button on:click={() => selectWinner(7)} class="flex-1 block w-full rounded-sm sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2">Select a Team</button>
+          <button
+            on:click={() => selectWinner(7)}
+            class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2"
+            >Select a Team</button
+          >
           <div class="text-right">
-            <p class="text-xs mt-1">15 Points</p>
+            <p class="text-xs mt-4">15 Points</p>
           </div>
         </div>
         <div class="w-1/6">
-          <button on:click={() => selectLoser(7)} class="flex-1 block w-full rounded-sm sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2">Select a Team</button>
+          <button
+            on:click={() => selectLoser(7)}
+            class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2"
+            >Select a Team</button
+          >
           <div class="text-right">
-            <p class="text-xs mt-1">15 Points</p>
+            <p class="text-xs mt-4">15 Points</p>
           </div>
         </div>
         <div class="w-1/6">
-          <button on:click={() => selectScorer(7)} class="flex-1 block w-full rounded-sm sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2">Select a Player</button>
+          <button
+            on:click={() => selectScorer(7)}
+            class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2"
+            >Select a Player</button
+          >
           <div class="text-right">
-            <p class="text-xs mt-1">30 Points</p>
+            <p class="text-xs mt-4">30 Points</p>
           </div>
         </div>
         <div class="w-1/6">
-          <button on:click={() => selectAssister(7)} class="flex-1 block w-full rounded-sm sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2">Select a Player</button>
+          <button
+            on:click={() => selectAssister(7)}
+            class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2"
+            >Select a Player</button
+          >
           <div class="text-right">
-            <p class="text-xs mt-1">30 Points</p>
+            <p class="text-xs mt-4">30 Points</p>
           </div>
         </div>
         <div class="w-1/6">
-          <button on:click={() => selectYellowCard(7)} class="flex-1 block w-full rounded-sm sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2">Select a Player</button>
+          <button
+            on:click={() => selectYellowCard(7)}
+            class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2"
+            >Select a Player</button
+          >
           <div class="text-right">
-            <p class="text-xs mt-1">15 Points</p>
+            <p class="text-xs mt-4">15 Points</p>
           </div>
         </div>
         <div class="w-1/6">
-          <button on:click={() => selectRedCard(7)} class="flex-1 block w-full rounded-sm sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2">Select a Player</button>
+          <button
+            on:click={() => selectRedCard(7)}
+            class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2"
+            >Select a Player</button
+          >
           <div class="text-right">
-            <p class="text-xs mt-1">30 Points</p>
+            <p class="text-xs mt-4">30 Points</p>
           </div>
         </div>
       </div>
     </div>
 
     <div class="flex flex-row my-4 space-x-2">
-      <div class="w-1/12 text-lg"></div>
+      <div class="w-1/12" />
       <div class="w-11/12 flex flex-row space-x-4">
         <div class="w-1/3">
-          <p class="flex-1 block w-full rounded-none rounded-r-md bg-gray-800 p-2 text-center">
+          <p
+            class="flex-1 block w-full rounded-none rounded-r-md bg-gray-800 p-2 text-center"
+          >
             Both Correct Bonus: 60 Points
           </p>
         </div>
         <div class="w-1/3">
-          <p class="flex-1 block w-full rounded-none rounded-r-md bg-gray-800 p-2 text-center">
+          <p
+            class="flex-1 block w-full rounded-none rounded-r-md bg-gray-800 p-2 text-center"
+          >
             Both Correct Bonus: 120 Points
           </p>
         </div>
         <div class="w-1/3">
-          <p class="flex-1 block w-full rounded-none rounded-r-md bg-gray-800 p-2 text-center">
+          <p
+            class="flex-1 block w-full rounded-none rounded-r-md bg-gray-800 p-2 text-center"
+          >
             Both Correct Bonus: 90 Points
           </p>
         </div>
       </div>
     </div>
 
-    <div class="flex flex-row items-center bg-gray-800 p-4">
-      <div class="w-1/12 text-lg">Semi Final</div>
+    <div class="flex flex-row items-center bg-gray-900 p-4">
+      <div class="w-1/12">Semi Final</div>
       <div class="w-11/12 flex flex-row space-x-4">
         <div class="w-1/6">
-          <button on:click={() => selectWinner(8)} class="flex-1 block w-full rounded-sm sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2">Select a Team</button>
+          <button
+            on:click={() => selectWinner(8)}
+            class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2"
+            >Select a Team</button
+          >
           <div class="text-right">
-            <p class="text-xs mt-1">20 Points</p>
+            <p class="text-xs mt-4">20 Points</p>
           </div>
         </div>
         <div class="w-1/6">
-          <button on:click={() => selectLoser(8)} class="flex-1 block w-full rounded-sm sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2">Select a Team</button>
+          <button
+            on:click={() => selectLoser(8)}
+            class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2"
+            >Select a Team</button
+          >
           <div class="text-right">
-            <p class="text-xs mt-1">20 Points</p>
+            <p class="text-xs mt-4">20 Points</p>
           </div>
         </div>
         <div class="w-1/6">
-          <button on:click={() => selectScorer(8)} class="flex-1 block w-full rounded-sm sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2">Select a Player</button>
+          <button
+            on:click={() => selectScorer(8)}
+            class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2"
+            >Select a Player</button
+          >
           <div class="text-right">
-            <p class="text-xs mt-1">40 Points</p>
+            <p class="text-xs mt-4">40 Points</p>
           </div>
         </div>
         <div class="w-1/6">
-          <button on:click={() => selectAssister(8)} class="flex-1 block w-full rounded-sm sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2">Select a Player</button>
+          <button
+            on:click={() => selectAssister(8)}
+            class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2"
+            >Select a Player</button
+          >
           <div class="text-right">
-            <p class="text-xs mt-1">40 Points</p>
+            <p class="text-xs mt-4">40 Points</p>
           </div>
         </div>
         <div class="w-1/6">
-          <button on:click={() => selectYellowCard(8)} class="flex-1 block w-full rounded-sm sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2">Select a Player</button>
+          <button
+            on:click={() => selectYellowCard(8)}
+            class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2"
+            >Select a Player</button
+          >
           <div class="text-right">
-            <p class="text-xs mt-1">10 Points</p>
+            <p class="text-xs mt-4">10 Points</p>
           </div>
         </div>
         <div class="w-1/6">
-          <button on:click={() => selectRedCard(8)} class="flex-1 block w-full rounded-sm sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2">Select a Player</button>
+          <button
+            on:click={() => selectRedCard(8)}
+            class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2"
+            >Select a Player</button
+          >
           <div class="text-right">
-            <p class="text-xs mt-1">40 Points</p>
+            <p class="text-xs mt-4">40 Points</p>
           </div>
         </div>
       </div>
     </div>
 
     <div class="flex flex-row my-4 space-x-2">
-      <div class="w-1/12 text-lg"></div>
+      <div class="w-1/12" />
       <div class="w-11/12 flex flex-row space-x-4">
         <div class="w-1/3">
-          <p class="flex-1 block w-full rounded-none rounded-r-md bg-gray-800 p-2 text-center">
+          <p
+            class="flex-1 block w-full rounded-none rounded-r-md bg-gray-800 p-2 text-center"
+          >
             Both Correct Bonus: 80 Points
           </p>
         </div>
         <div class="w-1/3">
-          <p class="flex-1 block w-full rounded-none rounded-r-md bg-gray-800 p-2 text-center">
+          <p
+            class="flex-1 block w-full rounded-none rounded-r-md bg-gray-800 p-2 text-center"
+          >
             Both Correct Bonus: 160 Points
           </p>
         </div>
         <div class="w-1/3">
-          <p class="flex-1 block w-full rounded-none rounded-r-md bg-gray-800 p-2 text-center">
+          <p
+            class="flex-1 block w-full rounded-none rounded-r-md bg-gray-800 p-2 text-center"
+          >
             Both Correct Bonus: 120 Points
           </p>
         </div>
       </div>
     </div>
 
-    <div class="flex flex-row items-center bg-gray-800 p-4">
-      <div class="w-1/12 text-lg">Final</div>
+    <div class="flex flex-row items-center bg-yellow-600 p-4">
+      <div class="w-1/12">Final</div>
       <div class="w-11/12 flex flex-row space-x-4">
         <div class="w-1/6">
-          <button on:click={() => selectWinner(9)} class="flex-1 block w-full rounded-sm sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2">Select a Team</button>
+          <button
+            on:click={() => selectWinner(9)}
+            class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2"
+            >Select a Team</button
+          >
           <div class="text-right">
-            <p class="text-xs mt-1">25 Points</p>
+            <p class="text-xs mt-4">25 Points</p>
           </div>
         </div>
         <div class="w-1/6">
-          <button on:click={() => selectLoser(9)} class="flex-1 block w-full rounded-sm sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2">Select a Team</button>
+          <button
+            on:click={() => selectLoser(9)}
+            class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2"
+            >Select a Team</button
+          >
           <div class="text-right">
-            <p class="text-xs mt-1">25 Points</p>
+            <p class="text-xs mt-4">25 Points</p>
           </div>
         </div>
         <div class="w-1/6">
-          <button on:click={() => selectScorer(9)} class="flex-1 block w-full rounded-sm sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2">Select a Player</button>
+          <button
+            on:click={() => selectScorer(9)}
+            class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2"
+            >Select a Player</button
+          >
           <div class="text-right">
-            <p class="text-xs mt-1">50 Points</p>
+            <p class="text-xs mt-4">50 Points</p>
           </div>
         </div>
         <div class="w-1/6">
-          <button on:click={() => selectAssister(9)} class="flex-1 block w-full rounded-sm sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2">Select a Player</button>
+          <button
+            on:click={() => selectAssister(9)}
+            class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2"
+            >Select a Player</button
+          >
           <div class="text-right">
-            <p class="text-xs mt-1">50 Points</p>
+            <p class="text-xs mt-4">50 Points</p>
           </div>
         </div>
         <div class="w-1/6">
-          <button on:click={() => selectYellowCard(9)} class="flex-1 block w-full rounded-sm sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2">Select a Player</button>
+          <button
+            on:click={() => selectYellowCard(9)}
+            class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2"
+            >Select a Player</button
+          >
           <div class="text-right">
-            <p class="text-xs mt-1">25 Points</p>
+            <p class="text-xs mt-4">25 Points</p>
           </div>
         </div>
         <div class="w-1/6">
-          <button on:click={() => selectRedCard(9)} class="flex-1 block w-full rounded-sm sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2">Select a Player</button>
+          <button
+            on:click={() => selectRedCard(9)}
+            class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2"
+            >Select a Player</button
+          >
           <div class="text-right">
-            <p class="text-xs mt-1">50 Points</p>
+            <p class="text-xs mt-4">50 Points</p>
           </div>
         </div>
       </div>
     </div>
 
     <div class="flex flex-row my-4 space-x-2">
-      <div class="w-1/12 text-lg"></div>
+      <div class="w-1/12" />
       <div class="w-11/12 flex flex-row space-x-4">
         <div class="w-1/3">
-          <p class="flex-1 block w-full rounded-none rounded-r-md bg-gray-800 p-2 text-center">
+          <p
+            class="flex-1 block w-full rounded-none rounded-r-md bg-gray-800 p-2 text-center"
+          >
             Both Correct Bonus: 100 Points
           </p>
         </div>
         <div class="w-1/3">
-          <p class="flex-1 block w-full rounded-none rounded-r-md bg-gray-800 p-2 text-center">
+          <p
+            class="flex-1 block w-full rounded-none rounded-r-md bg-gray-800 p-2 text-center"
+          >
             Both Correct Bonus: 200 Points
           </p>
         </div>
         <div class="w-1/3">
-          <p class="flex-1 block w-full rounded-none rounded-r-md bg-gray-800 p-2 text-center">
+          <p
+            class="flex-1 block w-full rounded-none rounded-r-md bg-gray-800 p-2 text-center"
+          >
             Both Correct Bonus: 150 Points
           </p>
         </div>
       </div>
     </div>
 
-
-  </div>
-</Layout>
+    <div class="bg-panel rounded-md p-4 mt-4">
+      <div class="flex justify-center">
+        <button
+          type="submit"
+          class="inline-flex justify-center px-4 py-2 border border-transparent shadow-sm font-bold rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+        >
+          <p class="text-xl px-4">
+            Play<br /> <span class="text-xxs">(100 $FPL)</span>
+          </p>
+        </button>
+      </div>
+    </div>
+  </div></Layout
+>
