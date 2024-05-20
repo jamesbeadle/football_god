@@ -10,7 +10,7 @@ return {
 	assets: new Set([".ic-assets.json",".well-known/ic-domains",".well-known/ii-alternative-origins","FPLCoin.png","banner.jpg","favicons/apple-touch-icon.png","favicons/browserconfig.xml","favicons/favicon-16x16.png","favicons/favicon-32x32.png","favicons/favicon.ico","favicons/icon-192x192.png","favicons/icon-512x512.png","favicons/mstile-150x150.png","favicons/safari-pinned-tab.svg","openfpl.png","poppins-regular-webfont.woff2","whitepaper.jpg"]),
 	mimeTypes: {".json":"application/json",".png":"image/png",".jpg":"image/jpeg",".xml":"text/xml",".svg":"image/svg+xml",".woff2":"font/woff2"},
 	_: {
-		client: {"start":"_app/immutable/entry/start.X1AGkPLp.js","app":"_app/immutable/entry/app.B73faFsS.js","imports":["_app/immutable/entry/start.X1AGkPLp.js","_app/immutable/chunks/index.8OvprEYt.js","_app/immutable/chunks/vendor.5EGZ7AZB.js","_app/immutable/entry/app.B73faFsS.js","_app/immutable/chunks/index.8OvprEYt.js","_app/immutable/chunks/vendor.5EGZ7AZB.js"],"stylesheets":["_app/immutable/assets/index.D7eaxdDC.css","_app/immutable/assets/index.D7eaxdDC.css"],"fonts":[],"uses_env_dynamic_public":false},
+		client: {"start":"_app/immutable/entry/start.Cz05B1Ni.js","app":"_app/immutable/entry/app.DZb_8Khw.js","imports":["_app/immutable/entry/start.Cz05B1Ni.js","_app/immutable/chunks/index.DwtmdVWq.js","_app/immutable/chunks/vendor.x7LRBi4-.js","_app/immutable/entry/app.DZb_8Khw.js","_app/immutable/chunks/index.DwtmdVWq.js","_app/immutable/chunks/vendor.x7LRBi4-.js"],"stylesheets":["_app/immutable/assets/index.D7eaxdDC.css","_app/immutable/assets/index.D7eaxdDC.css"],"fonts":[],"uses_env_dynamic_public":false},
 		nodes: [
 			__memo(() => import('./nodes/0.js')),
 			__memo(() => import('./nodes/1.js')),

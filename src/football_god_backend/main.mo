@@ -21,10 +21,6 @@ import Book "book";
 import Account "Account";
 import DTOs "DTOs";
 
-import Euro2024Fixtures "./data/euro2024_fixtures";
-import Euro2024Players "./data/euro2024_players";
-import Euro2024Teams "./data/euro2024_teams";
-
 actor Self {
 
   let admins : [Principal] = [

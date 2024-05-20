@@ -1,7 +1,6 @@
 {
   "canisters": {
     "football_god_backend": {
-      "dependencies": ["ledger"],
       "main": "src/football_god_backend/main.mo",
       "type": "motoko",
       "optimize": "cycles"
@@ -13,21 +12,6 @@
       },
       "source": ["build/"],
       "type": "assets"
-    },
-    "internet-identity": {
-      "type": "pull",
-      "id": "rdmx6-jaaaa-aaaaa-aaadq-cai"
-    },
-    "ledger": {
-      "candid": "candid/nns-ledger.did",
-      "remote": {
-        "id": {
-          "ic": "ryjl3-tyaaa-aaaaa-aaaba-cai",
-          "local": "ryjl3-tyaaa-aaaaa-aaaba-cai"
-        }
-      },
-      "type": "custom",
-      "wasm": ""
     }
   },
   "defaults": {

@@ -136,24 +136,16 @@ module Types {
   public type InternationalTeam = {
     id : TeamId;
     players : [InternationalPlayer];
-    countryName : Text;
+    name : Text;
     countryCode : Text;
-    shirtColour : Text;
   };
 
   public type InternationalPlayer = {
     id : PlayerId;
     firstName : Text;
     lastName : Text;
-    nickname : Text;
     position : Position;
-    qualifyingAppearances : Nat8;
-    qualifyingGoals : Nat8;
-    qualifyingAssists : Nat8;
     teamId : TeamId;
-    shirtNumber : Nat8;
-    dateOfBirth : Int;
-    nationality : CountryId;
   };
 
   public type CountryId = Nat8;

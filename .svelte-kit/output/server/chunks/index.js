@@ -3410,7 +3410,7 @@ const options = {
   root: Root,
   service_worker: false,
   templates: {
-    app: ({ head, body: body2, assets: assets2, nonce, env }) => '<!DOCTYPE html>\n<html lang="en">\n  <head>\n    <meta charset="utf-8" />\n    <meta content="width=device-width, initial-scale=1" name="viewport" />\n\n    <title>FootballGod</title>\n    <link href="https://footballgod.xyz" rel="canonical" />\n    <meta\n      content="FootballGod is a tokenised betting platform on the Internet Computer blockchain."\n      name="description"\n    />\n    <meta content="FootballGod" property="og:title" />\n    <meta\n      content="FootballGod is a tokenised betting platform on the Internet Computer blockchain."\n      property="og:description"\n    />\n    <meta content="website" property="og:type" />\n    <meta content="https://footballgod.xyz" property="og:url" />\n    <meta\n      content="https://footballgod.xyz/meta-share.jpg"\n      property="og:image"\n    />\n    <meta content="summary_large_image" name="twitter:card" />\n    <meta content="FootballGod" name="twitter:title" />\n    <meta\n      content="FootballGod is a tokenised betting platform on the Internet Computer blockchain."\n      name="twitter:description"\n    />\n    <meta\n      content="https://footballgod.xyz/meta-share.jpg"\n      name="twitter:image"\n    />\n    <meta content="@beadle1989" name="twitter:creator" />\n\n    <link crossorigin="anonymous" href="/manifest.webmanifest" rel="manifest" />\n\n    <!-- Favicon -->\n    <link\n      rel="icon"\n      type="image/png"\n      sizes="32x32"\n      href="' + assets2 + '/favicons/favicon-32x32.png"\n    />\n    <link\n      rel="icon"\n      type="image/png"\n      sizes="16x16"\n      href="' + assets2 + '/favicons/favicon-16x16.png"\n    />\n    <link rel="shortcut icon" href="' + assets2 + '/favicons/favicon.ico" />\n\n    <!-- iOS meta tags & icons -->\n    <meta name="apple-mobile-web-app-capable" content="yes" />\n    <meta name="apple-mobile-web-app-status-bar-style" content="#2CE3A6" />\n    <meta name="apple-mobile-web-app-title" content="FootballGod" />\n    <link\n      rel="apple-touch-icon"\n      href="' + assets2 + '/favicons/apple-touch-icon.png"\n    />\n    <link\n      rel="mask-icon"\n      href="' + assets2 + '/favicons/safari-pinned-tab.svg"\n      color="#2CE3A6"\n    />\n\n    <!-- MS -->\n    <meta name="msapplication-TileColor" content="#2CE3A6" />\n    <meta\n      name="msapplication-config"\n      content="' + assets2 + '/favicons/browserconfig.xml"\n    />\n\n    <meta content="#2CE3A6" name="theme-color" />\n    ' + head + '\n\n    <style>\n      html,\n      body {\n        height: 100%;\n        margin: 0;\n      }\n\n      @font-face {\n        font-display: swap;\n        font-family: "Poppins";\n        font-style: normal;\n        font-weight: 400;\n        src: url("' + assets2 + '/poppins-regular-webfont.woff2")\n          format("woff2");\n      }\n\n      @font-face {\n        font-display: swap;\n        font-family: "Manrope";\n        font-style: normal;\n        font-weight: 400;\n        src: url("' + assets2 + '/Manrope-Regular.woff2") format("woff2");\n      }\n      body {\n        font-family: "Poppins", sans-serif !important;\n        color: white !important;\n        background-color: #1a1a1d;\n        height: 100vh;\n        margin: 0;\n      }\n\n      #app-spinner {\n        --spinner-size: 30px;\n\n        width: var(--spinner-size);\n        height: var(--spinner-size);\n\n        animation: app-spinner-linear-rotate 2000ms linear infinite;\n\n        position: absolute;\n        top: calc(50% - (var(--spinner-size) / 2));\n        left: calc(50% - (var(--spinner-size) / 2));\n\n        --radius: 45px;\n        --circumference: calc(3.14159265359 * var(--radius) * 2);\n\n        --start: calc((1 - 0.05) * var(--circumference));\n        --end: calc((1 - 0.8) * var(--circumference));\n      }\n\n      #app-spinner circle {\n        stroke-dasharray: var(--circumference);\n        stroke-width: 10%;\n        transform-origin: 50% 50% 0;\n\n        transition-property: stroke;\n\n        animation-name: app-spinner-stroke-rotate-100;\n        animation-duration: 4000ms;\n        animation-timing-function: cubic-bezier(0.35, 0, 0.25, 1);\n        animation-iteration-count: infinite;\n\n        fill: transparent;\n        stroke: currentColor;\n\n        transition: stroke-dashoffset 225ms linear;\n      }\n\n      @keyframes app-spinner-linear-rotate {\n        0% {\n          transform: rotate(0deg);\n        }\n        100% {\n          transform: rotate(360deg);\n        }\n      }\n\n      @keyframes app-spinner-stroke-rotate-100 {\n        0% {\n          stroke-dashoffset: var(--start);\n          transform: rotate(0);\n        }\n        12.5% {\n          stroke-dashoffset: var(--end);\n          transform: rotate(0);\n        }\n        12.5001% {\n          stroke-dashoffset: var(--end);\n          transform: rotateX(180deg) rotate(72.5deg);\n        }\n        25% {\n          stroke-dashoffset: var(--start);\n          transform: rotateX(180deg) rotate(72.5deg);\n        }\n\n        25.0001% {\n          stroke-dashoffset: var(--start);\n          transform: rotate(270deg);\n        }\n        37.5% {\n          stroke-dashoffset: var(--end);\n          transform: rotate(270deg);\n        }\n        37.5001% {\n          stroke-dashoffset: var(--end);\n          transform: rotateX(180deg) rotate(161.5deg);\n        }\n        50% {\n          stroke-dashoffset: var(--start);\n          transform: rotateX(180deg) rotate(161.5deg);\n        }\n\n        50.0001% {\n          stroke-dashoffset: var(--start);\n          transform: rotate(180deg);\n        }\n        62.5% {\n          stroke-dashoffset: var(--end);\n          transform: rotate(180deg);\n        }\n        62.5001% {\n          stroke-dashoffset: var(--end);\n          transform: rotateX(180deg) rotate(251.5deg);\n        }\n        75% {\n          stroke-dashoffset: var(--start);\n          transform: rotateX(180deg) rotate(251.5deg);\n        }\n\n        75.0001% {\n          stroke-dashoffset: var(--start);\n          transform: rotate(90deg);\n        }\n        87.5% {\n          stroke-dashoffset: var(--end);\n          transform: rotate(90deg);\n        }\n        87.5001% {\n          stroke-dashoffset: var(--end);\n          transform: rotateX(180deg) rotate(341.5deg);\n        }\n        100% {\n          stroke-dashoffset: var(--start);\n          transform: rotateX(180deg) rotate(341.5deg);\n        }\n      }\n    </style>\n  </head>\n  <body data-sveltekit-preload-data="hover">\n    <div style="display: contents">' + body2 + '</div>\n\n    <svg\n      id="app-spinner"\n      preserveAspectRatio="xMidYMid meet"\n      focusable="false"\n      aria-hidden="true"\n      data-tid="spinner"\n      viewBox="0 0 100 100"\n    >\n      <circle cx="50%" cy="50%" r="45" />\n    </svg>\n  </body>\n</html>\n',
+    app: ({ head, body: body2, assets: assets2, nonce, env }) => '<!doctype html>\n<html lang="en">\n  <head>\n    <meta charset="utf-8" />\n    <meta content="width=device-width, initial-scale=1" name="viewport" />\n\n    <title>FootballGod</title>\n    <link href="https://footballgod.xyz" rel="canonical" />\n    <meta\n      content="FootballGod is a tokenised betting platform on the Internet Computer blockchain."\n      name="description"\n    />\n    <meta content="FootballGod" property="og:title" />\n    <meta\n      content="FootballGod is a tokenised betting platform on the Internet Computer blockchain."\n      property="og:description"\n    />\n    <meta content="website" property="og:type" />\n    <meta content="https://footballgod.xyz" property="og:url" />\n    <meta\n      content="https://footballgod.xyz/meta-share.jpg"\n      property="og:image"\n    />\n    <meta content="summary_large_image" name="twitter:card" />\n    <meta content="FootballGod" name="twitter:title" />\n    <meta\n      content="FootballGod is a tokenised betting platform on the Internet Computer blockchain."\n      name="twitter:description"\n    />\n    <meta\n      content="https://footballgod.xyz/meta-share.jpg"\n      name="twitter:image"\n    />\n    <meta content="@beadle1989" name="twitter:creator" />\n\n    <link crossorigin="anonymous" href="/manifest.webmanifest" rel="manifest" />\n\n    <!-- Favicon -->\n    <link\n      rel="icon"\n      type="image/png"\n      sizes="32x32"\n      href="' + assets2 + '/favicons/favicon-32x32.png"\n    />\n    <link\n      rel="icon"\n      type="image/png"\n      sizes="16x16"\n      href="' + assets2 + '/favicons/favicon-16x16.png"\n    />\n    <link rel="shortcut icon" href="' + assets2 + '/favicons/favicon.ico" />\n\n    <!-- iOS meta tags & icons -->\n    <meta name="apple-mobile-web-app-capable" content="yes" />\n    <meta name="apple-mobile-web-app-status-bar-style" content="#2CE3A6" />\n    <meta name="apple-mobile-web-app-title" content="FootballGod" />\n    <link\n      rel="apple-touch-icon"\n      href="' + assets2 + '/favicons/apple-touch-icon.png"\n    />\n    <link\n      rel="mask-icon"\n      href="' + assets2 + '/favicons/safari-pinned-tab.svg"\n      color="#2CE3A6"\n    />\n\n    <!-- MS -->\n    <meta name="msapplication-TileColor" content="#2CE3A6" />\n    <meta\n      name="msapplication-config"\n      content="' + assets2 + '/favicons/browserconfig.xml"\n    />\n\n    <meta content="#2CE3A6" name="theme-color" />\n    ' + head + '\n\n    <style>\n      html,\n      body {\n        height: 100%;\n        margin: 0;\n      }\n\n      @font-face {\n        font-display: swap;\n        font-family: "Poppins";\n        font-style: normal;\n        font-weight: 400;\n        src: url("' + assets2 + '/poppins-regular-webfont.woff2")\n          format("woff2");\n      }\n\n      @font-face {\n        font-display: swap;\n        font-family: "Manrope";\n        font-style: normal;\n        font-weight: 400;\n        src: url("' + assets2 + '/Manrope-Regular.woff2") format("woff2");\n      }\n      body {\n        font-family: "Poppins", sans-serif !important;\n        color: white !important;\n        background-color: #1a1a1d;\n        height: 100vh;\n        margin: 0;\n      }\n\n      #app-spinner {\n        --spinner-size: 30px;\n\n        width: var(--spinner-size);\n        height: var(--spinner-size);\n\n        animation: app-spinner-linear-rotate 2000ms linear infinite;\n\n        position: absolute;\n        top: calc(50% - (var(--spinner-size) / 2));\n        left: calc(50% - (var(--spinner-size) / 2));\n\n        --radius: 45px;\n        --circumference: calc(3.14159265359 * var(--radius) * 2);\n\n        --start: calc((1 - 0.05) * var(--circumference));\n        --end: calc((1 - 0.8) * var(--circumference));\n      }\n\n      #app-spinner circle {\n        stroke-dasharray: var(--circumference);\n        stroke-width: 10%;\n        transform-origin: 50% 50% 0;\n\n        transition-property: stroke;\n\n        animation-name: app-spinner-stroke-rotate-100;\n        animation-duration: 4000ms;\n        animation-timing-function: cubic-bezier(0.35, 0, 0.25, 1);\n        animation-iteration-count: infinite;\n\n        fill: transparent;\n        stroke: currentColor;\n\n        transition: stroke-dashoffset 225ms linear;\n      }\n\n      @keyframes app-spinner-linear-rotate {\n        0% {\n          transform: rotate(0deg);\n        }\n        100% {\n          transform: rotate(360deg);\n        }\n      }\n\n      @keyframes app-spinner-stroke-rotate-100 {\n        0% {\n          stroke-dashoffset: var(--start);\n          transform: rotate(0);\n        }\n        12.5% {\n          stroke-dashoffset: var(--end);\n          transform: rotate(0);\n        }\n        12.5001% {\n          stroke-dashoffset: var(--end);\n          transform: rotateX(180deg) rotate(72.5deg);\n        }\n        25% {\n          stroke-dashoffset: var(--start);\n          transform: rotateX(180deg) rotate(72.5deg);\n        }\n\n        25.0001% {\n          stroke-dashoffset: var(--start);\n          transform: rotate(270deg);\n        }\n        37.5% {\n          stroke-dashoffset: var(--end);\n          transform: rotate(270deg);\n        }\n        37.5001% {\n          stroke-dashoffset: var(--end);\n          transform: rotateX(180deg) rotate(161.5deg);\n        }\n        50% {\n          stroke-dashoffset: var(--start);\n          transform: rotateX(180deg) rotate(161.5deg);\n        }\n\n        50.0001% {\n          stroke-dashoffset: var(--start);\n          transform: rotate(180deg);\n        }\n        62.5% {\n          stroke-dashoffset: var(--end);\n          transform: rotate(180deg);\n        }\n        62.5001% {\n          stroke-dashoffset: var(--end);\n          transform: rotateX(180deg) rotate(251.5deg);\n        }\n        75% {\n          stroke-dashoffset: var(--start);\n          transform: rotateX(180deg) rotate(251.5deg);\n        }\n\n        75.0001% {\n          stroke-dashoffset: var(--start);\n          transform: rotate(90deg);\n        }\n        87.5% {\n          stroke-dashoffset: var(--end);\n          transform: rotate(90deg);\n        }\n        87.5001% {\n          stroke-dashoffset: var(--end);\n          transform: rotateX(180deg) rotate(341.5deg);\n        }\n        100% {\n          stroke-dashoffset: var(--start);\n          transform: rotateX(180deg) rotate(341.5deg);\n        }\n      }\n    </style>\n  </head>\n  <body data-sveltekit-preload-data="hover">\n    <div style="display: contents">' + body2 + '</div>\n\n    <svg\n      id="app-spinner"\n      preserveAspectRatio="xMidYMid meet"\n      focusable="false"\n      aria-hidden="true"\n      data-tid="spinner"\n      viewBox="0 0 100 100"\n    >\n      <circle cx="50%" cy="50%" r="45" />\n    </svg>\n  </body>\n</html>\n',
     error: ({ status, message }) => '<!doctype html>\n<html lang="en">\n	<head>\n		<meta charset="utf-8" />\n		<title>' + message + `</title>
 
 		<style>
@@ -3482,7 +3482,7 @@ const options = {
 		<div class="error">
 			<span class="status">` + status + '</span>\n			<div class="message">\n				<h1>' + message + "</h1>\n			</div>\n		</div>\n	</body>\n</html>\n"
   },
-  version_hash: "1n2xn20"
+  version_hash: "4y68j4"
 };
 async function get_hooks() {
   return {};
@@ -4137,326 +4137,306 @@ const Page$7 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
     }
   })}`;
 });
-const Page$6 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
-  return `${validate_component(Layout, "Layout").$$render($$result, {}, {}, {
-    default: () => {
-      return `${``} ${``} <div class="bg-panel rounded-md p-4"><p class="text-xl my-2 mb-4" data-svelte-h="svelte-15uwobf">Welcome to the FootballGod Euro 2024 prediction game.</p> <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2" data-svelte-h="svelte-1jizq7n"><div class="flex flex-col bg-gray-700 rounded-lg overflow-hidden"><div class="p-4 flex flex-col justify-between h-full"><p class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm font-bold rounded-md text-white items-center"><img src="FPLCoin.png" alt="fpl" class="w-8 h-8 mr-2 mb-1">
-            Prize Pool: 0.00 $FPL</p></div></div> <div class="flex flex-col bg-gray-700 rounded-lg overflow-hidden"><div class="flex flex-col justify-center h-full"><p class="inline-flex justify-center py-2 px-4 mx-2 border border-transparent shadow-sm font-bold rounded-md text-white">Total Entries: 0</p></div></div> <div class="flex flex-col bg-gray-700 rounded-lg overflow-hidden"><div class="flex flex-col justify-center h-full"><button type="submit" class="inline-flex justify-center py-2 px-4 mx-2 border border-transparent shadow-sm font-bold rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">View Leaderboard</button></div></div></div> <p class="my-4" data-svelte-h="svelte-t8s52k">Make your selections below and enter the sweepstake to be in with a chance
-      of winning $FPL.</p> <div class="horizontal-divider my-4 mb-8"></div> <div class="flex flex-row items-center bg-black border rounded-md p-4 m-4" data-svelte-h="svelte-1bt2qdi"><div class="w-1/12"></div> <div class="w-11/12 flex flex-row space-x-4"><div class="w-1/6 flex"><p class="w-full text-center border-x">Winner</p></div> <div class="w-1/6 flex"><p class="w-full text-center border-x">Loser</p></div> <div class="w-1/6 flex"><p class="w-full text-center border-x">To Score</p></div> <div class="w-1/6 flex"><p class="w-full text-center border-x">To Assist</p></div> <div class="w-1/6 flex"><p class="w-full text-center border-x">Yellow Card</p></div> <div class="w-1/6 flex"><p class="w-full text-center border-x">Red Card</p></div></div></div> <div class="flex flex-row items-center bg-gray-400 p-4 m-4 rounded-md"><div class="w-1/12" data-svelte-h="svelte-1itpdb2">Group A</div> <div class="w-11/12 flex flex-row space-x-4"><div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-4nwbji">Select a Team</button> <div class="text-right" data-svelte-h="svelte-1nrc4qq"><p class="text-xs mt-4">5 Points</p></div></div> <div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-w1uisa">Select a Team</button> <div class="text-right" data-svelte-h="svelte-1nrc4qq"><p class="text-xs mt-4">5 Points</p></div></div> <div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-bk4oel">Select a Player</button> <div class="text-right" data-svelte-h="svelte-1yzcc3s"><p class="text-xs mt-4">10 Points</p></div></div> <div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-1mqpk8h">Select a Player</button> <div class="text-right" data-svelte-h="svelte-1yzcc3s"><p class="text-xs mt-4">10 Points</p></div></div> <div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-gs3yvn">Select a Player</button> <div class="text-right" data-svelte-h="svelte-1nrc4qq"><p class="text-xs mt-4">5 Points</p></div></div> <div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-rjk8c6">Select a Player</button> <div class="text-right" data-svelte-h="svelte-1yzcc3s"><p class="text-xs mt-4">10 Points</p></div></div></div></div> <div class="flex flex-row items-center bg-gray-500 p-4 m-4 rounded-md"><div class="w-1/12" data-svelte-h="svelte-1qqz6f1">Group B</div> <div class="w-11/12 flex flex-row space-x-4"><div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-1u8114h">Select a Team</button> <div class="text-right" data-svelte-h="svelte-1nrc4qq"><p class="text-xs mt-4">5 Points</p></div></div> <div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-1c330r3">Select a Team</button> <div class="text-right" data-svelte-h="svelte-1nrc4qq"><p class="text-xs mt-4">5 Points</p></div></div> <div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-1qiyevq">Select a Player</button> <div class="text-right" data-svelte-h="svelte-1yzcc3s"><p class="text-xs mt-4">10 Points</p></div></div> <div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-p01c32">Select a Player</button> <div class="text-right" data-svelte-h="svelte-1yzcc3s"><p class="text-xs mt-4">10 Points</p></div></div> <div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-1ife4go">Select a Player</button> <div class="text-right" data-svelte-h="svelte-1nrc4qq"><p class="text-xs mt-4">5 Points</p></div></div> <div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-1q6pykv">Select a Player</button> <div class="text-right" data-svelte-h="svelte-1yzcc3s"><p class="text-xs mt-4">10 Points</p></div></div></div></div> <div class="flex flex-row items-center bg-gray-400 p-4 m-4 rounded-md"><div class="w-1/12" data-svelte-h="svelte-1a8frqk">Group C</div> <div class="w-11/12 flex flex-row space-x-4"><div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-11x9wls">Select a Team</button> <div class="text-right" data-svelte-h="svelte-1nrc4qq"><p class="text-xs mt-4">5 Points</p></div></div> <div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-4f6s10">Select a Team</button> <div class="text-right" data-svelte-h="svelte-1nrc4qq"><p class="text-xs mt-4">5 Points</p></div></div> <div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-hqb81f">Select a Player</button> <div class="text-right" data-svelte-h="svelte-1yzcc3s"><p class="text-xs mt-4">10 Points</p></div></div> <div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-1147c0r">Select a Player</button> <div class="text-right" data-svelte-h="svelte-1yzcc3s"><p class="text-xs mt-4">10 Points</p></div></div> <div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-1bepoul">Select a Player</button> <div class="text-right" data-svelte-h="svelte-1nrc4qq"><p class="text-xs mt-4">5 Points</p></div></div> <div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-afv7nk">Select a Player</button> <div class="text-right" data-svelte-h="svelte-1yzcc3s"><p class="text-xs mt-4">10 Points</p></div></div></div></div> <div class="flex flex-row items-center bg-gray-500 p-4 m-4 rounded-md"><div class="w-1/12" data-svelte-h="svelte-jsk4sb">Group D</div> <div class="w-11/12 flex flex-row space-x-4"><div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-19xh2zv">Select a Team</button> <div class="text-right" data-svelte-h="svelte-1nrc4qq"><p class="text-xs mt-4">5 Points</p></div></div> <div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-7qmkkh">Select a Team</button> <div class="text-right" data-svelte-h="svelte-1nrc4qq"><p class="text-xs mt-4">5 Points</p></div></div> <div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-1sxrujw">Select a Player</button> <div class="text-right" data-svelte-h="svelte-1yzcc3s"><p class="text-xs mt-4">10 Points</p></div></div> <div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-76g2ps">Select a Player</button> <div class="text-right" data-svelte-h="svelte-1yzcc3s"><p class="text-xs mt-4">10 Points</p></div></div> <div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-1jkq6yy">Select a Player</button> <div class="text-right" data-svelte-h="svelte-1nrc4qq"><p class="text-xs mt-4">5 Points</p></div></div> <div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-1gbs4bl">Select a Player</button> <div class="text-right" data-svelte-h="svelte-1yzcc3s"><p class="text-xs mt-4">10 Points</p></div></div></div></div> <div class="flex flex-row items-center bg-gray-400 p-4 m-4 rounded-md"><div class="w-1/12" data-svelte-h="svelte-vhucmi">Group E</div> <div class="w-11/12 flex flex-row space-x-4"><div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-1y7qrcq">Select a Team</button> <div class="text-right" data-svelte-h="svelte-1nrc4qq"><p class="text-xs mt-4">5 Points</p></div></div> <div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-1t255py">Select a Team</button> <div class="text-right" data-svelte-h="svelte-1nrc4qq"><p class="text-xs mt-4">5 Points</p></div></div> <div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-1ek7tft">Select a Player</button> <div class="text-right" data-svelte-h="svelte-1yzcc3s"><p class="text-xs mt-4">10 Points</p></div></div> <div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-wjx6il">Select a Player</button> <div class="text-right" data-svelte-h="svelte-1yzcc3s"><p class="text-xs mt-4">10 Points</p></div></div> <div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-iohldr">Select a Player</button> <div class="text-right" data-svelte-h="svelte-1nrc4qq"><p class="text-xs mt-4">5 Points</p></div></div> <div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-d8vboi">Select a Player</button> <div class="text-right" data-svelte-h="svelte-1yzcc3s"><p class="text-xs mt-4">10 Points</p></div></div></div></div> <div class="flex flex-row items-center bg-gray-500 p-4 m-4 rounded-md"><div class="w-1/12" data-svelte-h="svelte-1p3y09l">Group F</div> <div class="w-11/12 flex flex-row space-x-4"><div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-8twwml">Select a Team</button> <div class="text-right" data-svelte-h="svelte-1nrc4qq"><p class="text-xs mt-4">5 Points</p></div></div> <div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-bbsawb">Select a Team</button> <div class="text-right" data-svelte-h="svelte-1nrc4qq"><p class="text-xs mt-4">5 Points</p></div></div> <div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-kr038y">Select a Player</button> <div class="text-right" data-svelte-h="svelte-1yzcc3s"><p class="text-xs mt-4">10 Points</p></div></div> <div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-r623uy">Select a Player</button> <div class="text-right" data-svelte-h="svelte-1yzcc3s"><p class="text-xs mt-4">10 Points</p></div></div> <div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-1q7rtn8">Select a Player</button> <div class="text-right" data-svelte-h="svelte-1nrc4qq"><p class="text-xs mt-4">5 Points</p></div></div> <div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-11k93vv">Select a Player</button> <div class="text-right" data-svelte-h="svelte-1yzcc3s"><p class="text-xs mt-4">10 Points</p></div></div></div></div> <div class="flex flex-row my-4 space-x-2" data-svelte-h="svelte-ks2zg1"><div class="w-full mx-4"><p class="flex-1 block w-full bg-gray-800 p-2 text-center rounded-md">Receive double points for each group stage category you make 3 or more
-          correct selections.</p></div></div> <div class="horizontal-divider my-8"></div> <div class="flex flex-row items-center bg-black border rounded-md p-4 m-4" data-svelte-h="svelte-1bt2qdi"><div class="w-1/12"></div> <div class="w-11/12 flex flex-row space-x-4"><div class="w-1/6 flex"><p class="w-full text-center border-x">Winner</p></div> <div class="w-1/6 flex"><p class="w-full text-center border-x">Loser</p></div> <div class="w-1/6 flex"><p class="w-full text-center border-x">To Score</p></div> <div class="w-1/6 flex"><p class="w-full text-center border-x">To Assist</p></div> <div class="w-1/6 flex"><p class="w-full text-center border-x">Yellow Card</p></div> <div class="w-1/6 flex"><p class="w-full text-center border-x">Red Card</p></div></div></div> <div class="flex flex-row items-center bg-green-700 p-4"><div class="w-1/12" data-svelte-h="svelte-1ylkbty">Round of 16</div> <div class="w-11/12 flex flex-row space-x-4"><div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-19t214s">Select a Team</button> <div class="text-right" data-svelte-h="svelte-1yzcc3s"><p class="text-xs mt-4">10 Points</p></div></div> <div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-1h36i8">Select a Team</button> <div class="text-right" data-svelte-h="svelte-1yzcc3s"><p class="text-xs mt-4">10 Points</p></div></div> <div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-oqm8jz">Select a Player</button> <div class="text-right" data-svelte-h="svelte-115w755"><p class="text-xs mt-4">20 Points</p></div></div> <div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-130vt3">Select a Player</button> <div class="text-right" data-svelte-h="svelte-115w755"><p class="text-xs mt-4">20 Points</p></div></div> <div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-1wjae1">Select a Player</button> <div class="text-right" data-svelte-h="svelte-1yzcc3s"><p class="text-xs mt-4">10 Points</p></div></div> <div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-1mrmsos">Select a Player</button> <div class="text-right" data-svelte-h="svelte-115w755"><p class="text-xs mt-4">20 Points</p></div></div></div></div> <div class="flex flex-row my-4 space-x-2" data-svelte-h="svelte-1tte2cj"><div class="w-1/12"></div> <div class="w-11/12 flex flex-row space-x-4"><div class="w-1/3"><p class="flex-1 block w-full rounded-none rounded-r-md bg-gray-800 p-2 text-center">Both Correct Bonus: 40 Points</p></div> <div class="w-1/3"><p class="flex-1 block w-full rounded-none rounded-r-md bg-gray-800 p-2 text-center">Both Correct Bonus: 80 Points</p></div> <div class="w-1/3"><p class="flex-1 block w-full rounded-none rounded-r-md bg-gray-800 p-2 text-center">Both Correct Bonus: 60 Points</p></div></div></div> <div class="flex flex-row items-center bg-gray-800 p-4"><div class="w-1/12" data-svelte-h="svelte-1xmz47u">Quarter Final</div> <div class="w-11/12 flex flex-row space-x-4"><div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-1anwtp3">Select a Team</button> <div class="text-right" data-svelte-h="svelte-em69s5"><p class="text-xs mt-4">15 Points</p></div></div> <div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-hskgm5">Select a Team</button> <div class="text-right" data-svelte-h="svelte-em69s5"><p class="text-xs mt-4">15 Points</p></div></div> <div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-16ompe0">Select a Player</button> <div class="text-right" data-svelte-h="svelte-65gvmi"><p class="text-xs mt-4">30 Points</p></div></div> <div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-1sh6x6k">Select a Player</button> <div class="text-right" data-svelte-h="svelte-65gvmi"><p class="text-xs mt-4">30 Points</p></div></div> <div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-1vyfrye">Select a Player</button> <div class="text-right" data-svelte-h="svelte-em69s5"><p class="text-xs mt-4">15 Points</p></div></div> <div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-13sgqcd">Select a Player</button> <div class="text-right" data-svelte-h="svelte-65gvmi"><p class="text-xs mt-4">30 Points</p></div></div></div></div> <div class="flex flex-row my-4 space-x-2" data-svelte-h="svelte-obspnt"><div class="w-1/12"></div> <div class="w-11/12 flex flex-row space-x-4"><div class="w-1/3"><p class="flex-1 block w-full rounded-none rounded-r-md bg-gray-800 p-2 text-center">Both Correct Bonus: 60 Points</p></div> <div class="w-1/3"><p class="flex-1 block w-full rounded-none rounded-r-md bg-gray-800 p-2 text-center">Both Correct Bonus: 120 Points</p></div> <div class="w-1/3"><p class="flex-1 block w-full rounded-none rounded-r-md bg-gray-800 p-2 text-center">Both Correct Bonus: 90 Points</p></div></div></div> <div class="flex flex-row items-center bg-gray-900 p-4"><div class="w-1/12" data-svelte-h="svelte-184ana2">Semi Final</div> <div class="w-11/12 flex flex-row space-x-4"><div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-eislbq">Select a Team</button> <div class="text-right" data-svelte-h="svelte-115w755"><p class="text-xs mt-4">20 Points</p></div></div> <div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-gxjf42">Select a Team</button> <div class="text-right" data-svelte-h="svelte-115w755"><p class="text-xs mt-4">20 Points</p></div></div> <div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-zppxx">Select a Player</button> <div class="text-right" data-svelte-h="svelte-15nxjhn"><p class="text-xs mt-4">40 Points</p></div></div> <div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-1q51ixl">Select a Player</button> <div class="text-right" data-svelte-h="svelte-15nxjhn"><p class="text-xs mt-4">40 Points</p></div></div> <div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-w1j7m3">Select a Player</button> <div class="text-right" data-svelte-h="svelte-1yzcc3s"><p class="text-xs mt-4">10 Points</p></div></div> <div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-1mlem0u">Select a Player</button> <div class="text-right" data-svelte-h="svelte-15nxjhn"><p class="text-xs mt-4">40 Points</p></div></div></div></div> <div class="flex flex-row my-4 space-x-2" data-svelte-h="svelte-hy0kjr"><div class="w-1/12"></div> <div class="w-11/12 flex flex-row space-x-4"><div class="w-1/3"><p class="flex-1 block w-full rounded-none rounded-r-md bg-gray-800 p-2 text-center">Both Correct Bonus: 80 Points</p></div> <div class="w-1/3"><p class="flex-1 block w-full rounded-none rounded-r-md bg-gray-800 p-2 text-center">Both Correct Bonus: 160 Points</p></div> <div class="w-1/3"><p class="flex-1 block w-full rounded-none rounded-r-md bg-gray-800 p-2 text-center">Both Correct Bonus: 120 Points</p></div></div></div> <div class="flex flex-row items-center bg-yellow-600 p-4"><div class="w-1/12" data-svelte-h="svelte-movlhe">Final</div> <div class="w-11/12 flex flex-row space-x-4"><div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-jcegm1">Select a Team</button> <div class="text-right" data-svelte-h="svelte-1xywyg4"><p class="text-xs mt-4">25 Points</p></div></div> <div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-1qmfbfb">Select a Team</button> <div class="text-right" data-svelte-h="svelte-1xywyg4"><p class="text-xs mt-4">25 Points</p></div></div> <div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-1m07noe">Select a Player</button> <div class="text-right" data-svelte-h="svelte-a12yh0"><p class="text-xs mt-4">50 Points</p></div></div> <div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-1j8djcm">Select a Player</button> <div class="text-right" data-svelte-h="svelte-a12yh0"><p class="text-xs mt-4">50 Points</p></div></div> <div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-1khn5bk">Select a Player</button> <div class="text-right" data-svelte-h="svelte-1xywyg4"><p class="text-xs mt-4">25 Points</p></div></div> <div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-et39sn">Select a Player</button> <div class="text-right" data-svelte-h="svelte-a12yh0"><p class="text-xs mt-4">50 Points</p></div></div></div></div> <div class="flex flex-row my-4 space-x-2" data-svelte-h="svelte-19wx7bi"><div class="w-1/12"></div> <div class="w-11/12 flex flex-row space-x-4"><div class="w-1/3"><p class="flex-1 block w-full rounded-none rounded-r-md bg-gray-800 p-2 text-center">Both Correct Bonus: 100 Points</p></div> <div class="w-1/3"><p class="flex-1 block w-full rounded-none rounded-r-md bg-gray-800 p-2 text-center">Both Correct Bonus: 200 Points</p></div> <div class="w-1/3"><p class="flex-1 block w-full rounded-none rounded-r-md bg-gray-800 p-2 text-center">Both Correct Bonus: 150 Points</p></div></div></div> <div class="bg-panel rounded-md p-4 mt-4" data-svelte-h="svelte-1m4bfv2"><div class="flex justify-center"><button type="submit" class="inline-flex justify-center px-4 py-2 border border-transparent shadow-sm font-bold rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"><p class="text-xl px-4">Play<br> <span class="text-xxs">(100 $FPL)</span></p></button></div></div></div>`;
-    }
-  })}`;
-});
-const Page$5 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
-  return ``;
-});
-const Page$4 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
-  return `     `;
-});
-const Page$3 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
-  return ``;
-});
 const idlFactory = ({ IDL }) => {
   const List = IDL.Rec();
   const List_1 = IDL.Rec();
   const Error2 = IDL.Variant({
-    DecodeError: IDL.Null,
-    NotAllowed: IDL.Null,
-    NotFound: IDL.Null,
-    NotAuthorized: IDL.Null,
-    AlreadyExists: IDL.Null
+    "DecodeError": IDL.Null,
+    "NotAllowed": IDL.Null,
+    "NotFound": IDL.Null,
+    "NotAuthorized": IDL.Null,
+    "AlreadyExists": IDL.Null
   });
-  const Result = IDL.Variant({ ok: IDL.Null, err: Error2 });
-  const AccountBalanceDTO = IDL.Record({ accountBalance: IDL.Nat64 });
+  const Result = IDL.Variant({ "ok": IDL.Null, "err": Error2 });
+  const AccountBalanceDTO = IDL.Record({ "accountBalance": IDL.Nat64 });
   const GameweekDTO = IDL.Record({
-    totalFixtures: IDL.Nat8,
-    correctScores: IDL.Nat8,
-    winnings: IDL.Nat64,
-    sweepstakeEntered: IDL.Bool,
-    gameweekNumber: IDL.Nat8
+    "totalFixtures": IDL.Nat8,
+    "correctScores": IDL.Nat8,
+    "winnings": IDL.Nat64,
+    "sweepstakeEntered": IDL.Bool,
+    "gameweekNumber": IDL.Nat8
   });
   const SeasonDTO = IDL.Record({
-    seasonId: IDL.Nat16,
-    gameweeks: IDL.Vec(GameweekDTO),
-    seasonName: IDL.Text,
-    seasonYear: IDL.Nat16
+    "seasonId": IDL.Nat16,
+    "gameweeks": IDL.Vec(GameweekDTO),
+    "seasonName": IDL.Text,
+    "seasonYear": IDL.Nat16
   });
   const AdminDTO = IDL.Record({
-    activeGameweekNumber: IDL.Nat8,
-    seasons: IDL.Vec(SeasonDTO),
-    activeGameweekStatus: IDL.Text,
-    activeSeasonId: IDL.Nat16,
-    activeSeasonName: IDL.Text
+    "activeGameweekNumber": IDL.Nat8,
+    "seasons": IDL.Vec(SeasonDTO),
+    "activeGameweekStatus": IDL.Text,
+    "activeSeasonId": IDL.Nat16,
+    "activeSeasonName": IDL.Text
   });
   const CorrectPredictionDTO = IDL.Record({
-    displayName: IDL.Text,
-    principalName: IDL.Text
+    "displayName": IDL.Text,
+    "principalName": IDL.Text
   });
   const CorrectPredictionsDTO = IDL.Record({
-    totalEntries: IDL.Nat64,
-    predictions: IDL.Vec(CorrectPredictionDTO),
-    awayTeamName: IDL.Text,
-    seasonId: IDL.Nat16,
-    homeTeamName: IDL.Text,
-    homeTeamGoals: IDL.Nat8,
-    seasonName: IDL.Text,
-    gameweekNumber: IDL.Nat8,
-    awayTeamGoals: IDL.Nat8
+    "totalEntries": IDL.Nat64,
+    "predictions": IDL.Vec(CorrectPredictionDTO),
+    "awayTeamName": IDL.Text,
+    "seasonId": IDL.Nat16,
+    "homeTeamName": IDL.Text,
+    "homeTeamGoals": IDL.Nat8,
+    "seasonName": IDL.Text,
+    "gameweekNumber": IDL.Nat8,
+    "awayTeamGoals": IDL.Nat8
   });
   const PlayerId = IDL.Nat16;
   const TeamId = IDL.Nat16;
   const TournamentStage = IDL.Variant({
-    RoundOf16: IDL.Null,
-    SemiFinal: IDL.Null,
-    GroupA: IDL.Null,
-    GroupB: IDL.Null,
-    GroupC: IDL.Null,
-    GroupD: IDL.Null,
-    GroupE: IDL.Null,
-    GroupF: IDL.Null,
-    Final: IDL.Null,
-    QuarterFinal: IDL.Null
+    "RoundOf16": IDL.Null,
+    "SemiFinal": IDL.Null,
+    "GroupA": IDL.Null,
+    "GroupB": IDL.Null,
+    "GroupC": IDL.Null,
+    "GroupD": IDL.Null,
+    "GroupE": IDL.Null,
+    "GroupF": IDL.Null,
+    "Final": IDL.Null,
+    "QuarterFinal": IDL.Null
   });
   const PredictionSet = IDL.Record({
-    goalAssister: PlayerId,
-    winner: TeamId,
-    loser: TeamId,
-    stage: TournamentStage,
-    goalScorer: PlayerId,
-    redCard: PlayerId,
-    yellowCard: PlayerId
+    "goalAssister": PlayerId,
+    "winner": TeamId,
+    "loser": TeamId,
+    "stage": TournamentStage,
+    "goalScorer": PlayerId,
+    "redCard": PlayerId,
+    "yellowCard": PlayerId
   });
   const Euro2024PredictionDTO = IDL.Record({
-    sfPrediction: PredictionSet,
-    groupAPrediction: PredictionSet,
-    groupCPrediction: PredictionSet,
-    groupEPrediction: PredictionSet,
-    fPrediction: PredictionSet,
-    qfPrediction: PredictionSet,
-    groupBPrediction: PredictionSet,
-    groupDPrediction: PredictionSet,
-    groupFPrediction: PredictionSet,
-    r16Prediction: PredictionSet
+    "sfPrediction": PredictionSet,
+    "groupAPrediction": PredictionSet,
+    "groupCPrediction": PredictionSet,
+    "groupEPrediction": PredictionSet,
+    "fPrediction": PredictionSet,
+    "qfPrediction": PredictionSet,
+    "groupBPrediction": PredictionSet,
+    "groupDPrediction": PredictionSet,
+    "groupFPrediction": PredictionSet,
+    "r16Prediction": PredictionSet
   });
-  const Result_3 = IDL.Variant({ ok: Euro2024PredictionDTO, err: Error2 });
-  const CountryId = IDL.Nat8;
+  const Result_3 = IDL.Variant({ "ok": Euro2024PredictionDTO, "err": Error2 });
   const Position = IDL.Variant({
-    Goalkeeper: IDL.Null,
-    Foward: IDL.Null,
-    Midfielder: IDL.Null,
-    Defender: IDL.Null
+    "Goalkeeper": IDL.Null,
+    "Foward": IDL.Null,
+    "Midfielder": IDL.Null,
+    "Defender": IDL.Null
   });
   const InternationalPlayer = IDL.Record({
-    id: PlayerId,
-    nickname: IDL.Text,
-    dateOfBirth: IDL.Int,
-    qualifyingAppearances: IDL.Nat8,
-    nationality: CountryId,
-    shirtNumber: IDL.Nat8,
-    qualifyingAssists: IDL.Nat8,
-    qualifyingGoals: IDL.Nat8,
-    teamId: TeamId,
-    position: Position,
-    lastName: IDL.Text,
-    firstName: IDL.Text
+    "id": PlayerId,
+    "teamId": TeamId,
+    "position": Position,
+    "lastName": IDL.Text,
+    "firstName": IDL.Text
   });
   const Result_2 = IDL.Variant({
-    ok: IDL.Vec(InternationalPlayer),
-    err: Error2
+    "ok": IDL.Vec(InternationalPlayer),
+    "err": Error2
   });
   const InternationalTeam = IDL.Record({
-    id: TeamId,
-    countryCode: IDL.Text,
-    countryName: IDL.Text,
-    players: IDL.Vec(InternationalPlayer),
-    shirtColour: IDL.Text
+    "id": TeamId,
+    "name": IDL.Text,
+    "countryCode": IDL.Text,
+    "players": IDL.Vec(InternationalPlayer)
   });
   const Result_1 = IDL.Variant({
-    ok: IDL.Vec(InternationalTeam),
-    err: Error2
+    "ok": IDL.Vec(InternationalTeam),
+    "err": Error2
   });
   const Fixture = IDL.Record({
-    id: IDL.Nat32,
-    status: IDL.Nat8,
-    awayTeamId: IDL.Nat16,
-    homeTeamId: IDL.Nat16,
-    homeGoals: IDL.Nat8,
-    awayGoals: IDL.Nat8
+    "id": IDL.Nat32,
+    "status": IDL.Nat8,
+    "awayTeamId": IDL.Nat16,
+    "homeTeamId": IDL.Nat16,
+    "homeGoals": IDL.Nat8,
+    "awayGoals": IDL.Nat8
   });
-  const GameweekPotDTO = IDL.Record({ gameweekPot: IDL.Nat64 });
+  const GameweekPotDTO = IDL.Record({ "gameweekPot": IDL.Nat64 });
   List_1.fill(IDL.Opt(IDL.Tuple(Fixture, List_1)));
   const Gameweek = IDL.Record({
-    status: IDL.Nat8,
-    winningShare: IDL.Nat64,
-    totalPot: IDL.Nat64,
-    number: IDL.Nat8,
-    fixtureCount: IDL.Nat8,
-    fixtures: List_1
+    "status": IDL.Nat8,
+    "winningShare": IDL.Nat64,
+    "totalPot": IDL.Nat64,
+    "number": IDL.Nat8,
+    "fixtureCount": IDL.Nat8,
+    "fixtures": List_1
   });
   const HistoryDTO = IDL.Record({
-    seasons: IDL.Vec(SeasonDTO),
-    seasonGameweeks: IDL.Vec(GameweekDTO),
-    userId: IDL.Text,
-    activeSeasonId: IDL.Nat16,
-    activeSeasonName: IDL.Text
+    "seasons": IDL.Vec(SeasonDTO),
+    "seasonGameweeks": IDL.Vec(GameweekDTO),
+    "userId": IDL.Text,
+    "activeSeasonId": IDL.Nat16,
+    "activeSeasonName": IDL.Text
   });
   const FixtureDTO = IDL.Record({
-    status: IDL.Nat8,
-    awayTeamPrediction: IDL.Nat8,
-    fixtureId: IDL.Nat32,
-    homeTeamPrediction: IDL.Nat8,
-    awayTeamId: IDL.Nat16,
-    awayTeamName: IDL.Text,
-    homeTeamId: IDL.Nat16,
-    correct: IDL.Bool,
-    homeTeamName: IDL.Text,
-    homeTeamGoals: IDL.Nat8,
-    awayTeamGoals: IDL.Nat8
+    "status": IDL.Nat8,
+    "awayTeamPrediction": IDL.Nat8,
+    "fixtureId": IDL.Nat32,
+    "homeTeamPrediction": IDL.Nat8,
+    "awayTeamId": IDL.Nat16,
+    "awayTeamName": IDL.Text,
+    "homeTeamId": IDL.Nat16,
+    "correct": IDL.Bool,
+    "homeTeamName": IDL.Text,
+    "homeTeamGoals": IDL.Nat8,
+    "awayTeamGoals": IDL.Nat8
   });
   const HomeDTO = IDL.Record({
-    activeGameweekNumber: IDL.Nat8,
-    hasPredictions: IDL.Bool,
-    systemUpdating: IDL.Bool,
-    gameweekStatus: IDL.Nat8,
-    activeSeasonId: IDL.Nat16,
-    principalName: IDL.Text,
-    activeSeasonName: IDL.Text,
-    fixtures: IDL.Vec(FixtureDTO)
+    "activeGameweekNumber": IDL.Nat8,
+    "hasPredictions": IDL.Bool,
+    "systemUpdating": IDL.Bool,
+    "gameweekStatus": IDL.Nat8,
+    "activeSeasonId": IDL.Nat16,
+    "principalName": IDL.Text,
+    "activeSeasonName": IDL.Text,
+    "fixtures": IDL.Vec(FixtureDTO)
   });
   const LeaderboardEntryDTO = IDL.Record({
-    totalFixtures: IDL.Nat8,
-    correctScores: IDL.Nat8,
-    displayName: IDL.Text,
-    enteredSweepstake: IDL.Bool,
-    principalName: IDL.Text,
-    position: IDL.Text
+    "totalFixtures": IDL.Nat8,
+    "correctScores": IDL.Nat8,
+    "displayName": IDL.Text,
+    "enteredSweepstake": IDL.Bool,
+    "principalName": IDL.Text,
+    "position": IDL.Text
   });
   const LeaderBoardDTO = IDL.Record({
-    status: IDL.Nat8,
-    activeGameweekNumber: IDL.Nat8,
-    totalEntries: IDL.Nat64,
-    seasons: IDL.Vec(SeasonDTO),
-    winningShare: IDL.Nat64,
-    leaderboardEntries: IDL.Vec(LeaderboardEntryDTO),
-    totalPot: IDL.Nat64,
-    activeSeasonId: IDL.Nat16,
-    activeSeasonName: IDL.Text
+    "status": IDL.Nat8,
+    "activeGameweekNumber": IDL.Nat8,
+    "totalEntries": IDL.Nat64,
+    "seasons": IDL.Vec(SeasonDTO),
+    "winningShare": IDL.Nat64,
+    "leaderboardEntries": IDL.Vec(LeaderboardEntryDTO),
+    "totalPot": IDL.Nat64,
+    "activeSeasonId": IDL.Nat16,
+    "activeSeasonName": IDL.Text
   });
   const PayoutDTO = IDL.Record({
-    winnerShare: IDL.Nat64,
-    activeGameweekNumber: IDL.Nat8,
-    gameweekPot: IDL.Nat64,
-    adminFee: IDL.Nat64,
-    potAccountBalance: IDL.Nat64,
-    winnerCount: IDL.Nat64,
-    activeSeasonName: IDL.Text
+    "winnerShare": IDL.Nat64,
+    "activeGameweekNumber": IDL.Nat8,
+    "gameweekPot": IDL.Nat64,
+    "adminFee": IDL.Nat64,
+    "potAccountBalance": IDL.Nat64,
+    "winnerCount": IDL.Nat64,
+    "activeSeasonName": IDL.Text
   });
   const PlayDTO = IDL.Record({
-    activeGameweekNumber: IDL.Nat8,
-    userId: IDL.Text,
-    sweepstakePaid: IDL.Bool,
-    activeSeasonId: IDL.Nat16,
-    activeSeasonName: IDL.Text,
-    fixtures: IDL.Vec(FixtureDTO)
+    "activeGameweekNumber": IDL.Nat8,
+    "userId": IDL.Text,
+    "sweepstakePaid": IDL.Bool,
+    "activeSeasonId": IDL.Nat16,
+    "activeSeasonName": IDL.Text,
+    "fixtures": IDL.Vec(FixtureDTO)
   });
   const ProfileDTO = IDL.Record({
-    displayName: IDL.Text,
-    walletAddress: IDL.Text,
-    depositAddress: IDL.Vec(IDL.Nat8),
-    principalName: IDL.Text
+    "displayName": IDL.Text,
+    "walletAddress": IDL.Text,
+    "depositAddress": IDL.Vec(IDL.Nat8),
+    "principalName": IDL.Text
   });
   List.fill(IDL.Opt(IDL.Tuple(Gameweek, List)));
   const Season = IDL.Record({
-    id: IDL.Nat16,
-    name: IDL.Text,
-    year: IDL.Nat16,
-    gameweeks: List
+    "id": IDL.Nat16,
+    "name": IDL.Text,
+    "year": IDL.Nat16,
+    "gameweeks": List
   });
-  const Team = IDL.Record({ id: IDL.Nat16, name: IDL.Text });
+  const Team = IDL.Record({ "id": IDL.Nat16, "name": IDL.Text });
   const UserBalanceDTO = IDL.Record({
-    balance: IDL.Nat64,
-    displayName: IDL.Text,
-    principalName: IDL.Text
+    "balance": IDL.Nat64,
+    "displayName": IDL.Text,
+    "principalName": IDL.Text
   });
   const BalancesDTO = IDL.Record({
-    totalEntries: IDL.Nat64,
-    potAccountBalance: IDL.Nat64,
-    userBalances: IDL.Vec(UserBalanceDTO)
+    "totalEntries": IDL.Nat64,
+    "potAccountBalance": IDL.Nat64,
+    "userBalances": IDL.Vec(UserBalanceDTO)
   });
   const ViewPredictionDTO = IDL.Record({
-    totalFixtures: IDL.Nat8,
-    correctScores: IDL.Nat8,
-    playerName: IDL.Text,
-    seasonName: IDL.Text,
-    fixtures: IDL.Vec(FixtureDTO)
+    "totalFixtures": IDL.Nat8,
+    "correctScores": IDL.Nat8,
+    "playerName": IDL.Text,
+    "seasonName": IDL.Text,
+    "fixtures": IDL.Vec(FixtureDTO)
   });
   const SubmitPlayDTO = IDL.Record({
-    enterSweepstake: IDL.Bool,
-    fixtures: IDL.Vec(FixtureDTO)
+    "enterSweepstake": IDL.Bool,
+    "fixtures": IDL.Vec(FixtureDTO)
   });
   return IDL.Service({
-    addFixtureToGameweek: IDL.Func(
+    "addFixtureToGameweek": IDL.Func(
       [IDL.Nat16, IDL.Nat8, IDL.Nat16, IDL.Nat16],
       [Result],
       []
     ),
-    createSeason: IDL.Func([IDL.Text, IDL.Nat16], [Result], []),
-    createTeam: IDL.Func([IDL.Text], [Result], []),
-    deleteFixture: IDL.Func([IDL.Nat16, IDL.Nat8, IDL.Nat32], [Result], []),
-    deleteSeason: IDL.Func([IDL.Nat16], [Result], []),
-    deleteTeam: IDL.Func([IDL.Nat16], [Result], []),
-    getAccountBalanceDTO: IDL.Func([], [AccountBalanceDTO], []),
-    getAdminDTO: IDL.Func([], [AdminDTO], ["query"]),
-    getCorrectPredictionsDTO: IDL.Func(
+    "createSeason": IDL.Func([IDL.Text, IDL.Nat16], [Result], []),
+    "createTeam": IDL.Func([IDL.Text], [Result], []),
+    "deleteFixture": IDL.Func([IDL.Nat16, IDL.Nat8, IDL.Nat32], [Result], []),
+    "deleteSeason": IDL.Func([IDL.Nat16], [Result], []),
+    "deleteTeam": IDL.Func([IDL.Nat16], [Result], []),
+    "getAccountBalanceDTO": IDL.Func([], [AccountBalanceDTO], []),
+    "getAdminDTO": IDL.Func([], [AdminDTO], ["query"]),
+    "getCorrectPredictionsDTO": IDL.Func(
       [IDL.Nat16, IDL.Nat8, IDL.Nat32, IDL.Nat, IDL.Nat],
       [CorrectPredictionsDTO],
       []
     ),
-    getEuro2024DTO: IDL.Func([], [Result_3], ["query"]),
-    getEuro2024Players: IDL.Func([], [Result_2], ["query"]),
-    getEuro2024Teams: IDL.Func([], [Result_1], ["query"]),
-    getFixture: IDL.Func(
+    "getEuro2024DTO": IDL.Func([], [Result_3], ["query"]),
+    "getEuro2024Players": IDL.Func([], [Result_2], ["query"]),
+    "getEuro2024Teams": IDL.Func([], [Result_1], ["query"]),
+    "getFixture": IDL.Func(
       [IDL.Nat16, IDL.Nat8, IDL.Nat32],
       [IDL.Opt(Fixture)],
       ["query"]
     ),
-    getFixtures: IDL.Func([IDL.Nat16, IDL.Nat8], [IDL.Vec(Fixture)], ["query"]),
-    getGameweekPotDTO: IDL.Func([], [GameweekPotDTO], []),
-    getGameweeks: IDL.Func([IDL.Nat16], [IDL.Vec(Gameweek)], ["query"]),
-    getHistoryDTO: IDL.Func([IDL.Nat16], [HistoryDTO], ["query"]),
-    getHomeDTO: IDL.Func([], [HomeDTO], ["query"]),
-    getLeaderboardDTO: IDL.Func(
+    "getFixtures": IDL.Func(
+      [IDL.Nat16, IDL.Nat8],
+      [IDL.Vec(Fixture)],
+      ["query"]
+    ),
+    "getGameweekPotDTO": IDL.Func([], [GameweekPotDTO], []),
+    "getGameweeks": IDL.Func([IDL.Nat16], [IDL.Vec(Gameweek)], ["query"]),
+    "getHistoryDTO": IDL.Func([IDL.Nat16], [HistoryDTO], ["query"]),
+    "getHomeDTO": IDL.Func([], [HomeDTO], ["query"]),
+    "getLeaderboardDTO": IDL.Func(
       [IDL.Nat16, IDL.Nat8, IDL.Nat, IDL.Nat],
       [LeaderBoardDTO],
       ["query"]
     ),
-    getPayoutDTO: IDL.Func([], [PayoutDTO], []),
-    getPlayDTO: IDL.Func([], [PlayDTO], ["query"]),
-    getProfileDTO: IDL.Func([], [ProfileDTO], []),
-    getSeason: IDL.Func([IDL.Nat16], [IDL.Opt(Season)], ["query"]),
-    getSeasons: IDL.Func([], [IDL.Vec(Season)], ["query"]),
-    getTeams: IDL.Func([], [IDL.Vec(Team)], ["query"]),
-    getUserBalancesDTO: IDL.Func([IDL.Nat, IDL.Nat], [BalancesDTO], []),
-    getViewPredictionDTO: IDL.Func(
+    "getPayoutDTO": IDL.Func([], [PayoutDTO], []),
+    "getPlayDTO": IDL.Func([], [PlayDTO], ["query"]),
+    "getProfileDTO": IDL.Func([], [ProfileDTO], []),
+    "getSeason": IDL.Func([IDL.Nat16], [IDL.Opt(Season)], ["query"]),
+    "getSeasons": IDL.Func([], [IDL.Vec(Season)], ["query"]),
+    "getTeams": IDL.Func([], [IDL.Vec(Team)], ["query"]),
+    "getUserBalancesDTO": IDL.Func([IDL.Nat, IDL.Nat], [BalancesDTO], []),
+    "getViewPredictionDTO": IDL.Func(
       [IDL.Text, IDL.Nat16, IDL.Nat8],
       [ViewPredictionDTO],
       ["query"]
     ),
-    isAdmin: IDL.Func([], [IDL.Bool], ["query"]),
-    isDisplayNameValid: IDL.Func([IDL.Text], [IDL.Bool], ["query"]),
-    isWalletValid: IDL.Func([IDL.Text], [IDL.Bool], ["query"]),
-    payAndSubmitEuro2024Prediction: IDL.Func(
+    "isAdmin": IDL.Func([], [IDL.Bool], ["query"]),
+    "isDisplayNameValid": IDL.Func([IDL.Text], [IDL.Bool], ["query"]),
+    "isWalletValid": IDL.Func([IDL.Text], [IDL.Bool], ["query"]),
+    "payAndSubmitEuro2024Prediction": IDL.Func(
       [Euro2024PredictionDTO],
       [Result],
       []
     ),
-    payoutSweepstake: IDL.Func([], [Result], []),
-    setSystemState: IDL.Func([IDL.Nat16, IDL.Nat8], [Result], []),
-    submitEuro2024Prediction: IDL.Func([Euro2024PredictionDTO], [Result], []),
-    submitPlayDTO: IDL.Func([SubmitPlayDTO], [Result], []),
-    unsetActiveState: IDL.Func([], [Result], []),
-    updateDisplayName: IDL.Func([IDL.Text], [Result], []),
-    updateFixture: IDL.Func(
+    "payoutSweepstake": IDL.Func([], [Result], []),
+    "setSystemState": IDL.Func([IDL.Nat16, IDL.Nat8], [Result], []),
+    "submitEuro2024Prediction": IDL.Func(
+      [Euro2024PredictionDTO],
+      [Result],
+      []
+    ),
+    "submitPlayDTO": IDL.Func([SubmitPlayDTO], [Result], []),
+    "unsetActiveState": IDL.Func([], [Result], []),
+    "updateDisplayName": IDL.Func([IDL.Text], [Result], []),
+    "updateFixture": IDL.Func(
       [
         IDL.Nat16,
         IDL.Nat8,
@@ -4470,19 +4450,19 @@ const idlFactory = ({ IDL }) => {
       [Result],
       []
     ),
-    updateGameweekStatus: IDL.Func(
+    "updateGameweekStatus": IDL.Func(
       [IDL.Nat16, IDL.Nat8, IDL.Nat8],
       [Result],
       []
     ),
-    updateSeason: IDL.Func([IDL.Nat16, IDL.Text, IDL.Nat16], [Result], []),
-    updateTeam: IDL.Func([IDL.Nat16, IDL.Text], [Result], []),
-    updateWalletAddress: IDL.Func([IDL.Text], [Result], []),
-    withdrawICP: IDL.Func([IDL.Float64], [Result], [])
+    "updateSeason": IDL.Func([IDL.Nat16, IDL.Text, IDL.Nat16], [Result], []),
+    "updateTeam": IDL.Func([IDL.Nat16, IDL.Text], [Result], []),
+    "updateWalletAddress": IDL.Func([IDL.Text], [Result], []),
+    "withdrawICP": IDL.Func([IDL.Float64], [Result], [])
   });
 };
-var define_process_env_default$1 = { FOOTBALL_GOD_BACKEND_CANISTER_ID: "ajuq4-ruaaa-aaaaa-qaaga-cai", FOOTBALL_GOD_FRONTEND_CANISTER_ID: "aovwi-4maaa-aaaaa-qaagq-cai", DFX_NETWORK: "local" };
-const canisterId = define_process_env_default$1.CANISTER_ID_FOOTBALL_GOD_BACKEND;
+var define_process_env_default$3 = { FOOTBALL_GOD_BACKEND_CANISTER_ID: "bd3sg-teaaa-aaaaa-qaaba-cai", FOOTBALL_GOD_FRONTEND_CANISTER_ID: "be2us-64aaa-aaaaa-qaabq-cai", DFX_NETWORK: "local" };
+const canisterId = define_process_env_default$3.CANISTER_ID_FOOTBALL_GOD_BACKEND;
 const createActor = (canisterId2, options2 = {}) => {
   const agent = options2.agent || new HttpAgent({ ...options2.agentOptions });
   if (options2.agent && options2.agentOptions) {
@@ -4508,7 +4488,7 @@ canisterId ? createActor(canisterId) : void 0;
 class ActorFactory {
   static createActor(idlFactory2, canisterId2 = "", identity = null, options2 = null) {
     const hostOptions = {
-      host: `http://localhost:4943/?canisterId=rdmx6-jaaaa-aaaaa-aaadq-cai`,
+      host: `http://localhost:8080/?canisterId=b77ix-eeaaa-aaaaa-qaada-cai`,
       identity
     };
     if (!options2) {
@@ -4537,7 +4517,7 @@ class ActorFactory {
   }
   static getAgent(canisterId2 = "", identity = null, options2 = null) {
     const hostOptions = {
-      host: `http://localhost:4943/?canisterId=rdmx6-jaaaa-aaaaa-aaadq-cai`,
+      host: `http://localhost:8080/?canisterId=b77ix-eeaaa-aaaaa-qaada-cai`,
       identity
     };
     if (!options2) {
@@ -4585,7 +4565,68 @@ function uint8ArrayToBase64(bytes) {
 function isError(response) {
   return response && response.err !== void 0;
 }
-var define_process_env_default = { FOOTBALL_GOD_BACKEND_CANISTER_ID: "ajuq4-ruaaa-aaaaa-qaaga-cai", FOOTBALL_GOD_FRONTEND_CANISTER_ID: "aovwi-4maaa-aaaaa-qaagq-cai", DFX_NETWORK: "local" };
+var define_process_env_default$2 = { FOOTBALL_GOD_BACKEND_CANISTER_ID: "bd3sg-teaaa-aaaaa-qaaba-cai", FOOTBALL_GOD_FRONTEND_CANISTER_ID: "be2us-64aaa-aaaaa-qaabq-cai", DFX_NETWORK: "local" };
+function createPlayerStore() {
+  const { subscribe: subscribe2, set } = writable([]);
+  let actor = ActorFactory.createActor(
+    idlFactory,
+    define_process_env_default$2.FOOTBALL_GOD_BACKEND_CANISTER_ID
+  );
+  async function sync() {
+    const newHashValues = await actor.getDataHashes();
+    let error = isError(newHashValues);
+    if (error) {
+      console.error("Error syncing player store");
+      return;
+    }
+  }
+  return {
+    subscribe: subscribe2,
+    sync
+  };
+}
+createPlayerStore();
+var define_process_env_default$1 = { FOOTBALL_GOD_BACKEND_CANISTER_ID: "bd3sg-teaaa-aaaaa-qaaba-cai", FOOTBALL_GOD_FRONTEND_CANISTER_ID: "be2us-64aaa-aaaaa-qaabq-cai", DFX_NETWORK: "local" };
+function createTeamStore() {
+  const { subscribe: subscribe2, set } = writable([]);
+  let actor = ActorFactory.createActor(
+    idlFactory,
+    define_process_env_default$1.FOOTBALL_GOD_BACKEND_CANISTER_ID
+  );
+  async function sync() {
+    const newHashValues = await actor.getDataHashes();
+    let error = isError(newHashValues);
+    if (error) {
+      console.error("Error syncing team store");
+      return;
+    }
+  }
+  return {
+    subscribe: subscribe2,
+    sync
+  };
+}
+createTeamStore();
+const Page$6 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
+  return `${validate_component(Layout, "Layout").$$render($$result, {}, {}, {
+    default: () => {
+      return `${``} ${``} <div class="bg-panel rounded-md p-4"><p class="text-xl my-2 mb-4" data-svelte-h="svelte-15uwobf">Welcome to the FootballGod Euro 2024 prediction game.</p> <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2" data-svelte-h="svelte-1jizq7n"><div class="flex flex-col bg-gray-700 rounded-lg overflow-hidden"><div class="p-4 flex flex-col justify-between h-full"><p class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm font-bold rounded-md text-white items-center"><img src="FPLCoin.png" alt="fpl" class="w-8 h-8 mr-2 mb-1">
+            Prize Pool: 0.00 $FPL</p></div></div> <div class="flex flex-col bg-gray-700 rounded-lg overflow-hidden"><div class="flex flex-col justify-center h-full"><p class="inline-flex justify-center py-2 px-4 mx-2 border border-transparent shadow-sm font-bold rounded-md text-white">Total Entries: 0</p></div></div> <div class="flex flex-col bg-gray-700 rounded-lg overflow-hidden"><div class="flex flex-col justify-center h-full"><button type="submit" class="inline-flex justify-center py-2 px-4 mx-2 border border-transparent shadow-sm font-bold rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">View Leaderboard</button></div></div></div> <p class="my-4" data-svelte-h="svelte-t8s52k">Make your selections below and enter the sweepstake to be in with a chance
+      of winning $FPL.</p> <div class="horizontal-divider my-4 mb-8"></div> <div class="flex flex-row items-center bg-black border rounded-md p-4 m-4" data-svelte-h="svelte-1bt2qdi"><div class="w-1/12"></div> <div class="w-11/12 flex flex-row space-x-4"><div class="w-1/6 flex"><p class="w-full text-center border-x">Winner</p></div> <div class="w-1/6 flex"><p class="w-full text-center border-x">Loser</p></div> <div class="w-1/6 flex"><p class="w-full text-center border-x">To Score</p></div> <div class="w-1/6 flex"><p class="w-full text-center border-x">To Assist</p></div> <div class="w-1/6 flex"><p class="w-full text-center border-x">Yellow Card</p></div> <div class="w-1/6 flex"><p class="w-full text-center border-x">Red Card</p></div></div></div> <div class="flex flex-row items-center bg-gray-400 p-4 m-4 rounded-md"><div class="w-1/12" data-svelte-h="svelte-1itpdb2">Group A</div> <div class="w-11/12 flex flex-row space-x-4"><div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-4nwbji">Select a Team</button> <div class="text-right" data-svelte-h="svelte-1nrc4qq"><p class="text-xs mt-4">5 Points</p></div></div> <div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-w1uisa">Select a Team</button> <div class="text-right" data-svelte-h="svelte-1nrc4qq"><p class="text-xs mt-4">5 Points</p></div></div> <div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-bk4oel">Select a Player</button> <div class="text-right" data-svelte-h="svelte-1yzcc3s"><p class="text-xs mt-4">10 Points</p></div></div> <div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-1mqpk8h">Select a Player</button> <div class="text-right" data-svelte-h="svelte-1yzcc3s"><p class="text-xs mt-4">10 Points</p></div></div> <div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-gs3yvn">Select a Player</button> <div class="text-right" data-svelte-h="svelte-1nrc4qq"><p class="text-xs mt-4">5 Points</p></div></div> <div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-rjk8c6">Select a Player</button> <div class="text-right" data-svelte-h="svelte-1yzcc3s"><p class="text-xs mt-4">10 Points</p></div></div></div></div> <div class="flex flex-row items-center bg-gray-500 p-4 m-4 rounded-md"><div class="w-1/12" data-svelte-h="svelte-1qqz6f1">Group B</div> <div class="w-11/12 flex flex-row space-x-4"><div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-1u8114h">Select a Team</button> <div class="text-right" data-svelte-h="svelte-1nrc4qq"><p class="text-xs mt-4">5 Points</p></div></div> <div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-1c330r3">Select a Team</button> <div class="text-right" data-svelte-h="svelte-1nrc4qq"><p class="text-xs mt-4">5 Points</p></div></div> <div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-1qiyevq">Select a Player</button> <div class="text-right" data-svelte-h="svelte-1yzcc3s"><p class="text-xs mt-4">10 Points</p></div></div> <div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-p01c32">Select a Player</button> <div class="text-right" data-svelte-h="svelte-1yzcc3s"><p class="text-xs mt-4">10 Points</p></div></div> <div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-1ife4go">Select a Player</button> <div class="text-right" data-svelte-h="svelte-1nrc4qq"><p class="text-xs mt-4">5 Points</p></div></div> <div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-1q6pykv">Select a Player</button> <div class="text-right" data-svelte-h="svelte-1yzcc3s"><p class="text-xs mt-4">10 Points</p></div></div></div></div> <div class="flex flex-row items-center bg-gray-400 p-4 m-4 rounded-md"><div class="w-1/12" data-svelte-h="svelte-1a8frqk">Group C</div> <div class="w-11/12 flex flex-row space-x-4"><div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-11x9wls">Select a Team</button> <div class="text-right" data-svelte-h="svelte-1nrc4qq"><p class="text-xs mt-4">5 Points</p></div></div> <div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-4f6s10">Select a Team</button> <div class="text-right" data-svelte-h="svelte-1nrc4qq"><p class="text-xs mt-4">5 Points</p></div></div> <div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-hqb81f">Select a Player</button> <div class="text-right" data-svelte-h="svelte-1yzcc3s"><p class="text-xs mt-4">10 Points</p></div></div> <div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-1147c0r">Select a Player</button> <div class="text-right" data-svelte-h="svelte-1yzcc3s"><p class="text-xs mt-4">10 Points</p></div></div> <div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-1bepoul">Select a Player</button> <div class="text-right" data-svelte-h="svelte-1nrc4qq"><p class="text-xs mt-4">5 Points</p></div></div> <div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-afv7nk">Select a Player</button> <div class="text-right" data-svelte-h="svelte-1yzcc3s"><p class="text-xs mt-4">10 Points</p></div></div></div></div> <div class="flex flex-row items-center bg-gray-500 p-4 m-4 rounded-md"><div class="w-1/12" data-svelte-h="svelte-jsk4sb">Group D</div> <div class="w-11/12 flex flex-row space-x-4"><div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-19xh2zv">Select a Team</button> <div class="text-right" data-svelte-h="svelte-1nrc4qq"><p class="text-xs mt-4">5 Points</p></div></div> <div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-7qmkkh">Select a Team</button> <div class="text-right" data-svelte-h="svelte-1nrc4qq"><p class="text-xs mt-4">5 Points</p></div></div> <div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-1sxrujw">Select a Player</button> <div class="text-right" data-svelte-h="svelte-1yzcc3s"><p class="text-xs mt-4">10 Points</p></div></div> <div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-76g2ps">Select a Player</button> <div class="text-right" data-svelte-h="svelte-1yzcc3s"><p class="text-xs mt-4">10 Points</p></div></div> <div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-1jkq6yy">Select a Player</button> <div class="text-right" data-svelte-h="svelte-1nrc4qq"><p class="text-xs mt-4">5 Points</p></div></div> <div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-1gbs4bl">Select a Player</button> <div class="text-right" data-svelte-h="svelte-1yzcc3s"><p class="text-xs mt-4">10 Points</p></div></div></div></div> <div class="flex flex-row items-center bg-gray-400 p-4 m-4 rounded-md"><div class="w-1/12" data-svelte-h="svelte-vhucmi">Group E</div> <div class="w-11/12 flex flex-row space-x-4"><div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-1y7qrcq">Select a Team</button> <div class="text-right" data-svelte-h="svelte-1nrc4qq"><p class="text-xs mt-4">5 Points</p></div></div> <div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-1t255py">Select a Team</button> <div class="text-right" data-svelte-h="svelte-1nrc4qq"><p class="text-xs mt-4">5 Points</p></div></div> <div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-1ek7tft">Select a Player</button> <div class="text-right" data-svelte-h="svelte-1yzcc3s"><p class="text-xs mt-4">10 Points</p></div></div> <div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-wjx6il">Select a Player</button> <div class="text-right" data-svelte-h="svelte-1yzcc3s"><p class="text-xs mt-4">10 Points</p></div></div> <div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-iohldr">Select a Player</button> <div class="text-right" data-svelte-h="svelte-1nrc4qq"><p class="text-xs mt-4">5 Points</p></div></div> <div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-d8vboi">Select a Player</button> <div class="text-right" data-svelte-h="svelte-1yzcc3s"><p class="text-xs mt-4">10 Points</p></div></div></div></div> <div class="flex flex-row items-center bg-gray-500 p-4 m-4 rounded-md"><div class="w-1/12" data-svelte-h="svelte-1p3y09l">Group F</div> <div class="w-11/12 flex flex-row space-x-4"><div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-8twwml">Select a Team</button> <div class="text-right" data-svelte-h="svelte-1nrc4qq"><p class="text-xs mt-4">5 Points</p></div></div> <div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-bbsawb">Select a Team</button> <div class="text-right" data-svelte-h="svelte-1nrc4qq"><p class="text-xs mt-4">5 Points</p></div></div> <div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-kr038y">Select a Player</button> <div class="text-right" data-svelte-h="svelte-1yzcc3s"><p class="text-xs mt-4">10 Points</p></div></div> <div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-r623uy">Select a Player</button> <div class="text-right" data-svelte-h="svelte-1yzcc3s"><p class="text-xs mt-4">10 Points</p></div></div> <div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-1q7rtn8">Select a Player</button> <div class="text-right" data-svelte-h="svelte-1nrc4qq"><p class="text-xs mt-4">5 Points</p></div></div> <div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-11k93vv">Select a Player</button> <div class="text-right" data-svelte-h="svelte-1yzcc3s"><p class="text-xs mt-4">10 Points</p></div></div></div></div> <div class="flex flex-row my-4 space-x-2" data-svelte-h="svelte-ks2zg1"><div class="w-full mx-4"><p class="flex-1 block w-full bg-gray-800 p-2 text-center rounded-md">Receive double points for each group stage category you make 3 or more
+          correct selections.</p></div></div> <div class="horizontal-divider my-8"></div> <div class="flex flex-row items-center bg-black border rounded-md p-4 m-4" data-svelte-h="svelte-1bt2qdi"><div class="w-1/12"></div> <div class="w-11/12 flex flex-row space-x-4"><div class="w-1/6 flex"><p class="w-full text-center border-x">Winner</p></div> <div class="w-1/6 flex"><p class="w-full text-center border-x">Loser</p></div> <div class="w-1/6 flex"><p class="w-full text-center border-x">To Score</p></div> <div class="w-1/6 flex"><p class="w-full text-center border-x">To Assist</p></div> <div class="w-1/6 flex"><p class="w-full text-center border-x">Yellow Card</p></div> <div class="w-1/6 flex"><p class="w-full text-center border-x">Red Card</p></div></div></div> <div class="flex flex-row items-center bg-green-700 p-4"><div class="w-1/12" data-svelte-h="svelte-1ylkbty">Round of 16</div> <div class="w-11/12 flex flex-row space-x-4"><div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-19t214s">Select a Team</button> <div class="text-right" data-svelte-h="svelte-1yzcc3s"><p class="text-xs mt-4">10 Points</p></div></div> <div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-1h36i8">Select a Team</button> <div class="text-right" data-svelte-h="svelte-1yzcc3s"><p class="text-xs mt-4">10 Points</p></div></div> <div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-oqm8jz">Select a Player</button> <div class="text-right" data-svelte-h="svelte-115w755"><p class="text-xs mt-4">20 Points</p></div></div> <div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-130vt3">Select a Player</button> <div class="text-right" data-svelte-h="svelte-115w755"><p class="text-xs mt-4">20 Points</p></div></div> <div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-1wjae1">Select a Player</button> <div class="text-right" data-svelte-h="svelte-1yzcc3s"><p class="text-xs mt-4">10 Points</p></div></div> <div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-1mrmsos">Select a Player</button> <div class="text-right" data-svelte-h="svelte-115w755"><p class="text-xs mt-4">20 Points</p></div></div></div></div> <div class="flex flex-row my-4 space-x-2" data-svelte-h="svelte-1tte2cj"><div class="w-1/12"></div> <div class="w-11/12 flex flex-row space-x-4"><div class="w-1/3"><p class="flex-1 block w-full rounded-none rounded-r-md bg-gray-800 p-2 text-center">Both Correct Bonus: 40 Points</p></div> <div class="w-1/3"><p class="flex-1 block w-full rounded-none rounded-r-md bg-gray-800 p-2 text-center">Both Correct Bonus: 80 Points</p></div> <div class="w-1/3"><p class="flex-1 block w-full rounded-none rounded-r-md bg-gray-800 p-2 text-center">Both Correct Bonus: 60 Points</p></div></div></div> <div class="flex flex-row items-center bg-gray-800 p-4"><div class="w-1/12" data-svelte-h="svelte-1xmz47u">Quarter Final</div> <div class="w-11/12 flex flex-row space-x-4"><div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-1anwtp3">Select a Team</button> <div class="text-right" data-svelte-h="svelte-em69s5"><p class="text-xs mt-4">15 Points</p></div></div> <div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-hskgm5">Select a Team</button> <div class="text-right" data-svelte-h="svelte-em69s5"><p class="text-xs mt-4">15 Points</p></div></div> <div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-16ompe0">Select a Player</button> <div class="text-right" data-svelte-h="svelte-65gvmi"><p class="text-xs mt-4">30 Points</p></div></div> <div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-1sh6x6k">Select a Player</button> <div class="text-right" data-svelte-h="svelte-65gvmi"><p class="text-xs mt-4">30 Points</p></div></div> <div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-1vyfrye">Select a Player</button> <div class="text-right" data-svelte-h="svelte-em69s5"><p class="text-xs mt-4">15 Points</p></div></div> <div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-13sgqcd">Select a Player</button> <div class="text-right" data-svelte-h="svelte-65gvmi"><p class="text-xs mt-4">30 Points</p></div></div></div></div> <div class="flex flex-row my-4 space-x-2" data-svelte-h="svelte-obspnt"><div class="w-1/12"></div> <div class="w-11/12 flex flex-row space-x-4"><div class="w-1/3"><p class="flex-1 block w-full rounded-none rounded-r-md bg-gray-800 p-2 text-center">Both Correct Bonus: 60 Points</p></div> <div class="w-1/3"><p class="flex-1 block w-full rounded-none rounded-r-md bg-gray-800 p-2 text-center">Both Correct Bonus: 120 Points</p></div> <div class="w-1/3"><p class="flex-1 block w-full rounded-none rounded-r-md bg-gray-800 p-2 text-center">Both Correct Bonus: 90 Points</p></div></div></div> <div class="flex flex-row items-center bg-gray-900 p-4"><div class="w-1/12" data-svelte-h="svelte-184ana2">Semi Final</div> <div class="w-11/12 flex flex-row space-x-4"><div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-eislbq">Select a Team</button> <div class="text-right" data-svelte-h="svelte-115w755"><p class="text-xs mt-4">20 Points</p></div></div> <div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-gxjf42">Select a Team</button> <div class="text-right" data-svelte-h="svelte-115w755"><p class="text-xs mt-4">20 Points</p></div></div> <div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-zppxx">Select a Player</button> <div class="text-right" data-svelte-h="svelte-15nxjhn"><p class="text-xs mt-4">40 Points</p></div></div> <div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-1q51ixl">Select a Player</button> <div class="text-right" data-svelte-h="svelte-15nxjhn"><p class="text-xs mt-4">40 Points</p></div></div> <div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-w1j7m3">Select a Player</button> <div class="text-right" data-svelte-h="svelte-1yzcc3s"><p class="text-xs mt-4">10 Points</p></div></div> <div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-1mlem0u">Select a Player</button> <div class="text-right" data-svelte-h="svelte-15nxjhn"><p class="text-xs mt-4">40 Points</p></div></div></div></div> <div class="flex flex-row my-4 space-x-2" data-svelte-h="svelte-hy0kjr"><div class="w-1/12"></div> <div class="w-11/12 flex flex-row space-x-4"><div class="w-1/3"><p class="flex-1 block w-full rounded-none rounded-r-md bg-gray-800 p-2 text-center">Both Correct Bonus: 80 Points</p></div> <div class="w-1/3"><p class="flex-1 block w-full rounded-none rounded-r-md bg-gray-800 p-2 text-center">Both Correct Bonus: 160 Points</p></div> <div class="w-1/3"><p class="flex-1 block w-full rounded-none rounded-r-md bg-gray-800 p-2 text-center">Both Correct Bonus: 120 Points</p></div></div></div> <div class="flex flex-row items-center bg-yellow-600 p-4"><div class="w-1/12" data-svelte-h="svelte-movlhe">Final</div> <div class="w-11/12 flex flex-row space-x-4"><div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-jcegm1">Select a Team</button> <div class="text-right" data-svelte-h="svelte-1xywyg4"><p class="text-xs mt-4">25 Points</p></div></div> <div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-1qmfbfb">Select a Team</button> <div class="text-right" data-svelte-h="svelte-1xywyg4"><p class="text-xs mt-4">25 Points</p></div></div> <div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-1m07noe">Select a Player</button> <div class="text-right" data-svelte-h="svelte-a12yh0"><p class="text-xs mt-4">50 Points</p></div></div> <div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-1j8djcm">Select a Player</button> <div class="text-right" data-svelte-h="svelte-a12yh0"><p class="text-xs mt-4">50 Points</p></div></div> <div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-1khn5bk">Select a Player</button> <div class="text-right" data-svelte-h="svelte-1xywyg4"><p class="text-xs mt-4">25 Points</p></div></div> <div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-et39sn">Select a Player</button> <div class="text-right" data-svelte-h="svelte-a12yh0"><p class="text-xs mt-4">50 Points</p></div></div></div></div> <div class="flex flex-row my-4 space-x-2" data-svelte-h="svelte-19wx7bi"><div class="w-1/12"></div> <div class="w-11/12 flex flex-row space-x-4"><div class="w-1/3"><p class="flex-1 block w-full rounded-none rounded-r-md bg-gray-800 p-2 text-center">Both Correct Bonus: 100 Points</p></div> <div class="w-1/3"><p class="flex-1 block w-full rounded-none rounded-r-md bg-gray-800 p-2 text-center">Both Correct Bonus: 200 Points</p></div> <div class="w-1/3"><p class="flex-1 block w-full rounded-none rounded-r-md bg-gray-800 p-2 text-center">Both Correct Bonus: 150 Points</p></div></div></div> <div class="bg-panel rounded-md p-4 mt-4" data-svelte-h="svelte-1m4bfv2"><div class="flex justify-center"><button type="submit" class="inline-flex justify-center px-4 py-2 border border-transparent shadow-sm font-bold rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"><p class="text-xl px-4">Play<br> <span class="text-xxs">(100 $FPL)</span></p></button></div></div></div>`;
+    }
+  })}`;
+});
+const Page$5 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
+  return ``;
+});
+const Page$4 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
+  return `     `;
+});
+const Page$3 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
+  return ``;
+});
+var define_process_env_default = { FOOTBALL_GOD_BACKEND_CANISTER_ID: "bd3sg-teaaa-aaaaa-qaaba-cai", FOOTBALL_GOD_FRONTEND_CANISTER_ID: "be2us-64aaa-aaaaa-qaabq-cai", DFX_NETWORK: "local" };
 function createUserStore() {
   const { subscribe: subscribe2, set } = writable(null);
   async function sync() {

@@ -1,16 +1,17 @@
 <script lang="ts">
   import { Modal } from "@dfinity/gix-components";
   import { onMount } from "svelte";
-  import { writable } from "svelte/store";
+  import { playerStore } from "$lib/stores/player.store";
+  import { toastsError } from "$lib/stores/toasts.store";
+  import { teamStore } from "$lib/stores/teams.store";
 
   export let visible: boolean;
 
   export let confirmTeamSelection: (teamId: number) => void;
   export let closeTeamSelectionModal: () => void;
-  
+
   let isLoading = true;
 
-  /*
   onMount(async () => {
     try {
       await teamStore.sync();
@@ -27,23 +28,21 @@
       isLoading = false;
     }
   });
-  */
 </script>
 
 <Modal {visible} on:nnsClose={closeTeamSelectionModal}>
   <div class="p-2">
     <div class="flex justify-between items-center">
-      <h3 class="default-header">Select Player</h3>
+      <h3 class="default-header">Select Team</h3>
       <button class="times-button" on:click={closeTeamSelectionModal}
         >&times;</button
       >
     </div>
-    <!--
 
+    print all the teams out to select from
     {#each $teamStore as team, index}
-      {/each}
-
-    -->  
+      <p>team.name</p>
+    {/each}
   </div>
 </Modal>
 

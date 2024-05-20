@@ -2,6 +2,11 @@ import T "types";
 
 module DTOs {
 
+  public type DataCacheDTO = {
+    category : Text;
+    hash : Text;
+  };
+
   public type HomeDTO = {
     systemUpdating : Bool;
     activeSeasonName : Text;

@@ -817,7 +817,11 @@
   {/if}
 
   {#if showSelectTeamModal}
-    <SelectTeamComponent {confirmTeamSelection} visible={showSelectTeamModal} {closeTeamSelectionModal} />
+    <SelectTeamComponent
+      {confirmTeamSelection}
+      visible={showSelectTeamModal}
+      {closeTeamSelectionModal}
+    />
   {/if}
 
   <div class="bg-panel rounded-md p-4">

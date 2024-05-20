@@ -63,9 +63,9 @@
 
   let tiles: TileData[] = [
     {
-      title: "Whitepaper",
-      content: "Read the FootballGod whitepaper.",
-      link: "/whitepaper",
+      title: "Lightpaper",
+      content: "Read the FootballGod lightpaper.",
+      link: "/lightpaper",
       icon: null,
       image: "whitepaper.jpg",
       buttonText: "Read",
