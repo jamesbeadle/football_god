@@ -19,11 +19,11 @@ export const dictionary = {
 		"/": [2],
 		"/euro2024": [3],
 		"/leaderboard": [4],
-		"/manage-euro2024": [5],
-		"/presale": [6],
-		"/profile": [7],
-		"/terms": [8],
-		"/whitepaper": [9]
+		"/lightpaper": [5],
+		"/manage-euro2024": [6],
+		"/presale": [7],
+		"/profile": [8],
+		"/terms": [9]
 	};
 
 export const hooks = {

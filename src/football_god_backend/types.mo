@@ -154,7 +154,7 @@ module Types {
     #Goalkeeper;
     #Defender;
     #Midfielder;
-    #Foward;
+    #Forward;
   };
 
   public type Euro2024Fixture = {

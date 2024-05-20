@@ -808,12 +808,26 @@
     }
   }
 
-  function closeTeamSelectionModal() {}
+  function closeTeamSelectionModal() {
+    showSelectTeamModal = false;
+    selectedStage = -1;
+    predictionType = -1;
+  }
+
+  function closePlayerSelectionModal() {
+    showSelectPlayerModal = false;
+    selectedStage = -1;
+    predictionType = -1;
+  }
 </script>
 
 <Layout>
   {#if showSelectPlayerModal}
-    <SelectPlayerComponent {confirmPlayerSelection} />
+    <SelectPlayerComponent
+      {confirmPlayerSelection}
+      visible={showSelectPlayerModal}
+      {closePlayerSelectionModal}
+     />
   {/if}
 
   {#if showSelectTeamModal}
@@ -852,12 +866,14 @@
 
       <div class="flex flex-col bg-gray-700 rounded-lg overflow-hidden">
         <div class="flex flex-col justify-center h-full">
-          <button
-            type="submit"
-            class="inline-flex justify-center py-2 px-4 mx-2 border border-transparent shadow-sm font-bold rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-          >
-            View Leaderboard
-          </button>
+          <a href="/leaderboard" class="inline-flex">
+            <button
+              type="submit"
+              class="w-full justify-center py-2 px-4 mx-2 border border-transparent shadow-sm font-bold rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+            >
+              View Leaderboard
+            </button>
+          </a>
         </div>
       </div>
     </div>
