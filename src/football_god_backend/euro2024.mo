@@ -10,14 +10,13 @@ import Nat64 "mo:base/Nat64";
 import Buffer "mo:base/Buffer";
 import DTOs "DTOs";
 
-import Euro2024Players "./data/euro2024_players";
 import Euro2024Teams "./data/euro2024_teams";
 
 module {
 
   public class Euro2024() {
 
-    private var players : List.List<T.InternationalPlayer> = List.fromArray(Euro2024Players.Euro2024Players().players);
+    //todo add to stable storage
     private var teams : List.List<T.InternationalTeam> = List.fromArray(Euro2024Teams.Euro2024Teams().teams);
 
     private var userPredictions = Map.HashMap<T.PrincipalName, T.Euro2024Prediction>(0, Text.equal, Text.hash);
@@ -209,10 +208,12 @@ module {
       allPlayerIds.add(predictions.fPrediction.yellowCard);
       allPlayerIds.add(predictions.fPrediction.redCard);
 
+      let allPlayers = getAllPlayers();
+
       for (playerId in Iter.fromArray(Buffer.toArray(allPlayerIds))) {
 
         let existingPlayer = List.find<T.InternationalPlayer>(
-          players,
+          allPlayers,
           func(p : T.InternationalPlayer) : Bool {
             return p.id == playerId;
           },
@@ -244,6 +245,16 @@ module {
       };
 
       return true;
+    };
+    private func getAllPlayers() : List.List<T.InternationalPlayer> {
+      let playerBuffer = Buffer.fromArray<T.InternationalPlayer>([]);
+
+      for(team in Iter.fromList<T.InternationalTeam>(teams))
+      {
+        playerBuffer.append(Buffer.fromArray(team.players));
+      };
+
+      return List.fromArray(Buffer.toArray(playerBuffer));
     };
 
   };
