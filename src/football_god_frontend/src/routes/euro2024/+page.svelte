@@ -978,9 +978,9 @@
         <div class="w-1/6">
           <button
             on:click={() => selectWinner(0)}
-            class="flex-1 w-full rounded-md sm:text-sm shadow-sm text-white 
-              {prediction?.groupAPrediction?.winner ? 'bg-OPENFPL hover:bg-OPENFPL px-3 py-2' : 'bg-OPENFPLPURPLE hover:bg-OPENFPLPURPLE p-3 '} 
-              hover:text-GRAY focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 flex items-center justify-center"
+            class="selection-panel 
+              {prediction?.groupAPrediction?.winner ? 'selected-panel' : 'select-panel '} 
+              "
             >
               {#if prediction?.groupAPrediction?.winner}
                 {getTeamName(prediction.groupAPrediction.winner)}
@@ -995,9 +995,9 @@
         </div>
         <div class="w-1/6">
           <button on:click={() => selectLoser(0)}
-            class="flex-1 w-full rounded-md sm:text-sm shadow-sm text-white 
-              {prediction?.groupAPrediction?.loser ? 'bg-OPENFPL hover:bg-OPENFPL px-3 py-2' : 'bg-OPENFPLPURPLE hover:bg-OPENFPLPURPLE p-3 '} 
-              hover:text-GRAY focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 flex items-center justify-center"
+            class="selection-panel 
+              {prediction?.groupAPrediction?.loser ? 'selected-panel' : 'select-panel '} 
+              "
         >
           {#if prediction?.groupAPrediction?.loser}
             <div class="flex items-center justify-center w-full">
@@ -1020,9 +1020,9 @@
         <div class="w-1/6">
           <button
             on:click={() => selectScorer(0)}
-            class="flex-1 w-full rounded-md sm:text-sm shadow-sm text-white 
-              {prediction?.groupAPrediction?.goalScorer ? 'bg-OPENFPL hover:bg-OPENFPL px-3 py-2' : 'bg-OPENFPLPURPLE hover:bg-OPENFPLPURPLE p-3 '} 
-              hover:text-GRAY focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 flex items-center justify-center"
+            class="selection-panel 
+              {prediction?.groupAPrediction?.goalScorer ? 'selected-panel' : 'select-panel '} 
+              "
             >
               {#if prediction?.groupAPrediction?.goalScorer}
                 {getPlayerName(prediction.groupAPrediction.goalScorer)}
@@ -1038,9 +1038,9 @@
         <div class="w-1/6">
           <button
             on:click={() => selectAssister(0)}
-            class="flex-1 w-full rounded-md sm:text-sm shadow-sm text-white 
-              {prediction?.groupAPrediction?.goalAssister ? 'bg-OPENFPL hover:bg-OPENFPL px-3 py-2' : 'bg-OPENFPLPURPLE hover:bg-OPENFPLPURPLE p-3 '} 
-              hover:text-GRAY focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 flex items-center justify-center"
+            class="selection-panel 
+              {prediction?.groupAPrediction?.goalAssister ? 'selected-panel' : 'select-panel '} 
+              "
             >
               {#if prediction?.groupAPrediction?.goalAssister}
                 {getPlayerName(prediction.groupAPrediction.goalAssister)}
@@ -1056,9 +1056,9 @@
         <div class="w-1/6">
           <button
             on:click={() => selectYellowCard(0)}
-            class="flex-1 w-full rounded-md sm:text-sm shadow-sm text-white 
-              {prediction?.groupAPrediction?.yellowCard ? 'bg-OPENFPL hover:bg-OPENFPL px-3 py-2' : 'bg-OPENFPLPURPLE hover:bg-OPENFPLPURPLE p-3 '} 
-              hover:text-GRAY focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 flex items-center justify-center"
+            class="selection-panel 
+              {prediction?.groupAPrediction?.yellowCard ? 'selected-panel' : 'select-panel '} 
+              "
             >
               {#if prediction?.groupAPrediction?.yellowCard}
                 {getPlayerName(prediction.groupAPrediction.yellowCard)}
@@ -1074,9 +1074,9 @@
         <div class="w-1/6">
           <button
             on:click={() => selectRedCard(0)}
-            class="flex-1 w-full rounded-md sm:text-sm shadow-sm text-white 
-              {prediction?.groupAPrediction?.redCard ? 'bg-OPENFPL hover:bg-OPENFPL px-3 py-2' : 'bg-OPENFPLPURPLE hover:bg-OPENFPLPURPLE p-3 '} 
-              hover:text-GRAY focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 flex items-center justify-center"
+            class="selection-panel 
+              {prediction?.groupAPrediction?.redCard ? 'selected-panel' : 'select-panel '} 
+              "
             >
               {#if prediction?.groupAPrediction?.redCard}
                 {getPlayerName(prediction.groupAPrediction.redCard)}
@@ -1098,9 +1098,9 @@
         <div class="w-1/6">
           <button
             on:click={() => selectWinner(1)}
-            class="flex-1 w-full rounded-md sm:text-sm shadow-sm text-white 
-              {prediction?.groupBPrediction?.winner ? 'bg-OPENFPL hover:bg-OPENFPL px-3 py-2' : 'bg-OPENFPLPURPLE hover:bg-OPENFPLPURPLE p-3 '} 
-              hover:text-GRAY focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 flex items-center justify-center"
+            class="selection-panel 
+              {prediction?.groupBPrediction?.winner ? 'selected-panel' : 'select-panel '} 
+              "
             >
               {#if prediction?.groupBPrediction?.winner}
                 {getTeamName(prediction.groupBPrediction.winner)}
@@ -1116,9 +1116,9 @@
         <div class="w-1/6">
           <button
             on:click={() => selectLoser(1)}
-            class="flex-1 w-full rounded-md sm:text-sm shadow-sm text-white 
-              {prediction?.groupBPrediction?.loser ? 'bg-OPENFPL hover:bg-OPENFPL px-3 py-2' : 'bg-OPENFPLPURPLE hover:bg-OPENFPLPURPLE p-3 '} 
-              hover:text-GRAY focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 flex items-center justify-center"
+            class="selection-panel 
+              {prediction?.groupBPrediction?.loser ? 'selected-panel' : 'select-panel '} 
+              "
             >
               {#if prediction?.groupBPrediction?.loser}
                 {getTeamName(prediction.groupBPrediction.loser)}
@@ -1134,9 +1134,9 @@
         <div class="w-1/6">
           <button
             on:click={() => selectScorer(1)}
-            class="flex-1 w-full rounded-md sm:text-sm shadow-sm text-white 
-              {prediction?.groupBPrediction?.goalScorer ? 'bg-OPENFPL hover:bg-OPENFPL px-3 py-2' : 'bg-OPENFPLPURPLE hover:bg-OPENFPLPURPLE p-3 '} 
-              hover:text-GRAY focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 flex items-center justify-center"
+            class="selection-panel 
+              {prediction?.groupBPrediction?.goalScorer ? 'selected-panel' : 'select-panel '} 
+              "
             >
             {#if prediction?.groupBPrediction?.goalScorer}
               {getPlayerName(prediction.groupBPrediction.goalScorer)}
@@ -1152,9 +1152,9 @@
         <div class="w-1/6">
           <button
             on:click={() => selectAssister(1)}
-            class="flex-1 w-full rounded-md sm:text-sm shadow-sm text-white 
-              {prediction?.groupBPrediction?.goalAssister ? 'bg-OPENFPL hover:bg-OPENFPL px-3 py-2' : 'bg-OPENFPLPURPLE hover:bg-OPENFPLPURPLE p-3 '} 
-              hover:text-GRAY focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 flex items-center justify-center"
+            class="selection-panel 
+              {prediction?.groupBPrediction?.goalAssister ? 'selected-panel' : 'select-panel '} 
+              "
             >
               {#if prediction?.groupBPrediction?.goalAssister}
                 {getPlayerName(prediction.groupBPrediction.goalAssister)}
@@ -1170,9 +1170,9 @@
         <div class="w-1/6">
           <button
             on:click={() => selectYellowCard(1)}
-            class="flex-1 w-full rounded-md sm:text-sm shadow-sm text-white 
-              {prediction?.groupBPrediction?.yellowCard ? 'bg-OPENFPL hover:bg-OPENFPL px-3 py-2' : 'bg-OPENFPLPURPLE hover:bg-OPENFPLPURPLE p-3 '} 
-              hover:text-GRAY focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 flex items-center justify-center"
+            class="selection-panel 
+              {prediction?.groupBPrediction?.yellowCard ? 'selected-panel' : 'select-panel '} 
+              "
             >
               {#if prediction?.groupBPrediction?.yellowCard}
                 {getPlayerName(prediction.groupBPrediction.yellowCard)}
@@ -1188,9 +1188,9 @@
         <div class="w-1/6">
           <button
             on:click={() => selectRedCard(1)}
-            class="flex-1 w-full rounded-md sm:text-sm shadow-sm text-white 
-              {prediction?.groupBPrediction?.redCard ? 'bg-OPENFPL hover:bg-OPENFPL px-3 py-2' : 'bg-OPENFPLPURPLE hover:bg-OPENFPLPURPLE p-3 '} 
-              hover:text-GRAY focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 flex items-center justify-center"
+            class="selection-panel 
+              {prediction?.groupBPrediction?.redCard ? 'selected-panel' : 'select-panel '} 
+              "
             >
               {#if prediction?.groupBPrediction?.redCard}
                 {getPlayerName(prediction.groupBPrediction.redCard)}
@@ -1212,9 +1212,9 @@
         <div class="w-1/6">
           <button
             on:click={() => selectWinner(2)}
-            class="flex-1 w-full rounded-md sm:text-sm shadow-sm text-white 
-              {prediction?.groupCPrediction?.winner ? 'bg-OPENFPL hover:bg-OPENFPL px-3 py-2' : 'bg-OPENFPLPURPLE hover:bg-OPENFPLPURPLE p-3 '} 
-              hover:text-GRAY focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 flex items-center justify-center"
+            class="selection-panel 
+              {prediction?.groupCPrediction?.winner ? 'selected-panel' : 'select-panel '} 
+              "
             >
               {#if prediction?.groupCPrediction?.winner}
                 {getTeamName(prediction.groupCPrediction.winner)}
@@ -1230,9 +1230,9 @@
         <div class="w-1/6">
           <button
             on:click={() => selectLoser(2)}
-            class="flex-1 w-full rounded-md sm:text-sm shadow-sm text-white 
-              {prediction?.groupCPrediction?.winner ? 'bg-OPENFPL hover:bg-OPENFPL px-3 py-2' : 'bg-OPENFPLPURPLE hover:bg-OPENFPLPURPLE p-3 '} 
-              hover:text-GRAY focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 flex items-center justify-center"
+            class="selection-panel 
+              {prediction?.groupCPrediction?.winner ? 'selected-panel' : 'select-panel '} 
+              "
             > 
               {#if prediction?.groupCPrediction?.loser}
                 {getTeamName(prediction.groupCPrediction.loser)}
@@ -1248,9 +1248,9 @@
         <div class="w-1/6">
           <button
             on:click={() => selectScorer(2)}
-            class="flex-1 w-full rounded-md sm:text-sm shadow-sm text-white 
-              {prediction?.groupCPrediction?.goalScorer ? 'bg-OPENFPL hover:bg-OPENFPL px-3 py-2' : 'bg-OPENFPLPURPLE hover:bg-OPENFPLPURPLE p-3 '} 
-              hover:text-GRAY focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 flex items-center justify-center"
+            class="selection-panel 
+              {prediction?.groupCPrediction?.goalScorer ? 'selected-panel' : 'select-panel '} 
+              "
             > 
               {#if prediction?.groupCPrediction?.goalScorer}
                 {getPlayerName(prediction.groupCPrediction.goalScorer)}
@@ -1266,9 +1266,9 @@
         <div class="w-1/6">
           <button
             on:click={() => selectAssister(2)}
-            class="flex-1 w-full rounded-md sm:text-sm shadow-sm text-white 
-              {prediction?.groupCPrediction?.goalAssister ? 'bg-OPENFPL hover:bg-OPENFPL px-3 py-2' : 'bg-OPENFPLPURPLE hover:bg-OPENFPLPURPLE p-3 '} 
-              hover:text-GRAY focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 flex items-center justify-center"
+            class="selection-panel 
+              {prediction?.groupCPrediction?.goalAssister ? 'selected-panel' : 'select-panel '} 
+              "
             >
               {#if prediction?.groupCPrediction?.goalAssister}
                 {getPlayerName(prediction.groupCPrediction.goalAssister)}
@@ -1284,9 +1284,9 @@
         <div class="w-1/6">
           <button
             on:click={() => selectYellowCard(2)}
-            class="flex-1 w-full rounded-md sm:text-sm shadow-sm text-white 
-              {prediction?.groupCPrediction?.yellowCard ? 'bg-OPENFPL hover:bg-OPENFPL px-3 py-2' : 'bg-OPENFPLPURPLE hover:bg-OPENFPLPURPLE p-3 '} 
-              hover:text-GRAY focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 flex items-center justify-center"
+            class="selection-panel 
+              {prediction?.groupCPrediction?.yellowCard ? 'selected-panel' : 'select-panel '} 
+              "
             >
               {#if prediction?.groupCPrediction?.yellowCard}
                 {getPlayerName(prediction.groupCPrediction.yellowCard)}
@@ -1302,9 +1302,9 @@
         <div class="w-1/6">
           <button
             on:click={() => selectRedCard(2)}
-            class="flex-1 w-full rounded-md sm:text-sm shadow-sm text-white 
-              {prediction?.groupCPrediction?.redCard ? 'bg-OPENFPL hover:bg-OPENFPL px-3 py-2' : 'bg-OPENFPLPURPLE hover:bg-OPENFPLPURPLE p-3 '} 
-              hover:text-GRAY focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 flex items-center justify-center"
+            class="selection-panel 
+              {prediction?.groupCPrediction?.redCard ? 'selected-panel' : 'select-panel '} 
+              "
             >
               {#if prediction?.groupCPrediction?.redCard}
                 {getPlayerName(prediction.groupCPrediction.redCard)}
@@ -1326,9 +1326,9 @@
         <div class="w-1/6">
           <button
             on:click={() => selectWinner(3)}
-            class="flex-1 w-full rounded-md sm:text-sm shadow-sm text-white 
-              {prediction?.groupDPrediction?.winner ? 'bg-OPENFPL hover:bg-OPENFPL px-3 py-2' : 'bg-OPENFPLPURPLE hover:bg-OPENFPLPURPLE p-3 '} 
-              hover:text-GRAY focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 flex items-center justify-center"
+            class="selection-panel 
+              {prediction?.groupDPrediction?.winner ? 'selected-panel' : 'select-panel '} 
+              "
             >
               {#if prediction?.groupDPrediction?.winner}
                 {getTeamName(prediction.groupDPrediction.winner)}
@@ -1344,9 +1344,9 @@
         <div class="w-1/6">
           <button
             on:click={() => selectLoser(3)}
-            class="flex-1 w-full rounded-md sm:text-sm shadow-sm text-white 
-              {prediction?.groupDPrediction?.loser ? 'bg-OPENFPL hover:bg-OPENFPL px-3 py-2' : 'bg-OPENFPLPURPLE hover:bg-OPENFPLPURPLE p-3 '} 
-              hover:text-GRAY focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 flex items-center justify-center"
+            class="selection-panel 
+              {prediction?.groupDPrediction?.loser ? 'selected-panel' : 'select-panel '} 
+              "
             >
               {#if prediction?.groupDPrediction?.loser}
                 {getTeamName(prediction.groupDPrediction.loser)}
@@ -1362,9 +1362,9 @@
         <div class="w-1/6">
           <button
             on:click={() => selectScorer(3)}
-            class="flex-1 w-full rounded-md sm:text-sm shadow-sm text-white 
-              {prediction?.groupDPrediction?.goalScorer ? 'bg-OPENFPL hover:bg-OPENFPL px-3 py-2' : 'bg-OPENFPLPURPLE hover:bg-OPENFPLPURPLE p-3 '} 
-              hover:text-GRAY focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 flex items-center justify-center"
+            class="selection-panel 
+              {prediction?.groupDPrediction?.goalScorer ? 'selected-panel' : 'select-panel '} 
+              "
             >
               {#if prediction?.groupDPrediction?.goalScorer}
                 {getPlayerName(prediction.groupDPrediction.goalScorer)}
@@ -1380,9 +1380,9 @@
         <div class="w-1/6">
           <button
             on:click={() => selectAssister(3)}
-            class="flex-1 w-full rounded-md sm:text-sm shadow-sm text-white 
-              {prediction?.groupDPrediction?.goalAssister ? 'bg-OPENFPL hover:bg-OPENFPL px-3 py-2' : 'bg-OPENFPLPURPLE hover:bg-OPENFPLPURPLE p-3 '} 
-              hover:text-GRAY focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 flex items-center justify-center"
+            class="selection-panel 
+              {prediction?.groupDPrediction?.goalAssister ? 'selected-panel' : 'select-panel '} 
+              "
             >
               {#if prediction?.groupDPrediction?.goalAssister}
                 {getPlayerName(prediction.groupDPrediction.goalAssister)}
@@ -1398,9 +1398,9 @@
         <div class="w-1/6">
           <button
             on:click={() => selectYellowCard(3)}
-            class="flex-1 w-full rounded-md sm:text-sm shadow-sm text-white 
-              {prediction?.groupDPrediction?.yellowCard ? 'bg-OPENFPL hover:bg-OPENFPL px-3 py-2' : 'bg-OPENFPLPURPLE hover:bg-OPENFPLPURPLE p-3 '} 
-              hover:text-GRAY focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 flex items-center justify-center"
+            class="selection-panel 
+              {prediction?.groupDPrediction?.yellowCard ? 'selected-panel' : 'select-panel '} 
+              "
             >
               {#if prediction?.groupDPrediction?.yellowCard}
                 {getPlayerName(prediction.groupDPrediction.yellowCard)}
@@ -1416,9 +1416,9 @@
         <div class="w-1/6">
           <button
             on:click={() => selectRedCard(3)}
-            class="flex-1 w-full rounded-md sm:text-sm shadow-sm text-white 
-              {prediction?.groupDPrediction?.winner ? 'bg-OPENFPL hover:bg-OPENFPL px-3 py-2' : 'bg-OPENFPLPURPLE hover:bg-OPENFPLPURPLE p-3 '} 
-              hover:text-GRAY focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 flex items-center justify-center"
+            class="selection-panel 
+              {prediction?.groupDPrediction?.winner ? 'selected-panel' : 'select-panel '} 
+              "
             >
               {#if prediction?.groupDPrediction?.redCard}
                 {getPlayerName(prediction.groupDPrediction.redCard)}
@@ -1440,9 +1440,9 @@
         <div class="w-1/6">
           <button
             on:click={() => selectWinner(4)}
-            class="flex-1 w-full rounded-md sm:text-sm shadow-sm text-white 
-              {prediction?.groupEPrediction?.winner ? 'bg-OPENFPL hover:bg-OPENFPL px-3 py-2' : 'bg-OPENFPLPURPLE hover:bg-OPENFPLPURPLE p-3 '} 
-              hover:text-GRAY focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 flex items-center justify-center"
+            class="selection-panel 
+              {prediction?.groupEPrediction?.winner ? 'selected-panel' : 'select-panel '} 
+              "
             >
               {#if prediction?.groupEPrediction?.winner}
                 {getTeamName(prediction.groupEPrediction.winner)}
@@ -1458,9 +1458,9 @@
         <div class="w-1/6">
           <button
             on:click={() => selectLoser(4)}
-            class="flex-1 w-full rounded-md sm:text-sm shadow-sm text-white 
-              {prediction?.groupEPrediction?.loser ? 'bg-OPENFPL hover:bg-OPENFPL px-3 py-2' : 'bg-OPENFPLPURPLE hover:bg-OPENFPLPURPLE p-3 '} 
-              hover:text-GRAY focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 flex items-center justify-center"
+            class="selection-panel 
+              {prediction?.groupEPrediction?.loser ? 'selected-panel' : 'select-panel '} 
+              "
             >
               {#if prediction?.groupEPrediction?.loser}
                 {getTeamName(prediction.groupEPrediction.loser)}
@@ -1476,9 +1476,9 @@
         <div class="w-1/6">
           <button
             on:click={() => selectScorer(4)}
-            class="flex-1 w-full rounded-md sm:text-sm shadow-sm text-white 
-              {prediction?.groupEPrediction?.goalScorer ? 'bg-OPENFPL hover:bg-OPENFPL px-3 py-2' : 'bg-OPENFPLPURPLE hover:bg-OPENFPLPURPLE p-3 '} 
-              hover:text-GRAY focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 flex items-center justify-center"
+            class="selection-panel 
+              {prediction?.groupEPrediction?.goalScorer ? 'selected-panel' : 'select-panel '} 
+              "
             >
               {#if prediction?.groupEPrediction?.goalScorer}
                 {getPlayerName(prediction.groupEPrediction.goalScorer)}
@@ -1494,9 +1494,9 @@
         <div class="w-1/6">
           <button
             on:click={() => selectAssister(4)}
-            class="flex-1 w-full rounded-md sm:text-sm shadow-sm text-white 
-              {prediction?.groupEPrediction?.goalAssister ? 'bg-OPENFPL hover:bg-OPENFPL px-3 py-2' : 'bg-OPENFPLPURPLE hover:bg-OPENFPLPURPLE p-3 '} 
-              hover:text-GRAY focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 flex items-center justify-center"
+            class="selection-panel 
+              {prediction?.groupEPrediction?.goalAssister ? 'selected-panel' : 'select-panel '} 
+              "
             >
               {#if prediction?.groupEPrediction?.goalAssister}
                 {getPlayerName(prediction.groupEPrediction.goalAssister)}
@@ -1512,9 +1512,9 @@
         <div class="w-1/6">
           <button
             on:click={() => selectYellowCard(4)}
-            class="flex-1 w-full rounded-md sm:text-sm shadow-sm text-white 
-              {prediction?.groupEPrediction?.yellowCard ? 'bg-OPENFPL hover:bg-OPENFPL px-3 py-2' : 'bg-OPENFPLPURPLE hover:bg-OPENFPLPURPLE p-3 '} 
-              hover:text-GRAY focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 flex items-center justify-center"
+            class="selection-panel 
+              {prediction?.groupEPrediction?.yellowCard ? 'selected-panel' : 'select-panel '} 
+              "
             >
               {#if prediction?.groupEPrediction?.yellowCard}
                 {getPlayerName(prediction.groupEPrediction.yellowCard)}
@@ -1530,9 +1530,9 @@
         <div class="w-1/6">
           <button
             on:click={() => selectRedCard(4)}
-            class="flex-1 w-full rounded-md sm:text-sm shadow-sm text-white 
-              {prediction?.groupEPrediction?.redCard ? 'bg-OPENFPL hover:bg-OPENFPL px-3 py-2' : 'bg-OPENFPLPURPLE hover:bg-OPENFPLPURPLE p-3 '} 
-              hover:text-GRAY focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 flex items-center justify-center"
+            class="selection-panel 
+              {prediction?.groupEPrediction?.redCard ? 'selected-panel' : 'select-panel '} 
+              "
             >
               {#if prediction?.groupEPrediction?.redCard}
                 {getPlayerName(prediction.groupEPrediction.redCard)}
@@ -1554,9 +1554,9 @@
         <div class="w-1/6">
           <button
             on:click={() => selectWinner(5)}
-            class="flex-1 w-full rounded-md sm:text-sm shadow-sm text-white 
-              {prediction?.groupFPrediction?.winner ? 'bg-OPENFPL hover:bg-OPENFPL px-3 py-2' : 'bg-OPENFPLPURPLE hover:bg-OPENFPLPURPLE p-3 '} 
-              hover:text-GRAY focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 flex items-center justify-center"
+            class="selection-panel 
+              {prediction?.groupFPrediction?.winner ? 'selected-panel' : 'select-panel '} 
+              "
             >
               {#if prediction?.groupFPrediction?.winner}
                 {getTeamName(prediction.groupFPrediction.winner)}
@@ -1572,9 +1572,9 @@
         <div class="w-1/6">
           <button
             on:click={() => selectLoser(5)}
-            class="flex-1 w-full rounded-md sm:text-sm shadow-sm text-white 
-              {prediction?.groupFPrediction?.loser ? 'bg-OPENFPL hover:bg-OPENFPL px-3 py-2' : 'bg-OPENFPLPURPLE hover:bg-OPENFPLPURPLE p-3 '} 
-              hover:text-GRAY focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 flex items-center justify-center"
+            class="selection-panel 
+              {prediction?.groupFPrediction?.loser ? 'selected-panel' : 'select-panel '} 
+              "
             >
               {#if prediction?.groupFPrediction?.loser}
                 {getTeamName(prediction.groupFPrediction.loser)}
@@ -1590,9 +1590,9 @@
         <div class="w-1/6">
           <button
             on:click={() => selectScorer(5)}
-            class="flex-1 w-full rounded-md sm:text-sm shadow-sm text-white 
-              {prediction?.groupFPrediction?.goalScorer ? 'bg-OPENFPL hover:bg-OPENFPL px-3 py-2' : 'bg-OPENFPLPURPLE hover:bg-OPENFPLPURPLE p-3 '} 
-              hover:text-GRAY focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 flex items-center justify-center"
+            class="selection-panel 
+              {prediction?.groupFPrediction?.goalScorer ? 'selected-panel' : 'select-panel '} 
+              "
             >
               {#if prediction?.groupFPrediction?.goalScorer}
                 {getPlayerName(prediction.groupFPrediction.goalScorer)}
@@ -1608,9 +1608,9 @@
         <div class="w-1/6">
           <button
             on:click={() => selectAssister(5)}
-            class="flex-1 w-full rounded-md sm:text-sm shadow-sm text-white 
-              {prediction?.groupFPrediction?.goalAssister ? 'bg-OPENFPL hover:bg-OPENFPL px-3 py-2' : 'bg-OPENFPLPURPLE hover:bg-OPENFPLPURPLE p-3 '} 
-              hover:text-GRAY focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 flex items-center justify-center"
+            class="selection-panel 
+              {prediction?.groupFPrediction?.goalAssister ? 'selected-panel' : 'select-panel '} 
+              "
             >
             {#if prediction?.groupFPrediction?.goalAssister}
               {getPlayerName(prediction.groupFPrediction.goalAssister)}
@@ -1626,9 +1626,9 @@
         <div class="w-1/6">
           <button
             on:click={() => selectYellowCard(5)}
-            class="flex-1 w-full rounded-md sm:text-sm shadow-sm text-white 
-              {prediction?.groupFPrediction?.yellowCard ? 'bg-OPENFPL hover:bg-OPENFPL px-3 py-2' : 'bg-OPENFPLPURPLE hover:bg-OPENFPLPURPLE p-3 '} 
-              hover:text-GRAY focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 flex items-center justify-center"
+            class="selection-panel 
+              {prediction?.groupFPrediction?.yellowCard ? 'selected-panel' : 'select-panel '} 
+              "
             >
             {#if prediction?.groupFPrediction?.yellowCard}
               {getPlayerName(prediction.groupFPrediction.yellowCard)}
@@ -1644,9 +1644,9 @@
         <div class="w-1/6">
           <button
             on:click={() => selectRedCard(5)}
-            class="flex-1 w-full rounded-md sm:text-sm shadow-sm text-white 
-              {prediction?.groupFPrediction?.redCard ? 'bg-OPENFPL hover:bg-OPENFPL px-3 py-2' : 'bg-OPENFPLPURPLE hover:bg-OPENFPLPURPLE p-3 '} 
-              hover:text-GRAY focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 flex items-center justify-center"
+            class="selection-panel 
+              {prediction?.groupFPrediction?.redCard ? 'selected-panel' : 'select-panel '} 
+              "
             >
             {#if prediction?.groupFPrediction?.redCard}
               {getPlayerName(prediction.groupFPrediction.redCard)}
@@ -1705,9 +1705,9 @@
         <div class="w-1/6">
           <button
             on:click={() => selectWinner(6)}
-            class="flex-1 w-full rounded-md sm:text-sm shadow-sm text-white 
-              {prediction?.r16Prediction?.winner ? 'bg-OPENFPL hover:bg-OPENFPL px-3 py-2' : 'bg-OPENFPLPURPLE hover:bg-OPENFPLPURPLE p-3 '} 
-              hover:text-GRAY focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 flex items-center justify-center"
+            class="selection-panel 
+              {prediction?.r16Prediction?.winner ? 'selected-panel' : 'select-panel '} 
+              "
             >
               {#if prediction?.r16Prediction?.winner}
                 {getTeamName(prediction.r16Prediction.winner)}
@@ -1723,9 +1723,9 @@
         <div class="w-1/6">
           <button
             on:click={() => selectLoser(6)}
-            class="flex-1 w-full rounded-md sm:text-sm shadow-sm text-white 
-              {prediction?.r16Prediction?.loser ? 'bg-OPENFPL hover:bg-OPENFPL px-3 py-2' : 'bg-OPENFPLPURPLE hover:bg-OPENFPLPURPLE p-3 '} 
-              hover:text-GRAY focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 flex items-center justify-center"
+            class="selection-panel 
+              {prediction?.r16Prediction?.loser ? 'selected-panel' : 'select-panel '} 
+              "
             >
             {#if prediction?.r16Prediction?.loser}
               {getTeamName(prediction.r16Prediction.loser)}
@@ -1741,9 +1741,9 @@
         <div class="w-1/6">
           <button
             on:click={() => selectScorer(6)}
-            class="flex-1 w-full rounded-md sm:text-sm shadow-sm text-white 
-              {prediction?.r16Prediction?.goalScorer ? 'bg-OPENFPL hover:bg-OPENFPL px-3 py-2' : 'bg-OPENFPLPURPLE hover:bg-OPENFPLPURPLE p-3 '} 
-              hover:text-GRAY focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 flex items-center justify-center"
+            class="selection-panel 
+              {prediction?.r16Prediction?.goalScorer ? 'selected-panel' : 'select-panel '} 
+              "
             >
             {#if prediction?.r16Prediction?.goalScorer}
               {getPlayerName(prediction.r16Prediction.goalScorer)}
@@ -1759,9 +1759,9 @@
         <div class="w-1/6">
           <button
             on:click={() => selectAssister(6)}
-            class="flex-1 w-full rounded-md sm:text-sm shadow-sm text-white 
-              {prediction?.r16Prediction?.goalAssister ? 'bg-OPENFPL hover:bg-OPENFPL px-3 py-2' : 'bg-OPENFPLPURPLE hover:bg-OPENFPLPURPLE p-3 '} 
-              hover:text-GRAY focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 flex items-center justify-center"
+            class="selection-panel 
+              {prediction?.r16Prediction?.goalAssister ? 'selected-panel' : 'select-panel '} 
+              "
             >
             {#if prediction?.r16Prediction?.goalAssister}
               {getPlayerName(prediction.r16Prediction.goalAssister)}
@@ -1777,9 +1777,9 @@
         <div class="w-1/6">
           <button
             on:click={() => selectYellowCard(6)}
-            class="flex-1 w-full rounded-md sm:text-sm shadow-sm text-white 
-              {prediction?.r16Prediction?.yellowCard ? 'bg-OPENFPL hover:bg-OPENFPL px-3 py-2' : 'bg-OPENFPLPURPLE hover:bg-OPENFPLPURPLE p-3 '} 
-              hover:text-GRAY focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 flex items-center justify-center"
+            class="selection-panel 
+              {prediction?.r16Prediction?.yellowCard ? 'selected-panel' : 'select-panel '} 
+              "
             >
             {#if prediction?.r16Prediction?.yellowCard}
               {getPlayerName(prediction.r16Prediction.yellowCard)}
@@ -1795,9 +1795,9 @@
         <div class="w-1/6">
           <button
             on:click={() => selectRedCard(6)}
-            class="flex-1 w-full rounded-md sm:text-sm shadow-sm text-white 
-              {prediction?.r16Prediction?.redCard ? 'bg-OPENFPL hover:bg-OPENFPL px-3 py-2' : 'bg-OPENFPLPURPLE hover:bg-OPENFPLPURPLE p-3 '} 
-              hover:text-GRAY focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 flex items-center justify-center"
+            class="selection-panel 
+              {prediction?.r16Prediction?.redCard ? 'selected-panel' : 'select-panel '} 
+              "
             >
             {#if prediction?.r16Prediction?.redCard}
               {getPlayerName(prediction.r16Prediction.redCard)}
@@ -1846,9 +1846,9 @@
         <div class="w-1/6">
           <button
             on:click={() => selectWinner(7)}
-            class="flex-1 w-full rounded-md sm:text-sm shadow-sm text-white 
-              {prediction?.qfPrediction?.winner ? 'bg-OPENFPL hover:bg-OPENFPL px-3 py-2' : 'bg-OPENFPLPURPLE hover:bg-OPENFPLPURPLE p-3 '} 
-              hover:text-GRAY focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 flex items-center justify-center"
+            class="selection-panel 
+              {prediction?.qfPrediction?.winner ? 'selected-panel' : 'select-panel '} 
+              "
             >
               {#if prediction?.qfPrediction?.winner}
                 {getTeamName(prediction.qfPrediction.winner)}
@@ -1864,9 +1864,9 @@
         <div class="w-1/6">
           <button
             on:click={() => selectLoser(7)}
-            class="flex-1 w-full rounded-md sm:text-sm shadow-sm text-white 
-              {prediction?.qfPrediction?.loser ? 'bg-OPENFPL hover:bg-OPENFPL px-3 py-2' : 'bg-OPENFPLPURPLE hover:bg-OPENFPLPURPLE p-3 '} 
-              hover:text-GRAY focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 flex items-center justify-center"
+            class="selection-panel 
+              {prediction?.qfPrediction?.loser ? 'selected-panel' : 'select-panel '} 
+              "
             >
             {#if prediction?.qfPrediction?.loser}
               {getTeamName(prediction.qfPrediction.loser)}
@@ -1882,9 +1882,9 @@
         <div class="w-1/6">
           <button
             on:click={() => selectScorer(7)}
-            class="flex-1 w-full rounded-md sm:text-sm shadow-sm text-white 
-              {prediction?.qfPrediction?.goalScorer ? 'bg-OPENFPL hover:bg-OPENFPL px-3 py-2' : 'bg-OPENFPLPURPLE hover:bg-OPENFPLPURPLE p-3 '} 
-              hover:text-GRAY focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 flex items-center justify-center"
+            class="selection-panel 
+              {prediction?.qfPrediction?.goalScorer ? 'selected-panel' : 'select-panel '} 
+              "
             >
             {#if prediction?.qfPrediction?.goalScorer}
               {getPlayerName(prediction.qfPrediction.goalScorer)}
@@ -1900,9 +1900,9 @@
         <div class="w-1/6">
           <button
             on:click={() => selectAssister(7)}
-            class="flex-1 w-full rounded-md sm:text-sm shadow-sm text-white 
-              {prediction?.qfPrediction?.goalAssister ? 'bg-OPENFPL hover:bg-OPENFPL px-3 py-2' : 'bg-OPENFPLPURPLE hover:bg-OPENFPLPURPLE p-3 '} 
-              hover:text-GRAY focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 flex items-center justify-center"
+            class="selection-panel 
+              {prediction?.qfPrediction?.goalAssister ? 'selected-panel' : 'select-panel '} 
+              "
             >
             {#if prediction?.qfPrediction?.goalAssister}
               {getPlayerName(prediction.qfPrediction.goalAssister)}
@@ -1918,9 +1918,9 @@
         <div class="w-1/6">
           <button
             on:click={() => selectYellowCard(7)}
-            class="flex-1 w-full rounded-md sm:text-sm shadow-sm text-white 
-              {prediction?.qfPrediction?.yellowCard ? 'bg-OPENFPL hover:bg-OPENFPL px-3 py-2' : 'bg-OPENFPLPURPLE hover:bg-OPENFPLPURPLE p-3 '} 
-              hover:text-GRAY focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 flex items-center justify-center"
+            class="selection-panel 
+              {prediction?.qfPrediction?.yellowCard ? 'selected-panel' : 'select-panel '} 
+              "
             >
             {#if prediction?.qfPrediction?.yellowCard}
               {getPlayerName(prediction.qfPrediction.yellowCard)}
@@ -1936,9 +1936,9 @@
         <div class="w-1/6">
           <button
             on:click={() => selectRedCard(7)}
-            class="flex-1 w-full rounded-md sm:text-sm shadow-sm text-white 
-              {prediction?.qfPrediction?.redCard ? 'bg-OPENFPL hover:bg-OPENFPL px-3 py-2' : 'bg-OPENFPLPURPLE hover:bg-OPENFPLPURPLE p-3 '} 
-              hover:text-GRAY focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 flex items-center justify-center"
+            class="selection-panel 
+              {prediction?.qfPrediction?.redCard ? 'selected-panel' : 'select-panel '} 
+              "
             >
             {#if prediction?.qfPrediction?.redCard}
               {getPlayerName(prediction.qfPrediction.redCard)}
@@ -1987,9 +1987,9 @@
         <div class="w-1/6">
           <button
             on:click={() => selectWinner(8)}
-            class="flex-1 w-full rounded-md sm:text-sm shadow-sm text-white 
-              {prediction?.sfPrediction?.winner ? 'bg-OPENFPL hover:bg-OPENFPL px-3 py-2' : 'bg-OPENFPLPURPLE hover:bg-OPENFPLPURPLE p-3 '} 
-              hover:text-GRAY focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 flex items-center justify-center"
+            class="selection-panel 
+              {prediction?.sfPrediction?.winner ? 'selected-panel' : 'select-panel '} 
+              "
             >
               {#if prediction?.sfPrediction?.winner}
                 {getTeamName(prediction.sfPrediction.winner)}
@@ -2005,9 +2005,9 @@
         <div class="w-1/6">
           <button
             on:click={() => selectLoser(8)}
-            class="flex-1 w-full rounded-md sm:text-sm shadow-sm text-white 
-              {prediction?.sfPrediction?.loser ? 'bg-OPENFPL hover:bg-OPENFPL px-3 py-2' : 'bg-OPENFPLPURPLE hover:bg-OPENFPLPURPLE p-3 '} 
-              hover:text-GRAY focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 flex items-center justify-center"
+            class="selection-panel 
+              {prediction?.sfPrediction?.loser ? 'selected-panel' : 'select-panel '} 
+              "
             >
             {#if prediction?.sfPrediction?.loser}
               {getTeamName(prediction.sfPrediction.loser)}
@@ -2023,9 +2023,9 @@
         <div class="w-1/6">
           <button
             on:click={() => selectScorer(8)}
-            class="flex-1 w-full rounded-md sm:text-sm shadow-sm text-white 
-              {prediction?.sfPrediction?.goalScorer ? 'bg-OPENFPL hover:bg-OPENFPL px-3 py-2' : 'bg-OPENFPLPURPLE hover:bg-OPENFPLPURPLE p-3 '} 
-              hover:text-GRAY focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 flex items-center justify-center"
+            class="selection-panel 
+              {prediction?.sfPrediction?.goalScorer ? 'selected-panel' : 'select-panel '} 
+              "
             >
             {#if prediction?.sfPrediction?.goalScorer}
               {getPlayerName(prediction.sfPrediction.goalScorer)}
@@ -2041,9 +2041,9 @@
         <div class="w-1/6">
           <button
             on:click={() => selectAssister(8)}
-            class="flex-1 w-full rounded-md sm:text-sm shadow-sm text-white 
-              {prediction?.sfPrediction?.goalAssister ? 'bg-OPENFPL hover:bg-OPENFPL px-3 py-2' : 'bg-OPENFPLPURPLE hover:bg-OPENFPLPURPLE p-3 '} 
-              hover:text-GRAY focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 flex items-center justify-center"
+            class="selection-panel 
+              {prediction?.sfPrediction?.goalAssister ? 'selected-panel' : 'select-panel '} 
+              "
             >
             {#if prediction?.sfPrediction?.goalAssister}
               {getPlayerName(prediction.sfPrediction.goalAssister)}
@@ -2059,9 +2059,9 @@
         <div class="w-1/6">
           <button
             on:click={() => selectYellowCard(8)}
-            class="flex-1 w-full rounded-md sm:text-sm shadow-sm text-white 
-              {prediction?.sfPrediction?.yellowCard ? 'bg-OPENFPL hover:bg-OPENFPL px-3 py-2' : 'bg-OPENFPLPURPLE hover:bg-OPENFPLPURPLE p-3 '} 
-              hover:text-GRAY focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 flex items-center justify-center"
+            class="selection-panel 
+              {prediction?.sfPrediction?.yellowCard ? 'selected-panel' : 'select-panel '} 
+              "
             >
             {#if prediction?.sfPrediction?.yellowCard}
               {getPlayerName(prediction.sfPrediction.yellowCard)}
@@ -2077,9 +2077,9 @@
         <div class="w-1/6">
           <button
             on:click={() => selectRedCard(8)}
-            class="flex-1 w-full rounded-md sm:text-sm shadow-sm text-white 
-              {prediction?.sfPrediction?.redCard ? 'bg-OPENFPL hover:bg-OPENFPL px-3 py-2' : 'bg-OPENFPLPURPLE hover:bg-OPENFPLPURPLE p-3 '} 
-              hover:text-GRAY focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 flex items-center justify-center"
+            class="selection-panel 
+              {prediction?.sfPrediction?.redCard ? 'selected-panel' : 'select-panel '} 
+              "
             >
             {#if prediction?.sfPrediction?.redCard}
               {getPlayerName(prediction.sfPrediction.redCard)}
@@ -2128,9 +2128,9 @@
         <div class="w-1/6">
           <button
             on:click={() => selectWinner(9)}
-            class="flex-1 w-full rounded-md sm:text-sm shadow-sm text-white 
-              {prediction?.fPrediction?.winner ? 'bg-OPENFPL hover:bg-OPENFPL px-3 py-2' : 'bg-OPENFPLPURPLE hover:bg-OPENFPLPURPLE p-3 '} 
-              hover:text-GRAY focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 flex items-center justify-center"
+            class="selection-panel 
+              {prediction?.fPrediction?.winner ? 'selected-panel' : 'select-panel '} 
+              "
             > 
               {#if prediction?.fPrediction?.winner}
                 {getTeamName(prediction.fPrediction.winner)}
@@ -2146,9 +2146,9 @@
         <div class="w-1/6">
           <button
             on:click={() => selectLoser(9)}
-            class="flex-1 w-full rounded-md sm:text-sm shadow-sm text-white 
-              {prediction?.fPrediction?.loser ? 'bg-OPENFPL hover:bg-OPENFPL px-3 py-2' : 'bg-OPENFPLPURPLE hover:bg-OPENFPLPURPLE p-3 '} 
-              hover:text-GRAY focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 flex items-center justify-center"
+            class="selection-panel 
+              {prediction?.fPrediction?.loser ? 'selected-panel' : 'select-panel '} 
+              "
             >
             {#if prediction?.fPrediction?.loser}
               {getTeamName(prediction.fPrediction.loser)}
@@ -2164,9 +2164,9 @@
         <div class="w-1/6">
           <button
             on:click={() => selectScorer(9)}
-            class="flex-1 w-full rounded-md sm:text-sm shadow-sm text-white 
-              {prediction?.fPrediction?.goalScorer ? 'bg-OPENFPL hover:bg-OPENFPL px-3 py-2' : 'bg-OPENFPLPURPLE hover:bg-OPENFPLPURPLE p-3 '} 
-              hover:text-GRAY focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 flex items-center justify-center"
+            class="selection-panel 
+              {prediction?.fPrediction?.goalScorer ? 'selected-panel' : 'select-panel '} 
+              "
             >
             {#if prediction?.fPrediction?.goalScorer}
               {getPlayerName(prediction.fPrediction.goalScorer)}
@@ -2182,9 +2182,9 @@
         <div class="w-1/6">
           <button
             on:click={() => selectAssister(9)}
-            class="flex-1 w-full rounded-md sm:text-sm shadow-sm text-white 
-              {prediction?.fPrediction?.goalAssister ? 'bg-OPENFPL hover:bg-OPENFPL px-3 py-2' : 'bg-OPENFPLPURPLE hover:bg-OPENFPLPURPLE p-3 '} 
-              hover:text-GRAY focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 flex items-center justify-center"
+            class="selection-panel 
+              {prediction?.fPrediction?.goalAssister ? 'selected-panel' : 'select-panel '} 
+              "
             >
             {#if prediction?.fPrediction?.goalAssister}
               {getPlayerName(prediction.fPrediction.goalAssister)}
@@ -2200,9 +2200,9 @@
         <div class="w-1/6">
           <button
             on:click={() => selectYellowCard(9)}
-            class="flex-1 w-full rounded-md sm:text-sm shadow-sm text-white 
-              {prediction?.fPrediction?.yellowCard ? 'bg-OPENFPL hover:bg-OPENFPL px-3 py-2' : 'bg-OPENFPLPURPLE hover:bg-OPENFPLPURPLE p-3 '} 
-              hover:text-GRAY focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 flex items-center justify-center"
+            class="selection-panel 
+              {prediction?.fPrediction?.yellowCard ? 'selected-panel' : 'select-panel '} 
+              "
             >
             {#if prediction?.fPrediction?.yellowCard}
               {getPlayerName(prediction.fPrediction.yellowCard)}
@@ -2218,9 +2218,9 @@
         <div class="w-1/6">
           <button
             on:click={() => selectRedCard(9)}
-            class="flex-1 w-full rounded-md sm:text-sm shadow-sm text-white 
-              {prediction?.fPrediction?.redCard ? 'bg-OPENFPL hover:bg-OPENFPL px-3 py-2' : 'bg-OPENFPLPURPLE hover:bg-OPENFPLPURPLE p-3 '} 
-              hover:text-GRAY focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 flex items-center justify-center"
+            class="selection-panel 
+              {prediction?.fPrediction?.redCard ? 'selected-panel' : 'select-panel '} 
+              "
             >
             {#if prediction?.fPrediction?.redCard}
               {getPlayerName(prediction.fPrediction.redCard)}
