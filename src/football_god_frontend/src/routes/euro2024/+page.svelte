@@ -1604,7 +1604,7 @@
             class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2"
             >
             {#if prediction?.r16Prediction?.goalScorer}
-              {getPlayerName(prediction.groupFPrediction.goalScorer)}
+              {getPlayerName(prediction.r16Prediction.goalScorer)}
             {:else}
               Select a Player
             {/if}
@@ -1620,7 +1620,7 @@
             class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2"
             >
             {#if prediction?.r16Prediction?.goalAssister}
-              {getPlayerName(prediction.groupFPrediction.goalAssister)}
+              {getPlayerName(prediction.r16Prediction.goalAssister)}
             {:else}
               Select a Player
             {/if}
@@ -1636,7 +1636,7 @@
             class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2"
             >
             {#if prediction?.r16Prediction?.yellowCard}
-              {getPlayerName(prediction.groupFPrediction.yellowCard)}
+              {getPlayerName(prediction.r16Prediction.yellowCard)}
             {:else}
               Select a Player
             {/if}
@@ -1652,7 +1652,7 @@
             class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2"
             >
             {#if prediction?.r16Prediction?.redCard}
-              {getPlayerName(prediction.groupFPrediction.redCard)}
+              {getPlayerName(prediction.r16Prediction.redCard)}
             {:else}
               Select a Player
             {/if}
