@@ -1555,16 +1555,16 @@
       </div>
     </div>
 
-    <div class="flex flex-row my-4 space-x-2">
-      <div class="w-full mx-4">
-        <p class="flex-1 block w-full bg-gray-800 p-2 text-center rounded-md">
+    <div class="flex flex-row my-4 space-x-2 text-sm">
+      <div class="w-full">
+        <p class="flex-1 block w-full bg-gray-800 py-4 px-2 text-center rounded-md">
           Receive double points for each group stage category you make 3 or more
           correct selections.
         </p>
       </div>
     </div>
 
-    <div class="horizontal-divider my-8" />
+    <div class="horizontal-divider my-4" />
 
     <div class="flex flex-row items-center bg-OPENFPL text-GRAY border border-white rounded-md p-2 text-sm">
       <div class="w-1/12 flex">
