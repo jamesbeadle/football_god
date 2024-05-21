@@ -3,14 +3,13 @@
     Euro2024PredictionDTO,
   } from "../../../../declarations/football_god_backend/football_god_backend.did";
   import Layout from "../Layout.svelte";
-  import { onMount, onDestroy } from "svelte";
+  import { onMount, onDestroy, SvelteComponent } from "svelte";
   import SelectTeamComponent from "$lib/components/euro2024/select-team-modal.svelte";
   import SelectPlayerComponent from "$lib/components/euro2024/select-player-modal.svelte";
   import { teamStore } from "$lib/stores/teams.store";
   import { playerStore } from "$lib/stores/player.store";
   import { writable } from "svelte/store";
-    import { getFlagComponent } from "$lib/utils/helpers";
-    import { userStore } from "$lib/stores/user.store";
+  import { userStore } from "$lib/stores/user.store";
  
   let prediction: Euro2024PredictionDTO | undefined;
 
@@ -875,6 +874,63 @@
     return player ? player.lastName : "Select a Player";
   }
 
+
+
+  const getFlagComponent = async (countryId: number): Promise<typeof SvelteComponent | null> => {
+    switch (countryId) {
+      case 1:
+        return (await import('$lib/components/flags/alb.svelte')).default as typeof SvelteComponent;
+      case 2:
+        return (await import('$lib/components/flags/aus.svelte')).default as typeof SvelteComponent;
+      case 3:
+        return (await import('$lib/components/flags/bel.svelte')).default as typeof SvelteComponent;
+      case 4:
+        return (await import('$lib/components/flags/cro.svelte')).default as typeof SvelteComponent;
+      case 5:
+        return (await import('$lib/components/flags/cze.svelte')).default as typeof SvelteComponent;
+      case 6:
+        return (await import('$lib/components/flags/den.svelte')).default as typeof SvelteComponent;
+      case 7:
+        return (await import('$lib/components/flags/eng.svelte')).default as typeof SvelteComponent;
+      case 8:
+        return (await import('$lib/components/flags/fra.svelte')).default as typeof SvelteComponent;
+      case 9:
+        return (await import('$lib/components/flags/geo.svelte')).default as typeof SvelteComponent;
+      case 10:
+        return (await import('$lib/components/flags/ger.svelte')).default as typeof SvelteComponent;
+      case 11:
+        return (await import('$lib/components/flags/hun.svelte')).default as typeof SvelteComponent;
+      case 12:
+        return (await import('$lib/components/flags/ita.svelte')).default as typeof SvelteComponent;
+      case 13:
+        return (await import('$lib/components/flags/den.svelte')).default as typeof SvelteComponent;
+      case 14:
+        return (await import('$lib/components/flags/pol.svelte')).default as typeof SvelteComponent;
+      case 15:
+        return (await import('$lib/components/flags/por.svelte')).default as typeof SvelteComponent;
+      case 16:
+        return (await import('$lib/components/flags/rom.svelte')).default as typeof SvelteComponent;
+      case 17:
+        return (await import('$lib/components/flags/sco.svelte')).default as typeof SvelteComponent;
+      case 18:
+        return (await import('$lib/components/flags/ser.svelte')).default as typeof SvelteComponent;
+      case 19:
+        return (await import('$lib/components/flags/ska.svelte')).default as typeof SvelteComponent;
+      case 20:
+        return (await import('$lib/components/flags/svi.svelte')).default as typeof SvelteComponent;
+      case 21:
+        return (await import('$lib/components/flags/spa.svelte')).default as typeof SvelteComponent;
+      case 22:
+        return (await import('$lib/components/flags/swi.svelte')).default as typeof SvelteComponent;
+      case 23:
+        return (await import('$lib/components/flags/tur.svelte')).default as typeof SvelteComponent;
+      case 24:
+        return (await import('$lib/components/flags/ukr.svelte')).default as typeof SvelteComponent;
+      default:
+        return null;
+    }
+  };
+
 </script>
 
 <Layout>
@@ -983,6 +1039,11 @@
               "
             >
               {#if prediction?.groupAPrediction?.winner}
+                {#await getFlagComponent(prediction?.groupAPrediction?.winner) then FlagComponent}
+                  {#if FlagComponent}
+                    <svelte:component this={FlagComponent} className="w-8" />
+                  {/if}
+                {/await}
                 {getTeamName(prediction.groupAPrediction.winner)}
               {:else}
                 Select a Team
@@ -1003,7 +1064,7 @@
             <div class="flex items-center justify-center w-full">
               {#await getFlagComponent(prediction?.groupAPrediction?.loser) then FlagComponent}
                 {#if FlagComponent}
-                  <svelte:component this={FlagComponent} />
+                  <svelte:component this={FlagComponent} className="w-8" />
                 {/if}
               {/await}
               <p class="ml-2">{getTeamName(prediction.groupAPrediction.loser)}</p>
@@ -1025,7 +1086,12 @@
               "
             >
               {#if prediction?.groupAPrediction?.goalScorer}
-                {getPlayerName(prediction.groupAPrediction.goalScorer)}
+                {#await getFlagComponent(prediction?.groupAPrediction?.goalScorer) then FlagComponent}
+                  {#if FlagComponent}
+                    <svelte:component this={FlagComponent} className="w-8" />
+                  {/if}
+                {/await}
+              {getPlayerName(prediction.groupAPrediction.goalScorer)}
               {:else}
                 Select a Player
               {/if}
@@ -1043,7 +1109,12 @@
               "
             >
               {#if prediction?.groupAPrediction?.goalAssister}
-                {getPlayerName(prediction.groupAPrediction.goalAssister)}
+                {#await getFlagComponent(prediction?.groupAPrediction?.goalAssister) then FlagComponent}
+                  {#if FlagComponent}
+                    <svelte:component this={FlagComponent} className="w-8" />
+                  {/if}
+                {/await}
+              {getPlayerName(prediction.groupAPrediction.goalAssister)}
               {:else}
                 Select a Player
               {/if}
@@ -1061,7 +1132,12 @@
               "
             >
               {#if prediction?.groupAPrediction?.yellowCard}
-                {getPlayerName(prediction.groupAPrediction.yellowCard)}
+                {#await getFlagComponent(prediction?.groupAPrediction?.yellowCard) then FlagComponent}
+                  {#if FlagComponent}
+                    <svelte:component this={FlagComponent} className="w-8" />
+                  {/if}
+                {/await}
+              {getPlayerName(prediction.groupAPrediction.yellowCard)}
               {:else}
                 Select a Player
               {/if}
@@ -1079,7 +1155,12 @@
               "
             >
               {#if prediction?.groupAPrediction?.redCard}
-                {getPlayerName(prediction.groupAPrediction.redCard)}
+                {#await getFlagComponent(prediction?.groupAPrediction?.redCard) then FlagComponent}
+                  {#if FlagComponent}
+                    <svelte:component this={FlagComponent} className="w-8" />
+                  {/if}
+                {/await}
+              {getPlayerName(prediction.groupAPrediction.redCard)}
               {:else}
                 Select a Player
               {/if}
@@ -1103,7 +1184,12 @@
               "
             >
               {#if prediction?.groupBPrediction?.winner}
-                {getTeamName(prediction.groupBPrediction.winner)}
+                {#await getFlagComponent(prediction?.groupBPrediction?.winner) then FlagComponent}
+                  {#if FlagComponent}
+                    <svelte:component this={FlagComponent} className="w-8" />
+                  {/if}
+                {/await}
+              {getTeamName(prediction.groupBPrediction.winner)}
               {:else}
                 Select a Team
               {/if}
@@ -1121,7 +1207,12 @@
               "
             >
               {#if prediction?.groupBPrediction?.loser}
-                {getTeamName(prediction.groupBPrediction.loser)}
+                {#await getFlagComponent(prediction?.groupBPrediction?.loser) then FlagComponent}
+                  {#if FlagComponent}
+                    <svelte:component this={FlagComponent} className="w-8" />
+                  {/if}
+                {/await}
+              {getTeamName(prediction.groupBPrediction.loser)}
               {:else}
                 Select a Team
               {/if}
@@ -1139,7 +1230,12 @@
               "
             >
             {#if prediction?.groupBPrediction?.goalScorer}
-              {getPlayerName(prediction.groupBPrediction.goalScorer)}
+              {#await getFlagComponent(prediction?.groupBPrediction?.goalScorer) then FlagComponent}
+                {#if FlagComponent}
+                  <svelte:component this={FlagComponent} className="w-8" />
+                {/if}
+              {/await}
+            {getPlayerName(prediction.groupBPrediction.goalScorer)}
             {:else}
               Select a Player
             {/if}
@@ -1157,7 +1253,12 @@
               "
             >
               {#if prediction?.groupBPrediction?.goalAssister}
-                {getPlayerName(prediction.groupBPrediction.goalAssister)}
+                {#await getFlagComponent(prediction?.groupBPrediction?.goalAssister) then FlagComponent}
+                  {#if FlagComponent}
+                    <svelte:component this={FlagComponent} className="w-8" />
+                  {/if}
+                {/await}
+              {getPlayerName(prediction.groupBPrediction.goalAssister)}
               {:else}
                 Select a Player
               {/if}
@@ -1175,7 +1276,12 @@
               "
             >
               {#if prediction?.groupBPrediction?.yellowCard}
-                {getPlayerName(prediction.groupBPrediction.yellowCard)}
+                {#await getFlagComponent(prediction?.groupBPrediction?.yellowCard) then FlagComponent}
+                  {#if FlagComponent}
+                    <svelte:component this={FlagComponent} className="w-8" />
+                  {/if}
+                {/await}
+              {getPlayerName(prediction.groupBPrediction.yellowCard)}
               {:else}
                 Select a Player
               {/if}
@@ -1193,7 +1299,12 @@
               "
             >
               {#if prediction?.groupBPrediction?.redCard}
-                {getPlayerName(prediction.groupBPrediction.redCard)}
+                {#await getFlagComponent(prediction?.groupBPrediction?.redCard) then FlagComponent}
+                  {#if FlagComponent}
+                    <svelte:component this={FlagComponent} className="w-8" />
+                  {/if}
+                {/await}
+              {getPlayerName(prediction.groupBPrediction.redCard)}
               {:else}
                 Select a Player
               {/if}
@@ -1217,7 +1328,12 @@
               "
             >
               {#if prediction?.groupCPrediction?.winner}
-                {getTeamName(prediction.groupCPrediction.winner)}
+                {#await getFlagComponent(prediction?.groupCPrediction?.winner) then FlagComponent}
+                  {#if FlagComponent}
+                    <svelte:component this={FlagComponent} className="w-8" />
+                  {/if}
+                {/await}
+              {getTeamName(prediction.groupCPrediction.winner)}
               {:else}
                 Select a Team
               {/if}
@@ -1231,11 +1347,16 @@
           <button
             on:click={() => selectLoser(2)}
             class="selection-panel 
-              {prediction?.groupCPrediction?.winner ? 'selected-panel' : 'select-panel '} 
+              {prediction?.groupCPrediction?.loser ? 'selected-panel' : 'select-panel '} 
               "
             > 
               {#if prediction?.groupCPrediction?.loser}
-                {getTeamName(prediction.groupCPrediction.loser)}
+                {#await getFlagComponent(prediction?.groupCPrediction?.loser) then FlagComponent}
+                  {#if FlagComponent}
+                    <svelte:component this={FlagComponent} className="w-8" />
+                  {/if}
+                {/await}
+              {getTeamName(prediction.groupCPrediction.loser)}
               {:else}
                 Select a Team
               {/if}
@@ -1253,7 +1374,12 @@
               "
             > 
               {#if prediction?.groupCPrediction?.goalScorer}
-                {getPlayerName(prediction.groupCPrediction.goalScorer)}
+                {#await getFlagComponent(prediction?.groupCPrediction?.goalScorer) then FlagComponent}
+                  {#if FlagComponent}
+                    <svelte:component this={FlagComponent} className="w-8" />
+                  {/if}
+                {/await}
+              {getPlayerName(prediction.groupCPrediction.goalScorer)}
               {:else}
                 Select a Player
               {/if}
@@ -1271,7 +1397,12 @@
               "
             >
               {#if prediction?.groupCPrediction?.goalAssister}
-                {getPlayerName(prediction.groupCPrediction.goalAssister)}
+                {#await getFlagComponent(prediction?.groupCPrediction?.goalAssister) then FlagComponent}
+                  {#if FlagComponent}
+                    <svelte:component this={FlagComponent} className="w-8" />
+                  {/if}
+                {/await}
+              {getPlayerName(prediction.groupCPrediction.goalAssister)}
               {:else}
                 Select a Player
               {/if}
@@ -1289,7 +1420,12 @@
               "
             >
               {#if prediction?.groupCPrediction?.yellowCard}
-                {getPlayerName(prediction.groupCPrediction.yellowCard)}
+                {#await getFlagComponent(prediction?.groupCPrediction?.yellowCard) then FlagComponent}
+                  {#if FlagComponent}
+                    <svelte:component this={FlagComponent} className="w-8" />
+                  {/if}
+                {/await}
+              {getPlayerName(prediction.groupCPrediction.yellowCard)}
               {:else}
                 Select a Player
               {/if}
@@ -1307,6 +1443,11 @@
               "
             >
               {#if prediction?.groupCPrediction?.redCard}
+                {#await getFlagComponent(prediction?.groupCPrediction?.redCard) then FlagComponent}
+                  {#if FlagComponent}
+                    <svelte:component this={FlagComponent} className="w-8" />
+                  {/if}
+                {/await}
                 {getPlayerName(prediction.groupCPrediction.redCard)}
               {:else}
                 Select a Player
@@ -1331,6 +1472,11 @@
               "
             >
               {#if prediction?.groupDPrediction?.winner}
+                {#await getFlagComponent(prediction?.groupDPrediction?.winner) then FlagComponent}
+                  {#if FlagComponent}
+                    <svelte:component this={FlagComponent} className="w-8" />
+                  {/if}
+                {/await}
                 {getTeamName(prediction.groupDPrediction.winner)}
               {:else}
                 Select a Team
@@ -1349,6 +1495,11 @@
               "
             >
               {#if prediction?.groupDPrediction?.loser}
+                {#await getFlagComponent(prediction?.groupDPrediction?.loser) then FlagComponent}
+                  {#if FlagComponent}
+                    <svelte:component this={FlagComponent} className="w-8" />
+                  {/if}
+                {/await}
                 {getTeamName(prediction.groupDPrediction.loser)}
               {:else}
                 Select a Team
@@ -1367,6 +1518,11 @@
               "
             >
               {#if prediction?.groupDPrediction?.goalScorer}
+                {#await getFlagComponent(prediction?.groupDPrediction?.goalScorer) then FlagComponent}
+                  {#if FlagComponent}
+                    <svelte:component this={FlagComponent} className="w-8" />
+                  {/if}
+                {/await}
                 {getPlayerName(prediction.groupDPrediction.goalScorer)}
               {:else}
                 Select a Player
@@ -1385,6 +1541,11 @@
               "
             >
               {#if prediction?.groupDPrediction?.goalAssister}
+                {#await getFlagComponent(prediction?.groupDPrediction?.goalAssister) then FlagComponent}
+                  {#if FlagComponent}
+                    <svelte:component this={FlagComponent} className="w-8" />
+                  {/if}
+                {/await}
                 {getPlayerName(prediction.groupDPrediction.goalAssister)}
               {:else}
                 Select a Player
@@ -1403,6 +1564,11 @@
               "
             >
               {#if prediction?.groupDPrediction?.yellowCard}
+                {#await getFlagComponent(prediction?.groupDPrediction?.yellowCard) then FlagComponent}
+                  {#if FlagComponent}
+                    <svelte:component this={FlagComponent} className="w-8" />
+                  {/if}
+                {/await}
                 {getPlayerName(prediction.groupDPrediction.yellowCard)}
               {:else}
                 Select a Player
@@ -1417,10 +1583,15 @@
           <button
             on:click={() => selectRedCard(3)}
             class="selection-panel 
-              {prediction?.groupDPrediction?.winner ? 'selected-panel' : 'select-panel '} 
+              {prediction?.groupDPrediction?.redCard ? 'selected-panel' : 'select-panel '} 
               "
             >
               {#if prediction?.groupDPrediction?.redCard}
+                {#await getFlagComponent(prediction?.groupDPrediction?.redCard) then FlagComponent}
+                  {#if FlagComponent}
+                    <svelte:component this={FlagComponent} className="w-8" />
+                  {/if}
+                {/await}
                 {getPlayerName(prediction.groupDPrediction.redCard)}
               {:else}
                 Select a Player
@@ -1445,6 +1616,11 @@
               "
             >
               {#if prediction?.groupEPrediction?.winner}
+                {#await getFlagComponent(prediction?.groupEPrediction?.winner) then FlagComponent}
+                  {#if FlagComponent}
+                    <svelte:component this={FlagComponent} className="w-8" />
+                  {/if}
+                {/await}
                 {getTeamName(prediction.groupEPrediction.winner)}
               {:else}
                 Select a Team
@@ -1463,6 +1639,11 @@
               "
             >
               {#if prediction?.groupEPrediction?.loser}
+                {#await getFlagComponent(prediction?.groupEPrediction?.loser) then FlagComponent}
+                  {#if FlagComponent}
+                    <svelte:component this={FlagComponent} className="w-8" />
+                  {/if}
+                {/await}
                 {getTeamName(prediction.groupEPrediction.loser)}
               {:else}
                 Select a Team
@@ -1481,6 +1662,11 @@
               "
             >
               {#if prediction?.groupEPrediction?.goalScorer}
+                {#await getFlagComponent(prediction?.groupEPrediction?.goalScorer) then FlagComponent}
+                  {#if FlagComponent}
+                    <svelte:component this={FlagComponent} className="w-8" />
+                  {/if}
+                {/await}
                 {getPlayerName(prediction.groupEPrediction.goalScorer)}
               {:else}
                 Select a Player
@@ -1499,6 +1685,11 @@
               "
             >
               {#if prediction?.groupEPrediction?.goalAssister}
+                {#await getFlagComponent(prediction?.groupEPrediction?.goalAssister) then FlagComponent}
+                  {#if FlagComponent}
+                    <svelte:component this={FlagComponent} className="w-8" />
+                  {/if}
+                {/await}
                 {getPlayerName(prediction.groupEPrediction.goalAssister)}
               {:else}
                 Select a Player
@@ -1517,6 +1708,11 @@
               "
             >
               {#if prediction?.groupEPrediction?.yellowCard}
+                {#await getFlagComponent(prediction?.groupEPrediction?.yellowCard) then FlagComponent}
+                  {#if FlagComponent}
+                    <svelte:component this={FlagComponent} className="w-8" />
+                  {/if}
+                {/await}
                 {getPlayerName(prediction.groupEPrediction.yellowCard)}
               {:else}
                 Select a Player
@@ -1535,6 +1731,11 @@
               "
             >
               {#if prediction?.groupEPrediction?.redCard}
+                {#await getFlagComponent(prediction?.groupEPrediction?.redCard) then FlagComponent}
+                  {#if FlagComponent}
+                    <svelte:component this={FlagComponent} className="w-8" />
+                  {/if}
+                {/await}
                 {getPlayerName(prediction.groupEPrediction.redCard)}
               {:else}
                 Select a Player
@@ -1559,6 +1760,11 @@
               "
             >
               {#if prediction?.groupFPrediction?.winner}
+                {#await getFlagComponent(prediction?.groupFPrediction?.winner) then FlagComponent}
+                  {#if FlagComponent}
+                    <svelte:component this={FlagComponent} className="w-8" />
+                  {/if}
+                {/await}
                 {getTeamName(prediction.groupFPrediction.winner)}
               {:else}
                 Select a Team
@@ -1577,6 +1783,11 @@
               "
             >
               {#if prediction?.groupFPrediction?.loser}
+                {#await getFlagComponent(prediction?.groupFPrediction?.loser) then FlagComponent}
+                  {#if FlagComponent}
+                    <svelte:component this={FlagComponent} className="w-8" />
+                  {/if}
+                {/await}
                 {getTeamName(prediction.groupFPrediction.loser)}
               {:else}
                 Select a Team
@@ -1595,6 +1806,11 @@
               "
             >
               {#if prediction?.groupFPrediction?.goalScorer}
+                {#await getFlagComponent(prediction?.groupFPrediction?.goalScorer) then FlagComponent}
+                  {#if FlagComponent}
+                    <svelte:component this={FlagComponent} className="w-8" />
+                  {/if}
+                {/await}
                 {getPlayerName(prediction.groupFPrediction.goalScorer)}
               {:else}
                 Select a Player
@@ -1613,6 +1829,11 @@
               "
             >
             {#if prediction?.groupFPrediction?.goalAssister}
+              {#await getFlagComponent(prediction?.groupFPrediction?.goalAssister) then FlagComponent}
+                {#if FlagComponent}
+                  <svelte:component this={FlagComponent} className="w-8" />
+                {/if}
+              {/await}
               {getPlayerName(prediction.groupFPrediction.goalAssister)}
             {:else}
               Select a Player
@@ -1631,6 +1852,11 @@
               "
             >
             {#if prediction?.groupFPrediction?.yellowCard}
+              {#await getFlagComponent(prediction?.groupFPrediction?.yellowCard) then FlagComponent}
+                {#if FlagComponent}
+                  <svelte:component this={FlagComponent} className="w-8" />
+                {/if}
+              {/await}
               {getPlayerName(prediction.groupFPrediction.yellowCard)}
             {:else}
               Select a Player
@@ -1649,6 +1875,11 @@
               "
             >
             {#if prediction?.groupFPrediction?.redCard}
+              {#await getFlagComponent(prediction?.groupFPrediction?.redCard) then FlagComponent}
+                {#if FlagComponent}
+                  <svelte:component this={FlagComponent} className="w-8" />
+                {/if}
+              {/await}
               {getPlayerName(prediction.groupFPrediction.redCard)}
             {:else}
               Select a Player
@@ -1710,6 +1941,11 @@
               "
             >
               {#if prediction?.r16Prediction?.winner}
+                {#await getFlagComponent(prediction?.r16Prediction?.winner) then FlagComponent}
+                  {#if FlagComponent}
+                    <svelte:component this={FlagComponent} className="w-8" />
+                  {/if}
+                {/await}
                 {getTeamName(prediction.r16Prediction.winner)}
               {:else}
                 Select a Team
@@ -1728,6 +1964,11 @@
               "
             >
             {#if prediction?.r16Prediction?.loser}
+              {#await getFlagComponent(prediction?.r16Prediction?.loser) then FlagComponent}
+                {#if FlagComponent}
+                  <svelte:component this={FlagComponent} className="w-8" />
+                {/if}
+              {/await}
               {getTeamName(prediction.r16Prediction.loser)}
             {:else}
               Select a Team
@@ -1746,6 +1987,11 @@
               "
             >
             {#if prediction?.r16Prediction?.goalScorer}
+              {#await getFlagComponent(prediction?.r16Prediction?.goalScorer) then FlagComponent}
+                {#if FlagComponent}
+                  <svelte:component this={FlagComponent} className="w-8" />
+                {/if}
+              {/await}
               {getPlayerName(prediction.r16Prediction.goalScorer)}
             {:else}
               Select a Player
@@ -1764,6 +2010,11 @@
               "
             >
             {#if prediction?.r16Prediction?.goalAssister}
+              {#await getFlagComponent(prediction?.r16Prediction?.goalAssister) then FlagComponent}
+                {#if FlagComponent}
+                  <svelte:component this={FlagComponent} className="w-8" />
+                {/if}
+              {/await}
               {getPlayerName(prediction.r16Prediction.goalAssister)}
             {:else}
               Select a Player
@@ -1782,6 +2033,11 @@
               "
             >
             {#if prediction?.r16Prediction?.yellowCard}
+              {#await getFlagComponent(prediction?.r16Prediction?.yellowCard) then FlagComponent}
+                {#if FlagComponent}
+                  <svelte:component this={FlagComponent} className="w-8" />
+                {/if}
+              {/await}
               {getPlayerName(prediction.r16Prediction.yellowCard)}
             {:else}
               Select a Player
@@ -1800,6 +2056,11 @@
               "
             >
             {#if prediction?.r16Prediction?.redCard}
+              {#await getFlagComponent(prediction?.r16Prediction?.redCard) then FlagComponent}
+                {#if FlagComponent}
+                  <svelte:component this={FlagComponent} className="w-8" />
+                {/if}
+              {/await}
               {getPlayerName(prediction.r16Prediction.redCard)}
             {:else}
               Select a Player
@@ -1851,6 +2112,11 @@
               "
             >
               {#if prediction?.qfPrediction?.winner}
+                {#await getFlagComponent(prediction?.qfPrediction?.winner) then FlagComponent}
+                  {#if FlagComponent}
+                    <svelte:component this={FlagComponent} className="w-8" />
+                  {/if}
+                {/await}
                 {getTeamName(prediction.qfPrediction.winner)}
               {:else}
                 Select a Team
@@ -1869,6 +2135,11 @@
               "
             >
             {#if prediction?.qfPrediction?.loser}
+              {#await getFlagComponent(prediction?.qfPrediction?.loser) then FlagComponent}
+                {#if FlagComponent}
+                  <svelte:component this={FlagComponent} className="w-8" />
+                {/if}
+              {/await}
               {getTeamName(prediction.qfPrediction.loser)}
             {:else}
               Select a Team
@@ -1887,6 +2158,11 @@
               "
             >
             {#if prediction?.qfPrediction?.goalScorer}
+              {#await getFlagComponent(prediction?.qfPrediction?.goalScorer) then FlagComponent}
+                {#if FlagComponent}
+                  <svelte:component this={FlagComponent} className="w-8" />
+                {/if}
+              {/await}
               {getPlayerName(prediction.qfPrediction.goalScorer)}
             {:else}
               Select a Player
@@ -1905,6 +2181,11 @@
               "
             >
             {#if prediction?.qfPrediction?.goalAssister}
+              {#await getFlagComponent(prediction?.qfPrediction?.goalAssister) then FlagComponent}
+                {#if FlagComponent}
+                  <svelte:component this={FlagComponent} className="w-8" />
+                {/if}
+              {/await}
               {getPlayerName(prediction.qfPrediction.goalAssister)}
             {:else}
               Select a Player
@@ -1923,6 +2204,11 @@
               "
             >
             {#if prediction?.qfPrediction?.yellowCard}
+              {#await getFlagComponent(prediction?.qfPrediction?.yellowCard) then FlagComponent}
+                {#if FlagComponent}
+                  <svelte:component this={FlagComponent} className="w-8" />
+                {/if}
+              {/await}
               {getPlayerName(prediction.qfPrediction.yellowCard)}
             {:else}
               Select a Player
@@ -1941,6 +2227,11 @@
               "
             >
             {#if prediction?.qfPrediction?.redCard}
+              {#await getFlagComponent(prediction?.qfPrediction?.redCard) then FlagComponent}
+                {#if FlagComponent}
+                  <svelte:component this={FlagComponent} className="w-8" />
+                {/if}
+              {/await}
               {getPlayerName(prediction.qfPrediction.redCard)}
             {:else}
               Select a Player
@@ -1992,6 +2283,11 @@
               "
             >
               {#if prediction?.sfPrediction?.winner}
+                {#await getFlagComponent(prediction?.sfPrediction?.winner) then FlagComponent}
+                  {#if FlagComponent}
+                    <svelte:component this={FlagComponent} className="w-8" />
+                  {/if}
+                {/await}
                 {getTeamName(prediction.sfPrediction.winner)}
               {:else}
                 Select a Team
@@ -2010,6 +2306,11 @@
               "
             >
             {#if prediction?.sfPrediction?.loser}
+              {#await getFlagComponent(prediction?.sfPrediction?.loser) then FlagComponent}
+                {#if FlagComponent}
+                  <svelte:component this={FlagComponent} className="w-8" />
+                {/if}
+              {/await}
               {getTeamName(prediction.sfPrediction.loser)}
             {:else}
               Select a Team
@@ -2028,6 +2329,11 @@
               "
             >
             {#if prediction?.sfPrediction?.goalScorer}
+              {#await getFlagComponent(prediction?.sfPrediction?.goalScorer) then FlagComponent}
+                {#if FlagComponent}
+                  <svelte:component this={FlagComponent} className="w-8" />
+                {/if}
+              {/await}
               {getPlayerName(prediction.sfPrediction.goalScorer)}
             {:else}
               Select a Player
@@ -2046,6 +2352,11 @@
               "
             >
             {#if prediction?.sfPrediction?.goalAssister}
+              {#await getFlagComponent(prediction?.sfPrediction?.goalAssister) then FlagComponent}
+                {#if FlagComponent}
+                  <svelte:component this={FlagComponent} className="w-8" />
+                {/if}
+              {/await}
               {getPlayerName(prediction.sfPrediction.goalAssister)}
             {:else}
               Select a Player
@@ -2064,6 +2375,11 @@
               "
             >
             {#if prediction?.sfPrediction?.yellowCard}
+              {#await getFlagComponent(prediction?.sfPrediction?.yellowCard) then FlagComponent}
+                {#if FlagComponent}
+                  <svelte:component this={FlagComponent} className="w-8" />
+                {/if}
+              {/await}
               {getPlayerName(prediction.sfPrediction.yellowCard)}
             {:else}
               Select a Player
@@ -2082,6 +2398,11 @@
               "
             >
             {#if prediction?.sfPrediction?.redCard}
+              {#await getFlagComponent(prediction?.sfPrediction?.redCard) then FlagComponent}
+                {#if FlagComponent}
+                  <svelte:component this={FlagComponent} className="w-8" />
+                {/if}
+              {/await}
               {getPlayerName(prediction.sfPrediction.redCard)}
             {:else}
               Select a Player
@@ -2133,6 +2454,11 @@
               "
             > 
               {#if prediction?.fPrediction?.winner}
+                {#await getFlagComponent(prediction?.fPrediction?.winner) then FlagComponent}
+                  {#if FlagComponent}
+                    <svelte:component this={FlagComponent} className="w-8" />
+                  {/if}
+                {/await}
                 {getTeamName(prediction.fPrediction.winner)}
               {:else}
                 Select a Team
@@ -2151,6 +2477,11 @@
               "
             >
             {#if prediction?.fPrediction?.loser}
+              {#await getFlagComponent(prediction?.fPrediction?.loser) then FlagComponent}
+                {#if FlagComponent}
+                  <svelte:component this={FlagComponent} className="w-8" />
+                {/if}
+              {/await}
               {getTeamName(prediction.fPrediction.loser)}
             {:else}
               Select a Team
@@ -2169,6 +2500,11 @@
               "
             >
             {#if prediction?.fPrediction?.goalScorer}
+              {#await getFlagComponent(prediction?.fPrediction?.goalScorer) then FlagComponent}
+                {#if FlagComponent}
+                  <svelte:component this={FlagComponent} className="w-8" />
+                {/if}
+              {/await}
               {getPlayerName(prediction.fPrediction.goalScorer)}
             {:else}
               Select a Player
@@ -2187,6 +2523,11 @@
               "
             >
             {#if prediction?.fPrediction?.goalAssister}
+              {#await getFlagComponent(prediction?.fPrediction?.goalAssister) then FlagComponent}
+                {#if FlagComponent}
+                  <svelte:component this={FlagComponent} className="w-8" />
+                {/if}
+              {/await}
               {getPlayerName(prediction.fPrediction.goalAssister)}
             {:else}
               Select a Player
@@ -2205,6 +2546,11 @@
               "
             >
             {#if prediction?.fPrediction?.yellowCard}
+              {#await getFlagComponent(prediction?.fPrediction?.yellowCard) then FlagComponent}
+                {#if FlagComponent}
+                  <svelte:component this={FlagComponent} className="w-8" />
+                {/if}
+              {/await}
               {getPlayerName(prediction.fPrediction.yellowCard)}
             {:else}
               Select a Player
@@ -2223,6 +2569,11 @@
               "
             >
             {#if prediction?.fPrediction?.redCard}
+              {#await getFlagComponent(prediction?.fPrediction?.redCard) then FlagComponent}
+                {#if FlagComponent}
+                  <svelte:component this={FlagComponent} className="w-8" />
+                {/if}
+              {/await}
               {getPlayerName(prediction.fPrediction.redCard)}
             {:else}
               Select a Player
