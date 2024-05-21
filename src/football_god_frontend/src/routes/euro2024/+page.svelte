@@ -871,7 +871,7 @@
 
   function getPlayerName(playerId: number): string {
     const player = $playerStore.find(player => player.id === playerId);
-    return player ? player.lastName : "Select a Player";
+    return player ? `${player.firstName.substring(0,1)} ${player.lastName}` : "Select a Player";
   }
 
 
@@ -1039,7 +1039,9 @@
               "
             >
               {#if prediction?.groupAPrediction?.winner}
-                {#await getFlagComponent(prediction?.groupAPrediction?.winner) then FlagComponent}
+                {@const player = $playerStore.find(x => x.id == prediction?.groupAPrediction.winner)}
+                {@const teamId = player ? player.teamId : 0 }
+                {#await getFlagComponent(teamId) then FlagComponent}
                   {#if FlagComponent}
                     <svelte:component this={FlagComponent} className="w-8" />
                   {/if}
@@ -1061,8 +1063,10 @@
               "
         >
           {#if prediction?.groupAPrediction?.loser}
+            {@const player = $playerStore.find(x => x.id == prediction?.groupAPrediction.loser)}
+            {@const teamId = player ? player.teamId : 0 }
             <div class="flex items-center justify-center w-full">
-              {#await getFlagComponent(prediction?.groupAPrediction?.loser) then FlagComponent}
+              {#await getFlagComponent(teamId) then FlagComponent}
                 {#if FlagComponent}
                   <svelte:component this={FlagComponent} className="w-8" />
                 {/if}
@@ -1086,7 +1090,9 @@
               "
             >
               {#if prediction?.groupAPrediction?.goalScorer}
-                {#await getFlagComponent(prediction?.groupAPrediction?.goalScorer) then FlagComponent}
+                {@const player = $playerStore.find(x => x.id == prediction?.groupAPrediction.goalScorer)}
+                {@const teamId = player ? player.teamId : 0 }
+                {#await getFlagComponent(teamId) then FlagComponent}
                   {#if FlagComponent}
                     <svelte:component this={FlagComponent} className="w-8" />
                   {/if}
@@ -1109,7 +1115,9 @@
               "
             >
               {#if prediction?.groupAPrediction?.goalAssister}
-                {#await getFlagComponent(prediction?.groupAPrediction?.goalAssister) then FlagComponent}
+                {@const player = $playerStore.find(x => x.id == prediction?.groupAPrediction.goalAssister)}
+                {@const teamId = player ? player.teamId : 0 }  
+                {#await getFlagComponent(teamId) then FlagComponent}
                   {#if FlagComponent}
                     <svelte:component this={FlagComponent} className="w-8" />
                   {/if}
@@ -1132,7 +1140,9 @@
               "
             >
               {#if prediction?.groupAPrediction?.yellowCard}
-                {#await getFlagComponent(prediction?.groupAPrediction?.yellowCard) then FlagComponent}
+                {@const player = $playerStore.find(x => x.id == prediction?.groupAPrediction.yellowCard)}
+                {@const teamId = player ? player.teamId : 0 }  
+                {#await getFlagComponent(teamId) then FlagComponent}
                   {#if FlagComponent}
                     <svelte:component this={FlagComponent} className="w-8" />
                   {/if}
@@ -1155,7 +1165,9 @@
               "
             >
               {#if prediction?.groupAPrediction?.redCard}
-                {#await getFlagComponent(prediction?.groupAPrediction?.redCard) then FlagComponent}
+              {@const player = $playerStore.find(x => x.id == prediction?.groupAPrediction.redCard)}
+              {@const teamId = player ? player.teamId : 0 }  
+              {#await getFlagComponent(teamId) then FlagComponent}
                   {#if FlagComponent}
                     <svelte:component this={FlagComponent} className="w-8" />
                   {/if}
@@ -1184,7 +1196,9 @@
               "
             >
               {#if prediction?.groupBPrediction?.winner}
-                {#await getFlagComponent(prediction?.groupBPrediction?.winner) then FlagComponent}
+              {@const player = $playerStore.find(x => x.id == prediction?.groupBPrediction.winner)}
+              {@const teamId = player ? player.teamId : 0 }  
+              {#await getFlagComponent(teamId) then FlagComponent}
                   {#if FlagComponent}
                     <svelte:component this={FlagComponent} className="w-8" />
                   {/if}
@@ -1207,7 +1221,9 @@
               "
             >
               {#if prediction?.groupBPrediction?.loser}
-                {#await getFlagComponent(prediction?.groupBPrediction?.loser) then FlagComponent}
+              {@const player = $playerStore.find(x => x.id == prediction?.groupBPrediction.loser)}
+              {@const teamId = player ? player.teamId : 0 }  
+              {#await getFlagComponent(teamId) then FlagComponent}
                   {#if FlagComponent}
                     <svelte:component this={FlagComponent} className="w-8" />
                   {/if}
@@ -1230,7 +1246,9 @@
               "
             >
             {#if prediction?.groupBPrediction?.goalScorer}
-              {#await getFlagComponent(prediction?.groupBPrediction?.goalScorer) then FlagComponent}
+            {@const player = $playerStore.find(x => x.id == prediction?.groupBPrediction.goalScorer)}
+            {@const teamId = player ? player.teamId : 0 }  
+            {#await getFlagComponent(teamId) then FlagComponent}
                 {#if FlagComponent}
                   <svelte:component this={FlagComponent} className="w-8" />
                 {/if}
@@ -1253,7 +1271,9 @@
               "
             >
               {#if prediction?.groupBPrediction?.goalAssister}
-                {#await getFlagComponent(prediction?.groupBPrediction?.goalAssister) then FlagComponent}
+              {@const player = $playerStore.find(x => x.id == prediction?.groupBPrediction.goalAssister)}
+              {@const teamId = player ? player.teamId : 0 }  
+              {#await getFlagComponent(teamId) then FlagComponent}
                   {#if FlagComponent}
                     <svelte:component this={FlagComponent} className="w-8" />
                   {/if}
@@ -1276,7 +1296,9 @@
               "
             >
               {#if prediction?.groupBPrediction?.yellowCard}
-                {#await getFlagComponent(prediction?.groupBPrediction?.yellowCard) then FlagComponent}
+              {@const player = $playerStore.find(x => x.id == prediction?.groupBPrediction.yellowCard)}
+              {@const teamId = player ? player.teamId : 0 }  
+              {#await getFlagComponent(teamId) then FlagComponent}
                   {#if FlagComponent}
                     <svelte:component this={FlagComponent} className="w-8" />
                   {/if}
@@ -1299,7 +1321,9 @@
               "
             >
               {#if prediction?.groupBPrediction?.redCard}
-                {#await getFlagComponent(prediction?.groupBPrediction?.redCard) then FlagComponent}
+              {@const player = $playerStore.find(x => x.id == prediction?.groupBPrediction.redCard)}
+              {@const teamId = player ? player.teamId : 0 }  
+              {#await getFlagComponent(teamId) then FlagComponent}
                   {#if FlagComponent}
                     <svelte:component this={FlagComponent} className="w-8" />
                   {/if}
@@ -1328,7 +1352,9 @@
               "
             >
               {#if prediction?.groupCPrediction?.winner}
-                {#await getFlagComponent(prediction?.groupCPrediction?.winner) then FlagComponent}
+              {@const player = $playerStore.find(x => x.id == prediction?.groupCPrediction.winner)}
+              {@const teamId = player ? player.teamId : 0 }  
+              {#await getFlagComponent(teamId) then FlagComponent}
                   {#if FlagComponent}
                     <svelte:component this={FlagComponent} className="w-8" />
                   {/if}
@@ -1351,7 +1377,9 @@
               "
             > 
               {#if prediction?.groupCPrediction?.loser}
-                {#await getFlagComponent(prediction?.groupCPrediction?.loser) then FlagComponent}
+              {@const player = $playerStore.find(x => x.id == prediction?.groupCPrediction.loser)}
+              {@const teamId = player ? player.teamId : 0 }  
+              {#await getFlagComponent(teamId) then FlagComponent}
                   {#if FlagComponent}
                     <svelte:component this={FlagComponent} className="w-8" />
                   {/if}
@@ -1374,7 +1402,9 @@
               "
             > 
               {#if prediction?.groupCPrediction?.goalScorer}
-                {#await getFlagComponent(prediction?.groupCPrediction?.goalScorer) then FlagComponent}
+              {@const player = $playerStore.find(x => x.id == prediction?.groupCPrediction.goalScorer)}
+              {@const teamId = player ? player.teamId : 0 }  
+              {#await getFlagComponent(teamId) then FlagComponent}
                   {#if FlagComponent}
                     <svelte:component this={FlagComponent} className="w-8" />
                   {/if}
@@ -1397,7 +1427,9 @@
               "
             >
               {#if prediction?.groupCPrediction?.goalAssister}
-                {#await getFlagComponent(prediction?.groupCPrediction?.goalAssister) then FlagComponent}
+              {@const player = $playerStore.find(x => x.id == prediction?.groupCPrediction.goalAssister)}
+              {@const teamId = player ? player.teamId : 0 }  
+              {#await getFlagComponent(teamId) then FlagComponent}
                   {#if FlagComponent}
                     <svelte:component this={FlagComponent} className="w-8" />
                   {/if}
@@ -1420,7 +1452,9 @@
               "
             >
               {#if prediction?.groupCPrediction?.yellowCard}
-                {#await getFlagComponent(prediction?.groupCPrediction?.yellowCard) then FlagComponent}
+              {@const player = $playerStore.find(x => x.id == prediction?.groupCPrediction.yellowCard)}
+              {@const teamId = player ? player.teamId : 0 }  
+              {#await getFlagComponent(teamId) then FlagComponent}
                   {#if FlagComponent}
                     <svelte:component this={FlagComponent} className="w-8" />
                   {/if}
@@ -1443,7 +1477,9 @@
               "
             >
               {#if prediction?.groupCPrediction?.redCard}
-                {#await getFlagComponent(prediction?.groupCPrediction?.redCard) then FlagComponent}
+              {@const player = $playerStore.find(x => x.id == prediction?.groupCPrediction.redCard)}
+              {@const teamId = player ? player.teamId : 0 }  
+              {#await getFlagComponent(teamId) then FlagComponent}
                   {#if FlagComponent}
                     <svelte:component this={FlagComponent} className="w-8" />
                   {/if}
@@ -1472,7 +1508,9 @@
               "
             >
               {#if prediction?.groupDPrediction?.winner}
-                {#await getFlagComponent(prediction?.groupDPrediction?.winner) then FlagComponent}
+              {@const player = $playerStore.find(x => x.id == prediction?.groupDPrediction.winner)}
+              {@const teamId = player ? player.teamId : 0 }  
+              {#await getFlagComponent(teamId) then FlagComponent}
                   {#if FlagComponent}
                     <svelte:component this={FlagComponent} className="w-8" />
                   {/if}
@@ -1495,7 +1533,9 @@
               "
             >
               {#if prediction?.groupDPrediction?.loser}
-                {#await getFlagComponent(prediction?.groupDPrediction?.loser) then FlagComponent}
+              {@const player = $playerStore.find(x => x.id == prediction?.groupDPrediction.loser)}
+              {@const teamId = player ? player.teamId : 0 }  
+              {#await getFlagComponent(teamId) then FlagComponent}
                   {#if FlagComponent}
                     <svelte:component this={FlagComponent} className="w-8" />
                   {/if}
@@ -1518,7 +1558,9 @@
               "
             >
               {#if prediction?.groupDPrediction?.goalScorer}
-                {#await getFlagComponent(prediction?.groupDPrediction?.goalScorer) then FlagComponent}
+              {@const player = $playerStore.find(x => x.id == prediction?.groupDPrediction.goalScorer)}
+              {@const teamId = player ? player.teamId : 0 }  
+              {#await getFlagComponent(teamId) then FlagComponent}
                   {#if FlagComponent}
                     <svelte:component this={FlagComponent} className="w-8" />
                   {/if}
@@ -1541,7 +1583,9 @@
               "
             >
               {#if prediction?.groupDPrediction?.goalAssister}
-                {#await getFlagComponent(prediction?.groupDPrediction?.goalAssister) then FlagComponent}
+              {@const player = $playerStore.find(x => x.id == prediction?.groupDPrediction.goalAssister)}
+              {@const teamId = player ? player.teamId : 0 }  
+              {#await getFlagComponent(teamId) then FlagComponent}
                   {#if FlagComponent}
                     <svelte:component this={FlagComponent} className="w-8" />
                   {/if}
@@ -1564,7 +1608,9 @@
               "
             >
               {#if prediction?.groupDPrediction?.yellowCard}
-                {#await getFlagComponent(prediction?.groupDPrediction?.yellowCard) then FlagComponent}
+              {@const player = $playerStore.find(x => x.id == prediction?.groupDPrediction.yellowCard)}
+              {@const teamId = player ? player.teamId : 0 }  
+              {#await getFlagComponent(teamId) then FlagComponent}
                   {#if FlagComponent}
                     <svelte:component this={FlagComponent} className="w-8" />
                   {/if}
@@ -1587,7 +1633,9 @@
               "
             >
               {#if prediction?.groupDPrediction?.redCard}
-                {#await getFlagComponent(prediction?.groupDPrediction?.redCard) then FlagComponent}
+              {@const player = $playerStore.find(x => x.id == prediction?.groupDPrediction.redCard)}
+              {@const teamId = player ? player.teamId : 0 }  
+              {#await getFlagComponent(teamId) then FlagComponent}
                   {#if FlagComponent}
                     <svelte:component this={FlagComponent} className="w-8" />
                   {/if}
@@ -1616,7 +1664,9 @@
               "
             >
               {#if prediction?.groupEPrediction?.winner}
-                {#await getFlagComponent(prediction?.groupEPrediction?.winner) then FlagComponent}
+              {@const player = $playerStore.find(x => x.id == prediction?.groupEPrediction.winner)}
+              {@const teamId = player ? player.teamId : 0 }  
+              {#await getFlagComponent(teamId) then FlagComponent}
                   {#if FlagComponent}
                     <svelte:component this={FlagComponent} className="w-8" />
                   {/if}
@@ -1639,7 +1689,9 @@
               "
             >
               {#if prediction?.groupEPrediction?.loser}
-                {#await getFlagComponent(prediction?.groupEPrediction?.loser) then FlagComponent}
+              {@const player = $playerStore.find(x => x.id == prediction?.groupEPrediction.loser)}
+              {@const teamId = player ? player.teamId : 0 }  
+              {#await getFlagComponent(teamId) then FlagComponent}
                   {#if FlagComponent}
                     <svelte:component this={FlagComponent} className="w-8" />
                   {/if}
@@ -1662,7 +1714,9 @@
               "
             >
               {#if prediction?.groupEPrediction?.goalScorer}
-                {#await getFlagComponent(prediction?.groupEPrediction?.goalScorer) then FlagComponent}
+              {@const player = $playerStore.find(x => x.id == prediction?.groupEPrediction.goalScorer)}
+              {@const teamId = player ? player.teamId : 0 }  
+              {#await getFlagComponent(teamId) then FlagComponent}
                   {#if FlagComponent}
                     <svelte:component this={FlagComponent} className="w-8" />
                   {/if}
@@ -1685,7 +1739,9 @@
               "
             >
               {#if prediction?.groupEPrediction?.goalAssister}
-                {#await getFlagComponent(prediction?.groupEPrediction?.goalAssister) then FlagComponent}
+              {@const player = $playerStore.find(x => x.id == prediction?.groupEPrediction.goalAssister)}
+              {@const teamId = player ? player.teamId : 0 }  
+              {#await getFlagComponent(teamId) then FlagComponent}
                   {#if FlagComponent}
                     <svelte:component this={FlagComponent} className="w-8" />
                   {/if}
@@ -1708,7 +1764,9 @@
               "
             >
               {#if prediction?.groupEPrediction?.yellowCard}
-                {#await getFlagComponent(prediction?.groupEPrediction?.yellowCard) then FlagComponent}
+              {@const player = $playerStore.find(x => x.id == prediction?.groupEPrediction.yellowCard)}
+              {@const teamId = player ? player.teamId : 0 }  
+              {#await getFlagComponent(teamId) then FlagComponent}
                   {#if FlagComponent}
                     <svelte:component this={FlagComponent} className="w-8" />
                   {/if}
@@ -1731,7 +1789,9 @@
               "
             >
               {#if prediction?.groupEPrediction?.redCard}
-                {#await getFlagComponent(prediction?.groupEPrediction?.redCard) then FlagComponent}
+              {@const player = $playerStore.find(x => x.id == prediction?.groupEPrediction.redCard)}
+              {@const teamId = player ? player.teamId : 0 }  
+              {#await getFlagComponent(teamId) then FlagComponent}
                   {#if FlagComponent}
                     <svelte:component this={FlagComponent} className="w-8" />
                   {/if}
@@ -1760,7 +1820,9 @@
               "
             >
               {#if prediction?.groupFPrediction?.winner}
-                {#await getFlagComponent(prediction?.groupFPrediction?.winner) then FlagComponent}
+              {@const player = $playerStore.find(x => x.id == prediction?.groupFPrediction.winner)}
+              {@const teamId = player ? player.teamId : 0 }  
+              {#await getFlagComponent(teamId) then FlagComponent}
                   {#if FlagComponent}
                     <svelte:component this={FlagComponent} className="w-8" />
                   {/if}
@@ -1783,7 +1845,9 @@
               "
             >
               {#if prediction?.groupFPrediction?.loser}
-                {#await getFlagComponent(prediction?.groupFPrediction?.loser) then FlagComponent}
+              {@const player = $playerStore.find(x => x.id == prediction?.groupFPrediction.loser)}
+              {@const teamId = player ? player.teamId : 0 }  
+              {#await getFlagComponent(teamId) then FlagComponent}
                   {#if FlagComponent}
                     <svelte:component this={FlagComponent} className="w-8" />
                   {/if}
@@ -1806,7 +1870,9 @@
               "
             >
               {#if prediction?.groupFPrediction?.goalScorer}
-                {#await getFlagComponent(prediction?.groupFPrediction?.goalScorer) then FlagComponent}
+              {@const player = $playerStore.find(x => x.id == prediction?.groupFPrediction.goalScorer)}
+              {@const teamId = player ? player.teamId : 0 }  
+              {#await getFlagComponent(teamId) then FlagComponent}
                   {#if FlagComponent}
                     <svelte:component this={FlagComponent} className="w-8" />
                   {/if}
@@ -1829,7 +1895,9 @@
               "
             >
             {#if prediction?.groupFPrediction?.goalAssister}
-              {#await getFlagComponent(prediction?.groupFPrediction?.goalAssister) then FlagComponent}
+            {@const player = $playerStore.find(x => x.id == prediction?.groupFPrediction.goalAssister)}
+            {@const teamId = player ? player.teamId : 0 }  
+            {#await getFlagComponent(teamId) then FlagComponent}
                 {#if FlagComponent}
                   <svelte:component this={FlagComponent} className="w-8" />
                 {/if}
@@ -1852,7 +1920,9 @@
               "
             >
             {#if prediction?.groupFPrediction?.yellowCard}
-              {#await getFlagComponent(prediction?.groupFPrediction?.yellowCard) then FlagComponent}
+            {@const player = $playerStore.find(x => x.id == prediction?.groupFPrediction.yellowCard)}
+            {@const teamId = player ? player.teamId : 0 }  
+            {#await getFlagComponent(teamId) then FlagComponent}
                 {#if FlagComponent}
                   <svelte:component this={FlagComponent} className="w-8" />
                 {/if}
@@ -1875,7 +1945,9 @@
               "
             >
             {#if prediction?.groupFPrediction?.redCard}
-              {#await getFlagComponent(prediction?.groupFPrediction?.redCard) then FlagComponent}
+            {@const player = $playerStore.find(x => x.id == prediction?.groupFPrediction.redCard)}
+            {@const teamId = player ? player.teamId : 0 }  
+            {#await getFlagComponent(teamId) then FlagComponent}
                 {#if FlagComponent}
                   <svelte:component this={FlagComponent} className="w-8" />
                 {/if}
@@ -1941,7 +2013,9 @@
               "
             >
               {#if prediction?.r16Prediction?.winner}
-                {#await getFlagComponent(prediction?.r16Prediction?.winner) then FlagComponent}
+              {@const player = $playerStore.find(x => x.id == prediction?.r16Prediction.winner)}
+              {@const teamId = player ? player.teamId : 0 }  
+              {#await getFlagComponent(teamId) then FlagComponent}
                   {#if FlagComponent}
                     <svelte:component this={FlagComponent} className="w-8" />
                   {/if}
@@ -1964,7 +2038,9 @@
               "
             >
             {#if prediction?.r16Prediction?.loser}
-              {#await getFlagComponent(prediction?.r16Prediction?.loser) then FlagComponent}
+            {@const player = $playerStore.find(x => x.id == prediction?.r16Prediction.loser)}
+            {@const teamId = player ? player.teamId : 0 }  
+            {#await getFlagComponent(teamId) then FlagComponent}
                 {#if FlagComponent}
                   <svelte:component this={FlagComponent} className="w-8" />
                 {/if}
@@ -1987,7 +2063,9 @@
               "
             >
             {#if prediction?.r16Prediction?.goalScorer}
-              {#await getFlagComponent(prediction?.r16Prediction?.goalScorer) then FlagComponent}
+            {@const player = $playerStore.find(x => x.id == prediction?.r16Prediction.goalScorer)}
+            {@const teamId = player ? player.teamId : 0 }  
+            {#await getFlagComponent(teamId) then FlagComponent}
                 {#if FlagComponent}
                   <svelte:component this={FlagComponent} className="w-8" />
                 {/if}
@@ -2010,7 +2088,9 @@
               "
             >
             {#if prediction?.r16Prediction?.goalAssister}
-              {#await getFlagComponent(prediction?.r16Prediction?.goalAssister) then FlagComponent}
+            {@const player = $playerStore.find(x => x.id == prediction?.r16Prediction.goalAssister)}
+            {@const teamId = player ? player.teamId : 0 }  
+            {#await getFlagComponent(teamId) then FlagComponent}
                 {#if FlagComponent}
                   <svelte:component this={FlagComponent} className="w-8" />
                 {/if}
@@ -2033,7 +2113,9 @@
               "
             >
             {#if prediction?.r16Prediction?.yellowCard}
-              {#await getFlagComponent(prediction?.r16Prediction?.yellowCard) then FlagComponent}
+            {@const player = $playerStore.find(x => x.id == prediction?.r16Prediction.yellowCard)}
+            {@const teamId = player ? player.teamId : 0 }  
+            {#await getFlagComponent(teamId) then FlagComponent}
                 {#if FlagComponent}
                   <svelte:component this={FlagComponent} className="w-8" />
                 {/if}
@@ -2056,7 +2138,9 @@
               "
             >
             {#if prediction?.r16Prediction?.redCard}
-              {#await getFlagComponent(prediction?.r16Prediction?.redCard) then FlagComponent}
+            {@const player = $playerStore.find(x => x.id == prediction?.r16Prediction.redCard)}
+            {@const teamId = player ? player.teamId : 0 }  
+            {#await getFlagComponent(teamId) then FlagComponent}
                 {#if FlagComponent}
                   <svelte:component this={FlagComponent} className="w-8" />
                 {/if}
@@ -2112,7 +2196,9 @@
               "
             >
               {#if prediction?.qfPrediction?.winner}
-                {#await getFlagComponent(prediction?.qfPrediction?.winner) then FlagComponent}
+              {@const player = $playerStore.find(x => x.id == prediction?.qfPrediction.winner)}
+              {@const teamId = player ? player.teamId : 0 }  
+              {#await getFlagComponent(teamId) then FlagComponent}
                   {#if FlagComponent}
                     <svelte:component this={FlagComponent} className="w-8" />
                   {/if}
@@ -2135,7 +2221,9 @@
               "
             >
             {#if prediction?.qfPrediction?.loser}
-              {#await getFlagComponent(prediction?.qfPrediction?.loser) then FlagComponent}
+            {@const player = $playerStore.find(x => x.id == prediction?.qfPrediction.loser)}
+            {@const teamId = player ? player.teamId : 0 }  
+            {#await getFlagComponent(teamId) then FlagComponent}
                 {#if FlagComponent}
                   <svelte:component this={FlagComponent} className="w-8" />
                 {/if}
@@ -2158,7 +2246,9 @@
               "
             >
             {#if prediction?.qfPrediction?.goalScorer}
-              {#await getFlagComponent(prediction?.qfPrediction?.goalScorer) then FlagComponent}
+            {@const player = $playerStore.find(x => x.id == prediction?.qfPrediction.goalScorer)}
+            {@const teamId = player ? player.teamId : 0 }  
+            {#await getFlagComponent(teamId) then FlagComponent}
                 {#if FlagComponent}
                   <svelte:component this={FlagComponent} className="w-8" />
                 {/if}
@@ -2181,7 +2271,9 @@
               "
             >
             {#if prediction?.qfPrediction?.goalAssister}
-              {#await getFlagComponent(prediction?.qfPrediction?.goalAssister) then FlagComponent}
+            {@const player = $playerStore.find(x => x.id == prediction?.qfPrediction.goalAssister)}
+            {@const teamId = player ? player.teamId : 0 }  
+            {#await getFlagComponent(teamId) then FlagComponent}
                 {#if FlagComponent}
                   <svelte:component this={FlagComponent} className="w-8" />
                 {/if}
@@ -2204,7 +2296,9 @@
               "
             >
             {#if prediction?.qfPrediction?.yellowCard}
-              {#await getFlagComponent(prediction?.qfPrediction?.yellowCard) then FlagComponent}
+            {@const player = $playerStore.find(x => x.id == prediction?.qfPrediction.yellowCard)}
+            {@const teamId = player ? player.teamId : 0 }  
+            {#await getFlagComponent(teamId) then FlagComponent}
                 {#if FlagComponent}
                   <svelte:component this={FlagComponent} className="w-8" />
                 {/if}
@@ -2227,7 +2321,9 @@
               "
             >
             {#if prediction?.qfPrediction?.redCard}
-              {#await getFlagComponent(prediction?.qfPrediction?.redCard) then FlagComponent}
+            {@const player = $playerStore.find(x => x.id == prediction?.qfPrediction.redCard)}
+            {@const teamId = player ? player.teamId : 0 }  
+            {#await getFlagComponent(teamId) then FlagComponent}
                 {#if FlagComponent}
                   <svelte:component this={FlagComponent} className="w-8" />
                 {/if}
@@ -2283,7 +2379,9 @@
               "
             >
               {#if prediction?.sfPrediction?.winner}
-                {#await getFlagComponent(prediction?.sfPrediction?.winner) then FlagComponent}
+              {@const player = $playerStore.find(x => x.id == prediction?.sfPrediction.winner)}
+              {@const teamId = player ? player.teamId : 0 }  
+              {#await getFlagComponent(teamId) then FlagComponent}
                   {#if FlagComponent}
                     <svelte:component this={FlagComponent} className="w-8" />
                   {/if}
@@ -2306,7 +2404,9 @@
               "
             >
             {#if prediction?.sfPrediction?.loser}
-              {#await getFlagComponent(prediction?.sfPrediction?.loser) then FlagComponent}
+            {@const player = $playerStore.find(x => x.id == prediction?.sfPrediction.loser)}
+            {@const teamId = player ? player.teamId : 0 }  
+            {#await getFlagComponent(teamId) then FlagComponent}
                 {#if FlagComponent}
                   <svelte:component this={FlagComponent} className="w-8" />
                 {/if}
@@ -2329,7 +2429,9 @@
               "
             >
             {#if prediction?.sfPrediction?.goalScorer}
-              {#await getFlagComponent(prediction?.sfPrediction?.goalScorer) then FlagComponent}
+            {@const player = $playerStore.find(x => x.id == prediction?.sfPrediction.goalScorer)}
+            {@const teamId = player ? player.teamId : 0 }  
+            {#await getFlagComponent(teamId) then FlagComponent}
                 {#if FlagComponent}
                   <svelte:component this={FlagComponent} className="w-8" />
                 {/if}
@@ -2352,7 +2454,9 @@
               "
             >
             {#if prediction?.sfPrediction?.goalAssister}
-              {#await getFlagComponent(prediction?.sfPrediction?.goalAssister) then FlagComponent}
+            {@const player = $playerStore.find(x => x.id == prediction?.sfPrediction.goalAssister)}
+            {@const teamId = player ? player.teamId : 0 }  
+            {#await getFlagComponent(teamId) then FlagComponent}
                 {#if FlagComponent}
                   <svelte:component this={FlagComponent} className="w-8" />
                 {/if}
@@ -2375,7 +2479,9 @@
               "
             >
             {#if prediction?.sfPrediction?.yellowCard}
-              {#await getFlagComponent(prediction?.sfPrediction?.yellowCard) then FlagComponent}
+            {@const player = $playerStore.find(x => x.id == prediction?.sfPrediction.yellowCard)}
+            {@const teamId = player ? player.teamId : 0 }  
+            {#await getFlagComponent(teamId) then FlagComponent}
                 {#if FlagComponent}
                   <svelte:component this={FlagComponent} className="w-8" />
                 {/if}
@@ -2398,7 +2504,9 @@
               "
             >
             {#if prediction?.sfPrediction?.redCard}
-              {#await getFlagComponent(prediction?.sfPrediction?.redCard) then FlagComponent}
+            {@const player = $playerStore.find(x => x.id == prediction?.sfPrediction.redCard)}
+            {@const teamId = player ? player.teamId : 0 }  
+            {#await getFlagComponent(teamId) then FlagComponent}
                 {#if FlagComponent}
                   <svelte:component this={FlagComponent} className="w-8" />
                 {/if}
@@ -2454,7 +2562,9 @@
               "
             > 
               {#if prediction?.fPrediction?.winner}
-                {#await getFlagComponent(prediction?.fPrediction?.winner) then FlagComponent}
+              {@const player = $playerStore.find(x => x.id == prediction?.fPrediction.winner)}
+              {@const teamId = player ? player.teamId : 0 }  
+              {#await getFlagComponent(teamId) then FlagComponent}
                   {#if FlagComponent}
                     <svelte:component this={FlagComponent} className="w-8" />
                   {/if}
@@ -2477,7 +2587,9 @@
               "
             >
             {#if prediction?.fPrediction?.loser}
-              {#await getFlagComponent(prediction?.fPrediction?.loser) then FlagComponent}
+            {@const player = $playerStore.find(x => x.id == prediction?.fPrediction.loser)}
+            {@const teamId = player ? player.teamId : 0 }  
+            {#await getFlagComponent(teamId) then FlagComponent}
                 {#if FlagComponent}
                   <svelte:component this={FlagComponent} className="w-8" />
                 {/if}
@@ -2500,7 +2612,9 @@
               "
             >
             {#if prediction?.fPrediction?.goalScorer}
-              {#await getFlagComponent(prediction?.fPrediction?.goalScorer) then FlagComponent}
+            {@const player = $playerStore.find(x => x.id == prediction?.fPrediction.goalScorer)}
+            {@const teamId = player ? player.teamId : 0 }  
+            {#await getFlagComponent(teamId) then FlagComponent}
                 {#if FlagComponent}
                   <svelte:component this={FlagComponent} className="w-8" />
                 {/if}
@@ -2523,7 +2637,9 @@
               "
             >
             {#if prediction?.fPrediction?.goalAssister}
-              {#await getFlagComponent(prediction?.fPrediction?.goalAssister) then FlagComponent}
+            {@const player = $playerStore.find(x => x.id == prediction?.fPrediction.goalAssister)}
+            {@const teamId = player ? player.teamId : 0 }  
+            {#await getFlagComponent(teamId) then FlagComponent}
                 {#if FlagComponent}
                   <svelte:component this={FlagComponent} className="w-8" />
                 {/if}
@@ -2546,7 +2662,9 @@
               "
             >
             {#if prediction?.fPrediction?.yellowCard}
-              {#await getFlagComponent(prediction?.fPrediction?.yellowCard) then FlagComponent}
+            {@const player = $playerStore.find(x => x.id == prediction?.fPrediction.yellowCard)}
+            {@const teamId = player ? player.teamId : 0 }  
+            {#await getFlagComponent(teamId) then FlagComponent}
                 {#if FlagComponent}
                   <svelte:component this={FlagComponent} className="w-8" />
                 {/if}
@@ -2569,7 +2687,9 @@
               "
             >
             {#if prediction?.fPrediction?.redCard}
-              {#await getFlagComponent(prediction?.fPrediction?.redCard) then FlagComponent}
+            {@const player = $playerStore.find(x => x.id == prediction?.fPrediction.redCard)}
+            {@const teamId = player ? player.teamId : 0 }  
+            {#await getFlagComponent(teamId) then FlagComponent}
                 {#if FlagComponent}
                   <svelte:component this={FlagComponent} className="w-8" />
                 {/if}
