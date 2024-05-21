@@ -40,6 +40,8 @@ export default {
         GRAY: "#242529",
         BLACK: "#101111",
         DARK: "#1a1a1d",
+        OPENFPL: "#2ce3a6",
+        OPENFPLPURPLE: "#7f56f1"
       },
     },
   },
