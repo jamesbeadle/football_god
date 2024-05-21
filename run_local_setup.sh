@@ -14,5 +14,5 @@ echo '{
       }
    }
 }' > "${DX_NET_JSON}"
-../sns-testing/bin/dfx start --clean; \
+../sns-testing/bin/dfx start; \
 mv "${DX_NET_JSON}.tmp" "$DX_NET_JSON" 2>/dev/null  # restore original config if it was present

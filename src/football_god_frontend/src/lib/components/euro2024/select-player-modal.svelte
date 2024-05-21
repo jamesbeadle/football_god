@@ -43,10 +43,3 @@
     {/each}
   </div>
 </Modal>
-
-<style>
-  .active {
-    background-color: #2ce3a6;
-    color: white;
-  }
-</style>

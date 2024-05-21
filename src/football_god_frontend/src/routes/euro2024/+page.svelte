@@ -8,6 +8,8 @@
   import { onMount } from "svelte";
   import SelectTeamComponent from "$lib/components/euro2024/select-team-modal.svelte";
   import SelectPlayerComponent from "$lib/components/euro2024/select-player-modal.svelte";
+  import { teamStore } from "$lib/stores/teams.store";
+  import { playerStore } from "$lib/stores/player.store";
 
   let teams: InternationalTeam[] = [];
   let players: InternationalPlayer[] = [];
@@ -30,8 +32,13 @@
   };
 
   onMount(async () => {
-    teams = await loadTeams(); // You need to define this
-    players = await loadPlayers(); // You need to define this
+    
+    await teamStore.sync();
+    await playerStore.sync();
+    if($teamStore.length == 0 || $playerStore.length == 0){
+      return;
+    };
+
     prediction = await fetchPrediction();
 
     if (!prediction) {
@@ -130,18 +137,6 @@
       };
     }
   });
-
-  // Replace with the actual function to load teams from the backend
-  async function loadTeams(): Promise<InternationalTeam[]> {
-    // TODO: Load teams from the backend
-    return [];
-  }
-
-  // Replace with the actual function to load players from the backend
-  async function loadPlayers(): Promise<InternationalPlayer[]> {
-    // TODO: Load players from the backend
-    return [];
-  }
 
   const handlePredictionSubmit = () => {
     // TODO: Submit the prediction to the backend
@@ -401,6 +396,7 @@
         }
         break;
     }
+    showSelectTeamModal = false;
   }
 
   function confirmPlayerSelection(playerId: number) {
@@ -819,6 +815,17 @@
     selectedStage = -1;
     predictionType = -1;
   }
+
+  function getTeamName(teamId: number): string {
+    const team = $teamStore.find(team => team.id === teamId);
+    return team ? team.name : "Select a Team";
+  }
+
+  function getPlayerName(playerId: number): string {
+    const player = $playerStore.find(player => player.id === playerId);
+    return player ? player.lastName : "Select a Player";
+  }
+
 </script>
 
 <Layout>
@@ -916,7 +923,13 @@
           <button
             on:click={() => selectWinner(0)}
             class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2"
-            >Select a Team</button
+            >
+              {#if prediction?.groupAPrediction?.winner}
+                {getTeamName(prediction.groupAPrediction.winner)}
+              {:else}
+                Select a Team
+              {/if}
+            </button
           >
           <div class="text-right">
             <p class="text-xs mt-4">5 Points</p>
@@ -926,7 +939,13 @@
           <button
             on:click={() => selectLoser(0)}
             class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2"
-            >Select a Team</button
+            >
+              {#if prediction?.groupAPrediction?.loser}
+                {getTeamName(prediction.groupAPrediction.loser)}
+              {:else}
+                Select a Team
+              {/if}
+            </button
           >
           <div class="text-right">
             <p class="text-xs mt-4">5 Points</p>
@@ -936,7 +955,13 @@
           <button
             on:click={() => selectScorer(0)}
             class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2"
-            >Select a Player</button
+            >
+              {#if prediction?.groupAPrediction?.goalScorer}
+                {getPlayerName(prediction.groupAPrediction.goalScorer)}
+              {:else}
+                Select a Player
+              {/if}
+            </button
           >
           <div class="text-right">
             <p class="text-xs mt-4">10 Points</p>
@@ -946,7 +971,13 @@
           <button
             on:click={() => selectAssister(0)}
             class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2"
-            >Select a Player</button
+            >
+              {#if prediction?.groupAPrediction?.goalAssister}
+                {getPlayerName(prediction.groupAPrediction.goalAssister)}
+              {:else}
+                Select a Player
+              {/if}
+            </button
           >
           <div class="text-right">
             <p class="text-xs mt-4">10 Points</p>
@@ -956,7 +987,13 @@
           <button
             on:click={() => selectYellowCard(0)}
             class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2"
-            >Select a Player</button
+            >
+              {#if prediction?.groupAPrediction?.yellowCard}
+                {getPlayerName(prediction.groupAPrediction.yellowCard)}
+              {:else}
+                Select a Player
+              {/if}
+            </button
           >
           <div class="text-right">
             <p class="text-xs mt-4">5 Points</p>
@@ -966,7 +1003,13 @@
           <button
             on:click={() => selectRedCard(0)}
             class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2"
-            >Select a Player</button
+            >
+              {#if prediction?.groupAPrediction?.redCard}
+                {getPlayerName(prediction.groupAPrediction.redCard)}
+              {:else}
+                Select a Player
+              {/if}
+            </button
           >
           <div class="text-right">
             <p class="text-xs mt-4">10 Points</p>
@@ -982,7 +1025,13 @@
           <button
             on:click={() => selectWinner(1)}
             class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2"
-            >Select a Team</button
+            >
+              {#if prediction?.groupBPrediction?.winner}
+                {getTeamName(prediction.groupBPrediction.winner)}
+              {:else}
+                Select a Team
+              {/if}
+            </button
           >
           <div class="text-right">
             <p class="text-xs mt-4">5 Points</p>
@@ -992,7 +1041,13 @@
           <button
             on:click={() => selectLoser(1)}
             class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2"
-            >Select a Team</button
+            >
+              {#if prediction?.groupBPrediction?.loser}
+                {getTeamName(prediction.groupBPrediction.loser)}
+              {:else}
+                Select a Team
+              {/if}
+            </button
           >
           <div class="text-right">
             <p class="text-xs mt-4">5 Points</p>
@@ -1002,7 +1057,13 @@
           <button
             on:click={() => selectScorer(1)}
             class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2"
-            >Select a Player</button
+            >
+            {#if prediction?.groupBPrediction?.goalScorer}
+              {getPlayerName(prediction.groupBPrediction.goalScorer)}
+            {:else}
+              Select a Player
+            {/if}
+          </button
           >
           <div class="text-right">
             <p class="text-xs mt-4">10 Points</p>
@@ -1012,7 +1073,13 @@
           <button
             on:click={() => selectAssister(1)}
             class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2"
-            >Select a Player</button
+            >
+              {#if prediction?.groupBPrediction?.goalAssister}
+                {getPlayerName(prediction.groupBPrediction.goalAssister)}
+              {:else}
+                Select a Player
+              {/if}
+            </button
           >
           <div class="text-right">
             <p class="text-xs mt-4">10 Points</p>
@@ -1022,7 +1089,13 @@
           <button
             on:click={() => selectYellowCard(1)}
             class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2"
-            >Select a Player</button
+            >
+              {#if prediction?.groupBPrediction?.yellowCard}
+                {getPlayerName(prediction.groupBPrediction.yellowCard)}
+              {:else}
+                Select a Player
+              {/if}
+            </button
           >
           <div class="text-right">
             <p class="text-xs mt-4">5 Points</p>
@@ -1032,7 +1105,13 @@
           <button
             on:click={() => selectRedCard(1)}
             class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2"
-            >Select a Player</button
+            >
+              {#if prediction?.groupBPrediction?.redCard}
+                {getPlayerName(prediction.groupBPrediction.redCard)}
+              {:else}
+                Select a Player
+              {/if}
+            </button
           >
           <div class="text-right">
             <p class="text-xs mt-4">10 Points</p>
@@ -1048,7 +1127,13 @@
           <button
             on:click={() => selectWinner(2)}
             class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2"
-            >Select a Team</button
+            >
+              {#if prediction?.groupCPrediction?.winner}
+                {getTeamName(prediction.groupCPrediction.winner)}
+              {:else}
+                Select a Team
+              {/if}
+            </button
           >
           <div class="text-right">
             <p class="text-xs mt-4">5 Points</p>
@@ -1058,7 +1143,13 @@
           <button
             on:click={() => selectLoser(2)}
             class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2"
-            >Select a Team</button
+            > 
+              {#if prediction?.groupCPrediction?.loser}
+                {getTeamName(prediction.groupCPrediction.loser)}
+              {:else}
+                Select a Team
+              {/if}
+            </button
           >
           <div class="text-right">
             <p class="text-xs mt-4">5 Points</p>
@@ -1068,7 +1159,13 @@
           <button
             on:click={() => selectScorer(2)}
             class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2"
-            >Select a Player</button
+            > 
+              {#if prediction?.groupCPrediction?.goalScorer}
+                {getPlayerName(prediction.groupCPrediction.goalScorer)}
+              {:else}
+                Select a Player
+              {/if}
+            </button
           >
           <div class="text-right">
             <p class="text-xs mt-4">10 Points</p>
@@ -1078,7 +1175,13 @@
           <button
             on:click={() => selectAssister(2)}
             class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2"
-            >Select a Player</button
+            >
+              {#if prediction?.groupCPrediction?.goalAssister}
+                {getPlayerName(prediction.groupCPrediction.goalAssister)}
+              {:else}
+                Select a Player
+              {/if}
+            </button
           >
           <div class="text-right">
             <p class="text-xs mt-4">10 Points</p>
@@ -1088,7 +1191,13 @@
           <button
             on:click={() => selectYellowCard(2)}
             class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2"
-            >Select a Player</button
+            >
+              {#if prediction?.groupCPrediction?.yellowCard}
+                {getPlayerName(prediction.groupCPrediction.yellowCard)}
+              {:else}
+                Select a Player
+              {/if}
+            </button
           >
           <div class="text-right">
             <p class="text-xs mt-4">5 Points</p>
@@ -1098,7 +1207,13 @@
           <button
             on:click={() => selectRedCard(2)}
             class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2"
-            >Select a Player</button
+            >
+              {#if prediction?.groupCPrediction?.redCard}
+                {getPlayerName(prediction.groupCPrediction.redCard)}
+              {:else}
+                Select a Player
+              {/if}
+            </button
           >
           <div class="text-right">
             <p class="text-xs mt-4">10 Points</p>
@@ -1114,7 +1229,13 @@
           <button
             on:click={() => selectWinner(3)}
             class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2"
-            >Select a Team</button
+            >
+              {#if prediction?.groupDPrediction?.winner}
+                {getTeamName(prediction.groupDPrediction.winner)}
+              {:else}
+                Select a Team
+              {/if}
+            </button
           >
           <div class="text-right">
             <p class="text-xs mt-4">5 Points</p>
@@ -1124,7 +1245,13 @@
           <button
             on:click={() => selectLoser(3)}
             class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2"
-            >Select a Team</button
+            >
+              {#if prediction?.groupDPrediction?.loser}
+                {getTeamName(prediction.groupDPrediction.loser)}
+              {:else}
+                Select a Team
+              {/if}
+            </button
           >
           <div class="text-right">
             <p class="text-xs mt-4">5 Points</p>
@@ -1134,7 +1261,13 @@
           <button
             on:click={() => selectScorer(3)}
             class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2"
-            >Select a Player</button
+            >
+              {#if prediction?.groupDPrediction?.goalScorer}
+                {getPlayerName(prediction.groupDPrediction.goalScorer)}
+              {:else}
+                Select a Player
+              {/if}
+            </button
           >
           <div class="text-right">
             <p class="text-xs mt-4">10 Points</p>
@@ -1144,7 +1277,13 @@
           <button
             on:click={() => selectAssister(3)}
             class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2"
-            >Select a Player</button
+            >
+              {#if prediction?.groupDPrediction?.goalAssister}
+                {getPlayerName(prediction.groupDPrediction.goalAssister)}
+              {:else}
+                Select a Player
+              {/if}
+            </button
           >
           <div class="text-right">
             <p class="text-xs mt-4">10 Points</p>
@@ -1154,7 +1293,13 @@
           <button
             on:click={() => selectYellowCard(3)}
             class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2"
-            >Select a Player</button
+            >
+              {#if prediction?.groupDPrediction?.yellowCard}
+                {getPlayerName(prediction.groupDPrediction.yellowCard)}
+              {:else}
+                Select a Player
+              {/if}
+            </button
           >
           <div class="text-right">
             <p class="text-xs mt-4">5 Points</p>
@@ -1164,7 +1309,13 @@
           <button
             on:click={() => selectRedCard(3)}
             class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2"
-            >Select a Player</button
+            >
+              {#if prediction?.groupDPrediction?.redCard}
+                {getPlayerName(prediction.groupDPrediction.redCard)}
+              {:else}
+                Select a Player
+              {/if}
+            </button
           >
           <div class="text-right">
             <p class="text-xs mt-4">10 Points</p>
@@ -1180,7 +1331,13 @@
           <button
             on:click={() => selectWinner(4)}
             class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2"
-            >Select a Team</button
+            >
+              {#if prediction?.groupEPrediction?.winner}
+                {getTeamName(prediction.groupEPrediction.winner)}
+              {:else}
+                Select a Team
+              {/if}
+            </button
           >
           <div class="text-right">
             <p class="text-xs mt-4">5 Points</p>
@@ -1190,7 +1347,13 @@
           <button
             on:click={() => selectLoser(4)}
             class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2"
-            >Select a Team</button
+            >
+              {#if prediction?.groupEPrediction?.loser}
+                {getTeamName(prediction.groupEPrediction.loser)}
+              {:else}
+                Select a Team
+              {/if}
+            </button
           >
           <div class="text-right">
             <p class="text-xs mt-4">5 Points</p>
@@ -1200,7 +1363,13 @@
           <button
             on:click={() => selectScorer(4)}
             class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2"
-            >Select a Player</button
+            >
+              {#if prediction?.groupEPrediction?.goalScorer}
+                {getPlayerName(prediction.groupEPrediction.goalScorer)}
+              {:else}
+                Select a Player
+              {/if}
+            </button
           >
           <div class="text-right">
             <p class="text-xs mt-4">10 Points</p>
@@ -1210,7 +1379,13 @@
           <button
             on:click={() => selectAssister(4)}
             class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2"
-            >Select a Player</button
+            >
+              {#if prediction?.groupEPrediction?.goalAssister}
+                {getPlayerName(prediction.groupEPrediction.goalAssister)}
+              {:else}
+                Select a Player
+              {/if}
+            </button
           >
           <div class="text-right">
             <p class="text-xs mt-4">10 Points</p>
@@ -1220,7 +1395,13 @@
           <button
             on:click={() => selectYellowCard(4)}
             class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2"
-            >Select a Player</button
+            >
+              {#if prediction?.groupEPrediction?.yellowCard}
+                {getPlayerName(prediction.groupEPrediction.yellowCard)}
+              {:else}
+                Select a Player
+              {/if}
+          </button
           >
           <div class="text-right">
             <p class="text-xs mt-4">5 Points</p>
@@ -1230,7 +1411,13 @@
           <button
             on:click={() => selectRedCard(4)}
             class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2"
-            >Select a Player</button
+            >
+              {#if prediction?.groupEPrediction?.redCard}
+                {getPlayerName(prediction.groupEPrediction.redCard)}
+              {:else}
+                Select a Player
+              {/if}
+            </button
           >
           <div class="text-right">
             <p class="text-xs mt-4">10 Points</p>
@@ -1246,7 +1433,13 @@
           <button
             on:click={() => selectWinner(5)}
             class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2"
-            >Select a Team</button
+            >
+              {#if prediction?.groupFPrediction?.winner}
+                {getTeamName(prediction.groupFPrediction.winner)}
+              {:else}
+                Select a Team
+              {/if}
+            </button
           >
           <div class="text-right">
             <p class="text-xs mt-4">5 Points</p>
@@ -1256,7 +1449,13 @@
           <button
             on:click={() => selectLoser(5)}
             class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2"
-            >Select a Team</button
+            >
+              {#if prediction?.groupFPrediction?.loser}
+                {getTeamName(prediction.groupFPrediction.loser)}
+              {:else}
+                Select a Team
+              {/if}
+            </button
           >
           <div class="text-right">
             <p class="text-xs mt-4">5 Points</p>
@@ -1266,7 +1465,13 @@
           <button
             on:click={() => selectScorer(5)}
             class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2"
-            >Select a Player</button
+            >
+              {#if prediction?.groupFPrediction?.goalScorer}
+                {getPlayerName(prediction.groupFPrediction.goalScorer)}
+              {:else}
+                Select a Player
+              {/if}
+            </button
           >
           <div class="text-right">
             <p class="text-xs mt-4">10 Points</p>
@@ -1276,7 +1481,13 @@
           <button
             on:click={() => selectAssister(5)}
             class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2"
-            >Select a Player</button
+            >
+            {#if prediction?.groupFPrediction?.goalAssister}
+              {getPlayerName(prediction.groupFPrediction.goalAssister)}
+            {:else}
+              Select a Player
+            {/if}
+          </button
           >
           <div class="text-right">
             <p class="text-xs mt-4">10 Points</p>
@@ -1286,7 +1497,13 @@
           <button
             on:click={() => selectYellowCard(5)}
             class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2"
-            >Select a Player</button
+            >
+            {#if prediction?.groupFPrediction?.yellowCard}
+              {getPlayerName(prediction.groupFPrediction.yellowCard)}
+            {:else}
+              Select a Player
+            {/if}
+          </button
           >
           <div class="text-right">
             <p class="text-xs mt-4">5 Points</p>
@@ -1296,7 +1513,13 @@
           <button
             on:click={() => selectRedCard(5)}
             class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2"
-            >Select a Player</button
+            >
+            {#if prediction?.groupFPrediction?.redCard}
+              {getPlayerName(prediction.groupFPrediction.redCard)}
+            {:else}
+              Select a Player
+            {/if}
+          </button
           >
           <div class="text-right">
             <p class="text-xs mt-4">10 Points</p>
@@ -1347,7 +1570,13 @@
           <button
             on:click={() => selectWinner(6)}
             class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2"
-            >Select a Team</button
+            >
+              {#if prediction?.r16Prediction?.winner}
+                {getTeamName(prediction.r16Prediction.winner)}
+              {:else}
+                Select a Team
+              {/if}
+            </button
           >
           <div class="text-right">
             <p class="text-xs mt-4">10 Points</p>
@@ -1357,7 +1586,13 @@
           <button
             on:click={() => selectLoser(6)}
             class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2"
-            >Select a Team</button
+            >
+            {#if prediction?.r16Prediction?.loser}
+              {getTeamName(prediction.r16Prediction.loser)}
+            {:else}
+              Select a Team
+            {/if}
+          </button
           >
           <div class="text-right">
             <p class="text-xs mt-4">10 Points</p>
@@ -1367,7 +1602,13 @@
           <button
             on:click={() => selectScorer(6)}
             class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2"
-            >Select a Player</button
+            >
+            {#if prediction?.r16Prediction?.goalScorer}
+              {getPlayerName(prediction.groupFPrediction.goalScorer)}
+            {:else}
+              Select a Player
+            {/if}
+          </button
           >
           <div class="text-right">
             <p class="text-xs mt-4">20 Points</p>
@@ -1377,7 +1618,13 @@
           <button
             on:click={() => selectAssister(6)}
             class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2"
-            >Select a Player</button
+            >
+            {#if prediction?.r16Prediction?.goalAssister}
+              {getPlayerName(prediction.groupFPrediction.goalAssister)}
+            {:else}
+              Select a Player
+            {/if}
+          </button
           >
           <div class="text-right">
             <p class="text-xs mt-4">20 Points</p>
@@ -1387,7 +1634,13 @@
           <button
             on:click={() => selectYellowCard(6)}
             class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2"
-            >Select a Player</button
+            >
+            {#if prediction?.r16Prediction?.yellowCard}
+              {getPlayerName(prediction.groupFPrediction.yellowCard)}
+            {:else}
+              Select a Player
+            {/if}
+          </button
           >
           <div class="text-right">
             <p class="text-xs mt-4">10 Points</p>
@@ -1397,7 +1650,13 @@
           <button
             on:click={() => selectRedCard(6)}
             class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2"
-            >Select a Player</button
+            >
+            {#if prediction?.r16Prediction?.redCard}
+              {getPlayerName(prediction.groupFPrediction.redCard)}
+            {:else}
+              Select a Player
+            {/if}
+          </button
           >
           <div class="text-right">
             <p class="text-xs mt-4">20 Points</p>
@@ -1440,7 +1699,13 @@
           <button
             on:click={() => selectWinner(7)}
             class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2"
-            >Select a Team</button
+            >
+              {#if prediction?.qfPrediction?.winner}
+                {getTeamName(prediction.qfPrediction.winner)}
+              {:else}
+                Select a Team
+              {/if}
+            </button
           >
           <div class="text-right">
             <p class="text-xs mt-4">15 Points</p>
@@ -1450,7 +1715,13 @@
           <button
             on:click={() => selectLoser(7)}
             class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2"
-            >Select a Team</button
+            >
+            {#if prediction?.qfPrediction?.loser}
+              {getTeamName(prediction.qfPrediction.loser)}
+            {:else}
+              Select a Team
+            {/if}
+          </button
           >
           <div class="text-right">
             <p class="text-xs mt-4">15 Points</p>
@@ -1460,7 +1731,13 @@
           <button
             on:click={() => selectScorer(7)}
             class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2"
-            >Select a Player</button
+            >
+            {#if prediction?.qfPrediction?.goalScorer}
+              {getPlayerName(prediction.qfPrediction.goalScorer)}
+            {:else}
+              Select a Player
+            {/if}
+          </button
           >
           <div class="text-right">
             <p class="text-xs mt-4">30 Points</p>
@@ -1470,7 +1747,13 @@
           <button
             on:click={() => selectAssister(7)}
             class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2"
-            >Select a Player</button
+            >
+            {#if prediction?.qfPrediction?.goalAssister}
+              {getPlayerName(prediction.qfPrediction.goalAssister)}
+            {:else}
+              Select a Player
+            {/if}
+          </button
           >
           <div class="text-right">
             <p class="text-xs mt-4">30 Points</p>
@@ -1480,7 +1763,13 @@
           <button
             on:click={() => selectYellowCard(7)}
             class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2"
-            >Select a Player</button
+            >
+            {#if prediction?.qfPrediction?.yellowCard}
+              {getPlayerName(prediction.qfPrediction.yellowCard)}
+            {:else}
+              Select a Player
+            {/if}
+          </button
           >
           <div class="text-right">
             <p class="text-xs mt-4">15 Points</p>
@@ -1490,7 +1779,13 @@
           <button
             on:click={() => selectRedCard(7)}
             class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2"
-            >Select a Player</button
+            >
+            {#if prediction?.qfPrediction?.redCard}
+              {getPlayerName(prediction.qfPrediction.redCard)}
+            {:else}
+              Select a Player
+            {/if}
+          </button
           >
           <div class="text-right">
             <p class="text-xs mt-4">30 Points</p>
@@ -1533,7 +1828,13 @@
           <button
             on:click={() => selectWinner(8)}
             class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2"
-            >Select a Team</button
+            >
+              {#if prediction?.sfPrediction?.winner}
+                {getTeamName(prediction.sfPrediction.winner)}
+              {:else}
+                Select a Team
+              {/if}
+            </button
           >
           <div class="text-right">
             <p class="text-xs mt-4">20 Points</p>
@@ -1543,7 +1844,13 @@
           <button
             on:click={() => selectLoser(8)}
             class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2"
-            >Select a Team</button
+            >
+            {#if prediction?.sfPrediction?.loser}
+              {getTeamName(prediction.sfPrediction.loser)}
+            {:else}
+              Select a Team
+            {/if}
+          </button
           >
           <div class="text-right">
             <p class="text-xs mt-4">20 Points</p>
@@ -1553,7 +1860,13 @@
           <button
             on:click={() => selectScorer(8)}
             class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2"
-            >Select a Player</button
+            >
+            {#if prediction?.sfPrediction?.goalScorer}
+              {getPlayerName(prediction.sfPrediction.goalScorer)}
+            {:else}
+              Select a Player
+            {/if}
+          </button
           >
           <div class="text-right">
             <p class="text-xs mt-4">40 Points</p>
@@ -1563,7 +1876,13 @@
           <button
             on:click={() => selectAssister(8)}
             class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2"
-            >Select a Player</button
+            >
+            {#if prediction?.sfPrediction?.goalAssister}
+              {getPlayerName(prediction.sfPrediction.goalAssister)}
+            {:else}
+              Select a Player
+            {/if}
+          </button
           >
           <div class="text-right">
             <p class="text-xs mt-4">40 Points</p>
@@ -1573,7 +1892,13 @@
           <button
             on:click={() => selectYellowCard(8)}
             class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2"
-            >Select a Player</button
+            >
+            {#if prediction?.sfPrediction?.yellowCard}
+              {getPlayerName(prediction.sfPrediction.yellowCard)}
+            {:else}
+              Select a Player
+            {/if}
+          </button
           >
           <div class="text-right">
             <p class="text-xs mt-4">10 Points</p>
@@ -1583,7 +1908,13 @@
           <button
             on:click={() => selectRedCard(8)}
             class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2"
-            >Select a Player</button
+            >
+            {#if prediction?.sfPrediction?.redCard}
+              {getPlayerName(prediction.sfPrediction.redCard)}
+            {:else}
+              Select a Player
+            {/if}
+          </button
           >
           <div class="text-right">
             <p class="text-xs mt-4">40 Points</p>
@@ -1626,7 +1957,13 @@
           <button
             on:click={() => selectWinner(9)}
             class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2"
-            >Select a Team</button
+            > 
+              {#if prediction?.fPrediction?.winner}
+                {getTeamName(prediction.fPrediction.winner)}
+              {:else}
+                Select a Team
+              {/if}
+            </button
           >
           <div class="text-right">
             <p class="text-xs mt-4">25 Points</p>
@@ -1636,7 +1973,13 @@
           <button
             on:click={() => selectLoser(9)}
             class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2"
-            >Select a Team</button
+            >
+            {#if prediction?.fPrediction?.loser}
+              {getTeamName(prediction.fPrediction.loser)}
+            {:else}
+              Select a Team
+            {/if}
+          </button
           >
           <div class="text-right">
             <p class="text-xs mt-4">25 Points</p>
@@ -1646,7 +1989,13 @@
           <button
             on:click={() => selectScorer(9)}
             class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2"
-            >Select a Player</button
+            >
+            {#if prediction?.fPrediction?.goalScorer}
+              {getPlayerName(prediction.fPrediction.goalScorer)}
+            {:else}
+              Select a Player
+            {/if}
+          </button
           >
           <div class="text-right">
             <p class="text-xs mt-4">50 Points</p>
@@ -1656,7 +2005,13 @@
           <button
             on:click={() => selectAssister(9)}
             class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2"
-            >Select a Player</button
+            >
+            {#if prediction?.fPrediction?.goalAssister}
+              {getPlayerName(prediction.fPrediction.goalAssister)}
+            {:else}
+              Select a Player
+            {/if}
+          </button
           >
           <div class="text-right">
             <p class="text-xs mt-4">50 Points</p>
@@ -1666,7 +2021,13 @@
           <button
             on:click={() => selectYellowCard(9)}
             class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2"
-            >Select a Player</button
+            >
+            {#if prediction?.fPrediction?.yellowCard}
+              {getPlayerName(prediction.fPrediction.yellowCard)}
+            {:else}
+              Select a Player
+            {/if}
+          </button
           >
           <div class="text-right">
             <p class="text-xs mt-4">25 Points</p>
@@ -1676,7 +2037,13 @@
           <button
             on:click={() => selectRedCard(9)}
             class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2"
-            >Select a Player</button
+            >
+            {#if prediction?.fPrediction?.redCard}
+              {getPlayerName(prediction.fPrediction.redCard)}
+            {:else}
+              Select a Player
+            {/if}
+          </button
           >
           <div class="text-right">
             <p class="text-xs mt-4">50 Points</p>

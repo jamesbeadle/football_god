@@ -92,9 +92,9 @@
 </script>
 
 <Modal {visible} on:nnsClose={closeTeamSelectionModal}>
-  <div class="p-2">
+  <div class="p-8">
     <div class="flex justify-between items-center mb-4">
-      <h3 class="default-header">Select Team</h3>
+      <h3 class="default-header py-4">Select Team</h3>
       <button class="times-button" on:click={closeTeamSelectionModal}>&times;</button>
     </div>
 
@@ -103,17 +103,19 @@
         <p>Loading...</p>
       </div>
     {:else}
-      <div class="grid grid-cols-2 sm:grid-cols-3 gap-4">
+      <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 md:gap-8">
         {#each $teamStore as team, index (team.id)}
-          <div class="team-card p-4 border rounded-md flex flex-col items-center">
-            {#await getFlagComponent(team.countryCode) then FlagComponent}
-              {#if FlagComponent}
-                <svelte:component this={FlagComponent} />
-              {/if}
-            {/await}
-            <p class="mt-2 text-center">{team.name}</p>
-            <button class="mt-2 bg-blue-500 text-white px-2 py-1 rounded" on:click={() => confirmTeamSelection(team.id)}>Select</button>
-          </div>
+          <button on:click={() => confirmTeamSelection(team.id)}>
+            <div class="team-card p-4 border rounded-md flex flex-col items-center hover:bg-red-500">
+              {#await getFlagComponent(team.countryCode) then FlagComponent}
+                {#if FlagComponent}
+                  <svelte:component this={FlagComponent} />
+                {/if}
+              {/await}
+              <p class="mt-2 text-center">{team.name}</p>
+              <button class="mt-2 bg-blue-500 text-white px-2 py-1 rounded">Select</button>
+            </div>
+          </button>
         {/each}
       </div>
     {/if}
