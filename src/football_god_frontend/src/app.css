@@ -69,3 +69,15 @@
   min-height: 50px;
   @apply flex-shrink-0 w-px bg-gray-400 self-stretch;
 }
+
+.default-header {
+  @apply text-xl font-semibold text-white;
+}
+
+.default-sub-header {
+  @apply text-lg font-bold;
+}
+
+.times-button {
+  @apply text-white text-3xl;
+}

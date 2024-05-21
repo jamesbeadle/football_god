@@ -1,9 +1,8 @@
 <script lang="ts">
   import { Modal } from "@dfinity/gix-components";
-  import { onMount } from "svelte";
+  import { SvelteComponent, onMount } from "svelte";
   import { toastsError } from "$lib/stores/toasts.store";
   import { teamStore } from "$lib/stores/teams.store";
-  import type { SvelteComponent } from "svelte";
 
   export let visible: boolean;
 
@@ -25,8 +24,8 @@
     } finally {
       isLoading = false;
     }
-  });
-
+  });  
+  
   const getFlagComponent = async (countryCode: string): Promise<typeof SvelteComponent | null> => {
     switch (countryCode) {
       case 'ALB':
@@ -71,10 +70,6 @@
         return (await import('../flags/svi.svelte')).default as typeof SvelteComponent;
       case 'SPA':
         return (await import('../flags/spa.svelte')).default as typeof SvelteComponent;
-      case 'SVI':
-        return (await import('../flags/svi.svelte')).default as typeof SvelteComponent;
-      case 'SKA':
-        return (await import('../flags/ska.svelte')).default as typeof SvelteComponent;
       case 'SWI':
         return (await import('../flags/swi.svelte')).default as typeof SvelteComponent;
       case 'TUR':
@@ -85,6 +80,8 @@
         return null;
     }
   };
+
+
 
 </script>
 
@@ -103,14 +100,14 @@
       <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 md:gap-8">
         {#each $teamStore as team, index (team.id)}
           <button on:click={() => confirmTeamSelection(team.id)}>
-            <div class="team-card p-4 border rounded-md flex flex-col items-center hover:bg-red-500">
+            <div class="team-card bg-OPENFPLPURPLE p-4 border rounded-md flex flex-col items-center hover:bg-OPENFPL">
               {#await getFlagComponent(team.countryCode) then FlagComponent}
                 {#if FlagComponent}
                   <svelte:component this={FlagComponent} />
                 {/if}
               {/await}
               <p class="mt-2 text-center">{team.name}</p>
-              <button class="mt-2 bg-blue-500 text-white px-2 py-1 rounded">Select</button>
+              <button class="select-button mt-2 bg-OPENFPL text-GRAY px-2 py-1 rounded">Select</button>
             </div>
           </button>
         {/each}
@@ -118,9 +115,8 @@
     {/if}
   </div>
 </Modal>
-
 <style>
-  .team-card {
-    background-color: blue;
+  .team-card:hover .select-button {
+    background-color: var(--bg-OPENFPLPURPLE);
   }
 </style>
