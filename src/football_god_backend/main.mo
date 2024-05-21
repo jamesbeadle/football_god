@@ -1094,11 +1094,11 @@ actor Self {
   };
 
   public shared query func getEuro2024Teams() : async Result.Result<[T.InternationalTeam], T.Error> {
-    return #ok([]);
+    return #ok(List.toArray(euro2024Instance.getTeams()));
   };
 
   public shared query func getEuro2024Players() : async Result.Result<[T.InternationalPlayer], T.Error> {
-    return #ok([]);
+    return #ok(List.toArray(euro2024Instance.getPlayers()));
   };
 
   //submit fixture data

@@ -1,6 +1,9 @@
 import { writable } from "svelte/store";
 import { idlFactory } from "../../../../declarations/football_god_backend";
-import type { DataCacheDTO, InternationalTeam } from "../../../../declarations/football_god_backend/football_god_backend.did";
+import type {
+  DataCacheDTO,
+  InternationalTeam,
+} from "../../../../declarations/football_god_backend/football_god_backend.did";
 import { ActorFactory } from "../../utils/ActorFactory";
 import { isError, replacer } from "$lib/utils/helpers";
 
@@ -25,7 +28,8 @@ function createTeamStore() {
     let dataCacheValues: DataCacheDTO[] = newHashValues.ok;
 
     let categoryHash =
-      dataCacheValues.find((x: DataCacheDTO) => x.category === category) ?? null;
+      dataCacheValues.find((x: DataCacheDTO) => x.category === category) ??
+      null;
 
     const localHash = localStorage.getItem(`${category}_hash`);
 

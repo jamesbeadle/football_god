@@ -16,7 +16,6 @@ module {
 
   public class Euro2024() {
 
-    //todo add to stable storage
     private var teams : List.List<T.InternationalTeam> = List.fromArray(Euro2024Teams.Euro2024Teams().teams);
 
     private var userPredictions = Map.HashMap<T.PrincipalName, T.Euro2024Prediction>(0, Text.equal, Text.hash);
@@ -208,7 +207,7 @@ module {
       allPlayerIds.add(predictions.fPrediction.yellowCard);
       allPlayerIds.add(predictions.fPrediction.redCard);
 
-      let allPlayers = getAllPlayers();
+      let allPlayers = getPlayers();
 
       for (playerId in Iter.fromArray(Buffer.toArray(allPlayerIds))) {
 
@@ -246,7 +245,8 @@ module {
 
       return true;
     };
-    private func getAllPlayers() : List.List<T.InternationalPlayer> {
+
+    public func getPlayers() : List.List<T.InternationalPlayer> {
       let playerBuffer = Buffer.fromArray<T.InternationalPlayer>([]);
 
       for(team in Iter.fromList<T.InternationalTeam>(teams))
@@ -255,6 +255,17 @@ module {
       };
 
       return List.fromArray(Buffer.toArray(playerBuffer));
+    };
+
+    public func getTeams() : List.List<T.InternationalTeam> {
+      let teamBuffer = Buffer.fromArray<T.InternationalTeam>([]);
+
+      for(team in Iter.fromList<T.InternationalTeam>(teams))
+      {
+        teamBuffer.add(team);
+      };
+
+      return List.fromArray(Buffer.toArray(teamBuffer));
     };
 
   };
