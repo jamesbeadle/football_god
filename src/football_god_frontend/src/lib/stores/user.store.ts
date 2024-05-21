@@ -2,6 +2,7 @@ import { authStore } from "$lib/stores/auth.store";
 import { ActorFactory } from "../../utils/ActorFactory";
 import { isError } from "$lib/utils/helpers";
 import { writable } from "svelte/store";
+import type { Euro2024PredictionDTO } from "../../../../declarations/football_god_backend/football_god_backend.did";
 
 function createUserStore() {
   const { subscribe, set } = writable<any>(null);
@@ -135,6 +136,24 @@ function createUserStore() {
     set(profileData);
   }
 
+  async function saveEuro2024Predictions(dto: Euro2024PredictionDTO): Promise<any> {
+    try {
+      const identityActor = await ActorFactory.createIdentityActor(
+        authStore,
+        process.env.FOOTBALL_GOD_BACKEND_CANISTER_ID ?? "",
+      );
+      const result = await identityActor.submitEuro2024Prediction(dto);
+      if (isError(result)) {
+        console.error("Error saving Euro2024 prediction.");
+        return;
+      }
+      return result;
+    } catch (error) {
+      console.error("Error saving Euro2024 prediction.", error);
+      throw error;
+    }
+  }
+
   return {
     subscribe,
     sync,
@@ -143,6 +162,7 @@ function createUserStore() {
     updateProfilePicture,
     isUsernameAvailable,
     cacheProfile,
+    saveEuro2024Predictions
   };
 }
 

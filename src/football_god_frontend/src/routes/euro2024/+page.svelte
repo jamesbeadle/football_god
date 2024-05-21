@@ -10,6 +10,7 @@
   import { playerStore } from "$lib/stores/player.store";
   import { writable } from "svelte/store";
     import { getFlagComponent } from "$lib/utils/helpers";
+    import { userStore } from "$lib/stores/user.store";
  
   let prediction: Euro2024PredictionDTO | undefined;
 
@@ -167,8 +168,26 @@
     clearInterval(interval);
   });
 
-  const handlePredictionSubmit = () => {
-    // TODO: Submit the prediction to the backend
+  async function handlePredictionSubmit() {
+
+    if(!prediction){
+      return;
+    };
+
+    let dto: Euro2024PredictionDTO = {
+      'sfPrediction' : prediction?.sfPrediction,
+      'groupAPrediction' : prediction?.groupAPrediction,
+      'groupCPrediction' : prediction?.groupCPrediction,
+      'groupEPrediction' : prediction?.groupEPrediction,
+      'fPrediction' : prediction?.fPrediction,
+      'qfPrediction' : prediction?.qfPrediction,
+      'groupBPrediction' : prediction?.groupBPrediction,
+      'groupDPrediction' : prediction?.groupDPrediction,
+      'groupFPrediction' : prediction?.groupFPrediction,
+      'r16Prediction' : prediction?.r16Prediction,
+    };
+
+    await userStore.saveEuro2024Predictions(dto);
   };
 
   function selectWinner(stage: number) {
@@ -2129,6 +2148,7 @@
     <div class="bg-panel rounded-md p-4 mt-4">
       <div class="flex justify-center">
         <button
+          on:click={handlePredictionSubmit}
           type="submit"
           class="inline-flex justify-center px-4 py-2 border border-transparent shadow-sm font-bold rounded-md text-white bg-OPENFPLPURPLE hover:bg-OPENFPL hover:text-GRAY focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
         >
