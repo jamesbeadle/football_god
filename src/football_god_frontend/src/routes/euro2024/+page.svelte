@@ -1566,9 +1566,9 @@
 
     <div class="horizontal-divider my-4" />
 
-    <div class="flex flex-row items-center bg-OPENFPL text-GRAY border border-white rounded-md p-2 text-sm">
+    <div class="flex flex-row items-center bg-OPENFPL text-GRAY border border-white rounded-md p-2 my-4 text-sm">
       <div class="w-1/12 flex">
-        <p class="w-full text-center">Group</p>
+        <p class="w-full text-center">Stage</p>
       </div>
       <div class="w-11/12 flex flex-row space-x-2">
         <div class="w-1/6 flex">
@@ -1592,8 +1592,8 @@
       </div>
     </div>
 
-    <div class="flex flex-row items-center bg-green-700 p-4">
-      <div class="w-1/12">Round of 16</div>
+    <div class="flex flex-row items-center bg-gray-600 p-2 mt-4 rounded-md text-sm">
+      <div class="w-1/12 text-center">R16</div>
       <div class="w-11/12 flex flex-row space-x-4">
         <div class="w-1/6">
           <button
@@ -1694,7 +1694,7 @@
       </div>
     </div>
 
-    <div class="flex flex-row my-4 space-x-2">
+    <div class="flex flex-row my-4 space-x-2 text-sm">
       <div class="w-1/12" />
       <div class="w-11/12 flex flex-row space-x-4">
         <div class="w-1/3">
@@ -1721,8 +1721,8 @@
       </div>
     </div>
 
-    <div class="flex flex-row items-center bg-gray-800 p-4">
-      <div class="w-1/12">Quarter Final</div>
+    <div class="flex flex-row items-center bg-blue-700 p-2 mt-4 rounded-md text-sm">
+      <div class="w-1/12 text-center">QF</div>
       <div class="w-11/12 flex flex-row space-x-4">
         <div class="w-1/6">
           <button
@@ -1823,7 +1823,7 @@
       </div>
     </div>
 
-    <div class="flex flex-row my-4 space-x-2">
+    <div class="flex flex-row my-4 space-x-2 text-sm">
       <div class="w-1/12" />
       <div class="w-11/12 flex flex-row space-x-4">
         <div class="w-1/3">
@@ -1850,8 +1850,8 @@
       </div>
     </div>
 
-    <div class="flex flex-row items-center bg-gray-900 p-4">
-      <div class="w-1/12">Semi Final</div>
+    <div class="flex flex-row items-center bg-blue-800 p-2 mt-4 rounded-md text-sm">
+      <div class="w-1/12 text-center">SF</div>
       <div class="w-11/12 flex flex-row space-x-4">
         <div class="w-1/6">
           <button
@@ -1952,7 +1952,7 @@
       </div>
     </div>
 
-    <div class="flex flex-row my-4 space-x-2">
+    <div class="flex flex-row my-4 space-x-2 text-sm">
       <div class="w-1/12" />
       <div class="w-11/12 flex flex-row space-x-4">
         <div class="w-1/3">
@@ -1979,8 +1979,8 @@
       </div>
     </div>
 
-    <div class="flex flex-row items-center bg-yellow-600 p-4">
-      <div class="w-1/12">Final</div>
+    <div class="flex flex-row items-center bg-blue-900 p-2 mt-4 rounded-md text-sm">
+      <div class="w-1/12 text-center">F</div>
       <div class="w-11/12 flex flex-row space-x-4">
         <div class="w-1/6">
           <button
@@ -2081,7 +2081,7 @@
       </div>
     </div>
 
-    <div class="flex flex-row my-4 space-x-2">
+    <div class="flex flex-row my-4 space-x-2 text-sm">
       <div class="w-1/12" />
       <div class="w-11/12 flex flex-row space-x-4">
         <div class="w-1/3">
@@ -2112,7 +2112,7 @@
       <div class="flex justify-center">
         <button
           type="submit"
-          class="inline-flex justify-center px-4 py-2 border border-transparent shadow-sm font-bold rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+          class="inline-flex justify-center px-4 py-2 border border-transparent shadow-sm font-bold rounded-md text-white bg-OPENFPLPURPLE hover:bg-OPENFPL hover:text-GRAY focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
         >
           <p class="text-xl px-4">
             Play<br /> <span class="text-xxs">(100 $FPL)</span>
