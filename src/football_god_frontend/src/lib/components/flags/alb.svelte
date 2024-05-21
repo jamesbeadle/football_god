@@ -5,5 +5,5 @@
 
 <svelte:component
   this={getFlagComponent(2)}
-  class="w-16"
+  class="w-8"
 />

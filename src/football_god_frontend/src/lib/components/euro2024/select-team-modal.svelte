@@ -2,9 +2,10 @@
   import { Modal } from "@dfinity/gix-components";
   import { SvelteComponent, onMount } from "svelte";
   import { toastsError } from "$lib/stores/toasts.store";
-  import { teamStore } from "$lib/stores/teams.store";
+  import type { InternationalTeam } from "../../../../../declarations/football_god_backend/football_god_backend.did";
 
   export let visible: boolean;
+  export let teams: InternationalTeam[];
 
   export let confirmTeamSelection: (teamId: number) => void;
   export let closeTeamSelectionModal: () => void;
@@ -13,8 +14,7 @@
 
   onMount(async () => {
     try {
-      await teamStore.sync();
-      if ($teamStore.length == 0) return;
+      if (teams.length == 0) return;
     } catch (error) {
       toastsError({
         msg: { text: "Error fetching add player data." },
@@ -98,7 +98,7 @@
       </div>
     {:else}
       <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 md:gap-8">
-        {#each $teamStore as team, index (team.id)}
+        {#each teams as team, index (team.id)}
           <button on:click={() => confirmTeamSelection(team.id)}>
             <div class="team-card bg-OPENFPLPURPLE p-4 border rounded-md flex flex-col items-center hover:bg-OPENFPL">
               {#await getFlagComponent(team.countryCode) then FlagComponent}

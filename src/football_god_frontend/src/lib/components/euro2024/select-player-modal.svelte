@@ -1,26 +1,24 @@
 <script lang="ts">
   import { Modal } from "@dfinity/gix-components";
   import { SvelteComponent, onMount } from "svelte";
-  import { playerStore } from "$lib/stores/player.store";
   import { toastsError } from "$lib/stores/toasts.store";
-  import { teamStore } from "$lib/stores/teams.store";
-  import type { Position } from "../../../../../declarations/football_god_backend/football_god_backend.did";
+  import type { InternationalPlayer, InternationalTeam, Position } from "../../../../../declarations/football_god_backend/football_god_backend.did";
     
   export let visible: boolean;
   export let confirmPlayerSelection: (playerId: number) => void;
   export let closePlayerSelectionModal: () => void;
+  export let teams: InternationalTeam[];
+  export let players: InternationalPlayer[];
 
   let isLoading = true;
   let showPlayers = false;
   let selectedTeamId = 0;
-  $: teamPlayers = (selectedTeamId > 0) ? $playerStore.filter(x => x.teamId == selectedTeamId) : [];
+  $: teamPlayers = (selectedTeamId > 0) ? players.filter(x => x.teamId == selectedTeamId) : [];
 
   onMount(async () => {
     try {
-      await teamStore.sync();
-      if ($teamStore.length == 0) return;
-      await playerStore.sync();
-      if ($playerStore.length == 0) return;
+      if (teams.length == 0) return;
+      if (players.length == 0) return;
     } catch (error) {
       toastsError({
         msg: { text: "Error fetching add player data." },
@@ -161,7 +159,7 @@
             <h4 class="my-4 mt-8">{positionHeaders[group.position]}</h4>
             <div class="flex flex-col gap-4">
               {#each group.players as player}
-                {@const team = $teamStore.find(x => x.id == player.teamId)}
+                {@const team = teams.find(x => x.id == player.teamId)}
                 <button on:click={() => confirmPlayerSelection(player.id)} class="flex items-center p-4 border rounded-md hover:bg-OPENFPLPURPLE">
                   {#if team}
                     <div class="flex flex-col">
@@ -190,7 +188,7 @@
         </div>  
         <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 md:gap-8">
           
-          {#each $teamStore as team, index (team.id)}
+          {#each teams as team, index (team.id)}
             <button on:click={() => selectTeam(team.id)}>
               <div class="team-card bg-OPENFPLPURPLE p-4 border rounded-md flex flex-col items-center hover:bg-OPENFPL">
                 {#await getFlagComponent(team.countryCode) then FlagComponent}

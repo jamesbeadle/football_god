@@ -1,8 +1,6 @@
 <script lang="ts">
   import type {
     Euro2024PredictionDTO,
-    InternationalPlayer,
-    InternationalTeam,
   } from "../../../../declarations/football_god_backend/football_god_backend.did";
   import Layout from "../Layout.svelte";
   import { onMount, onDestroy } from "svelte";
@@ -11,9 +9,8 @@
   import { teamStore } from "$lib/stores/teams.store";
   import { playerStore } from "$lib/stores/player.store";
   import { writable } from "svelte/store";
+    import { getFlagComponent } from "$lib/utils/helpers";
  
-  let teams: InternationalTeam[] = [];
-  let players: InternationalPlayer[] = [];
   let prediction: Euro2024PredictionDTO | undefined;
 
   let canEnterSweepstake = false; // TODO Update UI to use
@@ -23,8 +20,18 @@
   let predictionType = -1;
   let showSelectTeamModal = false;
   let showSelectPlayerModal = false;
-  const countdown = writable("");
   let interval: NodeJS.Timeout;
+
+  const countdown = writable("");
+
+  const groupStageTeams = [
+    [10, 17, 11, 22],
+    [21, 4, 12, 1],
+    [20, 6, 18, 7],
+    [14, 13, 2, 8],
+    [3, 19, 16, 24],
+    [23, 9, 15, 5]
+  ];
 
   const fetchPrediction = async (): Promise<
     Euro2024PredictionDTO | undefined
@@ -857,6 +864,8 @@
       {confirmPlayerSelection}
       visible={showSelectPlayerModal}
       {closePlayerSelectionModal}
+      players={selectedStage <= 5 ? $playerStore.filter(player => groupStageTeams[selectedStage].includes(player.teamId)) : $playerStore}
+      teams={selectedStage <= 5 ? $teamStore.filter(team => groupStageTeams[selectedStage].includes(team.id)) : $teamStore}
      />
   {/if}
 
@@ -865,6 +874,7 @@
       {confirmTeamSelection}
       visible={showSelectTeamModal}
       {closeTeamSelectionModal}
+      teams={selectedStage <= 5 ? $teamStore.filter(team => groupStageTeams[selectedStage].includes(team.id)) : $teamStore}
     />
   {/if}
 
@@ -968,7 +978,15 @@
             class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-OPENFPLPURPLE hover:bg-OPENFPL hover:text-GRAY focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2"
             >
               {#if prediction?.groupAPrediction?.loser}
-                {getTeamName(prediction.groupAPrediction.loser)}
+                <div class="flex flex-row items-center">
+                  {#await getFlagComponent(prediction?.groupAPrediction?.loser) then FlagComponent}
+                    {#if FlagComponent}
+                      <svelte:component this={FlagComponent} />
+                    {/if}
+                    {/await}
+                    <p class="ml-2">{getTeamName(prediction.groupAPrediction.loser)}</p>
+                </div>
+                
               {:else}
                 Select a Team
               {/if}
