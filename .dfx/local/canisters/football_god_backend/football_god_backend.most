@@ -1,4 +1,5 @@
 // Version: 1.0.0
+type DataCache = {category : Text; hash : Text};
 type Euro2024Prediction =
   {
     fPrediction : PredictionSet;
@@ -83,6 +84,7 @@ type UserGameweek =
 actor {
   stable var activeGameweek : Nat8;
   stable var activeSeason : Nat16;
+  stable var dataCacheHashes : ?(DataCache, List<DataCache>);
   stable var stable_euro2024_predictions :
     [(PrincipalName, Euro2024Prediction)];
   stable var stable_nextFixtureId : Nat32;

@@ -1,8 +1,8 @@
 import { writable } from "svelte/store";
 import { idlFactory } from "../../../../declarations/football_god_backend";
-import type { InternationalTeam } from "../../../../declarations/football_god_backend/football_god_backend.did";
+import type { DataCacheDTO, InternationalTeam } from "../../../../declarations/football_god_backend/football_god_backend.did";
 import { ActorFactory } from "../../utils/ActorFactory";
-import { isError } from "../utils/helpers";
+import { isError, replacer } from "$lib/utils/helpers";
 
 function createTeamStore() {
   const { subscribe, set } = writable<InternationalTeam[]>([]);
@@ -22,18 +22,15 @@ function createTeamStore() {
       return;
     }
 
-    /*
-
     let dataCacheValues: DataCacheDTO[] = newHashValues.ok;
 
     let categoryHash =
-      dataCacheValues.find((x: DataCacheDTO) => x.category === category) ??
-      null;
+      dataCacheValues.find((x: DataCacheDTO) => x.category === category) ?? null;
 
     const localHash = localStorage.getItem(`${category}_hash`);
 
     if (categoryHash?.hash != localHash) {
-      const updatedTeamsData = await actor.getClubs();
+      const updatedTeamsData = await actor.getEuro2024Teams();
 
       if (isError(updatedTeamsData)) {
         return [];
@@ -41,7 +38,7 @@ function createTeamStore() {
 
       localStorage.setItem(
         category,
-        JSON.stringify(updatedTeamsData.ok, replacer)
+        JSON.stringify(updatedTeamsData.ok, replacer),
       );
       localStorage.setItem(`${category}_hash`, categoryHash?.hash ?? "");
       set(updatedTeamsData.ok);
@@ -55,7 +52,6 @@ function createTeamStore() {
       }
       set(cachedTeams);
     }
-    */
   }
 
   return {

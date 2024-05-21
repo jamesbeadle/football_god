@@ -1,8 +1,8 @@
 import { writable } from "svelte/store";
 import { idlFactory } from "../../../../declarations/football_god_backend";
-import type { InternationalPlayer } from "../../../../declarations/football_god_backend/football_god_backend.did";
+import type { DataCacheDTO, InternationalPlayer } from "../../../../declarations/football_god_backend/football_god_backend.did";
 import { ActorFactory } from "../../utils/ActorFactory";
-import { isError } from "../utils/helpers";
+import { isError, replacer } from "$lib/utils/helpers";
 
 function createPlayerStore() {
   const { subscribe, set } = writable<InternationalPlayer[]>([]);
@@ -21,17 +21,16 @@ function createPlayerStore() {
       console.error("Error syncing player store");
       return;
     }
-    /*
+
     let dataCacheValues: DataCacheDTO[] = newHashValues.ok;
 
     let categoryHash =
-      dataCacheValues.find((x: DataCacheDTO) => x.category === category) ??
-      null;
+      dataCacheValues.find((x: DataCacheDTO) => x.category === category) ?? null;
 
     const localHash = localStorage.getItem(`${category}_hash`);
 
     if (categoryHash?.hash != localHash) {
-      const updatedPlayersData = await actor.getClubs();
+      const updatedPlayersData = await actor.getEuro2024Players();
 
       if (isError(updatedPlayersData)) {
         return [];
@@ -39,7 +38,7 @@ function createPlayerStore() {
 
       localStorage.setItem(
         category,
-        JSON.stringify(updatedPlayersData.ok, replacer)
+        JSON.stringify(updatedPlayersData.ok, replacer),
       );
       localStorage.setItem(`${category}_hash`, categoryHash?.hash ?? "");
       set(updatedPlayersData.ok);
@@ -47,13 +46,12 @@ function createPlayerStore() {
       const cachedPlayersData = localStorage.getItem(category);
       let cachedPlayers: InternationalPlayer[] = [];
       try {
-        cachedplayers = JSON.parse(cachedplayersData || "[]");
+        cachedPlayers = JSON.parse(cachedPlayersData || "[]");
       } catch (e) {
         cachedPlayers = [];
       }
       set(cachedPlayers);
     }
-    */
   }
 
   return {

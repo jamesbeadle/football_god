@@ -10,6 +10,11 @@ module Types {
     #DecodeError;
   };
 
+  public type DataCache = {
+    category : Text;
+    hash : Text;
+  };
+
   public type Season = {
     id : Nat16;
     name : Text;

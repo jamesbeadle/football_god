@@ -49,6 +49,16 @@ actor Self {
   private stable var stable_nextTeamId : Nat16 = 0;
   private stable var stable_euro2024_predictions : [(T.PrincipalName, T.Euro2024Prediction)] = [];
 
+  private stable var dataCacheHashes : List.List<T.DataCache> = List.fromArray([
+    { category = "teams"; hash = "NEW_DEFAULT_VALUE" },
+    { category = "fixtures"; hash = "NEW_DEFAULT_VALUE" },
+    { category = "players"; hash = "NEW_DEFAULT_VALUE" }
+  ]);
+
+  public shared query func getDataHashes() : async Result.Result<[DTOs.DataCacheDTO], T.Error> {
+    return #ok(List.toArray(dataCacheHashes));
+  };
+
   //admin functions
   private func isAdminForCaller(caller : Principal) : Bool {
     switch (Array.find<Principal>(admins, func(admin) { admin == caller })) {

@@ -50,6 +50,11 @@ type Season =
    name: text;
    year: nat16;
  };
+type Result_4 = 
+ variant {
+   err: Error;
+   ok: vec DataCacheDTO;
+ };
 type Result_3 = 
  variant {
    err: Error;
@@ -90,7 +95,7 @@ type PredictionSet =
 type Position = 
  variant {
    Defender;
-   Foward;
+   Forward;
    Goalkeeper;
    Midfielder;
  };
@@ -241,6 +246,11 @@ type Error =
    NotAuthorized;
    NotFound;
  };
+type DataCacheDTO = 
+ record {
+   category: text;
+   hash: text;
+ };
 type CorrectPredictionsDTO = 
  record {
    awayTeamGoals: nat8;
@@ -284,6 +294,7 @@ service : {
   getAdminDTO: () -> (AdminDTO) query;
   getCorrectPredictionsDTO: (nat16, nat8, nat32, nat, nat) ->
    (CorrectPredictionsDTO);
+  getDataHashes: () -> (Result_4) query;
   getEuro2024DTO: () -> (Result_3) query;
   getEuro2024Players: () -> (Result_2) query;
   getEuro2024Teams: () -> (Result_1) query;

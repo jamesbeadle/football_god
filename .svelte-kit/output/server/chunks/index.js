@@ -1970,7 +1970,7 @@ function get_data(event, options2, nodes, global) {
   let promise_id = 1;
   let count = 0;
   const { iterator, push, done } = create_async_iterator();
-  function replacer(thing) {
+  function replacer2(thing) {
     if (typeof thing?.then === "function") {
       const id = promise_id++;
       count += 1;
@@ -1990,7 +1990,7 @@ function get_data(event, options2, nodes, global) {
           count -= 1;
           let str;
           try {
-            str = devalue.uneval({ id, data, error }, replacer);
+            str = devalue.uneval({ id, data, error }, replacer2);
           } catch (e) {
             error = await handle_error_and_jsonify(
               event,
@@ -1998,7 +1998,7 @@ function get_data(event, options2, nodes, global) {
               new Error(`Failed to serialize promise while rendering ${event.route.id}`)
             );
             data = void 0;
-            str = devalue.uneval({ id, data, error }, replacer);
+            str = devalue.uneval({ id, data, error }, replacer2);
           }
           push(`<script>${global}.resolve(${str})<\/script>
 `);
@@ -2013,7 +2013,7 @@ function get_data(event, options2, nodes, global) {
     const strings = nodes.map((node) => {
       if (!node)
         return "null";
-      return `{"type":"data","data":${devalue.uneval(node.data, replacer)},${stringify_uses(node)}${node.slash ? `,"slash":${JSON.stringify(node.slash)}` : ""}}`;
+      return `{"type":"data","data":${devalue.uneval(node.data, replacer2)},${stringify_uses(node)}${node.slash ? `,"slash":${JSON.stringify(node.slash)}` : ""}}`;
     });
     return {
       data: `[${strings.join(",")}]`,
@@ -3482,7 +3482,7 @@ const options = {
 		<div class="error">
 			<span class="status">` + status + '</span>\n			<div class="message">\n				<h1>' + message + "</h1>\n			</div>\n		</div>\n	</body>\n</html>\n"
   },
-  version_hash: "4y68j4"
+  version_hash: "1ujk2hm"
 };
 async function get_hooks() {
   return {};
@@ -4184,6 +4184,8 @@ const idlFactory = ({ IDL }) => {
     "gameweekNumber": IDL.Nat8,
     "awayTeamGoals": IDL.Nat8
   });
+  const DataCacheDTO = IDL.Record({ "hash": IDL.Text, "category": IDL.Text });
+  const Result_4 = IDL.Variant({ "ok": IDL.Vec(DataCacheDTO), "err": Error2 });
   const PlayerId = IDL.Nat16;
   const TeamId = IDL.Nat16;
   const TournamentStage = IDL.Variant({
@@ -4222,8 +4224,8 @@ const idlFactory = ({ IDL }) => {
   const Result_3 = IDL.Variant({ "ok": Euro2024PredictionDTO, "err": Error2 });
   const Position = IDL.Variant({
     "Goalkeeper": IDL.Null,
-    "Foward": IDL.Null,
     "Midfielder": IDL.Null,
+    "Forward": IDL.Null,
     "Defender": IDL.Null
   });
   const InternationalPlayer = IDL.Record({
@@ -4384,6 +4386,7 @@ const idlFactory = ({ IDL }) => {
       [CorrectPredictionsDTO],
       []
     ),
+    "getDataHashes": IDL.Func([], [Result_4], ["query"]),
     "getEuro2024DTO": IDL.Func([], [Result_3], ["query"]),
     "getEuro2024Players": IDL.Func([], [Result_2], ["query"]),
     "getEuro2024Teams": IDL.Func([], [Result_1], ["query"]),
@@ -4461,7 +4464,7 @@ const idlFactory = ({ IDL }) => {
     "withdrawICP": IDL.Func([IDL.Float64], [Result], [])
   });
 };
-var define_process_env_default$3 = { FOOTBALL_GOD_BACKEND_CANISTER_ID: "bd3sg-teaaa-aaaaa-qaaba-cai", FOOTBALL_GOD_FRONTEND_CANISTER_ID: "be2us-64aaa-aaaaa-qaabq-cai", DFX_NETWORK: "local" };
+var define_process_env_default$3 = { __CANDID_UI_CANISTER_ID: "br5f7-7uaaa-aaaaa-qaaca-cai", FOOTBALL_GOD_BACKEND_CANISTER_ID: "bd3sg-teaaa-aaaaa-qaaba-cai", FOOTBALL_GOD_FRONTEND_CANISTER_ID: "be2us-64aaa-aaaaa-qaabq-cai", DFX_NETWORK: "local" };
 const canisterId = define_process_env_default$3.CANISTER_ID_FOOTBALL_GOD_BACKEND;
 const createActor = (canisterId2, options2 = {}) => {
   const agent = options2.agent || new HttpAgent({ ...options2.agentOptions });
@@ -4562,10 +4565,17 @@ function uint8ArrayToBase64(bytes) {
   const binary = Array.from(bytes).map((byte) => String.fromCharCode(byte)).join("");
   return btoa(binary);
 }
+function replacer(key2, value) {
+  if (typeof value === "bigint") {
+    return value.toString();
+  } else {
+    return value;
+  }
+}
 function isError(response) {
   return response && response.err !== void 0;
 }
-var define_process_env_default$2 = { FOOTBALL_GOD_BACKEND_CANISTER_ID: "bd3sg-teaaa-aaaaa-qaaba-cai", FOOTBALL_GOD_FRONTEND_CANISTER_ID: "be2us-64aaa-aaaaa-qaabq-cai", DFX_NETWORK: "local" };
+var define_process_env_default$2 = { __CANDID_UI_CANISTER_ID: "br5f7-7uaaa-aaaaa-qaaca-cai", FOOTBALL_GOD_BACKEND_CANISTER_ID: "bd3sg-teaaa-aaaaa-qaaba-cai", FOOTBALL_GOD_FRONTEND_CANISTER_ID: "be2us-64aaa-aaaaa-qaabq-cai", DFX_NETWORK: "local" };
 function createPlayerStore() {
   const { subscribe: subscribe2, set } = writable([]);
   let actor = ActorFactory.createActor(
@@ -4573,11 +4583,36 @@ function createPlayerStore() {
     define_process_env_default$2.FOOTBALL_GOD_BACKEND_CANISTER_ID
   );
   async function sync() {
+    const category = "players";
     const newHashValues = await actor.getDataHashes();
     let error = isError(newHashValues);
     if (error) {
       console.error("Error syncing player store");
       return;
+    }
+    let dataCacheValues = newHashValues.ok;
+    let categoryHash = dataCacheValues.find((x) => x.category === category) ?? null;
+    const localHash = localStorage.getItem(`${category}_hash`);
+    if (categoryHash?.hash != localHash) {
+      const updatedPlayersData = await actor.getClubs();
+      if (isError(updatedPlayersData)) {
+        return [];
+      }
+      localStorage.setItem(
+        category,
+        JSON.stringify(updatedPlayersData.ok, replacer)
+      );
+      localStorage.setItem(`${category}_hash`, categoryHash?.hash ?? "");
+      set(updatedPlayersData.ok);
+    } else {
+      const cachedPlayersData = localStorage.getItem(category);
+      let cachedPlayers = [];
+      try {
+        cachedPlayers = JSON.parse(cachedPlayersData || "[]");
+      } catch (e) {
+        cachedPlayers = [];
+      }
+      set(cachedPlayers);
     }
   }
   return {
@@ -4586,7 +4621,7 @@ function createPlayerStore() {
   };
 }
 createPlayerStore();
-var define_process_env_default$1 = { FOOTBALL_GOD_BACKEND_CANISTER_ID: "bd3sg-teaaa-aaaaa-qaaba-cai", FOOTBALL_GOD_FRONTEND_CANISTER_ID: "be2us-64aaa-aaaaa-qaabq-cai", DFX_NETWORK: "local" };
+var define_process_env_default$1 = { __CANDID_UI_CANISTER_ID: "br5f7-7uaaa-aaaaa-qaaca-cai", FOOTBALL_GOD_BACKEND_CANISTER_ID: "bd3sg-teaaa-aaaaa-qaaba-cai", FOOTBALL_GOD_FRONTEND_CANISTER_ID: "be2us-64aaa-aaaaa-qaabq-cai", DFX_NETWORK: "local" };
 function createTeamStore() {
   const { subscribe: subscribe2, set } = writable([]);
   let actor = ActorFactory.createActor(
@@ -4610,8 +4645,8 @@ createTeamStore();
 const Page$6 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
   return `${validate_component(Layout, "Layout").$$render($$result, {}, {}, {
     default: () => {
-      return `${``} ${``} <div class="bg-panel rounded-md p-4"><p class="text-xl my-2 mb-4" data-svelte-h="svelte-15uwobf">Welcome to the FootballGod Euro 2024 prediction game.</p> <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2" data-svelte-h="svelte-1jizq7n"><div class="flex flex-col bg-gray-700 rounded-lg overflow-hidden"><div class="p-4 flex flex-col justify-between h-full"><p class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm font-bold rounded-md text-white items-center"><img src="FPLCoin.png" alt="fpl" class="w-8 h-8 mr-2 mb-1">
-            Prize Pool: 0.00 $FPL</p></div></div> <div class="flex flex-col bg-gray-700 rounded-lg overflow-hidden"><div class="flex flex-col justify-center h-full"><p class="inline-flex justify-center py-2 px-4 mx-2 border border-transparent shadow-sm font-bold rounded-md text-white">Total Entries: 0</p></div></div> <div class="flex flex-col bg-gray-700 rounded-lg overflow-hidden"><div class="flex flex-col justify-center h-full"><button type="submit" class="inline-flex justify-center py-2 px-4 mx-2 border border-transparent shadow-sm font-bold rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">View Leaderboard</button></div></div></div> <p class="my-4" data-svelte-h="svelte-t8s52k">Make your selections below and enter the sweepstake to be in with a chance
+      return `${``} ${``} <div class="bg-panel rounded-md p-4"><p class="text-xl my-2 mb-4" data-svelte-h="svelte-15uwobf">Welcome to the FootballGod Euro 2024 prediction game.</p> <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2" data-svelte-h="svelte-5q5mr0"><div class="flex flex-col bg-gray-700 rounded-lg overflow-hidden"><div class="p-4 flex flex-col justify-between h-full"><p class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm font-bold rounded-md text-white items-center"><img src="FPLCoin.png" alt="fpl" class="w-8 h-8 mr-2 mb-1">
+            Prize Pool: 0.00 $FPL</p></div></div> <div class="flex flex-col bg-gray-700 rounded-lg overflow-hidden"><div class="flex flex-col justify-center h-full"><p class="inline-flex justify-center py-2 px-4 mx-2 border border-transparent shadow-sm font-bold rounded-md text-white">Total Entries: 0</p></div></div> <div class="flex flex-col bg-gray-700 rounded-lg overflow-hidden"><div class="flex flex-col justify-center h-full"><a href="/leaderboard" class="inline-flex"><button type="submit" class="w-full justify-center py-2 px-4 mx-2 border border-transparent shadow-sm font-bold rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">View Leaderboard</button></a></div></div></div> <p class="my-4" data-svelte-h="svelte-t8s52k">Make your selections below and enter the sweepstake to be in with a chance
       of winning $FPL.</p> <div class="horizontal-divider my-4 mb-8"></div> <div class="flex flex-row items-center bg-black border rounded-md p-4 m-4" data-svelte-h="svelte-1bt2qdi"><div class="w-1/12"></div> <div class="w-11/12 flex flex-row space-x-4"><div class="w-1/6 flex"><p class="w-full text-center border-x">Winner</p></div> <div class="w-1/6 flex"><p class="w-full text-center border-x">Loser</p></div> <div class="w-1/6 flex"><p class="w-full text-center border-x">To Score</p></div> <div class="w-1/6 flex"><p class="w-full text-center border-x">To Assist</p></div> <div class="w-1/6 flex"><p class="w-full text-center border-x">Yellow Card</p></div> <div class="w-1/6 flex"><p class="w-full text-center border-x">Red Card</p></div></div></div> <div class="flex flex-row items-center bg-gray-400 p-4 m-4 rounded-md"><div class="w-1/12" data-svelte-h="svelte-1itpdb2">Group A</div> <div class="w-11/12 flex flex-row space-x-4"><div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-4nwbji">Select a Team</button> <div class="text-right" data-svelte-h="svelte-1nrc4qq"><p class="text-xs mt-4">5 Points</p></div></div> <div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-w1uisa">Select a Team</button> <div class="text-right" data-svelte-h="svelte-1nrc4qq"><p class="text-xs mt-4">5 Points</p></div></div> <div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-bk4oel">Select a Player</button> <div class="text-right" data-svelte-h="svelte-1yzcc3s"><p class="text-xs mt-4">10 Points</p></div></div> <div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-1mqpk8h">Select a Player</button> <div class="text-right" data-svelte-h="svelte-1yzcc3s"><p class="text-xs mt-4">10 Points</p></div></div> <div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-gs3yvn">Select a Player</button> <div class="text-right" data-svelte-h="svelte-1nrc4qq"><p class="text-xs mt-4">5 Points</p></div></div> <div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-rjk8c6">Select a Player</button> <div class="text-right" data-svelte-h="svelte-1yzcc3s"><p class="text-xs mt-4">10 Points</p></div></div></div></div> <div class="flex flex-row items-center bg-gray-500 p-4 m-4 rounded-md"><div class="w-1/12" data-svelte-h="svelte-1qqz6f1">Group B</div> <div class="w-11/12 flex flex-row space-x-4"><div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-1u8114h">Select a Team</button> <div class="text-right" data-svelte-h="svelte-1nrc4qq"><p class="text-xs mt-4">5 Points</p></div></div> <div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-1c330r3">Select a Team</button> <div class="text-right" data-svelte-h="svelte-1nrc4qq"><p class="text-xs mt-4">5 Points</p></div></div> <div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-1qiyevq">Select a Player</button> <div class="text-right" data-svelte-h="svelte-1yzcc3s"><p class="text-xs mt-4">10 Points</p></div></div> <div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-p01c32">Select a Player</button> <div class="text-right" data-svelte-h="svelte-1yzcc3s"><p class="text-xs mt-4">10 Points</p></div></div> <div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-1ife4go">Select a Player</button> <div class="text-right" data-svelte-h="svelte-1nrc4qq"><p class="text-xs mt-4">5 Points</p></div></div> <div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-1q6pykv">Select a Player</button> <div class="text-right" data-svelte-h="svelte-1yzcc3s"><p class="text-xs mt-4">10 Points</p></div></div></div></div> <div class="flex flex-row items-center bg-gray-400 p-4 m-4 rounded-md"><div class="w-1/12" data-svelte-h="svelte-1a8frqk">Group C</div> <div class="w-11/12 flex flex-row space-x-4"><div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-11x9wls">Select a Team</button> <div class="text-right" data-svelte-h="svelte-1nrc4qq"><p class="text-xs mt-4">5 Points</p></div></div> <div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-4f6s10">Select a Team</button> <div class="text-right" data-svelte-h="svelte-1nrc4qq"><p class="text-xs mt-4">5 Points</p></div></div> <div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-hqb81f">Select a Player</button> <div class="text-right" data-svelte-h="svelte-1yzcc3s"><p class="text-xs mt-4">10 Points</p></div></div> <div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-1147c0r">Select a Player</button> <div class="text-right" data-svelte-h="svelte-1yzcc3s"><p class="text-xs mt-4">10 Points</p></div></div> <div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-1bepoul">Select a Player</button> <div class="text-right" data-svelte-h="svelte-1nrc4qq"><p class="text-xs mt-4">5 Points</p></div></div> <div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-afv7nk">Select a Player</button> <div class="text-right" data-svelte-h="svelte-1yzcc3s"><p class="text-xs mt-4">10 Points</p></div></div></div></div> <div class="flex flex-row items-center bg-gray-500 p-4 m-4 rounded-md"><div class="w-1/12" data-svelte-h="svelte-jsk4sb">Group D</div> <div class="w-11/12 flex flex-row space-x-4"><div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-19xh2zv">Select a Team</button> <div class="text-right" data-svelte-h="svelte-1nrc4qq"><p class="text-xs mt-4">5 Points</p></div></div> <div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-7qmkkh">Select a Team</button> <div class="text-right" data-svelte-h="svelte-1nrc4qq"><p class="text-xs mt-4">5 Points</p></div></div> <div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-1sxrujw">Select a Player</button> <div class="text-right" data-svelte-h="svelte-1yzcc3s"><p class="text-xs mt-4">10 Points</p></div></div> <div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-76g2ps">Select a Player</button> <div class="text-right" data-svelte-h="svelte-1yzcc3s"><p class="text-xs mt-4">10 Points</p></div></div> <div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-1jkq6yy">Select a Player</button> <div class="text-right" data-svelte-h="svelte-1nrc4qq"><p class="text-xs mt-4">5 Points</p></div></div> <div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-1gbs4bl">Select a Player</button> <div class="text-right" data-svelte-h="svelte-1yzcc3s"><p class="text-xs mt-4">10 Points</p></div></div></div></div> <div class="flex flex-row items-center bg-gray-400 p-4 m-4 rounded-md"><div class="w-1/12" data-svelte-h="svelte-vhucmi">Group E</div> <div class="w-11/12 flex flex-row space-x-4"><div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-1y7qrcq">Select a Team</button> <div class="text-right" data-svelte-h="svelte-1nrc4qq"><p class="text-xs mt-4">5 Points</p></div></div> <div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-1t255py">Select a Team</button> <div class="text-right" data-svelte-h="svelte-1nrc4qq"><p class="text-xs mt-4">5 Points</p></div></div> <div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-1ek7tft">Select a Player</button> <div class="text-right" data-svelte-h="svelte-1yzcc3s"><p class="text-xs mt-4">10 Points</p></div></div> <div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-wjx6il">Select a Player</button> <div class="text-right" data-svelte-h="svelte-1yzcc3s"><p class="text-xs mt-4">10 Points</p></div></div> <div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-iohldr">Select a Player</button> <div class="text-right" data-svelte-h="svelte-1nrc4qq"><p class="text-xs mt-4">5 Points</p></div></div> <div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-d8vboi">Select a Player</button> <div class="text-right" data-svelte-h="svelte-1yzcc3s"><p class="text-xs mt-4">10 Points</p></div></div></div></div> <div class="flex flex-row items-center bg-gray-500 p-4 m-4 rounded-md"><div class="w-1/12" data-svelte-h="svelte-1p3y09l">Group F</div> <div class="w-11/12 flex flex-row space-x-4"><div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-8twwml">Select a Team</button> <div class="text-right" data-svelte-h="svelte-1nrc4qq"><p class="text-xs mt-4">5 Points</p></div></div> <div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-bbsawb">Select a Team</button> <div class="text-right" data-svelte-h="svelte-1nrc4qq"><p class="text-xs mt-4">5 Points</p></div></div> <div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-kr038y">Select a Player</button> <div class="text-right" data-svelte-h="svelte-1yzcc3s"><p class="text-xs mt-4">10 Points</p></div></div> <div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-r623uy">Select a Player</button> <div class="text-right" data-svelte-h="svelte-1yzcc3s"><p class="text-xs mt-4">10 Points</p></div></div> <div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-1q7rtn8">Select a Player</button> <div class="text-right" data-svelte-h="svelte-1nrc4qq"><p class="text-xs mt-4">5 Points</p></div></div> <div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-11k93vv">Select a Player</button> <div class="text-right" data-svelte-h="svelte-1yzcc3s"><p class="text-xs mt-4">10 Points</p></div></div></div></div> <div class="flex flex-row my-4 space-x-2" data-svelte-h="svelte-ks2zg1"><div class="w-full mx-4"><p class="flex-1 block w-full bg-gray-800 p-2 text-center rounded-md">Receive double points for each group stage category you make 3 or more
           correct selections.</p></div></div> <div class="horizontal-divider my-8"></div> <div class="flex flex-row items-center bg-black border rounded-md p-4 m-4" data-svelte-h="svelte-1bt2qdi"><div class="w-1/12"></div> <div class="w-11/12 flex flex-row space-x-4"><div class="w-1/6 flex"><p class="w-full text-center border-x">Winner</p></div> <div class="w-1/6 flex"><p class="w-full text-center border-x">Loser</p></div> <div class="w-1/6 flex"><p class="w-full text-center border-x">To Score</p></div> <div class="w-1/6 flex"><p class="w-full text-center border-x">To Assist</p></div> <div class="w-1/6 flex"><p class="w-full text-center border-x">Yellow Card</p></div> <div class="w-1/6 flex"><p class="w-full text-center border-x">Red Card</p></div></div></div> <div class="flex flex-row items-center bg-green-700 p-4"><div class="w-1/12" data-svelte-h="svelte-1ylkbty">Round of 16</div> <div class="w-11/12 flex flex-row space-x-4"><div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-19t214s">Select a Team</button> <div class="text-right" data-svelte-h="svelte-1yzcc3s"><p class="text-xs mt-4">10 Points</p></div></div> <div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-1h36i8">Select a Team</button> <div class="text-right" data-svelte-h="svelte-1yzcc3s"><p class="text-xs mt-4">10 Points</p></div></div> <div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-oqm8jz">Select a Player</button> <div class="text-right" data-svelte-h="svelte-115w755"><p class="text-xs mt-4">20 Points</p></div></div> <div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-130vt3">Select a Player</button> <div class="text-right" data-svelte-h="svelte-115w755"><p class="text-xs mt-4">20 Points</p></div></div> <div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-1wjae1">Select a Player</button> <div class="text-right" data-svelte-h="svelte-1yzcc3s"><p class="text-xs mt-4">10 Points</p></div></div> <div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-1mrmsos">Select a Player</button> <div class="text-right" data-svelte-h="svelte-115w755"><p class="text-xs mt-4">20 Points</p></div></div></div></div> <div class="flex flex-row my-4 space-x-2" data-svelte-h="svelte-1tte2cj"><div class="w-1/12"></div> <div class="w-11/12 flex flex-row space-x-4"><div class="w-1/3"><p class="flex-1 block w-full rounded-none rounded-r-md bg-gray-800 p-2 text-center">Both Correct Bonus: 40 Points</p></div> <div class="w-1/3"><p class="flex-1 block w-full rounded-none rounded-r-md bg-gray-800 p-2 text-center">Both Correct Bonus: 80 Points</p></div> <div class="w-1/3"><p class="flex-1 block w-full rounded-none rounded-r-md bg-gray-800 p-2 text-center">Both Correct Bonus: 60 Points</p></div></div></div> <div class="flex flex-row items-center bg-gray-800 p-4"><div class="w-1/12" data-svelte-h="svelte-1xmz47u">Quarter Final</div> <div class="w-11/12 flex flex-row space-x-4"><div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-1anwtp3">Select a Team</button> <div class="text-right" data-svelte-h="svelte-em69s5"><p class="text-xs mt-4">15 Points</p></div></div> <div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-hskgm5">Select a Team</button> <div class="text-right" data-svelte-h="svelte-em69s5"><p class="text-xs mt-4">15 Points</p></div></div> <div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-16ompe0">Select a Player</button> <div class="text-right" data-svelte-h="svelte-65gvmi"><p class="text-xs mt-4">30 Points</p></div></div> <div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-1sh6x6k">Select a Player</button> <div class="text-right" data-svelte-h="svelte-65gvmi"><p class="text-xs mt-4">30 Points</p></div></div> <div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-1vyfrye">Select a Player</button> <div class="text-right" data-svelte-h="svelte-em69s5"><p class="text-xs mt-4">15 Points</p></div></div> <div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-13sgqcd">Select a Player</button> <div class="text-right" data-svelte-h="svelte-65gvmi"><p class="text-xs mt-4">30 Points</p></div></div></div></div> <div class="flex flex-row my-4 space-x-2" data-svelte-h="svelte-obspnt"><div class="w-1/12"></div> <div class="w-11/12 flex flex-row space-x-4"><div class="w-1/3"><p class="flex-1 block w-full rounded-none rounded-r-md bg-gray-800 p-2 text-center">Both Correct Bonus: 60 Points</p></div> <div class="w-1/3"><p class="flex-1 block w-full rounded-none rounded-r-md bg-gray-800 p-2 text-center">Both Correct Bonus: 120 Points</p></div> <div class="w-1/3"><p class="flex-1 block w-full rounded-none rounded-r-md bg-gray-800 p-2 text-center">Both Correct Bonus: 90 Points</p></div></div></div> <div class="flex flex-row items-center bg-gray-900 p-4"><div class="w-1/12" data-svelte-h="svelte-184ana2">Semi Final</div> <div class="w-11/12 flex flex-row space-x-4"><div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-eislbq">Select a Team</button> <div class="text-right" data-svelte-h="svelte-115w755"><p class="text-xs mt-4">20 Points</p></div></div> <div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-gxjf42">Select a Team</button> <div class="text-right" data-svelte-h="svelte-115w755"><p class="text-xs mt-4">20 Points</p></div></div> <div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-zppxx">Select a Player</button> <div class="text-right" data-svelte-h="svelte-15nxjhn"><p class="text-xs mt-4">40 Points</p></div></div> <div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-1q51ixl">Select a Player</button> <div class="text-right" data-svelte-h="svelte-15nxjhn"><p class="text-xs mt-4">40 Points</p></div></div> <div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-w1j7m3">Select a Player</button> <div class="text-right" data-svelte-h="svelte-1yzcc3s"><p class="text-xs mt-4">10 Points</p></div></div> <div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-1mlem0u">Select a Player</button> <div class="text-right" data-svelte-h="svelte-15nxjhn"><p class="text-xs mt-4">40 Points</p></div></div></div></div> <div class="flex flex-row my-4 space-x-2" data-svelte-h="svelte-hy0kjr"><div class="w-1/12"></div> <div class="w-11/12 flex flex-row space-x-4"><div class="w-1/3"><p class="flex-1 block w-full rounded-none rounded-r-md bg-gray-800 p-2 text-center">Both Correct Bonus: 80 Points</p></div> <div class="w-1/3"><p class="flex-1 block w-full rounded-none rounded-r-md bg-gray-800 p-2 text-center">Both Correct Bonus: 160 Points</p></div> <div class="w-1/3"><p class="flex-1 block w-full rounded-none rounded-r-md bg-gray-800 p-2 text-center">Both Correct Bonus: 120 Points</p></div></div></div> <div class="flex flex-row items-center bg-yellow-600 p-4"><div class="w-1/12" data-svelte-h="svelte-movlhe">Final</div> <div class="w-11/12 flex flex-row space-x-4"><div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-jcegm1">Select a Team</button> <div class="text-right" data-svelte-h="svelte-1xywyg4"><p class="text-xs mt-4">25 Points</p></div></div> <div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-1qmfbfb">Select a Team</button> <div class="text-right" data-svelte-h="svelte-1xywyg4"><p class="text-xs mt-4">25 Points</p></div></div> <div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-1m07noe">Select a Player</button> <div class="text-right" data-svelte-h="svelte-a12yh0"><p class="text-xs mt-4">50 Points</p></div></div> <div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-1j8djcm">Select a Player</button> <div class="text-right" data-svelte-h="svelte-a12yh0"><p class="text-xs mt-4">50 Points</p></div></div> <div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-1khn5bk">Select a Player</button> <div class="text-right" data-svelte-h="svelte-1xywyg4"><p class="text-xs mt-4">25 Points</p></div></div> <div class="w-1/6"><button class="flex-1 block w-full rounded-md sm:text-sm shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 p-2" data-svelte-h="svelte-et39sn">Select a Player</button> <div class="text-right" data-svelte-h="svelte-a12yh0"><p class="text-xs mt-4">50 Points</p></div></div></div></div> <div class="flex flex-row my-4 space-x-2" data-svelte-h="svelte-19wx7bi"><div class="w-1/12"></div> <div class="w-11/12 flex flex-row space-x-4"><div class="w-1/3"><p class="flex-1 block w-full rounded-none rounded-r-md bg-gray-800 p-2 text-center">Both Correct Bonus: 100 Points</p></div> <div class="w-1/3"><p class="flex-1 block w-full rounded-none rounded-r-md bg-gray-800 p-2 text-center">Both Correct Bonus: 200 Points</p></div> <div class="w-1/3"><p class="flex-1 block w-full rounded-none rounded-r-md bg-gray-800 p-2 text-center">Both Correct Bonus: 150 Points</p></div></div></div> <div class="bg-panel rounded-md p-4 mt-4" data-svelte-h="svelte-1m4bfv2"><div class="flex justify-center"><button type="submit" class="inline-flex justify-center px-4 py-2 border border-transparent shadow-sm font-bold rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"><p class="text-xl px-4">Play<br> <span class="text-xxs">(100 $FPL)</span></p></button></div></div></div>`;
     }
@@ -4620,13 +4655,58 @@ const Page$6 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
 const Page$5 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
   return ``;
 });
+const Vision = create_ssr_component(($$result, $$props, $$bindings, slots) => {
+  return `<div class="m-4" data-svelte-h="svelte-ahjhvb"><h1 class="default-header">Our Vision</h1> <p class="my-4">FootballGod will provide a much needed fixed-odds betting
+    platform to the Internet Computer. FootballGod will utilise the IC&#39;s unique
+    framework to manage risk through the power of deflationary tokenomics.
+    FootballGod will provide users with in game betting, the ability to build
+    accumulators and unique mini games giving users the opportunity to engage
+    with the platform on a regular basis.</p> <p class="my-4">FootballGod will provide this service using the DAO&#39;s deflationary utility
+    token, $FOOTBALL. Betting platforms are very profitable, we aim to use the
+    reality of more losing bets than winning bets to control the token supply.
+    When a bet loses, the stake is burned, decreasing the circlulating supply.
+    This is offset by more infrequent winning scenarios in which tokens are
+    minted, allowing the DAO to always have the liquidity required to cover
+    winning bets.</p> <p class="my-4"><b>Until a UK gambling license is aquired by the founding team, no $FOOTBALL token will be released.</b></p> <p class="my-4 default-header">Why The Internet Computer?</p> <p>The Internet Computer (IC) is the only computer system in the world that
+    allows users of an online service to truly own that service. The IC&#39;s unique
+    architecture allows the interface the user engages with to be stored on the
+    network, bypassing the big tech companies who do not have an interest in
+    providing decentralised services. The IC not only has the capabilities to
+    shift power structures in the tech world, it is built with its own
+    decentralised service creation infrastructure that allow services like
+    FootballGod to become Decentralised Autonomous Organisations (DAOs).
+    FootballGod will enable gamblers to build a betting platform made for them,
+    allowing them to design the games and features they want to see but also
+    define the control measures put in place to ensure gambling is done
+    responsibly.</p> <p class="my-4 default-header">The Future</p> <p class="my-4">After regulatory requirements are met, FootballGod will function entirely on-chain, aspiring to operate under the
+    Internet Computer’s Service Nervous System. The DAO will govern the inner
+    workings of the betting platform, using the tools available to control the
+    deflationary tokenomic model in use by FootballGod. Token holders have the
+    ability to control the rate of deflation by voting to increase or decrease
+    the spread of odds offered on the platform.</p> <p class="my-4">We aim to phase in difference markets, mini games and features as the
+    required jurisdicational gambling licenses are acquired. Eventually we want
+    to provide reliable fixed-odds betting markets for every major football
+    league in the world along with mini games for major events like
+    international football tournaments.</p> <p class="my-4">Our vision for FootballGod encompasses a commitment to societal impact,
+    specifically through our organisation, the ICPFA. The ICPFA will be focused
+    on supporting grassroots football initiatives, demonstrating our belief in
+    FootballGod&#39;s ability to bring about positive change in the football
+    community using the IC.</p></div>`;
+});
 const Page$4 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
-  return `     `;
+  return `${validate_component(Layout, "Layout").$$render($$result, {}, {}, {
+    default: () => {
+      return `<div class="bg-panel mt-4"><h1 class="p-4 mx-1 default-header" data-svelte-h="svelte-14v1lwf">FootballGod Lightpaper</h1> <ul class="flex flex-nowrap overflow-x-auto bg-light-gray border-b border-gray-700 px-4 pt-2"><li${add_attribute("class", `mr-4 ${"active-tab"}`, 0)}><button${add_attribute("class", `p-2 ${"text-white"}`, 0)}>Vision</button></li></ul> ${`${validate_component(Vision, "Vision").$$render($$result, {}, {}, {})}`}</div>`;
+    }
+  })}`;
 });
 const Page$3 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
+  return `     `;
+});
+const Page$2 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
   return ``;
 });
-var define_process_env_default = { FOOTBALL_GOD_BACKEND_CANISTER_ID: "bd3sg-teaaa-aaaaa-qaaba-cai", FOOTBALL_GOD_FRONTEND_CANISTER_ID: "be2us-64aaa-aaaaa-qaabq-cai", DFX_NETWORK: "local" };
+var define_process_env_default = { __CANDID_UI_CANISTER_ID: "br5f7-7uaaa-aaaaa-qaaca-cai", FOOTBALL_GOD_BACKEND_CANISTER_ID: "bd3sg-teaaa-aaaaa-qaaba-cai", FOOTBALL_GOD_FRONTEND_CANISTER_ID: "be2us-64aaa-aaaaa-qaabq-cai", DFX_NETWORK: "local" };
 function createUserStore() {
   const { subscribe: subscribe2, set } = writable(null);
   async function sync() {
@@ -4786,14 +4866,14 @@ derived(
   userStore,
   (user) => user !== null && user !== void 0 ? user.favouriteTeamId : 0
 );
-const Page$2 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
+const Page$1 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
   return `${validate_component(Layout, "Layout").$$render($$result, {}, {}, {
     default: () => {
       return `${`${validate_component(Spinner, "Spinner").$$render($$result, {}, {}, {})}`}`;
     }
   })}`;
 });
-const Page$1 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
+const Page = create_ssr_component(($$result, $$props, $$bindings, slots) => {
   return `${validate_component(Layout, "Layout").$$render($$result, {}, {}, {
     default: () => {
       return `<div class="bg-panel rounded-md p-4 mt-4" data-svelte-h="svelte-p7ybpc"><h1 class="default-header">OpenFPL DAO Terms &amp; Conditions</h1> <div><p class="my-2 text-xs">Last Updated: 13th October 2023</p> <p class="my-4">By accessing the OpenFPL website (&quot;Site&quot;) and participating in the
@@ -4807,59 +4887,6 @@ const Page$1 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
         other non-human ways of interacting with the site.</p> <h2 class="default-sub-header">Username Policy</h2> <p class="my-4">You agree not to use usernames that are offensive, vulgar, or infringe
         on the rights of others.</p> <h2 class="default-sub-header">Changes to Terms</h2> <p class="my-4">These Terms and Conditions are subject to change. Amendments will be
         effective upon DAO members&#39; approval via proposal and vote.</p></div></div>`;
-    }
-  })}`;
-});
-const Vision = create_ssr_component(($$result, $$props, $$bindings, slots) => {
-  return `<div class="m-4" data-svelte-h="svelte-6vmw3t"><h1 class="default-header">Our Vision</h1> <p class="my-4">FootballGod has been created to provide a much needed fixed-odds betting
-    platform to the Internet Computer. FootballGod will utilise the IC&#39;s unique
-    framework to manage risk through the power of deflationary tokenomics.
-    FootballGod will provide users with in game betting, the ability to build
-    accumulators and unique mini games giving users the opportunity to engage
-    with the platform on a regular basis.</p> <p class="my-4">FootballGod will provide this service using the DAO&#39;s deflationary utility
-    token, $FOOTBALL. Betting platforms are very profitable, we aim to use the
-    reality of more losing bets than winning bets to control the token supply.
-    When a bet loses, the stake is burned, decreasing the circlulating supply.
-    This is offset by more infrequent winning scenarios in which tokens are
-    minted, allowing the DAO to always have the liquidity required to cover
-    winning bets.</p> <p class="my-4 default-header">Why The Internet Computer?</p> <p>The Internet Computer (IC) is the only computer system in the world that
-    allows users of an online service to truly own that service. The IC&#39;s unique
-    architecture allows the interface the user engages with to be stored on the
-    network, bypassing the big tech companies who do not have an interest in
-    providing decentralised services. The IC not only has the capabilities to
-    shift power structures in the tech world, it is built with its own
-    decentralised service creation infrastructure that allow services like
-    FootballGod to become Decentralised Autonomous Organisations (DAOs).
-    FootballGod will enable gamblers to build a betting platform made for them,
-    allowing them to design the games and features they want to see but also
-    define the control measures put in place to ensure gambling is done
-    responsibly.</p> <p class="my-4 default-header">The Future</p> <p class="my-4">FootballGod functions entirely on-chain, aspiring to operate under the
-    Internet Computer’s Service Nervous System. The DAO will govern the inner
-    workings of the betting platform, using the tools available to control the
-    deflationary tokenomic model in use by FootballGod. Token holders have the
-    ability to control the rate of deflation by voting to increase or decrease
-    the spread of odds offered on the platform.</p> <p class="my-4">We aim to phase in difference markets, mini games and features as the
-    required jurisdicational gambling licenses are acquired. Eventually we want
-    to provide reliable fixed-odds betting markets for every major football
-    league in the world along with mini games for major events like
-    international football tournaments.</p> <p class="my-4">Our vision for FootballGod encompasses a commitment to societal impact,
-    specifically through our organisation, the ICPFA. The ICPFA will be focused
-    on supporting grassroots football initiatives, demonstrating our belief in
-    FootballGod&#39;s ability to bring about positive change in the football
-    community using the IC.</p></div>`;
-});
-const Page = create_ssr_component(($$result, $$props, $$bindings, slots) => {
-  return `${validate_component(Layout, "Layout").$$render($$result, {}, {}, {
-    default: () => {
-      return `<div class="bg-panel mt-4"><h1 class="p-4 mx-1 default-header" data-svelte-h="svelte-1m3bdzk">FootballGod Whitepaper</h1> <ul class="flex flex-nowrap overflow-x-auto bg-light-gray border-b border-gray-700 px-4 pt-2"><li${add_attribute("class", `mr-4 ${"active-tab"}`, 0)}><button${add_attribute("class", `p-2 ${"text-white"}`, 0)}>Vision</button></li> <li${add_attribute("class", `mr-4 ${""}`, 0)}><button${add_attribute(
-        "class",
-        `p-2 ${"text-gray-400"}`,
-        0
-      )}>Tokenomics</button></li> <li${add_attribute("class", `mr-4 ${""}`, 0)}><button${add_attribute(
-        "class",
-        `p-2 ${"text-gray-400"}`,
-        0
-      )}>Architecture</button></li> <li${add_attribute("class", `mr-4 ${""}`, 0)}><button${add_attribute("class", `p-2 ${"text-gray-400"}`, 0)}>Roadmap</button></li></ul> ${`${validate_component(Vision, "Vision").$$render($$result, {}, {}, {})}`}</div>`;
     }
   })}`;
 });
