@@ -1,7 +1,6 @@
 <script lang="ts">
   import { Modal } from "@dfinity/gix-components";
   import { onMount } from "svelte";
-  import { playerStore } from "$lib/stores/player.store";
   import { toastsError } from "$lib/stores/toasts.store";
   import { teamStore } from "$lib/stores/teams.store";
   import type { SvelteComponent } from "svelte";
@@ -17,8 +16,6 @@
     try {
       await teamStore.sync();
       if ($teamStore.length == 0) return;
-      await playerStore.sync();
-      if ($playerStore.length == 0) return;
     } catch (error) {
       toastsError({
         msg: { text: "Error fetching add player data." },
