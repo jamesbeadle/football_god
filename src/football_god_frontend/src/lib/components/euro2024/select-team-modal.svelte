@@ -32,11 +32,58 @@
 
   const getFlagComponent = async (countryCode: string): Promise<typeof SvelteComponent | null> => {
     switch (countryCode) {
+      case 'ALB':
+        return (await import('../flags/alb.svelte')).default as typeof SvelteComponent;
+      case 'AUS':
+        return (await import('../flags/aus.svelte')).default as typeof SvelteComponent;
+      case 'BEL':
+        return (await import('../flags/bel.svelte')).default as typeof SvelteComponent;
+      case 'CRO':
+        return (await import('../flags/cro.svelte')).default as typeof SvelteComponent;
+      case 'CZE':
+        return (await import('../flags/cze.svelte')).default as typeof SvelteComponent;
+      case 'DEN':
+        return (await import('../flags/den.svelte')).default as typeof SvelteComponent;
       case 'ENG':
         return (await import('../flags/eng.svelte')).default as typeof SvelteComponent;
-
       case 'FRA':
         return (await import('../flags/fra.svelte')).default as typeof SvelteComponent;
+      case 'GEO':
+        return (await import('../flags/geo.svelte')).default as typeof SvelteComponent;
+      case 'GER':
+        return (await import('../flags/ger.svelte')).default as typeof SvelteComponent;
+      case 'HUN':
+        return (await import('../flags/hun.svelte')).default as typeof SvelteComponent;
+      case 'ITA':
+        return (await import('../flags/ita.svelte')).default as typeof SvelteComponent;
+      case 'NED':
+        return (await import('../flags/den.svelte')).default as typeof SvelteComponent;
+      case 'POL':
+        return (await import('../flags/pol.svelte')).default as typeof SvelteComponent;
+      case 'POR':
+        return (await import('../flags/por.svelte')).default as typeof SvelteComponent;
+      case 'ROM':
+        return (await import('../flags/rom.svelte')).default as typeof SvelteComponent;
+      case 'SCO':
+        return (await import('../flags/sco.svelte')).default as typeof SvelteComponent;
+      case 'SER':
+        return (await import('../flags/ser.svelte')).default as typeof SvelteComponent;
+      case 'SKA':
+        return (await import('../flags/ska.svelte')).default as typeof SvelteComponent;
+      case 'SVI':
+        return (await import('../flags/svi.svelte')).default as typeof SvelteComponent;
+      case 'SPA':
+        return (await import('../flags/spa.svelte')).default as typeof SvelteComponent;
+      case 'SVI':
+        return (await import('../flags/svi.svelte')).default as typeof SvelteComponent;
+      case 'SKA':
+        return (await import('../flags/ska.svelte')).default as typeof SvelteComponent;
+      case 'SWI':
+        return (await import('../flags/swi.svelte')).default as typeof SvelteComponent;
+      case 'TUR':
+        return (await import('../flags/tur.svelte')).default as typeof SvelteComponent;
+      case 'UKR':
+        return (await import('../flags/ukr.svelte')).default as typeof SvelteComponent;
       default:
         return null;
     }
