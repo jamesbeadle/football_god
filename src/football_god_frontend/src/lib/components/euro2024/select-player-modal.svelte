@@ -194,11 +194,7 @@
                 {#await getFlagComponent(team.countryCode) then FlagComponent}
                   {#if FlagComponent}
                     <svelte:component this={FlagComponent} />
-                  {:else}
-                    <p>No flag available</p>
                   {/if}
-                {:catch error}
-                  <p>Error loading flag</p>
                 {/await}
                 <p class="mt-2 text-center">{team.name}</p>
                 <button class="select-button mt-2 bg-OPENFPL text-GRAY px-2 py-1 rounded">Select</button>

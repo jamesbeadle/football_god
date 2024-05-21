@@ -136,7 +136,9 @@ function createUserStore() {
     set(profileData);
   }
 
-  async function saveEuro2024Predictions(dto: Euro2024PredictionDTO): Promise<any> {
+  async function saveEuro2024Predictions(
+    dto: Euro2024PredictionDTO,
+  ): Promise<any> {
     try {
       const identityActor = await ActorFactory.createIdentityActor(
         authStore,
@@ -162,7 +164,7 @@ function createUserStore() {
     updateProfilePicture,
     isUsernameAvailable,
     cacheProfile,
-    saveEuro2024Predictions
+    saveEuro2024Predictions,
   };
 }
 
