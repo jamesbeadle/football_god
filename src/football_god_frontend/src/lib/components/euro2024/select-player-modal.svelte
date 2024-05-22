@@ -167,7 +167,7 @@
                     </div>
                     {#await getFlagComponent(team.countryCode) then FlagComponent}
                       {#if FlagComponent}
-                        <svelte:component this={FlagComponent} className="w-10 h-10"/>
+                        <svelte:component this={FlagComponent} className="w-8 h-8"/>
                       {/if}
                     {/await}
                     <div class="flex flex-col">
@@ -193,7 +193,7 @@
               <div class="team-card bg-OPENFPLPURPLE p-4 border rounded-md flex flex-col items-center hover:bg-OPENFPL">
                 {#await getFlagComponent(team.countryCode) then FlagComponent}
                   {#if FlagComponent}
-                    <svelte:component this={FlagComponent} />
+                    <svelte:component this={FlagComponent} className="w-16 h-16" />
                   {/if}
                 {/await}
                 <p class="mt-2 text-center">{team.name}</p>
