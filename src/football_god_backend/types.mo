@@ -223,4 +223,33 @@ module Types {
     positionText : Text;
   };
 
+  public type Euro2024State = {
+    prizePool : Nat64;
+    totalManagers : Nat;
+    stage : GameState;
+  };
+
+  public type Euro2024Event = {
+    stageId: Nat8;
+    fixtureId: FixtureId;
+    eventType: EventType;
+    playerId: PlayerId;
+    teamId: TeamId;
+  };
+
+  public type GameState = {
+    #Selecting;
+    #Active;
+    #Completed;
+  };
+
+  public type EventType = {
+    #StageWon;
+    #StageLost;
+    #GoalScored;
+    #GoalAssisted;
+    #YellowCard;
+    #RedCard;
+  };
+
 };

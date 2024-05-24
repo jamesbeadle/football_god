@@ -1,7 +1,6 @@
 import Result "mo:base/Result";
 import List "mo:base/List";
 import Text "mo:base/Text";
-import Principal "mo:base/Principal";
 import Nat64 "mo:base/Nat64";
 import Blob "mo:base/Blob";
 import Buffer "mo:base/Buffer";

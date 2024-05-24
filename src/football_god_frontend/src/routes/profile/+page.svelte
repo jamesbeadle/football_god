@@ -28,7 +28,7 @@
               class={`p-2 ${
                 activeTab === "details" ? "text-white" : "text-gray-400"
               }`}
-              on:click={() => setActiveTab("details")}>Details</button
+              on:click={() => setActiveTab("details")}>Profile Detail</button
             >
           </li>
         </ul>

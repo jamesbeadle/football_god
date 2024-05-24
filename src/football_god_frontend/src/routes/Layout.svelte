@@ -2,7 +2,9 @@
   import { onMount } from "svelte";
   import { browser } from "$app/environment";
   import { initAuthWorker } from "$lib/services/worker.auth.services";
-  import { authStore, type AuthStoreData } from "$lib/stores/auth.store";
+
+  import { authStore, type AuthSignInParams, type AuthStoreData } from "$lib/stores/auth.store";
+  import { authSignedInStore } from "$lib/derived/auth.derived";
   import { toastsError } from "$lib/stores/toasts.store";
   import { writable } from "svelte/store";
   import { BusyScreen, Spinner, Toasts } from "@dfinity/gix-components";
@@ -15,9 +17,20 @@
   import { fade } from "svelte/transition";
   import "../app.css";
   import { page } from "$app/stores";
+  import { goto } from "$app/navigation";
+    import ProfileIcon from "$lib/icons/ProfileIcon.svelte";
+  
 
   let isExpanded = writable(false);
-  let links = [
+  $: links = $authSignedInStore ? [
+    { name: "Home", icon: HomeIcon, href: "/" },
+    { name: "Match Betting", icon: BettingIcon, href: "/betting" },
+    { name: "Mini Games", icon: GamesIcon, href: "/games" },
+    { name: "Euro 2024", icon: StarIcon, href: "/euro2024" },
+    { name: "Rules", icon: RulesIcon, href: "/rules" },
+    { name: "Profile", icon: ProfileIcon, href: "/profile" },
+  ] : 
+  [
     { name: "Home", icon: HomeIcon, href: "/" },
     { name: "Match Betting", icon: BettingIcon, href: "/betting" },
     { name: "Mini Games", icon: GamesIcon, href: "/games" },
@@ -63,6 +76,22 @@
     const spinner = document.querySelector("body > #app-spinner");
     spinner?.remove();
   })();
+
+
+
+  function handleLogin() {
+    let params: AuthSignInParams = {
+      domain: import.meta.env.VITE_AUTH_PROVIDER_URL,
+    };
+    authStore.signIn(params);
+  }
+
+  function handleLogout() {
+    authStore.signOut();
+    goto("/");
+  }
+
+
 </script>
 
 <svelte:window on:storage={syncAuthStore} />
@@ -120,10 +149,17 @@
 
       <div class="mb-4">
         {#if $isExpanded}
-          <span
-            in:fade={{ duration: 200 }}
-            out:fade={{ delay: 0, duration: 100 }}>User</span
-          >
+          {#if $authSignedInStore}
+            <button on:click={handleLogout} class="button-hover p-2 rounded-md text-sm w-full"
+                in:fade={{ duration: 200 }}
+                out:fade={{ delay: 0, duration: 100 }}>Disconnect</button
+              >
+          {:else}
+            <button on:click={handleLogin} class="bg-OPENFPL hover:bg-OPENFPL hover:text-GRAY p-2 rounded-md text-sm w-full"
+                in:fade={{ duration: 200 }}
+                out:fade={{ delay: 0, duration: 100 }}>Connect Internet Identity</button
+              >
+          {/if}
         {/if}
       </div>
     </div>

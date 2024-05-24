@@ -20,6 +20,28 @@ module {
 
     private var userPredictions = Map.HashMap<T.PrincipalName, T.Euro2024Prediction>(0, Text.equal, Text.hash);
 
+    //TODO: ADD TO STABLE STORAGE
+    private var events: [T.Euro2024Event] = [];
+
+    private var state: T.Euro2024State = {
+      prizePool = 0;
+      totalManagers = 0;
+      stage = #Selecting;
+    };
+
+    public func getState() : T.Euro2024State {
+      return state;
+    };
+
+    public func setGameState(gameStage: T.GameState){
+      let newSystemState: T.Euro2024State = {
+        prizePool = state.prizePool;
+        totalManagers = state.totalManagers;
+        stage = gameStage;
+      };
+      state := newSystemState;
+    };
+
     public func setData(stable_predictions : [(T.PrincipalName, T.Euro2024Prediction)]) {
       userPredictions := Map.fromIter<T.PrincipalName, T.Euro2024Prediction>(
         stable_predictions.vals(),
@@ -266,6 +288,52 @@ module {
       };
 
       return List.fromArray(Buffer.toArray(teamBuffer));
+    };
+
+    public func getTotalPlayers() : Nat{
+        return Iter.size(userPredictions.entries());
+    };
+
+    public func getEuro2024StateDTO() : DTOs.Euro2024DTO {
+      return {
+        prizePool = state.prizePool;
+        totalManagers = state.totalManagers;
+        stage = state.stage;
+      };
+    };
+
+    public func submitEvent(dto: DTOs.Euro2024EventDTO){
+      let eventsBuffer = Buffer.fromArray<T.Euro2024Event>(events);
+      eventsBuffer.add({
+        eventType = dto.eventType;
+        fixtureId = dto.fixtureId;
+        playerId = dto.playerId;
+        stageId = dto.stageId;
+        teamId = dto.teamId;
+      });
+    };
+
+    public func getAllEvents() : [DTOs.Euro2024EventDTO] {
+      return Array.map<T.Euro2024Event, DTOs.Euro2024EventDTO>(
+        events,
+        func(evt: T.Euro2024Event) : DTOs.Euro2024EventDTO {
+          {
+            eventType = evt.eventType;
+            fixtureId = evt.fixtureId;
+            playerId = evt.playerId;
+            stageId = evt.stageId;
+            teamId = evt.teamId;
+          }
+        },
+      );
+    };
+
+    public func calculateLeaderboard(){
+      //TODO: Calculate the leaderboard based on the events that have been submitted
+        //redo a calculation for all events
+      
+      //calculation assumes that it is being run after each game is finished therefore the points that have been awarded are final
+
     };
 
   };

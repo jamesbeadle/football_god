@@ -20,12 +20,14 @@ import Profiles "profiles";
 import Book "book";
 import Account "Account";
 import DTOs "DTOs";
+import FPLLedger "fpl_ledger";
+import Environment "environment";
 
 actor Self {
 
   let admins : [Principal] = [
-    Principal.fromText("eqlhf-ppkq7-roa5i-4wu6r-jumy3-g2xrc-vfdd5-wtoeu-n7xre-vsktn-lqe")
-    //Principal.fromText("ld6pc-7sgvt-fs7gg-fvsih-gspgy-34ikk-wrwl6-ixrkc-k54er-7ivom-wae")
+    Principal.fromText("d7egg-wf5tk-olxbg-izlyy-bphvp-2nfuf-5yltc-kzmvt-dk5lo-qtv7e-vae"),
+    Principal.fromText("4jijx-ekel7-4t2kx-32cyf-wzo3t-i4tas-qsq4k-ujnug-oxke7-o5aci-eae")
   ];
 
   let profilesInstance = Profiles.Profiles();
@@ -34,6 +36,7 @@ actor Self {
   let predictionsInstance = Predictions.Predictions();
   let bookInstance = Book.Book();
   let euro2024Instance = Euro2024.Euro2024();
+  let fpl_ledger = FPLLedger.Book();
 
   let adminAccount = "66d542934fd0be74eaef2f5542b14832799be9f85d256555927a9760dcf2ac96";
 
@@ -245,7 +248,7 @@ actor Self {
     return playDTO;
   };
 
-  public shared ({ caller }) func getAccountBalanceDTO() : async DTOs.AccountBalanceDTO {
+  public shared ({ caller }) func getFPLAccountBalanceDTO() : async DTOs.AccountBalanceDTO {
 
     assert not Principal.isAnonymous(caller);
     let systemUpdating = (activeSeason == 0) or (activeGameweek == 0);
@@ -256,7 +259,7 @@ actor Self {
     };
 
     let accountBalanceDTO : DTOs.AccountBalanceDTO = {
-      accountBalance = accountBalance;
+      accountBalance = Nat64.toNat(accountBalance);
     };
 
     return accountBalanceDTO;
@@ -526,10 +529,11 @@ actor Self {
     return leaderboard;
   };
 
-  public shared ({ caller }) func getProfileDTO() : async DTOs.ProfileDTO {
+  public shared ({ caller }) func getProfileDTO() : async Result.Result<DTOs.ProfileDTO, T.Error> {
     assert not Principal.isAnonymous(caller);
     let principalName = Principal.toText(caller);
     var depositAddress = Blob.fromArray([]);
+    var fplDepositAddress = principalName;
     var displayName = "";
     var walletAddress = "";
 
@@ -546,15 +550,17 @@ actor Self {
         depositAddress := p.depositAddress;
         displayName := p.displayName;
         walletAddress := p.wallet;
+        fplDepositAddress := Principal.toText(caller);
       };
     };
 
-    let _ : DTOs.ProfileDTO = {
+    return #ok({
       principalName = principalName;
       depositAddress = depositAddress;
       displayName = displayName;
       walletAddress = walletAddress;
-    };
+      fplDepositAddress = fplDepositAddress;
+    });
 
   };
 
@@ -1025,9 +1031,19 @@ actor Self {
     Account.accountIdentifier(Principal.fromActor(Self), Account.principalToSubaccount(caller));
   };
 
+  private func getUserFPLDepositAccount(caller : Principal) : Account.AccountIdentifier {
+    Account.accountIdentifier(Principal.fromText(Environment.OPENFPL_LEDGER_CANISTER_ID), Account.principalToSubaccount(caller));
+  };
+
   //euro 2024 functions
 
   public shared ({ caller }) func submitEuro2024Prediction(euro2024PredictionDTO : DTOs.Euro2024PredictionDTO) : async Result.Result<(), T.Error> {
+
+    let state = euro2024Instance.getState();
+
+    if(state.stage != #Selecting){
+      return #err(#NotAllowed);
+    };
 
     assert not Principal.isAnonymous(caller);
     let principalName = Principal.toText(caller);
@@ -1037,13 +1053,22 @@ actor Self {
       profilesInstance.createProfile(Principal.toText(caller), Principal.toText(caller), "", getUserDepositAccount(caller));
     };
 
-    let validPredictions = euro2024Instance.checkValidPredictions(euro2024PredictionDTO);
+    let prediction = euro2024Instance.getPredictions(principalName);
 
-    if (not validPredictions) {
-      return #err(#NotAllowed);
+    switch(prediction){
+      case (null){
+        return #err(#NotFound);
+      };
+      case (?foundPrediction){
+        let validPredictions = euro2024Instance.checkValidPredictions(euro2024PredictionDTO);
+
+        if (not validPredictions) {
+          return #err(#NotAllowed);
+        };
+
+        return euro2024Instance.submitPredictions(principalName, euro2024PredictionDTO);
+      };
     };
-
-    return euro2024Instance.submitPredictions(principalName, euro2024PredictionDTO);
   };
 
   public shared ({ caller }) func payAndSubmitEuro2024Prediction(euro2024PredictionDTO : DTOs.Euro2024PredictionDTO) : async Result.Result<(), T.Error> {
@@ -1101,43 +1126,84 @@ actor Self {
     return #ok(List.toArray(euro2024Instance.getPlayers()));
   };
 
-  //submit fixture data
-  //should calculate team scores
-  //calculate leaderboard
+  public shared query func getEuro2024StateDTO() : async Result.Result<DTOs.Euro2024DTO, T.Error> {
+    return #ok(euro2024Instance.getEuro2024StateDTO());
+  };
 
-  //pay winners
-  //check all results in and list winners to pay
+  //Admin functions for euro 2024
+  let adminPrincipalId = "4jijx-ekel7-4t2kx-32cyf-wzo3t-i4tas-qsq4k-ujnug-oxke7-o5aci-eae";
+  
+  public shared ({ caller }) func submitEvent(dto: DTOs.Euro2024EventDTO) : async Result.Result<(), T.Error> {
 
-  //get paginated leaderboard
-  /*
-  public shared query func getEuroLeaderboardDTO() : async Result.Result<DTOs.Euro2024LeaderBoardDTO, T.Error> {
-    let leaderboardDTO: DTOs.Euro2024LeaderBoardDTO = {
+    assert not Principal.isAnonymous(caller);
+    let principalId = Principal.toText(caller);
+    assert principalId == adminPrincipalId;
+    
+    euro2024Instance.submitEvent(dto);
+    return #ok;
+  };
 
+  public shared func getAllEvents() : async Result.Result<[DTOs.Euro2024EventDTO], T.Error>{
+    return #ok(euro2024Instance.getAllEvents());
+  };
+  
+  public shared ({ caller }) func calculateEuro2024Leaderboard() : async Result.Result<(), T.Error> {
+
+    assert not Principal.isAnonymous(caller);
+    let principalId = Principal.toText(caller);
+    assert principalId == adminPrincipalId;
+    
+    euro2024Instance.calculateLeaderboard();
+    return #ok;
+  };
+
+
+  public shared ({caller}) func getFPLAccountBalance() : async DTOs.AccountBalanceDTO {
+    
+    assert not Principal.isAnonymous(caller);
+    var accountBalance: Nat = 0;
+
+    accountBalance := await fpl_ledger.getUserAccountBalance(Principal.fromActor(Self), caller);
+    
+    let accountBalanceDTO: DTOs.AccountBalanceDTO = {
+      accountBalance = accountBalance;
+    };
+
+    return accountBalanceDTO;
+  };
+
+
+  public shared ({caller}) func getUserPrediction() : async Result.Result<DTOs.Euro2024PredictionDTO, T.Error> {
+    
+    assert not Principal.isAnonymous(caller);
+    let userPrediction = euro2024Instance.getPredictions(Principal.toText(caller));
+    switch(userPrediction){
+      case null{
+        return #err(#NotFound);
+      };
+      case (?foundUserPrediction){
+        return #ok(foundUserPrediction);
+      }
     }
   };
 
+  public shared ({ caller }) func setEuroSystemState(gameState: T.GameState) : async Result.Result<(), T.Error> {
 
-  //get user euro 2024 leaderboard position
-  public shared query ({ caller }) func getUserLeaderboardEntry() : async Result.Result<DTOs.LeaderBoardDTO, T.Error> {
-    let leaderboardDTO: DTOs.LeaderBoardDTO  = {
+    let isCallerAdmin = isAdminForCaller(caller);
+    if (isCallerAdmin == false) {
+      return #err(#NotAuthorized);
+    };
 
-    }
+    euro2024Instance.setGameState(gameState);
+    return #ok(());
   };
 
-  //search username euro 2024 position
+  //TODO: get and pay winners
 
-  public shared query func getLeaderboardEntryById(principalId: Text) : async Result.Result<DTOs.LeaderboardEntryDTO, T.Error> {
+  //TODO: get leaderboard
 
-  };
-
-  //participate in presale
-
-  public shared ({ caller }) func participateInPresale(icp_amount: Nat64) : async Result.Result<Text, T.Error> {
-    //check the user has the amount in their wallet
-    //if they do note their participation
-  };
-  */
-
+  //TODO get another users team
+  
   system func preupgrade() {
     stable_profiles := profilesInstance.getProfiles();
     stable_predictions := predictionsInstance.getUserPredictions();
@@ -1147,6 +1213,7 @@ actor Self {
     stable_teams := teamsInstance.getTeams();
     stable_nextTeamId := teamsInstance.getNextTeamId();
     stable_euro2024_predictions := euro2024Instance.getUserPredictions();
+    //TODO: Add caching
   };
 
   system func postupgrade() {

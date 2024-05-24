@@ -41,25 +41,6 @@ function createUserStore() {
     }
   }
 
-  async function updateFavouriteTeam(favouriteTeamId: number): Promise<any> {
-    try {
-      const identityActor = await ActorFactory.createIdentityActor(
-        authStore,
-        process.env.FOOTBALL_GOD_BACKEND_CANISTER_ID ?? "",
-      );
-      const result = await identityActor.updateFavouriteClub(favouriteTeamId);
-      if (isError(result)) {
-        console.error("Error updating favourite team");
-        return;
-      }
-      await cacheProfile();
-      return result;
-    } catch (error) {
-      console.error("Error updating favourite team:", error);
-      throw error;
-    }
-  }
-
   async function updateProfilePicture(picture: File): Promise<any> {
     try {
       const maxPictureSize = 1000;
@@ -124,7 +105,8 @@ function createUserStore() {
       process.env.FOOTBALL_GOD_BACKEND_CANISTER_ID ?? "",
     );
 
-    let getProfileResponse = await identityActor.getProfile();
+    let getProfileResponse = await identityActor.getProfileDTO();
+    console.log(getProfileResponse);
     let error = isError(getProfileResponse);
     if (error) {
       console.error("Error fetching user profile");
@@ -132,7 +114,6 @@ function createUserStore() {
     }
 
     let profileData = getProfileResponse.ok;
-
     set(profileData);
   }
 
@@ -156,15 +137,37 @@ function createUserStore() {
     }
   }
 
+  async function getUserPrediction(): Promise<
+    Euro2024PredictionDTO | undefined
+  > {
+    try {
+      const identityActor: any = await ActorFactory.createIdentityActor(
+        authStore,
+        process.env.FOOTBALL_GOD_BACKEND_CANISTER_ID ?? "",
+      );
+      const result = await identityActor.getUserPrediction();
+      if (isError(result)) {
+        console.error("Error getting user prediction");
+        return;
+      }
+
+      let prediction = result.ok;
+      return prediction;
+    } catch (error) {
+      console.error("Error getting user prediction:", error);
+      return undefined;
+    }
+  }
+
   return {
     subscribe,
     sync,
     updateUsername,
-    updateFavouriteTeam,
     updateProfilePicture,
     isUsernameAvailable,
     cacheProfile,
     saveEuro2024Predictions,
+    getUserPrediction,
   };
 }
 

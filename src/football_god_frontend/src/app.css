@@ -82,14 +82,23 @@
   @apply text-white text-3xl;
 }
 
-.selection-panel{
-  @apply flex-1 w-full rounded-md sm:text-sm shadow-sm hover:text-GRAY focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 flex items-center justify-center
+.selection-panel {
+  @apply flex-1 w-full rounded-md sm:text-sm shadow-sm hover:text-GRAY focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 flex items-center justify-center;
 }
 
-.selected-panel{
+.selected-panel {
   @apply bg-OPENFPL hover:bg-OPENFPL px-3 py-2;
 }
 
-.select-panel{
+.select-panel {
   @apply bg-OPENFPLPURPLE hover:bg-OPENFPLPURPLE p-3 text-white;
+}
+
+.fg-button {
+  background-color: #ffffff;
+  color: black;
+}
+
+.button-hover {
+  @apply bg-white text-black hover:bg-OPENFPL hover:text-GRAY;
 }

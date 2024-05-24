@@ -32,7 +32,7 @@ module DTOs {
   };
 
   public type AccountBalanceDTO = {
-    accountBalance : Nat64;
+    accountBalance : Nat;
   };
 
   public type SubmitPlayDTO = {
@@ -139,6 +139,7 @@ module DTOs {
   public type ProfileDTO = {
     principalName : Text;
     depositAddress : Blob;
+    fplDepositAddress : Text;
     displayName : Text;
     walletAddress : Text;
   };
@@ -238,5 +239,19 @@ module DTOs {
     winningShare : Nat64;
     status : Nat8;
   };
+
+  public type Euro2024DTO = {
+    prizePool : Nat64;
+    totalManagers : Nat;
+    stage : T.GameState;
+  };
+
+  public type Euro2024EventDTO = {
+    stageId: Nat8;
+    eventType: T.EventType;
+    playerId: T.PlayerId;
+    teamId: T.TeamId;
+    fixtureId: T.FixtureId;
+  }
 
 };
