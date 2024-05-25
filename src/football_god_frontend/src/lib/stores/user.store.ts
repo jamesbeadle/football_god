@@ -6,6 +6,8 @@ import type {
   AccountBalancesDTO,
   Euro2024PredictionDTO,
 } from "../../../../declarations/football_god_backend/football_god_backend.did";
+import { IcrcLedgerCanister } from "@dfinity/ledger-icrc";
+import { Principal } from "@dfinity/principal";
 
 function createUserStore() {
   const { subscribe, set } = writable<any>(null);
@@ -128,13 +130,38 @@ function createUserStore() {
         authStore,
         process.env.FOOTBALL_GOD_BACKEND_CANISTER_ID ?? "",
       );
-      const result = await identityActor.submitEuro2024Prediction(dto);
-      console.log(result);
-      if (isError(result)) {
-        console.error("Error saving Euro2024 prediction.");
-        return;
+
+      if (dto.alreadyEntered) {
+        const result = await identityActor.submitEuro2024Prediction(dto);
+        console.log(result);
+        if (isError(result)) {
+          console.error("Error saving Euro2024 prediction.");
+          return;
+        }
+        return result;
       }
-      return result;
+
+      const ledger = IcrcLedgerCanister.create({
+        agent: ActorFactory.getAgent(),
+        canisterId: Principal.fromText("avqkn-guaaa-aaaaa-qaaea-cai"),
+      });
+
+      authStore.subscribe(async (auth) => {
+        let transfer_result = await ledger.transfer({
+          to: {
+            owner: Principal.fromText(
+              process.env.FOOTBALL_GOD_BACKEND_CANISTER_ID ?? "",
+            ),
+            subaccount: [auth.identity?.getPrincipal().toUint8Array() ?? []],
+          },
+          fee: 100_000n,
+          memo: undefined,
+          from_subaccount: undefined,
+          created_at_time: BigInt(Date.now()),
+          amount: 100_000_000_000n,
+        });
+        console.log(transfer_result);
+      });
     } catch (error) {
       console.error("Error saving Euro2024 prediction.", error);
       throw error;

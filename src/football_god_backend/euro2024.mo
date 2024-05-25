@@ -51,8 +51,28 @@ module {
       );
     };
 
-    public func getPredictions(principalName : Text) : ?T.Euro2024Prediction {
-      return userPredictions.get(principalName);
+    public func getPredictions(principalName : Text) : ?DTOs.Euro2024PredictionDTO {
+      let userPrediction = userPredictions.get(principalName);
+      switch(userPrediction){
+        case null{
+          return null;
+        };
+        case (?foundUserPrediction){
+          return ?{
+            alreadyEntered = true;
+            groupAPrediction = foundUserPrediction.groupAPrediction;
+            groupBPrediction = foundUserPrediction.groupBPrediction;
+            groupCPrediction = foundUserPrediction.groupCPrediction;
+            groupDPrediction = foundUserPrediction.groupDPrediction;
+            groupEPrediction = foundUserPrediction.groupEPrediction;
+            groupFPrediction = foundUserPrediction.groupFPrediction;
+            r16Prediction = foundUserPrediction.r16Prediction;
+            qfPrediction = foundUserPrediction.qfPrediction;
+            sfPrediction = foundUserPrediction.sfPrediction;
+            fPrediction = foundUserPrediction.fPrediction;
+          }
+        }
+      }
     };
 
     public func submitPredictions(principalName : Text, predictions : DTOs.Euro2024PredictionDTO) : Result.Result<(), T.Error> {

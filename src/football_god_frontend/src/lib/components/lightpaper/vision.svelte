@@ -64,4 +64,6 @@
     FootballGod's ability to bring about positive change in the football
     community using the IC.
   </p>
+  <br />
+  <br />
 </div>

@@ -201,7 +201,7 @@ module DTOs {
   };
 
   public type Euro2024PredictionDTO = {
-
+    alreadyEntered: Bool;
     groupAPrediction : T.PredictionSet;
     groupBPrediction : T.PredictionSet;
     groupCPrediction : T.PredictionSet;

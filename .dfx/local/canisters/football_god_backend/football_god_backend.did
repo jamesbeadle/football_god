@@ -260,6 +260,7 @@ type EventType =
  };
 type Euro2024PredictionDTO = 
  record {
+   alreadyEntered: bool;
    fPrediction: PredictionSet;
    groupAPrediction: PredictionSet;
    groupBPrediction: PredictionSet;
@@ -375,7 +376,6 @@ service : {
   isAdmin: () -> (bool) query;
   isDisplayNameValid: (text) -> (bool) query;
   isWalletValid: (text) -> (bool) query;
-  payAndSubmitEuro2024Prediction: (Euro2024PredictionDTO) -> (Result);
   payoutSweepstake: () -> (Result);
   setEuroSystemState: (GameState) -> (Result);
   setSystemState: (nat16, nat8) -> (Result);

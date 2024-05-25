@@ -1040,6 +1040,9 @@ actor Self {
     let profile = profilesInstance.getProfile(principalName);
     let state = euro2024Instance.getState();
 
+    //Todo: check the users sub account has transferred the entry fee and then transfer it out to null or check the entry already exists so it's just an update
+    
+
     if(state.stage != #Selecting){
       return #err(#NotAllowed);
     };
@@ -1053,14 +1056,15 @@ actor Self {
     switch(prediction){
       case (null){
         
-        let canAffordEntry = await fpl_ledger.canAffordEntry(Principal.fromActor(Self), caller);
+        /*
+        let canAffordEntry = await fpl_ledger.canAffordEntry(caller, null);
 
         if (not canAffordEntry) {
           return #err(#NotAllowed);
         };
         
-        await fpl_ledger.transferEntryFee(Principal.fromActor(Self), caller);
-
+        await fpl_ledger.transferEntryFee(caller, null);
+*/
       };
       case (?foundPrediction){};
     };
@@ -1078,19 +1082,7 @@ actor Self {
         return #err(#NotFound);
       };
       case (?foundPrediction) {
-        let playDTO : DTOs.Euro2024PredictionDTO = {
-          groupAPrediction = foundPrediction.groupAPrediction;
-          groupBPrediction = foundPrediction.groupBPrediction;
-          groupCPrediction = foundPrediction.groupCPrediction;
-          groupDPrediction = foundPrediction.groupDPrediction;
-          groupEPrediction = foundPrediction.groupEPrediction;
-          groupFPrediction = foundPrediction.groupFPrediction;
-          r16Prediction = foundPrediction.r16Prediction;
-          qfPrediction = foundPrediction.qfPrediction;
-          sfPrediction = foundPrediction.sfPrediction;
-          fPrediction = foundPrediction.fPrediction;
-        };
-        return #ok(playDTO);
+        return #ok(foundPrediction);
       };
     };
   };
@@ -1140,7 +1132,7 @@ actor Self {
     assert not Principal.isAnonymous(caller);
     var accountBalance: Nat = 0;
 
-    accountBalance := await fpl_ledger.getUserAccountBalance(Principal.fromActor(Self), caller);
+    accountBalance := await fpl_ledger.getUserAccountBalance(caller);
     
     let accountBalanceDTO: DTOs.AccountBalanceDTO = {
       accountBalance = accountBalance;
@@ -1178,7 +1170,7 @@ actor Self {
   public shared ({ caller }) func getAccountBalances() : async DTOs.AccountBalancesDTO {
     
     assert not Principal.isAnonymous(caller);
-    var fplAccountBalance = await fpl_ledger.getUserAccountBalance(Principal.fromActor(Self), caller);
+    var fplAccountBalance = await fpl_ledger.getUserAccountBalance(caller);
     var icpAccountBalance = await bookInstance.getUserAccountBalance(Principal.fromActor(Self), caller);
 
     let dto: DTOs.AccountBalancesDTO = {

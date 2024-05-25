@@ -7,6 +7,8 @@ import { nonNullish, isNullish } from "@dfinity/utils";
 import "dompurify";
 import { AuthClient } from "@dfinity/auth-client";
 import { HttpAgent, Actor } from "@dfinity/agent";
+import "@dfinity/ledger-icrc";
+import "@dfinity/principal";
 let base = "";
 let assets = base;
 const initial = { base, assets };
@@ -942,6 +944,9 @@ function subscribe(store, ...callbacks) {
 function null_to_empty(value) {
   return value == null ? "" : value;
 }
+function custom_event(type, detail, { bubbles = false, cancelable = false } = {}) {
+  return new CustomEvent(type, { detail, bubbles, cancelable });
+}
 let current_component;
 function set_current_component(component) {
   current_component = component;
@@ -953,6 +958,25 @@ function get_current_component() {
 }
 function onDestroy(fn) {
   get_current_component().$$.on_destroy.push(fn);
+}
+function createEventDispatcher() {
+  const component = get_current_component();
+  return (type, detail, { cancelable = false } = {}) => {
+    const callbacks = component.$$.callbacks[type];
+    if (callbacks) {
+      const event = custom_event(
+        /** @type {string} */
+        type,
+        detail,
+        { cancelable }
+      );
+      callbacks.slice().forEach((fn) => {
+        fn.call(component, event);
+      });
+      return !event.defaultPrevented;
+    }
+    return true;
+  };
 }
 function setContext(key2, context) {
   get_current_component().$$.context.set(key2, context);
@@ -3482,7 +3506,7 @@ const options = {
 		<div class="error">
 			<span class="status">` + status + '</span>\n			<div class="message">\n				<h1>' + message + "</h1>\n			</div>\n		</div>\n	</body>\n</html>\n"
   },
-  version_hash: "1l8egj7"
+  version_hash: "fb8bcq"
 };
 async function get_hooks() {
   return {};
@@ -3738,7 +3762,7 @@ const initBusyStore = () => {
 const busyStore = initBusyStore();
 const busy = derived(busyStore, ($busyStore) => $busyStore.length > 0);
 const busyMessage = derived(busyStore, ($busyStore) => $busyStore.reverse().find(({ text: text2 }) => nonNullish(text2))?.text);
-const css$6 = {
+const css$8 = {
   code: ".medium.svelte-85668t{--spinner-size:30px}.small.svelte-85668t{--spinner-size:calc(var(--line-height-standard) * 1rem)}.tiny.svelte-85668t{--spinner-size:calc(var(--line-height-standard) * 0.5rem)}svg.svelte-85668t{width:var(--spinner-size);height:var(--spinner-size);animation:spinner-linear-rotate 2000ms linear infinite;position:absolute;top:calc(50% - var(--spinner-size) / 2);left:calc(50% - var(--spinner-size) / 2);--radius:45px;--circumference:calc(3.1415926536 * var(--radius) * 2);--start:calc((1 - 0.05) * var(--circumference));--end:calc((1 - 0.8) * var(--circumference))}svg.inline.svelte-85668t{display:inline-block;position:relative}circle.svelte-85668t{stroke-dasharray:var(--circumference);stroke-width:10%;transform-origin:50% 50% 0;transition-property:stroke;animation-name:spinner-stroke-rotate-100;animation-duration:4000ms;animation-timing-function:cubic-bezier(0.35, 0, 0.25, 1);animation-iteration-count:infinite;fill:transparent;stroke:currentColor;transition:stroke-dashoffset 225ms linear}@keyframes spinner-linear-rotate{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}@keyframes spinner-stroke-rotate-100{0%{stroke-dashoffset:var(--start);transform:rotate(0)}12.5%{stroke-dashoffset:var(--end);transform:rotate(0)}12.5001%{stroke-dashoffset:var(--end);transform:rotateX(180deg) rotate(72.5deg)}25%{stroke-dashoffset:var(--start);transform:rotateX(180deg) rotate(72.5deg)}25.0001%{stroke-dashoffset:var(--start);transform:rotate(270deg)}37.5%{stroke-dashoffset:var(--end);transform:rotate(270deg)}37.5001%{stroke-dashoffset:var(--end);transform:rotateX(180deg) rotate(161.5deg)}50%{stroke-dashoffset:var(--start);transform:rotateX(180deg) rotate(161.5deg)}50.0001%{stroke-dashoffset:var(--start);transform:rotate(180deg)}62.5%{stroke-dashoffset:var(--end);transform:rotate(180deg)}62.5001%{stroke-dashoffset:var(--end);transform:rotateX(180deg) rotate(251.5deg)}75%{stroke-dashoffset:var(--start);transform:rotateX(180deg) rotate(251.5deg)}75.0001%{stroke-dashoffset:var(--start);transform:rotate(90deg)}87.5%{stroke-dashoffset:var(--end);transform:rotate(90deg)}87.5001%{stroke-dashoffset:var(--end);transform:rotateX(180deg) rotate(341.5deg)}100%{stroke-dashoffset:var(--start);transform:rotateX(180deg) rotate(341.5deg)}}",
   map: null
 };
@@ -3749,10 +3773,10 @@ const Spinner = create_ssr_component(($$result, $$props, $$bindings, slots) => {
     $$bindings.inline(inline);
   if ($$props.size === void 0 && $$bindings.size && size !== void 0)
     $$bindings.size(size);
-  $$result.css.add(css$6);
+  $$result.css.add(css$8);
   return `  <svg class="${[escape(null_to_empty(size), true) + " svelte-85668t", inline ? "inline" : ""].join(" ").trim()}" preserveAspectRatio="xMidYMid meet" focusable="false" aria-hidden="true" data-tid="spinner" viewBox="0 0 100 100"><circle cx="50%" cy="50%" r="45" class="svelte-85668t"></circle></svg>`;
 });
-const css$5 = {
+const css$7 = {
   code: "div.svelte-14plyno{z-index:calc(var(--z-index) + 1000);position:fixed;top:0;right:0;bottom:0;left:0;background:var(--backdrop);color:var(--backdrop-contrast)}.content.svelte-14plyno{display:flex;flex-direction:column;justify-content:center;align-items:center}p.svelte-14plyno{padding-bottom:var(--padding);max-width:calc(var(--section-max-width) / 2)}",
   map: null
 };
@@ -3761,16 +3785,87 @@ const BusyScreen = create_ssr_component(($$result, $$props, $$bindings, slots) =
   let $busyMessage, $$unsubscribe_busyMessage;
   $$unsubscribe_busy = subscribe(busy, (value) => $busy = value);
   $$unsubscribe_busyMessage = subscribe(busyMessage, (value) => $busyMessage = value);
-  $$result.css.add(css$5);
+  $$result.css.add(css$7);
   $$unsubscribe_busy();
   $$unsubscribe_busyMessage();
   return ` ${$busy ? `<div data-tid="busy" class="svelte-14plyno"><div class="content svelte-14plyno">${nonNullish($busyMessage) ? `<p class="svelte-14plyno">${escape($busyMessage)}</p>` : ``} <span>${validate_component(Spinner, "Spinner").$$render($$result, { inline: true }, {}, {})}</span></div></div>` : ``}`;
+});
+const IconExpandMore = create_ssr_component(($$result, $$props, $$bindings, slots) => {
+  return `  <svg${add_attribute("width", DEFAULT_ICON_SIZE, 0)}${add_attribute("height", DEFAULT_ICON_SIZE, 0)} viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M15.5 7.75L10.25 13L5 7.75" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg>`;
 });
 const IconCheckCircle = create_ssr_component(($$result, $$props, $$bindings, slots) => {
   let { size = `24px` } = $$props;
   if ($$props.size === void 0 && $$bindings.size && size !== void 0)
     $$bindings.size(size);
   return `  <svg${add_attribute("width", size, 0)}${add_attribute("height", size, 0)} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="1.25" y="1.25" width="21.5" height="21.5" rx="10.75" fill="var(--icon-check-circle-background, transparent)"></rect><path d="M7 11L11 15L17 9" stroke="var(--icon-check-circle-color, currentColor)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path><rect x="1.25" y="1.25" width="21.5" height="21.5" rx="10.75" stroke="var(--icon-check-circle-background, currentColor)" stroke-width="1.5"></rect></svg>`;
+});
+const css$6 = {
+  code: ".contents.svelte-37r2yq{display:contents}",
+  map: null
+};
+const TestIdWrapper = create_ssr_component(($$result, $$props, $$bindings, slots) => {
+  let { testId = void 0 } = $$props;
+  if ($$props.testId === void 0 && $$bindings.testId && testId !== void 0)
+    $$bindings.testId(testId);
+  $$result.css.add(css$6);
+  return `<div class="contents svelte-37r2yq"${add_attribute("data-tid", testId, 0)}>${slots.default ? slots.default({}) : ``} </div>`;
+});
+const css$5 = {
+  code: ".header.svelte-19dic4i.svelte-19dic4i{position:relative;display:flex;justify-content:center;outline:none}.header.svelte-19dic4i.svelte-19dic4i:not(.external){touch-action:manipulation;cursor:pointer;-webkit-user-select:none;-moz-user-select:none;user-select:none}.header.svelte-19dic4i .header-content.svelte-19dic4i{flex:1;display:flex;align-items:center;justify-content:flex-start}.header.svelte-19dic4i.svelte-19dic4i:focus{filter:contrast(1.25)}button.svelte-19dic4i.svelte-19dic4i{position:absolute;top:0;bottom:0;right:0;width:var(--padding-4x);margin:0;padding:0;display:flex;align-items:center}button.svelte-19dic4i svg{width:var(--padding-2x);transition:transform var(--animation-time-normal)}button.size-medium.svelte-19dic4i svg{width:var(--padding-4x)}button.expanded.svelte-19dic4i svg{transform:rotate(180deg)}.wrapper.svelte-19dic4i.svelte-19dic4i{margin-top:0;opacity:0;visibility:hidden;transition:all var(--animation-time-normal);height:-moz-fit-content;height:fit-content;overflow:hidden}.wrapper.expanded.svelte-19dic4i.svelte-19dic4i{margin-top:var(--padding);opacity:1;visibility:initial}.content.svelte-19dic4i.svelte-19dic4i{overflow:auto}.content.svelte-19dic4i.svelte-19dic4i:not(.wrapHeight){padding-bottom:var(--padding)}",
+  map: null
+};
+const Collapsible = create_ssr_component(($$result, $$props, $$bindings, slots) => {
+  let $i18n, $$unsubscribe_i18n;
+  $$unsubscribe_i18n = subscribe(i18n, (value) => $i18n = value);
+  let { id = void 0 } = $$props;
+  let { initiallyExpanded = false } = $$props;
+  let { maxContentHeight = void 0 } = $$props;
+  let { testId = void 0 } = $$props;
+  let { iconSize = "small" } = $$props;
+  let { expandButton = true } = $$props;
+  let { externalToggle = false } = $$props;
+  let { wrapHeight = false } = $$props;
+  const dispatch = createEventDispatcher();
+  let { expanded = initiallyExpanded } = $$props;
+  let container;
+  let maxHeight;
+  const dispatchUpdate = () => dispatch("nnsToggle", { expanded });
+  const toggleContent = () => {
+    expanded = !expanded;
+    dispatchUpdate();
+  };
+  const maxHeightStyle = (height) => isNullish(height) ? "" : `max-height: ${height}px;`;
+  const overflyYStyle = (height) => isNullish(height) || isNullish(maxContentHeight) ? "overflow-y: hidden;" : height < maxContentHeight ? "overflow-y: hidden;" : "overflow-y: auto;";
+  if ($$props.id === void 0 && $$bindings.id && id !== void 0)
+    $$bindings.id(id);
+  if ($$props.initiallyExpanded === void 0 && $$bindings.initiallyExpanded && initiallyExpanded !== void 0)
+    $$bindings.initiallyExpanded(initiallyExpanded);
+  if ($$props.maxContentHeight === void 0 && $$bindings.maxContentHeight && maxContentHeight !== void 0)
+    $$bindings.maxContentHeight(maxContentHeight);
+  if ($$props.testId === void 0 && $$bindings.testId && testId !== void 0)
+    $$bindings.testId(testId);
+  if ($$props.iconSize === void 0 && $$bindings.iconSize && iconSize !== void 0)
+    $$bindings.iconSize(iconSize);
+  if ($$props.expandButton === void 0 && $$bindings.expandButton && expandButton !== void 0)
+    $$bindings.expandButton(expandButton);
+  if ($$props.externalToggle === void 0 && $$bindings.externalToggle && externalToggle !== void 0)
+    $$bindings.externalToggle(externalToggle);
+  if ($$props.wrapHeight === void 0 && $$bindings.wrapHeight && wrapHeight !== void 0)
+    $$bindings.wrapHeight(wrapHeight);
+  if ($$props.expanded === void 0 && $$bindings.expanded && expanded !== void 0)
+    $$bindings.expanded(expanded);
+  if ($$props.toggleContent === void 0 && $$bindings.toggleContent && toggleContent !== void 0)
+    $$bindings.toggleContent(toggleContent);
+  $$result.css.add(css$5);
+  $$unsubscribe_i18n();
+  return `${validate_component(TestIdWrapper, "TestIdWrapper").$$render($$result, { testId }, {}, {
+    default: () => {
+      return `<div data-tid="collapsible-header"${add_attribute("id", nonNullish(id) ? `heading${id}` : void 0, 0)} role="button" class="${escape(null_to_empty(`header ${externalToggle ? "external" : ""}`), true) + " svelte-19dic4i"}"${add_attribute("tabindex", externalToggle ? -1 : 0, 0)}><div class="header-content svelte-19dic4i">${slots.header ? slots.header({}) : ``}</div> ${expandButton ? `<button class="${[
+        "collapsible-expand-icon svelte-19dic4i",
+        (iconSize === "medium" ? "size-medium" : "") + " " + (expanded ? "expanded" : "")
+      ].join(" ").trim()}" data-tid="collapsible-expand-button"${add_attribute("aria-expanded", expanded, 0)}${add_attribute("aria-controls", id, 0)}${add_attribute("title", expanded ? $i18n.core.collapse : $i18n.core.expand, 0)} tabindex="-1">${validate_component(IconExpandMore, "IconExpandMore").$$render($$result, {}, {}, {})}</button>` : ``}</div> <div data-tid="collapsible-content" role="definition" class="${["wrapper svelte-19dic4i", expanded ? "expanded" : ""].join(" ").trim()}"${add_attribute("style", `${maxHeightStyle(maxHeight)}${overflyYStyle(maxHeight)}`, 0)}><div${add_attribute("id", id, 0)}${add_attribute("aria-labelledby", nonNullish(id) ? `heading${id}` : void 0, 0)} class="${["content svelte-19dic4i", wrapHeight ? "wrapHeight" : ""].join(" ").trim()}"${add_attribute("this", container, 0)}>${slots.default ? slots.default({}) : ``}</div></div>`;
+    }
+  })}`;
 });
 const IconClose = create_ssr_component(($$result, $$props, $$bindings, slots) => {
   let { size = `${DEFAULT_ICON_SIZE}px` } = $$props;
@@ -4291,6 +4386,7 @@ const idlFactory = ({ IDL }) => {
     "groupEPrediction": PredictionSet,
     "fPrediction": PredictionSet,
     "qfPrediction": PredictionSet,
+    "alreadyEntered": IDL.Bool,
     "groupBPrediction": PredictionSet,
     "groupDPrediction": PredictionSet,
     "groupFPrediction": PredictionSet,
@@ -4519,11 +4615,6 @@ const idlFactory = ({ IDL }) => {
     "isAdmin": IDL.Func([], [IDL.Bool], ["query"]),
     "isDisplayNameValid": IDL.Func([IDL.Text], [IDL.Bool], ["query"]),
     "isWalletValid": IDL.Func([IDL.Text], [IDL.Bool], ["query"]),
-    "payAndSubmitEuro2024Prediction": IDL.Func(
-      [Euro2024PredictionDTO],
-      [Result],
-      []
-    ),
     "payoutSweepstake": IDL.Func([], [Result], []),
     "setEuroSystemState": IDL.Func([GameState], [Result], []),
     "setSystemState": IDL.Func([IDL.Nat16, IDL.Nat8], [Result], []),
@@ -4767,14 +4858,13 @@ const Page$6 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
   let $countdown, $$unsubscribe_countdown;
   $$unsubscribe_playerStore = subscribe(playerStore, (value) => value);
   $$unsubscribe_teamStore = subscribe(teamStore, (value) => value);
-  let prediction;
   let interval;
   const countdown = writable("");
   $$unsubscribe_countdown = subscribe(countdown, (value) => $countdown = value);
   onDestroy(() => {
     clearInterval(interval);
   });
-  isSubmitDisabled = prediction?.groupAPrediction == void 0;
+  isSubmitDisabled = false;
   $$unsubscribe_playerStore();
   $$unsubscribe_teamStore();
   $$unsubscribe_countdown();
@@ -4784,7 +4874,18 @@ const Page$6 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
             Prize Pool: 0.00 $FPL</p></div></div> <div class="flex flex-col bg-gray-700 rounded-lg overflow-hidden" data-svelte-h="svelte-qtmi3h"><div class="flex flex-col justify-center h-full"><p class="inline-flex justify-center py-2 px-4 mx-2 border border-transparent shadow-sm font-bold rounded-md text-white">Total Entries: 0</p></div></div> <div class="flex flex-col bg-gray-700 rounded-lg overflow-hidden"><div class="flex flex-col justify-center h-full"><p class="w-full text-center">${escape($countdown)}</p></div></div></div> <div class="horizontal-divider my-4"></div> <div class="flex flex-row"><div class="w-4/6" data-svelte-h="svelte-1d7lws0"><p class="my-4 text-sm">Entry Fee: 100 $FPL
           <br>
           Prize Pool / Burn % split: 80:20</p></div> <div class="w-2/6 flex items-center"><div class="flex flex-row items-center"><div class="w-auto">${validate_component(OpenChatIcon, "OpenChatIcon").$$render($$result, { className: "w-10" }, {}, {})}</div> <div class="w-auto ml-4" data-svelte-h="svelte-12qjadw"><button class="fg-button px-4 py-2 rounded-md">Join our OpenChat Community now!</button></div></div></div></div> <p class="text-sm" data-svelte-h="svelte-wswfdh">Make your selections below and enter the sweepstake to be in with a chance
-      of winning $FPL.</p> <div class="horizontal-divider my-4"></div> <div class="flex flex-row items-center bg-OPENFPL text-GRAY border border-white rounded-md p-2 text-sm" data-svelte-h="svelte-1giqx13"><div class="w-1/12 flex"><p class="w-full text-center">Group</p></div> <div class="w-11/12 flex flex-row space-x-2"><div class="w-1/6 flex"><p class="w-full text-center">Winner</p></div> <div class="w-1/6 flex"><p class="w-full text-center">Loser</p></div> <div class="w-1/6 flex"><p class="w-full text-center">To Score</p></div> <div class="w-1/6 flex"><p class="w-full text-center">To Assist</p></div> <div class="w-1/6 flex"><p class="w-full text-center">Yellow Card</p></div> <div class="w-1/6 flex"><p class="w-full text-center">Red Card</p></div></div></div> <div class="flex flex-row items-center bg-gray-700 p-2 mt-4 rounded-md text-sm"><div class="w-1/12 text-center" data-svelte-h="svelte-1wkfgs4">A</div> <div class="w-11/12 flex flex-row space-x-4"><div class="w-1/6"><button class="${"selection-panel " + escape(
+      of winning $FPL.</p> <div class="horizontal-divider my-4"></div> ${validate_component(Collapsible, "Collapsible").$$render($$result, { iconSize: "medium" }, {}, {
+        header: () => {
+          return `<div slot="header" data-svelte-h="svelte-1wdhnzz">How To Play, Rules &amp; Prizes</div>`;
+        },
+        default: () => {
+          return `<p class="text-sm my-4" data-svelte-h="svelte-mfnglx">For each group stage and knockout round you need to make 6 selections.
+        For the group stage you predict the winner and loser of a group. 
+        You can then predict any player from the teams in that group to either score, assist, get a yellow card or a red.
+        The knockout stage is very similar to the group stage but you can pick from any team as anyone can reach the knockout stage.</p> <p class="text-sm my-4" data-svelte-h="svelte-hrkjx7">When the game starts a leaderboard will be active throughout the tournament, updated shortly after a game finishes. 
+        At the end of the tournament the leaderboard will pay the top 20 players the prize pool. It will be split as follows:</p> <ul class="text-sm mt-4" data-svelte-h="svelte-eg3bec"><li>1st: 30%</li> <li>2nd: 20%</li> <li>3rd: 15%</li> <li>4th: 10%</li> <li>5th: 7%</li> <li>6th: 6%</li> <li>7th: 5%</li> <li>8th: 3%</li> <li>9th: 2%</li> <li>10th: 1%</li></ul>`;
+        }
+      })} <div class="horizontal-divider my-4"></div> <div class="flex flex-row items-center bg-OPENFPL text-GRAY border border-white rounded-md p-2 text-sm" data-svelte-h="svelte-1giqx13"><div class="w-1/12 flex"><p class="w-full text-center">Group</p></div> <div class="w-11/12 flex flex-row space-x-2"><div class="w-1/6 flex"><p class="w-full text-center">Winner</p></div> <div class="w-1/6 flex"><p class="w-full text-center">Loser</p></div> <div class="w-1/6 flex"><p class="w-full text-center">To Score</p></div> <div class="w-1/6 flex"><p class="w-full text-center">To Assist</p></div> <div class="w-1/6 flex"><p class="w-full text-center">Yellow Card</p></div> <div class="w-1/6 flex"><p class="w-full text-center">Red Card</p></div></div></div> <div class="flex flex-row items-center bg-gray-700 p-2 mt-4 rounded-md text-sm"><div class="w-1/12 text-center" data-svelte-h="svelte-1wkfgs4">A</div> <div class="w-11/12 flex flex-row space-x-4"><div class="w-1/6"><button class="${"selection-panel " + escape(
         "select-panel ",
         true
       )}">${`Select a Team`}</button> <div class="text-right" data-svelte-h="svelte-1nrc4qq"><p class="text-xs mt-4">5 Points</p></div></div> <div class="w-1/6"><button class="${"selection-panel " + escape(
@@ -4977,7 +5078,7 @@ const Page$5 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
   return ``;
 });
 const Vision = create_ssr_component(($$result, $$props, $$bindings, slots) => {
-  return `<div class="m-4" data-svelte-h="svelte-ahjhvb"><h1 class="default-header">Our Vision</h1> <p class="my-4">FootballGod will provide a much needed fixed-odds betting
+  return `<div class="m-4" data-svelte-h="svelte-1e280wp"><h1 class="default-header">Our Vision</h1> <p class="my-4">FootballGod will provide a much needed fixed-odds betting
     platform to the Internet Computer. FootballGod will utilise the IC&#39;s unique
     framework to manage risk through the power of deflationary tokenomics.
     FootballGod will provide users with in game betting, the ability to build
@@ -5012,7 +5113,7 @@ const Vision = create_ssr_component(($$result, $$props, $$bindings, slots) => {
     specifically through our organisation, the ICPFA. The ICPFA will be focused
     on supporting grassroots football initiatives, demonstrating our belief in
     FootballGod&#39;s ability to bring about positive change in the football
-    community using the IC.</p></div>`;
+    community using the IC.</p> <br> <br></div>`;
 });
 const Page$4 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
   return `${validate_component(Layout, "Layout").$$render($$result, {}, {}, {

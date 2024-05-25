@@ -111,7 +111,7 @@
             ></a
           >
           <div
-            class="overlay-panel h-10 rounded-tl-lg w-11/12 md:w-1/4 bg-DARK flex items-center px-1 md:px-4"
+            class="overlay-panel h-10 rounded-tl-lg w-11/12 md:w-2/3 lg:w-2/5 xl:w-1/4 bg-DARK flex items-center px-1 md:px-4"
           >
             <FootballIcon className="w-6 mr-2" />
             <p class="text-white text-sm font-bold">Euro2024&nbsp;</p>

@@ -42,7 +42,9 @@
 
 
 
-  $: isSubmitDisabled = (
+  $: isSubmitDisabled = false;
+  /*
+  (
     prediction?.groupAPrediction == undefined ||
     prediction?.groupBPrediction == undefined ||
     prediction?.groupCPrediction == undefined ||
@@ -114,6 +116,8 @@
     prediction?.qfPrediction.yellowCard == 0 ||
     prediction?.qfPrediction.redCard == 0
   );
+
+  */
 
   const fetchPrediction = async (): Promise<Euro2024PredictionDTO | undefined> => {    
     return userStore.getUserPrediction();
@@ -1129,17 +1133,17 @@
 
     <Collapsible iconSize="medium">
       <div slot="header">How To Play, Rules & Prizes</div>
-      <p>
+      <p class="text-sm my-4">
         For each group stage and knockout round you need to make 6 selections.
         For the group stage you predict the winner and loser of a group. 
         You can then predict any player from the teams in that group to either score, assist, get a yellow card or a red.
         The knockout stage is very similar to the group stage but you can pick from any team as anyone can reach the knockout stage.
       </p>
-      <p>
+      <p class="text-sm my-4">
         When the game starts a leaderboard will be active throughout the tournament, updated shortly after a game finishes. 
         At the end of the tournament the leaderboard will pay the top 20 players the prize pool. It will be split as follows:
       </p>
-      <ul>
+      <ul class="text-sm mt-4">
         <li>1st: 30%</li>
         <li>2nd: 20%</li>
         <li>3rd: 15%</li>
