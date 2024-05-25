@@ -87,12 +87,12 @@
     closeModal={closeUsernameModal}
     cancelModal={cancelUsernameModal}
   />
-  <div class="container mx-auto p-4">
+  <div class="container mt-4 mx-6">
     <div class="flex flex-wrap">
 
-      <div class="w-full md:px-2 mb-4 md:mb-0">
-        <div class="md:ml-4 md:px-4 px-4 mt-2 md:mt-1 rounded-lg">
-          <p class="mb-1">Display Name:</p>
+      <div class="w-full mb-4 md:mb-0">
+        <div class="mt-2 md:mt-1 rounded-lg">
+          <p class="mb-1 text-xs">Display Name:</p>
           <h2 class="default-header mb-1 md:mb-2">
             {$userStore?.displayName == $userStore.principalName ? "Not Set" : $userStore?.displayName}
           </h2>
@@ -106,7 +106,7 @@
           <p class="mb-1 mt-4 text-xs">Principal:</p>
           <div class="flex items-center">
             <button
-              class="flex items-center text-left"
+              class="flex items-center text-left text-xxs break-all"
               on:click={() => copyAndShowToast($userStore.principalName)}
             >
               <span>{$userStore.principalName}</span>
@@ -117,8 +117,8 @@
       </div>
     </div>
     <div class="flex flex-wrap">
-      <div class="w-full px-2 mb-4">
-        <div class="mt-4 px-2">
+      <div class="w-full mb-4">
+        <div class="mt-4">
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div
               class="flex items-center p-4 md:p-2 rounded-lg shadow-md border border-gray-700"
@@ -134,7 +134,7 @@
 
                 <div class="flex items-center text-xs">
                   <button
-                    class="flex items-center text-left"
+                    class="flex items-center text-left break-all"
                     on:click={() => copyAndShowToast(uint8ArrayToHexString($userStore.depositAddress))}
                   >
                     <span>{uint8ArrayToHexString($userStore.depositAddress)}</span>
@@ -157,7 +157,7 @@
 
                 <div class="flex items-center text-xs">
                   <button
-                    class="flex items-center text-left"
+                    class="flex items-center text-left break-all"
                     on:click={() => copyAndShowToast(uint8ArrayToHexString($userStore.fplDepositAddress))}
                   >
                     <span>{uint8ArrayToHexString($userStore.fplDepositAddress)}</span>
