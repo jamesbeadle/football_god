@@ -158,9 +158,9 @@
                 <div class="flex items-center text-xs">
                   <button
                     class="flex items-center text-left break-all"
-                    on:click={() => copyAndShowToast(uint8ArrayToHexString($userStore.fplDepositAddress))}
+                    on:click={() => copyAndShowToast($userStore.fplDepositAddress)}
                   >
-                    <span>{uint8ArrayToHexString($userStore.fplDepositAddress)}</span>
+                    <span>{$userStore.fplDepositAddress}</span>
                     <CopyIcon className="w-7 xs:w-6 text-left" fill="#FFFFFF" />
                   </button>
                 </div>

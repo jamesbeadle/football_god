@@ -139,7 +139,7 @@ module DTOs {
   public type ProfileDTO = {
     principalName : Text;
     depositAddress : Blob;
-    fplDepositAddress : Blob;
+    fplDepositAddress : Text;
     displayName : Text;
     walletAddress : Text;
   };

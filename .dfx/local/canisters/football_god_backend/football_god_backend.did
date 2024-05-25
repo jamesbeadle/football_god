@@ -94,7 +94,7 @@ type ProfileDTO =
  record {
    depositAddress: blob;
    displayName: text;
-   fplDepositAddress: blob;
+   fplDepositAddress: text;
    principalName: text;
    walletAddress: text;
  };

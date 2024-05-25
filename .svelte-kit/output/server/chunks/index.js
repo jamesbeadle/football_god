@@ -3506,7 +3506,7 @@ const options = {
 		<div class="error">
 			<span class="status">` + status + '</span>\n			<div class="message">\n				<h1>' + message + "</h1>\n			</div>\n		</div>\n	</body>\n</html>\n"
   },
-  version_hash: "fb8bcq"
+  version_hash: "1v7gyfs"
 };
 async function get_hooks() {
   return {};
@@ -4518,7 +4518,7 @@ const idlFactory = ({ IDL }) => {
   });
   const ProfileDTO = IDL.Record({
     "displayName": IDL.Text,
-    "fplDepositAddress": IDL.Vec(IDL.Nat8),
+    "fplDepositAddress": IDL.Text,
     "walletAddress": IDL.Text,
     "depositAddress": IDL.Vec(IDL.Nat8),
     "principalName": IDL.Text

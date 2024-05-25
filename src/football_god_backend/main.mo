@@ -533,7 +533,7 @@ actor Self {
     assert not Principal.isAnonymous(caller);
     let principalName = Principal.toText(caller);
     var depositAddress = Blob.fromArray([]);
-    var fplDepositAddress = Blob.fromArray([]);
+    var fplDepositAddress = "";
     var displayName = "";
     var walletAddress = "";
 
@@ -550,7 +550,7 @@ actor Self {
         depositAddress := p.depositAddress;
         displayName := p.displayName;
         walletAddress := p.wallet;
-        fplDepositAddress := getUserDepositAccount(caller);
+        fplDepositAddress := Principal.toText(caller);
       };
     };
 

@@ -12,19 +12,18 @@
   import { userStore } from "$lib/stores/user.store";
   import { isError } from "$lib/utils/helpers";
   import { toastsError, toastsShow } from "$lib/stores/toasts.store";
-    import OpenChatIcon from "$lib/icons/OpenChatIcon.svelte";
-    import { Collapsible } from "@dfinity/gix-components";
+  import OpenChatIcon from "$lib/icons/OpenChatIcon.svelte";
+  import { Collapsible } from "@dfinity/gix-components";
+  import ConfirmSelectionModal from "$lib/components/euro2024/confirm-selection-modal.svelte";
  
   let prediction: Euro2024PredictionDTO | undefined;
-
-  let canEnterSweepstake = false; // TODO Update UI to use
-  let sweepstakePaid = false; // TODO Update UI to use
 
   let selectedStage = -1;
   let predictionType = -1;
   let showSelectTeamModal = false;
   let showSelectPlayerModal = false;
   let interval: NodeJS.Timeout;
+  let showConfirmSubmit = false;
 
   const countdown = writable("");
 
@@ -36,88 +35,6 @@
     [3, 19, 16, 24],
     [23, 9, 15, 5]
   ];
-
-
-
-
-
-
-  $: isSubmitDisabled = false;
-  /*
-  (
-    prediction?.groupAPrediction == undefined ||
-    prediction?.groupBPrediction == undefined ||
-    prediction?.groupCPrediction == undefined ||
-    prediction?.groupDPrediction == undefined ||
-    prediction?.groupEPrediction == undefined ||
-    prediction?.groupFPrediction == undefined ||
-    prediction?.r16Prediction == undefined ||
-    prediction?.qfPrediction == undefined ||
-    prediction?.sfPrediction == undefined ||
-    prediction?.fPrediction == undefined ||
-    prediction?.groupAPrediction.winner == 0 ||
-    prediction?.groupAPrediction.loser == 0 ||
-    prediction?.groupAPrediction.goalScorer == 0 ||
-    prediction?.groupAPrediction.goalAssister == 0 ||
-    prediction?.groupAPrediction.yellowCard == 0 ||
-    prediction?.groupAPrediction.redCard == 0 ||
-    prediction?.groupBPrediction.winner == 0 ||
-    prediction?.groupBPrediction.loser == 0 ||
-    prediction?.groupBPrediction.goalScorer == 0 ||
-    prediction?.groupBPrediction.goalAssister == 0 ||
-    prediction?.groupBPrediction.yellowCard == 0 ||
-    prediction?.groupBPrediction.redCard == 0 ||
-    prediction?.groupCPrediction.winner == 0 ||
-    prediction?.groupCPrediction.loser == 0 ||
-    prediction?.groupCPrediction.goalScorer == 0 ||
-    prediction?.groupCPrediction.goalAssister == 0 ||
-    prediction?.groupCPrediction.yellowCard == 0 ||
-    prediction?.groupCPrediction.redCard == 0 ||
-    prediction?.groupDPrediction.winner == 0 ||
-    prediction?.groupDPrediction.loser == 0 ||
-    prediction?.groupDPrediction.goalScorer == 0 ||
-    prediction?.groupDPrediction.goalAssister == 0 ||
-    prediction?.groupDPrediction.yellowCard == 0 ||
-    prediction?.groupDPrediction.redCard == 0 ||
-    prediction?.groupEPrediction.winner == 0 ||
-    prediction?.groupEPrediction.loser == 0 ||
-    prediction?.groupEPrediction.goalScorer == 0 ||
-    prediction?.groupEPrediction.goalAssister == 0 ||
-    prediction?.groupEPrediction.yellowCard == 0 ||
-    prediction?.groupEPrediction.redCard == 0 ||
-    prediction?.groupFPrediction.winner == 0 ||
-    prediction?.groupFPrediction.loser == 0 ||
-    prediction?.groupFPrediction.goalScorer == 0 ||
-    prediction?.groupFPrediction.goalAssister == 0 ||
-    prediction?.groupFPrediction.yellowCard == 0 ||
-    prediction?.groupFPrediction.redCard == 0 ||
-    prediction?.r16Prediction.winner == 0 ||
-    prediction?.r16Prediction.loser == 0 ||
-    prediction?.r16Prediction.goalScorer == 0 ||
-    prediction?.r16Prediction.goalAssister == 0 ||
-    prediction?.r16Prediction.yellowCard == 0 ||
-    prediction?.r16Prediction.redCard == 0 ||
-    prediction?.qfPrediction.winner == 0 ||
-    prediction?.qfPrediction.loser == 0 ||
-    prediction?.qfPrediction.goalScorer == 0 ||
-    prediction?.qfPrediction.goalAssister == 0 ||
-    prediction?.qfPrediction.yellowCard == 0 ||
-    prediction?.qfPrediction.redCard == 0 ||
-    prediction?.qfPrediction.winner == 0 ||
-    prediction?.qfPrediction.loser == 0 ||
-    prediction?.qfPrediction.goalScorer == 0 ||
-    prediction?.qfPrediction.goalAssister == 0 ||
-    prediction?.qfPrediction.yellowCard == 0 ||
-    prediction?.qfPrediction.redCard == 0 ||
-    prediction?.qfPrediction.winner == 0 ||
-    prediction?.qfPrediction.loser == 0 ||
-    prediction?.qfPrediction.goalScorer == 0 ||
-    prediction?.qfPrediction.goalAssister == 0 ||
-    prediction?.qfPrediction.yellowCard == 0 ||
-    prediction?.qfPrediction.redCard == 0
-  );
-
-  */
 
   const fetchPrediction = async (): Promise<Euro2024PredictionDTO | undefined> => {    
     return userStore.getUserPrediction();
@@ -133,11 +50,9 @@
 
     prediction = await fetchPrediction();
 
-    sweepstakePaid = prediction != undefined;
-
     if (!prediction) {
       prediction = {
-        // Provide initial structure with empty/default values
+        alreadyEntered: false,
         groupAPrediction: {
           goalAssister: 0,
           winner: 0,
@@ -257,7 +172,34 @@
       return;
     };
 
+    if(prediction.alreadyEntered){
+      let dto: Euro2024PredictionDTO = {
+        'alreadyEntered' : prediction?.alreadyEntered,
+        'sfPrediction' : prediction?.sfPrediction,
+        'groupAPrediction' : prediction?.groupAPrediction,
+        'groupCPrediction' : prediction?.groupCPrediction,
+        'groupEPrediction' : prediction?.groupEPrediction,
+        'fPrediction' : prediction?.fPrediction,
+        'qfPrediction' : prediction?.qfPrediction,
+        'groupBPrediction' : prediction?.groupBPrediction,
+        'groupDPrediction' : prediction?.groupDPrediction,
+        'groupFPrediction' : prediction?.groupFPrediction,
+        'r16Prediction' : prediction?.r16Prediction,
+      };
+      return await savePrediction(dto);
+    }
+
+    showConfirmSubmit = true;
+  };
+
+  async function confirmSavePrediction(){
+    
+    if(!prediction){
+      return;
+    };
+
     let dto: Euro2024PredictionDTO = {
+      'alreadyEntered' : prediction?.alreadyEntered,
       'sfPrediction' : prediction?.sfPrediction,
       'groupAPrediction' : prediction?.groupAPrediction,
       'groupCPrediction' : prediction?.groupCPrediction,
@@ -270,9 +212,13 @@
       'r16Prediction' : prediction?.r16Prediction,
     };
 
+    await savePrediction(dto);
 
+    showConfirmSubmit = false;
+  }
+
+  async function savePrediction(dto: Euro2024PredictionDTO) {
     try {
-
       let result = await userStore.saveEuro2024Predictions(dto);
       if (isError(result)) {
         toastsError({
@@ -281,14 +227,12 @@
         });
         console.error("Error saving prediction on football god backend", null);
       }
-
-      sweepstakePaid = true;
       
       toastsShow({
         text: "Euro 2024 prediction saved.",
         level: "success",
         duration: 2000,
-      });
+      }); 
     } catch (error) {
       toastsError({
         msg: { text: "Error saving Euro 2024 prediction." },
@@ -296,11 +240,7 @@
       });
       console.error("Error saving Euro 2024 prediction", error);
     }
-
-    //TODO: Add in toast to say saved and update the text on the button to just say
-    //saved and sweepstake entered
-
-  };
+  }
 
   function selectWinner(stage: number) {
     predictionType = 0;
@@ -1047,6 +987,11 @@
 </script>
 
 <Layout>
+
+  {#if showConfirmSubmit}
+    <ConfirmSelectionModal confirmSubmit={confirmSavePrediction} visible={showConfirmSubmit} closeSelectionModal={closePlayerSelectionModal} />
+  {/if}
+  
   {#if showSelectPlayerModal}
     <SelectPlayerComponent
       {confirmPlayerSelection}
@@ -2856,18 +2801,11 @@
         <button
           on:click={handlePredictionSubmit}
           type="submit"
-          disabled={isSubmitDisabled}
-          class={`${isSubmitDisabled ? "bg-gray-500" : "bg-OPENFPLPURPLE hover:bg-OPENFPL hover:text-GRAY focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"} inline-flex justify-center px-4 py-2 border border-transparent shadow-sm font-bold rounded-md text-white`}
+          class="bg-OPENFPLPURPLE hover:bg-OPENFPL hover:text-GRAY focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 inline-flex justify-center px-4 py-2 border border-transparent shadow-sm font-bold rounded-md text-white"
         >
           <p class="text-xl px-4">
-            Play<br /> 
-            {#if !sweepstakePaid}
-              <span class="text-xxs">(100 $FPL)</span>
-            {/if}
+            Save<br /> 
           </p>
-          {#if sweepstakePaid}
-            <p class="text-small">You've already paid, but can update your team until the first kick off.</p>
-          {/if}
         </button>
       </div>
     </div>
