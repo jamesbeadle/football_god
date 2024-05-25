@@ -29,7 +29,6 @@
     });
     try {
       await userStore.updateUsername(newUsername);
-      userStore.sync();
       await closeModal();
       toastsShow({
         text: "Display name updated.",
@@ -37,6 +36,7 @@
         duration: 2000,
       });
     } catch (error) {
+      console.log("here")
       toastsError({
         msg: { text: "Error updating username." },
         err: error,

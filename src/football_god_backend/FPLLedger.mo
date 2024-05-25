@@ -1,5 +1,6 @@
+import Environment "environment";
 module {
-  public let CANISTER_ID : Text = "ddsp7-7iaaa-aaaaq-aacqq-cai";
+  public let CANISTER_ID : Text = Environment.OPENFPL_LEDGER_CANISTER_ID;
 
   //! Candid for canister `sns_ledger` obtained by `scripts/update_ic_commit` from: <https://raw.githubusercontent.com/dfinity/ic/release-2024-04-03_23-01-base/rs/rosetta-api/icrc1/ledger/ledger.did>
     type BlockIndex = Nat;

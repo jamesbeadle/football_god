@@ -12,6 +12,8 @@
   import { userStore } from "$lib/stores/user.store";
   import { isError } from "$lib/utils/helpers";
   import { toastsError, toastsShow } from "$lib/stores/toasts.store";
+    import OpenChatIcon from "$lib/icons/OpenChatIcon.svelte";
+    import { Collapsible } from "@dfinity/gix-components";
  
   let prediction: Euro2024PredictionDTO | undefined;
 
@@ -1060,10 +1062,12 @@
     />
   {/if}
 
+
   <div class="bg-panel rounded-md p-4">
     <p class="text-xl my-2 mb-4">
       Welcome to the FootballGod Euro 2024 prediction game.
     </p>
+    
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
       <div class="flex flex-col bg-gray-700 rounded-lg overflow-hidden">
         <div class="p-4 flex flex-col justify-between h-full">
@@ -1095,19 +1099,61 @@
 
     <div class="horizontal-divider my-4" />
 
-    <p class="my-4 text-sm">
-      Entry Fee: 100 $FPL
-      <br />
-      Prize Pool / Burn % split: 80:20
-    </p> 
+    <div class="flex flex-row">
+      <div class="w-4/6">
+        <p class="my-4 text-sm">
+          Entry Fee: 100 $FPL
+          <br />
+          Prize Pool / Burn % split: 80:20  
+        </p> 
+      </div>
+      <div class="w-2/6 flex items-center">
+        <div class="flex flex-row items-center">
+          <div class="w-auto">
+            <OpenChatIcon className="w-10" /> 
+          </div>
+          <div class="w-auto ml-4">
+            <button class="fg-button px-4 py-2 rounded-md">Join our OpenChat Community now!</button>
+          </div>
+        </div>
+      </div>
+    </div>
 
-    <p>
+    <p class=" text-sm">
       Make your selections below and enter the sweepstake to be in with a chance
       of winning $FPL.
     </p>
+    
 
     <div class="horizontal-divider my-4" />
 
+    <Collapsible iconSize="medium">
+      <div slot="header">How To Play, Rules & Prizes</div>
+      <p>
+        For each group stage and knockout round you need to make 6 selections.
+        For the group stage you predict the winner and loser of a group. 
+        You can then predict any player from the teams in that group to either score, assist, get a yellow card or a red.
+        The knockout stage is very similar to the group stage but you can pick from any team as anyone can reach the knockout stage.
+      </p>
+      <p>
+        When the game starts a leaderboard will be active throughout the tournament, updated shortly after a game finishes. 
+        At the end of the tournament the leaderboard will pay the top 20 players the prize pool. It will be split as follows:
+      </p>
+      <ul>
+        <li>1st: 30%</li>
+        <li>2nd: 20%</li>
+        <li>3rd: 15%</li>
+        <li>4th: 10%</li>
+        <li>5th: 7%</li>
+        <li>6th: 6%</li>
+        <li>7th: 5%</li>
+        <li>8th: 3%</li>
+        <li>9th: 2%</li>
+        <li>10th: 1%</li>
+      </ul>
+    </Collapsible>
+
+    <div class="horizontal-divider my-4" />
     
     <div class="flex flex-row items-center bg-OPENFPL text-GRAY border border-white rounded-md p-2 text-sm">
       <div class="w-1/12 flex">
@@ -2815,7 +2861,7 @@
               <span class="text-xxs">(100 $FPL)</span>
             {/if}
           </p>
-          {#if !sweepstakePaid}
+          {#if sweepstakePaid}
             <p class="text-small">You've already paid, but can update your team until the first kick off.</p>
           {/if}
         </button>

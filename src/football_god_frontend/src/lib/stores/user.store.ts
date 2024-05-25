@@ -2,7 +2,10 @@ import { authStore } from "$lib/stores/auth.store";
 import { ActorFactory } from "../../utils/ActorFactory";
 import { isError } from "$lib/utils/helpers";
 import { writable } from "svelte/store";
-import type { Euro2024PredictionDTO } from "../../../../declarations/football_god_backend/football_god_backend.did";
+import type {
+  AccountBalancesDTO,
+  Euro2024PredictionDTO,
+} from "../../../../declarations/football_god_backend/football_god_backend.did";
 
 function createUserStore() {
   const { subscribe, set } = writable<any>(null);
@@ -28,7 +31,7 @@ function createUserStore() {
         authStore,
         process.env.FOOTBALL_GOD_BACKEND_CANISTER_ID ?? "",
       );
-      const result = await identityActor.updateUsername(username);
+      const result = await identityActor.updateDisplayName(username);
       if (isError(result)) {
         console.error("Error updating username");
         return;
@@ -126,6 +129,7 @@ function createUserStore() {
         process.env.FOOTBALL_GOD_BACKEND_CANISTER_ID ?? "",
       );
       const result = await identityActor.submitEuro2024Prediction(dto);
+      console.log(result);
       if (isError(result)) {
         console.error("Error saving Euro2024 prediction.");
         return;
@@ -146,15 +150,37 @@ function createUserStore() {
         process.env.FOOTBALL_GOD_BACKEND_CANISTER_ID ?? "",
       );
       const result = await identityActor.getUserPrediction();
+      console.log("here");
+      console.log(result);
       if (isError(result)) {
         console.error("Error getting user prediction");
-        return;
+        return undefined;
       }
 
       let prediction = result.ok;
       return prediction;
     } catch (error) {
       console.error("Error getting user prediction:", error);
+      return undefined;
+    }
+  }
+
+  async function getAccountBalances(): Promise<AccountBalancesDTO | undefined> {
+    try {
+      const identityActor: any = await ActorFactory.createIdentityActor(
+        authStore,
+        process.env.FOOTBALL_GOD_BACKEND_CANISTER_ID ?? "",
+      );
+      const result = await identityActor.getAccountBalances();
+      if (isError(result)) {
+        console.error("Error getting account balances");
+        return undefined;
+      }
+
+      let accountBalances = result;
+      return accountBalances;
+    } catch (error) {
+      console.error("Error getting user account balances:", error);
       return undefined;
     }
   }
@@ -168,6 +194,7 @@ function createUserStore() {
     cacheProfile,
     saveEuro2024Predictions,
     getUserPrediction,
+    getAccountBalances,
   };
 }
 

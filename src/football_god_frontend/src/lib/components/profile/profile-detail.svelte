@@ -5,11 +5,16 @@
   import UpdateUsernameModal from "$lib/components/profile/update-username-modal.svelte";
   import { busyStore, Spinner } from "@dfinity/gix-components";
   import CopyIcon from "$lib/icons/CopyIcon.svelte";
-  import { userGetProfilePicture } from "$lib/derived/user.derived";
   import { uint8ArrayToHexString } from "@dfinity/utils";
+    import type { AccountBalancesDTO } from "../../../../../declarations/football_god_backend/football_god_backend.did";
 
   let showUsernameModal: boolean = false;
   let fileInput: HTMLInputElement;
+  let accountBalances: AccountBalancesDTO = {
+    principalId: "",
+    fplBalance: 0n,
+    icpBalance: 0n
+  };
   
   let unsubscribeUserProfile: () => void;
 
@@ -18,14 +23,21 @@
   onMount(async () => {
     try {
       await userStore.sync();
-
-      
       console.log($userStore)
       unsubscribeUserProfile = userStore.subscribe((value) => {
         if (!value) {
           return;
         }
       });
+      let userBalances = await userStore.getAccountBalances();
+      console.log(userBalances)
+      if(userBalances){
+        accountBalances = {
+          principalId: userBalances.principalId,
+          fplBalance: userBalances.fplBalance,
+          icpBalance: userBalances.icpBalance
+        }
+      }
     } catch (error) {
       toastsError({
         msg: { text: "Error fetching profile detail." },
@@ -48,50 +60,6 @@
 
   function cancelUsernameModal() {
     showUsernameModal = false;
-  }
-
-  function clickFileInput() {
-    fileInput.click();
-  }
-
-  function handleFileChange(event: Event) {
-    const input = event.target as HTMLInputElement;
-    if (input.files && input.files[0]) {
-      const file = input.files[0];
-      if (file.size > 500 * 1024) {
-        alert("File size exceeds 500KB");
-        return;
-      }
-
-      uploadProfileImage(file);
-    }
-  }
-
-  async function uploadProfileImage(file: File) {
-    busyStore.startBusy({
-      initiator: "upload-image",
-      text: "Uploading profile picture...",
-    });
-
-    try {
-      await userStore.updateProfilePicture(file);
-      await userStore.cacheProfile();
-      await userStore.sync();
-
-      toastsShow({
-        text: "Profile image updated.",
-        level: "success",
-        duration: 2000,
-      });
-    } catch (error) {
-      toastsError({
-        msg: { text: "Error updating profile image." },
-        err: error,
-      });
-      console.error("Error updating profile image", error);
-    } finally {
-      busyStore.stopBusy("upload-image");
-    }
   }
 
   async function copyAndShowToast(textToCopy: string) {
@@ -121,31 +89,8 @@
   />
   <div class="container mx-auto p-4">
     <div class="flex flex-wrap">
-      <div class="w-full md:w-1/2 lg:w-1/3 xl:w-1/4 px-2">
-        <div class="group flex flex-col md:block">
-          <img
-            src={$userGetProfilePicture}
-            alt="Profile"
-            class="w-full mb-1 rounded-lg"
-          />
 
-          <div class="file-upload-wrapper mt-4">
-            <button class="button-hover btn-file-upload fg-button" on:click={clickFileInput}
-              >Upload Photo</button
-            >
-            <input
-              type="file"
-              id="profile-image"
-              accept="image/*"
-              bind:this={fileInput}
-              on:change={handleFileChange}
-              style="opacity: 0; position: absolute; left: 0; top: 0;"
-            />
-          </div>
-        </div>
-      </div>
-
-      <div class="w-full md:w-1/2 lg:w-2/3 xl:w-3/4 md:px-2 mb-4 md:mb-0">
+      <div class="w-full md:px-2 mb-4 md:mb-0">
         <div class="md:ml-4 md:px-4 px-4 mt-2 md:mt-1 rounded-lg">
           <p class="mb-1">Display Name:</p>
           <h2 class="default-header mb-1 md:mb-2">
@@ -213,9 +158,9 @@
                 <div class="flex items-center text-xs">
                   <button
                     class="flex items-center text-left"
-                    on:click={() => copyAndShowToast($userStore.fplDepositAddress)}
+                    on:click={() => copyAndShowToast(uint8ArrayToHexString($userStore.fplDepositAddress))}
                   >
-                    <span>{$userStore.fplDepositAddress}</span>
+                    <span>{uint8ArrayToHexString($userStore.fplDepositAddress)}</span>
                     <CopyIcon className="w-7 xs:w-6 text-left" fill="#FFFFFF" />
                   </button>
                 </div>

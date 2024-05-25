@@ -533,7 +533,7 @@ actor Self {
     assert not Principal.isAnonymous(caller);
     let principalName = Principal.toText(caller);
     var depositAddress = Blob.fromArray([]);
-    var fplDepositAddress = principalName;
+    var fplDepositAddress = Blob.fromArray([]);
     var displayName = "";
     var walletAddress = "";
 
@@ -550,7 +550,7 @@ actor Self {
         depositAddress := p.depositAddress;
         displayName := p.displayName;
         walletAddress := p.wallet;
-        fplDepositAddress := Principal.toText(caller);
+        fplDepositAddress := getUserDepositAccount(caller);
       };
     };
 
@@ -1031,23 +1031,18 @@ actor Self {
     Account.accountIdentifier(Principal.fromActor(Self), Account.principalToSubaccount(caller));
   };
 
-  private func getUserFPLDepositAccount(caller : Principal) : Account.AccountIdentifier {
-    Account.accountIdentifier(Principal.fromText(Environment.OPENFPL_LEDGER_CANISTER_ID), Account.principalToSubaccount(caller));
-  };
-
   //euro 2024 functions
 
   public shared ({ caller }) func submitEuro2024Prediction(euro2024PredictionDTO : DTOs.Euro2024PredictionDTO) : async Result.Result<(), T.Error> {
-
+    
+    assert not Principal.isAnonymous(caller);
+    let principalName = Principal.toText(caller);
+    let profile = profilesInstance.getProfile(principalName);
     let state = euro2024Instance.getState();
 
     if(state.stage != #Selecting){
       return #err(#NotAllowed);
     };
-
-    assert not Principal.isAnonymous(caller);
-    let principalName = Principal.toText(caller);
-    let profile = profilesInstance.getProfile(principalName);
 
     if (profile == null) {
       profilesInstance.createProfile(Principal.toText(caller), Principal.toText(caller), "", getUserDepositAccount(caller));
@@ -1057,36 +1052,18 @@ actor Self {
 
     switch(prediction){
       case (null){
-        return #err(#NotFound);
-      };
-      case (?foundPrediction){
-        let validPredictions = euro2024Instance.checkValidPredictions(euro2024PredictionDTO);
+        
+        let canAffordEntry = await fpl_ledger.canAffordEntry(Principal.fromActor(Self), caller);
 
-        if (not validPredictions) {
+        if (not canAffordEntry) {
           return #err(#NotAllowed);
         };
+        
+        await fpl_ledger.transferEntryFee(Principal.fromActor(Self), caller);
 
-        return euro2024Instance.submitPredictions(principalName, euro2024PredictionDTO);
       };
+      case (?foundPrediction){};
     };
-  };
-
-  public shared ({ caller }) func payAndSubmitEuro2024Prediction(euro2024PredictionDTO : DTOs.Euro2024PredictionDTO) : async Result.Result<(), T.Error> {
-
-    assert not Principal.isAnonymous(caller);
-    let principalName = Principal.toText(caller);
-    let profile = profilesInstance.getProfile(principalName);
-
-    if (profile == null) {
-      profilesInstance.createProfile(Principal.toText(caller), Principal.toText(caller), "", getUserDepositAccount(caller));
-    };
-
-    let validPredictions = euro2024Instance.checkValidPredictions(euro2024PredictionDTO);
-
-    if (not validPredictions) {
-      return #err(#NotAllowed);
-    };
-
     return euro2024Instance.submitPredictions(principalName, euro2024PredictionDTO);
   };
 
@@ -1196,6 +1173,20 @@ actor Self {
 
     euro2024Instance.setGameState(gameState);
     return #ok(());
+  };
+
+  public shared ({ caller }) func getAccountBalances() : async DTOs.AccountBalancesDTO {
+    
+    assert not Principal.isAnonymous(caller);
+    var fplAccountBalance = await fpl_ledger.getUserAccountBalance(Principal.fromActor(Self), caller);
+    var icpAccountBalance = await bookInstance.getUserAccountBalance(Principal.fromActor(Self), caller);
+
+    let dto: DTOs.AccountBalancesDTO = {
+      principalId = Principal.toText(caller);
+      fplBalance = fplAccountBalance;
+      icpBalance = icpAccountBalance;
+    };
+    return dto;
   };
 
   //TODO: get and pay winners

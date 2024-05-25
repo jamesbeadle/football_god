@@ -3482,7 +3482,7 @@ const options = {
 		<div class="error">
 			<span class="status">` + status + '</span>\n			<div class="message">\n				<h1>' + message + "</h1>\n			</div>\n		</div>\n	</body>\n</html>\n"
   },
-  version_hash: "13mcpkr"
+  version_hash: "1l8egj7"
 };
 async function get_hooks() {
   return {};
@@ -4065,17 +4065,25 @@ const css$1 = {
   map: null
 };
 const Layout = create_ssr_component(($$result, $$props, $$bindings, slots) => {
+  let links;
   let activeRoute;
   let $$unsubscribe_authStore;
   let $page, $$unsubscribe_page;
-  let $isExpanded, $$unsubscribe_isExpanded;
   let $authSignedInStore, $$unsubscribe_authSignedInStore;
+  let $isExpanded, $$unsubscribe_isExpanded;
   $$unsubscribe_authStore = subscribe(authStore, (value) => value);
   $$unsubscribe_page = subscribe(page, (value) => $page = value);
   $$unsubscribe_authSignedInStore = subscribe(authSignedInStore, (value) => $authSignedInStore = value);
   let isExpanded = writable(false);
   $$unsubscribe_isExpanded = subscribe(isExpanded, (value) => $isExpanded = value);
-  let links = [
+  const init2 = async () => await Promise.all([syncAuthStore()]);
+  const syncAuthStore = async () => {
+    {
+      return;
+    }
+  };
+  $$result.css.add(css$1);
+  links = $authSignedInStore ? [
     { name: "Home", icon: HomeIcon, href: "/" },
     {
       name: "Match Betting",
@@ -4102,19 +4110,34 @@ const Layout = create_ssr_component(($$result, $$props, $$bindings, slots) => {
       icon: ProfileIcon,
       href: "/profile"
     }
-  ];
-  const init2 = async () => await Promise.all([syncAuthStore()]);
-  const syncAuthStore = async () => {
+  ] : [
+    { name: "Home", icon: HomeIcon, href: "/" },
     {
-      return;
+      name: "Match Betting",
+      icon: BettingIcon,
+      href: "/betting"
+    },
+    {
+      name: "Mini Games",
+      icon: GamesIcon,
+      href: "/games"
+    },
+    {
+      name: "Euro 2024",
+      icon: StarIcon,
+      href: "/euro2024"
+    },
+    {
+      name: "Rules",
+      icon: RulesIcon,
+      href: "/rules"
     }
-  };
-  $$result.css.add(css$1);
+  ];
   activeRoute = $page.url.pathname;
   $$unsubscribe_authStore();
   $$unsubscribe_page();
-  $$unsubscribe_isExpanded();
   $$unsubscribe_authSignedInStore();
+  $$unsubscribe_isExpanded();
   return ` ${function(__value) {
     if (is_promise(__value)) {
       __value.then(null, noop);
@@ -4137,6 +4160,12 @@ const Layout = create_ssr_component(($$result, $$props, $$bindings, slots) => {
       })}</div></div> <div class="mb-4">${$isExpanded ? `${$authSignedInStore ? `<button class="button-hover p-2 rounded-md text-sm w-full" data-svelte-h="svelte-kl75by">Disconnect</button>` : `<button class="bg-OPENFPL hover:bg-OPENFPL hover:text-GRAY p-2 rounded-md text-sm w-full" data-svelte-h="svelte-lbywhq">Connect Internet Identity</button>`}` : ``}</div></div> <div class="flex-1">${slots.default ? slots.default({}) : ``}</div></div> `;
     }();
   }(init2())} ${validate_component(Toasts, "Toasts").$$render($$result, {}, {}, {})} ${validate_component(BusyScreen, "BusyScreen").$$render($$result, {}, {}, {})}`;
+});
+const OpenChatIcon = create_ssr_component(($$result, $$props, $$bindings, slots) => {
+  let { className = "" } = $$props;
+  if ($$props.className === void 0 && $$bindings.className && className !== void 0)
+    $$bindings.className(className);
+  return `<svg viewBox="0 0 361 361"${add_attribute("class", className, 0)} xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><defs><linearGradient id="gradient-2"></linearGradient><linearGradient id="gradient-5"><stop style="stop-color: rgb(251, 176, 59);" offset="0"></stop><stop style="stop-color: rgb(240, 90, 36);" offset="1"></stop></linearGradient><linearGradient id="gradient-6"><stop style="stop-color: rgb(95, 37, 131);" offset="0"></stop><stop style="stop-color: rgb(237, 30, 121);" offset="1"></stop></linearGradient><linearGradient id="gradient-6-1" gradientUnits="userSpaceOnUse" x1="973.216" y1="100.665" x2="973.216" y2="388.077" gradientTransform="matrix(0.974127, -0.22842, 0.310454, 1.352474, -95.300314, 85.515158)" xlink:href="#gradient-6"></linearGradient><linearGradient id="gradient-5-0" gradientUnits="userSpaceOnUse" x1="188.919" y1="1.638" x2="188.919" y2="361.638" gradientTransform="matrix(-0.999999, 0.0016, -0.002016, -1.25907, 376.779907, 357.264557)" xlink:href="#gradient-5"></linearGradient></defs><g transform="matrix(1, 0, 0, 1, -69.98674, -69.986298)"><path d="M 188.919 181.638 m -180 0 a 180 180 0 1 0 360 0 a 180 180 0 1 0 -360 0 Z M 188.919 181.638 m -100 0 a 100 100 0 0 1 200 0 a 100 100 0 0 1 -200 0 Z" style="fill: url(#gradient-5-0);" transform="matrix(1, 0.000074, -0.000074, 1, 61.094498, 68.347626)"></path><path style="stroke-width: 0px; paint-order: stroke; fill: url(#gradient-6-1);" transform="matrix(1.031731, 0.000001, 0, 1.020801, -634.597351, 0.544882)" d="M 958.327234958 100.664699414 A 175.433 175.433 0 0 1 958.327234958 388.077300586 L 913.296322517 323.766492741 A 96.924 96.924 0 0 0 913.296322517 164.975507259 Z"></path><circle style="fill: rgb(25, 25, 25);" cx="250" cy="250" r="100"></circle></g></svg>`;
 });
 const css = {
   code: ".overlay-container.svelte-a3qity{position:relative}.overlay-panel.svelte-a3qity{position:absolute;bottom:0;right:0}",
@@ -4169,6 +4198,12 @@ const idlFactory = ({ IDL }) => {
     "AlreadyExists": IDL.Null
   });
   const Result = IDL.Variant({ "ok": IDL.Null, "err": Error2 });
+  const PrincipalName = IDL.Text;
+  const AccountBalancesDTO = IDL.Record({
+    "icpBalance": IDL.Nat64,
+    "principalId": PrincipalName,
+    "fplBalance": IDL.Nat
+  });
   const GameweekDTO = IDL.Record({
     "totalFixtures": IDL.Nat8,
     "correctScores": IDL.Nat8,
@@ -4387,7 +4422,7 @@ const idlFactory = ({ IDL }) => {
   });
   const ProfileDTO = IDL.Record({
     "displayName": IDL.Text,
-    "fplDepositAddress": IDL.Text,
+    "fplDepositAddress": IDL.Vec(IDL.Nat8),
     "walletAddress": IDL.Text,
     "depositAddress": IDL.Vec(IDL.Nat8),
     "principalName": IDL.Text
@@ -4434,6 +4469,7 @@ const idlFactory = ({ IDL }) => {
     "deleteFixture": IDL.Func([IDL.Nat16, IDL.Nat8, IDL.Nat32], [Result], []),
     "deleteSeason": IDL.Func([IDL.Nat16], [Result], []),
     "deleteTeam": IDL.Func([IDL.Nat16], [Result], []),
+    "getAccountBalances": IDL.Func([], [AccountBalancesDTO], []),
     "getAdminDTO": IDL.Func([], [AdminDTO], ["query"]),
     "getAllEvents": IDL.Func([], [Result_7], []),
     "getCorrectPredictionsDTO": IDL.Func(
@@ -4525,8 +4561,8 @@ const idlFactory = ({ IDL }) => {
     "withdrawICP": IDL.Func([IDL.Float64], [Result], [])
   });
 };
-var define_process_env_default$3 = { __CANDID_UI_CANISTER_ID: "br5f7-7uaaa-aaaaa-qaaca-cai", FOOTBALL_GOD_BACKEND_CANISTER_ID: "bd3sg-teaaa-aaaaa-qaaba-cai", FOOTBALL_GOD_FRONTEND_CANISTER_ID: "be2us-64aaa-aaaaa-qaabq-cai", DFX_NETWORK: "local" };
-const canisterId = define_process_env_default$3.CANISTER_ID_FOOTBALL_GOD_BACKEND;
+var define_process_env_default$2 = { __CANDID_UI_CANISTER_ID: "ahw5u-keaaa-aaaaa-qaaha-cai", FOOTBALL_GOD_BACKEND_CANISTER_ID: "ajuq4-ruaaa-aaaaa-qaaga-cai", FOOTBALL_GOD_FRONTEND_CANISTER_ID: "aovwi-4maaa-aaaaa-qaagq-cai", DFX_NETWORK: "local" };
+const canisterId = define_process_env_default$2.CANISTER_ID_FOOTBALL_GOD_BACKEND;
 const createActor = (canisterId2, options2 = {}) => {
   const agent = options2.agent || new HttpAgent({ ...options2.agentOptions });
   if (options2.agent && options2.agentOptions) {
@@ -4622,10 +4658,6 @@ class ActorFactory {
     });
   }
 }
-function uint8ArrayToBase64(bytes) {
-  const binary = Array.from(bytes).map((byte) => String.fromCharCode(byte)).join("");
-  return btoa(binary);
-}
 function replacer(key2, value) {
   if (typeof value === "bigint") {
     return value.toString();
@@ -4636,12 +4668,12 @@ function replacer(key2, value) {
 function isError(response) {
   return response && response.err !== void 0;
 }
-var define_process_env_default$2 = { __CANDID_UI_CANISTER_ID: "br5f7-7uaaa-aaaaa-qaaca-cai", FOOTBALL_GOD_BACKEND_CANISTER_ID: "bd3sg-teaaa-aaaaa-qaaba-cai", FOOTBALL_GOD_FRONTEND_CANISTER_ID: "be2us-64aaa-aaaaa-qaabq-cai", DFX_NETWORK: "local" };
+var define_process_env_default$1 = { __CANDID_UI_CANISTER_ID: "ahw5u-keaaa-aaaaa-qaaha-cai", FOOTBALL_GOD_BACKEND_CANISTER_ID: "ajuq4-ruaaa-aaaaa-qaaga-cai", FOOTBALL_GOD_FRONTEND_CANISTER_ID: "aovwi-4maaa-aaaaa-qaagq-cai", DFX_NETWORK: "local" };
 function createTeamStore() {
   const { subscribe: subscribe2, set } = writable([]);
   let actor = ActorFactory.createActor(
     idlFactory,
-    define_process_env_default$2.FOOTBALL_GOD_BACKEND_CANISTER_ID
+    define_process_env_default$1.FOOTBALL_GOD_BACKEND_CANISTER_ID
   );
   async function sync() {
     const category = "teams";
@@ -4682,12 +4714,12 @@ function createTeamStore() {
   };
 }
 const teamStore = createTeamStore();
-var define_process_env_default$1 = { __CANDID_UI_CANISTER_ID: "br5f7-7uaaa-aaaaa-qaaca-cai", FOOTBALL_GOD_BACKEND_CANISTER_ID: "bd3sg-teaaa-aaaaa-qaaba-cai", FOOTBALL_GOD_FRONTEND_CANISTER_ID: "be2us-64aaa-aaaaa-qaabq-cai", DFX_NETWORK: "local" };
+var define_process_env_default = { __CANDID_UI_CANISTER_ID: "ahw5u-keaaa-aaaaa-qaaha-cai", FOOTBALL_GOD_BACKEND_CANISTER_ID: "ajuq4-ruaaa-aaaaa-qaaga-cai", FOOTBALL_GOD_FRONTEND_CANISTER_ID: "aovwi-4maaa-aaaaa-qaagq-cai", DFX_NETWORK: "local" };
 function createPlayerStore() {
   const { subscribe: subscribe2, set } = writable([]);
   let actor = ActorFactory.createActor(
     idlFactory,
-    define_process_env_default$1.FOOTBALL_GOD_BACKEND_CANISTER_ID
+    define_process_env_default.FOOTBALL_GOD_BACKEND_CANISTER_ID
   );
   async function sync() {
     const category = "players";
@@ -4728,151 +4760,6 @@ function createPlayerStore() {
   };
 }
 const playerStore = createPlayerStore();
-var define_process_env_default = { __CANDID_UI_CANISTER_ID: "br5f7-7uaaa-aaaaa-qaaca-cai", FOOTBALL_GOD_BACKEND_CANISTER_ID: "bd3sg-teaaa-aaaaa-qaaba-cai", FOOTBALL_GOD_FRONTEND_CANISTER_ID: "be2us-64aaa-aaaaa-qaabq-cai", DFX_NETWORK: "local" };
-function createUserStore() {
-  const { subscribe: subscribe2, set } = writable(null);
-  async function sync() {
-    let localStorageString = localStorage.getItem("user_profile_data");
-    if (localStorageString) {
-      const localProfile = JSON.parse(localStorageString);
-      set(localProfile);
-      return;
-    }
-    try {
-      await cacheProfile();
-    } catch (error) {
-      console.error("Error fetching user profile:", error);
-      throw error;
-    }
-  }
-  async function updateUsername(username) {
-    try {
-      const identityActor = await ActorFactory.createIdentityActor(
-        authStore,
-        define_process_env_default.FOOTBALL_GOD_BACKEND_CANISTER_ID ?? ""
-      );
-      const result = await identityActor.updateUsername(username);
-      if (isError(result)) {
-        console.error("Error updating username");
-        return;
-      }
-      await cacheProfile();
-      return result;
-    } catch (error) {
-      console.error("Error updating username:", error);
-      throw error;
-    }
-  }
-  async function updateProfilePicture(picture) {
-    try {
-      const maxPictureSize = 1e3;
-      const extension = getFileExtensionFromFile(picture);
-      if (picture.size > maxPictureSize * 1024) {
-        return null;
-      }
-      const reader = new FileReader();
-      reader.readAsArrayBuffer(picture);
-      reader.onloadend = async () => {
-        const arrayBuffer = reader.result;
-        const uint8Array = new Uint8Array(arrayBuffer);
-        try {
-          const identityActor = await ActorFactory.createIdentityActor(
-            authStore,
-            define_process_env_default.FOOTBALL_GOD_BACKEND_CANISTER_ID ?? ""
-          );
-          const result = await identityActor.updateProfilePicture(
-            uint8Array,
-            extension
-          );
-          if (isError(result)) {
-            console.error("Error updating profile picture");
-            return;
-          }
-          await cacheProfile();
-          return result;
-        } catch (error) {
-          console.error(error);
-        }
-      };
-    } catch (error) {
-      console.error("Error updating username:", error);
-      throw error;
-    }
-  }
-  function getFileExtensionFromFile(file) {
-    const filename = file.name;
-    const lastIndex = filename.lastIndexOf(".");
-    return lastIndex !== -1 ? filename.substring(lastIndex + 1) : "";
-  }
-  async function isUsernameAvailable(username) {
-    const identityActor = await ActorFactory.createIdentityActor(
-      authStore,
-      define_process_env_default.FOOTBALL_GOD_BACKEND_CANISTER_ID
-    );
-    return await identityActor.isUsernameValid(username);
-  }
-  async function cacheProfile() {
-    const identityActor = await ActorFactory.createIdentityActor(
-      authStore,
-      define_process_env_default.FOOTBALL_GOD_BACKEND_CANISTER_ID
-    );
-    let getProfileResponse = await identityActor.getProfileDTO();
-    console.log(getProfileResponse);
-    let error = isError(getProfileResponse);
-    if (error) {
-      console.error("Error fetching user profile");
-      return;
-    }
-    let profileData = getProfileResponse.ok;
-    set(profileData);
-  }
-  async function saveEuro2024Predictions(dto) {
-    try {
-      const identityActor = await ActorFactory.createIdentityActor(
-        authStore,
-        define_process_env_default.FOOTBALL_GOD_BACKEND_CANISTER_ID ?? ""
-      );
-      const result = await identityActor.submitEuro2024Prediction(dto);
-      if (isError(result)) {
-        console.error("Error saving Euro2024 prediction.");
-        return;
-      }
-      return result;
-    } catch (error) {
-      console.error("Error saving Euro2024 prediction.", error);
-      throw error;
-    }
-  }
-  async function getUserPrediction() {
-    try {
-      const identityActor = await ActorFactory.createIdentityActor(
-        authStore,
-        define_process_env_default.FOOTBALL_GOD_BACKEND_CANISTER_ID ?? ""
-      );
-      const result = await identityActor.getUserPrediction();
-      if (isError(result)) {
-        console.error("Error getting user prediction");
-        return;
-      }
-      let prediction = result.ok;
-      return prediction;
-    } catch (error) {
-      console.error("Error getting user prediction:", error);
-      return void 0;
-    }
-  }
-  return {
-    subscribe: subscribe2,
-    sync,
-    updateUsername,
-    updateProfilePicture,
-    isUsernameAvailable,
-    cacheProfile,
-    saveEuro2024Predictions,
-    getUserPrediction
-  };
-}
-const userStore = createUserStore();
 const Page$6 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
   let isSubmitDisabled;
   let $$unsubscribe_playerStore;
@@ -4894,9 +4781,9 @@ const Page$6 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
   return `${validate_component(Layout, "Layout").$$render($$result, {}, {}, {
     default: () => {
       return `${``} ${``} <div class="bg-panel rounded-md p-4"><p class="text-xl my-2 mb-4" data-svelte-h="svelte-15uwobf">Welcome to the FootballGod Euro 2024 prediction game.</p> <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2"><div class="flex flex-col bg-gray-700 rounded-lg overflow-hidden" data-svelte-h="svelte-89bcxj"><div class="p-4 flex flex-col justify-between h-full"><p class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm font-bold rounded-md text-white items-center"><img src="FPLCoin.png" alt="fpl" class="w-8 h-8 mr-2 mb-1">
-            Prize Pool: 0.00 $FPL</p></div></div> <div class="flex flex-col bg-gray-700 rounded-lg overflow-hidden" data-svelte-h="svelte-qtmi3h"><div class="flex flex-col justify-center h-full"><p class="inline-flex justify-center py-2 px-4 mx-2 border border-transparent shadow-sm font-bold rounded-md text-white">Total Entries: 0</p></div></div> <div class="flex flex-col bg-gray-700 rounded-lg overflow-hidden"><div class="flex flex-col justify-center h-full"><p class="w-full text-center">${escape($countdown)}</p></div></div></div> <div class="horizontal-divider my-4"></div> <p class="my-4 text-sm" data-svelte-h="svelte-1crq14l">Entry Fee: 100 $FPL
-      <br>
-      Prize Pool / Burn % split: 80:20</p> <p data-svelte-h="svelte-5qjg8e">Make your selections below and enter the sweepstake to be in with a chance
+            Prize Pool: 0.00 $FPL</p></div></div> <div class="flex flex-col bg-gray-700 rounded-lg overflow-hidden" data-svelte-h="svelte-qtmi3h"><div class="flex flex-col justify-center h-full"><p class="inline-flex justify-center py-2 px-4 mx-2 border border-transparent shadow-sm font-bold rounded-md text-white">Total Entries: 0</p></div></div> <div class="flex flex-col bg-gray-700 rounded-lg overflow-hidden"><div class="flex flex-col justify-center h-full"><p class="w-full text-center">${escape($countdown)}</p></div></div></div> <div class="horizontal-divider my-4"></div> <div class="flex flex-row"><div class="w-4/6" data-svelte-h="svelte-1d7lws0"><p class="my-4 text-sm">Entry Fee: 100 $FPL
+          <br>
+          Prize Pool / Burn % split: 80:20</p></div> <div class="w-2/6 flex items-center"><div class="flex flex-row items-center"><div class="w-auto">${validate_component(OpenChatIcon, "OpenChatIcon").$$render($$result, { className: "w-10" }, {}, {})}</div> <div class="w-auto ml-4" data-svelte-h="svelte-12qjadw"><button class="fg-button px-4 py-2 rounded-md">Join our OpenChat Community now!</button></div></div></div></div> <p class="text-sm" data-svelte-h="svelte-wswfdh">Make your selections below and enter the sweepstake to be in with a chance
       of winning $FPL.</p> <div class="horizontal-divider my-4"></div> <div class="flex flex-row items-center bg-OPENFPL text-GRAY border border-white rounded-md p-2 text-sm" data-svelte-h="svelte-1giqx13"><div class="w-1/12 flex"><p class="w-full text-center">Group</p></div> <div class="w-11/12 flex flex-row space-x-2"><div class="w-1/6 flex"><p class="w-full text-center">Winner</p></div> <div class="w-1/6 flex"><p class="w-full text-center">Loser</p></div> <div class="w-1/6 flex"><p class="w-full text-center">To Score</p></div> <div class="w-1/6 flex"><p class="w-full text-center">To Assist</p></div> <div class="w-1/6 flex"><p class="w-full text-center">Yellow Card</p></div> <div class="w-1/6 flex"><p class="w-full text-center">Red Card</p></div></div></div> <div class="flex flex-row items-center bg-gray-700 p-2 mt-4 rounded-md text-sm"><div class="w-1/12 text-center" data-svelte-h="svelte-1wkfgs4">A</div> <div class="w-11/12 flex flex-row space-x-4"><div class="w-1/6"><button class="${"selection-panel " + escape(
         "select-panel ",
         true
@@ -5082,7 +4969,7 @@ const Page$6 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
         "class",
         `${isSubmitDisabled ? "bg-gray-500" : "bg-OPENFPLPURPLE hover:bg-OPENFPL hover:text-GRAY focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"} inline-flex justify-center px-4 py-2 border border-transparent shadow-sm font-bold rounded-md text-white`,
         0
-      )}><p class="text-xl px-4">Play<br> ${`<span class="text-xxs" data-svelte-h="svelte-t0q2ca">(100 $FPL)</span>`}</p> ${`<p class="text-small" data-svelte-h="svelte-1y8y6hv">You&#39;ve already paid, but can update your team until the first kick off.</p>`}</button></div></div></div>`;
+      )}><p class="text-xl px-4">Play<br> ${`<span class="text-xxs" data-svelte-h="svelte-t0q2ca">(100 $FPL)</span>`}</p> ${``}</button></div></div></div>`;
     }
   })}`;
 });
@@ -5140,40 +5027,6 @@ const Page$3 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
 const Page$2 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
   return ``;
 });
-derived(
-  userStore,
-  ($user) => {
-    try {
-      let byteArray;
-      if ($user && $user.profilePicture) {
-        if (Array.isArray($user.profilePicture) && $user.profilePicture[0] instanceof Uint8Array) {
-          byteArray = $user.profilePicture[0];
-          return `data:image/${$user.profilePictureType};base64,${uint8ArrayToBase64(byteArray)}`;
-        } else if ($user.profilePicture instanceof Uint8Array) {
-          return `data:${$user.profilePictureType};base64,${uint8ArrayToBase64(
-            $user.profilePicture
-          )}`;
-        } else {
-          if (typeof $user.profilePicture === "string") {
-            if ($user.profilePicture.startsWith("data:image")) {
-              return $user.profilePicture;
-            } else {
-              return `data:${$user.profilePictureType};base64,${$user.profilePicture}`;
-            }
-          }
-        }
-      }
-      return "/profile_placeholder.png";
-    } catch (error) {
-      console.error(error);
-      return "/profile_placeholder.png";
-    }
-  }
-);
-derived(
-  userStore,
-  (user) => user !== null && user !== void 0 ? user.favouriteTeamId : 0
-);
 const Page$1 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
   return `${validate_component(Layout, "Layout").$$render($$result, {}, {}, {
     default: () => {

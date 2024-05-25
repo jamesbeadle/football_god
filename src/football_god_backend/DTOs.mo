@@ -139,7 +139,7 @@ module DTOs {
   public type ProfileDTO = {
     principalName : Text;
     depositAddress : Blob;
-    fplDepositAddress : Text;
+    fplDepositAddress : Blob;
     displayName : Text;
     walletAddress : Text;
   };
@@ -252,6 +252,12 @@ module DTOs {
     playerId: T.PlayerId;
     teamId: T.TeamId;
     fixtureId: T.FixtureId;
-  }
+  };
+
+  public type AccountBalancesDTO = {
+    principalId: T.PrincipalName;
+    fplBalance: Nat;
+    icpBalance: Nat64;
+  };
 
 };

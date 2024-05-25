@@ -94,10 +94,11 @@ type ProfileDTO =
  record {
    depositAddress: blob;
    displayName: text;
-   fplDepositAddress: text;
+   fplDepositAddress: blob;
    principalName: text;
    walletAddress: text;
  };
+type PrincipalName = text;
 type PredictionSet = 
  record {
    goalAssister: PlayerId;
@@ -328,6 +329,12 @@ type AdminDTO =
    activeSeasonName: text;
    seasons: vec SeasonDTO;
  };
+type AccountBalancesDTO = 
+ record {
+   fplBalance: nat;
+   icpBalance: nat64;
+   principalId: PrincipalName;
+ };
 type AccountBalanceDTO = record {accountBalance: nat;};
 service : {
   addFixtureToGameweek: (nat16, nat8, nat16, nat16) -> (Result);
@@ -337,6 +344,7 @@ service : {
   deleteFixture: (nat16, nat8, nat32) -> (Result);
   deleteSeason: (nat16) -> (Result);
   deleteTeam: (nat16) -> (Result);
+  getAccountBalances: () -> (AccountBalancesDTO);
   getAdminDTO: () -> (AdminDTO) query;
   getAllEvents: () -> (Result_7);
   getCorrectPredictionsDTO: (nat16, nat8, nat32, nat, nat) ->
