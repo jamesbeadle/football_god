@@ -23,14 +23,12 @@
   onMount(async () => {
     try {
       await userStore.sync();
-      console.log($userStore)
       unsubscribeUserProfile = userStore.subscribe((value) => {
         if (!value) {
           return;
         }
       });
       let userBalances = await userStore.getAccountBalances();
-      console.log(userBalances)
       if(userBalances){
         accountBalances = {
           principalId: userBalances.principalId,

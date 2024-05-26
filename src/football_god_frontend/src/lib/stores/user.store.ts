@@ -114,7 +114,6 @@ function createUserStore() {
     );
 
     let getProfileResponse = await identityActor.getProfileDTO();
-    console.log(getProfileResponse);
     let error = isError(getProfileResponse);
     if (error) {
       console.error("Error fetching user profile");
@@ -136,7 +135,6 @@ function createUserStore() {
 
       if (dto.alreadyEntered) {
         const result = await identityActor.submitEuro2024Prediction(dto);
-        console.log(result);
         if (isError(result)) {
           console.error("Error saving Euro2024 prediction.");
           return;
@@ -172,7 +170,6 @@ function createUserStore() {
 
       if (principalId) {
         let subaccount: Uint8Array = principalToSubAccount(principalId);
-        console.log(subaccount);
         try {
           let transfer_result = await transfer({
             to: {
@@ -187,11 +184,8 @@ function createUserStore() {
             created_at_time: BigInt(Date.now()) * BigInt(1_000_000),
             amount: 10_000_000_000n,
           });
-          console.log("Transfer Result Frontend Transfer by user:");
-          console.log(transfer_result);
-
+          
           const result = await identityActor.submitEuro2024Prediction(dto);
-          console.log(result);
           if (isError(result)) {
             console.error("Error saving Euro2024 prediction.");
             return;
@@ -216,8 +210,6 @@ function createUserStore() {
         process.env.FOOTBALL_GOD_BACKEND_CANISTER_ID ?? "",
       );
       const result = await identityActor.getUserPrediction();
-      console.log("here");
-      console.log(result);
       if (isError(result)) {
         console.error("Error getting user prediction");
         return undefined;

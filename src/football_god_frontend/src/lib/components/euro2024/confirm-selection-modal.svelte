@@ -12,7 +12,7 @@ import { Modal } from "@dfinity/gix-components";
   export let confirmSubmit: () => void;
   let accountBalances: AccountBalancesDTO;
 
-  let entryFee = 0n;
+  let entryFee = 10_000_000_000n;
   let isLoading = true;
   
 
@@ -20,7 +20,6 @@ import { Modal } from "@dfinity/gix-components";
     try {
       await userStore.sync();
       let userBalances = await userStore.getAccountBalances();
-      console.log(userBalances)
       if(userBalances){
         accountBalances = userBalances;
       }
@@ -78,9 +77,9 @@ import { Modal } from "@dfinity/gix-components";
           <RefreshIcon className="w-5 ml-2" />
         </span>
       </button>
-      <p class="py-4">Please confirm you are happy to pay 100 FPL to enter the Euro 2024 sweepstake.</p>
-      <button on:click={confirmSubmit} class="w-full bg-OPENFPLPURPLE rounded-md mt-8 px-4 py-2">Pay 100 FPL & Enter</button>
-      {#if accountBalances.fplBalance < entryFee}
+       {#if accountBalances.fplBalance < entryFee}
+        <p class="py-4">Please confirm you are happy to pay 100 FPL to enter the Euro 2024 sweepstake.</p>
+        <button on:click={confirmSubmit} class="w-full bg-OPENFPLPURPLE rounded-md mt-8 px-4 py-2">Pay 100 FPL & Enter</button>
       {:else}
         <p>You will need 100 FPL to enter this competition, please deposit to your principal ID {$userStore.principalId}:</p>
         <button

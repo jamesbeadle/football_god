@@ -36,7 +36,6 @@
         duration: 2000,
       });
     } catch (error) {
-      console.log("here")
       toastsError({
         msg: { text: "Error updating username." },
         err: error,

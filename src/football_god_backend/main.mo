@@ -1055,16 +1055,7 @@ actor Self {
 
     switch(prediction){
       case (null){
-        let userBalance = await fpl_ledger.getUserSubaccountBalance(Principal.fromActor(Self), caller);
-        Debug.print(debug_show "User Sub Account Balance: " # Nat.toText(userBalance));
-
-
-        Debug.print("Transferring user FPL");
         let transferResult = await fpl_ledger.payEuro2024EntryFee(Principal.fromActor(Self), caller);
-        Debug.print(debug_show transferResult);
-
-        let newUserBalance = await fpl_ledger.getUserAccountBalance(caller);
-        Debug.print(debug_show "New User Balance: " # Nat.toText(newUserBalance));
 
         switch(transferResult){
           case(#Ok result){
@@ -1193,7 +1184,6 @@ actor Self {
 
   public shared func getEuroPotBalance() : async Nat64 {  
     let result = await fpl_ledger.getPotBalance(Principal.fromActor(Self));
-    Debug.print(debug_show result);
     return result;
   };
 

@@ -181,7 +181,6 @@
 
     if(euro2024Store){
       potBalance = Number(await euro2024Store.getPotBalance() / 100_000_000n);
-      console.log(potBalance)
     }
     loadingPot = false;
     clearInterval(dot_interval);

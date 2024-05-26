@@ -75,8 +75,6 @@ function createEuro2024Store() {
       process.env.FOOTBALL_GOD_BACKEND_CANISTER_ID ?? "",
     );
     let result = await identityActor.getEuroPotBalance();
-    console.log("result");
-    console.log(result);
     return result;
   }
 
