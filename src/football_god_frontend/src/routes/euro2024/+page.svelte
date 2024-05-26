@@ -180,7 +180,9 @@
     interval = setInterval(updateCountdown, 60000); 
 
     if(euro2024Store){
-      potBalance = Number(await euro2024Store.getPotBalance() / 100_000_000n);
+      let pot = Number(await euro2024Store.getPotBalance());
+      let prizePool = pot * 0.8 / 100_000_000;
+      potBalance = prizePool;
     }
     loadingPot = false;
     clearInterval(dot_interval);
@@ -1057,7 +1059,7 @@
               {#if loadingPot}
                 <div class="dot-animation min-w-[50px] text-center">{$dots}</div>
               {:else}
-                {potBalance} $FPL
+                {potBalance.toFixed(0)} $FPL
               {/if}
             </p>
           </div>
@@ -1087,7 +1089,12 @@
           <p class="my-4 text-sm">
             Entry Fee: 100 $FPL
             <br />
-            Prize Pool / Burn % split: 80:20  
+            Total FPL to be burned:
+            {#if loadingPot}
+              <div class="dot-animation min-w-[50px] text-center">{$dots}</div>
+            {:else}
+              {(potBalance / 4).toFixed(0)} $FPL
+            {/if}
           </p> 
         </div>
         <div class="w-2/6 flex items-center">
@@ -1136,6 +1143,7 @@
           <li>9th: 2%</li>
           <li>10th: 1%</li>
         </ul>
+        <p>The prize pool & total FPL burned is rounded to the nearest whole number of FPL tokens. 20% of the total FPL entered will be burned after the competition.</p>
       </Collapsible>
 
       <div class="horizontal-divider my-4" />
