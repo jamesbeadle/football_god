@@ -171,7 +171,7 @@ function createUserStore() {
             owner: Principal.fromText(
               process.env.FOOTBALL_GOD_BACKEND_CANISTER_ID ?? "",
             ),
-            subaccount: [auth.identity?.getPrincipal().toUint8Array() ?? []],
+            subaccount: [ auth.identity?.getPrincipal().toUint8Array() ?? []],
           },
           fee: 100_000n,
           memo: new Uint8Array(Text.encodeValue("0")),
