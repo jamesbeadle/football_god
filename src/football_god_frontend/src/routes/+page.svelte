@@ -1,13 +1,13 @@
 <script lang="ts">
   import { onMount, onDestroy } from "svelte";
-  import { authStore } from "$lib/stores/auth.store";
   import { toastsError } from "$lib/stores/toasts.store";
   import Layout from "./Layout.svelte";
   import { Spinner } from "@dfinity/gix-components";
   import { writable } from "svelte/store";
   import FootballIcon from "$lib/icons/FootballIcon.svelte";
   import OpenChatIcon from "$lib/icons/OpenChatIcon.svelte";
-  import OpenFPLIcon from "$lib/icons/OpenFPLIcon.svelte";
+  import { authSignedInStore } from "$lib/derived/auth.derived";
+  import { authStore, type AuthSignInParams, type AuthStoreData } from "$lib/stores/auth.store";
 
   let isLoggedIn = false;
   let isLoading = true;
@@ -87,6 +87,14 @@
       buttonText: "Play",
     },
   ];
+
+
+  function handleLogin() {
+    let params: AuthSignInParams = {
+      domain: import.meta.env.VITE_AUTH_PROVIDER_URL,
+    };
+    authStore.signIn(params);
+  }
 </script>
 
 <Layout>
@@ -105,11 +113,18 @@
             Play for free or enter the $FPL sweepstake up until Friday 14th June
             2024
           </p>
+          {#if $authSignedInStore}
           <a href="/euro2024"
             ><button class="btn bg-DARK mt-4 py-4 w-48 rounded-md"
               >Enter Now</button
             ></a
           >
+          {:else}
+            
+          <button on:click={handleLogin} class="btn bg-DARK mt-4 py-4 w-48 rounded-md">Connect To Play</button
+        >
+          {/if}
+          
           <div
             class="overlay-panel h-10 rounded-tl-lg w-11/12 md:w-2/3 lg:w-2/5 xl:w-1/4 bg-DARK flex items-center px-1 md:px-4"
           >
