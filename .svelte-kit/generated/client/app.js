@@ -10,20 +10,24 @@ export const nodes = [
 	() => import('./nodes/6'),
 	() => import('./nodes/7'),
 	() => import('./nodes/8'),
-	() => import('./nodes/9')
+	() => import('./nodes/9'),
+	() => import('./nodes/10'),
+	() => import('./nodes/11')
 ];
 
 export const server_loads = [];
 
 export const dictionary = {
 		"/": [2],
-		"/euro2024": [3],
-		"/leaderboard": [4],
-		"/lightpaper": [5],
-		"/manage-euro2024": [6],
-		"/presale": [7],
-		"/profile": [8],
-		"/terms": [9]
+		"/betting": [3],
+		"/euro2024": [4],
+		"/games": [5],
+		"/leaderboard": [6],
+		"/lightpaper": [7],
+		"/manage-euro2024": [8],
+		"/presale": [9],
+		"/profile": [10],
+		"/terms": [11]
 	};
 
 export const hooks = {

@@ -13,7 +13,6 @@
   import BettingIcon from "$lib/icons/BettingIcon.svelte";
   import GamesIcon from "$lib/icons/GamesIcon.svelte";
   import StarIcon from "$lib/icons/StarIcon.svelte";
-  import RulesIcon from "$lib/icons/RulesIcon.svelte";
   import { fade } from "svelte/transition";
   import "../app.css";
   import { page } from "$app/stores";
@@ -24,18 +23,13 @@
   let isExpanded = writable(false);
   $: links = $authSignedInStore ? [
     { name: "Home", icon: HomeIcon, href: "/" },
+    { name: "Euro 2024", icon: StarIcon, href: "/euro2024" },
     { name: "Match Betting", icon: BettingIcon, href: "/betting" },
     { name: "Mini Games", icon: GamesIcon, href: "/games" },
-    { name: "Euro 2024", icon: StarIcon, href: "/euro2024" },
-    { name: "Rules", icon: RulesIcon, href: "/rules" },
     { name: "Profile", icon: ProfileIcon, href: "/profile" },
   ] : 
   [
-    { name: "Home", icon: HomeIcon, href: "/" },
-    { name: "Match Betting", icon: BettingIcon, href: "/betting" },
-    { name: "Mini Games", icon: GamesIcon, href: "/games" },
-    { name: "Euro 2024", icon: StarIcon, href: "/euro2024" },
-    { name: "Rules", icon: RulesIcon, href: "/rules" },
+    { name: "Home", icon: HomeIcon, href: "/" }
   ];
 
   let worker: { syncAuthIdle: (auth: AuthStoreData) => void } | undefined;

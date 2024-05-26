@@ -122,7 +122,7 @@
     </div>
     <div class="mr-2 py-2">
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
-        {#each tiles as tile}
+         {#each tiles as tile}
           <div class="flex flex-col bg-gray-700 rounded-lg overflow-hidden">
             {#if tile.image}
               <img
@@ -135,9 +135,8 @@
                 <a
                   href={tile.link}
                   class="self-end btn bg-blue-500 text-white px-4 py-2 rounded mt-4"
-                  {...tile.link.startsWith("http")
-                    ? { target: "_blank", rel: "noopener noreferrer" }
-                    : {}}
+                  target={tile.link.startsWith("http") ? "_blank" : "_self"}
+                  rel={tile.link.startsWith("http") ? "noopener noreferrer" : ""}
                 >
                   {tile.buttonText}
                 </a>
@@ -152,9 +151,8 @@
                 <a
                   href={tile.link}
                   class="self-end btn bg-blue-500 text-white px-4 py-2 rounded mt-4"
-                  {...tile.link.startsWith("http")
-                    ? { target: "_blank", rel: "noopener noreferrer" }
-                    : {}}
+                  target={tile.link.startsWith("http") ? "_blank" : "_self"}
+                  rel={tile.link.startsWith("http") ? "noopener noreferrer" : ""}
                 >
                   {tile.buttonText}
                 </a>

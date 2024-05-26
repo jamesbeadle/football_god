@@ -1097,7 +1097,9 @@
               <OpenChatIcon className="w-10" /> 
             </div>
             <div class="w-auto ml-4">
-              <button class="fg-button px-4 py-2 rounded-md">Join our OpenChat Community now!</button>
+              <a href="https://oc.app/community/ji74r-lqaaa-aaaar-ayhoq-cai/?ref=zv6hh-xaaaa-aaaar-ac35q-cai" target="_blank">
+                <button class="fg-button px-4 py-2 rounded-md">Join our OpenChat Community now!</button>
+              </a>
             </div>
           </div>
         </div>
