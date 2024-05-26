@@ -15,6 +15,7 @@
     fplBalance: 0n,
     icpBalance: 0n
   };
+  let fplBalance = "0";
   
   let unsubscribeUserProfile: () => void;
 
@@ -35,6 +36,7 @@
           fplBalance: userBalances.fplBalance,
           icpBalance: userBalances.icpBalance
         }
+        fplBalance = Number(accountBalances.fplBalance / 100_000_000n).toFixed(4);
       }
     } catch (error) {
       toastsError({
@@ -151,7 +153,7 @@
               />
               <div class="ml-4 md:ml-3">
                 <p class="font-bold">FPL</p>
-                <p>{ (accountBalances.fplBalance/ 10_0000_000n).toLocaleString()} FPL</p>
+                <p>{fplBalance} FPL</p>
 
                 <div class="flex items-center text-xs">
                   <button

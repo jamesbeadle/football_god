@@ -11,6 +11,7 @@ import { Modal, Spinner } from "@dfinity/gix-components";
   export let closeSelectionModal: () => void;
   export let confirmSubmit: () => void;
   let accountBalances: AccountBalancesDTO;
+  let fplBalance = "0";
 
   let entryFee = 10_000_000_000n;
   let isLoading = true;
@@ -21,6 +22,7 @@ import { Modal, Spinner } from "@dfinity/gix-components";
       let userBalances = await userStore.getAccountBalances();
       if(userBalances){
         accountBalances = userBalances;
+        fplBalance = Number(accountBalances.fplBalance / 100_000_000n).toFixed(4);
       }
       console.log(userBalances)
 
@@ -62,6 +64,7 @@ import { Modal, Spinner } from "@dfinity/gix-components";
     let userBalances = await userStore.getAccountBalances();
     if(userBalances){
       accountBalances = userBalances;
+      fplBalance = Number(accountBalances.fplBalance / 100_000_000n).toFixed(4);
     }
     console.log(accountBalances)
   }
@@ -82,7 +85,7 @@ import { Modal, Spinner } from "@dfinity/gix-components";
           {#if isLoading}
             <p class="py-4">Loading Balance</p>
           {:else}
-            <p class="py-4">Balance: {(accountBalances.fplBalance / 100_000_000n)} FPL</p>
+            <p class="py-4">Balance: {fplBalance} FPL</p>
           {/if}
           <RefreshIcon className="w-5 ml-2" />
         </span>

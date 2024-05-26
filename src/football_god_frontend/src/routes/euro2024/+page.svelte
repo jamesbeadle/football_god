@@ -943,6 +943,10 @@
     predictionType = -1;
   }
 
+  function closeConfirmSelectionModal(){
+    showConfirmSubmit = false;
+  }
+
   function getTeamName(teamId: number): string {
     const team = $teamStore.find(team => team.id === teamId);
     return team ? team.name : "Select a Team";
@@ -1020,7 +1024,7 @@
   {:else}
 
     {#if showConfirmSubmit}
-      <ConfirmSelectionModal confirmSubmit={confirmSavePrediction} visible={showConfirmSubmit} closeSelectionModal={closePlayerSelectionModal} />
+      <ConfirmSelectionModal confirmSubmit={confirmSavePrediction} visible={showConfirmSubmit} closeSelectionModal={closeConfirmSelectionModal} />
     {/if}
     
     {#if showSelectPlayerModal}
