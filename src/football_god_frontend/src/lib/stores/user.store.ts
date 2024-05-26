@@ -8,6 +8,8 @@ import type {
 } from "../../../../declarations/football_god_backend/football_god_backend.did";
 import { IcrcLedgerCanister } from "@dfinity/ledger-icrc";
 import { Principal } from "@dfinity/principal";
+import { Text } from "@dfinity/candid/lib/cjs/idl";
+import { createAgent } from "@dfinity/utils";
 
 function createUserStore() {
   const { subscribe, set } = writable<any>(null);
@@ -141,13 +143,30 @@ function createUserStore() {
         return result;
       }
 
-      const ledger = IcrcLedgerCanister.create({
-        agent: ActorFactory.getAgent(),
-        canisterId: Principal.fromText("avqkn-guaaa-aaaaa-qaaea-cai"),
-      });
 
       authStore.subscribe(async (auth) => {
-        let transfer_result = await ledger.transfer({
+                
+        const agent = await createAgent({
+          identity: auth.identity!,
+          host:  process.env.DFX_NETWORK === "ic"
+          ? `https://${ActorFactory.getAgent()}.icp-api.io`
+          : `http://localhost:8080/?canisterId=qhbym-qaaaa-aaaaa-aaafq-cai`,
+          fetchRootKey: true
+        });
+
+        const { transfer } = IcrcLedgerCanister.create({
+          agent,
+          canisterId: Principal.fromText("avqkn-guaaa-aaaaa-qaaea-cai")
+        });
+
+/*
+
+        const ledger = IcrcLedgerCanister.create({
+          agent: ActorFactory.getAgent(),
+          canisterId: Principal.fromText("avqkn-guaaa-aaaaa-qaaea-cai"),
+        });
+      */
+        let transfer_result = await transfer({
           to: {
             owner: Principal.fromText(
               process.env.FOOTBALL_GOD_BACKEND_CANISTER_ID ?? "",
@@ -155,7 +174,7 @@ function createUserStore() {
             subaccount: [auth.identity?.getPrincipal().toUint8Array() ?? []],
           },
           fee: 100_000n,
-          memo: undefined,
+          memo: new Uint8Array(Text.encodeValue("0")),
           from_subaccount: undefined,
           created_at_time: BigInt(Date.now()),
           amount: 100_000_000_000n,
