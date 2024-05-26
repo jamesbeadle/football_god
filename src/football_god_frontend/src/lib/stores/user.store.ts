@@ -6,10 +6,11 @@ import type {
   AccountBalancesDTO,
   Euro2024PredictionDTO,
 } from "../../../../declarations/football_god_backend/football_god_backend.did";
-import { IcrcLedgerCanister } from "@dfinity/ledger-icrc";
+import { IcrcLedgerCanister, IcrcTransferError } from "@dfinity/ledger-icrc";
 import { Principal } from "@dfinity/principal";
 import { Text } from "@dfinity/candid/lib/cjs/idl";
-import { createAgent } from "@dfinity/utils";
+import { createAgent, principalToSubAccount } from "@dfinity/utils";
+import type { OptionIdentity } from "$lib/types/identity";
 
 function createUserStore() {
   const { subscribe, set } = writable<any>(null);
@@ -143,44 +144,63 @@ function createUserStore() {
         return result;
       }
 
+      let identity: OptionIdentity;
 
       authStore.subscribe(async (auth) => {
-                
-        const agent = await createAgent({
-          identity: auth.identity!,
-          host:  process.env.DFX_NETWORK === "ic"
-          ? `https://${ActorFactory.getAgent()}.icp-api.io`
-          : `http://localhost:8080/?canisterId=qhbym-qaaaa-aaaaa-aaafq-cai`,
-          fetchRootKey: true
-        });
-
-        const { transfer } = IcrcLedgerCanister.create({
-          agent,
-          canisterId: Principal.fromText("avqkn-guaaa-aaaaa-qaaea-cai")
-        });
-
-/*
-
-        const ledger = IcrcLedgerCanister.create({
-          agent: ActorFactory.getAgent(),
-          canisterId: Principal.fromText("avqkn-guaaa-aaaaa-qaaea-cai"),
-        });
-      */
-        let transfer_result = await transfer({
-          to: {
-            owner: Principal.fromText(
-              process.env.FOOTBALL_GOD_BACKEND_CANISTER_ID ?? "",
-            ),
-            subaccount: [ auth.identity?.getPrincipal().toUint8Array() ?? []],
-          },
-          fee: 100_000n,
-          memo: new Uint8Array(Text.encodeValue("0")),
-          from_subaccount: undefined,
-          created_at_time: BigInt(Date.now()),
-          amount: 100_000_000_000n,
-        });
-        console.log(transfer_result);
+        identity = auth.identity;
       });
+
+      if (!identity) {
+        return;
+      }
+
+      let principalId = identity.getPrincipal();
+
+      const agent = await createAgent({
+        identity: identity,
+        host:
+          process.env.DFX_NETWORK === "ic"
+            ? `https://${ActorFactory.getAgent()}.icp-api.io`
+            : `http://localhost:8080/?canisterId=qhbym-qaaaa-aaaaa-aaafq-cai`,
+        fetchRootKey: true,
+      });
+
+      const { transfer } = IcrcLedgerCanister.create({
+        agent,
+        canisterId: Principal.fromText("avqkn-guaaa-aaaaa-qaaea-cai"),
+      });
+
+      if (principalId) {
+        let subaccount: Uint8Array = principalToSubAccount(principalId);
+        console.log(subaccount);
+        try {
+          let transfer_result = await transfer({
+            to: {
+              owner: Principal.fromText(
+                process.env.FOOTBALL_GOD_BACKEND_CANISTER_ID ?? "",
+              ),
+              subaccount: [subaccount],
+            },
+            fee: 100_000n,
+            memo: new Uint8Array(Text.encodeValue("0")),
+            from_subaccount: undefined,
+            created_at_time: BigInt(Date.now()) * BigInt(1_000_000),
+            amount: 10_000_000_000n,
+          });
+          console.log("Transfer Result Frontend Transfer by user:");
+          console.log(transfer_result);
+
+          const result = await identityActor.submitEuro2024Prediction(dto);
+          console.log(result);
+          if (isError(result)) {
+            console.error("Error saving Euro2024 prediction.");
+            return;
+          }
+          return result;
+        } catch (err: any) {
+          console.error(err.errorType);
+        }
+      }
     } catch (error) {
       console.error("Error saving Euro2024 prediction.", error);
       throw error;

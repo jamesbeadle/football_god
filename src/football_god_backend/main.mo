@@ -10,6 +10,9 @@ import Principal "mo:base/Principal";
 import Result "mo:base/Result";
 import Buffer "mo:base/Buffer";
 import Blob "mo:base/Blob";
+import Debug "mo:base/Debug";
+import Text "mo:base/Text";
+import Nat "mo:base/Nat";
 
 import T "types";
 import Seasons "seasons";
@@ -1040,9 +1043,6 @@ actor Self {
     let profile = profilesInstance.getProfile(principalName);
     let state = euro2024Instance.getState();
 
-    //Todo: check the users sub account has transferred the entry fee and then transfer it out to null or check the entry already exists so it's just an update
-    
-
     if(state.stage != #Selecting){
       return #err(#NotAllowed);
     };
@@ -1055,20 +1055,30 @@ actor Self {
 
     switch(prediction){
       case (null){
-        
-        /*
-        let canAffordEntry = await fpl_ledger.canAffordEntry(caller, null);
+        let userBalance = await fpl_ledger.getUserSubaccountBalance(Principal.fromActor(Self), caller);
+        Debug.print(debug_show "User Sub Account Balance: " # Nat.toText(userBalance));
 
-        if (not canAffordEntry) {
-          return #err(#NotAllowed);
-        };
-        
-        await fpl_ledger.transferEntryFee(caller, null);
-*/
+
+        Debug.print("Transferring user FPL");
+        let transferResult = await fpl_ledger.payEuro2024EntryFee(Principal.fromActor(Self), caller);
+        Debug.print(debug_show transferResult);
+
+        let newUserBalance = await fpl_ledger.getUserAccountBalance(caller);
+        Debug.print(debug_show "New User Balance: " # Nat.toText(newUserBalance));
+
+        switch(transferResult){
+          case(#Ok result){
+            return euro2024Instance.submitPredictions(principalName, euro2024PredictionDTO);
+          };
+          case _{
+            return #err(#NotAllowed);
+          };
+        }
       };
-      case (?foundPrediction){};
+      case (?foundPrediction){
+        return euro2024Instance.submitPredictions(principalName, euro2024PredictionDTO);
+      };
     };
-    return euro2024Instance.submitPredictions(principalName, euro2024PredictionDTO);
   };
 
   public shared query ({ caller }) func getEuro2024DTO() : async Result.Result<DTOs.Euro2024PredictionDTO, T.Error> {
@@ -1179,6 +1189,12 @@ actor Self {
       icpBalance = icpAccountBalance;
     };
     return dto;
+  };
+
+  public shared func getEuroPotBalance() : async Nat64 {  
+    let result = await fpl_ledger.getPotBalance(Principal.fromActor(Self));
+    Debug.print(debug_show result);
+    return result;
   };
 
   //TODO: get and pay winners

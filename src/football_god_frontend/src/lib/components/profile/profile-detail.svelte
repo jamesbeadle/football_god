@@ -153,7 +153,7 @@
               />
               <div class="ml-4 md:ml-3">
                 <p class="font-bold">FPL</p>
-                <p>0.00 FPL</p>
+                <p>{ (accountBalances.fplBalance/ 10_0000_000n).toLocaleString()} FPL</p>
 
                 <div class="flex items-center text-xs">
                   <button

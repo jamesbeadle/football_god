@@ -9,6 +9,7 @@ import { AuthClient } from "@dfinity/auth-client";
 import { HttpAgent, Actor } from "@dfinity/agent";
 import "@dfinity/ledger-icrc";
 import "@dfinity/principal";
+import "@dfinity/candid/lib/cjs/idl.js";
 let base = "";
 let assets = base;
 const initial = { base, assets };
@@ -3506,7 +3507,7 @@ const options = {
 		<div class="error">
 			<span class="status">` + status + '</span>\n			<div class="message">\n				<h1>' + message + "</h1>\n			</div>\n		</div>\n	</body>\n</html>\n"
   },
-  version_hash: "1v7gyfs"
+  version_hash: "otqfll"
 };
 async function get_hooks() {
   return {};
@@ -4578,6 +4579,7 @@ const idlFactory = ({ IDL }) => {
     "getEuro2024Players": IDL.Func([], [Result_5], ["query"]),
     "getEuro2024StateDTO": IDL.Func([], [Result_4], ["query"]),
     "getEuro2024Teams": IDL.Func([], [Result_3], ["query"]),
+    "getEuroPotBalance": IDL.Func([], [IDL.Nat64], []),
     "getFPLAccountBalance": IDL.Func([], [AccountBalanceDTO], []),
     "getFPLAccountBalanceDTO": IDL.Func([], [AccountBalanceDTO], []),
     "getFixture": IDL.Func(
@@ -4652,8 +4654,8 @@ const idlFactory = ({ IDL }) => {
     "withdrawICP": IDL.Func([IDL.Float64], [Result], [])
   });
 };
-var define_process_env_default$2 = { __CANDID_UI_CANISTER_ID: "ahw5u-keaaa-aaaaa-qaaha-cai", FOOTBALL_GOD_BACKEND_CANISTER_ID: "ajuq4-ruaaa-aaaaa-qaaga-cai", FOOTBALL_GOD_FRONTEND_CANISTER_ID: "aovwi-4maaa-aaaaa-qaagq-cai", DFX_NETWORK: "local" };
-const canisterId = define_process_env_default$2.CANISTER_ID_FOOTBALL_GOD_BACKEND;
+var define_process_env_default$3 = { __CANDID_UI_CANISTER_ID: "ahw5u-keaaa-aaaaa-qaaha-cai", FOOTBALL_GOD_BACKEND_CANISTER_ID: "ajuq4-ruaaa-aaaaa-qaaga-cai", FOOTBALL_GOD_FRONTEND_CANISTER_ID: "aovwi-4maaa-aaaaa-qaagq-cai", DFX_NETWORK: "local" };
+const canisterId = define_process_env_default$3.CANISTER_ID_FOOTBALL_GOD_BACKEND;
 const createActor = (canisterId2, options2 = {}) => {
   const agent = options2.agent || new HttpAgent({ ...options2.agentOptions });
   if (options2.agent && options2.agentOptions) {
@@ -4679,7 +4681,7 @@ canisterId ? createActor(canisterId) : void 0;
 class ActorFactory {
   static createActor(idlFactory2, canisterId2 = "", identity = null, options2 = null) {
     const hostOptions = {
-      host: `http://localhost:8080/?canisterId=b77ix-eeaaa-aaaaa-qaada-cai`,
+      host: `http://localhost:8080/?canisterId=qhbym-qaaaa-aaaaa-aaafq-cai`,
       identity
     };
     if (!options2) {
@@ -4708,7 +4710,7 @@ class ActorFactory {
   }
   static getAgent(canisterId2 = "", identity = null, options2 = null) {
     const hostOptions = {
-      host: `http://localhost:8080/?canisterId=b77ix-eeaaa-aaaaa-qaada-cai`,
+      host: `http://localhost:8080/?canisterId=qhbym-qaaaa-aaaaa-aaafq-cai`,
       identity
     };
     if (!options2) {
@@ -4759,12 +4761,12 @@ function replacer(key2, value) {
 function isError(response) {
   return response && response.err !== void 0;
 }
-var define_process_env_default$1 = { __CANDID_UI_CANISTER_ID: "ahw5u-keaaa-aaaaa-qaaha-cai", FOOTBALL_GOD_BACKEND_CANISTER_ID: "ajuq4-ruaaa-aaaaa-qaaga-cai", FOOTBALL_GOD_FRONTEND_CANISTER_ID: "aovwi-4maaa-aaaaa-qaagq-cai", DFX_NETWORK: "local" };
+var define_process_env_default$2 = { __CANDID_UI_CANISTER_ID: "ahw5u-keaaa-aaaaa-qaaha-cai", FOOTBALL_GOD_BACKEND_CANISTER_ID: "ajuq4-ruaaa-aaaaa-qaaga-cai", FOOTBALL_GOD_FRONTEND_CANISTER_ID: "aovwi-4maaa-aaaaa-qaagq-cai", DFX_NETWORK: "local" };
 function createTeamStore() {
   const { subscribe: subscribe2, set } = writable([]);
   let actor = ActorFactory.createActor(
     idlFactory,
-    define_process_env_default$1.FOOTBALL_GOD_BACKEND_CANISTER_ID
+    define_process_env_default$2.FOOTBALL_GOD_BACKEND_CANISTER_ID
   );
   async function sync() {
     const category = "teams";
@@ -4805,12 +4807,12 @@ function createTeamStore() {
   };
 }
 const teamStore = createTeamStore();
-var define_process_env_default = { __CANDID_UI_CANISTER_ID: "ahw5u-keaaa-aaaaa-qaaha-cai", FOOTBALL_GOD_BACKEND_CANISTER_ID: "ajuq4-ruaaa-aaaaa-qaaga-cai", FOOTBALL_GOD_FRONTEND_CANISTER_ID: "aovwi-4maaa-aaaaa-qaagq-cai", DFX_NETWORK: "local" };
+var define_process_env_default$1 = { __CANDID_UI_CANISTER_ID: "ahw5u-keaaa-aaaaa-qaaha-cai", FOOTBALL_GOD_BACKEND_CANISTER_ID: "ajuq4-ruaaa-aaaaa-qaaga-cai", FOOTBALL_GOD_FRONTEND_CANISTER_ID: "aovwi-4maaa-aaaaa-qaagq-cai", DFX_NETWORK: "local" };
 function createPlayerStore() {
   const { subscribe: subscribe2, set } = writable([]);
   let actor = ActorFactory.createActor(
     idlFactory,
-    define_process_env_default.FOOTBALL_GOD_BACKEND_CANISTER_ID
+    define_process_env_default$1.FOOTBALL_GOD_BACKEND_CANISTER_ID
   );
   async function sync() {
     const category = "players";
@@ -4851,27 +4853,93 @@ function createPlayerStore() {
   };
 }
 const playerStore = createPlayerStore();
+var define_process_env_default = { __CANDID_UI_CANISTER_ID: "ahw5u-keaaa-aaaaa-qaaha-cai", FOOTBALL_GOD_BACKEND_CANISTER_ID: "ajuq4-ruaaa-aaaaa-qaaga-cai", FOOTBALL_GOD_FRONTEND_CANISTER_ID: "aovwi-4maaa-aaaaa-qaagq-cai", DFX_NETWORK: "local" };
+function createEuro2024Store() {
+  const { subscribe: subscribe2, set } = writable(null);
+  let actor = ActorFactory.createActor(
+    idlFactory,
+    define_process_env_default.FOOTBALL_GOD_BACKEND_CANISTER_ID
+  );
+  async function sync() {
+    let category = "euro_2024_state";
+    const newHashValues = await actor.getDataHashes();
+    let error = isError(newHashValues);
+    if (error) {
+      console.error("Error syncing euro 2024 store");
+      return;
+    }
+    let dataCacheValues = newHashValues.ok;
+    let categoryHash = dataCacheValues.find((x) => x.category === category) ?? null;
+    const localHash = localStorage.getItem(`${category}_hash`);
+    if (categoryHash?.hash != localHash) {
+      let result = await actor.getEuro2024StateDTO();
+      if (isError(result)) {
+        console.error("Error syncing euro 2024 store");
+        return;
+      }
+      let updatedEuro2024StateData = result.ok;
+      localStorage.setItem(
+        category,
+        JSON.stringify(updatedEuro2024StateData, replacer)
+      );
+      localStorage.setItem(`${category}_hash`, categoryHash?.hash ?? "");
+      set(updatedEuro2024StateData);
+    } else {
+      const cachedEuro2024StateData = localStorage.getItem(category);
+      let cachedEuro2024State = null;
+      try {
+        cachedEuro2024State = JSON.parse(cachedEuro2024StateData || "{}");
+      } catch (e) {
+        cachedEuro2024State = null;
+      }
+      set(cachedEuro2024State);
+    }
+  }
+  async function getEuro2024State() {
+    let euro2024State;
+    subscribe2((value) => {
+      euro2024State = value;
+    })();
+    return euro2024State;
+  }
+  async function getPotBalance() {
+    const identityActor = await ActorFactory.createIdentityActor(
+      authStore,
+      define_process_env_default.FOOTBALL_GOD_BACKEND_CANISTER_ID
+    );
+    let result = await identityActor.getEuroPotBalance();
+    console.log("result");
+    console.log(result);
+    return result;
+  }
+  return {
+    subscribe: subscribe2,
+    sync,
+    getEuro2024State,
+    getPotBalance
+  };
+}
+createEuro2024Store();
 const Page$6 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
-  let isSubmitDisabled;
   let $$unsubscribe_playerStore;
   let $$unsubscribe_teamStore;
   let $countdown, $$unsubscribe_countdown;
   $$unsubscribe_playerStore = subscribe(playerStore, (value) => value);
   $$unsubscribe_teamStore = subscribe(teamStore, (value) => value);
   let interval;
+  let potBalance = 0;
   const countdown = writable("");
   $$unsubscribe_countdown = subscribe(countdown, (value) => $countdown = value);
   onDestroy(() => {
     clearInterval(interval);
   });
-  isSubmitDisabled = false;
   $$unsubscribe_playerStore();
   $$unsubscribe_teamStore();
   $$unsubscribe_countdown();
   return `${validate_component(Layout, "Layout").$$render($$result, {}, {}, {
     default: () => {
-      return `${``} ${``} <div class="bg-panel rounded-md p-4"><p class="text-xl my-2 mb-4" data-svelte-h="svelte-15uwobf">Welcome to the FootballGod Euro 2024 prediction game.</p> <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2"><div class="flex flex-col bg-gray-700 rounded-lg overflow-hidden" data-svelte-h="svelte-89bcxj"><div class="p-4 flex flex-col justify-between h-full"><p class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm font-bold rounded-md text-white items-center"><img src="FPLCoin.png" alt="fpl" class="w-8 h-8 mr-2 mb-1">
-            Prize Pool: 0.00 $FPL</p></div></div> <div class="flex flex-col bg-gray-700 rounded-lg overflow-hidden" data-svelte-h="svelte-qtmi3h"><div class="flex flex-col justify-center h-full"><p class="inline-flex justify-center py-2 px-4 mx-2 border border-transparent shadow-sm font-bold rounded-md text-white">Total Entries: 0</p></div></div> <div class="flex flex-col bg-gray-700 rounded-lg overflow-hidden"><div class="flex flex-col justify-center h-full"><p class="w-full text-center">${escape($countdown)}</p></div></div></div> <div class="horizontal-divider my-4"></div> <div class="flex flex-row"><div class="w-4/6" data-svelte-h="svelte-1d7lws0"><p class="my-4 text-sm">Entry Fee: 100 $FPL
+      return `${``} ${``} ${``} <div class="bg-panel rounded-md p-4"><p class="text-xl my-2 mb-4" data-svelte-h="svelte-15uwobf">Welcome to the FootballGod Euro 2024 prediction game.</p> <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2"><div class="flex flex-col bg-gray-700 rounded-lg overflow-hidden"><div class="p-4 flex flex-col justify-between h-full"><p class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm font-bold rounded-md text-white items-center"><img src="FPLCoin.png" alt="fpl" class="w-8 h-8 mr-2 mb-1">
+            Prize Pool: ${escape(potBalance)} $FPL</p></div></div> <div class="flex flex-col bg-gray-700 rounded-lg overflow-hidden" data-svelte-h="svelte-qtmi3h"><div class="flex flex-col justify-center h-full"><p class="inline-flex justify-center py-2 px-4 mx-2 border border-transparent shadow-sm font-bold rounded-md text-white">Total Entries: 0</p></div></div> <div class="flex flex-col bg-gray-700 rounded-lg overflow-hidden"><div class="flex flex-col justify-center h-full"><p class="w-full text-center">${escape($countdown)}</p></div></div></div> <div class="horizontal-divider my-4"></div> <div class="flex flex-row"><div class="w-4/6" data-svelte-h="svelte-1d7lws0"><p class="my-4 text-sm">Entry Fee: 100 $FPL
           <br>
           Prize Pool / Burn % split: 80:20</p></div> <div class="w-2/6 flex items-center"><div class="flex flex-row items-center"><div class="w-auto">${validate_component(OpenChatIcon, "OpenChatIcon").$$render($$result, { className: "w-10" }, {}, {})}</div> <div class="w-auto ml-4" data-svelte-h="svelte-12qjadw"><button class="fg-button px-4 py-2 rounded-md">Join our OpenChat Community now!</button></div></div></div></div> <p class="text-sm" data-svelte-h="svelte-wswfdh">Make your selections below and enter the sweepstake to be in with a chance
       of winning $FPL.</p> <div class="horizontal-divider my-4"></div> ${validate_component(Collapsible, "Collapsible").$$render($$result, { iconSize: "medium" }, {}, {
@@ -5066,11 +5134,7 @@ const Page$6 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
       )}">${`Select a Player`}</button> <div class="text-right" data-svelte-h="svelte-1xywyg4"><p class="text-xs mt-4">25 Points</p></div></div> <div class="w-1/6"><button class="${"selection-panel " + escape(
         "select-panel ",
         true
-      )}">${`Select a Player`}</button> <div class="text-right" data-svelte-h="svelte-a12yh0"><p class="text-xs mt-4">50 Points</p></div></div></div></div> <div class="flex flex-row my-4 space-x-2 text-sm" data-svelte-h="svelte-97nmo0"><div class="w-1/12"></div> <div class="w-11/12 flex flex-row space-x-4"><div class="w-1/3"><p class="flex-1 block w-full rounded-none rounded-r-md bg-gray-800 p-2 text-center">Both Correct Bonus: 100 Points</p></div> <div class="w-1/3"><p class="flex-1 block w-full rounded-none rounded-r-md bg-gray-800 p-2 text-center">Both Correct Bonus: 200 Points</p></div> <div class="w-1/3"><p class="flex-1 block w-full rounded-none rounded-r-md bg-gray-800 p-2 text-center">Both Correct Bonus: 150 Points</p></div></div></div> <div class="bg-panel rounded-md p-4 mt-4"><div class="flex justify-center"><button type="submit" ${isSubmitDisabled ? "disabled" : ""}${add_attribute(
-        "class",
-        `${isSubmitDisabled ? "bg-gray-500" : "bg-OPENFPLPURPLE hover:bg-OPENFPL hover:text-GRAY focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"} inline-flex justify-center px-4 py-2 border border-transparent shadow-sm font-bold rounded-md text-white`,
-        0
-      )}><p class="text-xl px-4">Play<br> ${`<span class="text-xxs" data-svelte-h="svelte-t0q2ca">(100 $FPL)</span>`}</p> ${``}</button></div></div></div>`;
+      )}">${`Select a Player`}</button> <div class="text-right" data-svelte-h="svelte-a12yh0"><p class="text-xs mt-4">50 Points</p></div></div></div></div> <div class="flex flex-row my-4 space-x-2 text-sm" data-svelte-h="svelte-97nmo0"><div class="w-1/12"></div> <div class="w-11/12 flex flex-row space-x-4"><div class="w-1/3"><p class="flex-1 block w-full rounded-none rounded-r-md bg-gray-800 p-2 text-center">Both Correct Bonus: 100 Points</p></div> <div class="w-1/3"><p class="flex-1 block w-full rounded-none rounded-r-md bg-gray-800 p-2 text-center">Both Correct Bonus: 200 Points</p></div> <div class="w-1/3"><p class="flex-1 block w-full rounded-none rounded-r-md bg-gray-800 p-2 text-center">Both Correct Bonus: 150 Points</p></div></div></div> <div class="bg-panel rounded-md p-4 mt-4"><div class="flex justify-center"><button type="submit" class="bg-OPENFPLPURPLE hover:bg-OPENFPL hover:text-GRAY focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 inline-flex justify-center px-4 py-2 border border-transparent shadow-sm font-bold rounded-md text-white" data-svelte-h="svelte-qozak4"><p class="text-xl px-4">Save<br></p></button></div></div></div>`;
     }
   })}`;
 });

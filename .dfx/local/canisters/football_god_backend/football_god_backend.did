@@ -355,6 +355,7 @@ service : {
   getEuro2024Players: () -> (Result_5) query;
   getEuro2024StateDTO: () -> (Result_4) query;
   getEuro2024Teams: () -> (Result_3) query;
+  getEuroPotBalance: () -> (nat64);
   getFPLAccountBalance: () -> (AccountBalanceDTO);
   getFPLAccountBalanceDTO: () -> (AccountBalanceDTO);
   getFixture: (nat16, nat8, nat32) -> (opt Fixture) query;

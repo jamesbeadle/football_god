@@ -83,7 +83,7 @@ module {
         #GenericError : { error_code : Nat; message : Text };
     };
 
-    type TransferResult = {
+    public type TransferResult = {
         #Ok : BlockIndex;
         #Err : TransferError;
     };
