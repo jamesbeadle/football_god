@@ -28,6 +28,7 @@
   let isLoading = true;
   let loadingPot = true;
   $: potBalance = 0;
+  $: loadingText = "Loading, please wait...";
 
   let dots = writable('.');
   let dot_interval;
@@ -56,9 +57,9 @@
     }, 500);
 
 
-    
     await teamStore.sync();
     await playerStore.sync();
+    loadingText = "Fetching Prediction";
     await userStore.sync();
     await euro2024Store.sync();
     if($teamStore.length == 0 || $playerStore.length == 0){
@@ -193,7 +194,8 @@
   });
 
   async function handlePredictionSubmit() {
-
+    isLoading = true;
+    loadingText = "Saving Prediction";
     if(!prediction){
       return;
     };
@@ -216,9 +218,12 @@
     }
 
     showConfirmSubmit = true;
+    isLoading = false;
   };
 
   async function confirmSavePrediction(){
+    isLoading = true;
+    loadingText = "Saving Prediction";
     
     if(!prediction){
       return;
@@ -265,6 +270,8 @@
         err: error,
       });
       console.error("Error saving Euro 2024 prediction", error);
+    } finally {
+      isLoading = false;
     }
   }
 
@@ -1020,7 +1027,10 @@
 
 
   {#if isLoading}
-    <Spinner />
+  <Spinner />
+  <div class="fixed inset-0 flex flex-col items-center justify-center">
+    <p class="mt-24">{loadingText}</p>
+  </div>
   {:else}
 
     {#if showConfirmSubmit}
@@ -1103,22 +1113,19 @@
         </div>
         <div class="w-2/6 flex items-center">
           <div class="flex flex-row items-center">
-            <div class="w-auto">
-              <OpenChatIcon className="w-10" /> 
-            </div>
             <div class="w-auto ml-4">
               <a href="https://oc.app/community/ji74r-lqaaa-aaaar-ayhoq-cai/?ref=zv6hh-xaaaa-aaaar-ac35q-cai" target="_blank">
-                <button class="fg-button px-4 py-2 rounded-md">Join our OpenChat Community now!</button>
+                <button class="fg-button px-4 py-2 rounded-md my-2">
+                  <div class="flex flex-row items-center space-x-2">
+                    <OpenChatIcon className="w-24" />
+                    <p class="text-left text-sm">Join our OpenChat Community now!</p>
+                  </div>
+                  </button>
               </a>
             </div>
           </div>
         </div>
       </div>
-
-      <p class=" text-sm">
-        Make your selections below and enter the sweepstake to be in with a chance
-        of winning $FPL.
-      </p>
       
 
       <div class="horizontal-divider my-4" />
@@ -1147,11 +1154,16 @@
           <li>9th: 2%</li>
           <li>10th: 1%</li>
         </ul>
-        <p>The prize pool & total FPL burned is rounded to the nearest whole number of FPL tokens. 20% of the total FPL entered will be burned after the competition.</p>
+        <p class="text-sm mt-4">The prize pool & total FPL burned is rounded to the nearest whole number of FPL tokens. 20% of the total FPL entered will be burned after the competition.</p>
       </Collapsible>
 
-      <div class="horizontal-divider my-4" />
+      <div class="horizontal-divider mt-4" />
       
+      <p class="text-sm my-4">
+        Make your selections below and enter the sweepstake to be in with a chance
+        of winning $FPL.
+      </p>
+
       <div class="flex flex-row items-center bg-OPENFPL text-GRAY border border-white rounded-md p-2 text-sm">
         <div class="w-1/12 flex">
           <p class="w-full text-center">Group</p>
