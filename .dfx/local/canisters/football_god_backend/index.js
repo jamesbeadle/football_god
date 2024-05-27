@@ -4,7 +4,7 @@ import { Actor, HttpAgent } from "@dfinity/agent";
 import { idlFactory } from './football_god_backend.did.js';
 export { idlFactory } from './football_god_backend.did.js';
 // CANISTER_ID is replaced by webpack based on node environment
-export const canisterId = process.env.FOOTBALL_GOD_BACKEND_CANISTER_ID;
+export const canisterId = process.env.CANISTER_ID_FOOTBALL_GOD_BACKEND;
 
 /**
  * @deprecated since dfx 0.11.1

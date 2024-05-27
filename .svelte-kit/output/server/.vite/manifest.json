@@ -1,0 +1,118 @@
+{
+  ".svelte-kit/generated/server/internal.js": {
+    "file": "internal.js",
+    "imports": [
+      "_index.js"
+    ],
+    "isEntry": true,
+    "src": ".svelte-kit/generated/server/internal.js"
+  },
+  "_index.js": {
+    "css": [
+      "_app/immutable/assets/index.0XBRf2S-.css"
+    ],
+    "file": "chunks/index.js",
+    "imports": [
+      "_vendor.js"
+    ]
+  },
+  "_vendor.js": {
+    "file": "chunks/vendor.js"
+  },
+  "node_modules/@sveltejs/kit/src/runtime/components/error.svelte": {
+    "file": "entries/fallbacks/error.svelte.js",
+    "imports": [
+      "_index.js"
+    ],
+    "isEntry": true,
+    "src": "node_modules/@sveltejs/kit/src/runtime/components/error.svelte"
+  },
+  "node_modules/@sveltejs/kit/src/runtime/components/layout.svelte": {
+    "file": "entries/fallbacks/layout.svelte.js",
+    "imports": [
+      "_index.js"
+    ],
+    "isEntry": true,
+    "src": "node_modules/@sveltejs/kit/src/runtime/components/layout.svelte"
+  },
+  "node_modules/@sveltejs/kit/src/runtime/server/index.js": {
+    "file": "index.js",
+    "imports": [
+      "_index.js"
+    ],
+    "isEntry": true,
+    "src": "node_modules/@sveltejs/kit/src/runtime/server/index.js"
+  },
+  "src/football_god_frontend/src/routes/+page.svelte": {
+    "file": "entries/pages/_page.svelte.js",
+    "imports": [
+      "_index.js"
+    ],
+    "isEntry": true,
+    "src": "src/football_god_frontend/src/routes/+page.svelte"
+  },
+  "src/football_god_frontend/src/routes/betting/+page.svelte": {
+    "file": "entries/pages/betting/_page.svelte.js",
+    "imports": [
+      "_index.js"
+    ],
+    "isEntry": true,
+    "src": "src/football_god_frontend/src/routes/betting/+page.svelte"
+  },
+  "src/football_god_frontend/src/routes/euro2024/+page.svelte": {
+    "file": "entries/pages/euro2024/_page.svelte.js",
+    "imports": [
+      "_index.js"
+    ],
+    "isEntry": true,
+    "src": "src/football_god_frontend/src/routes/euro2024/+page.svelte"
+  },
+  "src/football_god_frontend/src/routes/games/+page.svelte": {
+    "file": "entries/pages/games/_page.svelte.js",
+    "imports": [
+      "_index.js"
+    ],
+    "isEntry": true,
+    "src": "src/football_god_frontend/src/routes/games/+page.svelte"
+  },
+  "src/football_god_frontend/src/routes/leaderboard/+page.svelte": {
+    "file": "entries/pages/leaderboard/_page.svelte.js",
+    "imports": [
+      "_index.js"
+    ],
+    "isEntry": true,
+    "src": "src/football_god_frontend/src/routes/leaderboard/+page.svelte"
+  },
+  "src/football_god_frontend/src/routes/lightpaper/+page.svelte": {
+    "file": "entries/pages/lightpaper/_page.svelte.js",
+    "imports": [
+      "_index.js"
+    ],
+    "isEntry": true,
+    "src": "src/football_god_frontend/src/routes/lightpaper/+page.svelte"
+  },
+  "src/football_god_frontend/src/routes/manage-euro2024/+page.svelte": {
+    "file": "entries/pages/manage-euro2024/_page.svelte.js",
+    "imports": [
+      "_index.js"
+    ],
+    "isEntry": true,
+    "src": "src/football_god_frontend/src/routes/manage-euro2024/+page.svelte"
+  },
+  "src/football_god_frontend/src/routes/presale/+page.svelte": {
+    "file": "entries/pages/presale/_page.svelte.js",
+    "imports": [
+      "_index.js"
+    ],
+    "isEntry": true,
+    "src": "src/football_god_frontend/src/routes/presale/+page.svelte"
+  },
+  "src/football_god_frontend/src/routes/profile/+page.svelte": {
+    "file": "entries/pages/profile/_page.svelte.js",
+    "imports": [
+      "_index.js"
+    ],
+    "isEntry": true,
+    "src": "src/football_god_frontend/src/routes/profile/+page.svelte"
+  }
+}

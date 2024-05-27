@@ -1,0 +1,119 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.modal-backdrop {
+  z-index: 1000;
+}
+
+.modal {
+  position: fixed !important;
+  z-index: 9999 !important;
+  background-color: rgba(36, 37, 41, 0.7) !important;
+}
+
+.modal .content {
+  left: 0 !important;
+  right: 0 !important;
+  background-color: #161819 !important;
+  border-radius: 8px;
+  border: 1px solid #2e323a !important;
+}
+
+.modal .container {
+  border-radius: 0px !important;
+}
+
+.toast {
+  background-color: #2ce3a6 !important;
+  padding-left: 16px !important;
+  padding-right: 16px !important;
+  padding-top: 8px !important;
+  padding-bottom: 8px !important;
+  border-radius: 4px !important;
+}
+.error > .toast {
+  background-color: #f27557 !important;
+}
+
+[data-tid="busy"] {
+  background-color: rgba(36, 37, 41, 0.7) !important;
+  z-index: 99999 !important;
+}
+
+.bigger-text {
+  @apply text-xs xs:text-base sm:text-lg;
+}
+
+.smaller-text {
+  @apply text-xxs xs:text-xs sm:text-sm;
+}
+
+/* global.css */
+:root {
+  --dialog-width: 90% !important;
+  --dialog-max-width: 600px !important;
+  --dialog-min-height: 100px !important;
+  --dialog-height: auto !important;
+  --dialog-max-height: 80vh !important;
+  --dialog-border-radius: 1px !important;
+}
+
+.horizontal-divider {
+  min-height: 2px;
+  @apply flex-shrink-0 h-px bg-gray-400 self-stretch;
+}
+
+.vertical-divider {
+  min-width: 2px;
+  min-height: 50px;
+  @apply flex-shrink-0 w-px bg-gray-400 self-stretch;
+}
+
+.default-header {
+  @apply text-xl font-semibold text-white;
+}
+
+.default-sub-header {
+  @apply text-lg font-bold;
+}
+
+.times-button {
+  @apply text-white text-3xl;
+}
+
+.selection-panel {
+  @apply flex-1 w-full rounded-md sm:text-sm shadow-sm hover:text-GRAY focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 flex items-center justify-center;
+}
+
+.selected-panel {
+  @apply bg-OPENFPL hover:bg-OPENFPL px-3 py-2;
+}
+
+.select-panel {
+  @apply bg-OPENFPLPURPLE hover:bg-OPENFPLPURPLE p-3 text-white;
+}
+
+.fg-button {
+  background-color: #393a3e;
+  color: white;
+}
+
+.button-hover {
+  @apply bg-white text-black hover:bg-OPENFPL hover:text-GRAY;
+}
+
+.toast {
+  background-color: #2ce3a6 !important;
+  padding-left: 16px !important;
+  padding-right: 16px !important;
+  padding-top: 8px !important;
+  padding-bottom: 8px !important;
+  border-radius: 4px !important;
+}
+.error > .toast {
+  background-color: #f27557 !important;
+}
+
+.toast.error {
+}

@@ -12,6 +12,20 @@ type UserBalanceDTO =
    displayName: text;
    principalName: text;
  };
+type TournamentStage = 
+ variant {
+   Final;
+   GroupA;
+   GroupB;
+   GroupC;
+   GroupD;
+   GroupE;
+   GroupF;
+   QuarterFinal;
+   RoundOf16;
+   SemiFinal;
+ };
+type TeamId = nat16;
 type Team = 
  record {
    id: nat16;
@@ -36,6 +50,41 @@ type Season =
    name: text;
    year: nat16;
  };
+type Result_7 = 
+ variant {
+   err: Error;
+   ok: vec Euro2024EventDTO;
+ };
+type Result_6 = 
+ variant {
+   err: Error;
+   ok: vec DataCacheDTO;
+ };
+type Result_5 = 
+ variant {
+   err: Error;
+   ok: vec InternationalPlayer;
+ };
+type Result_4 = 
+ variant {
+   err: Error;
+   ok: Euro2024DTO;
+ };
+type Result_3 = 
+ variant {
+   err: Error;
+   ok: vec InternationalTeam;
+ };
+type Result_2 = 
+ variant {
+   err: Error;
+   ok: ProfileDTO;
+ };
+type Result_1 = 
+ variant {
+   err: Error;
+   ok: Euro2024PredictionDTO;
+ };
 type Result = 
  variant {
    err: Error;
@@ -45,9 +94,29 @@ type ProfileDTO =
  record {
    depositAddress: blob;
    displayName: text;
+   fplDepositAddress: text;
    principalName: text;
    walletAddress: text;
  };
+type PrincipalName = text;
+type PredictionSet = 
+ record {
+   goalAssister: PlayerId;
+   goalScorer: PlayerId;
+   loser: TeamId;
+   redCard: PlayerId;
+   stage: TournamentStage;
+   winner: TeamId;
+   yellowCard: PlayerId;
+ };
+type Position = 
+ variant {
+   Defender;
+   Forward;
+   Goalkeeper;
+   Midfielder;
+ };
+type PlayerId = nat16;
 type PlayDTO = 
  record {
    activeGameweekNumber: nat8;
@@ -98,6 +167,21 @@ type LeaderBoardDTO =
    totalPot: nat64;
    winningShare: nat64;
  };
+type InternationalTeam = 
+ record {
+   countryCode: text;
+   id: TeamId;
+   name: text;
+   players: vec InternationalPlayer;
+ };
+type InternationalPlayer = 
+ record {
+   firstName: text;
+   id: PlayerId;
+   lastName: text;
+   position: Position;
+   teamId: TeamId;
+ };
 type HomeDTO = 
  record {
    activeGameweekNumber: nat8;
@@ -135,6 +219,13 @@ type Gameweek =
    totalPot: nat64;
    winningShare: nat64;
  };
+type GameState = 
+ variant {
+   Active;
+   Completed;
+   Selecting;
+ };
+type FixtureId = nat32;
 type FixtureDTO = 
  record {
    awayTeamGoals: nat8;
@@ -158,6 +249,43 @@ type Fixture =
    id: nat32;
    status: nat8;
  };
+type EventType = 
+ variant {
+   GoalAssisted;
+   GoalScored;
+   RedCard;
+   StageLost;
+   StageWon;
+   YellowCard;
+ };
+type Euro2024PredictionDTO = 
+ record {
+   alreadyEntered: bool;
+   fPrediction: PredictionSet;
+   groupAPrediction: PredictionSet;
+   groupBPrediction: PredictionSet;
+   groupCPrediction: PredictionSet;
+   groupDPrediction: PredictionSet;
+   groupEPrediction: PredictionSet;
+   groupFPrediction: PredictionSet;
+   qfPrediction: PredictionSet;
+   r16Prediction: PredictionSet;
+   sfPrediction: PredictionSet;
+ };
+type Euro2024EventDTO = 
+ record {
+   eventType: EventType;
+   fixtureId: FixtureId;
+   playerId: PlayerId;
+   stageId: nat8;
+   teamId: TeamId;
+ };
+type Euro2024DTO = 
+ record {
+   prizePool: nat64;
+   stage: GameState;
+   totalManagers: nat;
+ };
 type Error = 
  variant {
    AlreadyExists;
@@ -165,6 +293,11 @@ type Error =
    NotAllowed;
    NotAuthorized;
    NotFound;
+ };
+type DataCacheDTO = 
+ record {
+   category: text;
+   hash: text;
  };
 type CorrectPredictionsDTO = 
  record {
@@ -197,18 +330,34 @@ type AdminDTO =
    activeSeasonName: text;
    seasons: vec SeasonDTO;
  };
-type AccountBalanceDTO = record {accountBalance: nat64;};
+type AccountBalancesDTO = 
+ record {
+   fplBalance: nat;
+   icpBalance: nat64;
+   principalId: PrincipalName;
+ };
+type AccountBalanceDTO = record {accountBalance: nat;};
 service : {
   addFixtureToGameweek: (nat16, nat8, nat16, nat16) -> (Result);
+  calculateEuro2024Leaderboard: () -> (Result);
   createSeason: (text, nat16) -> (Result);
   createTeam: (text) -> (Result);
   deleteFixture: (nat16, nat8, nat32) -> (Result);
   deleteSeason: (nat16) -> (Result);
   deleteTeam: (nat16) -> (Result);
-  getAccountBalanceDTO: () -> (AccountBalanceDTO);
+  getAccountBalances: () -> (AccountBalancesDTO);
   getAdminDTO: () -> (AdminDTO) query;
+  getAllEvents: () -> (Result_7);
   getCorrectPredictionsDTO: (nat16, nat8, nat32, nat, nat) ->
    (CorrectPredictionsDTO);
+  getDataHashes: () -> (Result_6) query;
+  getEuro2024DTO: () -> (Result_1) query;
+  getEuro2024Players: () -> (Result_5) query;
+  getEuro2024StateDTO: () -> (Result_4) query;
+  getEuro2024Teams: () -> (Result_3) query;
+  getEuroPotBalance: () -> (nat64);
+  getFPLAccountBalance: () -> (AccountBalanceDTO);
+  getFPLAccountBalanceDTO: () -> (AccountBalanceDTO);
   getFixture: (nat16, nat8, nat32) -> (opt Fixture) query;
   getFixtures: (nat16, nat8) -> (vec Fixture) query;
   getGameweekPotDTO: () -> (GameweekPotDTO);
@@ -218,17 +367,21 @@ service : {
   getLeaderboardDTO: (nat16, nat8, nat, nat) -> (LeaderBoardDTO) query;
   getPayoutDTO: () -> (PayoutDTO);
   getPlayDTO: () -> (PlayDTO) query;
-  getProfileDTO: () -> (ProfileDTO);
+  getProfileDTO: () -> (Result_2);
   getSeason: (nat16) -> (opt Season) query;
   getSeasons: () -> (vec Season) query;
   getTeams: () -> (vec Team) query;
   getUserBalancesDTO: (nat, nat) -> (BalancesDTO);
+  getUserPrediction: () -> (Result_1);
   getViewPredictionDTO: (text, nat16, nat8) -> (ViewPredictionDTO) query;
   isAdmin: () -> (bool) query;
   isDisplayNameValid: (text) -> (bool) query;
   isWalletValid: (text) -> (bool) query;
   payoutSweepstake: () -> (Result);
+  setEuroSystemState: (GameState) -> (Result);
   setSystemState: (nat16, nat8) -> (Result);
+  submitEuro2024Prediction: (Euro2024PredictionDTO) -> (Result);
+  submitEvent: (Euro2024EventDTO) -> (Result);
   submitPlayDTO: (SubmitPlayDTO) -> (Result);
   unsetActiveState: () -> (Result);
   updateDisplayName: (text) -> (Result);

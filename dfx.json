@@ -1,57 +1,25 @@
 {
   "canisters": {
     "football_god_backend": {
-      "dependencies": [
-        "ledger"
-      ],
       "main": "src/football_god_backend/main.mo",
-      "type": "motoko"
+      "type": "motoko",
+      "optimize": "cycles"
     },
     "football_god_frontend": {
-      "dependencies": [
-        "football_god_backend"
-      ],
+      "dependencies": ["football_god_backend"],
       "frontend": {
-        "entrypoint": "src/football_god_frontend/src/index.html"
+        "entrypoint": "build/index.html"
       },
-      "source": [
-        "src/football_god_frontend/assets",
-        "dist/football_god_frontend/"
-      ],
+      "source": ["build/"],
       "type": "assets"
-    },
-    "internet_identity": {
-      "candid": "https://github.com/dfinity/internet-identity/releases/latest/download/internet_identity.did",
-      "remote": {
-        "id": {
-          "ic": "rdmx6-jaaaa-aaaaa-aaadq-cai",
-          "local": "rdmx6-jaaaa-aaaaa-aaadq-cai"
-        }
-      },
-      "type": "custom",
-      "wasm": "https://github.com/dfinity/internet-identity/releases/latest/download/internet_identity_dev.wasm"
-    },
-    "ledger": {
-      "candid": "candid/nns-ledger.did",
-      "remote": {
-        "id": {
-          "ic": "ryjl3-tyaaa-aaaaa-aaaba-cai",
-          "local": "ryjl3-tyaaa-aaaaa-aaaba-cai"
-        }
-      },
-      "type": "custom",
-      "wasm": ""
     }
   },
   "defaults": {
     "build": {
       "args": "",
-      "packtool": ""
-    },
-    "replica": {
-      "subnet_type": "system"
+      "packtool": "mops sources"
     }
   },
   "output_env_file": ".env",
-  "version": 1
+  "version": 2
 }

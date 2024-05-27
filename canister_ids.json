@@ -1,8 +1,10 @@
 {
   "football_god_backend": {
-    "ic": "44kin-waaaa-aaaal-qbxra-cai"
+    "ic": "44kin-waaaa-aaaal-qbxra-cai",
+    "local": "44kin-waaaa-aaaal-qbxra-cai"
   },
   "football_god_frontend": {
-    "ic": "43loz-3yaaa-aaaal-qbxrq-cai"
+    "ic": "43loz-3yaaa-aaaal-qbxrq-cai",
+    "local": "43loz-3yaaa-aaaal-qbxrq-cai"
   }
 }
