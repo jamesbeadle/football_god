@@ -965,8 +965,6 @@
     return player ? `${player.firstName.substring(0,1)} ${player.lastName}` : "Select a Player";
   }
 
-
-
   const getFlagComponent = async (countryId: number): Promise<typeof SvelteComponent | null> => {
     switch (countryId) {
       case 1:
@@ -1039,7 +1037,6 @@
 </script>
 
 <Layout>
-
 
   {#if isLoading}
   <Spinner />
@@ -1263,7 +1260,7 @@
                 </button
               >
               <div class="text-right">
-                <p class="text-xs mt-4">5 Points</p>
+                <p class="text-xs mt-4">10 Points</p>
               </div>
             </div>
 
@@ -1289,7 +1286,7 @@
                 </button
               >
               <div class="text-right">
-                <p class="text-xs mt-4">5 Points</p>
+                <p class="text-xs mt-4">10 Points</p>
               </div>
             </div>
 
@@ -1341,7 +1338,7 @@
                 </button
               >
               <div class="text-right">
-                <p class="text-xs mt-4">5 Points</p>
+                <p class="text-xs mt-4">10 Points</p>
               </div>
             </div>
 
@@ -1434,7 +1431,7 @@
                 </button
               >
               <div class="text-right">
-                <p class="text-xs mt-4">5 Points</p>
+                <p class="text-xs mt-4">10 Points</p>
               </div>
             </div>
 
@@ -1460,7 +1457,7 @@
                 </button
               >
               <div class="text-right">
-                <p class="text-xs mt-4">5 Points</p>
+                <p class="text-xs mt-4">10 Points</p>
               </div>
             </div>
 
@@ -1512,7 +1509,7 @@
                 </button
               >
               <div class="text-right">
-                <p class="text-xs mt-4">5 Points</p>
+                <p class="text-xs mt-4">10 Points</p>
               </div>
             </div>
 
@@ -1605,7 +1602,7 @@
                 </button
               >
               <div class="text-right">
-                <p class="text-xs mt-4">5 Points</p>
+                <p class="text-xs mt-4">10 Points</p>
               </div>
             </div>
 
@@ -1631,7 +1628,7 @@
                 </button
               >
               <div class="text-right">
-                <p class="text-xs mt-4">5 Points</p>
+                <p class="text-xs mt-4">10 Points</p>
               </div>
             </div>
 
@@ -1683,7 +1680,7 @@
                 </button
               >
               <div class="text-right">
-                <p class="text-xs mt-4">5 Points</p>
+                <p class="text-xs mt-4">10 Points</p>
               </div>
             </div>
 
@@ -1776,7 +1773,7 @@
                 </button
               >
               <div class="text-right">
-                <p class="text-xs mt-4">5 Points</p>
+                <p class="text-xs mt-4">10 Points</p>
               </div>
             </div>
 
@@ -1802,7 +1799,7 @@
                 </button
               >
               <div class="text-right">
-                <p class="text-xs mt-4">5 Points</p>
+                <p class="text-xs mt-4">10 Points</p>
               </div>
             </div>
 
@@ -1854,7 +1851,7 @@
                 </button
               >
               <div class="text-right">
-                <p class="text-xs mt-4">5 Points</p>
+                <p class="text-xs mt-4">10 Points</p>
               </div>
             </div>
 
@@ -1947,7 +1944,7 @@
                 </button
               >
               <div class="text-right">
-                <p class="text-xs mt-4">5 Points</p>
+                <p class="text-xs mt-4">10 Points</p>
               </div>
             </div>
 
@@ -1973,7 +1970,7 @@
                 </button
               >
               <div class="text-right">
-                <p class="text-xs mt-4">5 Points</p>
+                <p class="text-xs mt-4">10 Points</p>
               </div>
             </div>
 
@@ -2025,7 +2022,7 @@
                 </button
               >
               <div class="text-right">
-                <p class="text-xs mt-4">5 Points</p>
+                <p class="text-xs mt-4">10 Points</p>
               </div>
             </div>
 
@@ -2118,7 +2115,7 @@
                 </button
               >
               <div class="text-right">
-                <p class="text-xs mt-4">5 Points</p>
+                <p class="text-xs mt-4">10 Points</p>
               </div>
             </div>
 
@@ -2144,7 +2141,7 @@
                 </button
               >
               <div class="text-right">
-                <p class="text-xs mt-4">5 Points</p>
+                <p class="text-xs mt-4">10 Points</p>
               </div>
             </div>
 
@@ -2196,7 +2193,7 @@
                 </button
               >
               <div class="text-right">
-                <p class="text-xs mt-4">5 Points</p>
+                <p class="text-xs mt-4">10 Points</p>
               </div>
             </div>
           </div>
@@ -2213,7 +2210,7 @@
         {/if}
 
         {#if sliderStage == 6}
-          <div class="flex flex-col bg-gray-700 p-2 mt-4 rounded-md text-sm">
+          <div class="flex flex-col bg-blue-600 p-2 mt-4 rounded-md text-sm">
             
             <div class="my-4 flex flex-row items-center w-full">
               <button on:click={priorStage} class="bg-OPENFPL text-GRAY px-2 py-1 rounded-sm text-2xl">&lt;</button>
@@ -2244,7 +2241,7 @@
                 </button
               >
               <div class="text-right">
-                <p class="text-xs mt-4">5 Points</p>
+                <p class="text-xs mt-4">10 Points</p>
               </div>
             </div>
 
@@ -2270,7 +2267,7 @@
                 </button
               >
               <div class="text-right">
-                <p class="text-xs mt-4">5 Points</p>
+                <p class="text-xs mt-4">10 Points</p>
               </div>
             </div>
 
@@ -2300,7 +2297,7 @@
                 </button
               >
               <div class="text-right">
-                <p class="text-xs mt-4">5 Points</p>
+                <p class="text-xs mt-4">20 Points</p>
               </div>
             </div>
 
@@ -2326,7 +2323,7 @@
                 </button
               >
               <div class="text-right">
-                <p class="text-xs mt-4">5 Points</p>
+                <p class="text-xs mt-4">20 Points</p>
               </div>
             </div>
 
@@ -2356,7 +2353,7 @@
                 </button
               >
               <div class="text-right">
-                <p class="text-xs mt-4">5 Points</p>
+                <p class="text-xs mt-4">10 Points</p>
               </div>
             </div>
 
@@ -2382,7 +2379,7 @@
                 </button
               >
               <div class="text-right">
-                <p class="text-xs mt-4">5 Points</p>
+                <p class="text-xs mt-4">20 Points</p>
               </div>
             </div>
 
@@ -2396,7 +2393,7 @@
         {/if}
 
         {#if sliderStage == 7}
-          <div class="flex flex-col bg-gray-700 p-2 mt-4 rounded-md text-sm">
+          <div class="flex flex-col bg-blue-700 p-2 mt-4 rounded-md text-sm">
             
             <div class="my-4 flex flex-row items-center w-full">
               <button on:click={priorStage} class="bg-OPENFPL text-GRAY px-2 py-1 rounded-sm text-2xl">&lt;</button>
@@ -2427,7 +2424,7 @@
                 </button
               >
               <div class="text-right">
-                <p class="text-xs mt-4">5 Points</p>
+                <p class="text-xs mt-4">15 Points</p>
               </div>
             </div>
 
@@ -2453,7 +2450,7 @@
                 </button
               >
               <div class="text-right">
-                <p class="text-xs mt-4">5 Points</p>
+                <p class="text-xs mt-4">15 Points</p>
               </div>
             </div>
 
@@ -2483,7 +2480,7 @@
                 </button
               >
               <div class="text-right">
-                <p class="text-xs mt-4">5 Points</p>
+                <p class="text-xs mt-4">30 Points</p>
               </div>
             </div>
 
@@ -2509,7 +2506,7 @@
                 </button
               >
               <div class="text-right">
-                <p class="text-xs mt-4">5 Points</p>
+                <p class="text-xs mt-4">30 Points</p>
               </div>
             </div>
 
@@ -2539,7 +2536,7 @@
                 </button
               >
               <div class="text-right">
-                <p class="text-xs mt-4">5 Points</p>
+                <p class="text-xs mt-4">15 Points</p>
               </div>
             </div>
 
@@ -2565,7 +2562,7 @@
                 </button
               >
               <div class="text-right">
-                <p class="text-xs mt-4">5 Points</p>
+                <p class="text-xs mt-4">30 Points</p>
               </div>
             </div>
 
@@ -2579,7 +2576,7 @@
         {/if}
 
         {#if sliderStage == 8}
-          <div class="flex flex-col bg-gray-700 p-2 mt-4 rounded-md text-sm">
+          <div class="flex flex-col bg-blue-800 p-2 mt-4 rounded-md text-sm">
             
             <div class="my-4 flex flex-row items-center w-full">
               <button on:click={priorStage} class="bg-OPENFPL text-GRAY px-2 py-1 rounded-sm text-2xl">&lt;</button>
@@ -2610,7 +2607,7 @@
                 </button
               >
               <div class="text-right">
-                <p class="text-xs mt-4">5 Points</p>
+                <p class="text-xs mt-4">20 Points</p>
               </div>
             </div>
 
@@ -2636,7 +2633,7 @@
                 </button
               >
               <div class="text-right">
-                <p class="text-xs mt-4">5 Points</p>
+                <p class="text-xs mt-4">20 Points</p>
               </div>
             </div>
 
@@ -2666,7 +2663,7 @@
                 </button
               >
               <div class="text-right">
-                <p class="text-xs mt-4">5 Points</p>
+                <p class="text-xs mt-4">40 Points</p>
               </div>
             </div>
 
@@ -2692,7 +2689,7 @@
                 </button
               >
               <div class="text-right">
-                <p class="text-xs mt-4">5 Points</p>
+                <p class="text-xs mt-4">40 Points</p>
               </div>
             </div>
 
@@ -2722,7 +2719,7 @@
                 </button
               >
               <div class="text-right">
-                <p class="text-xs mt-4">5 Points</p>
+                <p class="text-xs mt-4">20 Points</p>
               </div>
             </div>
 
@@ -2748,7 +2745,7 @@
                 </button
               >
               <div class="text-right">
-                <p class="text-xs mt-4">5 Points</p>
+                <p class="text-xs mt-4">40 Points</p>
               </div>
             </div>
 
@@ -2762,7 +2759,7 @@
         {/if}
 
         {#if sliderStage == 9}
-          <div class="flex flex-col bg-gray-700 p-2 mt-4 rounded-md text-sm">
+          <div class="flex flex-col bg-blue-900 p-2 mt-4 rounded-md text-sm">
             
             <div class="my-4 flex flex-row items-center w-full">
               <button on:click={priorStage} class="bg-OPENFPL text-GRAY px-2 py-1 rounded-sm text-2xl">&lt;</button>
@@ -2793,7 +2790,7 @@
                 </button
               >
               <div class="text-right">
-                <p class="text-xs mt-4">5 Points</p>
+                <p class="text-xs mt-4">25 Points</p>
               </div>
             </div>
 
@@ -2819,7 +2816,7 @@
                 </button
               >
               <div class="text-right">
-                <p class="text-xs mt-4">5 Points</p>
+                <p class="text-xs mt-4">25 Points</p>
               </div>
             </div>
 
@@ -2849,7 +2846,7 @@
                 </button
               >
               <div class="text-right">
-                <p class="text-xs mt-4">5 Points</p>
+                <p class="text-xs mt-4">50 Points</p>
               </div>
             </div>
 
@@ -2875,7 +2872,7 @@
                 </button
               >
               <div class="text-right">
-                <p class="text-xs mt-4">5 Points</p>
+                <p class="text-xs mt-4">50 Points</p>
               </div>
             </div>
 
@@ -2905,7 +2902,7 @@
                 </button
               >
               <div class="text-right">
-                <p class="text-xs mt-4">5 Points</p>
+                <p class="text-xs mt-4">25 Points</p>
               </div>
             </div>
 
@@ -2931,7 +2928,7 @@
                 </button
               >
               <div class="text-right">
-                <p class="text-xs mt-4">5 Points</p>
+                <p class="text-xs mt-4">50 Points</p>
               </div>
             </div>
 
@@ -2950,6 +2947,7 @@
 
         
       </div>
+
       <div id="dektop-wrapper" class="hidden md:flex flex-col">
 
 
@@ -4414,7 +4412,7 @@
               </button
               >
               <div class="text-right">
-                <p class="text-xs mt-4">10 Points</p>
+                <p class="text-xs mt-4">20 Points</p>
               </div>
             </div>
             <div class="w-1/6">
@@ -4654,7 +4652,6 @@
 
 
       </div>
-
 
       <div class="bg-panel rounded-md p-4 mt-4">
         <div class="flex justify-center">
