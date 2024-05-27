@@ -1022,6 +1022,20 @@
     }
   };
 
+  function nextStage() {
+    if(sliderStage == 9){
+      return;
+    }
+    sliderStage++;
+  }
+
+  function priorStage() {
+    if(sliderStage == 0){
+      return;
+    }
+    sliderStage--;
+  }
+
 </script>
 
 <Layout>
@@ -1059,20 +1073,20 @@
 
 
     <div class="bg-panel rounded-md p-4">
-      <p class="text-xl my-2 mb-4">
+      <p class="text-sm md:text-xl my-2 mb-4">
         Welcome to the FootballGod Euro 2024 prediction game.
       </p>
       
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 text-xs md:text-base">
         <div class="flex flex-col bg-gray-700 rounded-lg overflow-hidden">
-          <div class="p-4 flex flex-col justify-between h-full">
+          <div class="p-2 flex flex-col justify-between h-full">
             <p
               class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm font-bold rounded-md text-white items-center"
             >
               <img src="FPLCoin.png" alt="fpl" class="w-8 h-8 mr-2 mb-1" />
               Prize Pool:
               {#if loadingPot}
-                <div class="dot-animation min-w-[50px] text-center">{$dots}</div>
+                <div class="dot-animation min-w-[20px] text-center">{$dots}</div>
               {:else}
                 {potBalance.toFixed(0)} $FPL
               {/if}
@@ -1100,14 +1114,16 @@
       </div>
 
       <div class="horizontal-divider my-4" />
-      <div class="flex flex-col md:flex-row">
-        <div class="w-full md:w-4/6">
-          <p class="my-4 text-sm">
+      <div class="flex flex-col md:flex-row text-xs md:text-base">
+        <div class="w-full md:w-4/6 flex flex-col">
+          <p class="md:my-4 inline-flex">
             Entry Fee: 100 $FPL
-            <br />
+          </p>
+
+          <p class="md:my-4 inline-flex">
             Total FPL to be burned:
             {#if loadingPot}
-              <div class="dot-animation min-w-[50px] text-center">{$dots}</div>
+              <div class="dot-animation min-w-[20px] text-center">{$dots}</div>
             {:else}
               {(potBalance / 4).toFixed(0)} $FPL
             {/if}
@@ -1117,8 +1133,8 @@
           <div class="w-full flex justify-center md:justify-start">
             <a href="https://oc.app/community/ji74r-lqaaa-aaaar-ayhoq-cai/?ref=zv6hh-xaaaa-aaaar-ac35q-cai" target="_blank">
               <button class="fg-button px-4 py-2 rounded-md my-2 flex items-center space-x-2">
-                <OpenChatIcon className="w-24" />
-                <p class="text-left text-sm">Join our OpenChat Community now!</p>
+                <OpenChatIcon className="w-8 md:w-24" />
+                <p class="text-left text-xs md:text-sm">Join our OpenChat Community now!</p>
               </button>
             </a>
           </div>
@@ -1167,8 +1183,13 @@
         
         {#if sliderStage == 0}
           <div class="flex flex-col bg-gray-700 p-2 mt-4 rounded-md text-sm">
-            <div class="text-left my-4">Group A</div>
-
+            <div class="my-4 flex flex-row items-center w-full">
+              <button disabled={true} class="bg-GRAY text-white px-2 py-1 rounded-sm text-2xl">&lt;</button>
+              <div class="flex-grow text-center">Group A</div>
+              <button on:click={nextStage} class="bg-OPENFPL text-GRAY px-2 py-1 rounded-sm text-2xl">&gt;</button>
+            </div>
+            
+            
 
             <div>
               <button
@@ -1333,7 +1354,12 @@
 
         {#if sliderStage == 1}
           <div class="flex flex-col bg-gray-700 p-2 mt-4 rounded-md text-sm">
-            <div class="text-left my-4">Group B</div>
+            
+            <div class="my-4 flex flex-row items-center w-full">
+              <button on:click={priorStage} class="bg-OPENFPL text-GRAY px-2 py-1 rounded-sm text-2xl">&lt;</button>
+              <div class="flex-grow text-center">Group B</div>
+              <button on:click={nextStage} class="bg-OPENFPL text-GRAY px-2 py-1 rounded-sm text-2xl">&gt;</button>
+            </div>
 
 
             <div>
@@ -1499,7 +1525,12 @@
 
         {#if sliderStage == 2}
           <div class="flex flex-col bg-gray-700 p-2 mt-4 rounded-md text-sm">
-            <div class="text-left my-4">Group C</div>
+            
+            <div class="my-4 flex flex-row items-center w-full">
+              <button on:click={priorStage} class="bg-OPENFPL text-GRAY px-2 py-1 rounded-sm text-2xl">&lt;</button>
+              <div class="flex-grow text-center">Group C</div>
+              <button on:click={nextStage} class="bg-OPENFPL text-GRAY px-2 py-1 rounded-sm text-2xl">&gt;</button>
+            </div>
 
 
             <div>
@@ -1665,7 +1696,12 @@
 
         {#if sliderStage == 3}
           <div class="flex flex-col bg-gray-700 p-2 mt-4 rounded-md text-sm">
-            <div class="text-left my-4">Group D</div>
+            
+            <div class="my-4 flex flex-row items-center w-full">
+              <button on:click={priorStage} class="bg-OPENFPL text-GRAY px-2 py-1 rounded-sm text-2xl">&lt;</button>
+              <div class="flex-grow text-center">Group D</div>
+              <button on:click={nextStage} class="bg-OPENFPL text-GRAY px-2 py-1 rounded-sm text-2xl">&gt;</button>
+            </div>
 
 
             <div>
@@ -1831,7 +1867,12 @@
 
         {#if sliderStage == 4}
           <div class="flex flex-col bg-gray-700 p-2 mt-4 rounded-md text-sm">
-            <div class="text-left my-4">Group E</div>
+            
+            <div class="my-4 flex flex-row items-center w-full">
+              <button on:click={priorStage} class="bg-OPENFPL text-GRAY px-2 py-1 rounded-sm text-2xl">&lt;</button>
+              <div class="flex-grow text-center">Group E</div>
+              <button on:click={nextStage} class="bg-OPENFPL text-GRAY px-2 py-1 rounded-sm text-2xl">&gt;</button>
+            </div>
 
 
             <div>
@@ -1997,7 +2038,12 @@
 
         {#if sliderStage == 5}
           <div class="flex flex-col bg-gray-700 p-2 mt-4 rounded-md text-sm">
-            <div class="text-left my-4">Group F</div>
+            
+            <div class="my-4 flex flex-row items-center w-full">
+              <button on:click={priorStage} class="bg-OPENFPL text-GRAY px-2 py-1 rounded-sm text-2xl">&lt;</button>
+              <div class="flex-grow text-center">Group F</div>
+              <button on:click={nextStage} class="bg-OPENFPL text-GRAY px-2 py-1 rounded-sm text-2xl">&gt;</button>
+            </div>
 
 
             <div>
@@ -2163,7 +2209,12 @@
 
         {#if sliderStage == 6}
           <div class="flex flex-col bg-gray-700 p-2 mt-4 rounded-md text-sm">
-            <div class="text-left my-4">Round of 16</div>
+            
+            <div class="my-4 flex flex-row items-center w-full">
+              <button on:click={priorStage} class="bg-OPENFPL text-GRAY px-2 py-1 rounded-sm text-2xl">&lt;</button>
+              <div class="flex-grow text-center">Round of 16</div>
+              <button on:click={nextStage} class="bg-OPENFPL text-GRAY px-2 py-1 rounded-sm text-2xl">&gt;</button>
+            </div>
 
 
             <div>
@@ -2329,7 +2380,12 @@
 
         {#if sliderStage == 7}
           <div class="flex flex-col bg-gray-700 p-2 mt-4 rounded-md text-sm">
-            <div class="text-left my-4">Quarter Final</div>
+            
+            <div class="my-4 flex flex-row items-center w-full">
+              <button on:click={priorStage} class="bg-OPENFPL text-GRAY px-2 py-1 rounded-sm text-2xl">&lt;</button>
+              <div class="flex-grow text-center">Quarter Final</div>
+              <button on:click={nextStage} class="bg-OPENFPL text-GRAY px-2 py-1 rounded-sm text-2xl">&gt;</button>
+            </div>
 
 
             <div>
@@ -2495,7 +2551,12 @@
 
         {#if sliderStage == 8}
           <div class="flex flex-col bg-gray-700 p-2 mt-4 rounded-md text-sm">
-            <div class="text-left my-4">Semi Final</div>
+            
+            <div class="my-4 flex flex-row items-center w-full">
+              <button on:click={priorStage} class="bg-OPENFPL text-GRAY px-2 py-1 rounded-sm text-2xl">&lt;</button>
+              <div class="flex-grow text-center">Semi Final</div>
+              <button on:click={nextStage} class="bg-OPENFPL text-GRAY px-2 py-1 rounded-sm text-2xl">&gt;</button>
+            </div>
 
 
             <div>
@@ -2661,7 +2722,12 @@
 
         {#if sliderStage == 9}
           <div class="flex flex-col bg-gray-700 p-2 mt-4 rounded-md text-sm">
-            <div class="text-left my-4">Final</div>
+            
+            <div class="my-4 flex flex-row items-center w-full">
+              <button on:click={priorStage} class="bg-OPENFPL text-GRAY px-2 py-1 rounded-sm text-2xl">&lt;</button>
+              <div class="flex-grow text-center">Final</div>
+              <button on:click={nextStage} class="bg-GRAY text-white px-2 py-1 rounded-sm text-2xl">&gt;</button>
+            </div>
 
 
             <div>
