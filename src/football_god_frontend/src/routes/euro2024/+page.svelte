@@ -1188,8 +1188,6 @@
               <div class="flex-grow text-center">Group A</div>
               <button on:click={nextStage} class="bg-OPENFPL text-GRAY px-2 py-1 rounded-sm text-2xl">&gt;</button>
             </div>
-            
-            
 
             <div>
               <button
@@ -2204,6 +2202,16 @@
           </div>
         {/if}
 
+        {#if sliderStage < 6}
+
+
+        <p
+        class="flex-1 block w-full rounded-none rounded-md bg-gray-800 p-2 text-center text-xs mt-2"
+      >
+        If you make 3 or more correct selections within the same category across all 6 groups, you will receive double points for that category.
+      </p>
+        {/if}
+
         {#if sliderStage == 6}
           <div class="flex flex-col bg-gray-700 p-2 mt-4 rounded-md text-sm">
             
@@ -2266,6 +2274,10 @@
               </div>
             </div>
 
+            <p class="flex-1 block w-full rounded-none rounded-md bg-gray-800 p-2 text-center text-xs mt-2">
+              Receive a 40 point bonus if you select both a winner and loser from the round of 16.
+            </p>
+
             <div class="mt-4">
               <button
                 on:click={() => selectScorer(6)}
@@ -2318,6 +2330,10 @@
               </div>
             </div>
 
+            <p class="flex-1 block w-full rounded-none rounded-md bg-gray-800 p-2 text-center text-xs mt-2">
+              Receive an 80 point bonus if you select both a goalscorer and a player to get an assist from the round of 16.
+            </p>
+
             <div class="mt-4">
               <button
                 on:click={() => selectYellowCard(6)}
@@ -2369,6 +2385,10 @@
                 <p class="text-xs mt-4">5 Points</p>
               </div>
             </div>
+
+            <p class="flex-1 block w-full rounded-none rounded-md bg-gray-800 p-2 text-center text-xs mt-2">
+              Receive a 60 point bonus if you select a player to get a yellow card and a player to get a red card from the round of 16.
+            </p>
 
 
 
@@ -2437,6 +2457,10 @@
               </div>
             </div>
 
+            <p class="flex-1 block w-full rounded-none rounded-md bg-gray-800 p-2 text-center text-xs mt-2">
+              Receive a 60 point bonus if you select both a winner and loser from the quarter final.
+            </p>
+
             <div class="mt-4">
               <button
                 on:click={() => selectScorer(7)}
@@ -2489,6 +2513,10 @@
               </div>
             </div>
 
+            <p class="flex-1 block w-full rounded-none rounded-md bg-gray-800 p-2 text-center text-xs mt-2">
+              Receive an 120 point bonus if you select both a goalscorer and a player to get an assist from the quarter final.
+            </p>
+
             <div class="mt-4">
               <button
                 on:click={() => selectYellowCard(7)}
@@ -2540,6 +2568,10 @@
                 <p class="text-xs mt-4">5 Points</p>
               </div>
             </div>
+
+            <p class="flex-1 block w-full rounded-none rounded-md bg-gray-800 p-2 text-center text-xs mt-2">
+              Receive a 90 point bonus if you select a player to get a yellow card and a player to get a red card from the quarter final.
+            </p>
 
 
 
@@ -2608,6 +2640,10 @@
               </div>
             </div>
 
+            <p class="flex-1 block w-full rounded-none rounded-md bg-gray-800 p-2 text-center text-xs mt-2">
+              Receive a 80 point bonus if you select both a winner and loser from the semi final.
+            </p>
+
             <div class="mt-4">
               <button
                 on:click={() => selectScorer(8)}
@@ -2660,6 +2696,10 @@
               </div>
             </div>
 
+            <p class="flex-1 block w-full rounded-none rounded-md bg-gray-800 p-2 text-center text-xs mt-2">
+              Receive an 160 point bonus if you select both a goalscorer and a player to get an assist from the semi final.
+            </p>
+
             <div class="mt-4">
               <button
                 on:click={() => selectYellowCard(8)}
@@ -2711,6 +2751,10 @@
                 <p class="text-xs mt-4">5 Points</p>
               </div>
             </div>
+
+            <p class="flex-1 block w-full rounded-none rounded-md bg-gray-800 p-2 text-center text-xs mt-2">
+              Receive a 120 point bonus if you select a player to get a yellow card and a player to get a red card from the semi final.
+            </p>
 
 
 
@@ -2779,6 +2823,10 @@
               </div>
             </div>
 
+            <p class="flex-1 block w-full rounded-none rounded-md bg-gray-800 p-2 text-center text-xs mt-2">
+              Receive a 100 point bonus if you select both a winner and loser from the final.
+            </p>
+
             <div class="mt-4">
               <button
                 on:click={() => selectScorer(9)}
@@ -2831,6 +2879,10 @@
               </div>
             </div>
 
+            <p class="flex-1 block w-full rounded-none rounded-md bg-gray-800 p-2 text-center text-xs mt-2">
+              Receive an 200 point bonus if you select both a goalscorer and a player to get an assist from the final.
+            </p>
+
             <div class="mt-4">
               <button
                 on:click={() => selectYellowCard(9)}
@@ -2882,6 +2934,10 @@
                 <p class="text-xs mt-4">5 Points</p>
               </div>
             </div>
+
+            <p class="flex-1 block w-full rounded-none rounded-md bg-gray-800 p-2 text-center text-xs mt-2">
+              Receive a 150 point bonus if you select a player to get a yellow card and a player to get a red card from the final.
+            </p>
 
 
 
