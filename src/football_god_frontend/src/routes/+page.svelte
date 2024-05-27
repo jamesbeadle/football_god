@@ -7,7 +7,7 @@
   import FootballIcon from "$lib/icons/FootballIcon.svelte";
   import OpenChatIcon from "$lib/icons/OpenChatIcon.svelte";
   import { authSignedInStore } from "$lib/derived/auth.derived";
-  import { authStore, type AuthSignInParams, type AuthStoreData } from "$lib/stores/auth.store";
+  import { authStore, type AuthSignInParams } from "$lib/stores/auth.store";
 
   let isLoggedIn = false;
   let isLoading = true;
