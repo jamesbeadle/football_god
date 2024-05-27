@@ -262,13 +262,18 @@
           err: null,
         });
         console.error("Error saving prediction on football god backend", null);
-      }
+      } 
+
+      prediction = {
+        ...prediction!,
+        alreadyEntered: true,
+      };
       
       toastsShow({
         text: "Euro 2024 prediction saved.",
         level: "success",
         duration: 2000,
-      }); 
+      });
     } catch (error) {
       toastsError({
         msg: { text: "Error saving Euro 2024 prediction." },

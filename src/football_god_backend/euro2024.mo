@@ -51,6 +51,14 @@ module {
       );
     };
 
+    public func setEvents(stable_events: [T.Euro2024Event]) {
+      events := stable_events;
+    };
+
+    public func getEvents() : [T.Euro2024Event] {
+      return events;
+    };
+
     public func getPredictions(principalName : Text) : ?DTOs.Euro2024PredictionDTO {
       let userPrediction = userPredictions.get(principalName);
       switch(userPrediction){

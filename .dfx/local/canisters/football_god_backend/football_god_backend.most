@@ -1,5 +1,13 @@
 // Version: 1.0.0
 type DataCache = {category : Text; hash : Text};
+type Euro2024Event =
+  {
+    eventType : EventType;
+    fixtureId : FixtureId;
+    playerId : PlayerId;
+    stageId : Nat8;
+    teamId : TeamId
+  };
 type Euro2024Prediction =
   {
     fPrediction : PredictionSet;
@@ -14,6 +22,8 @@ type Euro2024Prediction =
     sfPrediction : PredictionSet;
     totalScore : Nat16
   };
+type EventType =
+  {#GoalAssisted; #GoalScored; #RedCard; #StageLost; #StageWon; #YellowCard};
 type Fixture =
   {
     awayGoals : Nat8;
@@ -23,6 +33,7 @@ type Fixture =
     id : Nat32;
     status : Nat8
   };
+type FixtureId = Nat32;
 type Gameweek =
   {
     fixtureCount : Nat8;
@@ -85,6 +96,7 @@ actor {
   stable var activeGameweek : Nat8;
   stable var activeSeason : Nat16;
   stable var dataCacheHashes : ?(DataCache, List<DataCache>);
+  stable var stable_euro2024_events : [Euro2024Event];
   stable var stable_euro2024_predictions :
     [(PrincipalName, Euro2024Prediction)];
   stable var stable_nextFixtureId : Nat32;

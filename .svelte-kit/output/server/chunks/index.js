@@ -3485,7 +3485,7 @@ const options = {
 		<div class="error">
 			<span class="status">` + status + '</span>\n			<div class="message">\n				<h1>' + message + "</h1>\n			</div>\n		</div>\n	</body>\n</html>\n"
   },
-  version_hash: "3y97cr"
+  version_hash: "3iqlsr"
 };
 async function get_hooks() {
   return {};
@@ -4442,6 +4442,7 @@ const idlFactory = ({ IDL }) => {
       []
     ),
     "calculateEuro2024Leaderboard": IDL.Func([], [Result], []),
+    "checkPaidButNoEntry": IDL.Func([], [IDL.Bool], []),
     "createSeason": IDL.Func([IDL.Text, IDL.Nat16], [Result], []),
     "createTeam": IDL.Func([IDL.Text], [Result], []),
     "deleteFixture": IDL.Func([IDL.Nat16, IDL.Nat8, IDL.Nat32], [Result], []),
@@ -4535,7 +4536,7 @@ const idlFactory = ({ IDL }) => {
     "withdrawICP": IDL.Func([IDL.Float64], [Result], [])
   });
 };
-var define_process_env_default$3 = { __CANDID_UI_CANISTER_ID: "ahw5u-keaaa-aaaaa-qaaha-cai", FOOTBALL_GOD_BACKEND_CANISTER_ID: "ajuq4-ruaaa-aaaaa-qaaga-cai", FOOTBALL_GOD_FRONTEND_CANISTER_ID: "aovwi-4maaa-aaaaa-qaagq-cai", DFX_NETWORK: "local" };
+var define_process_env_default$3 = { FOOTBALL_GOD_BACKEND_CANISTER_ID: "44kin-waaaa-aaaal-qbxra-cai", FOOTBALL_GOD_FRONTEND_CANISTER_ID: "43loz-3yaaa-aaaal-qbxrq-cai", DFX_NETWORK: "ic" };
 const canisterId = define_process_env_default$3.CANISTER_ID_FOOTBALL_GOD_BACKEND;
 const createActor = (canisterId2, options2 = {}) => {
   const agent = options2.agent || new HttpAgent({ ...options2.agentOptions });
@@ -4543,14 +4544,6 @@ const createActor = (canisterId2, options2 = {}) => {
     console.warn(
       "Detected both agent and agentOptions passed to createActor. Ignoring agentOptions and proceeding with the provided agent."
     );
-  }
-  {
-    agent.fetchRootKey().catch((err) => {
-      console.warn(
-        "Unable to fetch root key. Check to ensure that your local replica is running"
-      );
-      console.error(err);
-    });
   }
   return Actor.createActor(idlFactory, {
     agent,
@@ -4562,7 +4555,7 @@ canisterId ? createActor(canisterId) : void 0;
 class ActorFactory {
   static createActor(idlFactory2, canisterId2 = "", identity = null, options2 = null) {
     const hostOptions = {
-      host: `http://localhost:8080/?canisterId=qhbym-qaaaa-aaaaa-aaafq-cai`,
+      host: `https://${canisterId2}.icp-api.io`,
       identity
     };
     if (!options2) {
@@ -4575,14 +4568,6 @@ class ActorFactory {
       options2.agentOptions.host = hostOptions.host;
     }
     const agent = new HttpAgent({ ...options2.agentOptions });
-    {
-      agent.fetchRootKey().catch((err) => {
-        console.warn(
-          "Unable to fetch root key. Ensure your local replica is running"
-        );
-        console.error(err);
-      });
-    }
     return Actor.createActor(idlFactory2, {
       agent,
       canisterId: canisterId2,
@@ -4591,7 +4576,7 @@ class ActorFactory {
   }
   static getAgent(canisterId2 = "", identity = null, options2 = null) {
     const hostOptions = {
-      host: `http://localhost:8080/?canisterId=qhbym-qaaaa-aaaaa-aaafq-cai`,
+      host: `https://${canisterId2}.icp-api.io`,
       identity
     };
     if (!options2) {
@@ -4642,7 +4627,7 @@ function replacer(key2, value) {
 function isError(response) {
   return response && response.err !== void 0;
 }
-var define_process_env_default$2 = { __CANDID_UI_CANISTER_ID: "ahw5u-keaaa-aaaaa-qaaha-cai", FOOTBALL_GOD_BACKEND_CANISTER_ID: "ajuq4-ruaaa-aaaaa-qaaga-cai", FOOTBALL_GOD_FRONTEND_CANISTER_ID: "aovwi-4maaa-aaaaa-qaagq-cai", DFX_NETWORK: "local" };
+var define_process_env_default$2 = { FOOTBALL_GOD_BACKEND_CANISTER_ID: "44kin-waaaa-aaaal-qbxra-cai", FOOTBALL_GOD_FRONTEND_CANISTER_ID: "43loz-3yaaa-aaaal-qbxrq-cai", DFX_NETWORK: "ic" };
 function createTeamStore() {
   const { subscribe: subscribe2, set } = writable([]);
   let actor = ActorFactory.createActor(
@@ -4688,7 +4673,7 @@ function createTeamStore() {
   };
 }
 const teamStore = createTeamStore();
-var define_process_env_default$1 = { __CANDID_UI_CANISTER_ID: "ahw5u-keaaa-aaaaa-qaaha-cai", FOOTBALL_GOD_BACKEND_CANISTER_ID: "ajuq4-ruaaa-aaaaa-qaaga-cai", FOOTBALL_GOD_FRONTEND_CANISTER_ID: "aovwi-4maaa-aaaaa-qaagq-cai", DFX_NETWORK: "local" };
+var define_process_env_default$1 = { FOOTBALL_GOD_BACKEND_CANISTER_ID: "44kin-waaaa-aaaal-qbxra-cai", FOOTBALL_GOD_FRONTEND_CANISTER_ID: "43loz-3yaaa-aaaal-qbxrq-cai", DFX_NETWORK: "ic" };
 function createPlayerStore() {
   const { subscribe: subscribe2, set } = writable([]);
   let actor = ActorFactory.createActor(
@@ -4734,7 +4719,7 @@ function createPlayerStore() {
   };
 }
 const playerStore = createPlayerStore();
-var define_process_env_default = { __CANDID_UI_CANISTER_ID: "ahw5u-keaaa-aaaaa-qaaha-cai", FOOTBALL_GOD_BACKEND_CANISTER_ID: "ajuq4-ruaaa-aaaaa-qaaga-cai", FOOTBALL_GOD_FRONTEND_CANISTER_ID: "aovwi-4maaa-aaaaa-qaagq-cai", DFX_NETWORK: "local" };
+var define_process_env_default = { FOOTBALL_GOD_BACKEND_CANISTER_ID: "44kin-waaaa-aaaal-qbxra-cai", FOOTBALL_GOD_FRONTEND_CANISTER_ID: "43loz-3yaaa-aaaal-qbxrq-cai", DFX_NETWORK: "ic" };
 function createEuro2024Store() {
   const { subscribe: subscribe2, set } = writable(null);
   let actor = ActorFactory.createActor(
@@ -4742,40 +4727,13 @@ function createEuro2024Store() {
     define_process_env_default.FOOTBALL_GOD_BACKEND_CANISTER_ID
   );
   async function sync() {
-    let category = "euro_2024_state";
-    const newHashValues = await actor.getDataHashes();
-    console.log(newHashValues);
-    let error = isError(newHashValues);
-    if (error) {
+    let result = await actor.getEuro2024StateDTO();
+    if (isError(result)) {
       console.error("Error syncing euro 2024 store");
       return;
     }
-    let dataCacheValues = newHashValues.ok;
-    let categoryHash = dataCacheValues.find((x) => x.category === category) ?? null;
-    const localHash = localStorage.getItem(`${category}_hash`);
-    if (categoryHash?.hash != localHash) {
-      let result = await actor.getEuro2024StateDTO();
-      if (isError(result)) {
-        console.error("Error syncing euro 2024 store");
-        return;
-      }
-      let updatedEuro2024StateData = result.ok;
-      localStorage.setItem(
-        category,
-        JSON.stringify(updatedEuro2024StateData, replacer)
-      );
-      localStorage.setItem(`${category}_hash`, categoryHash?.hash ?? "");
-      set(updatedEuro2024StateData);
-    } else {
-      const cachedEuro2024StateData = localStorage.getItem(category);
-      let cachedEuro2024State = null;
-      try {
-        cachedEuro2024State = JSON.parse(cachedEuro2024StateData || "{}");
-      } catch (e) {
-        cachedEuro2024State = null;
-      }
-      set(cachedEuro2024State);
-    }
+    let updatedEuro2024StateData = result.ok;
+    set(updatedEuro2024StateData);
   }
   async function getEuro2024State() {
     let euro2024State;

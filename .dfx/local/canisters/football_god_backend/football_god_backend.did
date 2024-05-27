@@ -340,6 +340,7 @@ type AccountBalanceDTO = record {accountBalance: nat;};
 service : {
   addFixtureToGameweek: (nat16, nat8, nat16, nat16) -> (Result);
   calculateEuro2024Leaderboard: () -> (Result);
+  checkPaidButNoEntry: () -> (bool);
   createSeason: (text, nat16) -> (Result);
   createTeam: (text) -> (Result);
   deleteFixture: (nat16, nat8, nat32) -> (Result);

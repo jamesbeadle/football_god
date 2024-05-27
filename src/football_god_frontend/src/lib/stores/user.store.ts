@@ -128,13 +128,18 @@ function createUserStore() {
     dto: Euro2024PredictionDTO,
   ): Promise<any> {
     try {
+      console.log("saving prediction");
       const identityActor = await ActorFactory.createIdentityActor(
         authStore,
         process.env.FOOTBALL_GOD_BACKEND_CANISTER_ID ?? "",
       );
+      console.log("process.env.FOOTBALL_GOD_BACKEND_CANISTER_ID");
+      console.log(process.env.FOOTBALL_GOD_BACKEND_CANISTER_ID);
 
-      const paidButNoEntry = await identityActor.checkPaidButNoEntry(dto);
-      
+      const paidButNoEntry = await identityActor.checkPaidButNoEntry();
+      console.log("paidButNoEntry");
+      console.log(paidButNoEntry);
+
       if (dto.alreadyEntered || paidButNoEntry) {
         const result = await identityActor.submitEuro2024Prediction(dto);
         if (isError(result)) {
@@ -155,19 +160,27 @@ function createUserStore() {
       }
 
       let principalId = identity.getPrincipal();
+      console.log("Principal");
+      console.log(principalId);
+
+      console.log("Host");
+      console.log(ActorFactory.getAgent());
 
       const agent = await createAgent({
         identity: identity,
-        host:
-          process.env.DFX_NETWORK === "ic"
-            ? `https://${ActorFactory.getAgent()}.icp-api.io`
-            : `http://localhost:8080/?canisterId=qhbym-qaaaa-aaaaa-aaafq-cai`,
-        fetchRootKey: true,
+        host: import.meta.env.VITE_AUTH_PROVIDER_URL,
+        fetchRootKey: process.env.DFX_NETWORK === "local",
       });
+
+      console.log("agent");
+      console.log(agent);
 
       const { transfer } = IcrcLedgerCanister.create({
         agent,
-        canisterId: Principal.fromText("avqkn-guaaa-aaaaa-qaaea-cai"),
+        canisterId:
+          process.env.DFX_NETWORK === "ic"
+            ? Principal.fromText("ddsp7-7iaaa-aaaaq-aacqq-cai")
+            : Principal.fromText("avqkn-guaaa-aaaaa-qaaea-cai"),
       });
 
       if (principalId) {

@@ -52,6 +52,7 @@ actor Self {
   private stable var stable_nextFixtureId : Nat32 = 0;
   private stable var stable_nextTeamId : Nat16 = 0;
   private stable var stable_euro2024_predictions : [(T.PrincipalName, T.Euro2024Prediction)] = [];
+  private stable var stable_euro2024_events : [T.Euro2024Event] = [];
 
   private stable var dataCacheHashes : List.List<T.DataCache> = List.fromArray([
     { category = "teams"; hash = "NEW_DEFAULT_VALUE" },
@@ -1216,7 +1217,7 @@ actor Self {
     stable_teams := teamsInstance.getTeams();
     stable_nextTeamId := teamsInstance.getNextTeamId();
     stable_euro2024_predictions := euro2024Instance.getUserPredictions();
-    //TODO: Add caching
+    stable_euro2024_events := euro2024Instance.getEvents();
   };
 
   system func postupgrade() {
@@ -1225,11 +1226,7 @@ actor Self {
     seasonsInstance.setData(stable_seasons, stable_nextSeasonId, stable_nextFixtureId);
     teamsInstance.setData(stable_teams, stable_nextTeamId);
     euro2024Instance.setData(stable_euro2024_predictions);
-    dataCacheHashes := List.fromArray([
-      { category = "teams"; hash = "NEW_DEFAULT_VALUE" },
-      { category = "fixtures"; hash = "NEW_DEFAULT_VALUE" },
-      { category = "players"; hash = "NEW_DEFAULT_VALUE" },
-      { category = "euro_2024_state"; hash = "NEW_DEFAULT_VALUE" }]);
-    };
-
+    euro2024Instance.setEvents(stable_euro2024_events);
+  };
+    
 };

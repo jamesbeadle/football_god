@@ -17,7 +17,6 @@ function createEuro2024Store() {
   );
 
   async function sync() {
-    
     let result = await actor.getEuro2024StateDTO();
     if (isError(result)) {
       console.error("Error syncing euro 2024 store");
