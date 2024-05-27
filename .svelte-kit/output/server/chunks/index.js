@@ -3485,7 +3485,7 @@ const options = {
 		<div class="error">
 			<span class="status">` + status + '</span>\n			<div class="message">\n				<h1>' + message + "</h1>\n			</div>\n		</div>\n	</body>\n</html>\n"
   },
-  version_hash: "9v8dg6"
+  version_hash: "4tla55"
 };
 async function get_hooks() {
   return {};
@@ -4771,14 +4771,14 @@ const Page$6 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
   let loadingText;
   let $$unsubscribe_playerStore;
   let $$unsubscribe_teamStore;
-  let $$unsubscribe_euro2024Store;
   let $authSignedInStore, $$unsubscribe_authSignedInStore;
   let $$unsubscribe_dots;
+  let $$unsubscribe_euro2024Store;
   let $$unsubscribe_countdown;
   $$unsubscribe_playerStore = subscribe(playerStore, (value) => value);
   $$unsubscribe_teamStore = subscribe(teamStore, (value) => value);
-  $$unsubscribe_euro2024Store = subscribe(euro2024Store, (value) => value);
   $$unsubscribe_authSignedInStore = subscribe(authSignedInStore, (value) => $authSignedInStore = value);
+  $$unsubscribe_euro2024Store = subscribe(euro2024Store, (value) => value);
   let interval;
   let dots = writable(".");
   $$unsubscribe_dots = subscribe(dots, (value) => value);
@@ -4790,9 +4790,9 @@ const Page$6 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
   loadingText = "Loading, please wait...";
   $$unsubscribe_playerStore();
   $$unsubscribe_teamStore();
-  $$unsubscribe_euro2024Store();
   $$unsubscribe_authSignedInStore();
   $$unsubscribe_dots();
+  $$unsubscribe_euro2024Store();
   $$unsubscribe_countdown();
   return `${validate_component(Layout, "Layout").$$render($$result, {}, {}, {
     default: () => {

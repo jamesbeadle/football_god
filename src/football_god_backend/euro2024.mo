@@ -20,7 +20,6 @@ module {
 
     private var userPredictions = Map.HashMap<T.PrincipalName, T.Euro2024Prediction>(0, Text.equal, Text.hash);
 
-    //TODO: ADD TO STABLE STORAGE
     private var events: [T.Euro2024Event] = [];
 
     private var state: T.Euro2024State = {
