@@ -136,48 +136,42 @@
       </div>
     </div>
     <div class="mr-2 py-2">
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
-         {#each tiles as tile}
-          <div class="flex flex-col bg-gray-700 rounded-lg overflow-hidden">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {#each tiles as tile}
+          <div class="bg-gray-700 rounded-lg overflow-hidden flex flex-col">
             {#if tile.image}
               <img
-                class="w-full h-96 object-cover min-h-96"
+                class="w-full h-48 object-cover"
                 src={tile.image}
                 alt={tile.title}
               />
-              <div class="p-4 flex flex-col justify-between h-full">
-                <h3 class="text-xl font-bold min-h-[30px]">{tile.title}</h3>
-                <p class="min-h-[100px]">{tile.content}</p>
-                <a
-                  href={tile.link}
-                  class="self-end btn bg-blue-500 text-white px-4 py-2 rounded mt-4"
-                  target={tile.link.startsWith("http") ? "_blank" : "_self"}
-                  rel={tile.link.startsWith("http") ? "noopener noreferrer" : ""}
-                >
-                  {tile.buttonText}
-                </a>
-              </div>
-            {:else if tile.icon}
-              <div class="flex flex-row items-center">
-                <svelte:component this={tile.icon} className="h-84 w-full p-24" />
-              </div>
-              <div class="p-4 flex flex-col justify-between h-full">
-                <h3 class="text-xl font-bold min-h-[30px]">{tile.title}</h3>
-                <p class="min-h-[100px]">{tile.content}</p>
-                <a
-                  href={tile.link}
-                  class="self-end btn bg-blue-500 text-white px-4 py-2 rounded mt-4"
-                  target={tile.link.startsWith("http") ? "_blank" : "_self"}
-                  rel={tile.link.startsWith("http") ? "noopener noreferrer" : ""}
-                >
-                  {tile.buttonText}
-                </a>
+            {/if}
+            {#if tile.icon}
+              <div class="flex items-center justify-center h-48 bg-gray-800">
+                <svelte:component this={tile.icon} className="h-32 w-32" />
               </div>
             {/if}
+            <div class="flex flex-col justify-between flex-grow p-4">
+              <div class="flex-grow">
+                <h3 class="text-xl font-bold text-white">{tile.title}</h3>
+                <p class="mt-2 text-white">{tile.content}</p>
+              </div>
+              <div class="mt-4 flex justify-end">
+                <a
+                  href={tile.link}
+                  class="bg-blue-500 text-white px-4 py-2 rounded"
+                  target={tile.link.startsWith("http") ? "_blank" : "_self"}
+                  rel={tile.link.startsWith("http") ? "noopener noreferrer" : ""}
+                >
+                  {tile.buttonText}
+                </a>
+              </div>
+            </div>
           </div>
         {/each}
       </div>
     </div>
+    
   {/if}
 </Layout>
 
