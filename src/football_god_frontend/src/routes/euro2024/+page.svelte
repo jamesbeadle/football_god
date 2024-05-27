@@ -2201,9 +2201,6 @@
                 <p class="text-xs mt-4">5 Points</p>
               </div>
             </div>
-
-
-
           </div>
         {/if}
 

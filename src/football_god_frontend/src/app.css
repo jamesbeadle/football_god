@@ -117,3 +117,22 @@
 
 .toast.error {
 }
+
+/* Override styles for .container when it is a child of .modal */
+.modal .container {
+  max-width: none !important;
+  width: 100% !important;
+}
+
+/* Ensure media queries for .modal .container */
+@media (min-width: 480px) {
+  .modal .container {
+    max-width: none !important; /* or set to desired value */
+  }
+}
+
+@media (min-width: 420px) {
+  .modal .container {
+    max-width: none !important; /* or set to desired value */
+  }
+}
