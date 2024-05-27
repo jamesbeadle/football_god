@@ -53,6 +53,9 @@ actor Self {
   private stable var stable_nextTeamId : Nat16 = 0;
   private stable var stable_euro2024_predictions : [(T.PrincipalName, T.Euro2024Prediction)] = [];
   private stable var stable_euro2024_events : [T.Euro2024Event] = [];
+  private stable var stable_euro2024_state: T.Euro2024State = {
+    prizePool = 0; stage = #Selecting; totalManagers = 1
+  };
 
   private stable var dataCacheHashes : List.List<T.DataCache> = List.fromArray([
     { category = "teams"; hash = "NEW_DEFAULT_VALUE" },
@@ -1056,12 +1059,6 @@ actor Self {
     switch(prediction){
       case (null){
 
-        let paidButNoEntry = await checkCallerPaidButNoEntry(caller);
-
-        if(paidButNoEntry){
-          return euro2024Instance.submitPredictions(principalName, euro2024PredictionDTO);
-        };
-
         let transferResult = await fpl_ledger.payEuro2024EntryFee(Principal.fromActor(Self), caller);
 
         switch(transferResult){
@@ -1179,7 +1176,7 @@ actor Self {
     
     assert not Principal.isAnonymous(caller);
     var fplAccountBalance = await fpl_ledger.getUserAccountBalance(caller);
-    var icpAccountBalance = await bookInstance.getUserAccountBalance(Principal.fromActor(Self), caller);
+    var icpAccountBalance: Nat64 = 0;
 
     let dto: DTOs.AccountBalancesDTO = {
       principalId = Principal.toText(caller);
@@ -1218,6 +1215,7 @@ actor Self {
     stable_nextTeamId := teamsInstance.getNextTeamId();
     stable_euro2024_predictions := euro2024Instance.getUserPredictions();
     stable_euro2024_events := euro2024Instance.getEvents();
+    stable_euro2024_state := euro2024Instance.getState();
   };
 
   system func postupgrade() {
@@ -1227,6 +1225,7 @@ actor Self {
     teamsInstance.setData(stable_teams, stable_nextTeamId);
     euro2024Instance.setData(stable_euro2024_predictions);
     euro2024Instance.setEvents(stable_euro2024_events);
+    euro2024Instance.setState(stable_euro2024_state);
   };
     
 };

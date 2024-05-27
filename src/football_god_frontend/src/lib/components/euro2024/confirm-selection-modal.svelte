@@ -22,7 +22,7 @@ import { Modal, Spinner } from "@dfinity/gix-components";
       let userBalances = await userStore.getAccountBalances();
       if(userBalances){
         accountBalances = userBalances;
-        fplBalance = Number(accountBalances.fplBalance / 100_000_000n).toFixed(4);
+        fplBalance = Number(accountBalances.fplBalance / 100_000_000n).toPrecision(4);
       }
 
       if(!userBalances){
@@ -63,7 +63,7 @@ import { Modal, Spinner } from "@dfinity/gix-components";
     let userBalances = await userStore.getAccountBalances();
     if(userBalances){
       accountBalances = userBalances;
-      fplBalance = Number(accountBalances.fplBalance / 100_000_000n).toFixed(4);
+      fplBalance = Number(accountBalances.fplBalance / 100_000_000n).toPrecision(4);
     }
   }
 </script>

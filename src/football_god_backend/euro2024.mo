@@ -33,6 +33,10 @@ module {
       return state;
     };
 
+    public func setState(stable_state: T.Euro2024State){
+      state := stable_state;
+    };
+
     public func setGameState(gameStage: T.GameState){
       let newSystemState: T.Euro2024State = {
         prizePool = state.prizePool;

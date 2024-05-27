@@ -48,8 +48,8 @@
           fplBalance: userBalances.fplBalance,
           icpBalance: userBalances.icpBalance
         }
-        fplBalance = Number(accountBalances.fplBalance / 100_000_000n).toFixed(4);
-        icpBalance = Number(accountBalances.icpBalance / 100_000_000n).toFixed(4);
+        fplBalance = (Number(accountBalances.fplBalance) / 100_000_000).toPrecision(4);
+        icpBalance = (Number(accountBalances.icpBalance) / 100_000_000).toPrecision(4);
         clearInterval(dot_interval);
         loadingBalances = false;
       }
@@ -134,6 +134,7 @@
       <div class="w-full mb-4">
         <div class="mt-4">
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <!--
             <div
               class="flex items-center p-4 md:p-2 rounded-lg shadow-md border border-gray-700"
             >
@@ -164,6 +165,7 @@
                 </div>
               </div>
             </div>
+            -->
             <div
               class="flex items-center p-4 rounded-lg shadow-md border border-gray-700"
             >

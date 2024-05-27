@@ -128,17 +128,11 @@ function createUserStore() {
     dto: Euro2024PredictionDTO,
   ): Promise<any> {
     try {
-      console.log("saving prediction");
       const identityActor = await ActorFactory.createIdentityActor(
         authStore,
         process.env.FOOTBALL_GOD_BACKEND_CANISTER_ID ?? "",
       );
-      console.log("process.env.FOOTBALL_GOD_BACKEND_CANISTER_ID");
-      console.log(process.env.FOOTBALL_GOD_BACKEND_CANISTER_ID);
-
       const paidButNoEntry = await identityActor.checkPaidButNoEntry();
-      console.log("paidButNoEntry");
-      console.log(paidButNoEntry);
 
       if (dto.alreadyEntered || paidButNoEntry) {
         const result = await identityActor.submitEuro2024Prediction(dto);
@@ -160,20 +154,12 @@ function createUserStore() {
       }
 
       let principalId = identity.getPrincipal();
-      console.log("Principal");
-      console.log(principalId);
-
-      console.log("Host");
-      console.log(ActorFactory.getAgent());
 
       const agent = await createAgent({
         identity: identity,
         host: import.meta.env.VITE_AUTH_PROVIDER_URL,
         fetchRootKey: process.env.DFX_NETWORK === "local",
       });
-
-      console.log("agent");
-      console.log(agent);
 
       const { transfer } = IcrcLedgerCanister.create({
         agent,

@@ -66,7 +66,6 @@
     loadingText = "Fetching Prediction";
     await userStore.sync();
     await euro2024Store.sync();
-    console.log($euro2024Store)
     if($teamStore.length == 0 || $playerStore.length == 0){
       return;
     };
