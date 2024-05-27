@@ -79,6 +79,12 @@ module {
         created_at_time =?Nat64.fromNat(Int.abs(Time.now()));
       });
     };
+    
+    public func checkCallerPaidButNoEntry(owner: Principal, caller: Principal) : async Bool {
+      let balance = await ledger.icrc1_balance_of({owner; subaccount = ?principalToSubaccount(caller)});
+      let requiredAmount: Nat = entry_fee - fpl_fee;
+      return balance >= requiredAmount;
+    };
 
   };
 };

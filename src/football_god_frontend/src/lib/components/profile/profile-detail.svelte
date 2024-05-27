@@ -7,28 +7,40 @@
   import CopyIcon from "$lib/icons/CopyIcon.svelte";
   import { uint8ArrayToHexString } from "@dfinity/utils";
   import type { AccountBalancesDTO } from "../../../../../declarations/football_god_backend/football_god_backend.did";
+  import { writable } from "svelte/store";
 
   let showUsernameModal: boolean = false;
-  let fileInput: HTMLInputElement;
   let accountBalances: AccountBalancesDTO = {
     principalId: "",
     fplBalance: 0n,
     icpBalance: 0n
   };
   let fplBalance = "0";
+  let icpBalance = "0";
   
   let unsubscribeUserProfile: () => void;
 
   let isLoading = true;
+  let loadingBalances = true;
+
+  let dots = writable('.');
+  let dot_interval;
 
   onMount(async () => {
     try {
+      let count = 1;
+      dot_interval = setInterval(() => {
+        count = (count % 3) + 1;
+        dots.set('.'.repeat(count));
+      }, 500);
+
       await userStore.sync();
       unsubscribeUserProfile = userStore.subscribe((value) => {
         if (!value) {
           return;
         }
       });
+      isLoading = false;
       let userBalances = await userStore.getAccountBalances();
       if(userBalances){
         accountBalances = {
@@ -37,6 +49,9 @@
           icpBalance: userBalances.icpBalance
         }
         fplBalance = Number(accountBalances.fplBalance / 100_000_000n).toFixed(4);
+        icpBalance = Number(accountBalances.icpBalance / 100_000_000n).toFixed(4);
+        clearInterval(dot_interval);
+        loadingBalances = false;
       }
     } catch (error) {
       toastsError({
@@ -44,7 +59,6 @@
         err: error,
       });
       console.error("Error fetching profile detail:", error);
-    } finally {
       isLoading = false;
     }
   });
@@ -130,7 +144,14 @@
               />
               <div class="ml-4 md:ml-3">
                 <p class="font-bold">ICP</p>
-                <p>0.00 ICP</p>
+
+                <p>
+                  {#if loadingBalances}
+                    <div class="dot-animation min-w-[20px]">{$dots}</div>
+                  {:else}
+                    {icpBalance} ICP
+                  {/if}
+                </p>
 
                 <div class="flex items-center text-xs">
                   <button
@@ -153,7 +174,14 @@
               />
               <div class="ml-4 md:ml-3">
                 <p class="font-bold">FPL</p>
-                <p>{fplBalance} FPL</p>
+
+                <p>
+                  {#if loadingBalances}
+                    <div class="dot-animation min-w-[20px]">{$dots}</div>
+                  {:else}
+                    {fplBalance} FPL
+                  {/if}
+                </p>
 
                 <div class="flex items-center text-xs">
                   <button

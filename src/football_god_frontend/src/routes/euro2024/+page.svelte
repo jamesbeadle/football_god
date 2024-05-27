@@ -66,6 +66,7 @@
     loadingText = "Fetching Prediction";
     await userStore.sync();
     await euro2024Store.sync();
+    console.log($euro2024Store)
     if($teamStore.length == 0 || $playerStore.length == 0){
       return;
     };
@@ -1146,7 +1147,7 @@
               <p
                 class="inline-flex justify-center py-2 px-4 mx-2 border border-transparent shadow-sm font-bold rounded-md text-white"
               >
-                Total Entries: 0
+                Total Entries: {$euro2024Store ? $euro2024Store.totalManagers : 0}
               </p>
             </div>
           </div>

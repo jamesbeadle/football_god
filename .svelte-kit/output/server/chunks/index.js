@@ -3485,7 +3485,7 @@ const options = {
 		<div class="error">
 			<span class="status">` + status + '</span>\n			<div class="message">\n				<h1>' + message + "</h1>\n			</div>\n		</div>\n	</body>\n</html>\n"
   },
-  version_hash: "l06e55"
+  version_hash: "3y97cr"
 };
 async function get_hooks() {
   return {};
@@ -4535,7 +4535,7 @@ const idlFactory = ({ IDL }) => {
     "withdrawICP": IDL.Func([IDL.Float64], [Result], [])
   });
 };
-var define_process_env_default$3 = { FOOTBALL_GOD_BACKEND_CANISTER_ID: "44kin-waaaa-aaaal-qbxra-cai", FOOTBALL_GOD_FRONTEND_CANISTER_ID: "43loz-3yaaa-aaaal-qbxrq-cai", DFX_NETWORK: "ic" };
+var define_process_env_default$3 = { __CANDID_UI_CANISTER_ID: "ahw5u-keaaa-aaaaa-qaaha-cai", FOOTBALL_GOD_BACKEND_CANISTER_ID: "ajuq4-ruaaa-aaaaa-qaaga-cai", FOOTBALL_GOD_FRONTEND_CANISTER_ID: "aovwi-4maaa-aaaaa-qaagq-cai", DFX_NETWORK: "local" };
 const canisterId = define_process_env_default$3.CANISTER_ID_FOOTBALL_GOD_BACKEND;
 const createActor = (canisterId2, options2 = {}) => {
   const agent = options2.agent || new HttpAgent({ ...options2.agentOptions });
@@ -4543,6 +4543,14 @@ const createActor = (canisterId2, options2 = {}) => {
     console.warn(
       "Detected both agent and agentOptions passed to createActor. Ignoring agentOptions and proceeding with the provided agent."
     );
+  }
+  {
+    agent.fetchRootKey().catch((err) => {
+      console.warn(
+        "Unable to fetch root key. Check to ensure that your local replica is running"
+      );
+      console.error(err);
+    });
   }
   return Actor.createActor(idlFactory, {
     agent,
@@ -4554,7 +4562,7 @@ canisterId ? createActor(canisterId) : void 0;
 class ActorFactory {
   static createActor(idlFactory2, canisterId2 = "", identity = null, options2 = null) {
     const hostOptions = {
-      host: `https://${canisterId2}.icp-api.io`,
+      host: `http://localhost:8080/?canisterId=qhbym-qaaaa-aaaaa-aaafq-cai`,
       identity
     };
     if (!options2) {
@@ -4567,6 +4575,14 @@ class ActorFactory {
       options2.agentOptions.host = hostOptions.host;
     }
     const agent = new HttpAgent({ ...options2.agentOptions });
+    {
+      agent.fetchRootKey().catch((err) => {
+        console.warn(
+          "Unable to fetch root key. Ensure your local replica is running"
+        );
+        console.error(err);
+      });
+    }
     return Actor.createActor(idlFactory2, {
       agent,
       canisterId: canisterId2,
@@ -4575,7 +4591,7 @@ class ActorFactory {
   }
   static getAgent(canisterId2 = "", identity = null, options2 = null) {
     const hostOptions = {
-      host: `https://${canisterId2}.icp-api.io`,
+      host: `http://localhost:8080/?canisterId=qhbym-qaaaa-aaaaa-aaafq-cai`,
       identity
     };
     if (!options2) {
@@ -4626,7 +4642,7 @@ function replacer(key2, value) {
 function isError(response) {
   return response && response.err !== void 0;
 }
-var define_process_env_default$2 = { FOOTBALL_GOD_BACKEND_CANISTER_ID: "44kin-waaaa-aaaal-qbxra-cai", FOOTBALL_GOD_FRONTEND_CANISTER_ID: "43loz-3yaaa-aaaal-qbxrq-cai", DFX_NETWORK: "ic" };
+var define_process_env_default$2 = { __CANDID_UI_CANISTER_ID: "ahw5u-keaaa-aaaaa-qaaha-cai", FOOTBALL_GOD_BACKEND_CANISTER_ID: "ajuq4-ruaaa-aaaaa-qaaga-cai", FOOTBALL_GOD_FRONTEND_CANISTER_ID: "aovwi-4maaa-aaaaa-qaagq-cai", DFX_NETWORK: "local" };
 function createTeamStore() {
   const { subscribe: subscribe2, set } = writable([]);
   let actor = ActorFactory.createActor(
@@ -4672,7 +4688,7 @@ function createTeamStore() {
   };
 }
 const teamStore = createTeamStore();
-var define_process_env_default$1 = { FOOTBALL_GOD_BACKEND_CANISTER_ID: "44kin-waaaa-aaaal-qbxra-cai", FOOTBALL_GOD_FRONTEND_CANISTER_ID: "43loz-3yaaa-aaaal-qbxrq-cai", DFX_NETWORK: "ic" };
+var define_process_env_default$1 = { __CANDID_UI_CANISTER_ID: "ahw5u-keaaa-aaaaa-qaaha-cai", FOOTBALL_GOD_BACKEND_CANISTER_ID: "ajuq4-ruaaa-aaaaa-qaaga-cai", FOOTBALL_GOD_FRONTEND_CANISTER_ID: "aovwi-4maaa-aaaaa-qaagq-cai", DFX_NETWORK: "local" };
 function createPlayerStore() {
   const { subscribe: subscribe2, set } = writable([]);
   let actor = ActorFactory.createActor(
@@ -4718,7 +4734,7 @@ function createPlayerStore() {
   };
 }
 const playerStore = createPlayerStore();
-var define_process_env_default = { FOOTBALL_GOD_BACKEND_CANISTER_ID: "44kin-waaaa-aaaal-qbxra-cai", FOOTBALL_GOD_FRONTEND_CANISTER_ID: "43loz-3yaaa-aaaal-qbxrq-cai", DFX_NETWORK: "ic" };
+var define_process_env_default = { __CANDID_UI_CANISTER_ID: "ahw5u-keaaa-aaaaa-qaaha-cai", FOOTBALL_GOD_BACKEND_CANISTER_ID: "ajuq4-ruaaa-aaaaa-qaaga-cai", FOOTBALL_GOD_FRONTEND_CANISTER_ID: "aovwi-4maaa-aaaaa-qaagq-cai", DFX_NETWORK: "local" };
 function createEuro2024Store() {
   const { subscribe: subscribe2, set } = writable(null);
   let actor = ActorFactory.createActor(
@@ -4728,6 +4744,7 @@ function createEuro2024Store() {
   async function sync() {
     let category = "euro_2024_state";
     const newHashValues = await actor.getDataHashes();
+    console.log(newHashValues);
     let error = isError(newHashValues);
     if (error) {
       console.error("Error syncing euro 2024 store");
@@ -4775,23 +4792,34 @@ function createEuro2024Store() {
     let result = await identityActor.getEuroPotBalance();
     return result;
   }
+  async function getTotalEntries() {
+    const identityActor = await ActorFactory.createIdentityActor(
+      authStore,
+      define_process_env_default.FOOTBALL_GOD_BACKEND_CANISTER_ID
+    );
+    let result = await identityActor.getTotalEntries();
+    return result;
+  }
   return {
     subscribe: subscribe2,
     sync,
     getEuro2024State,
-    getPotBalance
+    getPotBalance,
+    getTotalEntries
   };
 }
-createEuro2024Store();
+const euro2024Store = createEuro2024Store();
 const Page$6 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
   let loadingText;
   let $$unsubscribe_playerStore;
   let $$unsubscribe_teamStore;
+  let $$unsubscribe_euro2024Store;
   let $authSignedInStore, $$unsubscribe_authSignedInStore;
   let $$unsubscribe_dots;
   let $$unsubscribe_countdown;
   $$unsubscribe_playerStore = subscribe(playerStore, (value) => value);
   $$unsubscribe_teamStore = subscribe(teamStore, (value) => value);
+  $$unsubscribe_euro2024Store = subscribe(euro2024Store, (value) => value);
   $$unsubscribe_authSignedInStore = subscribe(authSignedInStore, (value) => $authSignedInStore = value);
   let interval;
   let dots = writable(".");
@@ -4804,6 +4832,7 @@ const Page$6 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
   loadingText = "Loading, please wait...";
   $$unsubscribe_playerStore();
   $$unsubscribe_teamStore();
+  $$unsubscribe_euro2024Store();
   $$unsubscribe_authSignedInStore();
   $$unsubscribe_dots();
   $$unsubscribe_countdown();

@@ -56,7 +56,8 @@ actor Self {
   private stable var dataCacheHashes : List.List<T.DataCache> = List.fromArray([
     { category = "teams"; hash = "NEW_DEFAULT_VALUE" },
     { category = "fixtures"; hash = "NEW_DEFAULT_VALUE" },
-    { category = "players"; hash = "NEW_DEFAULT_VALUE" }
+    { category = "players"; hash = "NEW_DEFAULT_VALUE" },
+    { category = "euro_2024_state"; hash = "NEW_DEFAULT_VALUE" }
   ]);
 
   public shared query func getDataHashes() : async Result.Result<[DTOs.DataCacheDTO], T.Error> {
@@ -1053,6 +1054,13 @@ actor Self {
 
     switch(prediction){
       case (null){
+
+        let paidButNoEntry = await checkCallerPaidButNoEntry(caller);
+
+        if(paidButNoEntry){
+          return euro2024Instance.submitPredictions(principalName, euro2024PredictionDTO);
+        };
+
         let transferResult = await fpl_ledger.payEuro2024EntryFee(Principal.fromActor(Self), caller);
 
         switch(transferResult){
@@ -1185,6 +1193,14 @@ actor Self {
     return result;
   };
 
+  public shared ({ caller }) func checkPaidButNoEntry() : async Bool {
+    return await checkCallerPaidButNoEntry(caller);
+  };
+
+  private func checkCallerPaidButNoEntry(caller: Principal) : async Bool {
+    return await fpl_ledger.checkCallerPaidButNoEntry(Principal.fromActor(Self), caller);
+  };
+
   //TODO: get and pay winners
 
   //TODO: get leaderboard
@@ -1209,6 +1225,11 @@ actor Self {
     seasonsInstance.setData(stable_seasons, stable_nextSeasonId, stable_nextFixtureId);
     teamsInstance.setData(stable_teams, stable_nextTeamId);
     euro2024Instance.setData(stable_euro2024_predictions);
-  };
+    dataCacheHashes := List.fromArray([
+      { category = "teams"; hash = "NEW_DEFAULT_VALUE" },
+      { category = "fixtures"; hash = "NEW_DEFAULT_VALUE" },
+      { category = "players"; hash = "NEW_DEFAULT_VALUE" },
+      { category = "euro_2024_state"; hash = "NEW_DEFAULT_VALUE" }]);
+    };
 
 };

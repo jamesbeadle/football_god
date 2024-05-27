@@ -133,7 +133,9 @@ function createUserStore() {
         process.env.FOOTBALL_GOD_BACKEND_CANISTER_ID ?? "",
       );
 
-      if (dto.alreadyEntered) {
+      const paidButNoEntry = await identityActor.checkPaidButNoEntry(dto);
+      
+      if (dto.alreadyEntered || paidButNoEntry) {
         const result = await identityActor.submitEuro2024Prediction(dto);
         if (isError(result)) {
           console.error("Error saving Euro2024 prediction.");

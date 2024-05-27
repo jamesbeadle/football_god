@@ -94,6 +94,12 @@ module {
         },
       );
 
+      state := {
+        prizePool = state.prizePool; 
+        stage = state.stage; 
+        totalManagers = state.totalManagers + 1;
+      };
+
       return #ok(());
     };
 
