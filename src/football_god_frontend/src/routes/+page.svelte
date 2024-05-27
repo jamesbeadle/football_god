@@ -141,12 +141,13 @@
           <div class="flex flex-col bg-gray-700 rounded-lg overflow-hidden">
             {#if tile.image}
               <img
-                class="w-full h-96 object-cover"
+                class="w-full h-96 object-cover min-h-96"
                 src={tile.image}
                 alt={tile.title}
               />
               <div class="p-4 flex flex-col justify-between h-full">
-                <p><b>{tile.title}: </b>{tile.content}</p>
+                <h3 class="text-xl font-bold min-h-[30px]">{tile.title}</h3>
+                <p class="min-h-[100px]">{tile.content}</p>
                 <a
                   href={tile.link}
                   class="self-end btn bg-blue-500 text-white px-4 py-2 rounded mt-4"
@@ -158,11 +159,11 @@
               </div>
             {:else if tile.icon}
               <div class="flex flex-row items-center">
-                <svelte:component this={tile.icon} className="h-96 p-8" />
-                <h3 class="text-xl font-bold">{tile.title}</h3>
+                <svelte:component this={tile.icon} className="h-84 w-full p-24" />
               </div>
               <div class="p-4 flex flex-col justify-between h-full">
-                <p>{tile.content}</p>
+                <h3 class="text-xl font-bold min-h-[30px]">{tile.title}</h3>
+                <p class="min-h-[100px]">{tile.content}</p>
                 <a
                   href={tile.link}
                   class="self-end btn bg-blue-500 text-white px-4 py-2 rounded mt-4"

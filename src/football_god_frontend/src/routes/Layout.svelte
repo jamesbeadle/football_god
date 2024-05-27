@@ -17,7 +17,7 @@
   import "../app.css";
   import { page } from "$app/stores";
   import { goto } from "$app/navigation";
-    import ProfileIcon from "$lib/icons/ProfileIcon.svelte";
+  import ProfileIcon from "$lib/icons/ProfileIcon.svelte";
   
 
   let isExpanded = writable(false);
@@ -161,10 +161,10 @@
     <div class="flex-1">
       <slot />
     </div>
+    <Toasts />
   </div>
 {/await}
 
-<Toasts />
 <BusyScreen />
 
 <style>

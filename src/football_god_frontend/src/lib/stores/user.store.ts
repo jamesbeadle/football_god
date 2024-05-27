@@ -184,7 +184,7 @@ function createUserStore() {
             created_at_time: BigInt(Date.now()) * BigInt(1_000_000),
             amount: 10_000_000_000n,
           });
-          
+
           const result = await identityActor.submitEuro2024Prediction(dto);
           if (isError(result)) {
             console.error("Error saving Euro2024 prediction.");

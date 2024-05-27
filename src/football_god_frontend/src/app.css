@@ -95,10 +95,26 @@
 }
 
 .fg-button {
-  background-color: #393A3E;
+  background-color: #393a3e;
   color: white;
 }
 
 .button-hover {
   @apply bg-white text-black hover:bg-OPENFPL hover:text-GRAY;
+}
+
+
+.toast {
+  background-color: #2ce3a6 !important;
+  padding-left: 16px !important;
+  padding-right: 16px !important;
+  padding-top: 8px !important;
+  padding-bottom: 8px !important;
+  border-radius: 4px !important;
+}
+.error > .toast {
+  background-color: #f27557 !important;
+}
+
+.toast.error {
 }
