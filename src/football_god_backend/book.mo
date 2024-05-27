@@ -73,7 +73,6 @@ module {
 
     };
 
-    //withdraw ICP
     public func withdrawICP(defaultAccount : Principal, user : Principal, amount : Float, walletAddress : Text) : async Result.Result<(), Types.Error> {
 
       if (amount <= 0) {

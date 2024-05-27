@@ -24,7 +24,6 @@ import { Modal, Spinner } from "@dfinity/gix-components";
         accountBalances = userBalances;
         fplBalance = Number(accountBalances.fplBalance / 100_000_000n).toFixed(4);
       }
-      console.log(userBalances)
 
       if(!userBalances){
         accountBalances = {
@@ -66,7 +65,6 @@ import { Modal, Spinner } from "@dfinity/gix-components";
       accountBalances = userBalances;
       fplBalance = Number(accountBalances.fplBalance / 100_000_000n).toFixed(4);
     }
-    console.log(accountBalances)
   }
 </script>
 

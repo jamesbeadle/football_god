@@ -3,10 +3,10 @@
   import { userStore } from "$lib/stores/user.store";
   import { toastsError, toastsShow } from "$lib/stores/toasts.store";
   import UpdateUsernameModal from "$lib/components/profile/update-username-modal.svelte";
-  import { busyStore, Spinner } from "@dfinity/gix-components";
+  import { Spinner } from "@dfinity/gix-components";
   import CopyIcon from "$lib/icons/CopyIcon.svelte";
   import { uint8ArrayToHexString } from "@dfinity/utils";
-    import type { AccountBalancesDTO } from "../../../../../declarations/football_god_backend/football_god_backend.did";
+  import type { AccountBalancesDTO } from "../../../../../declarations/football_god_backend/football_god_backend.did";
 
   let showUsernameModal: boolean = false;
   let fileInput: HTMLInputElement;
@@ -173,34 +173,3 @@
     </div>
   </div>
 {/if}
-
-<style>
-  .file-upload-wrapper {
-    position: relative;
-    overflow: hidden;
-    display: inline-block;
-    width: 100%;
-  }
-
-  .btn-file-upload {
-    width: 100%;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 5px;
-    font-size: 1em;
-    cursor: pointer;
-    text-align: center;
-    display: block;
-  }
-
-  input[type="file"] {
-    font-size: 100px;
-    position: absolute;
-    left: 0;
-    top: 0;
-    opacity: 0;
-    width: 100%;
-    height: 100%;
-    cursor: pointer;
-  }
-</style>

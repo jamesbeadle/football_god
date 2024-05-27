@@ -10,7 +10,6 @@ import Principal "mo:base/Principal";
 import Result "mo:base/Result";
 import Buffer "mo:base/Buffer";
 import Blob "mo:base/Blob";
-import Debug "mo:base/Debug";
 import Text "mo:base/Text";
 import Nat "mo:base/Nat";
 
@@ -24,7 +23,6 @@ import Book "book";
 import Account "Account";
 import DTOs "DTOs";
 import FPLLedger "fpl_ledger";
-import Environment "environment";
 
 actor Self {
 
