@@ -107,9 +107,9 @@
         style="background-image: url('banner.jpg');"
       >
         <div class="container ml-4 flex flex-col justify-between">
-          <p class="text-xl">$FPL Prediction Sweepstake</p>
-          <p class="text-4xl font-bold">Euro 2024</p>
-          <p class="text-xl">
+          <p class="text-base md:text-xl">$FPL Prediction Sweepstake</p>
+          <p class="text-xl md:text-4xl font-bold">Euro 2024</p>
+          <p class="text-sm md:text-xl">
             Play for free or enter the $FPL sweepstake up until Friday 14th June
             2024
           </p>
@@ -126,11 +126,11 @@
           {/if}
           
           <div
-            class="overlay-panel h-10 rounded-tl-lg w-11/12 md:w-2/3 lg:w-2/5 xl:w-1/4 bg-DARK flex items-center px-1 md:px-4"
+            class="overlay-panel h-10 rounded-tl-lg w-11/12 md:w-2/3 lg:w-2/5 xl:w-1/4 bg-DARK flex items-center px-1 md:px-4 text-xs md:text-sm"
           >
             <FootballIcon className="w-6 mr-2" />
-            <p class="text-white text-sm font-bold">Euro2024&nbsp;</p>
-            <p class="text-white text-sm">| {$countdown}</p>
+            <p class="text-white  font-bold">Euro2024&nbsp;</p>
+            <p class="text-white">| {$countdown}</p>
           </div>
         </div>
       </div>
