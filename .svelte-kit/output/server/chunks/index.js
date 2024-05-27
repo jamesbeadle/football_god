@@ -3485,7 +3485,7 @@ const options = {
 		<div class="error">
 			<span class="status">` + status + '</span>\n			<div class="message">\n				<h1>' + message + "</h1>\n			</div>\n		</div>\n	</body>\n</html>\n"
   },
-  version_hash: "x6l6zc"
+  version_hash: "14qj983"
 };
 async function get_hooks() {
   return {};
@@ -3610,6 +3610,87 @@ const Error$1 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
   $$unsubscribe_page();
   return `<h1>${escape($page.status)}</h1> <p>${escape($page.error?.message)}</p>`;
 });
+const AUTH_MAX_TIME_TO_LIVE = BigInt(
+  60 * 60 * 1e3 * 1e3 * 1e3 * 24 * 14
+);
+const AUTH_POPUP_WIDTH = 576;
+const AUTH_POPUP_HEIGHT = 625;
+const createAuthClient = () => AuthClient.create({
+  idleOptions: {
+    disableIdle: true,
+    disableDefaultIdleCallback: true
+  }
+});
+const popupCenter = ({
+  width,
+  height
+}) => {
+  {
+    return void 0;
+  }
+};
+let authClient;
+const NNS_IC_ORG_ALTERNATIVE_ORIGIN = "https://footballgod.xyz";
+const NNS_IC_APP_DERIVATION_ORIGIN = "https://43loz-3yaaa-aaaal-qbxrq-cai.icp0.io";
+const isNnsAlternativeOrigin = () => {
+  return window.location.origin === NNS_IC_ORG_ALTERNATIVE_ORIGIN;
+};
+const initAuthStore = () => {
+  const { subscribe: subscribe2, set, update } = writable({
+    identity: void 0
+  });
+  return {
+    subscribe: subscribe2,
+    sync: async () => {
+      authClient = authClient ?? await createAuthClient();
+      const isAuthenticated = await authClient.isAuthenticated();
+      set({
+        identity: isAuthenticated ? authClient.getIdentity() : null
+      });
+    },
+    signIn: ({ domain }) => (
+      // eslint-disable-next-line no-async-promise-executor
+      new Promise(async (resolve2, reject) => {
+        authClient = authClient ?? await createAuthClient();
+        const identityProvider = domain;
+        await authClient?.login({
+          maxTimeToLive: AUTH_MAX_TIME_TO_LIVE,
+          onSuccess: () => {
+            update((state) => ({
+              ...state,
+              identity: authClient?.getIdentity()
+            }));
+            resolve2();
+          },
+          onError: reject,
+          identityProvider,
+          ...isNnsAlternativeOrigin() && {
+            derivationOrigin: NNS_IC_APP_DERIVATION_ORIGIN
+          },
+          windowOpenerFeatures: popupCenter({
+            width: AUTH_POPUP_WIDTH,
+            height: AUTH_POPUP_HEIGHT
+          })
+        });
+      })
+    ),
+    signOut: async () => {
+      const client = authClient ?? await createAuthClient();
+      await client.logout();
+      authClient = null;
+      update((state) => ({
+        ...state,
+        identity: null
+      }));
+      localStorage.removeItem("user_profile_data");
+    }
+  };
+};
+const authStore = initAuthStore();
+const authSignedInStore = derived(
+  authStore,
+  ({ identity }) => identity !== null && identity !== void 0
+);
 const DEFAULT_ICON_SIZE = 20;
 const core = {
   close: "Close",
@@ -3919,87 +4000,6 @@ const Toasts = create_ssr_component(($$result, $$props, $$bindings, slots) => {
     return `${validate_component(Toast, "Toast").$$render($$result, { msg }, {}, {})}`;
   })}</div>` : ``}`;
 });
-const AUTH_MAX_TIME_TO_LIVE = BigInt(
-  60 * 60 * 1e3 * 1e3 * 1e3 * 24 * 14
-);
-const AUTH_POPUP_WIDTH = 576;
-const AUTH_POPUP_HEIGHT = 625;
-const createAuthClient = () => AuthClient.create({
-  idleOptions: {
-    disableIdle: true,
-    disableDefaultIdleCallback: true
-  }
-});
-const popupCenter = ({
-  width,
-  height
-}) => {
-  {
-    return void 0;
-  }
-};
-let authClient;
-const NNS_IC_ORG_ALTERNATIVE_ORIGIN = "https://footballgod.xyz";
-const NNS_IC_APP_DERIVATION_ORIGIN = "https://43loz-3yaaa-aaaal-qbxrq-cai.icp0.io";
-const isNnsAlternativeOrigin = () => {
-  return window.location.origin === NNS_IC_ORG_ALTERNATIVE_ORIGIN;
-};
-const initAuthStore = () => {
-  const { subscribe: subscribe2, set, update } = writable({
-    identity: void 0
-  });
-  return {
-    subscribe: subscribe2,
-    sync: async () => {
-      authClient = authClient ?? await createAuthClient();
-      const isAuthenticated = await authClient.isAuthenticated();
-      set({
-        identity: isAuthenticated ? authClient.getIdentity() : null
-      });
-    },
-    signIn: ({ domain }) => (
-      // eslint-disable-next-line no-async-promise-executor
-      new Promise(async (resolve2, reject) => {
-        authClient = authClient ?? await createAuthClient();
-        const identityProvider = domain;
-        await authClient?.login({
-          maxTimeToLive: AUTH_MAX_TIME_TO_LIVE,
-          onSuccess: () => {
-            update((state) => ({
-              ...state,
-              identity: authClient?.getIdentity()
-            }));
-            resolve2();
-          },
-          onError: reject,
-          identityProvider,
-          ...isNnsAlternativeOrigin() && {
-            derivationOrigin: NNS_IC_APP_DERIVATION_ORIGIN
-          },
-          windowOpenerFeatures: popupCenter({
-            width: AUTH_POPUP_WIDTH,
-            height: AUTH_POPUP_HEIGHT
-          })
-        });
-      })
-    ),
-    signOut: async () => {
-      const client = authClient ?? await createAuthClient();
-      await client.logout();
-      authClient = null;
-      update((state) => ({
-        ...state,
-        identity: null
-      }));
-      localStorage.removeItem("user_profile_data");
-    }
-  };
-};
-const authStore = initAuthStore();
-const authSignedInStore = derived(
-  authStore,
-  ({ identity }) => identity !== null && identity !== void 0
-);
 const LogoIcon = create_ssr_component(($$result, $$props, $$bindings, slots) => {
   let { className = "" } = $$props;
   let { fill = "white" } = $$props;
@@ -4787,10 +4787,12 @@ const Page$6 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
   let loadingText;
   let $$unsubscribe_playerStore;
   let $$unsubscribe_teamStore;
+  let $authSignedInStore, $$unsubscribe_authSignedInStore;
   let $$unsubscribe_dots;
   let $$unsubscribe_countdown;
   $$unsubscribe_playerStore = subscribe(playerStore, (value) => value);
   $$unsubscribe_teamStore = subscribe(teamStore, (value) => value);
+  $$unsubscribe_authSignedInStore = subscribe(authSignedInStore, (value) => $authSignedInStore = value);
   let interval;
   let dots = writable(".");
   $$unsubscribe_dots = subscribe(dots, (value) => value);
@@ -4802,11 +4804,13 @@ const Page$6 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
   loadingText = "Loading, please wait...";
   $$unsubscribe_playerStore();
   $$unsubscribe_teamStore();
+  $$unsubscribe_authSignedInStore();
   $$unsubscribe_dots();
   $$unsubscribe_countdown();
   return `${validate_component(Layout, "Layout").$$render($$result, {}, {}, {
     default: () => {
-      return `${`${validate_component(Spinner, "Spinner").$$render($$result, {}, {}, {})} <div class="fixed inset-0 flex flex-col items-center justify-center"><p class="mt-24">${escape(loadingText)}</p></div>`}`;
+      return `${!$authSignedInStore ? `<div class="relative bg-gray-800 text-white mt-2 mr-2 rounded-lg"><div class="bg-cover bg-center bg-no-repeat py-20 px-4" style="background-image: url('banner.jpg');"><div class="container ml-4 flex flex-col justify-between"><p class="text-xl" data-svelte-h="svelte-xwnshe">$FPL Prediction Sweepstake</p> <p class="text-4xl font-bold" data-svelte-h="svelte-1icqllx">Euro 2024</p> <p class="text-xl" data-svelte-h="svelte-1hdg5zl">Play for free or enter the $FPL sweepstake up until Friday 14th June
+            2024</p> ${$authSignedInStore ? `<a href="/euro2024" data-svelte-h="svelte-1bm7ttp"><button class="btn bg-DARK mt-4 py-4 w-48 rounded-md">Enter Now</button></a>` : `<button class="btn bg-DARK mt-4 py-4 w-48 rounded-md" data-svelte-h="svelte-yce1a2">Connect To Play</button>`}</div></div></div>` : `${`${validate_component(Spinner, "Spinner").$$render($$result, {}, {}, {})} <div class="fixed inset-0 flex flex-col items-center justify-center"><p class="mt-24">${escape(loadingText)}</p></div>`}`}`;
     }
   })}`;
 });

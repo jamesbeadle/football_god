@@ -1,14 +1,14 @@
 <script lang="ts">
   import { onMount, onDestroy } from "svelte";
-  import { toastsError } from "$lib/stores/toasts.store";
-  import Layout from "./Layout.svelte";
-  import { Spinner } from "@dfinity/gix-components";
   import { writable } from "svelte/store";
-  import FootballIcon from "$lib/icons/FootballIcon.svelte";
-  import OpenChatIcon from "$lib/icons/OpenChatIcon.svelte";
   import { authSignedInStore } from "$lib/derived/auth.derived";
   import { authStore, type AuthSignInParams } from "$lib/stores/auth.store";
-
+  import { toastsError } from "$lib/stores/toasts.store";
+  import Layout from "./Layout.svelte";
+  import FootballIcon from "$lib/icons/FootballIcon.svelte";
+  import OpenChatIcon from "$lib/icons/OpenChatIcon.svelte";
+  import { Spinner } from "@dfinity/gix-components";
+  
   let isLoggedIn = false;
   let isLoading = true;
   const countdown = writable("");

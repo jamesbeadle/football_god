@@ -17,7 +17,6 @@
   import ConfirmSelectionModal from "$lib/components/euro2024/confirm-selection-modal.svelte";
   import { euro2024Store } from "$lib/stores/euro2024.store";
   import { authSignedInStore } from "$lib/derived/auth.derived";
-  import FootballIcon from "$lib/icons/FootballIcon.svelte";
   import { authStore, type AuthSignInParams } from "$lib/stores/auth.store";
  
   let prediction: Euro2024PredictionDTO | undefined;
