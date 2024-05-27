@@ -27,6 +27,7 @@
   let showConfirmSubmit = false;
   let isLoading = true;
   let loadingPot = true;
+  let sliderStage = 0;
   $: potBalance = 0;
   $: loadingText = "Loading, please wait...";
 
@@ -1091,15 +1092,16 @@
 
         <div class="flex flex-col bg-gray-700 rounded-lg overflow-hidden">
           <div class="flex flex-col justify-center h-full">
-            <p class="w-full text-center">{$countdown}</p>
+            <p
+              class="inline-flex justify-center py-2 px-4 mx-2 border border-transparent shadow-sm font-bold rounded-md text-white"
+            >{$countdown}</p>
           </div>
         </div>
       </div>
 
       <div class="horizontal-divider my-4" />
-
-      <div class="flex flex-row">
-        <div class="w-4/6">
+      <div class="flex flex-col md:flex-row">
+        <div class="w-full md:w-4/6">
           <p class="my-4 text-sm">
             Entry Fee: 100 $FPL
             <br />
@@ -1109,23 +1111,20 @@
             {:else}
               {(potBalance / 4).toFixed(0)} $FPL
             {/if}
-          </p> 
+          </p>
         </div>
-        <div class="w-2/6 flex items-center">
-          <div class="flex flex-row items-center">
-            <div class="w-auto ml-4">
-              <a href="https://oc.app/community/ji74r-lqaaa-aaaar-ayhoq-cai/?ref=zv6hh-xaaaa-aaaar-ac35q-cai" target="_blank">
-                <button class="fg-button px-4 py-2 rounded-md my-2">
-                  <div class="flex flex-row items-center space-x-2">
-                    <OpenChatIcon className="w-24" />
-                    <p class="text-left text-sm">Join our OpenChat Community now!</p>
-                  </div>
-                  </button>
-              </a>
-            </div>
+        <div class="w-full md:w-2/6 flex items-center mt-4 md:mt-0">
+          <div class="w-full flex justify-center md:justify-start">
+            <a href="https://oc.app/community/ji74r-lqaaa-aaaar-ayhoq-cai/?ref=zv6hh-xaaaa-aaaar-ac35q-cai" target="_blank">
+              <button class="fg-button px-4 py-2 rounded-md my-2 flex items-center space-x-2">
+                <OpenChatIcon className="w-24" />
+                <p class="text-left text-sm">Join our OpenChat Community now!</p>
+              </button>
+            </a>
           </div>
         </div>
       </div>
+      
       
 
       <div class="horizontal-divider my-4" />
@@ -1163,1704 +1162,3380 @@
         Make your selections below and enter the sweepstake to be in with a chance
         of winning $FPL.
       </p>
+      
+      <div id="mobile-wrapper" class="md:hidden">
+        
+        {#if sliderStage == 0}
+          <div class="flex flex-col bg-gray-700 p-2 mt-4 rounded-md text-sm">
+            <div class="text-left my-4">Group A</div>
 
-      <div class="flex flex-row items-center bg-OPENFPL text-GRAY border border-white rounded-md p-2 text-sm">
-        <div class="w-1/12 flex">
-          <p class="w-full text-center">Group</p>
-        </div>
-        <div class="w-11/12 flex flex-row space-x-2">
-          <div class="w-1/6 flex">
-            <p class="w-full text-center">Winner</p>
-          </div>
-          <div class="w-1/6 flex">
-            <p class="w-full text-center">Loser</p>
-          </div>
-          <div class="w-1/6 flex">
-            <p class="w-full text-center">To Score</p>
-          </div>
-          <div class="w-1/6 flex">
-            <p class="w-full text-center">To Assist</p>
-          </div>
-          <div class="w-1/6 flex">
-            <p class="w-full text-center">Yellow Card</p>
-          </div>
-          <div class="w-1/6 flex">
-            <p class="w-full text-center">Red Card</p>
-          </div>
-        </div>
-      </div>
 
-      <div class="flex flex-row items-center bg-gray-700 p-2 mt-4 rounded-md text-sm">
-        <div class="w-1/12 text-center">A</div>
-        <div class="w-11/12 flex flex-row space-x-4">
-          <div class="w-1/6">
-            <button
-              on:click={() => selectWinner(0)}
-              class="selection-panel 
-                {prediction?.groupAPrediction?.winner ? 'selected-panel' : 'select-panel '} 
-                "
-              >
-                {#if prediction?.groupAPrediction?.winner}
-                  {#await getFlagComponent(prediction?.groupAPrediction.winner) then FlagComponent}
-                    {#if FlagComponent}
-                      <svelte:component this={FlagComponent} className="w-6 mr-1" />
-                    {/if}
-                  {/await}
-                  <span class="truncate whitespace-nowrap overflow-hidden">
-                    {getTeamName(prediction.groupAPrediction.winner)}
-                  </span>
-                {:else}
-                  Select a Team
-                {/if}
-              </button
-            >
-            <div class="text-right">
-              <p class="text-xs mt-4">5 Points</p>
-            </div>
-          </div>
-          <div class="w-1/6">
-            <button on:click={() => selectLoser(0)}
-              class="selection-panel 
-                {prediction?.groupAPrediction?.loser ? 'selected-panel' : 'select-panel '} 
-                "
-          >
-            {#if prediction?.groupAPrediction?.loser}
-              <div class="flex items-center justify-center w-full">
-                {#await getFlagComponent(prediction?.groupAPrediction.loser) then FlagComponent}
-                  {#if FlagComponent}
-                    <svelte:component this={FlagComponent} className="w-6 mr-1" />
+            <div>
+              <button
+                on:click={() => selectWinner(0)}
+                class="selection-panel 
+                  {prediction?.groupAPrediction?.winner ? 'selected-panel' : 'select-panel '} 
+                  "
+                >
+                  {#if prediction?.groupAPrediction?.winner}
+                    {#await getFlagComponent(prediction?.groupAPrediction.winner) then FlagComponent}
+                      {#if FlagComponent}
+                        <svelte:component this={FlagComponent} className="w-6 mr-1" />
+                      {/if}
+                    {/await}
+                    <span class="truncate whitespace-nowrap overflow-hidden">
+                      {getTeamName(prediction.groupAPrediction.winner)}
+                    </span>
+                  {:else}
+                    Select Winner
                   {/if}
-                {/await}
-
-                <span class="truncate whitespace-nowrap overflow-hidden">
-                  {getTeamName(prediction.groupAPrediction.loser)}
-                </span>
+                </button
+              >
+              <div class="text-right">
+                <p class="text-xs mt-4">5 Points</p>
               </div>
-            {:else}
-              Select a Team
-            {/if}
-          </button>
-          
-            <div class="text-right">
-              <p class="text-xs mt-4">5 Points</p>
+            </div>
+
+            <div class="mt-4">
+              <button
+                on:click={() => selectLoser(0)}
+                class="selection-panel 
+                  {prediction?.groupAPrediction?.loser ? 'selected-panel' : 'select-panel '} 
+                  "
+                >
+                  {#if prediction?.groupAPrediction?.loser}
+                    {#await getFlagComponent(prediction?.groupAPrediction.loser) then FlagComponent}
+                      {#if FlagComponent}
+                        <svelte:component this={FlagComponent} className="w-6 mr-1" />
+                      {/if}
+                    {/await}
+                    <span class="truncate whitespace-nowrap overflow-hidden">
+                      {getTeamName(prediction.groupAPrediction.loser)}
+                    </span>
+                  {:else}
+                    Select Loser
+                  {/if}
+                </button
+              >
+              <div class="text-right">
+                <p class="text-xs mt-4">5 Points</p>
+              </div>
+            </div>
+
+            <div class="mt-4">
+              <button
+                on:click={() => selectScorer(0)}
+                class="selection-panel 
+                  {prediction?.groupAPrediction?.goalScorer ? 'selected-panel' : 'select-panel '} 
+                  "
+                >
+                  {#if prediction?.groupAPrediction?.goalScorer}
+                    {#await getFlagComponent(prediction?.groupAPrediction.goalScorer) then FlagComponent}
+                      {#if FlagComponent}
+                        <svelte:component this={FlagComponent} className="w-6 mr-1" />
+                      {/if}
+                    {/await}
+                    <span class="truncate whitespace-nowrap overflow-hidden">
+                      {getTeamName(prediction.groupAPrediction.goalScorer)}
+                    </span>
+                  {:else}
+                    Select Goal Scorer
+                  {/if}
+                </button
+              >
+              <div class="text-right">
+                <p class="text-xs mt-4">5 Points</p>
+              </div>
+            </div>
+
+            <div class="mt-4">
+              <button
+                on:click={() => selectAssister(0)}
+                class="selection-panel 
+                  {prediction?.groupAPrediction?.goalAssister ? 'selected-panel' : 'select-panel '} 
+                  "
+                >
+                  {#if prediction?.groupAPrediction?.goalAssister}
+                    {#await getFlagComponent(prediction?.groupAPrediction.goalAssister) then FlagComponent}
+                      {#if FlagComponent}
+                        <svelte:component this={FlagComponent} className="w-6 mr-1" />
+                      {/if}
+                    {/await}
+                    <span class="truncate whitespace-nowrap overflow-hidden">
+                      {getTeamName(prediction.groupAPrediction.goalAssister)}
+                    </span>
+                  {:else}
+                    Select Goal Assister
+                  {/if}
+                </button
+              >
+              <div class="text-right">
+                <p class="text-xs mt-4">5 Points</p>
+              </div>
+            </div>
+
+            <div class="mt-4">
+              <button
+                on:click={() => selectYellowCard(0)}
+                class="selection-panel 
+                  {prediction?.groupAPrediction?.yellowCard ? 'selected-panel' : 'select-panel '} 
+                  "
+                >
+                  {#if prediction?.groupAPrediction?.yellowCard}
+                    {#await getFlagComponent(prediction?.groupAPrediction.yellowCard) then FlagComponent}
+                      {#if FlagComponent}
+                        <svelte:component this={FlagComponent} className="w-6 mr-1" />
+                      {/if}
+                    {/await}
+                    <span class="truncate whitespace-nowrap overflow-hidden">
+                      {getTeamName(prediction.groupAPrediction.yellowCard)}
+                    </span>
+                  {:else}
+                    Select Yellow Card
+                  {/if}
+                </button
+              >
+              <div class="text-right">
+                <p class="text-xs mt-4">5 Points</p>
+              </div>
+            </div>
+
+            <div class="mt-4">
+              <button
+                on:click={() => selectRedCard(0)}
+                class="selection-panel 
+                  {prediction?.groupAPrediction?.redCard ? 'selected-panel' : 'select-panel '} 
+                  "
+                >
+                  {#if prediction?.groupAPrediction?.redCard}
+                    {#await getFlagComponent(prediction?.groupAPrediction.redCard) then FlagComponent}
+                      {#if FlagComponent}
+                        <svelte:component this={FlagComponent} className="w-6 mr-1" />
+                      {/if}
+                    {/await}
+                    <span class="truncate whitespace-nowrap overflow-hidden">
+                      {getTeamName(prediction.groupAPrediction.redCard)}
+                    </span>
+                  {:else}
+                    Select Red Card
+                  {/if}
+                </button
+              >
+              <div class="text-right">
+                <p class="text-xs mt-4">5 Points</p>
+              </div>
+            </div>
+
+
+
+          </div>
+        {/if}
+
+        {#if sliderStage == 1}
+          <div class="flex flex-col bg-gray-700 p-2 mt-4 rounded-md text-sm">
+            <div class="text-left my-4">Group B</div>
+
+
+            <div>
+              <button
+                on:click={() => selectWinner(1)}
+                class="selection-panel 
+                  {prediction?.groupBPrediction?.winner ? 'selected-panel' : 'select-panel '} 
+                  "
+                >
+                  {#if prediction?.groupBPrediction?.winner}
+                    {#await getFlagComponent(prediction?.groupBPrediction.winner) then FlagComponent}
+                      {#if FlagComponent}
+                        <svelte:component this={FlagComponent} className="w-6 mr-1" />
+                      {/if}
+                    {/await}
+                    <span class="truncate whitespace-nowrap overflow-hidden">
+                      {getTeamName(prediction.groupBPrediction.winner)}
+                    </span>
+                  {:else}
+                    Select Winner
+                  {/if}
+                </button
+              >
+              <div class="text-right">
+                <p class="text-xs mt-4">5 Points</p>
+              </div>
+            </div>
+
+            <div class="mt-4">
+              <button
+                on:click={() => selectLoser(1)}
+                class="selection-panel 
+                  {prediction?.groupBPrediction?.loser ? 'selected-panel' : 'select-panel '} 
+                  "
+                >
+                  {#if prediction?.groupBPrediction?.loser}
+                    {#await getFlagComponent(prediction?.groupBPrediction.loser) then FlagComponent}
+                      {#if FlagComponent}
+                        <svelte:component this={FlagComponent} className="w-6 mr-1" />
+                      {/if}
+                    {/await}
+                    <span class="truncate whitespace-nowrap overflow-hidden">
+                      {getTeamName(prediction.groupBPrediction.loser)}
+                    </span>
+                  {:else}
+                    Select Loser
+                  {/if}
+                </button
+              >
+              <div class="text-right">
+                <p class="text-xs mt-4">5 Points</p>
+              </div>
+            </div>
+
+            <div class="mt-4">
+              <button
+                on:click={() => selectScorer(1)}
+                class="selection-panel 
+                  {prediction?.groupBPrediction?.goalScorer ? 'selected-panel' : 'select-panel '} 
+                  "
+                >
+                  {#if prediction?.groupBPrediction?.goalScorer}
+                    {#await getFlagComponent(prediction?.groupBPrediction.goalScorer) then FlagComponent}
+                      {#if FlagComponent}
+                        <svelte:component this={FlagComponent} className="w-6 mr-1" />
+                      {/if}
+                    {/await}
+                    <span class="truncate whitespace-nowrap overflow-hidden">
+                      {getTeamName(prediction.groupBPrediction.goalScorer)}
+                    </span>
+                  {:else}
+                    Select Goal Scorer
+                  {/if}
+                </button
+              >
+              <div class="text-right">
+                <p class="text-xs mt-4">5 Points</p>
+              </div>
+            </div>
+
+            <div class="mt-4">
+              <button
+                on:click={() => selectAssister(1)}
+                class="selection-panel 
+                  {prediction?.groupBPrediction?.goalAssister ? 'selected-panel' : 'select-panel '} 
+                  "
+                >
+                  {#if prediction?.groupBPrediction?.goalAssister}
+                    {#await getFlagComponent(prediction?.groupBPrediction.goalAssister) then FlagComponent}
+                      {#if FlagComponent}
+                        <svelte:component this={FlagComponent} className="w-6 mr-1" />
+                      {/if}
+                    {/await}
+                    <span class="truncate whitespace-nowrap overflow-hidden">
+                      {getTeamName(prediction.groupBPrediction.goalAssister)}
+                    </span>
+                  {:else}
+                    Select Goal Assister
+                  {/if}
+                </button
+              >
+              <div class="text-right">
+                <p class="text-xs mt-4">5 Points</p>
+              </div>
+            </div>
+
+            <div class="mt-4">
+              <button
+                on:click={() => selectYellowCard(1)}
+                class="selection-panel 
+                  {prediction?.groupBPrediction?.yellowCard ? 'selected-panel' : 'select-panel '} 
+                  "
+                >
+                  {#if prediction?.groupBPrediction?.yellowCard}
+                    {#await getFlagComponent(prediction?.groupBPrediction.yellowCard) then FlagComponent}
+                      {#if FlagComponent}
+                        <svelte:component this={FlagComponent} className="w-6 mr-1" />
+                      {/if}
+                    {/await}
+                    <span class="truncate whitespace-nowrap overflow-hidden">
+                      {getTeamName(prediction.groupBPrediction.yellowCard)}
+                    </span>
+                  {:else}
+                    Select Yellow Card
+                  {/if}
+                </button
+              >
+              <div class="text-right">
+                <p class="text-xs mt-4">5 Points</p>
+              </div>
+            </div>
+
+            <div class="mt-4">
+              <button
+                on:click={() => selectRedCard(1)}
+                class="selection-panel 
+                  {prediction?.groupBPrediction?.redCard ? 'selected-panel' : 'select-panel '} 
+                  "
+                >
+                  {#if prediction?.groupBPrediction?.redCard}
+                    {#await getFlagComponent(prediction?.groupBPrediction.redCard) then FlagComponent}
+                      {#if FlagComponent}
+                        <svelte:component this={FlagComponent} className="w-6 mr-1" />
+                      {/if}
+                    {/await}
+                    <span class="truncate whitespace-nowrap overflow-hidden">
+                      {getTeamName(prediction.groupBPrediction.redCard)}
+                    </span>
+                  {:else}
+                    Select Red Card
+                  {/if}
+                </button
+              >
+              <div class="text-right">
+                <p class="text-xs mt-4">5 Points</p>
+              </div>
+            </div>
+
+
+
+          </div>
+        {/if}
+
+        {#if sliderStage == 2}
+          <div class="flex flex-col bg-gray-700 p-2 mt-4 rounded-md text-sm">
+            <div class="text-left my-4">Group C</div>
+
+
+            <div>
+              <button
+                on:click={() => selectWinner(2)}
+                class="selection-panel 
+                  {prediction?.groupCPrediction?.winner ? 'selected-panel' : 'select-panel '} 
+                  "
+                >
+                  {#if prediction?.groupCPrediction?.winner}
+                    {#await getFlagComponent(prediction?.groupCPrediction.winner) then FlagComponent}
+                      {#if FlagComponent}
+                        <svelte:component this={FlagComponent} className="w-6 mr-1" />
+                      {/if}
+                    {/await}
+                    <span class="truncate whitespace-nowrap overflow-hidden">
+                      {getTeamName(prediction.groupCPrediction.winner)}
+                    </span>
+                  {:else}
+                    Select Winner
+                  {/if}
+                </button
+              >
+              <div class="text-right">
+                <p class="text-xs mt-4">5 Points</p>
+              </div>
+            </div>
+
+            <div class="mt-4">
+              <button
+                on:click={() => selectLoser(2)}
+                class="selection-panel 
+                  {prediction?.groupCPrediction?.loser ? 'selected-panel' : 'select-panel '} 
+                  "
+                >
+                  {#if prediction?.groupCPrediction?.loser}
+                    {#await getFlagComponent(prediction?.groupCPrediction.loser) then FlagComponent}
+                      {#if FlagComponent}
+                        <svelte:component this={FlagComponent} className="w-6 mr-1" />
+                      {/if}
+                    {/await}
+                    <span class="truncate whitespace-nowrap overflow-hidden">
+                      {getTeamName(prediction.groupCPrediction.loser)}
+                    </span>
+                  {:else}
+                    Select Loser
+                  {/if}
+                </button
+              >
+              <div class="text-right">
+                <p class="text-xs mt-4">5 Points</p>
+              </div>
+            </div>
+
+            <div class="mt-4">
+              <button
+                on:click={() => selectScorer(2)}
+                class="selection-panel 
+                  {prediction?.groupCPrediction?.goalScorer ? 'selected-panel' : 'select-panel '} 
+                  "
+                >
+                  {#if prediction?.groupCPrediction?.goalScorer}
+                    {#await getFlagComponent(prediction?.groupCPrediction.goalScorer) then FlagComponent}
+                      {#if FlagComponent}
+                        <svelte:component this={FlagComponent} className="w-6 mr-1" />
+                      {/if}
+                    {/await}
+                    <span class="truncate whitespace-nowrap overflow-hidden">
+                      {getTeamName(prediction.groupCPrediction.goalScorer)}
+                    </span>
+                  {:else}
+                    Select Goal Scorer
+                  {/if}
+                </button
+              >
+              <div class="text-right">
+                <p class="text-xs mt-4">5 Points</p>
+              </div>
+            </div>
+
+            <div class="mt-4">
+              <button
+                on:click={() => selectAssister(2)}
+                class="selection-panel 
+                  {prediction?.groupCPrediction?.goalAssister ? 'selected-panel' : 'select-panel '} 
+                  "
+                >
+                  {#if prediction?.groupCPrediction?.goalAssister}
+                    {#await getFlagComponent(prediction?.groupCPrediction.goalAssister) then FlagComponent}
+                      {#if FlagComponent}
+                        <svelte:component this={FlagComponent} className="w-6 mr-1" />
+                      {/if}
+                    {/await}
+                    <span class="truncate whitespace-nowrap overflow-hidden">
+                      {getTeamName(prediction.groupCPrediction.goalAssister)}
+                    </span>
+                  {:else}
+                    Select Goal Assister
+                  {/if}
+                </button
+              >
+              <div class="text-right">
+                <p class="text-xs mt-4">5 Points</p>
+              </div>
+            </div>
+
+            <div class="mt-4">
+              <button
+                on:click={() => selectYellowCard(2)}
+                class="selection-panel 
+                  {prediction?.groupCPrediction?.yellowCard ? 'selected-panel' : 'select-panel '} 
+                  "
+                >
+                  {#if prediction?.groupCPrediction?.yellowCard}
+                    {#await getFlagComponent(prediction?.groupCPrediction.yellowCard) then FlagComponent}
+                      {#if FlagComponent}
+                        <svelte:component this={FlagComponent} className="w-6 mr-1" />
+                      {/if}
+                    {/await}
+                    <span class="truncate whitespace-nowrap overflow-hidden">
+                      {getTeamName(prediction.groupCPrediction.yellowCard)}
+                    </span>
+                  {:else}
+                    Select Yellow Card
+                  {/if}
+                </button
+              >
+              <div class="text-right">
+                <p class="text-xs mt-4">5 Points</p>
+              </div>
+            </div>
+
+            <div class="mt-4">
+              <button
+                on:click={() => selectRedCard(2)}
+                class="selection-panel 
+                  {prediction?.groupCPrediction?.redCard ? 'selected-panel' : 'select-panel '} 
+                  "
+                >
+                  {#if prediction?.groupCPrediction?.redCard}
+                    {#await getFlagComponent(prediction?.groupCPrediction.redCard) then FlagComponent}
+                      {#if FlagComponent}
+                        <svelte:component this={FlagComponent} className="w-6 mr-1" />
+                      {/if}
+                    {/await}
+                    <span class="truncate whitespace-nowrap overflow-hidden">
+                      {getTeamName(prediction.groupCPrediction.redCard)}
+                    </span>
+                  {:else}
+                    Select Red Card
+                  {/if}
+                </button
+              >
+              <div class="text-right">
+                <p class="text-xs mt-4">5 Points</p>
+              </div>
+            </div>
+
+
+
+          </div>
+        {/if}
+
+        {#if sliderStage == 3}
+          <div class="flex flex-col bg-gray-700 p-2 mt-4 rounded-md text-sm">
+            <div class="text-left my-4">Group D</div>
+
+
+            <div>
+              <button
+                on:click={() => selectWinner(3)}
+                class="selection-panel 
+                  {prediction?.groupDPrediction?.winner ? 'selected-panel' : 'select-panel '} 
+                  "
+                >
+                  {#if prediction?.groupDPrediction?.winner}
+                    {#await getFlagComponent(prediction?.groupDPrediction.winner) then FlagComponent}
+                      {#if FlagComponent}
+                        <svelte:component this={FlagComponent} className="w-6 mr-1" />
+                      {/if}
+                    {/await}
+                    <span class="truncate whitespace-nowrap overflow-hidden">
+                      {getTeamName(prediction.groupDPrediction.winner)}
+                    </span>
+                  {:else}
+                    Select Winner
+                  {/if}
+                </button
+              >
+              <div class="text-right">
+                <p class="text-xs mt-4">5 Points</p>
+              </div>
+            </div>
+
+            <div class="mt-4">
+              <button
+                on:click={() => selectLoser(3)}
+                class="selection-panel 
+                  {prediction?.groupDPrediction?.loser ? 'selected-panel' : 'select-panel '} 
+                  "
+                >
+                  {#if prediction?.groupDPrediction?.loser}
+                    {#await getFlagComponent(prediction?.groupDPrediction.loser) then FlagComponent}
+                      {#if FlagComponent}
+                        <svelte:component this={FlagComponent} className="w-6 mr-1" />
+                      {/if}
+                    {/await}
+                    <span class="truncate whitespace-nowrap overflow-hidden">
+                      {getTeamName(prediction.groupDPrediction.loser)}
+                    </span>
+                  {:else}
+                    Select Loser
+                  {/if}
+                </button
+              >
+              <div class="text-right">
+                <p class="text-xs mt-4">5 Points</p>
+              </div>
+            </div>
+
+            <div class="mt-4">
+              <button
+                on:click={() => selectScorer(3)}
+                class="selection-panel 
+                  {prediction?.groupDPrediction?.goalScorer ? 'selected-panel' : 'select-panel '} 
+                  "
+                >
+                  {#if prediction?.groupDPrediction?.goalScorer}
+                    {#await getFlagComponent(prediction?.groupDPrediction.goalScorer) then FlagComponent}
+                      {#if FlagComponent}
+                        <svelte:component this={FlagComponent} className="w-6 mr-1" />
+                      {/if}
+                    {/await}
+                    <span class="truncate whitespace-nowrap overflow-hidden">
+                      {getTeamName(prediction.groupDPrediction.goalScorer)}
+                    </span>
+                  {:else}
+                    Select Goal Scorer
+                  {/if}
+                </button
+              >
+              <div class="text-right">
+                <p class="text-xs mt-4">5 Points</p>
+              </div>
+            </div>
+
+            <div class="mt-4">
+              <button
+                on:click={() => selectAssister(3)}
+                class="selection-panel 
+                  {prediction?.groupDPrediction?.goalAssister ? 'selected-panel' : 'select-panel '} 
+                  "
+                >
+                  {#if prediction?.groupDPrediction?.goalAssister}
+                    {#await getFlagComponent(prediction?.groupDPrediction.goalAssister) then FlagComponent}
+                      {#if FlagComponent}
+                        <svelte:component this={FlagComponent} className="w-6 mr-1" />
+                      {/if}
+                    {/await}
+                    <span class="truncate whitespace-nowrap overflow-hidden">
+                      {getTeamName(prediction.groupDPrediction.goalAssister)}
+                    </span>
+                  {:else}
+                    Select Goal Assister
+                  {/if}
+                </button
+              >
+              <div class="text-right">
+                <p class="text-xs mt-4">5 Points</p>
+              </div>
+            </div>
+
+            <div class="mt-4">
+              <button
+                on:click={() => selectYellowCard(3)}
+                class="selection-panel 
+                  {prediction?.groupDPrediction?.yellowCard ? 'selected-panel' : 'select-panel '} 
+                  "
+                >
+                  {#if prediction?.groupDPrediction?.yellowCard}
+                    {#await getFlagComponent(prediction?.groupDPrediction.yellowCard) then FlagComponent}
+                      {#if FlagComponent}
+                        <svelte:component this={FlagComponent} className="w-6 mr-1" />
+                      {/if}
+                    {/await}
+                    <span class="truncate whitespace-nowrap overflow-hidden">
+                      {getTeamName(prediction.groupDPrediction.yellowCard)}
+                    </span>
+                  {:else}
+                    Select Yellow Card
+                  {/if}
+                </button
+              >
+              <div class="text-right">
+                <p class="text-xs mt-4">5 Points</p>
+              </div>
+            </div>
+
+            <div class="mt-4">
+              <button
+                on:click={() => selectRedCard(3)}
+                class="selection-panel 
+                  {prediction?.groupDPrediction?.redCard ? 'selected-panel' : 'select-panel '} 
+                  "
+                >
+                  {#if prediction?.groupDPrediction?.redCard}
+                    {#await getFlagComponent(prediction?.groupDPrediction.redCard) then FlagComponent}
+                      {#if FlagComponent}
+                        <svelte:component this={FlagComponent} className="w-6 mr-1" />
+                      {/if}
+                    {/await}
+                    <span class="truncate whitespace-nowrap overflow-hidden">
+                      {getTeamName(prediction.groupDPrediction.redCard)}
+                    </span>
+                  {:else}
+                    Select Red Card
+                  {/if}
+                </button
+              >
+              <div class="text-right">
+                <p class="text-xs mt-4">5 Points</p>
+              </div>
+            </div>
+
+
+
+          </div>
+        {/if}
+
+        {#if sliderStage == 4}
+          <div class="flex flex-col bg-gray-700 p-2 mt-4 rounded-md text-sm">
+            <div class="text-left my-4">Group E</div>
+
+
+            <div>
+              <button
+                on:click={() => selectWinner(4)}
+                class="selection-panel 
+                  {prediction?.groupEPrediction?.winner ? 'selected-panel' : 'select-panel '} 
+                  "
+                >
+                  {#if prediction?.groupEPrediction?.winner}
+                    {#await getFlagComponent(prediction?.groupEPrediction.winner) then FlagComponent}
+                      {#if FlagComponent}
+                        <svelte:component this={FlagComponent} className="w-6 mr-1" />
+                      {/if}
+                    {/await}
+                    <span class="truncate whitespace-nowrap overflow-hidden">
+                      {getTeamName(prediction.groupEPrediction.winner)}
+                    </span>
+                  {:else}
+                    Select Winner
+                  {/if}
+                </button
+              >
+              <div class="text-right">
+                <p class="text-xs mt-4">5 Points</p>
+              </div>
+            </div>
+
+            <div class="mt-4">
+              <button
+                on:click={() => selectLoser(4)}
+                class="selection-panel 
+                  {prediction?.groupEPrediction?.loser ? 'selected-panel' : 'select-panel '} 
+                  "
+                >
+                  {#if prediction?.groupEPrediction?.loser}
+                    {#await getFlagComponent(prediction?.groupEPrediction.loser) then FlagComponent}
+                      {#if FlagComponent}
+                        <svelte:component this={FlagComponent} className="w-6 mr-1" />
+                      {/if}
+                    {/await}
+                    <span class="truncate whitespace-nowrap overflow-hidden">
+                      {getTeamName(prediction.groupEPrediction.loser)}
+                    </span>
+                  {:else}
+                    Select Loser
+                  {/if}
+                </button
+              >
+              <div class="text-right">
+                <p class="text-xs mt-4">5 Points</p>
+              </div>
+            </div>
+
+            <div class="mt-4">
+              <button
+                on:click={() => selectScorer(4)}
+                class="selection-panel 
+                  {prediction?.groupEPrediction?.goalScorer ? 'selected-panel' : 'select-panel '} 
+                  "
+                >
+                  {#if prediction?.groupEPrediction?.goalScorer}
+                    {#await getFlagComponent(prediction?.groupEPrediction.goalScorer) then FlagComponent}
+                      {#if FlagComponent}
+                        <svelte:component this={FlagComponent} className="w-6 mr-1" />
+                      {/if}
+                    {/await}
+                    <span class="truncate whitespace-nowrap overflow-hidden">
+                      {getTeamName(prediction.groupEPrediction.goalScorer)}
+                    </span>
+                  {:else}
+                    Select Goal Scorer
+                  {/if}
+                </button
+              >
+              <div class="text-right">
+                <p class="text-xs mt-4">5 Points</p>
+              </div>
+            </div>
+
+            <div class="mt-4">
+              <button
+                on:click={() => selectAssister(4)}
+                class="selection-panel 
+                  {prediction?.groupEPrediction?.goalAssister ? 'selected-panel' : 'select-panel '} 
+                  "
+                >
+                  {#if prediction?.groupEPrediction?.goalAssister}
+                    {#await getFlagComponent(prediction?.groupEPrediction.goalAssister) then FlagComponent}
+                      {#if FlagComponent}
+                        <svelte:component this={FlagComponent} className="w-6 mr-1" />
+                      {/if}
+                    {/await}
+                    <span class="truncate whitespace-nowrap overflow-hidden">
+                      {getTeamName(prediction.groupEPrediction.goalAssister)}
+                    </span>
+                  {:else}
+                    Select Goal Assister
+                  {/if}
+                </button
+              >
+              <div class="text-right">
+                <p class="text-xs mt-4">5 Points</p>
+              </div>
+            </div>
+
+            <div class="mt-4">
+              <button
+                on:click={() => selectYellowCard(4)}
+                class="selection-panel 
+                  {prediction?.groupEPrediction?.yellowCard ? 'selected-panel' : 'select-panel '} 
+                  "
+                >
+                  {#if prediction?.groupEPrediction?.yellowCard}
+                    {#await getFlagComponent(prediction?.groupEPrediction.yellowCard) then FlagComponent}
+                      {#if FlagComponent}
+                        <svelte:component this={FlagComponent} className="w-6 mr-1" />
+                      {/if}
+                    {/await}
+                    <span class="truncate whitespace-nowrap overflow-hidden">
+                      {getTeamName(prediction.groupEPrediction.yellowCard)}
+                    </span>
+                  {:else}
+                    Select Yellow Card
+                  {/if}
+                </button
+              >
+              <div class="text-right">
+                <p class="text-xs mt-4">5 Points</p>
+              </div>
+            </div>
+
+            <div class="mt-4">
+              <button
+                on:click={() => selectRedCard(4)}
+                class="selection-panel 
+                  {prediction?.groupEPrediction?.redCard ? 'selected-panel' : 'select-panel '} 
+                  "
+                >
+                  {#if prediction?.groupEPrediction?.redCard}
+                    {#await getFlagComponent(prediction?.groupEPrediction.redCard) then FlagComponent}
+                      {#if FlagComponent}
+                        <svelte:component this={FlagComponent} className="w-6 mr-1" />
+                      {/if}
+                    {/await}
+                    <span class="truncate whitespace-nowrap overflow-hidden">
+                      {getTeamName(prediction.groupEPrediction.redCard)}
+                    </span>
+                  {:else}
+                    Select Red Card
+                  {/if}
+                </button
+              >
+              <div class="text-right">
+                <p class="text-xs mt-4">5 Points</p>
+              </div>
+            </div>
+
+
+
+          </div>
+        {/if}
+
+        {#if sliderStage == 5}
+          <div class="flex flex-col bg-gray-700 p-2 mt-4 rounded-md text-sm">
+            <div class="text-left my-4">Group F</div>
+
+
+            <div>
+              <button
+                on:click={() => selectWinner(5)}
+                class="selection-panel 
+                  {prediction?.groupFPrediction?.winner ? 'selected-panel' : 'select-panel '} 
+                  "
+                >
+                  {#if prediction?.groupFPrediction?.winner}
+                    {#await getFlagComponent(prediction?.groupFPrediction.winner) then FlagComponent}
+                      {#if FlagComponent}
+                        <svelte:component this={FlagComponent} className="w-6 mr-1" />
+                      {/if}
+                    {/await}
+                    <span class="truncate whitespace-nowrap overflow-hidden">
+                      {getTeamName(prediction.groupFPrediction.winner)}
+                    </span>
+                  {:else}
+                    Select Winner
+                  {/if}
+                </button
+              >
+              <div class="text-right">
+                <p class="text-xs mt-4">5 Points</p>
+              </div>
+            </div>
+
+            <div class="mt-4">
+              <button
+                on:click={() => selectLoser(5)}
+                class="selection-panel 
+                  {prediction?.groupFPrediction?.loser ? 'selected-panel' : 'select-panel '} 
+                  "
+                >
+                  {#if prediction?.groupFPrediction?.loser}
+                    {#await getFlagComponent(prediction?.groupFPrediction.loser) then FlagComponent}
+                      {#if FlagComponent}
+                        <svelte:component this={FlagComponent} className="w-6 mr-1" />
+                      {/if}
+                    {/await}
+                    <span class="truncate whitespace-nowrap overflow-hidden">
+                      {getTeamName(prediction.groupFPrediction.loser)}
+                    </span>
+                  {:else}
+                    Select Loser
+                  {/if}
+                </button
+              >
+              <div class="text-right">
+                <p class="text-xs mt-4">5 Points</p>
+              </div>
+            </div>
+
+            <div class="mt-4">
+              <button
+                on:click={() => selectScorer(5)}
+                class="selection-panel 
+                  {prediction?.groupFPrediction?.goalScorer ? 'selected-panel' : 'select-panel '} 
+                  "
+                >
+                  {#if prediction?.groupFPrediction?.goalScorer}
+                    {#await getFlagComponent(prediction?.groupFPrediction.goalScorer) then FlagComponent}
+                      {#if FlagComponent}
+                        <svelte:component this={FlagComponent} className="w-6 mr-1" />
+                      {/if}
+                    {/await}
+                    <span class="truncate whitespace-nowrap overflow-hidden">
+                      {getTeamName(prediction.groupFPrediction.goalScorer)}
+                    </span>
+                  {:else}
+                    Select Goal Scorer
+                  {/if}
+                </button
+              >
+              <div class="text-right">
+                <p class="text-xs mt-4">5 Points</p>
+              </div>
+            </div>
+
+            <div class="mt-4">
+              <button
+                on:click={() => selectAssister(5)}
+                class="selection-panel 
+                  {prediction?.groupFPrediction?.goalAssister ? 'selected-panel' : 'select-panel '} 
+                  "
+                >
+                  {#if prediction?.groupFPrediction?.goalAssister}
+                    {#await getFlagComponent(prediction?.groupFPrediction.goalAssister) then FlagComponent}
+                      {#if FlagComponent}
+                        <svelte:component this={FlagComponent} className="w-6 mr-1" />
+                      {/if}
+                    {/await}
+                    <span class="truncate whitespace-nowrap overflow-hidden">
+                      {getTeamName(prediction.groupFPrediction.goalAssister)}
+                    </span>
+                  {:else}
+                    Select Goal Assister
+                  {/if}
+                </button
+              >
+              <div class="text-right">
+                <p class="text-xs mt-4">5 Points</p>
+              </div>
+            </div>
+
+            <div class="mt-4">
+              <button
+                on:click={() => selectYellowCard(5)}
+                class="selection-panel 
+                  {prediction?.groupFPrediction?.yellowCard ? 'selected-panel' : 'select-panel '} 
+                  "
+                >
+                  {#if prediction?.groupFPrediction?.yellowCard}
+                    {#await getFlagComponent(prediction?.groupFPrediction.yellowCard) then FlagComponent}
+                      {#if FlagComponent}
+                        <svelte:component this={FlagComponent} className="w-6 mr-1" />
+                      {/if}
+                    {/await}
+                    <span class="truncate whitespace-nowrap overflow-hidden">
+                      {getTeamName(prediction.groupFPrediction.yellowCard)}
+                    </span>
+                  {:else}
+                    Select Yellow Card
+                  {/if}
+                </button
+              >
+              <div class="text-right">
+                <p class="text-xs mt-4">5 Points</p>
+              </div>
+            </div>
+
+            <div class="mt-4">
+              <button
+                on:click={() => selectRedCard(5)}
+                class="selection-panel 
+                  {prediction?.groupFPrediction?.redCard ? 'selected-panel' : 'select-panel '} 
+                  "
+                >
+                  {#if prediction?.groupFPrediction?.redCard}
+                    {#await getFlagComponent(prediction?.groupFPrediction.redCard) then FlagComponent}
+                      {#if FlagComponent}
+                        <svelte:component this={FlagComponent} className="w-6 mr-1" />
+                      {/if}
+                    {/await}
+                    <span class="truncate whitespace-nowrap overflow-hidden">
+                      {getTeamName(prediction.groupFPrediction.redCard)}
+                    </span>
+                  {:else}
+                    Select Red Card
+                  {/if}
+                </button
+              >
+              <div class="text-right">
+                <p class="text-xs mt-4">5 Points</p>
+              </div>
+            </div>
+
+
+
+          </div>
+        {/if}
+
+        {#if sliderStage == 6}
+          <div class="flex flex-col bg-gray-700 p-2 mt-4 rounded-md text-sm">
+            <div class="text-left my-4">Round of 16</div>
+
+
+            <div>
+              <button
+                on:click={() => selectWinner(6)}
+                class="selection-panel 
+                  {prediction?.r16Prediction?.winner ? 'selected-panel' : 'select-panel '} 
+                  "
+                >
+                  {#if prediction?.r16Prediction?.winner}
+                    {#await getFlagComponent(prediction?.r16Prediction.winner) then FlagComponent}
+                      {#if FlagComponent}
+                        <svelte:component this={FlagComponent} className="w-6 mr-1" />
+                      {/if}
+                    {/await}
+                    <span class="truncate whitespace-nowrap overflow-hidden">
+                      {getTeamName(prediction.r16Prediction.winner)}
+                    </span>
+                  {:else}
+                    Select Winner
+                  {/if}
+                </button
+              >
+              <div class="text-right">
+                <p class="text-xs mt-4">5 Points</p>
+              </div>
+            </div>
+
+            <div class="mt-4">
+              <button
+                on:click={() => selectLoser(6)}
+                class="selection-panel 
+                  {prediction?.r16Prediction?.loser ? 'selected-panel' : 'select-panel '} 
+                  "
+                >
+                  {#if prediction?.r16Prediction?.loser}
+                    {#await getFlagComponent(prediction?.r16Prediction.loser) then FlagComponent}
+                      {#if FlagComponent}
+                        <svelte:component this={FlagComponent} className="w-6 mr-1" />
+                      {/if}
+                    {/await}
+                    <span class="truncate whitespace-nowrap overflow-hidden">
+                      {getTeamName(prediction.r16Prediction.loser)}
+                    </span>
+                  {:else}
+                    Select Loser
+                  {/if}
+                </button
+              >
+              <div class="text-right">
+                <p class="text-xs mt-4">5 Points</p>
+              </div>
+            </div>
+
+            <div class="mt-4">
+              <button
+                on:click={() => selectScorer(6)}
+                class="selection-panel 
+                  {prediction?.r16Prediction?.goalScorer ? 'selected-panel' : 'select-panel '} 
+                  "
+                >
+                  {#if prediction?.r16Prediction?.goalScorer}
+                    {#await getFlagComponent(prediction?.r16Prediction.goalScorer) then FlagComponent}
+                      {#if FlagComponent}
+                        <svelte:component this={FlagComponent} className="w-6 mr-1" />
+                      {/if}
+                    {/await}
+                    <span class="truncate whitespace-nowrap overflow-hidden">
+                      {getTeamName(prediction.r16Prediction.goalScorer)}
+                    </span>
+                  {:else}
+                    Select Goal Scorer
+                  {/if}
+                </button
+              >
+              <div class="text-right">
+                <p class="text-xs mt-4">5 Points</p>
+              </div>
+            </div>
+
+            <div class="mt-4">
+              <button
+                on:click={() => selectAssister(6)}
+                class="selection-panel 
+                  {prediction?.r16Prediction?.goalAssister ? 'selected-panel' : 'select-panel '} 
+                  "
+                >
+                  {#if prediction?.r16Prediction?.goalAssister}
+                    {#await getFlagComponent(prediction?.r16Prediction.goalAssister) then FlagComponent}
+                      {#if FlagComponent}
+                        <svelte:component this={FlagComponent} className="w-6 mr-1" />
+                      {/if}
+                    {/await}
+                    <span class="truncate whitespace-nowrap overflow-hidden">
+                      {getTeamName(prediction.r16Prediction.goalAssister)}
+                    </span>
+                  {:else}
+                    Select Goal Assister
+                  {/if}
+                </button
+              >
+              <div class="text-right">
+                <p class="text-xs mt-4">5 Points</p>
+              </div>
+            </div>
+
+            <div class="mt-4">
+              <button
+                on:click={() => selectYellowCard(6)}
+                class="selection-panel 
+                  {prediction?.r16Prediction?.yellowCard ? 'selected-panel' : 'select-panel '} 
+                  "
+                >
+                  {#if prediction?.r16Prediction?.yellowCard}
+                    {#await getFlagComponent(prediction?.r16Prediction.yellowCard) then FlagComponent}
+                      {#if FlagComponent}
+                        <svelte:component this={FlagComponent} className="w-6 mr-1" />
+                      {/if}
+                    {/await}
+                    <span class="truncate whitespace-nowrap overflow-hidden">
+                      {getTeamName(prediction.r16Prediction.yellowCard)}
+                    </span>
+                  {:else}
+                    Select Yellow Card
+                  {/if}
+                </button
+              >
+              <div class="text-right">
+                <p class="text-xs mt-4">5 Points</p>
+              </div>
+            </div>
+
+            <div class="mt-4">
+              <button
+                on:click={() => selectRedCard(6)}
+                class="selection-panel 
+                  {prediction?.r16Prediction?.redCard ? 'selected-panel' : 'select-panel '} 
+                  "
+                >
+                  {#if prediction?.r16Prediction?.redCard}
+                    {#await getFlagComponent(prediction?.r16Prediction.redCard) then FlagComponent}
+                      {#if FlagComponent}
+                        <svelte:component this={FlagComponent} className="w-6 mr-1" />
+                      {/if}
+                    {/await}
+                    <span class="truncate whitespace-nowrap overflow-hidden">
+                      {getTeamName(prediction.r16Prediction.redCard)}
+                    </span>
+                  {:else}
+                    Select Red Card
+                  {/if}
+                </button
+              >
+              <div class="text-right">
+                <p class="text-xs mt-4">5 Points</p>
+              </div>
+            </div>
+
+
+
+          </div>
+        {/if}
+
+        {#if sliderStage == 7}
+          <div class="flex flex-col bg-gray-700 p-2 mt-4 rounded-md text-sm">
+            <div class="text-left my-4">Quarter Final</div>
+
+
+            <div>
+              <button
+                on:click={() => selectWinner(7)}
+                class="selection-panel 
+                  {prediction?.qfPrediction?.winner ? 'selected-panel' : 'select-panel '} 
+                  "
+                >
+                  {#if prediction?.qfPrediction?.winner}
+                    {#await getFlagComponent(prediction?.qfPrediction.winner) then FlagComponent}
+                      {#if FlagComponent}
+                        <svelte:component this={FlagComponent} className="w-6 mr-1" />
+                      {/if}
+                    {/await}
+                    <span class="truncate whitespace-nowrap overflow-hidden">
+                      {getTeamName(prediction.qfPrediction.winner)}
+                    </span>
+                  {:else}
+                    Select Winner
+                  {/if}
+                </button
+              >
+              <div class="text-right">
+                <p class="text-xs mt-4">5 Points</p>
+              </div>
+            </div>
+
+            <div class="mt-4">
+              <button
+                on:click={() => selectLoser(7)}
+                class="selection-panel 
+                  {prediction?.qfPrediction?.loser ? 'selected-panel' : 'select-panel '} 
+                  "
+                >
+                  {#if prediction?.qfPrediction?.loser}
+                    {#await getFlagComponent(prediction?.qfPrediction.loser) then FlagComponent}
+                      {#if FlagComponent}
+                        <svelte:component this={FlagComponent} className="w-6 mr-1" />
+                      {/if}
+                    {/await}
+                    <span class="truncate whitespace-nowrap overflow-hidden">
+                      {getTeamName(prediction.qfPrediction.loser)}
+                    </span>
+                  {:else}
+                    Select Loser
+                  {/if}
+                </button
+              >
+              <div class="text-right">
+                <p class="text-xs mt-4">5 Points</p>
+              </div>
+            </div>
+
+            <div class="mt-4">
+              <button
+                on:click={() => selectScorer(7)}
+                class="selection-panel 
+                  {prediction?.qfPrediction?.goalScorer ? 'selected-panel' : 'select-panel '} 
+                  "
+                >
+                  {#if prediction?.qfPrediction?.goalScorer}
+                    {#await getFlagComponent(prediction?.qfPrediction.goalScorer) then FlagComponent}
+                      {#if FlagComponent}
+                        <svelte:component this={FlagComponent} className="w-6 mr-1" />
+                      {/if}
+                    {/await}
+                    <span class="truncate whitespace-nowrap overflow-hidden">
+                      {getTeamName(prediction.qfPrediction.goalScorer)}
+                    </span>
+                  {:else}
+                    Select Goal Scorer
+                  {/if}
+                </button
+              >
+              <div class="text-right">
+                <p class="text-xs mt-4">5 Points</p>
+              </div>
+            </div>
+
+            <div class="mt-4">
+              <button
+                on:click={() => selectAssister(7)}
+                class="selection-panel 
+                  {prediction?.qfPrediction?.goalAssister ? 'selected-panel' : 'select-panel '} 
+                  "
+                >
+                  {#if prediction?.qfPrediction?.goalAssister}
+                    {#await getFlagComponent(prediction?.qfPrediction.goalAssister) then FlagComponent}
+                      {#if FlagComponent}
+                        <svelte:component this={FlagComponent} className="w-6 mr-1" />
+                      {/if}
+                    {/await}
+                    <span class="truncate whitespace-nowrap overflow-hidden">
+                      {getTeamName(prediction.qfPrediction.goalAssister)}
+                    </span>
+                  {:else}
+                    Select Goal Assister
+                  {/if}
+                </button
+              >
+              <div class="text-right">
+                <p class="text-xs mt-4">5 Points</p>
+              </div>
+            </div>
+
+            <div class="mt-4">
+              <button
+                on:click={() => selectYellowCard(7)}
+                class="selection-panel 
+                  {prediction?.qfPrediction?.yellowCard ? 'selected-panel' : 'select-panel '} 
+                  "
+                >
+                  {#if prediction?.qfPrediction?.yellowCard}
+                    {#await getFlagComponent(prediction?.qfPrediction.yellowCard) then FlagComponent}
+                      {#if FlagComponent}
+                        <svelte:component this={FlagComponent} className="w-6 mr-1" />
+                      {/if}
+                    {/await}
+                    <span class="truncate whitespace-nowrap overflow-hidden">
+                      {getTeamName(prediction.qfPrediction.yellowCard)}
+                    </span>
+                  {:else}
+                    Select Yellow Card
+                  {/if}
+                </button
+              >
+              <div class="text-right">
+                <p class="text-xs mt-4">5 Points</p>
+              </div>
+            </div>
+
+            <div class="mt-4">
+              <button
+                on:click={() => selectRedCard(7)}
+                class="selection-panel 
+                  {prediction?.qfPrediction?.redCard ? 'selected-panel' : 'select-panel '} 
+                  "
+                >
+                  {#if prediction?.qfPrediction?.redCard}
+                    {#await getFlagComponent(prediction?.qfPrediction.redCard) then FlagComponent}
+                      {#if FlagComponent}
+                        <svelte:component this={FlagComponent} className="w-6 mr-1" />
+                      {/if}
+                    {/await}
+                    <span class="truncate whitespace-nowrap overflow-hidden">
+                      {getTeamName(prediction.qfPrediction.redCard)}
+                    </span>
+                  {:else}
+                    Select Red Card
+                  {/if}
+                </button
+              >
+              <div class="text-right">
+                <p class="text-xs mt-4">5 Points</p>
+              </div>
+            </div>
+
+
+
+          </div>
+        {/if}
+
+        {#if sliderStage == 8}
+          <div class="flex flex-col bg-gray-700 p-2 mt-4 rounded-md text-sm">
+            <div class="text-left my-4">Semi Final</div>
+
+
+            <div>
+              <button
+                on:click={() => selectWinner(8)}
+                class="selection-panel 
+                  {prediction?.sfPrediction?.winner ? 'selected-panel' : 'select-panel '} 
+                  "
+                >
+                  {#if prediction?.sfPrediction?.winner}
+                    {#await getFlagComponent(prediction?.sfPrediction.winner) then FlagComponent}
+                      {#if FlagComponent}
+                        <svelte:component this={FlagComponent} className="w-6 mr-1" />
+                      {/if}
+                    {/await}
+                    <span class="truncate whitespace-nowrap overflow-hidden">
+                      {getTeamName(prediction.sfPrediction.winner)}
+                    </span>
+                  {:else}
+                    Select Winner
+                  {/if}
+                </button
+              >
+              <div class="text-right">
+                <p class="text-xs mt-4">5 Points</p>
+              </div>
+            </div>
+
+            <div class="mt-4">
+              <button
+                on:click={() => selectLoser(8)}
+                class="selection-panel 
+                  {prediction?.sfPrediction?.loser ? 'selected-panel' : 'select-panel '} 
+                  "
+                >
+                  {#if prediction?.sfPrediction?.loser}
+                    {#await getFlagComponent(prediction?.sfPrediction.loser) then FlagComponent}
+                      {#if FlagComponent}
+                        <svelte:component this={FlagComponent} className="w-6 mr-1" />
+                      {/if}
+                    {/await}
+                    <span class="truncate whitespace-nowrap overflow-hidden">
+                      {getTeamName(prediction.sfPrediction.loser)}
+                    </span>
+                  {:else}
+                    Select Loser
+                  {/if}
+                </button
+              >
+              <div class="text-right">
+                <p class="text-xs mt-4">5 Points</p>
+              </div>
+            </div>
+
+            <div class="mt-4">
+              <button
+                on:click={() => selectScorer(8)}
+                class="selection-panel 
+                  {prediction?.sfPrediction?.goalScorer ? 'selected-panel' : 'select-panel '} 
+                  "
+                >
+                  {#if prediction?.sfPrediction?.goalScorer}
+                    {#await getFlagComponent(prediction?.sfPrediction.goalScorer) then FlagComponent}
+                      {#if FlagComponent}
+                        <svelte:component this={FlagComponent} className="w-6 mr-1" />
+                      {/if}
+                    {/await}
+                    <span class="truncate whitespace-nowrap overflow-hidden">
+                      {getTeamName(prediction.sfPrediction.goalScorer)}
+                    </span>
+                  {:else}
+                    Select Goal Scorer
+                  {/if}
+                </button
+              >
+              <div class="text-right">
+                <p class="text-xs mt-4">5 Points</p>
+              </div>
+            </div>
+
+            <div class="mt-4">
+              <button
+                on:click={() => selectAssister(8)}
+                class="selection-panel 
+                  {prediction?.sfPrediction?.goalAssister ? 'selected-panel' : 'select-panel '} 
+                  "
+                >
+                  {#if prediction?.sfPrediction?.goalAssister}
+                    {#await getFlagComponent(prediction?.sfPrediction.goalAssister) then FlagComponent}
+                      {#if FlagComponent}
+                        <svelte:component this={FlagComponent} className="w-6 mr-1" />
+                      {/if}
+                    {/await}
+                    <span class="truncate whitespace-nowrap overflow-hidden">
+                      {getTeamName(prediction.sfPrediction.goalAssister)}
+                    </span>
+                  {:else}
+                    Select Goal Assister
+                  {/if}
+                </button
+              >
+              <div class="text-right">
+                <p class="text-xs mt-4">5 Points</p>
+              </div>
+            </div>
+
+            <div class="mt-4">
+              <button
+                on:click={() => selectYellowCard(8)}
+                class="selection-panel 
+                  {prediction?.sfPrediction?.yellowCard ? 'selected-panel' : 'select-panel '} 
+                  "
+                >
+                  {#if prediction?.sfPrediction?.yellowCard}
+                    {#await getFlagComponent(prediction?.sfPrediction.yellowCard) then FlagComponent}
+                      {#if FlagComponent}
+                        <svelte:component this={FlagComponent} className="w-6 mr-1" />
+                      {/if}
+                    {/await}
+                    <span class="truncate whitespace-nowrap overflow-hidden">
+                      {getTeamName(prediction.sfPrediction.yellowCard)}
+                    </span>
+                  {:else}
+                    Select Yellow Card
+                  {/if}
+                </button
+              >
+              <div class="text-right">
+                <p class="text-xs mt-4">5 Points</p>
+              </div>
+            </div>
+
+            <div class="mt-4">
+              <button
+                on:click={() => selectRedCard(8)}
+                class="selection-panel 
+                  {prediction?.sfPrediction?.redCard ? 'selected-panel' : 'select-panel '} 
+                  "
+                >
+                  {#if prediction?.sfPrediction?.redCard}
+                    {#await getFlagComponent(prediction?.sfPrediction.redCard) then FlagComponent}
+                      {#if FlagComponent}
+                        <svelte:component this={FlagComponent} className="w-6 mr-1" />
+                      {/if}
+                    {/await}
+                    <span class="truncate whitespace-nowrap overflow-hidden">
+                      {getTeamName(prediction.sfPrediction.redCard)}
+                    </span>
+                  {:else}
+                    Select Red Card
+                  {/if}
+                </button
+              >
+              <div class="text-right">
+                <p class="text-xs mt-4">5 Points</p>
+              </div>
+            </div>
+
+
+
+          </div>
+        {/if}
+
+        {#if sliderStage == 9}
+          <div class="flex flex-col bg-gray-700 p-2 mt-4 rounded-md text-sm">
+            <div class="text-left my-4">Final</div>
+
+
+            <div>
+              <button
+                on:click={() => selectWinner(9)}
+                class="selection-panel 
+                  {prediction?.fPrediction?.winner ? 'selected-panel' : 'select-panel '} 
+                  "
+                >
+                  {#if prediction?.fPrediction?.winner}
+                    {#await getFlagComponent(prediction?.fPrediction.winner) then FlagComponent}
+                      {#if FlagComponent}
+                        <svelte:component this={FlagComponent} className="w-6 mr-1" />
+                      {/if}
+                    {/await}
+                    <span class="truncate whitespace-nowrap overflow-hidden">
+                      {getTeamName(prediction.fPrediction.winner)}
+                    </span>
+                  {:else}
+                    Select Winner
+                  {/if}
+                </button
+              >
+              <div class="text-right">
+                <p class="text-xs mt-4">5 Points</p>
+              </div>
+            </div>
+
+            <div class="mt-4">
+              <button
+                on:click={() => selectLoser(9)}
+                class="selection-panel 
+                  {prediction?.fPrediction?.loser ? 'selected-panel' : 'select-panel '} 
+                  "
+                >
+                  {#if prediction?.fPrediction?.loser}
+                    {#await getFlagComponent(prediction?.fPrediction.loser) then FlagComponent}
+                      {#if FlagComponent}
+                        <svelte:component this={FlagComponent} className="w-6 mr-1" />
+                      {/if}
+                    {/await}
+                    <span class="truncate whitespace-nowrap overflow-hidden">
+                      {getTeamName(prediction.fPrediction.loser)}
+                    </span>
+                  {:else}
+                    Select Loser
+                  {/if}
+                </button
+              >
+              <div class="text-right">
+                <p class="text-xs mt-4">5 Points</p>
+              </div>
+            </div>
+
+            <div class="mt-4">
+              <button
+                on:click={() => selectScorer(9)}
+                class="selection-panel 
+                  {prediction?.fPrediction?.goalScorer ? 'selected-panel' : 'select-panel '} 
+                  "
+                >
+                  {#if prediction?.fPrediction?.goalScorer}
+                    {#await getFlagComponent(prediction?.fPrediction.goalScorer) then FlagComponent}
+                      {#if FlagComponent}
+                        <svelte:component this={FlagComponent} className="w-6 mr-1" />
+                      {/if}
+                    {/await}
+                    <span class="truncate whitespace-nowrap overflow-hidden">
+                      {getTeamName(prediction.fPrediction.goalScorer)}
+                    </span>
+                  {:else}
+                    Select Goal Scorer
+                  {/if}
+                </button
+              >
+              <div class="text-right">
+                <p class="text-xs mt-4">5 Points</p>
+              </div>
+            </div>
+
+            <div class="mt-4">
+              <button
+                on:click={() => selectAssister(9)}
+                class="selection-panel 
+                  {prediction?.fPrediction?.goalAssister ? 'selected-panel' : 'select-panel '} 
+                  "
+                >
+                  {#if prediction?.fPrediction?.goalAssister}
+                    {#await getFlagComponent(prediction?.fPrediction.goalAssister) then FlagComponent}
+                      {#if FlagComponent}
+                        <svelte:component this={FlagComponent} className="w-6 mr-1" />
+                      {/if}
+                    {/await}
+                    <span class="truncate whitespace-nowrap overflow-hidden">
+                      {getTeamName(prediction.fPrediction.goalAssister)}
+                    </span>
+                  {:else}
+                    Select Goal Assister
+                  {/if}
+                </button
+              >
+              <div class="text-right">
+                <p class="text-xs mt-4">5 Points</p>
+              </div>
+            </div>
+
+            <div class="mt-4">
+              <button
+                on:click={() => selectYellowCard(9)}
+                class="selection-panel 
+                  {prediction?.fPrediction?.yellowCard ? 'selected-panel' : 'select-panel '} 
+                  "
+                >
+                  {#if prediction?.fPrediction?.yellowCard}
+                    {#await getFlagComponent(prediction?.fPrediction.yellowCard) then FlagComponent}
+                      {#if FlagComponent}
+                        <svelte:component this={FlagComponent} className="w-6 mr-1" />
+                      {/if}
+                    {/await}
+                    <span class="truncate whitespace-nowrap overflow-hidden">
+                      {getTeamName(prediction.fPrediction.yellowCard)}
+                    </span>
+                  {:else}
+                    Select Yellow Card
+                  {/if}
+                </button
+              >
+              <div class="text-right">
+                <p class="text-xs mt-4">5 Points</p>
+              </div>
+            </div>
+
+            <div class="mt-4">
+              <button
+                on:click={() => selectRedCard(9)}
+                class="selection-panel 
+                  {prediction?.fPrediction?.redCard ? 'selected-panel' : 'select-panel '} 
+                  "
+                >
+                  {#if prediction?.fPrediction?.redCard}
+                    {#await getFlagComponent(prediction?.fPrediction.redCard) then FlagComponent}
+                      {#if FlagComponent}
+                        <svelte:component this={FlagComponent} className="w-6 mr-1" />
+                      {/if}
+                    {/await}
+                    <span class="truncate whitespace-nowrap overflow-hidden">
+                      {getTeamName(prediction.fPrediction.redCard)}
+                    </span>
+                  {:else}
+                    Select Red Card
+                  {/if}
+                </button
+              >
+              <div class="text-right">
+                <p class="text-xs mt-4">5 Points</p>
+              </div>
+            </div>
+
+
+
+          </div>
+        {/if}
+
+
+
+
+
+        
+      </div>
+      <div id="dektop-wrapper" class="hidden md:flex flex-col">
+
+
+        <div class="flex flex-row items-center bg-OPENFPL text-GRAY border border-white rounded-md p-2 text-sm">
+          <div class="w-1/12 flex">
+            <p class="w-full text-center">Group</p>
+          </div>
+          <div class="w-11/12 flex flex-row space-x-2">
+            <div class="w-1/6 flex">
+              <p class="w-full text-center">Winner</p>
+            </div>
+            <div class="w-1/6 flex">
+              <p class="w-full text-center">Loser</p>
+            </div>
+            <div class="w-1/6 flex">
+              <p class="w-full text-center">To Score</p>
+            </div>
+            <div class="w-1/6 flex">
+              <p class="w-full text-center">To Assist</p>
+            </div>
+            <div class="w-1/6 flex">
+              <p class="w-full text-center">Yellow Card</p>
+            </div>
+            <div class="w-1/6 flex">
+              <p class="w-full text-center">Red Card</p>
             </div>
           </div>
-          <div class="w-1/6">
-            <button
-              on:click={() => selectScorer(0)}
-              class="selection-panel 
-                {prediction?.groupAPrediction?.goalScorer ? 'selected-panel' : 'select-panel '} 
-                "
+        </div>
+  
+        <div class="flex flex-row items-center bg-gray-700 p-2 mt-4 rounded-md text-sm">
+          <div class="w-1/12 text-center">A</div>
+          <div class="w-11/12 flex flex-row space-x-4">
+            <div class="w-1/6">
+              <button
+                on:click={() => selectWinner(0)}
+                class="selection-panel 
+                  {prediction?.groupAPrediction?.winner ? 'selected-panel' : 'select-panel '} 
+                  "
+                >
+                  {#if prediction?.groupAPrediction?.winner}
+                    {#await getFlagComponent(prediction?.groupAPrediction.winner) then FlagComponent}
+                      {#if FlagComponent}
+                        <svelte:component this={FlagComponent} className="w-6 mr-1" />
+                      {/if}
+                    {/await}
+                    <span class="truncate whitespace-nowrap overflow-hidden">
+                      {getTeamName(prediction.groupAPrediction.winner)}
+                    </span>
+                  {:else}
+                    Select a Team
+                  {/if}
+                </button
               >
-                {#if prediction?.groupAPrediction?.goalScorer}
-                  {@const player = $playerStore.find(x => x.id == prediction?.groupAPrediction.goalScorer)}
-                  {@const teamId = player ? player.teamId : 0 }
-                  {#await getFlagComponent(teamId) then FlagComponent}
+              <div class="text-right">
+                <p class="text-xs mt-4">5 Points</p>
+              </div>
+            </div>
+            <div class="w-1/6">
+              <button on:click={() => selectLoser(0)}
+                class="selection-panel 
+                  {prediction?.groupAPrediction?.loser ? 'selected-panel' : 'select-panel '} 
+                  "
+            >
+              {#if prediction?.groupAPrediction?.loser}
+                <div class="flex items-center justify-center w-full">
+                  {#await getFlagComponent(prediction?.groupAPrediction.loser) then FlagComponent}
                     {#if FlagComponent}
                       <svelte:component this={FlagComponent} className="w-6 mr-1" />
                     {/if}
                   {/await}
-                  <span class="truncate whitespace-nowrap overflow-hidden">{getPlayerName(prediction.groupAPrediction.goalScorer)}</span>
-                
-                {:else}
-                  Select a Player
-                {/if}
-              </button
-            >
-            <div class="text-right">
-              <p class="text-xs mt-4">10 Points</p>
+  
+                  <span class="truncate whitespace-nowrap overflow-hidden">
+                    {getTeamName(prediction.groupAPrediction.loser)}
+                  </span>
+                </div>
+              {:else}
+                Select a Team
+              {/if}
+            </button>
+            
+              <div class="text-right">
+                <p class="text-xs mt-4">5 Points</p>
+              </div>
             </div>
-          </div>
-          <div class="w-1/6">
-            <button
-              on:click={() => selectAssister(0)}
-              class="selection-panel 
-                {prediction?.groupAPrediction?.goalAssister ? 'selected-panel' : 'select-panel '} 
-                "
+            <div class="w-1/6">
+              <button
+                on:click={() => selectScorer(0)}
+                class="selection-panel 
+                  {prediction?.groupAPrediction?.goalScorer ? 'selected-panel' : 'select-panel '} 
+                  "
+                >
+                  {#if prediction?.groupAPrediction?.goalScorer}
+                    {@const player = $playerStore.find(x => x.id == prediction?.groupAPrediction.goalScorer)}
+                    {@const teamId = player ? player.teamId : 0 }
+                    {#await getFlagComponent(teamId) then FlagComponent}
+                      {#if FlagComponent}
+                        <svelte:component this={FlagComponent} className="w-6 mr-1" />
+                      {/if}
+                    {/await}
+                    <span class="truncate whitespace-nowrap overflow-hidden">{getPlayerName(prediction.groupAPrediction.goalScorer)}</span>
+                  
+                  {:else}
+                    Select a Player
+                  {/if}
+                </button
               >
-                {#if prediction?.groupAPrediction?.goalAssister}
-                  {@const player = $playerStore.find(x => x.id == prediction?.groupAPrediction.goalAssister)}
+              <div class="text-right">
+                <p class="text-xs mt-4">10 Points</p>
+              </div>
+            </div>
+            <div class="w-1/6">
+              <button
+                on:click={() => selectAssister(0)}
+                class="selection-panel 
+                  {prediction?.groupAPrediction?.goalAssister ? 'selected-panel' : 'select-panel '} 
+                  "
+                >
+                  {#if prediction?.groupAPrediction?.goalAssister}
+                    {@const player = $playerStore.find(x => x.id == prediction?.groupAPrediction.goalAssister)}
+                    {@const teamId = player ? player.teamId : 0 }  
+                    {#await getFlagComponent(teamId) then FlagComponent}
+                      {#if FlagComponent}
+                        <svelte:component this={FlagComponent} className="w-6 mr-1" />
+                      {/if}
+                    {/await}
+                  <span class="truncate whitespace-nowrap overflow-hidden">{getPlayerName(prediction.groupAPrediction.goalAssister)}</span>
+                  {:else}
+                    Select a Player
+                  {/if}
+                </button
+              >
+              <div class="text-right">
+                <p class="text-xs mt-4">10 Points</p>
+              </div>
+            </div>
+            <div class="w-1/6">
+              <button
+                on:click={() => selectYellowCard(0)}
+                class="selection-panel 
+                  {prediction?.groupAPrediction?.yellowCard ? 'selected-panel' : 'select-panel '} 
+                  "
+                >
+                  {#if prediction?.groupAPrediction?.yellowCard}
+                    {@const player = $playerStore.find(x => x.id == prediction?.groupAPrediction.yellowCard)}
+                    {@const teamId = player ? player.teamId : 0 }  
+                    {#await getFlagComponent(teamId) then FlagComponent}
+                      {#if FlagComponent}
+                        <svelte:component this={FlagComponent} className="w-6 mr-1" />
+                      {/if}
+                    {/await}
+                  <span class="truncate whitespace-nowrap overflow-hidden">{getPlayerName(prediction.groupAPrediction.yellowCard)}</span>
+                  {:else}
+                    Select a Player
+                  {/if}
+                </button
+              >
+              <div class="text-right">
+                <p class="text-xs mt-4">5 Points</p>
+              </div>
+            </div>
+            <div class="w-1/6">
+              <button
+                on:click={() => selectRedCard(0)}
+                class="selection-panel 
+                  {prediction?.groupAPrediction?.redCard ? 'selected-panel' : 'select-panel '} 
+                  "
+                >
+                  {#if prediction?.groupAPrediction?.redCard}
+                  {@const player = $playerStore.find(x => x.id == prediction?.groupAPrediction.redCard)}
                   {@const teamId = player ? player.teamId : 0 }  
                   {#await getFlagComponent(teamId) then FlagComponent}
+                      {#if FlagComponent}
+                        <svelte:component this={FlagComponent} className="w-6 mr-1" />
+                      {/if}
+                    {/await}
+                  <span class="truncate whitespace-nowrap overflow-hidden">{getPlayerName(prediction.groupAPrediction.redCard)}</span>
+                  {:else}
+                    Select a Player
+                  {/if}
+                </button
+              >
+              <div class="text-right">
+                <p class="text-xs mt-4">10 Points</p>
+              </div>
+            </div>
+          </div>
+        </div>
+  
+        <div class="flex flex-row items-center bg-gray-700 p-2 mt-4 rounded-md text-sm">
+          <div class="w-1/12 text-center">B</div>
+          <div class="w-11/12 flex flex-row space-x-4">
+            <div class="w-1/6">
+              <button
+                on:click={() => selectWinner(1)}
+                class="selection-panel 
+                  {prediction?.groupBPrediction?.winner ? 'selected-panel' : 'select-panel '} 
+                  "
+                >
+                  {#if prediction?.groupBPrediction?.winner}
+                  {#await getFlagComponent(prediction?.groupBPrediction.winner) then FlagComponent}
+                      {#if FlagComponent}
+                        <svelte:component this={FlagComponent} className="w-6 mr-1" />
+                      {/if}
+                    {/await}
+                  <span class="truncate whitespace-nowrap overflow-hidden">{getTeamName(prediction.groupBPrediction.winner)}</span>
+                  {:else}
+                    Select a Team
+                  {/if}
+                </button
+              >
+              <div class="text-right">
+                <p class="text-xs mt-4">5 Points</p>
+              </div>
+            </div>
+            <div class="w-1/6">
+              <button
+                on:click={() => selectLoser(1)}
+                class="selection-panel 
+                  {prediction?.groupBPrediction?.loser ? 'selected-panel' : 'select-panel '} 
+                  "
+                >
+                  {#if prediction?.groupBPrediction?.loser}
+                  {#await getFlagComponent(prediction?.groupBPrediction.loser) then FlagComponent}
+                      {#if FlagComponent}
+                        <svelte:component this={FlagComponent} className="w-6 mr-1" />
+                      {/if}
+                    {/await}
+                  <span class="truncate whitespace-nowrap overflow-hidden">{getTeamName(prediction.groupBPrediction.loser)}</span>
+                  {:else}
+                    Select a Team
+                  {/if}
+                </button
+              >
+              <div class="text-right">
+                <p class="text-xs mt-4">5 Points</p>
+              </div>
+            </div>
+            <div class="w-1/6">
+              <button
+                on:click={() => selectScorer(1)}
+                class="selection-panel 
+                  {prediction?.groupBPrediction?.goalScorer ? 'selected-panel' : 'select-panel '} 
+                  "
+                >
+                {#if prediction?.groupBPrediction?.goalScorer}
+                {@const player = $playerStore.find(x => x.id == prediction?.groupBPrediction.goalScorer)}
+                {@const teamId = player ? player.teamId : 0 }  
+                {#await getFlagComponent(teamId) then FlagComponent}
                     {#if FlagComponent}
                       <svelte:component this={FlagComponent} className="w-6 mr-1" />
                     {/if}
                   {/await}
-                <span class="truncate whitespace-nowrap overflow-hidden">{getPlayerName(prediction.groupAPrediction.goalAssister)}</span>
+                <span class="truncate whitespace-nowrap overflow-hidden">{getPlayerName(prediction.groupBPrediction.goalScorer)}</span>
                 {:else}
                   Select a Player
                 {/if}
               </button
-            >
-            <div class="text-right">
-              <p class="text-xs mt-4">10 Points</p>
-            </div>
-          </div>
-          <div class="w-1/6">
-            <button
-              on:click={() => selectYellowCard(0)}
-              class="selection-panel 
-                {prediction?.groupAPrediction?.yellowCard ? 'selected-panel' : 'select-panel '} 
-                "
               >
-                {#if prediction?.groupAPrediction?.yellowCard}
-                  {@const player = $playerStore.find(x => x.id == prediction?.groupAPrediction.yellowCard)}
+              <div class="text-right">
+                <p class="text-xs mt-4">10 Points</p>
+              </div>
+            </div>
+            <div class="w-1/6">
+              <button
+                on:click={() => selectAssister(1)}
+                class="selection-panel 
+                  {prediction?.groupBPrediction?.goalAssister ? 'selected-panel' : 'select-panel '} 
+                  "
+                >
+                  {#if prediction?.groupBPrediction?.goalAssister}
+                  {@const player = $playerStore.find(x => x.id == prediction?.groupBPrediction.goalAssister)}
                   {@const teamId = player ? player.teamId : 0 }  
                   {#await getFlagComponent(teamId) then FlagComponent}
-                    {#if FlagComponent}
-                      <svelte:component this={FlagComponent} className="w-6 mr-1" />
-                    {/if}
-                  {/await}
-                <span class="truncate whitespace-nowrap overflow-hidden">{getPlayerName(prediction.groupAPrediction.yellowCard)}</span>
-                {:else}
-                  Select a Player
-                {/if}
-              </button
-            >
-            <div class="text-right">
-              <p class="text-xs mt-4">5 Points</p>
-            </div>
-          </div>
-          <div class="w-1/6">
-            <button
-              on:click={() => selectRedCard(0)}
-              class="selection-panel 
-                {prediction?.groupAPrediction?.redCard ? 'selected-panel' : 'select-panel '} 
-                "
-              >
-                {#if prediction?.groupAPrediction?.redCard}
-                {@const player = $playerStore.find(x => x.id == prediction?.groupAPrediction.redCard)}
-                {@const teamId = player ? player.teamId : 0 }  
-                {#await getFlagComponent(teamId) then FlagComponent}
-                    {#if FlagComponent}
-                      <svelte:component this={FlagComponent} className="w-6 mr-1" />
-                    {/if}
-                  {/await}
-                <span class="truncate whitespace-nowrap overflow-hidden">{getPlayerName(prediction.groupAPrediction.redCard)}</span>
-                {:else}
-                  Select a Player
-                {/if}
-              </button
-            >
-            <div class="text-right">
-              <p class="text-xs mt-4">10 Points</p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="flex flex-row items-center bg-gray-700 p-2 mt-4 rounded-md text-sm">
-        <div class="w-1/12 text-center">B</div>
-        <div class="w-11/12 flex flex-row space-x-4">
-          <div class="w-1/6">
-            <button
-              on:click={() => selectWinner(1)}
-              class="selection-panel 
-                {prediction?.groupBPrediction?.winner ? 'selected-panel' : 'select-panel '} 
-                "
-              >
-                {#if prediction?.groupBPrediction?.winner}
-                {#await getFlagComponent(prediction?.groupBPrediction.winner) then FlagComponent}
-                    {#if FlagComponent}
-                      <svelte:component this={FlagComponent} className="w-6 mr-1" />
-                    {/if}
-                  {/await}
-                <span class="truncate whitespace-nowrap overflow-hidden">{getTeamName(prediction.groupBPrediction.winner)}</span>
-                {:else}
-                  Select a Team
-                {/if}
-              </button
-            >
-            <div class="text-right">
-              <p class="text-xs mt-4">5 Points</p>
-            </div>
-          </div>
-          <div class="w-1/6">
-            <button
-              on:click={() => selectLoser(1)}
-              class="selection-panel 
-                {prediction?.groupBPrediction?.loser ? 'selected-panel' : 'select-panel '} 
-                "
-              >
-                {#if prediction?.groupBPrediction?.loser}
-                {#await getFlagComponent(prediction?.groupBPrediction.loser) then FlagComponent}
-                    {#if FlagComponent}
-                      <svelte:component this={FlagComponent} className="w-6 mr-1" />
-                    {/if}
-                  {/await}
-                <span class="truncate whitespace-nowrap overflow-hidden">{getTeamName(prediction.groupBPrediction.loser)}</span>
-                {:else}
-                  Select a Team
-                {/if}
-              </button
-            >
-            <div class="text-right">
-              <p class="text-xs mt-4">5 Points</p>
-            </div>
-          </div>
-          <div class="w-1/6">
-            <button
-              on:click={() => selectScorer(1)}
-              class="selection-panel 
-                {prediction?.groupBPrediction?.goalScorer ? 'selected-panel' : 'select-panel '} 
-                "
-              >
-              {#if prediction?.groupBPrediction?.goalScorer}
-              {@const player = $playerStore.find(x => x.id == prediction?.groupBPrediction.goalScorer)}
-              {@const teamId = player ? player.teamId : 0 }  
-              {#await getFlagComponent(teamId) then FlagComponent}
-                  {#if FlagComponent}
-                    <svelte:component this={FlagComponent} className="w-6 mr-1" />
+                      {#if FlagComponent}
+                        <svelte:component this={FlagComponent} className="w-6 mr-1" />
+                      {/if}
+                    {/await}
+                  <span class="truncate whitespace-nowrap overflow-hidden">{getPlayerName(prediction.groupBPrediction.goalAssister)}</span>
+                  {:else}
+                    Select a Player
                   {/if}
-                {/await}
-              <span class="truncate whitespace-nowrap overflow-hidden">{getPlayerName(prediction.groupBPrediction.goalScorer)}</span>
-              {:else}
-                Select a Player
-              {/if}
-            </button
-            >
-            <div class="text-right">
-              <p class="text-xs mt-4">10 Points</p>
-            </div>
-          </div>
-          <div class="w-1/6">
-            <button
-              on:click={() => selectAssister(1)}
-              class="selection-panel 
-                {prediction?.groupBPrediction?.goalAssister ? 'selected-panel' : 'select-panel '} 
-                "
+                </button
               >
-                {#if prediction?.groupBPrediction?.goalAssister}
-                {@const player = $playerStore.find(x => x.id == prediction?.groupBPrediction.goalAssister)}
-                {@const teamId = player ? player.teamId : 0 }  
-                {#await getFlagComponent(teamId) then FlagComponent}
-                    {#if FlagComponent}
-                      <svelte:component this={FlagComponent} className="w-6 mr-1" />
-                    {/if}
-                  {/await}
-                <span class="truncate whitespace-nowrap overflow-hidden">{getPlayerName(prediction.groupBPrediction.goalAssister)}</span>
-                {:else}
-                  Select a Player
-                {/if}
-              </button
-            >
-            <div class="text-right">
-              <p class="text-xs mt-4">10 Points</p>
+              <div class="text-right">
+                <p class="text-xs mt-4">10 Points</p>
+              </div>
             </div>
-          </div>
-          <div class="w-1/6">
-            <button
-              on:click={() => selectYellowCard(1)}
-              class="selection-panel 
-                {prediction?.groupBPrediction?.yellowCard ? 'selected-panel' : 'select-panel '} 
-                "
-              >
-                {#if prediction?.groupBPrediction?.yellowCard}
-                {@const player = $playerStore.find(x => x.id == prediction?.groupBPrediction.yellowCard)}
-                {@const teamId = player ? player.teamId : 0 }  
-                {#await getFlagComponent(teamId) then FlagComponent}
-                    {#if FlagComponent}
-                      <svelte:component this={FlagComponent} className="w-6 mr-1" />
-                    {/if}
-                  {/await}
-                <span class="truncate whitespace-nowrap overflow-hidden">{getPlayerName(prediction.groupBPrediction.yellowCard)}</span>
-                {:else}
-                  Select a Player
-                {/if}
-              </button
-            >
-            <div class="text-right">
-              <p class="text-xs mt-4">5 Points</p>
-            </div>
-          </div>
-          <div class="w-1/6">
-            <button
-              on:click={() => selectRedCard(1)}
-              class="selection-panel 
-                {prediction?.groupBPrediction?.redCard ? 'selected-panel' : 'select-panel '} 
-                "
-              >
-                {#if prediction?.groupBPrediction?.redCard}
-                {@const player = $playerStore.find(x => x.id == prediction?.groupBPrediction.redCard)}
-                {@const teamId = player ? player.teamId : 0 }  
-                {#await getFlagComponent(teamId) then FlagComponent}
-                    {#if FlagComponent}
-                      <svelte:component this={FlagComponent} className="w-6 mr-1" />
-                    {/if}
-                  {/await}
-                <span class="truncate whitespace-nowrap overflow-hidden">{getPlayerName(prediction.groupBPrediction.redCard)}</span>
-                {:else}
-                  Select a Player
-                {/if}
-              </button
-            >
-            <div class="text-right">
-              <p class="text-xs mt-4">10 Points</p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="flex flex-row items-center bg-gray-700 p-2 mt-4 rounded-md text-sm">
-        <div class="w-1/12 text-center">C</div>
-        <div class="w-11/12 flex flex-row space-x-4">
-          <div class="w-1/6">
-            <button
-              on:click={() => selectWinner(2)}
-              class="selection-panel 
-                {prediction?.groupCPrediction?.winner ? 'selected-panel' : 'select-panel '} 
-                "
-              >
-                {#if prediction?.groupCPrediction?.winner} 
-                {#await getFlagComponent(prediction?.groupCPrediction.winner) then FlagComponent}
-                    {#if FlagComponent}
-                      <svelte:component this={FlagComponent} className="w-6 mr-1" />
-                    {/if}
-                  {/await}
-                <span class="truncate whitespace-nowrap overflow-hidden">{getTeamName(prediction.groupCPrediction.winner)}</span>
-                {:else}
-                  Select a Team
-                {/if}
-              </button
-            >
-            <div class="text-right">
-              <p class="text-xs mt-4">5 Points</p>
-            </div>
-          </div>
-          <div class="w-1/6">
-            <button
-              on:click={() => selectLoser(2)}
-              class="selection-panel 
-                {prediction?.groupCPrediction?.loser ? 'selected-panel' : 'select-panel '} 
-                "
-              > 
-                {#if prediction?.groupCPrediction?.loser}
-                {#await getFlagComponent(prediction?.groupCPrediction.loser) then FlagComponent}
-                    {#if FlagComponent}
-                      <svelte:component this={FlagComponent} className="w-6 mr-1" />
-                    {/if}
-                  {/await}
-                <span class="truncate whitespace-nowrap overflow-hidden">{getTeamName(prediction.groupCPrediction.loser)}</span>
-                {:else}
-                  Select a Team
-                {/if}
-              </button
-            >
-            <div class="text-right">
-              <p class="text-xs mt-4">5 Points</p>
-            </div>
-          </div>
-          <div class="w-1/6">
-            <button
-              on:click={() => selectScorer(2)}
-              class="selection-panel 
-                {prediction?.groupCPrediction?.goalScorer ? 'selected-panel' : 'select-panel '} 
-                "
-              > 
-                {#if prediction?.groupCPrediction?.goalScorer}
-                {@const player = $playerStore.find(x => x.id == prediction?.groupCPrediction.goalScorer)}
-                {@const teamId = player ? player.teamId : 0 }  
-                {#await getFlagComponent(teamId) then FlagComponent}
-                    {#if FlagComponent}
-                      <svelte:component this={FlagComponent} className="w-6 mr-1" />
-                    {/if}
-                  {/await}
-                <span class="truncate whitespace-nowrap overflow-hidden">{getPlayerName(prediction.groupCPrediction.goalScorer)}</span>
-                {:else}
-                  Select a Player
-                {/if}
-              </button
-            >
-            <div class="text-right">
-              <p class="text-xs mt-4">10 Points</p>
-            </div>
-          </div>
-          <div class="w-1/6">
-            <button
-              on:click={() => selectAssister(2)}
-              class="selection-panel 
-                {prediction?.groupCPrediction?.goalAssister ? 'selected-panel' : 'select-panel '} 
-                "
-              >
-                {#if prediction?.groupCPrediction?.goalAssister}
-                {@const player = $playerStore.find(x => x.id == prediction?.groupCPrediction.goalAssister)}
-                {@const teamId = player ? player.teamId : 0 }  
-                {#await getFlagComponent(teamId) then FlagComponent}
-                    {#if FlagComponent}
-                      <svelte:component this={FlagComponent} className="w-6 mr-1" />
-                    {/if}
-                  {/await}
-                <span class="truncate whitespace-nowrap overflow-hidden">{getPlayerName(prediction.groupCPrediction.goalAssister)}</span>
-                {:else}
-                  Select a Player
-                {/if}
-              </button
-            >
-            <div class="text-right">
-              <p class="text-xs mt-4">10 Points</p>
-            </div>
-          </div>
-          <div class="w-1/6">
-            <button
-              on:click={() => selectYellowCard(2)}
-              class="selection-panel 
-                {prediction?.groupCPrediction?.yellowCard ? 'selected-panel' : 'select-panel '} 
-                "
-              >
-                {#if prediction?.groupCPrediction?.yellowCard}
-                {@const player = $playerStore.find(x => x.id == prediction?.groupCPrediction.yellowCard)}
-                {@const teamId = player ? player.teamId : 0 }  
-                {#await getFlagComponent(teamId) then FlagComponent}
-                    {#if FlagComponent}
-                      <svelte:component this={FlagComponent} className="w-6 mr-1" />
-                    {/if}
-                  {/await}
-                <span class="truncate whitespace-nowrap overflow-hidden">{getPlayerName(prediction.groupCPrediction.yellowCard)}</span>
-                {:else}
-                  Select a Player
-                {/if}
-              </button
-            >
-            <div class="text-right">
-              <p class="text-xs mt-4">5 Points</p>
-            </div>
-          </div>
-          <div class="w-1/6">
-            <button
-              on:click={() => selectRedCard(2)}
-              class="selection-panel 
-                {prediction?.groupCPrediction?.redCard ? 'selected-panel' : 'select-panel '} 
-                "
-              >
-                {#if prediction?.groupCPrediction?.redCard}
-                {@const player = $playerStore.find(x => x.id == prediction?.groupCPrediction.redCard)}
-                {@const teamId = player ? player.teamId : 0 }  
-                {#await getFlagComponent(teamId) then FlagComponent}
-                    {#if FlagComponent}
-                      <svelte:component this={FlagComponent} className="w-6 mr-1" />
-                    {/if}
-                  {/await}
-                  <span class="truncate whitespace-nowrap overflow-hidden">{getPlayerName(prediction.groupCPrediction.redCard)}</span>
-                {:else}
-                  Select a Player
-                {/if}
-              </button
-            >
-            <div class="text-right">
-              <p class="text-xs mt-4">10 Points</p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="flex flex-row items-center bg-gray-700 p-2 mt-4 rounded-md text-sm">
-        <div class="w-1/12 text-center">D</div>
-        <div class="w-11/12 flex flex-row space-x-4">
-          <div class="w-1/6">
-            <button
-              on:click={() => selectWinner(3)}
-              class="selection-panel 
-                {prediction?.groupDPrediction?.winner ? 'selected-panel' : 'select-panel '} 
-                "
-              >
-                {#if prediction?.groupDPrediction?.winner}
-                {#await getFlagComponent(prediction?.groupDPrediction.winner) then FlagComponent}
-                    {#if FlagComponent}
-                      <svelte:component this={FlagComponent} className="w-6 mr-1" />
-                    {/if}
-                  {/await}
-                  <span class="truncate whitespace-nowrap overflow-hidden">{getTeamName(prediction.groupDPrediction.winner)}</span>
-                {:else}
-                  Select a Team
-                {/if}
-              </button
-            >
-            <div class="text-right">
-              <p class="text-xs mt-4">5 Points</p>
-            </div>
-          </div>
-          <div class="w-1/6">
-            <button
-              on:click={() => selectLoser(3)}
-              class="selection-panel 
-                {prediction?.groupDPrediction?.loser ? 'selected-panel' : 'select-panel '} 
-                "
-              >
-                {#if prediction?.groupDPrediction?.loser}
-                {#await getFlagComponent(prediction?.groupDPrediction.loser) then FlagComponent}
-                    {#if FlagComponent}
-                      <svelte:component this={FlagComponent} className="w-6 mr-1" />
-                    {/if}
-                  {/await}
-                  <span class="truncate whitespace-nowrap overflow-hidden">{getTeamName(prediction.groupDPrediction.loser)}</span>
-                {:else}
-                  Select a Team
-                {/if}
-              </button
-            >
-            <div class="text-right">
-              <p class="text-xs mt-4">5 Points</p>
-            </div>
-          </div>
-          <div class="w-1/6">
-            <button
-              on:click={() => selectScorer(3)}
-              class="selection-panel 
-                {prediction?.groupDPrediction?.goalScorer ? 'selected-panel' : 'select-panel '} 
-                "
-              >
-                {#if prediction?.groupDPrediction?.goalScorer}
-                {@const player = $playerStore.find(x => x.id == prediction?.groupDPrediction.goalScorer)}
-                {@const teamId = player ? player.teamId : 0 }  
-                {#await getFlagComponent(teamId) then FlagComponent}
-                    {#if FlagComponent}
-                      <svelte:component this={FlagComponent} className="w-6 mr-1" />
-                    {/if}
-                  {/await}
-                  <span class="truncate whitespace-nowrap overflow-hidden">{getPlayerName(prediction.groupDPrediction.goalScorer)}</span>
-                {:else}
-                  Select a Player
-                {/if}
-              </button
-            >
-            <div class="text-right">
-              <p class="text-xs mt-4">10 Points</p>
-            </div>
-          </div>
-          <div class="w-1/6">
-            <button
-              on:click={() => selectAssister(3)}
-              class="selection-panel 
-                {prediction?.groupDPrediction?.goalAssister ? 'selected-panel' : 'select-panel '} 
-                "
-              >
-                {#if prediction?.groupDPrediction?.goalAssister}
-                {@const player = $playerStore.find(x => x.id == prediction?.groupDPrediction.goalAssister)}
-                {@const teamId = player ? player.teamId : 0 }  
-                {#await getFlagComponent(teamId) then FlagComponent}
-                    {#if FlagComponent}
-                      <svelte:component this={FlagComponent} className="w-6 mr-1" />
-                    {/if}
-                  {/await}
-                  <span class="truncate whitespace-nowrap overflow-hidden">{getPlayerName(prediction.groupDPrediction.goalAssister)}</span>
-                {:else}
-                  Select a Player
-                {/if}
-              </button
-            >
-            <div class="text-right">
-              <p class="text-xs mt-4">10 Points</p>
-            </div>
-          </div>
-          <div class="w-1/6">
-            <button
-              on:click={() => selectYellowCard(3)}
-              class="selection-panel 
-                {prediction?.groupDPrediction?.yellowCard ? 'selected-panel' : 'select-panel '} 
-                "
-              >
-                {#if prediction?.groupDPrediction?.yellowCard}
-                {@const player = $playerStore.find(x => x.id == prediction?.groupDPrediction.yellowCard)}
-                {@const teamId = player ? player.teamId : 0 }  
-                {#await getFlagComponent(teamId) then FlagComponent}
-                    {#if FlagComponent}
-                      <svelte:component this={FlagComponent} className="w-6 mr-1" />
-                    {/if}
-                  {/await}
-                  <span class="truncate whitespace-nowrap overflow-hidden">{getPlayerName(prediction.groupDPrediction.yellowCard)}</span>
-                {:else}
-                  Select a Player
-                {/if}
-              </button
-            >
-            <div class="text-right">
-              <p class="text-xs mt-4">5 Points</p>
-            </div>
-          </div>
-          <div class="w-1/6">
-            <button
-              on:click={() => selectRedCard(3)}
-              class="selection-panel 
-                {prediction?.groupDPrediction?.redCard ? 'selected-panel' : 'select-panel '} 
-                "
-              >
-                {#if prediction?.groupDPrediction?.redCard}
-                {@const player = $playerStore.find(x => x.id == prediction?.groupDPrediction.redCard)}
-                {@const teamId = player ? player.teamId : 0 }  
-                {#await getFlagComponent(teamId) then FlagComponent}
-                    {#if FlagComponent}
-                      <svelte:component this={FlagComponent} className="w-6 mr-1" />
-                    {/if}
-                  {/await}
-                  <span class="truncate whitespace-nowrap overflow-hidden">{getPlayerName(prediction.groupDPrediction.redCard)}</span>
-                {:else}
-                  Select a Player
-                {/if}
-              </button
-            >
-            <div class="text-right">
-              <p class="text-xs mt-4">10 Points</p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="flex flex-row items-center bg-gray-700 p-2 mt-4 rounded-md text-sm">
-        <div class="w-1/12 text-center">E</div>
-        <div class="w-11/12 flex flex-row space-x-4">
-          <div class="w-1/6">
-            <button
-              on:click={() => selectWinner(4)}
-              class="selection-panel 
-                {prediction?.groupEPrediction?.winner ? 'selected-panel' : 'select-panel '} 
-                "
-              >
-                {#if prediction?.groupEPrediction?.winner}
-                {#await getFlagComponent(prediction?.groupEPrediction.winner) then FlagComponent}
-                    {#if FlagComponent}
-                      <svelte:component this={FlagComponent} className="w-6 mr-1" />
-                    {/if}
-                  {/await}
-                  <span class="truncate whitespace-nowrap overflow-hidden">{getTeamName(prediction.groupEPrediction.winner)}</span>
-                {:else}
-                  Select a Team
-                {/if}
-              </button
-            >
-            <div class="text-right">
-              <p class="text-xs mt-4">5 Points</p>
-            </div>
-          </div>
-          <div class="w-1/6">
-            <button
-              on:click={() => selectLoser(4)}
-              class="selection-panel 
-                {prediction?.groupEPrediction?.loser ? 'selected-panel' : 'select-panel '} 
-                "
-              >
-                {#if prediction?.groupEPrediction?.loser}
-                {#await getFlagComponent(prediction?.groupEPrediction.loser) then FlagComponent}
-                    {#if FlagComponent}
-                      <svelte:component this={FlagComponent} className="w-6 mr-1" />
-                    {/if}
-                  {/await}
-                  <span class="truncate whitespace-nowrap overflow-hidden">{getTeamName(prediction.groupEPrediction.loser)}</span>
-                {:else}
-                  Select a Team
-                {/if}
-              </button
-            >
-            <div class="text-right">
-              <p class="text-xs mt-4">5 Points</p>
-            </div>
-          </div>
-          <div class="w-1/6">
-            <button
-              on:click={() => selectScorer(4)}
-              class="selection-panel 
-                {prediction?.groupEPrediction?.goalScorer ? 'selected-panel' : 'select-panel '} 
-                "
-              >
-                {#if prediction?.groupEPrediction?.goalScorer}
-                {@const player = $playerStore.find(x => x.id == prediction?.groupEPrediction.goalScorer)}
-                {@const teamId = player ? player.teamId : 0 }  
-                {#await getFlagComponent(teamId) then FlagComponent}
-                    {#if FlagComponent}
-                      <svelte:component this={FlagComponent} className="w-6 mr-1" />
-                    {/if}
-                  {/await}
-                  <span class="truncate whitespace-nowrap overflow-hidden">{getPlayerName(prediction.groupEPrediction.goalScorer)}</span>
-                {:else}
-                  Select a Player
-                {/if}
-              </button
-            >
-            <div class="text-right">
-              <p class="text-xs mt-4">10 Points</p>
-            </div>
-          </div>
-          <div class="w-1/6">
-            <button
-              on:click={() => selectAssister(4)}
-              class="selection-panel 
-                {prediction?.groupEPrediction?.goalAssister ? 'selected-panel' : 'select-panel '} 
-                "
-              >
-                {#if prediction?.groupEPrediction?.goalAssister}
-                {@const player = $playerStore.find(x => x.id == prediction?.groupEPrediction.goalAssister)}
-                {@const teamId = player ? player.teamId : 0 }  
-                {#await getFlagComponent(teamId) then FlagComponent}
-                    {#if FlagComponent}
-                      <svelte:component this={FlagComponent} className="w-6 mr-1" />
-                    {/if}
-                  {/await}
-                  <span class="truncate whitespace-nowrap overflow-hidden">{getPlayerName(prediction.groupEPrediction.goalAssister)}</span>
-                {:else}
-                  Select a Player
-                {/if}
-              </button
-            >
-            <div class="text-right">
-              <p class="text-xs mt-4">10 Points</p>
-            </div>
-          </div>
-          <div class="w-1/6">
-            <button
-              on:click={() => selectYellowCard(4)}
-              class="selection-panel 
-                {prediction?.groupEPrediction?.yellowCard ? 'selected-panel' : 'select-panel '} 
-                "
-              >
-                {#if prediction?.groupEPrediction?.yellowCard}
-                {@const player = $playerStore.find(x => x.id == prediction?.groupEPrediction.yellowCard)}
-                {@const teamId = player ? player.teamId : 0 }  
-                {#await getFlagComponent(teamId) then FlagComponent}
-                    {#if FlagComponent}
-                      <svelte:component this={FlagComponent} className="w-6 mr-1" />
-                    {/if}
-                  {/await}
-                  <span class="truncate whitespace-nowrap overflow-hidden">{getPlayerName(prediction.groupEPrediction.yellowCard)}</span>
-                {:else}
-                  Select a Player
-                {/if}
-            </button
-            >
-            <div class="text-right">
-              <p class="text-xs mt-4">5 Points</p>
-            </div>
-          </div>
-          <div class="w-1/6">
-            <button
-              on:click={() => selectRedCard(4)}
-              class="selection-panel 
-                {prediction?.groupEPrediction?.redCard ? 'selected-panel' : 'select-panel '} 
-                "
-              >
-                {#if prediction?.groupEPrediction?.redCard}
-                {@const player = $playerStore.find(x => x.id == prediction?.groupEPrediction.redCard)}
-                {@const teamId = player ? player.teamId : 0 }  
-                {#await getFlagComponent(teamId) then FlagComponent}
-                    {#if FlagComponent}
-                      <svelte:component this={FlagComponent} className="w-6 mr-1" />
-                    {/if}
-                  {/await}
-                  <span class="truncate whitespace-nowrap overflow-hidden">{getPlayerName(prediction.groupEPrediction.redCard)}</span>
-                {:else}
-                  Select a Player
-                {/if}
-              </button
-            >
-            <div class="text-right">
-              <p class="text-xs mt-4">10 Points</p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="flex flex-row items-center bg-gray-700 p-2 mt-4 rounded-md text-sm">
-        <div class="w-1/12 text-center">F</div>
-        <div class="w-11/12 flex flex-row space-x-4">
-          <div class="w-1/6">
-            <button
-              on:click={() => selectWinner(5)}
-              class="selection-panel 
-                {prediction?.groupFPrediction?.winner ? 'selected-panel' : 'select-panel '} 
-                "
-              >
-                {#if prediction?.groupFPrediction?.winner}
-                {#await getFlagComponent(prediction?.groupFPrediction.winner) then FlagComponent}
-                    {#if FlagComponent}
-                      <svelte:component this={FlagComponent} className="w-6 mr-1" />
-                    {/if}
-                  {/await}
-                  <span class="truncate whitespace-nowrap overflow-hidden">{getTeamName(prediction.groupFPrediction.winner)}</span>
-                {:else}
-                  Select a Team
-                {/if}
-              </button
-            >
-            <div class="text-right">
-              <p class="text-xs mt-4">5 Points</p>
-            </div>
-          </div>
-          <div class="w-1/6">
-            <button
-              on:click={() => selectLoser(5)}
-              class="selection-panel 
-                {prediction?.groupFPrediction?.loser ? 'selected-panel' : 'select-panel '} 
-                "
-              >
-                {#if prediction?.groupFPrediction?.loser}
-                {#await getFlagComponent(prediction?.groupFPrediction.loser) then FlagComponent}
-                    {#if FlagComponent}
-                      <svelte:component this={FlagComponent} className="w-6 mr-1" />
-                    {/if}
-                  {/await}
-                  <span class="truncate whitespace-nowrap overflow-hidden">{getTeamName(prediction.groupFPrediction.loser)}</span>
-                {:else}
-                  Select a Team
-                {/if}
-              </button
-            >
-            <div class="text-right">
-              <p class="text-xs mt-4">5 Points</p>
-            </div>
-          </div>
-          <div class="w-1/6">
-            <button
-              on:click={() => selectScorer(5)}
-              class="selection-panel 
-                {prediction?.groupFPrediction?.goalScorer ? 'selected-panel' : 'select-panel '} 
-                "
-              >
-                {#if prediction?.groupFPrediction?.goalScorer}
-                {@const player = $playerStore.find(x => x.id == prediction?.groupFPrediction.goalScorer)}
-                {@const teamId = player ? player.teamId : 0 }  
-                {#await getFlagComponent(teamId) then FlagComponent}
-                    {#if FlagComponent}
-                      <svelte:component this={FlagComponent} className="w-6 mr-1" />
-                    {/if}
-                  {/await}
-                  <span class="truncate whitespace-nowrap overflow-hidden">{getPlayerName(prediction.groupFPrediction.goalScorer)}</span>
-                {:else}
-                  Select a Player
-                {/if}
-              </button
-            >
-            <div class="text-right">
-              <p class="text-xs mt-4">10 Points</p>
-            </div>
-          </div>
-          <div class="w-1/6">
-            <button
-              on:click={() => selectAssister(5)}
-              class="selection-panel 
-                {prediction?.groupFPrediction?.goalAssister ? 'selected-panel' : 'select-panel '} 
-                "
-              >
-              {#if prediction?.groupFPrediction?.goalAssister}
-              {@const player = $playerStore.find(x => x.id == prediction?.groupFPrediction.goalAssister)}
-              {@const teamId = player ? player.teamId : 0 }  
-              {#await getFlagComponent(teamId) then FlagComponent}
-                  {#if FlagComponent}
-                    <svelte:component this={FlagComponent} className="w-6 mr-1" />
+            <div class="w-1/6">
+              <button
+                on:click={() => selectYellowCard(1)}
+                class="selection-panel 
+                  {prediction?.groupBPrediction?.yellowCard ? 'selected-panel' : 'select-panel '} 
+                  "
+                >
+                  {#if prediction?.groupBPrediction?.yellowCard}
+                  {@const player = $playerStore.find(x => x.id == prediction?.groupBPrediction.yellowCard)}
+                  {@const teamId = player ? player.teamId : 0 }  
+                  {#await getFlagComponent(teamId) then FlagComponent}
+                      {#if FlagComponent}
+                        <svelte:component this={FlagComponent} className="w-6 mr-1" />
+                      {/if}
+                    {/await}
+                  <span class="truncate whitespace-nowrap overflow-hidden">{getPlayerName(prediction.groupBPrediction.yellowCard)}</span>
+                  {:else}
+                    Select a Player
                   {/if}
-                {/await}
-                <span class="truncate whitespace-nowrap overflow-hidden">{getPlayerName(prediction.groupFPrediction.goalAssister)}</span>
-              {:else}
-                Select a Player
-              {/if}
-            </button
-            >
-            <div class="text-right">
-              <p class="text-xs mt-4">10 Points</p>
-            </div>
-          </div>
-          <div class="w-1/6">
-            <button
-              on:click={() => selectYellowCard(5)}
-              class="selection-panel 
-                {prediction?.groupFPrediction?.yellowCard ? 'selected-panel' : 'select-panel '} 
-                "
+                </button
               >
-              {#if prediction?.groupFPrediction?.yellowCard}
-              {@const player = $playerStore.find(x => x.id == prediction?.groupFPrediction.yellowCard)}
-              {@const teamId = player ? player.teamId : 0 }  
-              {#await getFlagComponent(teamId) then FlagComponent}
-                  {#if FlagComponent}
-                    <svelte:component this={FlagComponent} className="w-6 mr-1" />
+              <div class="text-right">
+                <p class="text-xs mt-4">5 Points</p>
+              </div>
+            </div>
+            <div class="w-1/6">
+              <button
+                on:click={() => selectRedCard(1)}
+                class="selection-panel 
+                  {prediction?.groupBPrediction?.redCard ? 'selected-panel' : 'select-panel '} 
+                  "
+                >
+                  {#if prediction?.groupBPrediction?.redCard}
+                  {@const player = $playerStore.find(x => x.id == prediction?.groupBPrediction.redCard)}
+                  {@const teamId = player ? player.teamId : 0 }  
+                  {#await getFlagComponent(teamId) then FlagComponent}
+                      {#if FlagComponent}
+                        <svelte:component this={FlagComponent} className="w-6 mr-1" />
+                      {/if}
+                    {/await}
+                  <span class="truncate whitespace-nowrap overflow-hidden">{getPlayerName(prediction.groupBPrediction.redCard)}</span>
+                  {:else}
+                    Select a Player
                   {/if}
-                {/await}
-                <span class="truncate whitespace-nowrap overflow-hidden">{getPlayerName(prediction.groupFPrediction.yellowCard)}</span>
-              {:else}
-                Select a Player
-              {/if}
-            </button
-            >
-            <div class="text-right">
-              <p class="text-xs mt-4">5 Points</p>
+                </button
+              >
+              <div class="text-right">
+                <p class="text-xs mt-4">10 Points</p>
+              </div>
             </div>
           </div>
-          <div class="w-1/6">
-            <button
-              on:click={() => selectRedCard(5)}
-              class="selection-panel 
-                {prediction?.groupFPrediction?.redCard ? 'selected-panel' : 'select-panel '} 
-                "
-              >
-              {#if prediction?.groupFPrediction?.redCard}
-              {@const player = $playerStore.find(x => x.id == prediction?.groupFPrediction.redCard)}
-              {@const teamId = player ? player.teamId : 0 }  
-              {#await getFlagComponent(teamId) then FlagComponent}
-                  {#if FlagComponent}
-                    <svelte:component this={FlagComponent} className="w-6 mr-1" />
+        </div>
+  
+        <div class="flex flex-row items-center bg-gray-700 p-2 mt-4 rounded-md text-sm">
+          <div class="w-1/12 text-center">C</div>
+          <div class="w-11/12 flex flex-row space-x-4">
+            <div class="w-1/6">
+              <button
+                on:click={() => selectWinner(2)}
+                class="selection-panel 
+                  {prediction?.groupCPrediction?.winner ? 'selected-panel' : 'select-panel '} 
+                  "
+                >
+                  {#if prediction?.groupCPrediction?.winner} 
+                  {#await getFlagComponent(prediction?.groupCPrediction.winner) then FlagComponent}
+                      {#if FlagComponent}
+                        <svelte:component this={FlagComponent} className="w-6 mr-1" />
+                      {/if}
+                    {/await}
+                  <span class="truncate whitespace-nowrap overflow-hidden">{getTeamName(prediction.groupCPrediction.winner)}</span>
+                  {:else}
+                    Select a Team
                   {/if}
-                {/await}
-                <span class="truncate whitespace-nowrap overflow-hidden">{getPlayerName(prediction.groupFPrediction.redCard)}</span>
-              {:else}
-                Select a Player
-              {/if}
-            </button
-            >
-            <div class="text-right">
-              <p class="text-xs mt-4">10 Points</p>
+                </button
+              >
+              <div class="text-right">
+                <p class="text-xs mt-4">5 Points</p>
+              </div>
+            </div>
+            <div class="w-1/6">
+              <button
+                on:click={() => selectLoser(2)}
+                class="selection-panel 
+                  {prediction?.groupCPrediction?.loser ? 'selected-panel' : 'select-panel '} 
+                  "
+                > 
+                  {#if prediction?.groupCPrediction?.loser}
+                  {#await getFlagComponent(prediction?.groupCPrediction.loser) then FlagComponent}
+                      {#if FlagComponent}
+                        <svelte:component this={FlagComponent} className="w-6 mr-1" />
+                      {/if}
+                    {/await}
+                  <span class="truncate whitespace-nowrap overflow-hidden">{getTeamName(prediction.groupCPrediction.loser)}</span>
+                  {:else}
+                    Select a Team
+                  {/if}
+                </button
+              >
+              <div class="text-right">
+                <p class="text-xs mt-4">5 Points</p>
+              </div>
+            </div>
+            <div class="w-1/6">
+              <button
+                on:click={() => selectScorer(2)}
+                class="selection-panel 
+                  {prediction?.groupCPrediction?.goalScorer ? 'selected-panel' : 'select-panel '} 
+                  "
+                > 
+                  {#if prediction?.groupCPrediction?.goalScorer}
+                  {@const player = $playerStore.find(x => x.id == prediction?.groupCPrediction.goalScorer)}
+                  {@const teamId = player ? player.teamId : 0 }  
+                  {#await getFlagComponent(teamId) then FlagComponent}
+                      {#if FlagComponent}
+                        <svelte:component this={FlagComponent} className="w-6 mr-1" />
+                      {/if}
+                    {/await}
+                  <span class="truncate whitespace-nowrap overflow-hidden">{getPlayerName(prediction.groupCPrediction.goalScorer)}</span>
+                  {:else}
+                    Select a Player
+                  {/if}
+                </button
+              >
+              <div class="text-right">
+                <p class="text-xs mt-4">10 Points</p>
+              </div>
+            </div>
+            <div class="w-1/6">
+              <button
+                on:click={() => selectAssister(2)}
+                class="selection-panel 
+                  {prediction?.groupCPrediction?.goalAssister ? 'selected-panel' : 'select-panel '} 
+                  "
+                >
+                  {#if prediction?.groupCPrediction?.goalAssister}
+                  {@const player = $playerStore.find(x => x.id == prediction?.groupCPrediction.goalAssister)}
+                  {@const teamId = player ? player.teamId : 0 }  
+                  {#await getFlagComponent(teamId) then FlagComponent}
+                      {#if FlagComponent}
+                        <svelte:component this={FlagComponent} className="w-6 mr-1" />
+                      {/if}
+                    {/await}
+                  <span class="truncate whitespace-nowrap overflow-hidden">{getPlayerName(prediction.groupCPrediction.goalAssister)}</span>
+                  {:else}
+                    Select a Player
+                  {/if}
+                </button
+              >
+              <div class="text-right">
+                <p class="text-xs mt-4">10 Points</p>
+              </div>
+            </div>
+            <div class="w-1/6">
+              <button
+                on:click={() => selectYellowCard(2)}
+                class="selection-panel 
+                  {prediction?.groupCPrediction?.yellowCard ? 'selected-panel' : 'select-panel '} 
+                  "
+                >
+                  {#if prediction?.groupCPrediction?.yellowCard}
+                  {@const player = $playerStore.find(x => x.id == prediction?.groupCPrediction.yellowCard)}
+                  {@const teamId = player ? player.teamId : 0 }  
+                  {#await getFlagComponent(teamId) then FlagComponent}
+                      {#if FlagComponent}
+                        <svelte:component this={FlagComponent} className="w-6 mr-1" />
+                      {/if}
+                    {/await}
+                  <span class="truncate whitespace-nowrap overflow-hidden">{getPlayerName(prediction.groupCPrediction.yellowCard)}</span>
+                  {:else}
+                    Select a Player
+                  {/if}
+                </button
+              >
+              <div class="text-right">
+                <p class="text-xs mt-4">5 Points</p>
+              </div>
+            </div>
+            <div class="w-1/6">
+              <button
+                on:click={() => selectRedCard(2)}
+                class="selection-panel 
+                  {prediction?.groupCPrediction?.redCard ? 'selected-panel' : 'select-panel '} 
+                  "
+                >
+                  {#if prediction?.groupCPrediction?.redCard}
+                  {@const player = $playerStore.find(x => x.id == prediction?.groupCPrediction.redCard)}
+                  {@const teamId = player ? player.teamId : 0 }  
+                  {#await getFlagComponent(teamId) then FlagComponent}
+                      {#if FlagComponent}
+                        <svelte:component this={FlagComponent} className="w-6 mr-1" />
+                      {/if}
+                    {/await}
+                    <span class="truncate whitespace-nowrap overflow-hidden">{getPlayerName(prediction.groupCPrediction.redCard)}</span>
+                  {:else}
+                    Select a Player
+                  {/if}
+                </button
+              >
+              <div class="text-right">
+                <p class="text-xs mt-4">10 Points</p>
+              </div>
             </div>
           </div>
         </div>
-      </div>
-
-      <div class="flex flex-row my-4 space-x-2 text-sm">
-        <div class="w-full">
-          <p class="flex-1 block w-full bg-gray-800 py-4 px-2 text-center rounded-md">
-            Receive double points for each group stage category you make 3 or more
-            correct selections.
-          </p>
-        </div>
-      </div>
-
-      <div class="horizontal-divider my-4" />
-
-      <div class="flex flex-row items-center bg-OPENFPL text-GRAY border border-white rounded-md p-2 my-4 text-sm">
-        <div class="w-1/12 flex">
-          <p class="w-full text-center">Stage</p>
-        </div>
-        <div class="w-11/12 flex flex-row space-x-2">
-          <div class="w-1/6 flex">
-            <p class="w-full text-center">Winner</p>
-          </div>
-          <div class="w-1/6 flex">
-            <p class="w-full text-center">Loser</p>
-          </div>
-          <div class="w-1/6 flex">
-            <p class="w-full text-center">To Score</p>
-          </div>
-          <div class="w-1/6 flex">
-            <p class="w-full text-center">To Assist</p>
-          </div>
-          <div class="w-1/6 flex">
-            <p class="w-full text-center">Yellow Card</p>
-          </div>
-          <div class="w-1/6 flex">
-            <p class="w-full text-center">Red Card</p>
-          </div>
-        </div>
-      </div>
-
-      <div class="flex flex-row items-center bg-gray-600 p-2 mt-4 rounded-md text-sm">
-        <div class="w-1/12 text-center">R16</div>
-        <div class="w-11/12 flex flex-row space-x-4">
-          <div class="w-1/6">
-            <button
-              on:click={() => selectWinner(6)}
-              class="selection-panel 
-                {prediction?.r16Prediction?.winner ? 'selected-panel' : 'select-panel '} 
-                "
+  
+        <div class="flex flex-row items-center bg-gray-700 p-2 mt-4 rounded-md text-sm">
+          <div class="w-1/12 text-center">D</div>
+          <div class="w-11/12 flex flex-row space-x-4">
+            <div class="w-1/6">
+              <button
+                on:click={() => selectWinner(3)}
+                class="selection-panel 
+                  {prediction?.groupDPrediction?.winner ? 'selected-panel' : 'select-panel '} 
+                  "
+                >
+                  {#if prediction?.groupDPrediction?.winner}
+                  {#await getFlagComponent(prediction?.groupDPrediction.winner) then FlagComponent}
+                      {#if FlagComponent}
+                        <svelte:component this={FlagComponent} className="w-6 mr-1" />
+                      {/if}
+                    {/await}
+                    <span class="truncate whitespace-nowrap overflow-hidden">{getTeamName(prediction.groupDPrediction.winner)}</span>
+                  {:else}
+                    Select a Team
+                  {/if}
+                </button
               >
-                {#if prediction?.r16Prediction?.winner} 
-                {#await getFlagComponent(prediction?.r16Prediction.winner) then FlagComponent}
+              <div class="text-right">
+                <p class="text-xs mt-4">5 Points</p>
+              </div>
+            </div>
+            <div class="w-1/6">
+              <button
+                on:click={() => selectLoser(3)}
+                class="selection-panel 
+                  {prediction?.groupDPrediction?.loser ? 'selected-panel' : 'select-panel '} 
+                  "
+                >
+                  {#if prediction?.groupDPrediction?.loser}
+                  {#await getFlagComponent(prediction?.groupDPrediction.loser) then FlagComponent}
+                      {#if FlagComponent}
+                        <svelte:component this={FlagComponent} className="w-6 mr-1" />
+                      {/if}
+                    {/await}
+                    <span class="truncate whitespace-nowrap overflow-hidden">{getTeamName(prediction.groupDPrediction.loser)}</span>
+                  {:else}
+                    Select a Team
+                  {/if}
+                </button
+              >
+              <div class="text-right">
+                <p class="text-xs mt-4">5 Points</p>
+              </div>
+            </div>
+            <div class="w-1/6">
+              <button
+                on:click={() => selectScorer(3)}
+                class="selection-panel 
+                  {prediction?.groupDPrediction?.goalScorer ? 'selected-panel' : 'select-panel '} 
+                  "
+                >
+                  {#if prediction?.groupDPrediction?.goalScorer}
+                  {@const player = $playerStore.find(x => x.id == prediction?.groupDPrediction.goalScorer)}
+                  {@const teamId = player ? player.teamId : 0 }  
+                  {#await getFlagComponent(teamId) then FlagComponent}
+                      {#if FlagComponent}
+                        <svelte:component this={FlagComponent} className="w-6 mr-1" />
+                      {/if}
+                    {/await}
+                    <span class="truncate whitespace-nowrap overflow-hidden">{getPlayerName(prediction.groupDPrediction.goalScorer)}</span>
+                  {:else}
+                    Select a Player
+                  {/if}
+                </button
+              >
+              <div class="text-right">
+                <p class="text-xs mt-4">10 Points</p>
+              </div>
+            </div>
+            <div class="w-1/6">
+              <button
+                on:click={() => selectAssister(3)}
+                class="selection-panel 
+                  {prediction?.groupDPrediction?.goalAssister ? 'selected-panel' : 'select-panel '} 
+                  "
+                >
+                  {#if prediction?.groupDPrediction?.goalAssister}
+                  {@const player = $playerStore.find(x => x.id == prediction?.groupDPrediction.goalAssister)}
+                  {@const teamId = player ? player.teamId : 0 }  
+                  {#await getFlagComponent(teamId) then FlagComponent}
+                      {#if FlagComponent}
+                        <svelte:component this={FlagComponent} className="w-6 mr-1" />
+                      {/if}
+                    {/await}
+                    <span class="truncate whitespace-nowrap overflow-hidden">{getPlayerName(prediction.groupDPrediction.goalAssister)}</span>
+                  {:else}
+                    Select a Player
+                  {/if}
+                </button
+              >
+              <div class="text-right">
+                <p class="text-xs mt-4">10 Points</p>
+              </div>
+            </div>
+            <div class="w-1/6">
+              <button
+                on:click={() => selectYellowCard(3)}
+                class="selection-panel 
+                  {prediction?.groupDPrediction?.yellowCard ? 'selected-panel' : 'select-panel '} 
+                  "
+                >
+                  {#if prediction?.groupDPrediction?.yellowCard}
+                  {@const player = $playerStore.find(x => x.id == prediction?.groupDPrediction.yellowCard)}
+                  {@const teamId = player ? player.teamId : 0 }  
+                  {#await getFlagComponent(teamId) then FlagComponent}
+                      {#if FlagComponent}
+                        <svelte:component this={FlagComponent} className="w-6 mr-1" />
+                      {/if}
+                    {/await}
+                    <span class="truncate whitespace-nowrap overflow-hidden">{getPlayerName(prediction.groupDPrediction.yellowCard)}</span>
+                  {:else}
+                    Select a Player
+                  {/if}
+                </button
+              >
+              <div class="text-right">
+                <p class="text-xs mt-4">5 Points</p>
+              </div>
+            </div>
+            <div class="w-1/6">
+              <button
+                on:click={() => selectRedCard(3)}
+                class="selection-panel 
+                  {prediction?.groupDPrediction?.redCard ? 'selected-panel' : 'select-panel '} 
+                  "
+                >
+                  {#if prediction?.groupDPrediction?.redCard}
+                  {@const player = $playerStore.find(x => x.id == prediction?.groupDPrediction.redCard)}
+                  {@const teamId = player ? player.teamId : 0 }  
+                  {#await getFlagComponent(teamId) then FlagComponent}
+                      {#if FlagComponent}
+                        <svelte:component this={FlagComponent} className="w-6 mr-1" />
+                      {/if}
+                    {/await}
+                    <span class="truncate whitespace-nowrap overflow-hidden">{getPlayerName(prediction.groupDPrediction.redCard)}</span>
+                  {:else}
+                    Select a Player
+                  {/if}
+                </button
+              >
+              <div class="text-right">
+                <p class="text-xs mt-4">10 Points</p>
+              </div>
+            </div>
+          </div>
+        </div>
+  
+        <div class="flex flex-row items-center bg-gray-700 p-2 mt-4 rounded-md text-sm">
+          <div class="w-1/12 text-center">E</div>
+          <div class="w-11/12 flex flex-row space-x-4">
+            <div class="w-1/6">
+              <button
+                on:click={() => selectWinner(4)}
+                class="selection-panel 
+                  {prediction?.groupEPrediction?.winner ? 'selected-panel' : 'select-panel '} 
+                  "
+                >
+                  {#if prediction?.groupEPrediction?.winner}
+                  {#await getFlagComponent(prediction?.groupEPrediction.winner) then FlagComponent}
+                      {#if FlagComponent}
+                        <svelte:component this={FlagComponent} className="w-6 mr-1" />
+                      {/if}
+                    {/await}
+                    <span class="truncate whitespace-nowrap overflow-hidden">{getTeamName(prediction.groupEPrediction.winner)}</span>
+                  {:else}
+                    Select a Team
+                  {/if}
+                </button
+              >
+              <div class="text-right">
+                <p class="text-xs mt-4">5 Points</p>
+              </div>
+            </div>
+            <div class="w-1/6">
+              <button
+                on:click={() => selectLoser(4)}
+                class="selection-panel 
+                  {prediction?.groupEPrediction?.loser ? 'selected-panel' : 'select-panel '} 
+                  "
+                >
+                  {#if prediction?.groupEPrediction?.loser}
+                  {#await getFlagComponent(prediction?.groupEPrediction.loser) then FlagComponent}
+                      {#if FlagComponent}
+                        <svelte:component this={FlagComponent} className="w-6 mr-1" />
+                      {/if}
+                    {/await}
+                    <span class="truncate whitespace-nowrap overflow-hidden">{getTeamName(prediction.groupEPrediction.loser)}</span>
+                  {:else}
+                    Select a Team
+                  {/if}
+                </button
+              >
+              <div class="text-right">
+                <p class="text-xs mt-4">5 Points</p>
+              </div>
+            </div>
+            <div class="w-1/6">
+              <button
+                on:click={() => selectScorer(4)}
+                class="selection-panel 
+                  {prediction?.groupEPrediction?.goalScorer ? 'selected-panel' : 'select-panel '} 
+                  "
+                >
+                  {#if prediction?.groupEPrediction?.goalScorer}
+                  {@const player = $playerStore.find(x => x.id == prediction?.groupEPrediction.goalScorer)}
+                  {@const teamId = player ? player.teamId : 0 }  
+                  {#await getFlagComponent(teamId) then FlagComponent}
+                      {#if FlagComponent}
+                        <svelte:component this={FlagComponent} className="w-6 mr-1" />
+                      {/if}
+                    {/await}
+                    <span class="truncate whitespace-nowrap overflow-hidden">{getPlayerName(prediction.groupEPrediction.goalScorer)}</span>
+                  {:else}
+                    Select a Player
+                  {/if}
+                </button
+              >
+              <div class="text-right">
+                <p class="text-xs mt-4">10 Points</p>
+              </div>
+            </div>
+            <div class="w-1/6">
+              <button
+                on:click={() => selectAssister(4)}
+                class="selection-panel 
+                  {prediction?.groupEPrediction?.goalAssister ? 'selected-panel' : 'select-panel '} 
+                  "
+                >
+                  {#if prediction?.groupEPrediction?.goalAssister}
+                  {@const player = $playerStore.find(x => x.id == prediction?.groupEPrediction.goalAssister)}
+                  {@const teamId = player ? player.teamId : 0 }  
+                  {#await getFlagComponent(teamId) then FlagComponent}
+                      {#if FlagComponent}
+                        <svelte:component this={FlagComponent} className="w-6 mr-1" />
+                      {/if}
+                    {/await}
+                    <span class="truncate whitespace-nowrap overflow-hidden">{getPlayerName(prediction.groupEPrediction.goalAssister)}</span>
+                  {:else}
+                    Select a Player
+                  {/if}
+                </button
+              >
+              <div class="text-right">
+                <p class="text-xs mt-4">10 Points</p>
+              </div>
+            </div>
+            <div class="w-1/6">
+              <button
+                on:click={() => selectYellowCard(4)}
+                class="selection-panel 
+                  {prediction?.groupEPrediction?.yellowCard ? 'selected-panel' : 'select-panel '} 
+                  "
+                >
+                  {#if prediction?.groupEPrediction?.yellowCard}
+                  {@const player = $playerStore.find(x => x.id == prediction?.groupEPrediction.yellowCard)}
+                  {@const teamId = player ? player.teamId : 0 }  
+                  {#await getFlagComponent(teamId) then FlagComponent}
+                      {#if FlagComponent}
+                        <svelte:component this={FlagComponent} className="w-6 mr-1" />
+                      {/if}
+                    {/await}
+                    <span class="truncate whitespace-nowrap overflow-hidden">{getPlayerName(prediction.groupEPrediction.yellowCard)}</span>
+                  {:else}
+                    Select a Player
+                  {/if}
+              </button
+              >
+              <div class="text-right">
+                <p class="text-xs mt-4">5 Points</p>
+              </div>
+            </div>
+            <div class="w-1/6">
+              <button
+                on:click={() => selectRedCard(4)}
+                class="selection-panel 
+                  {prediction?.groupEPrediction?.redCard ? 'selected-panel' : 'select-panel '} 
+                  "
+                >
+                  {#if prediction?.groupEPrediction?.redCard}
+                  {@const player = $playerStore.find(x => x.id == prediction?.groupEPrediction.redCard)}
+                  {@const teamId = player ? player.teamId : 0 }  
+                  {#await getFlagComponent(teamId) then FlagComponent}
+                      {#if FlagComponent}
+                        <svelte:component this={FlagComponent} className="w-6 mr-1" />
+                      {/if}
+                    {/await}
+                    <span class="truncate whitespace-nowrap overflow-hidden">{getPlayerName(prediction.groupEPrediction.redCard)}</span>
+                  {:else}
+                    Select a Player
+                  {/if}
+                </button
+              >
+              <div class="text-right">
+                <p class="text-xs mt-4">10 Points</p>
+              </div>
+            </div>
+          </div>
+        </div>
+  
+        <div class="flex flex-row items-center bg-gray-700 p-2 mt-4 rounded-md text-sm">
+          <div class="w-1/12 text-center">F</div>
+          <div class="w-11/12 flex flex-row space-x-4">
+            <div class="w-1/6">
+              <button
+                on:click={() => selectWinner(5)}
+                class="selection-panel 
+                  {prediction?.groupFPrediction?.winner ? 'selected-panel' : 'select-panel '} 
+                  "
+                >
+                  {#if prediction?.groupFPrediction?.winner}
+                  {#await getFlagComponent(prediction?.groupFPrediction.winner) then FlagComponent}
+                      {#if FlagComponent}
+                        <svelte:component this={FlagComponent} className="w-6 mr-1" />
+                      {/if}
+                    {/await}
+                    <span class="truncate whitespace-nowrap overflow-hidden">{getTeamName(prediction.groupFPrediction.winner)}</span>
+                  {:else}
+                    Select a Team
+                  {/if}
+                </button
+              >
+              <div class="text-right">
+                <p class="text-xs mt-4">5 Points</p>
+              </div>
+            </div>
+            <div class="w-1/6">
+              <button
+                on:click={() => selectLoser(5)}
+                class="selection-panel 
+                  {prediction?.groupFPrediction?.loser ? 'selected-panel' : 'select-panel '} 
+                  "
+                >
+                  {#if prediction?.groupFPrediction?.loser}
+                  {#await getFlagComponent(prediction?.groupFPrediction.loser) then FlagComponent}
+                      {#if FlagComponent}
+                        <svelte:component this={FlagComponent} className="w-6 mr-1" />
+                      {/if}
+                    {/await}
+                    <span class="truncate whitespace-nowrap overflow-hidden">{getTeamName(prediction.groupFPrediction.loser)}</span>
+                  {:else}
+                    Select a Team
+                  {/if}
+                </button
+              >
+              <div class="text-right">
+                <p class="text-xs mt-4">5 Points</p>
+              </div>
+            </div>
+            <div class="w-1/6">
+              <button
+                on:click={() => selectScorer(5)}
+                class="selection-panel 
+                  {prediction?.groupFPrediction?.goalScorer ? 'selected-panel' : 'select-panel '} 
+                  "
+                >
+                  {#if prediction?.groupFPrediction?.goalScorer}
+                  {@const player = $playerStore.find(x => x.id == prediction?.groupFPrediction.goalScorer)}
+                  {@const teamId = player ? player.teamId : 0 }  
+                  {#await getFlagComponent(teamId) then FlagComponent}
+                      {#if FlagComponent}
+                        <svelte:component this={FlagComponent} className="w-6 mr-1" />
+                      {/if}
+                    {/await}
+                    <span class="truncate whitespace-nowrap overflow-hidden">{getPlayerName(prediction.groupFPrediction.goalScorer)}</span>
+                  {:else}
+                    Select a Player
+                  {/if}
+                </button
+              >
+              <div class="text-right">
+                <p class="text-xs mt-4">10 Points</p>
+              </div>
+            </div>
+            <div class="w-1/6">
+              <button
+                on:click={() => selectAssister(5)}
+                class="selection-panel 
+                  {prediction?.groupFPrediction?.goalAssister ? 'selected-panel' : 'select-panel '} 
+                  "
+                >
+                {#if prediction?.groupFPrediction?.goalAssister}
+                {@const player = $playerStore.find(x => x.id == prediction?.groupFPrediction.goalAssister)}
+                {@const teamId = player ? player.teamId : 0 }  
+                {#await getFlagComponent(teamId) then FlagComponent}
                     {#if FlagComponent}
                       <svelte:component this={FlagComponent} className="w-6 mr-1" />
                     {/if}
                   {/await}
-                  <span class="truncate whitespace-nowrap overflow-hidden">{getTeamName(prediction.r16Prediction.winner)}</span>
+                  <span class="truncate whitespace-nowrap overflow-hidden">{getPlayerName(prediction.groupFPrediction.goalAssister)}</span>
                 {:else}
-                  Select a Team
+                  Select a Player
                 {/if}
               </button
-            >
-            <div class="text-right">
-              <p class="text-xs mt-4">10 Points</p>
-            </div>
-          </div>
-          <div class="w-1/6">
-            <button
-              on:click={() => selectLoser(6)}
-              class="selection-panel 
-                {prediction?.r16Prediction?.loser ? 'selected-panel' : 'select-panel '} 
-                "
               >
-              {#if prediction?.r16Prediction?.loser}
-              {#await getFlagComponent(prediction?.r16Prediction.loser) then FlagComponent}
-                  {#if FlagComponent}
-                    <svelte:component this={FlagComponent} className="w-6 mr-1" />
-                  {/if}
-                {/await}
-                <span class="truncate whitespace-nowrap overflow-hidden">{getTeamName(prediction.r16Prediction.loser)}</span>
-              {:else}
-                Select a Team
-              {/if}
-            </button
-            >
-            <div class="text-right">
-              <p class="text-xs mt-4">10 Points</p>
+              <div class="text-right">
+                <p class="text-xs mt-4">10 Points</p>
+              </div>
             </div>
-          </div>
-          <div class="w-1/6">
-            <button
-              on:click={() => selectScorer(6)}
-              class="selection-panel 
-                {prediction?.r16Prediction?.goalScorer ? 'selected-panel' : 'select-panel '} 
-                "
+            <div class="w-1/6">
+              <button
+                on:click={() => selectYellowCard(5)}
+                class="selection-panel 
+                  {prediction?.groupFPrediction?.yellowCard ? 'selected-panel' : 'select-panel '} 
+                  "
+                >
+                {#if prediction?.groupFPrediction?.yellowCard}
+                {@const player = $playerStore.find(x => x.id == prediction?.groupFPrediction.yellowCard)}
+                {@const teamId = player ? player.teamId : 0 }  
+                {#await getFlagComponent(teamId) then FlagComponent}
+                    {#if FlagComponent}
+                      <svelte:component this={FlagComponent} className="w-6 mr-1" />
+                    {/if}
+                  {/await}
+                  <span class="truncate whitespace-nowrap overflow-hidden">{getPlayerName(prediction.groupFPrediction.yellowCard)}</span>
+                {:else}
+                  Select a Player
+                {/if}
+              </button
               >
-              {#if prediction?.r16Prediction?.goalScorer}
-              {@const player = $playerStore.find(x => x.id == prediction?.r16Prediction.goalScorer)}
-              {@const teamId = player ? player.teamId : 0 }  
-              {#await getFlagComponent(teamId) then FlagComponent}
-                  {#if FlagComponent}
-                    <svelte:component this={FlagComponent} className="w-6 mr-1" />
-                  {/if}
-                {/await}
-                <span class="truncate whitespace-nowrap overflow-hidden">{getPlayerName(prediction.r16Prediction.goalScorer)}</span>
-              {:else}
-                Select a Player
-              {/if}
-            </button
-            >
-            <div class="text-right">
-              <p class="text-xs mt-4">20 Points</p>
+              <div class="text-right">
+                <p class="text-xs mt-4">5 Points</p>
+              </div>
             </div>
-          </div>
-          <div class="w-1/6">
-            <button
-              on:click={() => selectAssister(6)}
-              class="selection-panel 
-                {prediction?.r16Prediction?.goalAssister ? 'selected-panel' : 'select-panel '} 
-                "
+            <div class="w-1/6">
+              <button
+                on:click={() => selectRedCard(5)}
+                class="selection-panel 
+                  {prediction?.groupFPrediction?.redCard ? 'selected-panel' : 'select-panel '} 
+                  "
+                >
+                {#if prediction?.groupFPrediction?.redCard}
+                {@const player = $playerStore.find(x => x.id == prediction?.groupFPrediction.redCard)}
+                {@const teamId = player ? player.teamId : 0 }  
+                {#await getFlagComponent(teamId) then FlagComponent}
+                    {#if FlagComponent}
+                      <svelte:component this={FlagComponent} className="w-6 mr-1" />
+                    {/if}
+                  {/await}
+                  <span class="truncate whitespace-nowrap overflow-hidden">{getPlayerName(prediction.groupFPrediction.redCard)}</span>
+                {:else}
+                  Select a Player
+                {/if}
+              </button
               >
-              {#if prediction?.r16Prediction?.goalAssister}
-              {@const player = $playerStore.find(x => x.id == prediction?.r16Prediction.goalAssister)}
-              {@const teamId = player ? player.teamId : 0 }  
-              {#await getFlagComponent(teamId) then FlagComponent}
-                  {#if FlagComponent}
-                    <svelte:component this={FlagComponent} className="w-6 mr-1" />
-                  {/if}
-                {/await}
-                <span class="truncate whitespace-nowrap overflow-hidden">{getPlayerName(prediction.r16Prediction.goalAssister)}</span>
-              {:else}
-                Select a Player
-              {/if}
-            </button
-            >
-            <div class="text-right">
-              <p class="text-xs mt-4">20 Points</p>
-            </div>
-          </div>
-          <div class="w-1/6">
-            <button
-              on:click={() => selectYellowCard(6)}
-              class="selection-panel 
-                {prediction?.r16Prediction?.yellowCard ? 'selected-panel' : 'select-panel '} 
-                "
-              >
-              {#if prediction?.r16Prediction?.yellowCard}
-              {@const player = $playerStore.find(x => x.id == prediction?.r16Prediction.yellowCard)}
-              {@const teamId = player ? player.teamId : 0 }  
-              {#await getFlagComponent(teamId) then FlagComponent}
-                  {#if FlagComponent}
-                    <svelte:component this={FlagComponent} className="w-6 mr-1" />
-                  {/if}
-                {/await}
-                <span class="truncate whitespace-nowrap overflow-hidden">{getPlayerName(prediction.r16Prediction.yellowCard)}</span>
-              {:else}
-                Select a Player
-              {/if}
-            </button
-            >
-            <div class="text-right">
-              <p class="text-xs mt-4">10 Points</p>
-            </div>
-          </div>
-          <div class="w-1/6">
-            <button
-              on:click={() => selectRedCard(6)}
-              class="selection-panel 
-                {prediction?.r16Prediction?.redCard ? 'selected-panel' : 'select-panel '} 
-                "
-              >
-              {#if prediction?.r16Prediction?.redCard}
-              {@const player = $playerStore.find(x => x.id == prediction?.r16Prediction.redCard)}
-              {@const teamId = player ? player.teamId : 0 }  
-              {#await getFlagComponent(teamId) then FlagComponent}
-                  {#if FlagComponent}
-                    <svelte:component this={FlagComponent} className="w-6 mr-1" />
-                  {/if}
-                {/await}
-                <span class="truncate whitespace-nowrap overflow-hidden">{getPlayerName(prediction.r16Prediction.redCard)}</span>
-              {:else}
-                Select a Player
-              {/if}
-            </button
-            >
-            <div class="text-right">
-              <p class="text-xs mt-4">20 Points</p>
+              <div class="text-right">
+                <p class="text-xs mt-4">10 Points</p>
+              </div>
             </div>
           </div>
         </div>
-      </div>
-
-      <div class="flex flex-row my-4 space-x-2 text-sm">
-        <div class="w-1/12" />
-        <div class="w-11/12 flex flex-row space-x-4">
-          <div class="w-1/3">
-            <p
-              class="flex-1 block w-full rounded-none rounded-r-md bg-gray-800 p-2 text-center"
-            >
-              Both Correct Bonus: 40 Points
-            </p>
-          </div>
-          <div class="w-1/3">
-            <p
-              class="flex-1 block w-full rounded-none rounded-r-md bg-gray-800 p-2 text-center"
-            >
-              Both Correct Bonus: 80 Points
-            </p>
-          </div>
-          <div class="w-1/3">
-            <p
-              class="flex-1 block w-full rounded-none rounded-r-md bg-gray-800 p-2 text-center"
-            >
-              Both Correct Bonus: 60 Points
+  
+        <div class="flex flex-row my-4 space-x-2 text-sm">
+          <div class="w-full">
+            <p class="flex-1 block w-full bg-gray-800 py-4 px-2 text-center rounded-md">
+              Receive double points for each group stage category you make 3 or more
+              correct selections.
             </p>
           </div>
         </div>
-      </div>
-
-      <div class="flex flex-row items-center bg-blue-700 p-2 mt-4 rounded-md text-sm">
-        <div class="w-1/12 text-center">QF</div>
-        <div class="w-11/12 flex flex-row space-x-4">
-          <div class="w-1/6">
-            <button
-              on:click={() => selectWinner(7)}
-              class="selection-panel 
-                {prediction?.qfPrediction?.winner ? 'selected-panel' : 'select-panel '} 
-                "
+  
+        <div class="horizontal-divider my-4" />
+  
+        <div class="flex flex-row items-center bg-OPENFPL text-GRAY border border-white rounded-md p-2 my-4 text-sm">
+          <div class="w-1/12 flex">
+            <p class="w-full text-center">Stage</p>
+          </div>
+          <div class="w-11/12 flex flex-row space-x-2">
+            <div class="w-1/6 flex">
+              <p class="w-full text-center">Winner</p>
+            </div>
+            <div class="w-1/6 flex">
+              <p class="w-full text-center">Loser</p>
+            </div>
+            <div class="w-1/6 flex">
+              <p class="w-full text-center">To Score</p>
+            </div>
+            <div class="w-1/6 flex">
+              <p class="w-full text-center">To Assist</p>
+            </div>
+            <div class="w-1/6 flex">
+              <p class="w-full text-center">Yellow Card</p>
+            </div>
+            <div class="w-1/6 flex">
+              <p class="w-full text-center">Red Card</p>
+            </div>
+          </div>
+        </div>
+  
+        <div class="flex flex-row items-center bg-gray-600 p-2 mt-4 rounded-md text-sm">
+          <div class="w-1/12 text-center">R16</div>
+          <div class="w-11/12 flex flex-row space-x-4">
+            <div class="w-1/6">
+              <button
+                on:click={() => selectWinner(6)}
+                class="selection-panel 
+                  {prediction?.r16Prediction?.winner ? 'selected-panel' : 'select-panel '} 
+                  "
+                >
+                  {#if prediction?.r16Prediction?.winner} 
+                  {#await getFlagComponent(prediction?.r16Prediction.winner) then FlagComponent}
+                      {#if FlagComponent}
+                        <svelte:component this={FlagComponent} className="w-6 mr-1" />
+                      {/if}
+                    {/await}
+                    <span class="truncate whitespace-nowrap overflow-hidden">{getTeamName(prediction.r16Prediction.winner)}</span>
+                  {:else}
+                    Select a Team
+                  {/if}
+                </button
               >
-                {#if prediction?.qfPrediction?.winner}
-                {#await getFlagComponent(prediction?.qfPrediction.winner) then FlagComponent}
+              <div class="text-right">
+                <p class="text-xs mt-4">10 Points</p>
+              </div>
+            </div>
+            <div class="w-1/6">
+              <button
+                on:click={() => selectLoser(6)}
+                class="selection-panel 
+                  {prediction?.r16Prediction?.loser ? 'selected-panel' : 'select-panel '} 
+                  "
+                >
+                {#if prediction?.r16Prediction?.loser}
+                {#await getFlagComponent(prediction?.r16Prediction.loser) then FlagComponent}
                     {#if FlagComponent}
                       <svelte:component this={FlagComponent} className="w-6 mr-1" />
                     {/if}
                   {/await}
-                  <span class="truncate whitespace-nowrap overflow-hidden">{getTeamName(prediction.qfPrediction.winner)}</span>
+                  <span class="truncate whitespace-nowrap overflow-hidden">{getTeamName(prediction.r16Prediction.loser)}</span>
                 {:else}
                   Select a Team
                 {/if}
               </button
-            >
-            <div class="text-right">
-              <p class="text-xs mt-4">15 Points</p>
-            </div>
-          </div>
-          <div class="w-1/6">
-            <button
-              on:click={() => selectLoser(7)}
-              class="selection-panel 
-                {prediction?.qfPrediction?.loser ? 'selected-panel' : 'select-panel '} 
-                "
               >
-              {#if prediction?.qfPrediction?.loser}
-              {#await getFlagComponent(prediction?.qfPrediction.loser) then FlagComponent}
-                  {#if FlagComponent}
-                    <svelte:component this={FlagComponent} className="w-6 mr-1" />
-                  {/if}
-                {/await}
-                <span class="truncate whitespace-nowrap overflow-hidden">{getTeamName(prediction.qfPrediction.loser)}</span>
-              {:else}
-                Select a Team
-              {/if}
-            </button
-            >
-            <div class="text-right">
-              <p class="text-xs mt-4">15 Points</p>
+              <div class="text-right">
+                <p class="text-xs mt-4">10 Points</p>
+              </div>
             </div>
-          </div>
-          <div class="w-1/6">
-            <button
-              on:click={() => selectScorer(7)}
-              class="selection-panel 
-                {prediction?.qfPrediction?.goalScorer ? 'selected-panel' : 'select-panel '} 
-                "
-              >
-              {#if prediction?.qfPrediction?.goalScorer}
-              {@const player = $playerStore.find(x => x.id == prediction?.qfPrediction.goalScorer)}
-              {@const teamId = player ? player.teamId : 0 }  
-              {#await getFlagComponent(teamId) then FlagComponent}
-                  {#if FlagComponent}
-                    <svelte:component this={FlagComponent} className="w-6 mr-1" />
-                  {/if}
-                {/await}
-                <span class="truncate whitespace-nowrap overflow-hidden">{getPlayerName(prediction.qfPrediction.goalScorer)}</span>
-              {:else}
-                Select a Player
-              {/if}
-            </button
-            >
-            <div class="text-right">
-              <p class="text-xs mt-4">30 Points</p>
-            </div>
-          </div>
-          <div class="w-1/6">
-            <button
-              on:click={() => selectAssister(7)}
-              class="selection-panel 
-                {prediction?.qfPrediction?.goalAssister ? 'selected-panel' : 'select-panel '} 
-                "
-              >
-              {#if prediction?.qfPrediction?.goalAssister}
-              {@const player = $playerStore.find(x => x.id == prediction?.qfPrediction.goalAssister)}
-              {@const teamId = player ? player.teamId : 0 }  
-              {#await getFlagComponent(teamId) then FlagComponent}
-                  {#if FlagComponent}
-                    <svelte:component this={FlagComponent} className="w-6 mr-1" />
-                  {/if}
-                {/await}
-                <span class="truncate whitespace-nowrap overflow-hidden">{getPlayerName(prediction.qfPrediction.goalAssister)}</span>
-              {:else}
-                Select a Player
-              {/if}
-            </button
-            >
-            <div class="text-right">
-              <p class="text-xs mt-4">30 Points</p>
-            </div>
-          </div>
-          <div class="w-1/6">
-            <button
-              on:click={() => selectYellowCard(7)}
-              class="selection-panel 
-                {prediction?.qfPrediction?.yellowCard ? 'selected-panel' : 'select-panel '} 
-                "
-              >
-              {#if prediction?.qfPrediction?.yellowCard}
-              {@const player = $playerStore.find(x => x.id == prediction?.qfPrediction.yellowCard)}
-              {@const teamId = player ? player.teamId : 0 }  
-              {#await getFlagComponent(teamId) then FlagComponent}
-                  {#if FlagComponent}
-                    <svelte:component this={FlagComponent} className="w-6 mr-1" />
-                  {/if}
-                {/await}
-                <span class="truncate whitespace-nowrap overflow-hidden">{getPlayerName(prediction.qfPrediction.yellowCard)}</span>
-              {:else}
-                Select a Player
-              {/if}
-            </button
-            >
-            <div class="text-right">
-              <p class="text-xs mt-4">15 Points</p>
-            </div>
-          </div>
-          <div class="w-1/6">
-            <button
-              on:click={() => selectRedCard(7)}
-              class="selection-panel 
-                {prediction?.qfPrediction?.redCard ? 'selected-panel' : 'select-panel '} 
-                "
-              >
-              {#if prediction?.qfPrediction?.redCard}
-              {@const player = $playerStore.find(x => x.id == prediction?.qfPrediction.redCard)}
-              {@const teamId = player ? player.teamId : 0 }  
-              {#await getFlagComponent(teamId) then FlagComponent}
-                  {#if FlagComponent}
-                    <svelte:component this={FlagComponent} className="w-6 mr-1" />
-                  {/if}
-                {/await}
-                <span class="truncate whitespace-nowrap overflow-hidden">{getPlayerName(prediction.qfPrediction.redCard)}</span>
-              {:else}
-                Select a Player
-              {/if}
-            </button
-            >
-            <div class="text-right">
-              <p class="text-xs mt-4">30 Points</p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="flex flex-row my-4 space-x-2 text-sm">
-        <div class="w-1/12" />
-        <div class="w-11/12 flex flex-row space-x-4">
-          <div class="w-1/3">
-            <p
-              class="flex-1 block w-full rounded-none rounded-r-md bg-gray-800 p-2 text-center"
-            >
-              Both Correct Bonus: 60 Points
-            </p>
-          </div>
-          <div class="w-1/3">
-            <p
-              class="flex-1 block w-full rounded-none rounded-r-md bg-gray-800 p-2 text-center"
-            >
-              Both Correct Bonus: 120 Points
-            </p>
-          </div>
-          <div class="w-1/3">
-            <p
-              class="flex-1 block w-full rounded-none rounded-r-md bg-gray-800 p-2 text-center"
-            >
-              Both Correct Bonus: 90 Points
-            </p>
-          </div>
-        </div>
-      </div>
-
-      <div class="flex flex-row items-center bg-blue-800 p-2 mt-4 rounded-md text-sm">
-        <div class="w-1/12 text-center">SF</div>
-        <div class="w-11/12 flex flex-row space-x-4">
-          <div class="w-1/6">
-            <button
-              on:click={() => selectWinner(8)}
-              class="selection-panel 
-                {prediction?.sfPrediction?.winner ? 'selected-panel' : 'select-panel '} 
-                "
-              >
-                {#if prediction?.sfPrediction?.winner}
-                {#await getFlagComponent(prediction?.sfPrediction.winner) then FlagComponent}
+            <div class="w-1/6">
+              <button
+                on:click={() => selectScorer(6)}
+                class="selection-panel 
+                  {prediction?.r16Prediction?.goalScorer ? 'selected-panel' : 'select-panel '} 
+                  "
+                >
+                {#if prediction?.r16Prediction?.goalScorer}
+                {@const player = $playerStore.find(x => x.id == prediction?.r16Prediction.goalScorer)}
+                {@const teamId = player ? player.teamId : 0 }  
+                {#await getFlagComponent(teamId) then FlagComponent}
                     {#if FlagComponent}
                       <svelte:component this={FlagComponent} className="w-6 mr-1" />
                     {/if}
                   {/await}
-                  <span class="truncate whitespace-nowrap overflow-hidden">{getTeamName(prediction.sfPrediction.winner)}</span>
+                  <span class="truncate whitespace-nowrap overflow-hidden">{getPlayerName(prediction.r16Prediction.goalScorer)}</span>
                 {:else}
-                  Select a Team
+                  Select a Player
                 {/if}
               </button
-            >
-            <div class="text-right">
-              <p class="text-xs mt-4">20 Points</p>
-            </div>
-          </div>
-          <div class="w-1/6">
-            <button
-              on:click={() => selectLoser(8)}
-              class="selection-panel 
-                {prediction?.sfPrediction?.loser ? 'selected-panel' : 'select-panel '} 
-                "
               >
-              {#if prediction?.sfPrediction?.loser}
-              {#await getFlagComponent(prediction?.sfPrediction.loser) then FlagComponent}
-                  {#if FlagComponent}
-                    <svelte:component this={FlagComponent} className="w-6 mr-1" />
-                  {/if}
-                {/await}
-                <span class="truncate whitespace-nowrap overflow-hidden">{getTeamName(prediction.sfPrediction.loser)}</span>
-              {:else}
-                Select a Team
-              {/if}
-            </button
-            >
-            <div class="text-right">
-              <p class="text-xs mt-4">20 Points</p>
+              <div class="text-right">
+                <p class="text-xs mt-4">20 Points</p>
+              </div>
             </div>
-          </div>
-          <div class="w-1/6">
-            <button
-              on:click={() => selectScorer(8)}
-              class="selection-panel 
-                {prediction?.sfPrediction?.goalScorer ? 'selected-panel' : 'select-panel '} 
-                "
-              >
-              {#if prediction?.sfPrediction?.goalScorer}
-              {@const player = $playerStore.find(x => x.id == prediction?.sfPrediction.goalScorer)}
-              {@const teamId = player ? player.teamId : 0 }  
-              {#await getFlagComponent(teamId) then FlagComponent}
-                  {#if FlagComponent}
-                    <svelte:component this={FlagComponent} className="w-6 mr-1" />
-                  {/if}
-                {/await}
-                <span class="truncate whitespace-nowrap overflow-hidden">{getPlayerName(prediction.sfPrediction.goalScorer)}</span>
-              {:else}
-                Select a Player
-              {/if}
-            </button
-            >
-            <div class="text-right">
-              <p class="text-xs mt-4">40 Points</p>
-            </div>
-          </div>
-          <div class="w-1/6">
-            <button
-              on:click={() => selectAssister(8)}
-              class="selection-panel 
-                {prediction?.sfPrediction?.goalAssister ? 'selected-panel' : 'select-panel '} 
-                "
-              >
-              {#if prediction?.sfPrediction?.goalAssister}
-              {@const player = $playerStore.find(x => x.id == prediction?.sfPrediction.goalAssister)}
-              {@const teamId = player ? player.teamId : 0 }  
-              {#await getFlagComponent(teamId) then FlagComponent}
-                  {#if FlagComponent}
-                    <svelte:component this={FlagComponent} className="w-6 mr-1" />
-                  {/if}
-                {/await}
-                <span class="truncate whitespace-nowrap overflow-hidden">{getPlayerName(prediction.sfPrediction.goalAssister)}</span>
-              {:else}
-                Select a Player
-              {/if}
-            </button
-            >
-            <div class="text-right">
-              <p class="text-xs mt-4">40 Points</p>
-            </div>
-          </div>
-          <div class="w-1/6">
-            <button
-              on:click={() => selectYellowCard(8)}
-              class="selection-panel 
-                {prediction?.sfPrediction?.yellowCard ? 'selected-panel' : 'select-panel '} 
-                "
-              >
-              {#if prediction?.sfPrediction?.yellowCard}
-              {@const player = $playerStore.find(x => x.id == prediction?.sfPrediction.yellowCard)}
-              {@const teamId = player ? player.teamId : 0 }  
-              {#await getFlagComponent(teamId) then FlagComponent}
-                  {#if FlagComponent}
-                    <svelte:component this={FlagComponent} className="w-6 mr-1" />
-                  {/if}
-                {/await}
-                <span class="truncate whitespace-nowrap overflow-hidden">{getPlayerName(prediction.sfPrediction.yellowCard)}</span>
-              {:else}
-                Select a Player
-              {/if}
-            </button
-            >
-            <div class="text-right">
-              <p class="text-xs mt-4">10 Points</p>
-            </div>
-          </div>
-          <div class="w-1/6">
-            <button
-              on:click={() => selectRedCard(8)}
-              class="selection-panel 
-                {prediction?.sfPrediction?.redCard ? 'selected-panel' : 'select-panel '} 
-                "
-              >
-              {#if prediction?.sfPrediction?.redCard}
-              {@const player = $playerStore.find(x => x.id == prediction?.sfPrediction.redCard)}
-              {@const teamId = player ? player.teamId : 0 }  
-              {#await getFlagComponent(teamId) then FlagComponent}
-                  {#if FlagComponent}
-                    <svelte:component this={FlagComponent} className="w-6 mr-1" />
-                  {/if}
-                {/await}
-                <span class="truncate whitespace-nowrap overflow-hidden">{getPlayerName(prediction.sfPrediction.redCard)}</span>
-              {:else}
-                Select a Player
-              {/if}
-            </button
-            >
-            <div class="text-right">
-              <p class="text-xs mt-4">40 Points</p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="flex flex-row my-4 space-x-2 text-sm">
-        <div class="w-1/12" />
-        <div class="w-11/12 flex flex-row space-x-4">
-          <div class="w-1/3">
-            <p
-              class="flex-1 block w-full rounded-none rounded-r-md bg-gray-800 p-2 text-center"
-            >
-              Both Correct Bonus: 80 Points
-            </p>
-          </div>
-          <div class="w-1/3">
-            <p
-              class="flex-1 block w-full rounded-none rounded-r-md bg-gray-800 p-2 text-center"
-            >
-              Both Correct Bonus: 160 Points
-            </p>
-          </div>
-          <div class="w-1/3">
-            <p
-              class="flex-1 block w-full rounded-none rounded-r-md bg-gray-800 p-2 text-center"
-            >
-              Both Correct Bonus: 120 Points
-            </p>
-          </div>
-        </div>
-      </div>
-
-      <div class="flex flex-row items-center bg-blue-900 p-2 mt-4 rounded-md text-sm">
-        <div class="w-1/12 text-center">F</div>
-        <div class="w-11/12 flex flex-row space-x-4">
-          <div class="w-1/6">
-            <button
-              on:click={() => selectWinner(9)}
-              class="selection-panel 
-                {prediction?.fPrediction?.winner ? 'selected-panel' : 'select-panel '} 
-                "
-              > 
-                {#if prediction?.fPrediction?.winner}
-                {#await getFlagComponent(prediction?.fPrediction.winner) then FlagComponent}
+            <div class="w-1/6">
+              <button
+                on:click={() => selectAssister(6)}
+                class="selection-panel 
+                  {prediction?.r16Prediction?.goalAssister ? 'selected-panel' : 'select-panel '} 
+                  "
+                >
+                {#if prediction?.r16Prediction?.goalAssister}
+                {@const player = $playerStore.find(x => x.id == prediction?.r16Prediction.goalAssister)}
+                {@const teamId = player ? player.teamId : 0 }  
+                {#await getFlagComponent(teamId) then FlagComponent}
                     {#if FlagComponent}
                       <svelte:component this={FlagComponent} className="w-6 mr-1" />
                     {/if}
                   {/await}
-                  <span class="truncate whitespace-nowrap overflow-hidden">{getTeamName(prediction.fPrediction.winner)}</span>
+                  <span class="truncate whitespace-nowrap overflow-hidden">{getPlayerName(prediction.r16Prediction.goalAssister)}</span>
+                {:else}
+                  Select a Player
+                {/if}
+              </button
+              >
+              <div class="text-right">
+                <p class="text-xs mt-4">20 Points</p>
+              </div>
+            </div>
+            <div class="w-1/6">
+              <button
+                on:click={() => selectYellowCard(6)}
+                class="selection-panel 
+                  {prediction?.r16Prediction?.yellowCard ? 'selected-panel' : 'select-panel '} 
+                  "
+                >
+                {#if prediction?.r16Prediction?.yellowCard}
+                {@const player = $playerStore.find(x => x.id == prediction?.r16Prediction.yellowCard)}
+                {@const teamId = player ? player.teamId : 0 }  
+                {#await getFlagComponent(teamId) then FlagComponent}
+                    {#if FlagComponent}
+                      <svelte:component this={FlagComponent} className="w-6 mr-1" />
+                    {/if}
+                  {/await}
+                  <span class="truncate whitespace-nowrap overflow-hidden">{getPlayerName(prediction.r16Prediction.yellowCard)}</span>
+                {:else}
+                  Select a Player
+                {/if}
+              </button
+              >
+              <div class="text-right">
+                <p class="text-xs mt-4">10 Points</p>
+              </div>
+            </div>
+            <div class="w-1/6">
+              <button
+                on:click={() => selectRedCard(6)}
+                class="selection-panel 
+                  {prediction?.r16Prediction?.redCard ? 'selected-panel' : 'select-panel '} 
+                  "
+                >
+                {#if prediction?.r16Prediction?.redCard}
+                {@const player = $playerStore.find(x => x.id == prediction?.r16Prediction.redCard)}
+                {@const teamId = player ? player.teamId : 0 }  
+                {#await getFlagComponent(teamId) then FlagComponent}
+                    {#if FlagComponent}
+                      <svelte:component this={FlagComponent} className="w-6 mr-1" />
+                    {/if}
+                  {/await}
+                  <span class="truncate whitespace-nowrap overflow-hidden">{getPlayerName(prediction.r16Prediction.redCard)}</span>
+                {:else}
+                  Select a Player
+                {/if}
+              </button
+              >
+              <div class="text-right">
+                <p class="text-xs mt-4">20 Points</p>
+              </div>
+            </div>
+          </div>
+        </div>
+  
+        <div class="flex flex-row my-4 space-x-2 text-sm">
+          <div class="w-1/12" />
+          <div class="w-11/12 flex flex-row space-x-4">
+            <div class="w-1/3">
+              <p
+                class="flex-1 block w-full rounded-none rounded-r-md bg-gray-800 p-2 text-center"
+              >
+                Both Correct Bonus: 40 Points
+              </p>
+            </div>
+            <div class="w-1/3">
+              <p
+                class="flex-1 block w-full rounded-none rounded-r-md bg-gray-800 p-2 text-center"
+              >
+                Both Correct Bonus: 80 Points
+              </p>
+            </div>
+            <div class="w-1/3">
+              <p
+                class="flex-1 block w-full rounded-none rounded-r-md bg-gray-800 p-2 text-center"
+              >
+                Both Correct Bonus: 60 Points
+              </p>
+            </div>
+          </div>
+        </div>
+  
+        <div class="flex flex-row items-center bg-blue-700 p-2 mt-4 rounded-md text-sm">
+          <div class="w-1/12 text-center">QF</div>
+          <div class="w-11/12 flex flex-row space-x-4">
+            <div class="w-1/6">
+              <button
+                on:click={() => selectWinner(7)}
+                class="selection-panel 
+                  {prediction?.qfPrediction?.winner ? 'selected-panel' : 'select-panel '} 
+                  "
+                >
+                  {#if prediction?.qfPrediction?.winner}
+                  {#await getFlagComponent(prediction?.qfPrediction.winner) then FlagComponent}
+                      {#if FlagComponent}
+                        <svelte:component this={FlagComponent} className="w-6 mr-1" />
+                      {/if}
+                    {/await}
+                    <span class="truncate whitespace-nowrap overflow-hidden">{getTeamName(prediction.qfPrediction.winner)}</span>
+                  {:else}
+                    Select a Team
+                  {/if}
+                </button
+              >
+              <div class="text-right">
+                <p class="text-xs mt-4">15 Points</p>
+              </div>
+            </div>
+            <div class="w-1/6">
+              <button
+                on:click={() => selectLoser(7)}
+                class="selection-panel 
+                  {prediction?.qfPrediction?.loser ? 'selected-panel' : 'select-panel '} 
+                  "
+                >
+                {#if prediction?.qfPrediction?.loser}
+                {#await getFlagComponent(prediction?.qfPrediction.loser) then FlagComponent}
+                    {#if FlagComponent}
+                      <svelte:component this={FlagComponent} className="w-6 mr-1" />
+                    {/if}
+                  {/await}
+                  <span class="truncate whitespace-nowrap overflow-hidden">{getTeamName(prediction.qfPrediction.loser)}</span>
                 {:else}
                   Select a Team
                 {/if}
               </button
-            >
-            <div class="text-right">
-              <p class="text-xs mt-4">25 Points</p>
-            </div>
-          </div>
-          <div class="w-1/6">
-            <button
-              on:click={() => selectLoser(9)}
-              class="selection-panel 
-                {prediction?.fPrediction?.loser ? 'selected-panel' : 'select-panel '} 
-                "
               >
-              {#if prediction?.fPrediction?.loser}
-              {#await getFlagComponent(prediction?.fPrediction.loser) then FlagComponent}
-                  {#if FlagComponent}
-                    <svelte:component this={FlagComponent} className="w-6 mr-1" />
-                  {/if}
-                {/await}
-                <span class="truncate whitespace-nowrap overflow-hidden">{getTeamName(prediction.fPrediction.loser)}</span>
-              {:else}
-                Select a Team
-              {/if}
-            </button
-            >
-            <div class="text-right">
-              <p class="text-xs mt-4">25 Points</p>
+              <div class="text-right">
+                <p class="text-xs mt-4">15 Points</p>
+              </div>
             </div>
-          </div>
-          <div class="w-1/6">
-            <button
-              on:click={() => selectScorer(9)}
-              class="selection-panel 
-                {prediction?.fPrediction?.goalScorer ? 'selected-panel' : 'select-panel '} 
-                "
+            <div class="w-1/6">
+              <button
+                on:click={() => selectScorer(7)}
+                class="selection-panel 
+                  {prediction?.qfPrediction?.goalScorer ? 'selected-panel' : 'select-panel '} 
+                  "
+                >
+                {#if prediction?.qfPrediction?.goalScorer}
+                {@const player = $playerStore.find(x => x.id == prediction?.qfPrediction.goalScorer)}
+                {@const teamId = player ? player.teamId : 0 }  
+                {#await getFlagComponent(teamId) then FlagComponent}
+                    {#if FlagComponent}
+                      <svelte:component this={FlagComponent} className="w-6 mr-1" />
+                    {/if}
+                  {/await}
+                  <span class="truncate whitespace-nowrap overflow-hidden">{getPlayerName(prediction.qfPrediction.goalScorer)}</span>
+                {:else}
+                  Select a Player
+                {/if}
+              </button
               >
-              {#if prediction?.fPrediction?.goalScorer}
-              {@const player = $playerStore.find(x => x.id == prediction?.fPrediction.goalScorer)}
-              {@const teamId = player ? player.teamId : 0 }  
-              {#await getFlagComponent(teamId) then FlagComponent}
-                  {#if FlagComponent}
-                    <svelte:component this={FlagComponent} className="w-6 mr-1" />
-                  {/if}
-                {/await}
-                <span class="truncate whitespace-nowrap overflow-hidden">{getPlayerName(prediction.fPrediction.goalScorer)}</span>
-              {:else}
-                Select a Player
-              {/if}
-            </button
-            >
-            <div class="text-right">
-              <p class="text-xs mt-4">50 Points</p>
+              <div class="text-right">
+                <p class="text-xs mt-4">30 Points</p>
+              </div>
             </div>
-          </div>
-          <div class="w-1/6">
-            <button
-              on:click={() => selectAssister(9)}
-              class="selection-panel 
-                {prediction?.fPrediction?.goalAssister ? 'selected-panel' : 'select-panel '} 
-                "
+            <div class="w-1/6">
+              <button
+                on:click={() => selectAssister(7)}
+                class="selection-panel 
+                  {prediction?.qfPrediction?.goalAssister ? 'selected-panel' : 'select-panel '} 
+                  "
+                >
+                {#if prediction?.qfPrediction?.goalAssister}
+                {@const player = $playerStore.find(x => x.id == prediction?.qfPrediction.goalAssister)}
+                {@const teamId = player ? player.teamId : 0 }  
+                {#await getFlagComponent(teamId) then FlagComponent}
+                    {#if FlagComponent}
+                      <svelte:component this={FlagComponent} className="w-6 mr-1" />
+                    {/if}
+                  {/await}
+                  <span class="truncate whitespace-nowrap overflow-hidden">{getPlayerName(prediction.qfPrediction.goalAssister)}</span>
+                {:else}
+                  Select a Player
+                {/if}
+              </button
               >
-              {#if prediction?.fPrediction?.goalAssister}
-              {@const player = $playerStore.find(x => x.id == prediction?.fPrediction.goalAssister)}
-              {@const teamId = player ? player.teamId : 0 }  
-              {#await getFlagComponent(teamId) then FlagComponent}
-                  {#if FlagComponent}
-                    <svelte:component this={FlagComponent} className="w-6 mr-1" />
-                  {/if}
-                {/await}
-                <span class="truncate whitespace-nowrap overflow-hidden">{getPlayerName(prediction.fPrediction.goalAssister)}</span>
-              {:else}
-                Select a Player
-              {/if}
-            </button
-            >
-            <div class="text-right">
-              <p class="text-xs mt-4">50 Points</p>
+              <div class="text-right">
+                <p class="text-xs mt-4">30 Points</p>
+              </div>
             </div>
-          </div>
-          <div class="w-1/6">
-            <button
-              on:click={() => selectYellowCard(9)}
-              class="selection-panel 
-                {prediction?.fPrediction?.yellowCard ? 'selected-panel' : 'select-panel '} 
-                "
+            <div class="w-1/6">
+              <button
+                on:click={() => selectYellowCard(7)}
+                class="selection-panel 
+                  {prediction?.qfPrediction?.yellowCard ? 'selected-panel' : 'select-panel '} 
+                  "
+                >
+                {#if prediction?.qfPrediction?.yellowCard}
+                {@const player = $playerStore.find(x => x.id == prediction?.qfPrediction.yellowCard)}
+                {@const teamId = player ? player.teamId : 0 }  
+                {#await getFlagComponent(teamId) then FlagComponent}
+                    {#if FlagComponent}
+                      <svelte:component this={FlagComponent} className="w-6 mr-1" />
+                    {/if}
+                  {/await}
+                  <span class="truncate whitespace-nowrap overflow-hidden">{getPlayerName(prediction.qfPrediction.yellowCard)}</span>
+                {:else}
+                  Select a Player
+                {/if}
+              </button
               >
-              {#if prediction?.fPrediction?.yellowCard}
-              {@const player = $playerStore.find(x => x.id == prediction?.fPrediction.yellowCard)}
-              {@const teamId = player ? player.teamId : 0 }  
-              {#await getFlagComponent(teamId) then FlagComponent}
-                  {#if FlagComponent}
-                    <svelte:component this={FlagComponent} className="w-6 mr-1" />
-                  {/if}
-                {/await}
-                <span class="truncate whitespace-nowrap overflow-hidden">{getPlayerName(prediction.fPrediction.yellowCard)}</span>
-              {:else}
-                Select a Player
-              {/if}
-            </button
-            >
-            <div class="text-right">
-              <p class="text-xs mt-4">25 Points</p>
+              <div class="text-right">
+                <p class="text-xs mt-4">15 Points</p>
+              </div>
             </div>
-          </div>
-          <div class="w-1/6">
-            <button
-              on:click={() => selectRedCard(9)}
-              class="selection-panel 
-                {prediction?.fPrediction?.redCard ? 'selected-panel' : 'select-panel '} 
-                "
+            <div class="w-1/6">
+              <button
+                on:click={() => selectRedCard(7)}
+                class="selection-panel 
+                  {prediction?.qfPrediction?.redCard ? 'selected-panel' : 'select-panel '} 
+                  "
+                >
+                {#if prediction?.qfPrediction?.redCard}
+                {@const player = $playerStore.find(x => x.id == prediction?.qfPrediction.redCard)}
+                {@const teamId = player ? player.teamId : 0 }  
+                {#await getFlagComponent(teamId) then FlagComponent}
+                    {#if FlagComponent}
+                      <svelte:component this={FlagComponent} className="w-6 mr-1" />
+                    {/if}
+                  {/await}
+                  <span class="truncate whitespace-nowrap overflow-hidden">{getPlayerName(prediction.qfPrediction.redCard)}</span>
+                {:else}
+                  Select a Player
+                {/if}
+              </button
               >
-              {#if prediction?.fPrediction?.redCard}
-              {@const player = $playerStore.find(x => x.id == prediction?.fPrediction.redCard)}
-              {@const teamId = player ? player.teamId : 0 }  
-              {#await getFlagComponent(teamId) then FlagComponent}
-                  {#if FlagComponent}
-                    <svelte:component this={FlagComponent} className="w-6 mr-1" />
-                  {/if}
-                {/await}
-                <span class="truncate whitespace-nowrap overflow-hidden">{getPlayerName(prediction.fPrediction.redCard)}</span>
-              {:else}
-                Select a Player
-              {/if}
-            </button
-            >
-            <div class="text-right">
-              <p class="text-xs mt-4">50 Points</p>
+              <div class="text-right">
+                <p class="text-xs mt-4">30 Points</p>
+              </div>
             </div>
           </div>
         </div>
+  
+        <div class="flex flex-row my-4 space-x-2 text-sm">
+          <div class="w-1/12" />
+          <div class="w-11/12 flex flex-row space-x-4">
+            <div class="w-1/3">
+              <p
+                class="flex-1 block w-full rounded-none rounded-r-md bg-gray-800 p-2 text-center"
+              >
+                Both Correct Bonus: 60 Points
+              </p>
+            </div>
+            <div class="w-1/3">
+              <p
+                class="flex-1 block w-full rounded-none rounded-r-md bg-gray-800 p-2 text-center"
+              >
+                Both Correct Bonus: 120 Points
+              </p>
+            </div>
+            <div class="w-1/3">
+              <p
+                class="flex-1 block w-full rounded-none rounded-r-md bg-gray-800 p-2 text-center"
+              >
+                Both Correct Bonus: 90 Points
+              </p>
+            </div>
+          </div>
+        </div>
+  
+        <div class="flex flex-row items-center bg-blue-800 p-2 mt-4 rounded-md text-sm">
+          <div class="w-1/12 text-center">SF</div>
+          <div class="w-11/12 flex flex-row space-x-4">
+            <div class="w-1/6">
+              <button
+                on:click={() => selectWinner(8)}
+                class="selection-panel 
+                  {prediction?.sfPrediction?.winner ? 'selected-panel' : 'select-panel '} 
+                  "
+                >
+                  {#if prediction?.sfPrediction?.winner}
+                  {#await getFlagComponent(prediction?.sfPrediction.winner) then FlagComponent}
+                      {#if FlagComponent}
+                        <svelte:component this={FlagComponent} className="w-6 mr-1" />
+                      {/if}
+                    {/await}
+                    <span class="truncate whitespace-nowrap overflow-hidden">{getTeamName(prediction.sfPrediction.winner)}</span>
+                  {:else}
+                    Select a Team
+                  {/if}
+                </button
+              >
+              <div class="text-right">
+                <p class="text-xs mt-4">20 Points</p>
+              </div>
+            </div>
+            <div class="w-1/6">
+              <button
+                on:click={() => selectLoser(8)}
+                class="selection-panel 
+                  {prediction?.sfPrediction?.loser ? 'selected-panel' : 'select-panel '} 
+                  "
+                >
+                {#if prediction?.sfPrediction?.loser}
+                {#await getFlagComponent(prediction?.sfPrediction.loser) then FlagComponent}
+                    {#if FlagComponent}
+                      <svelte:component this={FlagComponent} className="w-6 mr-1" />
+                    {/if}
+                  {/await}
+                  <span class="truncate whitespace-nowrap overflow-hidden">{getTeamName(prediction.sfPrediction.loser)}</span>
+                {:else}
+                  Select a Team
+                {/if}
+              </button
+              >
+              <div class="text-right">
+                <p class="text-xs mt-4">20 Points</p>
+              </div>
+            </div>
+            <div class="w-1/6">
+              <button
+                on:click={() => selectScorer(8)}
+                class="selection-panel 
+                  {prediction?.sfPrediction?.goalScorer ? 'selected-panel' : 'select-panel '} 
+                  "
+                >
+                {#if prediction?.sfPrediction?.goalScorer}
+                {@const player = $playerStore.find(x => x.id == prediction?.sfPrediction.goalScorer)}
+                {@const teamId = player ? player.teamId : 0 }  
+                {#await getFlagComponent(teamId) then FlagComponent}
+                    {#if FlagComponent}
+                      <svelte:component this={FlagComponent} className="w-6 mr-1" />
+                    {/if}
+                  {/await}
+                  <span class="truncate whitespace-nowrap overflow-hidden">{getPlayerName(prediction.sfPrediction.goalScorer)}</span>
+                {:else}
+                  Select a Player
+                {/if}
+              </button
+              >
+              <div class="text-right">
+                <p class="text-xs mt-4">40 Points</p>
+              </div>
+            </div>
+            <div class="w-1/6">
+              <button
+                on:click={() => selectAssister(8)}
+                class="selection-panel 
+                  {prediction?.sfPrediction?.goalAssister ? 'selected-panel' : 'select-panel '} 
+                  "
+                >
+                {#if prediction?.sfPrediction?.goalAssister}
+                {@const player = $playerStore.find(x => x.id == prediction?.sfPrediction.goalAssister)}
+                {@const teamId = player ? player.teamId : 0 }  
+                {#await getFlagComponent(teamId) then FlagComponent}
+                    {#if FlagComponent}
+                      <svelte:component this={FlagComponent} className="w-6 mr-1" />
+                    {/if}
+                  {/await}
+                  <span class="truncate whitespace-nowrap overflow-hidden">{getPlayerName(prediction.sfPrediction.goalAssister)}</span>
+                {:else}
+                  Select a Player
+                {/if}
+              </button
+              >
+              <div class="text-right">
+                <p class="text-xs mt-4">40 Points</p>
+              </div>
+            </div>
+            <div class="w-1/6">
+              <button
+                on:click={() => selectYellowCard(8)}
+                class="selection-panel 
+                  {prediction?.sfPrediction?.yellowCard ? 'selected-panel' : 'select-panel '} 
+                  "
+                >
+                {#if prediction?.sfPrediction?.yellowCard}
+                {@const player = $playerStore.find(x => x.id == prediction?.sfPrediction.yellowCard)}
+                {@const teamId = player ? player.teamId : 0 }  
+                {#await getFlagComponent(teamId) then FlagComponent}
+                    {#if FlagComponent}
+                      <svelte:component this={FlagComponent} className="w-6 mr-1" />
+                    {/if}
+                  {/await}
+                  <span class="truncate whitespace-nowrap overflow-hidden">{getPlayerName(prediction.sfPrediction.yellowCard)}</span>
+                {:else}
+                  Select a Player
+                {/if}
+              </button
+              >
+              <div class="text-right">
+                <p class="text-xs mt-4">10 Points</p>
+              </div>
+            </div>
+            <div class="w-1/6">
+              <button
+                on:click={() => selectRedCard(8)}
+                class="selection-panel 
+                  {prediction?.sfPrediction?.redCard ? 'selected-panel' : 'select-panel '} 
+                  "
+                >
+                {#if prediction?.sfPrediction?.redCard}
+                {@const player = $playerStore.find(x => x.id == prediction?.sfPrediction.redCard)}
+                {@const teamId = player ? player.teamId : 0 }  
+                {#await getFlagComponent(teamId) then FlagComponent}
+                    {#if FlagComponent}
+                      <svelte:component this={FlagComponent} className="w-6 mr-1" />
+                    {/if}
+                  {/await}
+                  <span class="truncate whitespace-nowrap overflow-hidden">{getPlayerName(prediction.sfPrediction.redCard)}</span>
+                {:else}
+                  Select a Player
+                {/if}
+              </button
+              >
+              <div class="text-right">
+                <p class="text-xs mt-4">40 Points</p>
+              </div>
+            </div>
+          </div>
+        </div>
+  
+        <div class="flex flex-row my-4 space-x-2 text-sm">
+          <div class="w-1/12" />
+          <div class="w-11/12 flex flex-row space-x-4">
+            <div class="w-1/3">
+              <p
+                class="flex-1 block w-full rounded-none rounded-r-md bg-gray-800 p-2 text-center"
+              >
+                Both Correct Bonus: 80 Points
+              </p>
+            </div>
+            <div class="w-1/3">
+              <p
+                class="flex-1 block w-full rounded-none rounded-r-md bg-gray-800 p-2 text-center"
+              >
+                Both Correct Bonus: 160 Points
+              </p>
+            </div>
+            <div class="w-1/3">
+              <p
+                class="flex-1 block w-full rounded-none rounded-r-md bg-gray-800 p-2 text-center"
+              >
+                Both Correct Bonus: 120 Points
+              </p>
+            </div>
+          </div>
+        </div>
+  
+        <div class="flex flex-row items-center bg-blue-900 p-2 mt-4 rounded-md text-sm">
+          <div class="w-1/12 text-center">F</div>
+          <div class="w-11/12 flex flex-row space-x-4">
+            <div class="w-1/6">
+              <button
+                on:click={() => selectWinner(9)}
+                class="selection-panel 
+                  {prediction?.fPrediction?.winner ? 'selected-panel' : 'select-panel '} 
+                  "
+                > 
+                  {#if prediction?.fPrediction?.winner}
+                  {#await getFlagComponent(prediction?.fPrediction.winner) then FlagComponent}
+                      {#if FlagComponent}
+                        <svelte:component this={FlagComponent} className="w-6 mr-1" />
+                      {/if}
+                    {/await}
+                    <span class="truncate whitespace-nowrap overflow-hidden">{getTeamName(prediction.fPrediction.winner)}</span>
+                  {:else}
+                    Select a Team
+                  {/if}
+                </button
+              >
+              <div class="text-right">
+                <p class="text-xs mt-4">25 Points</p>
+              </div>
+            </div>
+            <div class="w-1/6">
+              <button
+                on:click={() => selectLoser(9)}
+                class="selection-panel 
+                  {prediction?.fPrediction?.loser ? 'selected-panel' : 'select-panel '} 
+                  "
+                >
+                {#if prediction?.fPrediction?.loser}
+                {#await getFlagComponent(prediction?.fPrediction.loser) then FlagComponent}
+                    {#if FlagComponent}
+                      <svelte:component this={FlagComponent} className="w-6 mr-1" />
+                    {/if}
+                  {/await}
+                  <span class="truncate whitespace-nowrap overflow-hidden">{getTeamName(prediction.fPrediction.loser)}</span>
+                {:else}
+                  Select a Team
+                {/if}
+              </button
+              >
+              <div class="text-right">
+                <p class="text-xs mt-4">25 Points</p>
+              </div>
+            </div>
+            <div class="w-1/6">
+              <button
+                on:click={() => selectScorer(9)}
+                class="selection-panel 
+                  {prediction?.fPrediction?.goalScorer ? 'selected-panel' : 'select-panel '} 
+                  "
+                >
+                {#if prediction?.fPrediction?.goalScorer}
+                {@const player = $playerStore.find(x => x.id == prediction?.fPrediction.goalScorer)}
+                {@const teamId = player ? player.teamId : 0 }  
+                {#await getFlagComponent(teamId) then FlagComponent}
+                    {#if FlagComponent}
+                      <svelte:component this={FlagComponent} className="w-6 mr-1" />
+                    {/if}
+                  {/await}
+                  <span class="truncate whitespace-nowrap overflow-hidden">{getPlayerName(prediction.fPrediction.goalScorer)}</span>
+                {:else}
+                  Select a Player
+                {/if}
+              </button
+              >
+              <div class="text-right">
+                <p class="text-xs mt-4">50 Points</p>
+              </div>
+            </div>
+            <div class="w-1/6">
+              <button
+                on:click={() => selectAssister(9)}
+                class="selection-panel 
+                  {prediction?.fPrediction?.goalAssister ? 'selected-panel' : 'select-panel '} 
+                  "
+                >
+                {#if prediction?.fPrediction?.goalAssister}
+                {@const player = $playerStore.find(x => x.id == prediction?.fPrediction.goalAssister)}
+                {@const teamId = player ? player.teamId : 0 }  
+                {#await getFlagComponent(teamId) then FlagComponent}
+                    {#if FlagComponent}
+                      <svelte:component this={FlagComponent} className="w-6 mr-1" />
+                    {/if}
+                  {/await}
+                  <span class="truncate whitespace-nowrap overflow-hidden">{getPlayerName(prediction.fPrediction.goalAssister)}</span>
+                {:else}
+                  Select a Player
+                {/if}
+              </button
+              >
+              <div class="text-right">
+                <p class="text-xs mt-4">50 Points</p>
+              </div>
+            </div>
+            <div class="w-1/6">
+              <button
+                on:click={() => selectYellowCard(9)}
+                class="selection-panel 
+                  {prediction?.fPrediction?.yellowCard ? 'selected-panel' : 'select-panel '} 
+                  "
+                >
+                {#if prediction?.fPrediction?.yellowCard}
+                {@const player = $playerStore.find(x => x.id == prediction?.fPrediction.yellowCard)}
+                {@const teamId = player ? player.teamId : 0 }  
+                {#await getFlagComponent(teamId) then FlagComponent}
+                    {#if FlagComponent}
+                      <svelte:component this={FlagComponent} className="w-6 mr-1" />
+                    {/if}
+                  {/await}
+                  <span class="truncate whitespace-nowrap overflow-hidden">{getPlayerName(prediction.fPrediction.yellowCard)}</span>
+                {:else}
+                  Select a Player
+                {/if}
+              </button
+              >
+              <div class="text-right">
+                <p class="text-xs mt-4">25 Points</p>
+              </div>
+            </div>
+            <div class="w-1/6">
+              <button
+                on:click={() => selectRedCard(9)}
+                class="selection-panel 
+                  {prediction?.fPrediction?.redCard ? 'selected-panel' : 'select-panel '} 
+                  "
+                >
+                {#if prediction?.fPrediction?.redCard}
+                {@const player = $playerStore.find(x => x.id == prediction?.fPrediction.redCard)}
+                {@const teamId = player ? player.teamId : 0 }  
+                {#await getFlagComponent(teamId) then FlagComponent}
+                    {#if FlagComponent}
+                      <svelte:component this={FlagComponent} className="w-6 mr-1" />
+                    {/if}
+                  {/await}
+                  <span class="truncate whitespace-nowrap overflow-hidden">{getPlayerName(prediction.fPrediction.redCard)}</span>
+                {:else}
+                  Select a Player
+                {/if}
+              </button
+              >
+              <div class="text-right">
+                <p class="text-xs mt-4">50 Points</p>
+              </div>
+            </div>
+          </div>
+        </div>
+  
+        <div class="flex flex-row my-4 space-x-2 text-sm">
+          <div class="w-1/12" />
+          <div class="w-11/12 flex flex-row space-x-4">
+            <div class="w-1/3">
+              <p
+                class="flex-1 block w-full rounded-none rounded-r-md bg-gray-800 p-2 text-center"
+              >
+                Both Correct Bonus: 100 Points
+              </p>
+            </div>
+            <div class="w-1/3">
+              <p
+                class="flex-1 block w-full rounded-none rounded-r-md bg-gray-800 p-2 text-center"
+              >
+                Both Correct Bonus: 200 Points
+              </p>
+            </div>
+            <div class="w-1/3">
+              <p
+                class="flex-1 block w-full rounded-none rounded-r-md bg-gray-800 p-2 text-center"
+              >
+                Both Correct Bonus: 150 Points
+              </p>
+            </div>
+          </div>
+        </div>
+
+
+
       </div>
 
-      <div class="flex flex-row my-4 space-x-2 text-sm">
-        <div class="w-1/12" />
-        <div class="w-11/12 flex flex-row space-x-4">
-          <div class="w-1/3">
-            <p
-              class="flex-1 block w-full rounded-none rounded-r-md bg-gray-800 p-2 text-center"
-            >
-              Both Correct Bonus: 100 Points
-            </p>
-          </div>
-          <div class="w-1/3">
-            <p
-              class="flex-1 block w-full rounded-none rounded-r-md bg-gray-800 p-2 text-center"
-            >
-              Both Correct Bonus: 200 Points
-            </p>
-          </div>
-          <div class="w-1/3">
-            <p
-              class="flex-1 block w-full rounded-none rounded-r-md bg-gray-800 p-2 text-center"
-            >
-              Both Correct Bonus: 150 Points
-            </p>
-          </div>
-        </div>
-      </div>
 
       <div class="bg-panel rounded-md p-4 mt-4">
         <div class="flex justify-center">
