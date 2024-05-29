@@ -290,7 +290,7 @@
       });
 
       await setPotBalance();
-
+      await euro2024Store.sync();
     } catch (error) {
       toastsError({
         msg: { text: "Error saving Euro 2024 prediction." },
