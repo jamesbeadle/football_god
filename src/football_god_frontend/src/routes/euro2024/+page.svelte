@@ -54,11 +54,6 @@
 
   onMount(async () => {
     await authStore.sync();
-    let count = 1;
-    dot_interval = setInterval(() => {
-      count = (count % 3) + 1;
-      dots.set('.'.repeat(count));
-    }, 500);
 
 
     await teamStore.sync();
@@ -75,6 +70,9 @@
     if (!prediction) {
       prediction = {
         alreadyEntered: false,
+        entryTime : 0n,
+        totalScore : 0,
+        principalId : "",
         groupAPrediction: {
           goalAssister: 0,
           winner: 0,
@@ -183,7 +181,22 @@
 
     updateCountdown(); // Run once on component mount
     interval = setInterval(updateCountdown, 60000); 
+    
+    await setPotBalance();
+    
+  });
 
+  onDestroy(() => {
+    clearInterval(interval);
+  });
+
+  async function setPotBalance(){
+    loadingPot = true;
+    let count = 1;
+    dot_interval = setInterval(() => {
+      count = (count % 3) + 1;
+      dots.set('.'.repeat(count));
+    }, 500);
     if(euro2024Store){
       let pot = Number(await euro2024Store.getPotBalance());
       let prizePool = pot * 0.8 / 100_000_000;
@@ -191,11 +204,7 @@
     }
     loadingPot = false;
     clearInterval(dot_interval);
-  });
-
-  onDestroy(() => {
-    clearInterval(interval);
-  });
+  }
 
   async function handlePredictionSubmit() {
     isLoading = true;
@@ -217,6 +226,9 @@
         'groupDPrediction' : prediction?.groupDPrediction,
         'groupFPrediction' : prediction?.groupFPrediction,
         'r16Prediction' : prediction?.r16Prediction,
+        'entryTime' : prediction?.entryTime,
+        'totalScore' : prediction?.totalScore,
+        'principalId' : prediction?.principalId
       };
       return await savePrediction(dto);
     }
@@ -245,6 +257,9 @@
       'groupDPrediction' : prediction?.groupDPrediction,
       'groupFPrediction' : prediction?.groupFPrediction,
       'r16Prediction' : prediction?.r16Prediction,
+      'entryTime' : prediction?.entryTime,
+      'totalScore' : prediction?.totalScore,
+      'principalId' : prediction?.principalId
     };
 
     await savePrediction(dto);
@@ -273,6 +288,9 @@
         level: "success",
         duration: 2000,
       });
+
+      await setPotBalance();
+
     } catch (error) {
       toastsError({
         msg: { text: "Error saving Euro 2024 prediction." },
@@ -1234,9 +1252,9 @@
           {#if sliderStage == 0}
             <div class="flex flex-col bg-gray-700 p-2 mt-4 rounded-md text-sm">
               <div class="my-4 flex flex-row items-center w-full">
-                <button disabled={true} class="bg-GRAY text-white px-2 py-1 rounded-sm text-2xl">&lt;</button>
+                <button disabled={true} class="bg-GRAY text-white px-4 py-2 rounded-sm text-2xl">&lt;</button>
                 <div class="flex-grow text-center">Group A</div>
-                <button on:click={nextStage} class="bg-OPENFPL text-GRAY px-2 py-1 rounded-sm text-2xl">&gt;</button>
+                <button on:click={nextStage} class="bg-OPENFPL text-GRAY px-4 py-2 rounded-sm text-2xl">&gt;</button>
               </div>
 
               <div>
@@ -1305,7 +1323,7 @@
                         {/if}
                       {/await}
                       <span class="truncate whitespace-nowrap overflow-hidden">
-                        {getTeamName(prediction.groupAPrediction.goalScorer)}
+                        {getPlayerName(prediction.groupAPrediction.goalScorer)}
                       </span>
                     {:else}
                       Select Goal Scorer
@@ -1331,7 +1349,7 @@
                         {/if}
                       {/await}
                       <span class="truncate whitespace-nowrap overflow-hidden">
-                        {getTeamName(prediction.groupAPrediction.goalAssister)}
+                        {getPlayerName(prediction.groupAPrediction.goalAssister)}
                       </span>
                     {:else}
                       Select Goal Assister
@@ -1357,7 +1375,7 @@
                         {/if}
                       {/await}
                       <span class="truncate whitespace-nowrap overflow-hidden">
-                        {getTeamName(prediction.groupAPrediction.yellowCard)}
+                        {getPlayerName(prediction.groupAPrediction.yellowCard)}
                       </span>
                     {:else}
                       Select Yellow Card
@@ -1383,7 +1401,7 @@
                         {/if}
                       {/await}
                       <span class="truncate whitespace-nowrap overflow-hidden">
-                        {getTeamName(prediction.groupAPrediction.redCard)}
+                        {getPlayerName(prediction.groupAPrediction.redCard)}
                       </span>
                     {:else}
                       Select Red Card
@@ -1404,9 +1422,9 @@
             <div class="flex flex-col bg-gray-700 p-2 mt-4 rounded-md text-sm">
               
               <div class="my-4 flex flex-row items-center w-full">
-                <button on:click={priorStage} class="bg-OPENFPL text-GRAY px-2 py-1 rounded-sm text-2xl">&lt;</button>
+                <button on:click={priorStage} class="bg-OPENFPL text-GRAY px-4 py-2 rounded-sm text-2xl">&lt;</button>
                 <div class="flex-grow text-center">Group B</div>
-                <button on:click={nextStage} class="bg-OPENFPL text-GRAY px-2 py-1 rounded-sm text-2xl">&gt;</button>
+                <button on:click={nextStage} class="bg-OPENFPL text-GRAY px-4 py-2 rounded-sm text-2xl">&gt;</button>
               </div>
 
 
@@ -1476,7 +1494,7 @@
                         {/if}
                       {/await}
                       <span class="truncate whitespace-nowrap overflow-hidden">
-                        {getTeamName(prediction.groupBPrediction.goalScorer)}
+                        {getPlayerName(prediction.groupBPrediction.goalScorer)}
                       </span>
                     {:else}
                       Select Goal Scorer
@@ -1502,7 +1520,7 @@
                         {/if}
                       {/await}
                       <span class="truncate whitespace-nowrap overflow-hidden">
-                        {getTeamName(prediction.groupBPrediction.goalAssister)}
+                        {getPlayerName(prediction.groupBPrediction.goalAssister)}
                       </span>
                     {:else}
                       Select Goal Assister
@@ -1528,7 +1546,7 @@
                         {/if}
                       {/await}
                       <span class="truncate whitespace-nowrap overflow-hidden">
-                        {getTeamName(prediction.groupBPrediction.yellowCard)}
+                        {getPlayerName(prediction.groupBPrediction.yellowCard)}
                       </span>
                     {:else}
                       Select Yellow Card
@@ -1554,7 +1572,7 @@
                         {/if}
                       {/await}
                       <span class="truncate whitespace-nowrap overflow-hidden">
-                        {getTeamName(prediction.groupBPrediction.redCard)}
+                        {getPlayerName(prediction.groupBPrediction.redCard)}
                       </span>
                     {:else}
                       Select Red Card
@@ -1575,9 +1593,9 @@
             <div class="flex flex-col bg-gray-700 p-2 mt-4 rounded-md text-sm">
               
               <div class="my-4 flex flex-row items-center w-full">
-                <button on:click={priorStage} class="bg-OPENFPL text-GRAY px-2 py-1 rounded-sm text-2xl">&lt;</button>
+                <button on:click={priorStage} class="bg-OPENFPL text-GRAY px-4 py-2 rounded-sm text-2xl">&lt;</button>
                 <div class="flex-grow text-center">Group C</div>
-                <button on:click={nextStage} class="bg-OPENFPL text-GRAY px-2 py-1 rounded-sm text-2xl">&gt;</button>
+                <button on:click={nextStage} class="bg-OPENFPL text-GRAY px-4 py-2 rounded-sm text-2xl">&gt;</button>
               </div>
 
 
@@ -1647,7 +1665,7 @@
                         {/if}
                       {/await}
                       <span class="truncate whitespace-nowrap overflow-hidden">
-                        {getTeamName(prediction.groupCPrediction.goalScorer)}
+                        {getPlayerName(prediction.groupCPrediction.goalScorer)}
                       </span>
                     {:else}
                       Select Goal Scorer
@@ -1673,7 +1691,7 @@
                         {/if}
                       {/await}
                       <span class="truncate whitespace-nowrap overflow-hidden">
-                        {getTeamName(prediction.groupCPrediction.goalAssister)}
+                        {getPlayerName(prediction.groupCPrediction.goalAssister)}
                       </span>
                     {:else}
                       Select Goal Assister
@@ -1699,7 +1717,7 @@
                         {/if}
                       {/await}
                       <span class="truncate whitespace-nowrap overflow-hidden">
-                        {getTeamName(prediction.groupCPrediction.yellowCard)}
+                        {getPlayerName(prediction.groupCPrediction.yellowCard)}
                       </span>
                     {:else}
                       Select Yellow Card
@@ -1725,7 +1743,7 @@
                         {/if}
                       {/await}
                       <span class="truncate whitespace-nowrap overflow-hidden">
-                        {getTeamName(prediction.groupCPrediction.redCard)}
+                        {getPlayerName(prediction.groupCPrediction.redCard)}
                       </span>
                     {:else}
                       Select Red Card
@@ -1746,9 +1764,9 @@
             <div class="flex flex-col bg-gray-700 p-2 mt-4 rounded-md text-sm">
               
               <div class="my-4 flex flex-row items-center w-full">
-                <button on:click={priorStage} class="bg-OPENFPL text-GRAY px-2 py-1 rounded-sm text-2xl">&lt;</button>
+                <button on:click={priorStage} class="bg-OPENFPL text-GRAY px-4 py-2 rounded-sm text-2xl">&lt;</button>
                 <div class="flex-grow text-center">Group D</div>
-                <button on:click={nextStage} class="bg-OPENFPL text-GRAY px-2 py-1 rounded-sm text-2xl">&gt;</button>
+                <button on:click={nextStage} class="bg-OPENFPL text-GRAY px-4 py-2 rounded-sm text-2xl">&gt;</button>
               </div>
 
 
@@ -1818,7 +1836,7 @@
                         {/if}
                       {/await}
                       <span class="truncate whitespace-nowrap overflow-hidden">
-                        {getTeamName(prediction.groupDPrediction.goalScorer)}
+                        {getPlayerName(prediction.groupDPrediction.goalScorer)}
                       </span>
                     {:else}
                       Select Goal Scorer
@@ -1844,7 +1862,7 @@
                         {/if}
                       {/await}
                       <span class="truncate whitespace-nowrap overflow-hidden">
-                        {getTeamName(prediction.groupDPrediction.goalAssister)}
+                        {getPlayerName(prediction.groupDPrediction.goalAssister)}
                       </span>
                     {:else}
                       Select Goal Assister
@@ -1870,7 +1888,7 @@
                         {/if}
                       {/await}
                       <span class="truncate whitespace-nowrap overflow-hidden">
-                        {getTeamName(prediction.groupDPrediction.yellowCard)}
+                        {getPlayerName(prediction.groupDPrediction.yellowCard)}
                       </span>
                     {:else}
                       Select Yellow Card
@@ -1896,7 +1914,7 @@
                         {/if}
                       {/await}
                       <span class="truncate whitespace-nowrap overflow-hidden">
-                        {getTeamName(prediction.groupDPrediction.redCard)}
+                        {getPlayerName(prediction.groupDPrediction.redCard)}
                       </span>
                     {:else}
                       Select Red Card
@@ -1917,9 +1935,9 @@
             <div class="flex flex-col bg-gray-700 p-2 mt-4 rounded-md text-sm">
               
               <div class="my-4 flex flex-row items-center w-full">
-                <button on:click={priorStage} class="bg-OPENFPL text-GRAY px-2 py-1 rounded-sm text-2xl">&lt;</button>
+                <button on:click={priorStage} class="bg-OPENFPL text-GRAY px-4 py-2 rounded-sm text-2xl">&lt;</button>
                 <div class="flex-grow text-center">Group E</div>
-                <button on:click={nextStage} class="bg-OPENFPL text-GRAY px-2 py-1 rounded-sm text-2xl">&gt;</button>
+                <button on:click={nextStage} class="bg-OPENFPL text-GRAY px-4 py-2 rounded-sm text-2xl">&gt;</button>
               </div>
 
 
@@ -1989,7 +2007,7 @@
                         {/if}
                       {/await}
                       <span class="truncate whitespace-nowrap overflow-hidden">
-                        {getTeamName(prediction.groupEPrediction.goalScorer)}
+                        {getPlayerName(prediction.groupEPrediction.goalScorer)}
                       </span>
                     {:else}
                       Select Goal Scorer
@@ -2015,7 +2033,7 @@
                         {/if}
                       {/await}
                       <span class="truncate whitespace-nowrap overflow-hidden">
-                        {getTeamName(prediction.groupEPrediction.goalAssister)}
+                        {getPlayerName(prediction.groupEPrediction.goalAssister)}
                       </span>
                     {:else}
                       Select Goal Assister
@@ -2041,7 +2059,7 @@
                         {/if}
                       {/await}
                       <span class="truncate whitespace-nowrap overflow-hidden">
-                        {getTeamName(prediction.groupEPrediction.yellowCard)}
+                        {getPlayerName(prediction.groupEPrediction.yellowCard)}
                       </span>
                     {:else}
                       Select Yellow Card
@@ -2067,7 +2085,7 @@
                         {/if}
                       {/await}
                       <span class="truncate whitespace-nowrap overflow-hidden">
-                        {getTeamName(prediction.groupEPrediction.redCard)}
+                        {getPlayerName(prediction.groupEPrediction.redCard)}
                       </span>
                     {:else}
                       Select Red Card
@@ -2088,9 +2106,9 @@
             <div class="flex flex-col bg-gray-700 p-2 mt-4 rounded-md text-sm">
               
               <div class="my-4 flex flex-row items-center w-full">
-                <button on:click={priorStage} class="bg-OPENFPL text-GRAY px-2 py-1 rounded-sm text-2xl">&lt;</button>
+                <button on:click={priorStage} class="bg-OPENFPL text-GRAY px-4 py-2 rounded-sm text-2xl">&lt;</button>
                 <div class="flex-grow text-center">Group F</div>
-                <button on:click={nextStage} class="bg-OPENFPL text-GRAY px-2 py-1 rounded-sm text-2xl">&gt;</button>
+                <button on:click={nextStage} class="bg-OPENFPL text-GRAY px-4 py-2 rounded-sm text-2xl">&gt;</button>
               </div>
 
 
@@ -2160,7 +2178,7 @@
                         {/if}
                       {/await}
                       <span class="truncate whitespace-nowrap overflow-hidden">
-                        {getTeamName(prediction.groupFPrediction.goalScorer)}
+                        {getPlayerName(prediction.groupFPrediction.goalScorer)}
                       </span>
                     {:else}
                       Select Goal Scorer
@@ -2186,7 +2204,7 @@
                         {/if}
                       {/await}
                       <span class="truncate whitespace-nowrap overflow-hidden">
-                        {getTeamName(prediction.groupFPrediction.goalAssister)}
+                        {getPlayerName(prediction.groupFPrediction.goalAssister)}
                       </span>
                     {:else}
                       Select Goal Assister
@@ -2212,7 +2230,7 @@
                         {/if}
                       {/await}
                       <span class="truncate whitespace-nowrap overflow-hidden">
-                        {getTeamName(prediction.groupFPrediction.yellowCard)}
+                        {getPlayerName(prediction.groupFPrediction.yellowCard)}
                       </span>
                     {:else}
                       Select Yellow Card
@@ -2238,7 +2256,7 @@
                         {/if}
                       {/await}
                       <span class="truncate whitespace-nowrap overflow-hidden">
-                        {getTeamName(prediction.groupFPrediction.redCard)}
+                        {getPlayerName(prediction.groupFPrediction.redCard)}
                       </span>
                     {:else}
                       Select Red Card
@@ -2266,9 +2284,9 @@
             <div class="flex flex-col bg-blue-600 p-2 mt-4 rounded-md text-sm">
               
               <div class="my-4 flex flex-row items-center w-full">
-                <button on:click={priorStage} class="bg-OPENFPL text-GRAY px-2 py-1 rounded-sm text-2xl">&lt;</button>
+                <button on:click={priorStage} class="bg-OPENFPL text-GRAY px-4 py-2 rounded-sm text-2xl">&lt;</button>
                 <div class="flex-grow text-center">Round of 16</div>
-                <button on:click={nextStage} class="bg-OPENFPL text-GRAY px-2 py-1 rounded-sm text-2xl">&gt;</button>
+                <button on:click={nextStage} class="bg-OPENFPL text-GRAY px-4 py-2 rounded-sm text-2xl">&gt;</button>
               </div>
 
 
@@ -2342,7 +2360,7 @@
                         {/if}
                       {/await}
                       <span class="truncate whitespace-nowrap overflow-hidden">
-                        {getTeamName(prediction.r16Prediction.goalScorer)}
+                        {getPlayerName(prediction.r16Prediction.goalScorer)}
                       </span>
                     {:else}
                       Select Goal Scorer
@@ -2368,7 +2386,7 @@
                         {/if}
                       {/await}
                       <span class="truncate whitespace-nowrap overflow-hidden">
-                        {getTeamName(prediction.r16Prediction.goalAssister)}
+                        {getPlayerName(prediction.r16Prediction.goalAssister)}
                       </span>
                     {:else}
                       Select Goal Assister
@@ -2398,7 +2416,7 @@
                         {/if}
                       {/await}
                       <span class="truncate whitespace-nowrap overflow-hidden">
-                        {getTeamName(prediction.r16Prediction.yellowCard)}
+                        {getPlayerName(prediction.r16Prediction.yellowCard)}
                       </span>
                     {:else}
                       Select Yellow Card
@@ -2424,7 +2442,7 @@
                         {/if}
                       {/await}
                       <span class="truncate whitespace-nowrap overflow-hidden">
-                        {getTeamName(prediction.r16Prediction.redCard)}
+                        {getPlayerName(prediction.r16Prediction.redCard)}
                       </span>
                     {:else}
                       Select Red Card
@@ -2449,9 +2467,9 @@
             <div class="flex flex-col bg-blue-700 p-2 mt-4 rounded-md text-sm">
               
               <div class="my-4 flex flex-row items-center w-full">
-                <button on:click={priorStage} class="bg-OPENFPL text-GRAY px-2 py-1 rounded-sm text-2xl">&lt;</button>
+                <button on:click={priorStage} class="bg-OPENFPL text-GRAY px-4 py-2 rounded-sm text-2xl">&lt;</button>
                 <div class="flex-grow text-center">Quarter Final</div>
-                <button on:click={nextStage} class="bg-OPENFPL text-GRAY px-2 py-1 rounded-sm text-2xl">&gt;</button>
+                <button on:click={nextStage} class="bg-OPENFPL text-GRAY px-4 py-2 rounded-sm text-2xl">&gt;</button>
               </div>
 
 
@@ -2525,7 +2543,7 @@
                         {/if}
                       {/await}
                       <span class="truncate whitespace-nowrap overflow-hidden">
-                        {getTeamName(prediction.qfPrediction.goalScorer)}
+                        {getPlayerName(prediction.qfPrediction.goalScorer)}
                       </span>
                     {:else}
                       Select Goal Scorer
@@ -2551,7 +2569,7 @@
                         {/if}
                       {/await}
                       <span class="truncate whitespace-nowrap overflow-hidden">
-                        {getTeamName(prediction.qfPrediction.goalAssister)}
+                        {getPlayerName(prediction.qfPrediction.goalAssister)}
                       </span>
                     {:else}
                       Select Goal Assister
@@ -2581,7 +2599,7 @@
                         {/if}
                       {/await}
                       <span class="truncate whitespace-nowrap overflow-hidden">
-                        {getTeamName(prediction.qfPrediction.yellowCard)}
+                        {getPlayerName(prediction.qfPrediction.yellowCard)}
                       </span>
                     {:else}
                       Select Yellow Card
@@ -2607,7 +2625,7 @@
                         {/if}
                       {/await}
                       <span class="truncate whitespace-nowrap overflow-hidden">
-                        {getTeamName(prediction.qfPrediction.redCard)}
+                        {getPlayerName(prediction.qfPrediction.redCard)}
                       </span>
                     {:else}
                       Select Red Card
@@ -2632,9 +2650,9 @@
             <div class="flex flex-col bg-blue-800 p-2 mt-4 rounded-md text-sm">
               
               <div class="my-4 flex flex-row items-center w-full">
-                <button on:click={priorStage} class="bg-OPENFPL text-GRAY px-2 py-1 rounded-sm text-2xl">&lt;</button>
+                <button on:click={priorStage} class="bg-OPENFPL text-GRAY px-4 py-2 rounded-sm text-2xl">&lt;</button>
                 <div class="flex-grow text-center">Semi Final</div>
-                <button on:click={nextStage} class="bg-OPENFPL text-GRAY px-2 py-1 rounded-sm text-2xl">&gt;</button>
+                <button on:click={nextStage} class="bg-OPENFPL text-GRAY px-4 py-2 rounded-sm text-2xl">&gt;</button>
               </div>
 
 
@@ -2708,7 +2726,7 @@
                         {/if}
                       {/await}
                       <span class="truncate whitespace-nowrap overflow-hidden">
-                        {getTeamName(prediction.sfPrediction.goalScorer)}
+                        {getPlayerName(prediction.sfPrediction.goalScorer)}
                       </span>
                     {:else}
                       Select Goal Scorer
@@ -2734,7 +2752,7 @@
                         {/if}
                       {/await}
                       <span class="truncate whitespace-nowrap overflow-hidden">
-                        {getTeamName(prediction.sfPrediction.goalAssister)}
+                        {getPlayerName(prediction.sfPrediction.goalAssister)}
                       </span>
                     {:else}
                       Select Goal Assister
@@ -2764,7 +2782,7 @@
                         {/if}
                       {/await}
                       <span class="truncate whitespace-nowrap overflow-hidden">
-                        {getTeamName(prediction.sfPrediction.yellowCard)}
+                        {getPlayerName(prediction.sfPrediction.yellowCard)}
                       </span>
                     {:else}
                       Select Yellow Card
@@ -2790,7 +2808,7 @@
                         {/if}
                       {/await}
                       <span class="truncate whitespace-nowrap overflow-hidden">
-                        {getTeamName(prediction.sfPrediction.redCard)}
+                        {getPlayerName(prediction.sfPrediction.redCard)}
                       </span>
                     {:else}
                       Select Red Card
@@ -2815,9 +2833,9 @@
             <div class="flex flex-col bg-blue-900 p-2 mt-4 rounded-md text-sm">
               
               <div class="my-4 flex flex-row items-center w-full">
-                <button on:click={priorStage} class="bg-OPENFPL text-GRAY px-2 py-1 rounded-sm text-2xl">&lt;</button>
+                <button on:click={priorStage} class="bg-OPENFPL text-GRAY px-4 py-2 rounded-sm text-2xl">&lt;</button>
                 <div class="flex-grow text-center">Final</div>
-                <button on:click={nextStage} class="bg-GRAY text-white px-2 py-1 rounded-sm text-2xl">&gt;</button>
+                <button on:click={nextStage} class="bg-GRAY text-white px-4 py-2 rounded-sm text-2xl">&gt;</button>
               </div>
 
 
@@ -2891,7 +2909,7 @@
                         {/if}
                       {/await}
                       <span class="truncate whitespace-nowrap overflow-hidden">
-                        {getTeamName(prediction.fPrediction.goalScorer)}
+                        {getPlayerName(prediction.fPrediction.goalScorer)}
                       </span>
                     {:else}
                       Select Goal Scorer
@@ -2917,7 +2935,7 @@
                         {/if}
                       {/await}
                       <span class="truncate whitespace-nowrap overflow-hidden">
-                        {getTeamName(prediction.fPrediction.goalAssister)}
+                        {getPlayerName(prediction.fPrediction.goalAssister)}
                       </span>
                     {:else}
                       Select Goal Assister
@@ -2947,7 +2965,7 @@
                         {/if}
                       {/await}
                       <span class="truncate whitespace-nowrap overflow-hidden">
-                        {getTeamName(prediction.fPrediction.yellowCard)}
+                        {getPlayerName(prediction.fPrediction.yellowCard)}
                       </span>
                     {:else}
                       Select Yellow Card
@@ -2973,7 +2991,7 @@
                         {/if}
                       {/await}
                       <span class="truncate whitespace-nowrap overflow-hidden">
-                        {getTeamName(prediction.fPrediction.redCard)}
+                        {getPlayerName(prediction.fPrediction.redCard)}
                       </span>
                     {:else}
                       Select Red Card

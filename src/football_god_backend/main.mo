@@ -12,6 +12,7 @@ import Buffer "mo:base/Buffer";
 import Blob "mo:base/Blob";
 import Text "mo:base/Text";
 import Nat "mo:base/Nat";
+import Debug "mo:base/Debug";
 
 import T "types";
 import Seasons "seasons";
@@ -28,8 +29,9 @@ actor Self {
 
   let admins : [Principal] = [
     Principal.fromText("d7egg-wf5tk-olxbg-izlyy-bphvp-2nfuf-5yltc-kzmvt-dk5lo-qtv7e-vae"),
-    Principal.fromText("4jijx-ekel7-4t2kx-32cyf-wzo3t-i4tas-qsq4k-ujnug-oxke7-o5aci-eae")
-  ];
+    Principal.fromText("4jijx-ekel7-4t2kx-32cyf-wzo3t-i4tas-qsq4k-ujnug-oxke7-o5aci-eae"),
+    Principal.fromText("2drvn-pdfn4-rzaf3-vbnny-qpulj-yeqaf-jyk65-xgmrw-o3zbj-35abt-2qe"),
+    Principal.fromText("eqlhf-ppkq7-roa5i-4wu6r-jumy3-g2xrc-vfdd5-wtoeu-n7xre-vsktn-lqe")  ];
 
   let profilesInstance = Profiles.Profiles();
   let seasonsInstance = Seasons.Seasons();
@@ -1199,6 +1201,16 @@ actor Self {
     return await fpl_ledger.checkCallerPaidButNoEntry(Principal.fromActor(Self), caller);
   };
 
+  public shared ({ caller }) func adminDelete2024Entry(principalId: T.PrincipalName) : async Bool {
+    assert isAdminForCaller(caller);
+    return euro2024Instance.adminDelete2024Entry(principalId);
+  };
+
+  public shared ({ caller }) func adminGetEuro2024Entries(limit: Nat, offset: Nat) : async [DTOs.Euro2024PredictionDTO] {
+    assert isAdminForCaller(caller);
+    return euro2024Instance.adminGetEuro2024Entries(limit, offset);
+  };
+
   //TODO: get and pay winners
 
   //TODO: get leaderboard
@@ -1226,6 +1238,111 @@ actor Self {
     euro2024Instance.setData(stable_euro2024_predictions);
     euro2024Instance.setEvents(stable_euro2024_events);
     euro2024Instance.setState(stable_euro2024_state);
+    
+    /*
+    euro2024Instance.setState({
+      totalManagers = 1;
+      stage = #Selecting;
+      prizePool = 0;
+    });
+    euro2024Instance.setData([
+    ("2drvn-pdfn4-rzaf3-vbnny-qpulj-yeqaf-jyk65-xgmrw-o3zbj-35abt-2qe", {
+      entryTime = 0;
+      fPrediction = {
+        goalAssister = 0;
+        goalScorer = 0;
+        loser = 0;
+        redCard = 0;
+        stage = #Final;
+        winner = 0;
+        yellowCard = 0;
+      };
+      groupAPrediction = {
+        goalAssister = 0;
+        goalScorer = 0;
+        loser = 0;
+        redCard = 0;
+        stage = #GroupA;
+        winner = 0;
+        yellowCard = 0;
+      };
+      groupBPrediction = {
+        goalAssister = 0;
+        goalScorer = 0;
+        loser = 0;
+        redCard = 0;
+        stage = #GroupB;
+        winner = 0;
+        yellowCard = 0;
+      };
+      groupCPrediction = {
+        goalAssister = 0;
+        goalScorer = 0;
+        loser = 0;
+        redCard = 0;
+        stage = #GroupC;
+        winner = 0;
+        yellowCard = 0;
+      };
+      groupDPrediction = {
+        goalAssister = 0;
+        goalScorer = 0;
+        loser = 0;
+        redCard = 0;
+        stage = #GroupD;
+        winner = 0;
+        yellowCard = 0;
+      };
+      groupEPrediction = {
+        goalAssister = 0;
+        goalScorer = 0;
+        loser = 0;
+        redCard = 0;
+        stage = #GroupE;
+        winner = 0;
+        yellowCard = 0;
+      };
+      groupFPrediction = {
+        goalAssister = 0;
+        goalScorer = 0;
+        loser = 0;
+        redCard = 0;
+        stage = #GroupF;
+        winner = 0;
+        yellowCard = 0;
+      };
+      principalId = "2drvn-pdfn4-rzaf3-vbnny-qpulj-yeqaf-jyk65-xgmrw-o3zbj-35abt-2qe";
+      qfPrediction = {
+        goalAssister = 0;
+        goalScorer = 0;
+        loser = 0;
+        redCard = 0;
+        stage = #QuarterFinal;
+        winner = 0;
+        yellowCard = 0;
+      };
+      r16Prediction = {
+        goalAssister = 0;
+        goalScorer = 0;
+        loser = 0;
+        redCard = 0;
+        stage = #RoundOf16;
+        winner = 0;
+        yellowCard = 0;
+      };
+      sfPrediction = {
+        goalAssister = 0;
+        goalScorer = 0;
+        loser = 0;
+        redCard = 0;
+        stage = #SemiFinal;
+        winner = 0;
+        yellowCard = 0;
+      };
+      totalScore = 0;
+    }
+    )]);
+    */
   };
     
 };

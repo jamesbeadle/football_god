@@ -8,6 +8,7 @@ import Array "mo:base/Array";
 import Int "mo:base/Int";
 import Nat64 "mo:base/Nat64";
 import Buffer "mo:base/Buffer";
+import Time "mo:base/Time";
 import DTOs "DTOs";
 
 import Euro2024Teams "./data/euro2024_teams";
@@ -81,6 +82,9 @@ module {
             qfPrediction = foundUserPrediction.qfPrediction;
             sfPrediction = foundUserPrediction.sfPrediction;
             fPrediction = foundUserPrediction.fPrediction;
+            entryTime = foundUserPrediction.entryTime;
+            principalId = foundUserPrediction.principalId;
+            totalScore = foundUserPrediction.totalScore;
           }
         }
       }
@@ -102,6 +106,8 @@ module {
           fPrediction = predictions.fPrediction;
           totalScore = 0;
           winnings = 0;
+          principalId = principalName;
+          entryTime = Time.now();
         },
       );
 
@@ -371,6 +377,40 @@ module {
       
       //calculation assumes that it is being run after each game is finished therefore the points that have been awarded are final
 
+    };
+
+    public func adminDelete2024Entry(principalId: T.PrincipalName) : Bool {
+      userPredictions.delete(principalId);
+      return true;
+    };
+
+    public func adminGetEuro2024Entries(limit: Nat, offset: Nat) : [DTOs.Euro2024PredictionDTO] {
+      
+      let entries = Array.map<(T.PrincipalName, T.Euro2024Prediction), DTOs.Euro2024PredictionDTO>(
+        Iter.toArray(userPredictions.entries()),
+        func(prediction : (T.PrincipalName, T.Euro2024Prediction)) : DTOs.Euro2024PredictionDTO {
+          return {
+            alreadyEntered = true;
+            groupAPrediction = prediction.1.groupAPrediction;
+            groupBPrediction = prediction.1.groupBPrediction;
+            groupCPrediction  = prediction.1.groupCPrediction;
+            groupDPrediction  = prediction.1.groupDPrediction;
+            groupEPrediction = prediction.1.groupEPrediction;
+            groupFPrediction = prediction.1.groupFPrediction;
+            r16Prediction  = prediction.1.r16Prediction;
+            qfPrediction  = prediction.1.qfPrediction;
+            sfPrediction = prediction.1.sfPrediction;
+            fPrediction  = prediction.1.fPrediction;
+            principalId  = prediction.1.principalId;
+            entryTime = prediction.1.entryTime;
+            totalScore  = prediction.1.totalScore;
+          };
+        }
+      );
+
+      let droppedEntries = List.drop<DTOs.Euro2024PredictionDTO>(List.fromArray(entries), offset);
+      let paginatedEntries = List.take<DTOs.Euro2024PredictionDTO>(droppedEntries, limit);
+      return List.toArray(paginatedEntries);
     };
 
   };

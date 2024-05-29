@@ -9,7 +9,7 @@
   },
   "_index.js": {
     "css": [
-      "_app/immutable/assets/index.DXdtVKER.css"
+      "_app/immutable/assets/index.BbfABu77.css"
     ],
     "file": "chunks/index.js",
     "imports": [
@@ -50,6 +50,14 @@
     ],
     "isEntry": true,
     "src": "src/football_god_frontend/src/routes/+page.svelte"
+  },
+  "src/football_god_frontend/src/routes/admin/+page.svelte": {
+    "file": "entries/pages/admin/_page.svelte.js",
+    "imports": [
+      "_index.js"
+    ],
+    "isEntry": true,
+    "src": "src/football_god_frontend/src/routes/admin/+page.svelte"
   },
   "src/football_god_frontend/src/routes/betting/+page.svelte": {
     "file": "entries/pages/betting/_page.svelte.js",

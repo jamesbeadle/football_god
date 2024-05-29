@@ -1,4 +1,4 @@
-import { q } from "../../../chunks/index.js";
+import { r } from "../../../chunks/index.js";
 import "@dfinity/auth-client";
 import "@dfinity/utils";
 import "@dfinity/agent";
@@ -7,5 +7,5 @@ import "@dfinity/principal";
 import "@dfinity/candid/lib/cjs/idl.js";
 import "dompurify";
 export {
-  q as default
+  r as default
 };

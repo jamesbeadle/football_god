@@ -1,1 +1,1 @@
-export { default as component } from "../../../../src/football_god_frontend/src/routes/betting/+page.svelte";
+export { default as component } from "../../../../src/football_god_frontend/src/routes/admin/+page.svelte";

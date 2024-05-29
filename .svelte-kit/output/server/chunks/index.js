@@ -3485,7 +3485,7 @@ const options = {
 		<div class="error">
 			<span class="status">` + status + '</span>\n			<div class="message">\n				<h1>' + message + "</h1>\n			</div>\n		</div>\n	</body>\n</html>\n"
   },
-  version_hash: "1ftoshk"
+  version_hash: "1qr6w1g"
 };
 async function get_hooks() {
   return {};
@@ -4054,6 +4054,15 @@ const ProfileIcon = create_ssr_component(($$result, $$props, $$bindings, slots) 
     $$bindings.fill(fill);
   return `<svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true"${add_attribute("class", className, 0)} fill="currentColor" viewBox="0 0 24 24"><path${add_attribute("fill", fill, 0)} d="M12 12c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm0 2c-3.33 0-10 1.67-10 5v2h20v-2c0-3.33-6.67-5-10-5z"></path></svg>`;
 });
+const LogoutIcon = create_ssr_component(($$result, $$props, $$bindings, slots) => {
+  let { className = "" } = $$props;
+  let { fill = "white" } = $$props;
+  if ($$props.className === void 0 && $$bindings.className && className !== void 0)
+    $$bindings.className(className);
+  if ($$props.fill === void 0 && $$bindings.fill && fill !== void 0)
+    $$bindings.fill(fill);
+  return `<svg${add_attribute("class", className, 0)} viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path fill="none" d="M0 0h24 24H0z"></path><path d="M16 13v-2H7V8l-5 4 5 4v-3zM20 3H9c-1.1 0-2 .9-2 2v3h2V5h11v14H9v-3H7v3c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"></path></svg>`;
+});
 const css$1 = {
   code: ".transition-width.svelte-frwh1m{transition:width 200ms}a.active.svelte-frwh1m{color:white !important}",
   map: null
@@ -4111,7 +4120,7 @@ const Layout = create_ssr_component(($$result, $$props, $$bindings, slots) => {
       return ` <div>${validate_component(Spinner, "Spinner").$$render($$result, {}, {}, {})}</div> `;
     }
     return function(_) {
-      return ` <div class="flex h-screen"><div class="bg-GRAY text-white flex flex-col justify-between transition-width duration-300 p-5 rounded-lg m-2 svelte-frwh1m" style="${"width: " + escape($isExpanded ? "16rem" : "4rem", true)}"><div><button class="mb-4"><span>${escape($isExpanded ? "<<" : ">>")}</span></button> <div class="text-gray-400 flex flex-col"><a href="/" class="block mt-4 text-lg my-4"><div class="flex flex-row items-center">${validate_component(LogoIcon, "LogoIcon").$$render($$result, { className: "w-6 mr-2" }, {}, {})} ${$isExpanded ? `<span data-svelte-h="svelte-judcsy">FootballGod</span>` : ``}</div></a> ${each(links, (link) => {
+      return ` <div class="flex h-screen"><div class="bg-GRAY text-white flex flex-col justify-between transition-width duration-300 p-5 rounded-lg m-2 svelte-frwh1m" style="${"width: " + escape($isExpanded ? "16rem" : "4rem", true)}"><div class="flex flex-col flex-grow"><button class="mb-4"><span>${escape($isExpanded ? "<<" : ">>")}</span></button> <div class="text-gray-400 flex flex-col"><a href="/" class="block mt-4 text-lg my-4"><div class="flex flex-row items-center">${validate_component(LogoIcon, "LogoIcon").$$render($$result, { className: "w-6 mr-2" }, {}, {})} ${$isExpanded ? `<span data-svelte-h="svelte-judcsy">FootballGod</span>` : ``}</div></a> ${each(links, (link) => {
         return `<a${add_attribute("href", link.href, 0)} rel="prefetch" class="${[
           "block mt-4 text-lg svelte-frwh1m",
           activeRoute === link.href ? "active" : ""
@@ -4124,7 +4133,7 @@ const Layout = create_ssr_component(($$result, $$props, $$bindings, slots) => {
           {},
           {}
         )} ${$isExpanded ? `<span>${escape(link.name)}</span>` : ``}</div> </a>`;
-      })}</div></div> <div class="mb-4">${$isExpanded ? `${$authSignedInStore ? `<button class="button-hover p-2 rounded-md text-sm w-full" data-svelte-h="svelte-kl75by">Disconnect</button>` : `<button class="bg-OPENFPL hover:bg-OPENFPL hover:text-GRAY p-2 rounded-md text-sm w-full" data-svelte-h="svelte-lbywhq">Connect Internet Identity</button>`}` : ``}</div></div> <div class="flex-1">${slots.default ? slots.default({}) : ``}</div> ${validate_component(Toasts, "Toasts").$$render($$result, {}, {}, {})}</div> `;
+      })}</div></div> ${$authSignedInStore && !$isExpanded ? `<button>${validate_component(LogoutIcon, "LogoutIcon").$$render($$result, { className: "max-w-6" }, {}, {})}</button>` : ``} <div class="mb-4">${$isExpanded ? `${$authSignedInStore ? `<button class="button-hover p-2 rounded-md text-sm w-full" data-svelte-h="svelte-kl75by">Disconnect</button>` : `<button class="bg-OPENFPL hover:bg-OPENFPL hover:text-GRAY p-2 rounded-md text-sm w-full" data-svelte-h="svelte-lbywhq">Connect Internet Identity</button>`}` : ``}</div></div> <div class="flex-1">${slots.default ? slots.default({}) : ``}</div> ${validate_component(Toasts, "Toasts").$$render($$result, {}, {}, {})}</div> `;
     }();
   }(init2())} ${validate_component(BusyScreen, "BusyScreen").$$render($$result, {}, {}, {})}`;
 });
@@ -4132,7 +4141,7 @@ const css = {
   code: ".overlay-panel.svelte-a3qity{position:absolute;bottom:0;right:0}",
   map: null
 };
-const Page$8 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
+const Page$9 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
   let $$unsubscribe_authSignedInStore;
   let $$unsubscribe_countdown;
   $$unsubscribe_authSignedInStore = subscribe(authSignedInStore, (value) => value);
@@ -4151,19 +4160,6 @@ const Page$8 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
     }
   })}`;
 });
-const Page$7 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
-  let { title = "Betting Unavailable" } = $$props;
-  let { message = "Betting is currently unavailable in your region." } = $$props;
-  if ($$props.title === void 0 && $$bindings.title && title !== void 0)
-    $$bindings.title(title);
-  if ($$props.message === void 0 && $$bindings.message && message !== void 0)
-    $$bindings.message(message);
-  return `  ${validate_component(Layout, "Layout").$$render($$result, {}, {}, {
-    default: () => {
-      return `<div class="min-h-screen flex items-center justify-center bg-gray-100"><div class="max-w-md w-full bg-white shadow-lg rounded-lg p-6 text-center p-8"><h1 class="text-2xl font-bold text-gray-800 mb-4">${escape(title)}</h1> <p class="text-gray-600">${escape(message)}</p></div></div>`;
-    }
-  })}`;
-});
 const idlFactory = ({ IDL }) => {
   const List = IDL.Rec();
   const List_1 = IDL.Rec();
@@ -4176,6 +4172,45 @@ const idlFactory = ({ IDL }) => {
   });
   const Result = IDL.Variant({ "ok": IDL.Null, "err": Error2 });
   const PrincipalName = IDL.Text;
+  const PlayerId = IDL.Nat16;
+  const TeamId = IDL.Nat16;
+  const TournamentStage = IDL.Variant({
+    "RoundOf16": IDL.Null,
+    "SemiFinal": IDL.Null,
+    "GroupA": IDL.Null,
+    "GroupB": IDL.Null,
+    "GroupC": IDL.Null,
+    "GroupD": IDL.Null,
+    "GroupE": IDL.Null,
+    "GroupF": IDL.Null,
+    "Final": IDL.Null,
+    "QuarterFinal": IDL.Null
+  });
+  const PredictionSet = IDL.Record({
+    "goalAssister": PlayerId,
+    "winner": TeamId,
+    "loser": TeamId,
+    "stage": TournamentStage,
+    "goalScorer": PlayerId,
+    "redCard": PlayerId,
+    "yellowCard": PlayerId
+  });
+  const Euro2024PredictionDTO = IDL.Record({
+    "sfPrediction": PredictionSet,
+    "entryTime": IDL.Int,
+    "groupAPrediction": PredictionSet,
+    "groupCPrediction": PredictionSet,
+    "groupEPrediction": PredictionSet,
+    "fPrediction": PredictionSet,
+    "qfPrediction": PredictionSet,
+    "totalScore": IDL.Nat16,
+    "alreadyEntered": IDL.Bool,
+    "groupBPrediction": PredictionSet,
+    "groupDPrediction": PredictionSet,
+    "groupFPrediction": PredictionSet,
+    "principalId": PrincipalName,
+    "r16Prediction": PredictionSet
+  });
   const AccountBalancesDTO = IDL.Record({
     "icpBalance": IDL.Nat64,
     "principalId": PrincipalName,
@@ -4202,8 +4237,6 @@ const idlFactory = ({ IDL }) => {
     "activeSeasonName": IDL.Text
   });
   const FixtureId = IDL.Nat32;
-  const PlayerId = IDL.Nat16;
-  const TeamId = IDL.Nat16;
   const EventType = IDL.Variant({
     "RedCard": IDL.Null,
     "GoalScored": IDL.Null,
@@ -4240,40 +4273,6 @@ const idlFactory = ({ IDL }) => {
   });
   const DataCacheDTO = IDL.Record({ "hash": IDL.Text, "category": IDL.Text });
   const Result_6 = IDL.Variant({ "ok": IDL.Vec(DataCacheDTO), "err": Error2 });
-  const TournamentStage = IDL.Variant({
-    "RoundOf16": IDL.Null,
-    "SemiFinal": IDL.Null,
-    "GroupA": IDL.Null,
-    "GroupB": IDL.Null,
-    "GroupC": IDL.Null,
-    "GroupD": IDL.Null,
-    "GroupE": IDL.Null,
-    "GroupF": IDL.Null,
-    "Final": IDL.Null,
-    "QuarterFinal": IDL.Null
-  });
-  const PredictionSet = IDL.Record({
-    "goalAssister": PlayerId,
-    "winner": TeamId,
-    "loser": TeamId,
-    "stage": TournamentStage,
-    "goalScorer": PlayerId,
-    "redCard": PlayerId,
-    "yellowCard": PlayerId
-  });
-  const Euro2024PredictionDTO = IDL.Record({
-    "sfPrediction": PredictionSet,
-    "groupAPrediction": PredictionSet,
-    "groupCPrediction": PredictionSet,
-    "groupEPrediction": PredictionSet,
-    "fPrediction": PredictionSet,
-    "qfPrediction": PredictionSet,
-    "alreadyEntered": IDL.Bool,
-    "groupBPrediction": PredictionSet,
-    "groupDPrediction": PredictionSet,
-    "groupFPrediction": PredictionSet,
-    "r16Prediction": PredictionSet
-  });
   const Result_1 = IDL.Variant({ "ok": Euro2024PredictionDTO, "err": Error2 });
   const Position = IDL.Variant({
     "Goalkeeper": IDL.Null,
@@ -4439,6 +4438,12 @@ const idlFactory = ({ IDL }) => {
     "addFixtureToGameweek": IDL.Func(
       [IDL.Nat16, IDL.Nat8, IDL.Nat16, IDL.Nat16],
       [Result],
+      []
+    ),
+    "adminDelete2024Entry": IDL.Func([PrincipalName], [IDL.Bool], []),
+    "adminGetEuro2024Entries": IDL.Func(
+      [IDL.Nat, IDL.Nat],
+      [IDL.Vec(Euro2024PredictionDTO)],
       []
     ),
     "calculateEuro2024Leaderboard": IDL.Func([], [Result], []),
@@ -4617,6 +4622,16 @@ class ActorFactory {
     });
   }
 }
+function formatUnixDateToReadable(unixNano) {
+  const date = new Date(unixNano / 1e6);
+  const options2 = {
+    weekday: "long",
+    year: "numeric",
+    month: "long",
+    day: "numeric"
+  };
+  return new Intl.DateTimeFormat("en-UK", options2).format(date);
+}
 function replacer(key2, value) {
   if (typeof value === "bigint") {
     return value.toString();
@@ -4627,6 +4642,44 @@ function replacer(key2, value) {
 function isError(response) {
   return response && response.err !== void 0;
 }
+const pageSize = 10;
+const Admin_euro2024 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
+  let currentPage = 1;
+  let entries = [];
+  return `<div class="p-4"><p data-svelte-h="svelte-k0jqut">Euro 2024 Entries:</p> <div class="overflow-x-auto flex-1"><div class="flex justify-between border border-gray-700 py-2 bg-light-gray border-b border-gray-700" data-svelte-h="svelte-1vms2iz"><div class="w-6/12">PrincipalId</div> <div class="w-3/12">Entry Date</div> <div class="w-3/12"></div></div> ${each(entries, (entry, index) => {
+    return `<div class="flex items-center justify-between py-2 border-b border-gray-700 cursor-pointer"><div class="w-6/12">${escape(entry.principalId)}</div> <div class="w-3/12">${escape(formatUnixDateToReadable(Number(entry.entryTime)))}</div> <div class="w-3/12"><button data-svelte-h="svelte-m1cq8q">Delete</button></div> </div>`;
+  })}</div></div> <div class="justify-center mt-4 pb-4 overflow-x-auto"><div class="flex space-x-1 min-w-max">${each(Array(Math.ceil(entries.length / pageSize)), (_, index) => {
+    return `<button${add_attribute("class", `px-4 py-2 rounded-md ${index + 1 === currentPage ? "fpl-button" : ""}`, 0)}>${escape(index + 1)} </button>`;
+  })}</div></div>    `;
+});
+const Page$8 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
+  return `${validate_component(Layout, "Layout").$$render($$result, {}, {}, {
+    default: () => {
+      return `<div class="relative bg-gray-800 text-white mt-2 mr-2 rounded-lg"><p class="text-2xl p-8" data-svelte-h="svelte-e3xv4p">Admin</p> <div class="bg-panel rounded-md"><ul class="flex bg-light-gray contained-text border-b border-gray-700"><li${add_attribute("class", `mr-1 md:mr-4 ${"active-tab"}`, 0)}><button${add_attribute(
+        "class",
+        `p-2 ${"text-white"}`,
+        0
+      )}>Euro 2024</button></li> <li${add_attribute("class", `mr-1 md:mr-4 ${""}`, 0)}><button${add_attribute(
+        "class",
+        `p-2 ${"text-gray-400"}`,
+        0
+      )}>Premier League</button></li></ul> ${`${validate_component(Admin_euro2024, "AdminEuro2024").$$render($$result, {}, {}, {})}`}</div></div>`;
+    }
+  })}`;
+});
+const Page$7 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
+  let { title = "Betting Unavailable" } = $$props;
+  let { message = "Betting is currently unavailable in your region." } = $$props;
+  if ($$props.title === void 0 && $$bindings.title && title !== void 0)
+    $$bindings.title(title);
+  if ($$props.message === void 0 && $$bindings.message && message !== void 0)
+    $$bindings.message(message);
+  return `  ${validate_component(Layout, "Layout").$$render($$result, {}, {}, {
+    default: () => {
+      return `<div class="min-h-screen flex items-center justify-center bg-gray-100"><div class="max-w-md w-full bg-white shadow-lg rounded-lg p-6 text-center p-8"><h1 class="text-2xl font-bold text-gray-800 mb-4">${escape(title)}</h1> <p class="text-gray-600">${escape(message)}</p></div></div>`;
+    }
+  })}`;
+});
 var define_process_env_default$2 = { FOOTBALL_GOD_BACKEND_CANISTER_ID: "44kin-waaaa-aaaal-qbxra-cai", FOOTBALL_GOD_FRONTEND_CANISTER_ID: "43loz-3yaaa-aaaal-qbxrq-cai", DFX_NETWORK: "ic" };
 function createTeamStore() {
   const { subscribe: subscribe2, set } = writable([]);
@@ -4728,6 +4781,7 @@ function createEuro2024Store() {
   );
   async function sync() {
     let result = await actor.getEuro2024StateDTO();
+    console.log(result);
     if (isError(result)) {
       console.error("Error syncing euro 2024 store");
       return;
@@ -4882,7 +4936,7 @@ const Page = create_ssr_component(($$result, $$props, $$bindings, slots) => {
 export {
   Error$1 as E,
   Layout$1 as L,
-  Page$8 as P,
+  Page$9 as P,
   Server as S,
   set_building as a,
   set_manifest as b,
@@ -4892,14 +4946,15 @@ export {
   set_read_implementation as f,
   get_hooks as g,
   set_safe_public_env as h,
-  Page$7 as i,
-  Page$6 as j,
-  Page$5 as k,
-  Page$4 as l,
-  Page$3 as m,
-  Page$2 as n,
+  Page$8 as i,
+  Page$7 as j,
+  Page$6 as k,
+  Page$5 as l,
+  Page$4 as m,
+  Page$3 as n,
   options as o,
-  Page$1 as p,
-  Page as q,
+  Page$2 as p,
+  Page$1 as q,
+  Page as r,
   set_assets as s
 };

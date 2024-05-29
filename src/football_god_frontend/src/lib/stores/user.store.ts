@@ -128,6 +128,9 @@ function createUserStore() {
     dto: Euro2024PredictionDTO,
   ): Promise<any> {
     try {
+      dto.entryTime = 0n;
+      dto.principalId = "";
+      dto.totalScore = 0;
       const identityActor = await ActorFactory.createIdentityActor(
         authStore,
         process.env.FOOTBALL_GOD_BACKEND_CANISTER_ID ?? "",

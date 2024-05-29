@@ -212,6 +212,9 @@ module DTOs {
     qfPrediction : T.PredictionSet;
     sfPrediction : T.PredictionSet;
     fPrediction : T.PredictionSet;
+    principalId : T.PrincipalName;
+    entryTime: Int;
+    totalScore : Nat16;
   };
 
   public type Euro2024FixtureDTO = {

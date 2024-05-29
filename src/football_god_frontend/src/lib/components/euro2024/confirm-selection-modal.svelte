@@ -1,11 +1,12 @@
 <script lang="ts">
-    import CopyIcon from "$lib/icons/CopyIcon.svelte";
+  import CopyIcon from "$lib/icons/CopyIcon.svelte";
   import RefreshIcon from "$lib/icons/RefreshIcon.svelte";
-    import { toastsError, toastsShow } from "$lib/stores/toasts.store";
-    import { userStore } from "$lib/stores/user.store";
-import { Modal, Spinner } from "@dfinity/gix-components";
+  import { toastsError, toastsShow } from "$lib/stores/toasts.store";
+  import { userStore } from "$lib/stores/user.store";
+  import { Modal, Spinner } from "@dfinity/gix-components";
   import { onMount } from "svelte";
   import type { AccountBalancesDTO } from "../../../../../declarations/football_god_backend/football_god_backend.did";
+  import { writable } from "svelte/store";
 
   export let visible: boolean;
   export let closeSelectionModal: () => void;
@@ -15,6 +16,9 @@ import { Modal, Spinner } from "@dfinity/gix-components";
 
   let entryFee = 10_000_000_000n;
   let isLoading = true;
+  let dots = writable('.');
+  let dot_interval;
+  let refreshingBalance = false;
   
   onMount(async () => {
     try {
@@ -60,11 +64,22 @@ import { Modal, Spinner } from "@dfinity/gix-components";
   }
 
   async function refreshBalance () {
+
+    refreshingBalance = true;
+    let count = 1;
+    dot_interval = setInterval(() => {
+      count = (count % 3) + 1;
+      dots.set('.'.repeat(count));
+    }, 500);
+
     let userBalances = await userStore.getAccountBalances();
     if(userBalances){
       accountBalances = userBalances;
       fplBalance = Number(accountBalances.fplBalance / 100_000_000n).toPrecision(4);
     }
+
+    refreshingBalance = false;
+    clearInterval(dot_interval);
   }
 </script>
 
@@ -83,7 +98,13 @@ import { Modal, Spinner } from "@dfinity/gix-components";
           {#if isLoading}
             <p class="py-4">Loading Balance</p>
           {:else}
-            <p class="py-4">Balance: {fplBalance} FPL</p>
+            <p class="py-4">Balance: 
+              {#if refreshingBalance}
+                {$dots}
+              {:else}
+                {fplBalance} FPL
+              {/if}
+            </p>
           {/if}
           <RefreshIcon className="w-5 ml-2" />
         </span>

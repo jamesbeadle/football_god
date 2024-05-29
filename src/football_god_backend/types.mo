@@ -100,7 +100,8 @@ module Types {
   //Euro 2024 types
 
   public type Euro2024Prediction = {
-
+    principalId : PrincipalName;
+    entryTime: Int;
     totalScore : Nat16;
 
     groupAPrediction : PredictionSet;

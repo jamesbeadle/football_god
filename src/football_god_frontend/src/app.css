@@ -136,3 +136,17 @@
     max-width: none !important; /* or set to desired value */
   }
 }
+
+.bg-panel {
+  @apply bg-panel-color w-full;
+}
+
+.bg-panel-color {
+  background-color: rgba(36, 37, 41, 0.9);
+  border-radius: 8px;
+  border: 1px solid #2e323a !important;
+}
+
+.active-tab {
+  border-bottom: 4px #2ce3a6 solid;
+}

@@ -10,6 +10,7 @@ type Euro2024Event =
   };
 type Euro2024Prediction =
   {
+    entryTime : Int;
     fPrediction : PredictionSet;
     groupAPrediction : PredictionSet;
     groupBPrediction : PredictionSet;
@@ -17,6 +18,7 @@ type Euro2024Prediction =
     groupDPrediction : PredictionSet;
     groupEPrediction : PredictionSet;
     groupFPrediction : PredictionSet;
+    principalId : PrincipalName;
     qfPrediction : PredictionSet;
     r16Prediction : PredictionSet;
     sfPrediction : PredictionSet;

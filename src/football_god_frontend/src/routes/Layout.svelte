@@ -18,6 +18,8 @@
   import { page } from "$app/stores";
   import { goto } from "$app/navigation";
   import ProfileIcon from "$lib/icons/ProfileIcon.svelte";
+    import LogoutIcon from "$lib/icons/LogoutIcon.svelte";
+    import { signOut } from "$lib/services/auth.services";
   
 
   let isExpanded = writable(false);
@@ -99,8 +101,8 @@
       class="bg-GRAY text-white flex flex-col justify-between transition-width duration-300 p-5 rounded-lg m-2"
       style="width: {$isExpanded ? '16rem' : '4rem'}"
     >
-      <div>
-        <button on:click={() => ($isExpanded = !$isExpanded)} class="mb-4">
+    <div class="flex flex-col flex-grow">
+      <button on:click={() => ($isExpanded = !$isExpanded)} class="mb-4">
           <span>{$isExpanded ? "<<" : ">>"}</span>
         </button>
 
@@ -140,6 +142,12 @@
           {/each}
         </div>
       </div>
+      {#if $authSignedInStore && !$isExpanded}
+        <button on:click={signOut} in:fade>
+          <LogoutIcon className="max-w-6" />
+        </button>
+      {/if}
+      
 
       <div class="mb-4">
         {#if $isExpanded}

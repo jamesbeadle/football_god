@@ -11,21 +11,23 @@ export const nodes = [
 	() => import('./nodes/7'),
 	() => import('./nodes/8'),
 	() => import('./nodes/9'),
-	() => import('./nodes/10')
+	() => import('./nodes/10'),
+	() => import('./nodes/11')
 ];
 
 export const server_loads = [];
 
 export const dictionary = {
 		"/": [2],
-		"/betting": [3],
-		"/euro2024": [4],
-		"/games": [5],
-		"/leaderboard": [6],
-		"/lightpaper": [7],
-		"/manage-euro2024": [8],
-		"/presale": [9],
-		"/profile": [10]
+		"/admin": [3],
+		"/betting": [4],
+		"/euro2024": [5],
+		"/games": [6],
+		"/leaderboard": [7],
+		"/lightpaper": [8],
+		"/manage-euro2024": [9],
+		"/presale": [10],
+		"/profile": [11]
 	};
 
 export const hooks = {

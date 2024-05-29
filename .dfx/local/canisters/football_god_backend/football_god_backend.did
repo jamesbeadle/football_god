@@ -261,6 +261,7 @@ type EventType =
 type Euro2024PredictionDTO = 
  record {
    alreadyEntered: bool;
+   entryTime: int;
    fPrediction: PredictionSet;
    groupAPrediction: PredictionSet;
    groupBPrediction: PredictionSet;
@@ -268,9 +269,11 @@ type Euro2024PredictionDTO =
    groupDPrediction: PredictionSet;
    groupEPrediction: PredictionSet;
    groupFPrediction: PredictionSet;
+   principalId: PrincipalName;
    qfPrediction: PredictionSet;
    r16Prediction: PredictionSet;
    sfPrediction: PredictionSet;
+   totalScore: nat16;
  };
 type Euro2024EventDTO = 
  record {
@@ -339,6 +342,8 @@ type AccountBalancesDTO =
 type AccountBalanceDTO = record {accountBalance: nat;};
 service : {
   addFixtureToGameweek: (nat16, nat8, nat16, nat16) -> (Result);
+  adminDelete2024Entry: (PrincipalName) -> (bool);
+  adminGetEuro2024Entries: (nat, nat) -> (vec Euro2024PredictionDTO);
   calculateEuro2024Leaderboard: () -> (Result);
   checkPaidButNoEntry: () -> (bool);
   createSeason: (text, nat16) -> (Result);
