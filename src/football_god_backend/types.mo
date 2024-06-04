@@ -253,4 +253,76 @@ module Types {
     #RedCard;
   };
 
+
+  //Original OpenFPL Manager Types
+
+  public type SeasonId = Nat16;
+  public type GameweekNumber = Nat8;
+
+  public type OpenFPLInfo = {
+    principalId: Text;
+    username: Text;
+  };
+
+  public type UserFantasyTeam = {
+    fantasyTeam : FantasyTeam;
+    history : List.List<FantasyTeamSeason>;
+  };
+
+  public type FantasyTeamSeason = {
+    seasonId : SeasonId;
+    totalPoints : Int16;
+    gameweeks : List.List<FantasyTeamSnapshot>;
+  };
+
+  public type FantasyTeam = {
+    principalId : Text;
+    teamName : Text;
+    favouriteTeamId : TeamId;
+    transfersAvailable : Nat8;
+    bankBalance : Nat; //Value in £0.25m units
+    playerIds : [PlayerId];
+    captainId : PlayerId;
+    goalGetterGameweek : GameweekNumber;
+    goalGetterPlayerId : PlayerId;
+    passMasterGameweek : GameweekNumber;
+    passMasterPlayerId : PlayerId;
+    noEntryGameweek : GameweekNumber;
+    noEntryPlayerId : PlayerId;
+    teamBoostGameweek : GameweekNumber;
+    teamBoostTeamId : TeamId;
+    safeHandsGameweek : GameweekNumber;
+    safeHandsPlayerId : PlayerId;
+    captainFantasticGameweek : GameweekNumber;
+    captainFantasticPlayerId : PlayerId;
+    braceBonusGameweek : GameweekNumber;
+    hatTrickHeroGameweek : GameweekNumber;
+  };
+
+  public type FantasyTeamSnapshot = {
+    principalId : Text;
+    teamName : Text;
+    favouriteTeamId : TeamId;
+    transfersAvailable : Nat8;
+    bankBalance : Nat; //Value in £0.25m units
+    playerIds : [PlayerId];
+    captainId : Nat16;
+    gameweek : GameweekNumber;
+    goalGetterGameweek : GameweekNumber;
+    goalGetterPlayerId : PlayerId;
+    passMasterGameweek : GameweekNumber;
+    passMasterPlayerId : PlayerId;
+    noEntryGameweek : GameweekNumber;
+    noEntryPlayerId : PlayerId;
+    teamBoostGameweek : GameweekNumber;
+    teamBoostTeamId : TeamId;
+    safeHandsGameweek : GameweekNumber;
+    safeHandsPlayerId : PlayerId;
+    captainFantasticGameweek : GameweekNumber;
+    captainFantasticPlayerId : PlayerId;
+    braceBonusGameweek : GameweekNumber;
+    hatTrickHeroGameweek : GameweekNumber;
+    points : Int16;
+  };
+
 };

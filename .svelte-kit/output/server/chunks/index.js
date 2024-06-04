@@ -3485,7 +3485,7 @@ const options = {
 		<div class="error">
 			<span class="status">` + status + '</span>\n			<div class="message">\n				<h1>' + message + "</h1>\n			</div>\n		</div>\n	</body>\n</html>\n"
   },
-  version_hash: "8hv0ou"
+  version_hash: "1chtc7t"
 };
 async function get_hooks() {
   return {};
@@ -4063,6 +4063,12 @@ const LogoutIcon = create_ssr_component(($$result, $$props, $$bindings, slots) =
     $$bindings.fill(fill);
   return `<svg${add_attribute("class", className, 0)} viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path fill="none" d="M0 0h24 24H0z"></path><path d="M16 13v-2H7V8l-5 4 5 4v-3zM20 3H9c-1.1 0-2 .9-2 2v3h2V5h11v14H9v-3H7v3c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"></path></svg>`;
 });
+const Tooltip = create_ssr_component(($$result, $$props, $$bindings, slots) => {
+  let { text: text2 } = $$props;
+  if ($$props.text === void 0 && $$bindings.text && text2 !== void 0)
+    $$bindings.text(text2);
+  return `<button class="relative flex items-center w-6 max-w-6 text-sm">${slots.default ? slots.default({}) : ``} ${``}</button>`;
+});
 const css$1 = {
   code: ".transition-width.svelte-frwh1m{transition:width 200ms}a.active.svelte-frwh1m{color:white !important}",
   map: null
@@ -4124,16 +4130,24 @@ const Layout = create_ssr_component(($$result, $$props, $$bindings, slots) => {
         return `<a${add_attribute("href", link.href, 0)} rel="prefetch" class="${[
           "block mt-4 text-lg svelte-frwh1m",
           activeRoute === link.href ? "active" : ""
-        ].join(" ").trim()}"><div class="flex flex-row items-center">${validate_component(link.icon || missing_component, "svelte:component").$$render(
-          $$result,
-          {
-            className: "w-6 mr-2",
-            fill: activeRoute === link.href ? "white" : "gray"
-          },
-          {},
-          {}
-        )} ${$isExpanded ? `<span>${escape(link.name)}</span>` : ``}</div> </a>`;
-      })}</div></div> ${$authSignedInStore && !$isExpanded ? `<button>${validate_component(LogoutIcon, "LogoutIcon").$$render($$result, { className: "max-w-6" }, {}, {})}</button>` : ``} <div class="mb-4">${$isExpanded ? `${$authSignedInStore ? `<button class="button-hover p-2 rounded-md text-sm w-full" data-svelte-h="svelte-kl75by">Disconnect</button>` : `<button class="bg-OPENFPL hover:bg-OPENFPL hover:text-GRAY p-2 rounded-md text-sm w-full" data-svelte-h="svelte-lbywhq">Connect Internet Identity</button>`}` : ``}</div></div> <div class="flex-1">${slots.default ? slots.default({}) : ``}</div> ${validate_component(Toasts, "Toasts").$$render($$result, {}, {}, {})}</div> `;
+        ].join(" ").trim()}"><div class="flex flex-row items-center">${validate_component(Tooltip, "Tooltip").$$render($$result, { text: link.name }, {}, {
+          default: () => {
+            return `${validate_component(link.icon || missing_component, "svelte:component").$$render(
+              $$result,
+              {
+                className: "w-6 mr-2",
+                fill: activeRoute === link.href ? "white" : "gray"
+              },
+              {},
+              {}
+            )} `;
+          }
+        })} ${$isExpanded ? `<span>${escape(link.name)}</span>` : ``}</div> </a>`;
+      })}</div></div> ${$authSignedInStore && !$isExpanded ? `<button>${validate_component(Tooltip, "Tooltip").$$render($$result, { text: "Logout" }, {}, {
+        default: () => {
+          return `${validate_component(LogoutIcon, "LogoutIcon").$$render($$result, { className: "max-w-6" }, {}, {})}`;
+        }
+      })}</button>` : ``} <div class="mb-4">${$isExpanded ? `${$authSignedInStore ? `<button class="button-hover p-2 rounded-md text-sm w-full" data-svelte-h="svelte-kl75by">Disconnect</button>` : `<button class="bg-OPENFPL hover:bg-OPENFPL hover:text-GRAY p-2 rounded-md text-sm w-full" data-svelte-h="svelte-lbywhq">Connect Internet Identity</button>`}` : ``}</div></div> <div class="flex-1">${slots.default ? slots.default({}) : ``}</div> ${validate_component(Toasts, "Toasts").$$render($$result, {}, {}, {})}</div> `;
     }();
   }(init2())} ${validate_component(BusyScreen, "BusyScreen").$$render($$result, {}, {}, {})}`;
 });
@@ -4141,7 +4155,7 @@ const css = {
   code: ".overlay-panel.svelte-a3qity{position:absolute;bottom:0;right:0}",
   map: null
 };
-const Page$9 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
+const Page$a = create_ssr_component(($$result, $$props, $$bindings, slots) => {
   let $$unsubscribe_authSignedInStore;
   let $$unsubscribe_countdown;
   $$unsubscribe_authSignedInStore = subscribe(authSignedInStore, (value) => value);
@@ -4501,6 +4515,7 @@ const idlFactory = ({ IDL }) => {
       [ViewPredictionDTO],
       ["query"]
     ),
+    "giftEntry": IDL.Func([PrincipalName], [Result], []),
     "isAdmin": IDL.Func([], [IDL.Bool], ["query"]),
     "isDisplayNameValid": IDL.Func([IDL.Text], [IDL.Bool], ["query"]),
     "isWalletValid": IDL.Func([IDL.Text], [IDL.Bool], ["query"]),
@@ -4652,7 +4667,7 @@ const Admin_euro2024 = create_ssr_component(($$result, $$props, $$bindings, slot
     return `<button${add_attribute("class", `px-4 py-2 rounded-md ${index + 1 === currentPage ? "fpl-button" : ""}`, 0)}>${escape(index + 1)} </button>`;
   })}</div></div>    `;
 });
-const Page$8 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
+const Page$9 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
   return `${validate_component(Layout, "Layout").$$render($$result, {}, {}, {
     default: () => {
       return `<div class="relative bg-gray-800 text-white mt-2 mr-2 rounded-lg"><p class="text-2xl p-8" data-svelte-h="svelte-e3xv4p">Admin</p> <div class="bg-panel rounded-md"><ul class="flex bg-light-gray contained-text border-b border-gray-700"><li${add_attribute("class", `mr-1 md:mr-4 ${"active-tab"}`, 0)}><button${add_attribute(
@@ -4667,7 +4682,7 @@ const Page$8 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
     }
   })}`;
 });
-const Page$7 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
+const Page$8 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
   let { title = "Betting Unavailable" } = $$props;
   let { message = "Betting is currently unavailable in your region." } = $$props;
   if ($$props.title === void 0 && $$bindings.title && title !== void 0)
@@ -4821,7 +4836,7 @@ function createEuro2024Store() {
   };
 }
 const euro2024Store = createEuro2024Store();
-const Page$6 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
+const Page$7 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
   let loadingText;
   let $$unsubscribe_playerStore;
   let $$unsubscribe_teamStore;
@@ -4855,7 +4870,7 @@ const Page$6 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
     }
   })}`;
 });
-const Page$5 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
+const Page$6 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
   const games = [
     {
       title: "Euro 2024",
@@ -4869,6 +4884,18 @@ const Page$5 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
       return `<div class="min-h-screen flex flex-col p-4"><h1 class="text-3xl font-bold my-6" data-svelte-h="svelte-fogumv">Our Games</h1> <div class="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 w-full max-w-6xl">${each(games, (game) => {
         return `<a${add_attribute("href", game.link, 0)} class="bg-OPENFPLPURPLE rounded-lg shadow-lg overflow-hidden transform transition-transform hover:scale-105"><img${add_attribute("src", game.imageUrl, 0)}${add_attribute("alt", game.title, 0)} class="w-full h-48 object-cover"> <div class="p-4"><h2 class="text-xl font-bold mb-2">${escape(game.title)}</h2> <p class="">${escape(game.description)}</p></div> </a>`;
       })}</div></div>`;
+    }
+  })}`;
+});
+const Page$5 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
+  let loadingText;
+  let $authSignedInStore, $$unsubscribe_authSignedInStore;
+  $$unsubscribe_authSignedInStore = subscribe(authSignedInStore, (value) => $authSignedInStore = value);
+  loadingText = "Loading, please wait...";
+  $$unsubscribe_authSignedInStore();
+  return `${validate_component(Layout, "Layout").$$render($$result, {}, {}, {
+    default: () => {
+      return `${!$authSignedInStore ? `<p data-svelte-h="svelte-qhegyw">Please sign in to gift an entry.</p>` : `${`${validate_component(Spinner, "Spinner").$$render($$result, {}, {}, {})} <div class="fixed inset-0 flex flex-col items-center justify-center"><p class="mt-24">${escape(loadingText)}</p></div>`}`}`;
     }
   })}`;
 });
@@ -4936,7 +4963,7 @@ const Page = create_ssr_component(($$result, $$props, $$bindings, slots) => {
 export {
   Error$1 as E,
   Layout$1 as L,
-  Page$9 as P,
+  Page$a as P,
   Server as S,
   set_building as a,
   set_manifest as b,
@@ -4946,15 +4973,16 @@ export {
   set_read_implementation as f,
   get_hooks as g,
   set_safe_public_env as h,
-  Page$8 as i,
-  Page$7 as j,
-  Page$6 as k,
-  Page$5 as l,
-  Page$4 as m,
-  Page$3 as n,
+  Page$9 as i,
+  Page$8 as j,
+  Page$7 as k,
+  Page$6 as l,
+  Page$5 as m,
+  Page$4 as n,
   options as o,
-  Page$2 as p,
-  Page$1 as q,
-  Page as r,
-  set_assets as s
+  Page$3 as p,
+  Page$2 as q,
+  Page$1 as r,
+  set_assets as s,
+  Page as t
 };

@@ -1018,7 +1018,7 @@
       case 12:
         return (await import('$lib/components/flags/ita.svelte')).default as typeof SvelteComponent;
       case 13:
-        return (await import('$lib/components/flags/den.svelte')).default as typeof SvelteComponent;
+        return (await import('$lib/components/flags/ned.svelte')).default as typeof SvelteComponent;
       case 14:
         return (await import('$lib/components/flags/pol.svelte')).default as typeof SvelteComponent;
       case 15:
@@ -1223,7 +1223,7 @@
           </p>
           <p class="text-sm my-4">
             When the game starts a leaderboard will be active throughout the tournament, updated shortly after a game finishes. 
-            At the end of the tournament the leaderboard will pay the top 20 players the prize pool. It will be split as follows:
+            At the end of the tournament the leaderboard will pay the top 10 players the prize pool. It will be split as follows:
           </p>
           <ul class="text-sm mt-4">
             <li>1st: 30%</li>

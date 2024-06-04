@@ -380,6 +380,7 @@ service : {
   getUserBalancesDTO: (nat, nat) -> (BalancesDTO);
   getUserPrediction: () -> (Result_1);
   getViewPredictionDTO: (text, nat16, nat8) -> (ViewPredictionDTO) query;
+  giftEntry: (PrincipalName) -> (Result);
   isAdmin: () -> (bool) query;
   isDisplayNameValid: (text) -> (bool) query;
   isWalletValid: (text) -> (bool) query;

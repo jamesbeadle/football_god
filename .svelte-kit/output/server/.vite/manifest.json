@@ -9,7 +9,7 @@
   },
   "_index.js": {
     "css": [
-      "_app/immutable/assets/index.BbfABu77.css"
+      "_app/immutable/assets/index.CxFGGsA5.css"
     ],
     "file": "chunks/index.js",
     "imports": [
@@ -82,6 +82,14 @@
     ],
     "isEntry": true,
     "src": "src/football_god_frontend/src/routes/games/+page.svelte"
+  },
+  "src/football_god_frontend/src/routes/gift-euro-entry/+page.svelte": {
+    "file": "entries/pages/gift-euro-entry/_page.svelte.js",
+    "imports": [
+      "_index.js"
+    ],
+    "isEntry": true,
+    "src": "src/football_god_frontend/src/routes/gift-euro-entry/+page.svelte"
   },
   "src/football_god_frontend/src/routes/leaderboard/+page.svelte": {
     "file": "entries/pages/leaderboard/_page.svelte.js",

@@ -186,12 +186,82 @@ function createUserStore() {
             memo: new Uint8Array(Text.encodeValue("0")),
             from_subaccount: undefined,
             created_at_time: BigInt(Date.now()) * BigInt(1_000_000),
-            amount: 10_000_000_000n,
+            amount: 9_999_900_000n,
           });
+
+          console.log(transfer_result);
 
           const result = await identityActor.submitEuro2024Prediction(dto);
           if (isError(result)) {
             console.error("Error saving Euro2024 prediction.");
+            return;
+          }
+          return result;
+        } catch (err: any) {
+          console.error(err.errorType);
+        }
+      }
+    } catch (error) {
+      console.error("Error saving Euro2024 prediction.", error);
+      throw error;
+    }
+  }
+
+  async function giftEntry(receiverId: string): Promise<any> {
+    try {
+      const identityActor = await ActorFactory.createIdentityActor(
+        authStore,
+        process.env.FOOTBALL_GOD_BACKEND_CANISTER_ID ?? "",
+      );
+
+      let identity: OptionIdentity;
+
+      authStore.subscribe(async (auth) => {
+        identity = auth.identity;
+      });
+
+      if (!identity) {
+        return;
+      }
+
+      let principalId = identity.getPrincipal();
+
+      const agent = await createAgent({
+        identity: identity,
+        host: import.meta.env.VITE_AUTH_PROVIDER_URL,
+        fetchRootKey: process.env.DFX_NETWORK === "local",
+      });
+
+      const { transfer } = IcrcLedgerCanister.create({
+        agent,
+        canisterId:
+          process.env.DFX_NETWORK === "ic"
+            ? Principal.fromText("ddsp7-7iaaa-aaaaq-aacqq-cai")
+            : Principal.fromText("avqkn-guaaa-aaaaa-qaaea-cai"),
+      });
+
+      if (principalId) {
+        let subaccount: Uint8Array = principalToSubAccount(principalId);
+        try {
+          let transfer_result = await transfer({
+            to: {
+              owner: Principal.fromText(
+                process.env.FOOTBALL_GOD_BACKEND_CANISTER_ID ?? "",
+              ),
+              subaccount: [subaccount],
+            },
+            fee: 100_000n,
+            memo: new Uint8Array(Text.encodeValue("0")),
+            from_subaccount: undefined,
+            created_at_time: BigInt(Date.now()) * BigInt(1_000_000),
+            amount: 9_999_900_000n,
+          });
+
+          console.log(transfer_result);
+
+          const result = await identityActor.giftEntry(receiverId);
+          if (isError(result)) {
+            console.error("Error gifting Euro2024 prediction.");
             return;
           }
           return result;
@@ -257,6 +327,7 @@ function createUserStore() {
     saveEuro2024Predictions,
     getUserPrediction,
     getAccountBalances,
+    giftEntry,
   };
 }
 

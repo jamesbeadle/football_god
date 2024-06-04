@@ -18,7 +18,7 @@ module {
     private let ledger : FPLLedger.Interface = actor (FPLLedger.CANISTER_ID);
     let entry_fee : Nat = 10_000_000_000;
     let fpl_fee : Nat = 100_000;
-
+    
     public func getPotBalance(owner : Principal) : async Nat64 {
       let balance = await ledger.icrc1_balance_of({owner; subaccount = ?Account.defaultSubaccount()});
       return Nat64.fromNat(balance);
@@ -49,7 +49,7 @@ module {
         memo = ?Text.encodeUtf8("0");
         from_subaccount = ?principalToSubaccount(caller);
         to = { owner = defaultAccount; subaccount = ?Account.defaultSubaccount()};
-        amount = entry_fee - fpl_fee;
+        amount = entry_fee - fpl_fee - fpl_fee;
         fee = ?fpl_fee;
         created_at_time =?Nat64.fromNat(Int.abs(Time.now()));
       });

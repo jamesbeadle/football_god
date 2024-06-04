@@ -20,6 +20,7 @@
   import ProfileIcon from "$lib/icons/ProfileIcon.svelte";
     import LogoutIcon from "$lib/icons/LogoutIcon.svelte";
     import { signOut } from "$lib/services/auth.services";
+    import Tooltip from "$lib/components/tooltip.svelte";
   
 
   let isExpanded = writable(false);
@@ -126,11 +127,14 @@
               class="block mt-4 text-lg"
             >
               <div class="flex flex-row items-center">
-                <svelte:component
-                  this={link.icon}
-                  className="w-6 mr-2"
-                  fill={activeRoute === link.href ? "white" : "gray"}
-                />
+
+                <Tooltip text={link.name}>
+                  <svelte:component
+                    this={link.icon}
+                    className="w-6 mr-2"
+                    fill={activeRoute === link.href ? "white" : "gray"}
+                  />
+                </Tooltip>
                 {#if $isExpanded}
                   <span
                     in:fade={{ duration: 200 }}
@@ -144,7 +148,9 @@
       </div>
       {#if $authSignedInStore && !$isExpanded}
         <button on:click={signOut} in:fade>
-          <LogoutIcon className="max-w-6" />
+          <Tooltip text="Logout">
+            <LogoutIcon className="max-w-6" />
+          </Tooltip>
         </button>
       {/if}
       

@@ -340,7 +340,7 @@ module {
     public func getEuro2024StateDTO() : DTOs.Euro2024DTO {
       return {
         prizePool = state.prizePool;
-        totalManagers = state.totalManagers;
+        totalManagers = userPredictions.size();
         stage = state.stage;
       };
     };

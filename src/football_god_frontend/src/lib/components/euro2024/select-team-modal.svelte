@@ -53,7 +53,7 @@
       case 'ITA':
         return (await import('../flags/ita.svelte')).default as typeof SvelteComponent;
       case 'NED':
-        return (await import('../flags/den.svelte')).default as typeof SvelteComponent;
+        return (await import('../flags/ned.svelte')).default as typeof SvelteComponent;
       case 'POL':
         return (await import('../flags/pol.svelte')).default as typeof SvelteComponent;
       case 'POR':
