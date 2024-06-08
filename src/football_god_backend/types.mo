@@ -222,6 +222,7 @@ module Types {
     principalName : Text;
     position : Nat;
     positionText : Text;
+    score: Nat;
   };
 
   public type Euro2024State = {
@@ -263,6 +264,21 @@ module Types {
     principalId: Text;
     username: Text;
   };
+
+
+    public type OldProfile = {
+        principalName: Text;
+        displayName: Text;
+        icpDepositAddress: Blob;
+        fplDepositAddress: Blob;
+        termsAccepted: Bool;
+        profilePicture: Blob;
+        favouriteTeamId: TeamId;
+        membershipType: Nat8;
+        createDate: Int;
+        subscriptionDate: Int;
+        reputation: Nat32;
+    };
 
   public type UserFantasyTeam = {
     fantasyTeam : FantasyTeam;
