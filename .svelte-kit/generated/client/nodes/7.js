@@ -1,1 +1,1 @@
-export { default as component } from "../../../../src/football_god_frontend/src/routes/gift-euro-entry/+page.svelte";
+export { default as component } from "../../../../src/football_god_frontend/src/routes/games/+page.svelte";

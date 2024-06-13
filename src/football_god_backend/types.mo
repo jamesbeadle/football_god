@@ -231,8 +231,11 @@ module Types {
     stage : GameState;
   };
 
+  public type Euro2024EventId = Nat;
+
   public type Euro2024Event = {
-    stageId: Nat8;
+    eventId: Nat;
+    stage: TournamentStage;
     fixtureId: FixtureId;
     eventType: EventType;
     playerId: PlayerId;

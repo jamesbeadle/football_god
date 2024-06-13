@@ -59,6 +59,9 @@ actor Self {
   private stable var stable_euro2024_state: T.Euro2024State = {
     prizePool = 0; stage = #Selecting; totalManagers = 1
   };
+  private stable var stable_next_euro2024_event_id: T.Euro2024EventId = 1;
+  private stable var stable_euro2024_fixtures: [T.Euro2024Fixture] = [];
+  private stable var stable_euro2024_leaderboard_entries: [T.LeaderboardEntry] = [];
 
   private stable var dataCacheHashes : List.List<T.DataCache> = List.fromArray([
     { category = "teams"; hash = "NEW_DEFAULT_VALUE" },
@@ -1226,6 +1229,19 @@ actor Self {
     };
   };
 
+  public shared query func getPublicEuro2024DTO(principalId: Text) : async Result.Result<DTOs.Euro2024PredictionDTO, T.Error> {
+
+    let prediction = euro2024Instance.getPredictions(principalId);
+    switch (prediction) {
+      case (null) {
+        return #err(#NotFound);
+      };
+      case (?foundPrediction) {
+        return #ok(foundPrediction);
+      };
+    };
+  };
+
   public shared query func getEuro2024Teams() : async Result.Result<[T.InternationalTeam], T.Error> {
     return #ok(List.toArray(euro2024Instance.getTeams()));
   };
@@ -1261,7 +1277,7 @@ actor Self {
     let principalId = Principal.toText(caller);
     assert principalId == adminPrincipalId;
     
-    euro2024Instance.calculateLeaderboard();
+    euro2024Instance.calculateLeaderboard(); 
     return #ok;
   };
 
@@ -1343,16 +1359,66 @@ actor Self {
     return euro2024Instance.adminGetEuro2024Entries(limit, offset);
   };
 
-  public shared ({ caller }) func addEuro2024Event(euroEvent: T.Euro2024Event) : async Bool {
+  public shared ({ caller }) func adminDelete2024Event(eventId: T.Euro2024EventId) : async Bool {
     assert isAdminForCaller(caller);
-    return euro2024Instance.addEuro2024Event(euroEvent);
+    return euro2024Instance.adminDelete2024Event(eventId);
   };
 
+  public shared ({ caller }) func adminGetEuro2024Events() : async [DTOs.Euro2024EventDTO] {
+    assert isAdminForCaller(caller);
+    return euro2024Instance.adminGetEuro2024Events();
+  };
+
+  public shared func getEuro2024Events() : async [DTOs.Euro2024EventDTO] {
+    return euro2024Instance.adminGetEuro2024Events();
+  };
+
+  public shared ({ caller }) func addEuro2024Event(euroEvent: T.Euro2024Event) : async Result.Result<(), T.Error> {
+    assert isAdminForCaller(caller);
+    return #ok(euro2024Instance.addEuro2024Event(euroEvent));
+  };
+
+  public shared func getEuro2024Fixtures() : async Result.Result<[T.Euro2024Fixture], T.Error> {
+    return #ok(euro2024Instance.getEuro2024Fixtures());
+  };
+
+  public shared ({ caller }) func resetEuro2024Fixtures() : async Result.Result<(), T.Error> { //REMOVE
+    return #ok(euro2024Instance.resetEuro2024Fixtures());
+  };
+
+  public shared query func getLeaderboard(dto: DTOs.GetLeaderboardDTO) : async Result.Result<DTOs.Euro2024LeaderBoardDTO, T.Error> {
+    return euro2024Instance.getEuro2024LeaderboardDTO(dto);
+  };
+
+  public shared ({ caller }) func closeEuro2024Entries() : async Result.Result<(), T.Error> {
+    assert isAdminForCaller(caller);
+    await euro2024Instance.closeEuro2024Entries();
+  };
+
+  public shared ({ caller }) func openEuro2024Entries() : async Result.Result<(), T.Error> {
+    assert isAdminForCaller(caller);
+    await euro2024Instance.openEuro2024Entries();
+  };
+
+  public shared ({ caller }) func completeEuro2024Competition() : async Result.Result<(), T.Error> {
+    assert isAdminForCaller(caller);
+    await euro2024Instance.completeEuro2024Competition();
+  };
+
+  public shared ({ caller }) func recalculateLeaderboard() : async Result.Result<(), T.Error> {
+    assert isAdminForCaller(caller);
+    euro2024Instance.calculateLeaderboard();
+    return #ok;
+  };
+
+  public shared query func getEuro2024State() : async Result.Result<T.Euro2024State, T.Error> {
+    return #ok(euro2024Instance.getState());
+  };
+
+  //ODO get another users team
+  
   //TODO: get and pay winners
 
-  //TODO: get leaderboard
-
-  //TODO get another users team
   
   system func preupgrade() {
     stable_profiles := profilesInstance.getProfiles();
@@ -1365,6 +1431,9 @@ actor Self {
     stable_euro2024_predictions := euro2024Instance.getUserPredictions();
     stable_euro2024_events := euro2024Instance.getEvents();
     stable_euro2024_state := euro2024Instance.getState();
+    stable_next_euro2024_event_id := euro2024Instance.getStableNextEventId();
+    stable_euro2024_fixtures := euro2024Instance.getEuro2024Fixtures();
+    stable_euro2024_leaderboard_entries := euro2024Instance.getLeaderboardEntries();
   };
 
   system func postupgrade() {
@@ -1375,6 +1444,20 @@ actor Self {
     euro2024Instance.setData(stable_euro2024_predictions);
     euro2024Instance.setEvents(stable_euro2024_events);
     euro2024Instance.setState(stable_euro2024_state);
+    euro2024Instance.setStableNextEventId(stable_next_euro2024_event_id);
+    euro2024Instance.setStableFixtures(stable_euro2024_fixtures);
+    euro2024Instance.setLeaderboardEntries(stable_euro2024_leaderboard_entries);
+    euro2024Instance.setGetUsernameFunction(?getUsernameFromPrincipal);
   };
+
+  private func getUsernameFromPrincipal(principalId: Text) : Text {
+    let profile = profilesInstance.getProfile(principalId);
+    switch(profile){
+      case null{ return principalId };
+      case (?foundProfile){
+        return foundProfile.displayName;
+      }
+    }
+  };  
     
 };

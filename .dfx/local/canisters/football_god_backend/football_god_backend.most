@@ -2,11 +2,22 @@
 type DataCache = {category : Text; hash : Text};
 type Euro2024Event =
   {
+    eventId : Nat;
     eventType : EventType;
     fixtureId : FixtureId;
     playerId : PlayerId;
-    stageId : Nat8;
+    stage : TournamentStage;
     teamId : TeamId
+  };
+type Euro2024Fixture =
+  {
+    awayGoals : Nat8;
+    awayTeamId : TeamId;
+    homeGoals : Nat8;
+    homeTeamId : TeamId;
+    id : Nat8;
+    stage : TournamentStage;
+    status : FixtureStatus
   };
 type Euro2024Prediction =
   {
@@ -36,6 +47,7 @@ type Fixture =
     status : Nat8
   };
 type FixtureId = Nat32;
+type FixtureStatus = {#Active; #Finished; #Unplayed};
 type GameState = {#Active; #Completed; #Selecting};
 type Gameweek =
   {
@@ -46,6 +58,8 @@ type Gameweek =
     totalPot : Nat64;
     winningShare : Nat64
   };
+type LeaderboardEntry =
+  {position : Nat; positionText : Text; principalName : Text; score : Nat};
 type List<T> = ?(T, List<T>);
 type PlayerId = Nat16;
 type Prediction = {awayGoals : Nat8; fixtureId : Nat32; homeGoals : Nat8};
@@ -100,6 +114,8 @@ actor {
   stable var activeSeason : Nat16;
   stable var dataCacheHashes : ?(DataCache, List<DataCache>);
   stable var stable_euro2024_events : [Euro2024Event];
+  stable var stable_euro2024_fixtures : [Euro2024Fixture];
+  stable var stable_euro2024_leaderboard_entries : [LeaderboardEntry];
   stable var stable_euro2024_predictions :
     [(PrincipalName, Euro2024Prediction)];
   stable var stable_euro2024_state :
@@ -107,6 +123,7 @@ actor {
   stable var stable_nextFixtureId : Nat32;
   stable var stable_nextSeasonId : Nat16;
   stable var stable_nextTeamId : Nat16;
+  stable var stable_next_euro2024_event_id : Nat;
   stable var stable_predictions : [(PrincipalName, List<UserGameweek>)];
   stable var stable_profiles : [Profile];
   stable var stable_seasons : [Season];

@@ -228,16 +228,9 @@ module DTOs {
     status : Nat8;
   };
 
-  public type Euro2024LeaderboardEntryDTO = {
-    principalName : Text;
-    position : Text;
-    displayName : Text;
-    totalScore : Nat16;
-  };
-
   public type Euro2024LeaderBoardDTO = {
     leaderboardEntries : [Euro2024LeaderboardEntryDTO];
-    totalEntries : Nat64;
+    totalEntries : Nat;
     totalPot : Nat64;
     winningShare : Nat64;
     status : Nat8;
@@ -250,7 +243,8 @@ module DTOs {
   };
 
   public type Euro2024EventDTO = {
-    stageId: Nat8;
+    eventId: T.Euro2024EventId;
+    stage: T.TournamentStage;
     eventType: T.EventType;
     playerId: T.PlayerId;
     teamId: T.TeamId;
@@ -261,6 +255,21 @@ module DTOs {
     principalId: T.PrincipalName;
     fplBalance: Nat;
     icpBalance: Nat64;
+  };
+
+  public type GetLeaderboardDTO = {
+    limit : Nat;
+    offset : Nat;
+    entries: [LeaderboardEntryDTO];
+    totalEntries: Nat;
+  };
+
+  public type Euro2024LeaderboardEntryDTO = {
+    principalName : Text;
+    position : Text;
+    displayName : Text;
+    totalScore : Nat;
+    profilePicture: ?Blob;
   };
 
 };

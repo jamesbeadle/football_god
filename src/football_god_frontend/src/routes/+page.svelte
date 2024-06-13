@@ -8,9 +8,13 @@
   import FootballIcon from "$lib/icons/FootballIcon.svelte";
   import OpenChatIcon from "$lib/icons/OpenChatIcon.svelte";
   import { Spinner } from "@dfinity/gix-components";
+    import { euro2024Store } from "$lib/stores/euro2024.store";
+    import type { Euro2024State } from "../../../declarations/football_god_backend/football_god_backend.did";
+    import { isError } from "$lib/utils/helpers";
   
   let isLoggedIn = false;
   let isLoading = true;
+  let euro2024State: Euro2024State;
   const countdown = writable("");
 
   type TileData = {
@@ -32,14 +36,21 @@
         isLoggedIn = store.identity !== null && store.identity !== undefined;
       });
 
-      const endDate = new Date("June 14, 2024 00:00:00 GMT+20:00").getTime();
+      await euro2024Store.sync();
+
+      let result = await euro2024Store.getEuro2024State();
+      if(isError(result)){
+        console.error("Error loading Euro2024 state: ", result)
+      }
+
+      euro2024State = result.ok;
+      
+      const endDate = new Date("June 14, 2024 20:00:00 GMT+0100").getTime();
       const updateCountdown = () => {
         const now = new Date().getTime();
         const distance = endDate - now;
         const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-        const hours = Math.floor(
-          (distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
-        );
+        const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
         const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
         countdown.set(`Kick Off: ${days}d ${hours}h ${minutes}m`);
       };
@@ -63,9 +74,9 @@
 
   let tiles: TileData[] = [
     {
-      title: "Lightpaper",
-      content: "Read the FootballGod lightpaper.",
-      link: "/lightpaper",
+      title: "Whitepaper",
+      content: "Read the FootballGod whitepaper.",
+      link: "/whitepaper",
       icon: null,
       image: "whitepaper.jpg",
       buttonText: "Read",
@@ -79,15 +90,14 @@
       buttonText: "Join",
     },
     {
-      title: "OpenFPL",
+      title: "Transfer Kings",
       content:
-        "Play decentralised fantasy football for your chance to win $FPL tokens for free.",
-      link: "https://openfpl.xyz",
-      image: "openfpl.png",
+        "Play 'Transfer Kings' for free to begin earning $FOOTBALL tokens.",
+      link: "https://transferkings.xyz",
+      image: "Gods.png",
       buttonText: "Play",
     },
   ];
-
 
   function handleLogin() {
     let params: AuthSignInParams = {
@@ -109,22 +119,53 @@
         <div class="container ml-4 flex flex-col justify-between">
           <p class="text-base md:text-xl">$FPL Prediction Sweepstake</p>
           <p class="text-xl md:text-4xl font-bold">Euro 2024</p>
-          <p class="text-sm md:text-xl">
-            Play for free or enter the $FPL sweepstake up until Friday 14th June
-            2024
-          </p>
-          {#if $authSignedInStore}
-          <a href="/euro2024"
-            ><button class="btn bg-DARK mt-4 py-4 w-48 rounded-md"
-              >Enter Now</button
-            ></a
-          >
-          {:else}
-            
-          <button on:click={handleLogin} class="btn bg-DARK mt-4 py-4 w-48 rounded-md">Connect To Play</button
-        >
-          {/if}
           
+          {#if Object.keys(euro2024State.stage)[0] == 'Selecting'}
+          
+            <p class="text-sm md:text-xl">
+              Play for free or enter the $FPL sweepstake up until Friday 14th June
+              2024
+            </p>
+            {#if $authSignedInStore}
+              <a href="/euro2024"
+                ><button class="btn bg-DARK mt-4 py-4 w-48 rounded-md"
+                  >Enter Now</button
+                ></a
+              >
+            {:else}
+                
+              <button on:click={handleLogin} class="btn bg-DARK mt-4 py-4 w-48 rounded-md">Connect To Play</button
+            >
+            {/if}
+          
+          {/if}
+
+          {#if Object.keys(euro2024State.stage)[0] == 'Active'}
+            
+            <p class="text-sm md:text-xl">
+              Check in on the Euro 2024 Prediction Leaderboard here:
+            </p>
+            <a href="/leaderboard"
+              ><button class="btn bg-DARK mt-4 py-4 w-48 rounded-md"
+                >Leaderboard</button
+              ></a
+            >
+                
+          {/if}
+
+          {#if Object.keys(euro2024State.stage)[0] == 'Completed'}
+              
+            <p class="text-sm md:text-xl">
+              Check in our Euro 2024 Prediction Competition results here:
+            </p>
+            <a href="/leaderboard"
+              ><button class="btn bg-DARK mt-4 py-4 w-48 rounded-md"
+                >Results</button
+              ></a
+            >
+                
+          {/if}
+
           <div
             class="overlay-panel h-10 rounded-tl-lg w-11/12 md:w-2/3 lg:w-2/5 xl:w-1/4 bg-DARK flex items-center px-1 md:px-4 text-xs md:text-sm"
           >

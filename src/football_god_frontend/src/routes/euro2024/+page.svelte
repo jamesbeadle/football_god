@@ -167,17 +167,15 @@
     }
     isLoading = false;
     
-    const endDate = new Date("June 14, 2024 00:00:00 GMT+20:00").getTime();  
+    const endDate = new Date("June 14, 2024 20:00:00 GMT+0100").getTime();
     const updateCountdown = () => {
-        const now = new Date().getTime();
-        const distance = endDate - now;
-        const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-        const hours = Math.floor(
-          (distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
-        );
-        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-        countdown.set(`Kick Off: ${days}d ${hours}h ${minutes}m`);
-      };
+      const now = new Date().getTime();
+      const distance = endDate - now;
+      const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+      countdown.set(`Kick Off: ${days}d ${hours}h ${minutes}m`);
+    };
 
     updateCountdown(); // Run once on component mount
     interval = setInterval(updateCountdown, 60000); 

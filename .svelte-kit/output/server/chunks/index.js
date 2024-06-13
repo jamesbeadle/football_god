@@ -3485,7 +3485,7 @@ const options = {
 		<div class="error">
 			<span class="status">` + status + '</span>\n			<div class="message">\n				<h1>' + message + "</h1>\n			</div>\n		</div>\n	</body>\n</html>\n"
   },
-  version_hash: "1chtc7t"
+  version_hash: "1ghntwe"
 };
 async function get_hooks() {
   return {};
@@ -3745,7 +3745,7 @@ const initBusyStore = () => {
 const busyStore = initBusyStore();
 const busy = derived(busyStore, ($busyStore) => $busyStore.length > 0);
 const busyMessage = derived(busyStore, ($busyStore) => $busyStore.reverse().find(({ text: text2 }) => nonNullish(text2))?.text);
-const css$6 = {
+const css$8 = {
   code: ".medium.svelte-85668t{--spinner-size:30px}.small.svelte-85668t{--spinner-size:calc(var(--line-height-standard) * 1rem)}.tiny.svelte-85668t{--spinner-size:calc(var(--line-height-standard) * 0.5rem)}svg.svelte-85668t{width:var(--spinner-size);height:var(--spinner-size);animation:spinner-linear-rotate 2000ms linear infinite;position:absolute;top:calc(50% - var(--spinner-size) / 2);left:calc(50% - var(--spinner-size) / 2);--radius:45px;--circumference:calc(3.1415926536 * var(--radius) * 2);--start:calc((1 - 0.05) * var(--circumference));--end:calc((1 - 0.8) * var(--circumference))}svg.inline.svelte-85668t{display:inline-block;position:relative}circle.svelte-85668t{stroke-dasharray:var(--circumference);stroke-width:10%;transform-origin:50% 50% 0;transition-property:stroke;animation-name:spinner-stroke-rotate-100;animation-duration:4000ms;animation-timing-function:cubic-bezier(0.35, 0, 0.25, 1);animation-iteration-count:infinite;fill:transparent;stroke:currentColor;transition:stroke-dashoffset 225ms linear}@keyframes spinner-linear-rotate{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}@keyframes spinner-stroke-rotate-100{0%{stroke-dashoffset:var(--start);transform:rotate(0)}12.5%{stroke-dashoffset:var(--end);transform:rotate(0)}12.5001%{stroke-dashoffset:var(--end);transform:rotateX(180deg) rotate(72.5deg)}25%{stroke-dashoffset:var(--start);transform:rotateX(180deg) rotate(72.5deg)}25.0001%{stroke-dashoffset:var(--start);transform:rotate(270deg)}37.5%{stroke-dashoffset:var(--end);transform:rotate(270deg)}37.5001%{stroke-dashoffset:var(--end);transform:rotateX(180deg) rotate(161.5deg)}50%{stroke-dashoffset:var(--start);transform:rotateX(180deg) rotate(161.5deg)}50.0001%{stroke-dashoffset:var(--start);transform:rotate(180deg)}62.5%{stroke-dashoffset:var(--end);transform:rotate(180deg)}62.5001%{stroke-dashoffset:var(--end);transform:rotateX(180deg) rotate(251.5deg)}75%{stroke-dashoffset:var(--start);transform:rotateX(180deg) rotate(251.5deg)}75.0001%{stroke-dashoffset:var(--start);transform:rotate(90deg)}87.5%{stroke-dashoffset:var(--end);transform:rotate(90deg)}87.5001%{stroke-dashoffset:var(--end);transform:rotateX(180deg) rotate(341.5deg)}100%{stroke-dashoffset:var(--start);transform:rotateX(180deg) rotate(341.5deg)}}",
   map: null
 };
@@ -3756,10 +3756,10 @@ const Spinner = create_ssr_component(($$result, $$props, $$bindings, slots) => {
     $$bindings.inline(inline);
   if ($$props.size === void 0 && $$bindings.size && size !== void 0)
     $$bindings.size(size);
-  $$result.css.add(css$6);
+  $$result.css.add(css$8);
   return `  <svg class="${[escape(null_to_empty(size), true) + " svelte-85668t", inline ? "inline" : ""].join(" ").trim()}" preserveAspectRatio="xMidYMid meet" focusable="false" aria-hidden="true" data-tid="spinner" viewBox="0 0 100 100"><circle cx="50%" cy="50%" r="45" class="svelte-85668t"></circle></svg>`;
 });
-const css$5 = {
+const css$7 = {
   code: "div.svelte-14plyno{z-index:calc(var(--z-index) + 1000);position:fixed;top:0;right:0;bottom:0;left:0;background:var(--backdrop);color:var(--backdrop-contrast)}.content.svelte-14plyno{display:flex;flex-direction:column;justify-content:center;align-items:center}p.svelte-14plyno{padding-bottom:var(--padding);max-width:calc(var(--section-max-width) / 2)}",
   map: null
 };
@@ -3768,7 +3768,7 @@ const BusyScreen = create_ssr_component(($$result, $$props, $$bindings, slots) =
   let $busyMessage, $$unsubscribe_busyMessage;
   $$unsubscribe_busy = subscribe(busy, (value) => $busy = value);
   $$unsubscribe_busyMessage = subscribe(busyMessage, (value) => $busyMessage = value);
-  $$result.css.add(css$5);
+  $$result.css.add(css$7);
   $$unsubscribe_busy();
   $$unsubscribe_busyMessage();
   return ` ${$busy ? `<div data-tid="busy" class="svelte-14plyno"><div class="content svelte-14plyno">${nonNullish($busyMessage) ? `<p class="svelte-14plyno">${escape($busyMessage)}</p>` : ``} <span>${validate_component(Spinner, "Spinner").$$render($$result, { inline: true }, {}, {})}</span></div></div>` : ``}`;
@@ -3791,7 +3791,7 @@ const IconError = create_ssr_component(($$result, $$props, $$bindings, slots) =>
     $$bindings.size(size);
   return `  <svg xmlns="http://www.w3.org/2000/svg"${add_attribute("height", size, 0)} viewBox="0 0 24 24"${add_attribute("width", size, 0)} fill="currentColor"><path d="M0 0h24v24H0z" fill="none"></path><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"></path></svg>`;
 });
-const css$4 = {
+const css$6 = {
   code: "svg.svelte-1lui9gh{vertical-align:middle}",
   map: null
 };
@@ -3799,7 +3799,7 @@ const IconInfo = create_ssr_component(($$result, $$props, $$bindings, slots) => 
   let { size = `${DEFAULT_ICON_SIZE}px` } = $$props;
   if ($$props.size === void 0 && $$bindings.size && size !== void 0)
     $$bindings.size(size);
-  $$result.css.add(css$4);
+  $$result.css.add(css$6);
   return `  <svg${add_attribute("width", size, 0)}${add_attribute("height", size, 0)} viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" data-tid="icon-info" class="svelte-1lui9gh"><path d="M10.2222 17.5C14.3643 17.5 17.7222 14.1421 17.7222 10C17.7222 5.85786 14.3643 2.5 10.2222 2.5C6.08003 2.5 2.72217 5.85786 2.72217 10C2.72217 14.1421 6.08003 17.5 10.2222 17.5Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path><path d="M10.2222 13.3333V10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path><path d="M10.2222 6.66699H10.2305" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg>`;
 });
 const IconWarning = create_ssr_component(($$result, $$props, $$bindings, slots) => {
@@ -3925,7 +3925,7 @@ const initToastsStore = () => {
   };
 };
 const toastsStore = initToastsStore();
-const css$3 = {
+const css$5 = {
   code: ".toast.svelte-w1j1kj.svelte-w1j1kj{display:flex;justify-content:space-between;align-items:center;gap:var(--padding-1_5x);background:var(--overlay-background);color:var(--overlay-background-contrast);--button-secondary-background:var(--focus-background);border-radius:var(--border-radius);box-shadow:var(--strong-shadow, 8px 8px 16px 0 rgba(0, 0, 0, 0.25));padding:var(--padding-1_5x);box-sizing:border-box}.toast.inverted.svelte-w1j1kj.svelte-w1j1kj{background:var(--toast-inverted-background);color:var(--toast-inverted-background-contrast)}.toast.svelte-w1j1kj .icon.svelte-w1j1kj{line-height:0}.toast.svelte-w1j1kj .icon.success.svelte-w1j1kj{color:var(--positive-emphasis)}.toast.svelte-w1j1kj .icon.info.svelte-w1j1kj{color:var(--primary)}.toast.svelte-w1j1kj .icon.warn.svelte-w1j1kj{color:var(--warning-emphasis-shade)}.toast.svelte-w1j1kj .icon.error.svelte-w1j1kj{color:var(--negative-emphasis)}.toast.svelte-w1j1kj .msg.svelte-w1j1kj{flex-grow:1;margin:0;word-break:break-word}.toast.svelte-w1j1kj .msg.scroll.svelte-w1j1kj{overflow-y:auto;max-height:calc(var(--font-size-standard) * 3 * 1.3);line-height:normal}.toast.svelte-w1j1kj .msg.truncate.svelte-w1j1kj{white-space:var(--text-white-space, nowrap);overflow:hidden;text-overflow:ellipsis}.toast.svelte-w1j1kj .msg.truncate .title.svelte-w1j1kj{white-space:var(--text-white-space, nowrap);overflow:hidden;text-overflow:ellipsis}.toast.svelte-w1j1kj .msg.clamp.svelte-w1j1kj{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:3;overflow:hidden}.toast.svelte-w1j1kj .msg.clamp .title.svelte-w1j1kj{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden}.toast.svelte-w1j1kj .title.svelte-w1j1kj{display:block;font-size:var(--font-size-standard);line-height:var(--line-height-standard);font-weight:var(--font-weight-bold);line-height:normal}.toast.svelte-w1j1kj button.close.svelte-w1j1kj{padding:0;line-height:0;color:inherit}",
   map: null
 };
@@ -3963,7 +3963,7 @@ const Toast = create_ssr_component(($$result, $$props, $$bindings, slots) => {
   onDestroy(cleanUpAutoHide);
   if ($$props.msg === void 0 && $$bindings.msg && msg !== void 0)
     $$bindings.msg(msg);
-  $$result.css.add(css$3);
+  $$result.css.add(css$5);
   ({ text: text2, level, spinner, title, overflow, position, icon, theme: theme2, renderAsHtml } = msg);
   scroll = overflow === void 0 || overflow === "scroll";
   truncate = overflow === "truncate";
@@ -3974,7 +3974,7 @@ const Toast = create_ssr_component(($$result, $$props, $$bindings, slots) => {
     (truncate ? "truncate" : "") + " " + (clamp ? "clamp" : "") + " " + (scroll ? "scroll" : "")
   ].join(" ").trim()}"${add_attribute("style", minHeightMessage, 0)}>${nonNullish(title) ? `<span class="title svelte-w1j1kj">${escape(title)}</span>` : ``} ${renderAsHtml ? `${validate_component(Html, "Html").$$render($$result, { text: text2 }, {}, {})}` : `${escape(text2)}`}</p> <button class="close svelte-w1j1kj"${add_attribute("aria-label", $i18n.core.close, 0)}>${validate_component(IconClose, "IconClose").$$render($$result, {}, {}, {})}</button> </div>`;
 });
-const css$2 = {
+const css$4 = {
   code: ".wrapper.svelte-24m335{position:fixed;left:50%;transform:translate(-50%, 0);bottom:calc(var(--layout-bottom-offset, 0) + var(--padding-2x));width:calc(100% - var(--padding-8x) - var(--padding-0_5x));display:flex;flex-direction:column;gap:var(--padding);z-index:var(--toast-info-z-index)}.wrapper.error.svelte-24m335{z-index:var(--toast-error-z-index)}@media(min-width: 1024px){.wrapper.svelte-24m335{max-width:calc(var(--section-max-width) - var(--padding-2x))}}.top.svelte-24m335{top:calc(var(--header-height) + var(--padding-3x));bottom:unset;width:calc(100% - var(--padding-6x))}@media(min-width: 1024px){.top.svelte-24m335{right:var(--padding-2x);left:unset;transform:none;max-width:calc(var(--section-max-width) / 1.5 - var(--padding-2x))}}",
   map: null
 };
@@ -3988,7 +3988,7 @@ const Toasts = create_ssr_component(($$result, $$props, $$bindings, slots) => {
   let hasErrors;
   if ($$props.position === void 0 && $$bindings.position && position !== void 0)
     $$bindings.position(position);
-  $$result.css.add(css$2);
+  $$result.css.add(css$4);
   toasts = $toastsStore.filter(({ position: pos }) => (pos ?? "bottom") === position);
   hasErrors = toasts.find(({ level }) => ["error", "warn"].includes(level)) !== void 0;
   $$unsubscribe_toastsStore();
@@ -4069,7 +4069,7 @@ const Tooltip = create_ssr_component(($$result, $$props, $$bindings, slots) => {
     $$bindings.text(text2);
   return `<button class="relative flex items-center w-6 max-w-6 text-sm">${slots.default ? slots.default({}) : ``} ${``}</button>`;
 });
-const css$1 = {
+const css$3 = {
   code: ".transition-width.svelte-frwh1m{transition:width 200ms}a.active.svelte-frwh1m{color:white !important}",
   map: null
 };
@@ -4091,7 +4091,7 @@ const Layout = create_ssr_component(($$result, $$props, $$bindings, slots) => {
       return;
     }
   };
-  $$result.css.add(css$1);
+  $$result.css.add(css$3);
   links = $authSignedInStore ? [
     { name: "Home", icon: HomeIcon, href: "/" },
     {
@@ -4151,43 +4151,11 @@ const Layout = create_ssr_component(($$result, $$props, $$bindings, slots) => {
     }();
   }(init2())} ${validate_component(BusyScreen, "BusyScreen").$$render($$result, {}, {}, {})}`;
 });
-const css = {
-  code: ".overlay-panel.svelte-a3qity{position:absolute;bottom:0;right:0}",
-  map: null
-};
-const Page$a = create_ssr_component(($$result, $$props, $$bindings, slots) => {
-  let $$unsubscribe_authSignedInStore;
-  let $$unsubscribe_countdown;
-  $$unsubscribe_authSignedInStore = subscribe(authSignedInStore, (value) => value);
-  const countdown = writable("");
-  $$unsubscribe_countdown = subscribe(countdown, (value) => value);
-  let interval;
-  onDestroy(() => {
-    clearInterval(interval);
-  });
-  $$result.css.add(css);
-  $$unsubscribe_authSignedInStore();
-  $$unsubscribe_countdown();
-  return `${validate_component(Layout, "Layout").$$render($$result, {}, {}, {
-    default: () => {
-      return `${`${validate_component(Spinner, "Spinner").$$render($$result, {}, {}, {})}`}`;
-    }
-  })}`;
-});
 const idlFactory = ({ IDL }) => {
   const List = IDL.Rec();
   const List_1 = IDL.Rec();
-  const Error2 = IDL.Variant({
-    "DecodeError": IDL.Null,
-    "NotAllowed": IDL.Null,
-    "NotFound": IDL.Null,
-    "NotAuthorized": IDL.Null,
-    "AlreadyExists": IDL.Null
-  });
-  const Result = IDL.Variant({ "ok": IDL.Null, "err": Error2 });
-  const PrincipalName = IDL.Text;
+  const FixtureId = IDL.Nat32;
   const PlayerId = IDL.Nat16;
-  const TeamId = IDL.Nat16;
   const TournamentStage = IDL.Variant({
     "RoundOf16": IDL.Null,
     "SemiFinal": IDL.Null,
@@ -4200,6 +4168,33 @@ const idlFactory = ({ IDL }) => {
     "Final": IDL.Null,
     "QuarterFinal": IDL.Null
   });
+  const TeamId = IDL.Nat16;
+  const EventType = IDL.Variant({
+    "RedCard": IDL.Null,
+    "GoalScored": IDL.Null,
+    "StageLost": IDL.Null,
+    "StageWon": IDL.Null,
+    "YellowCard": IDL.Null,
+    "GoalAssisted": IDL.Null
+  });
+  const Euro2024Event = IDL.Record({
+    "eventId": IDL.Nat,
+    "fixtureId": FixtureId,
+    "playerId": PlayerId,
+    "stage": TournamentStage,
+    "teamId": TeamId,
+    "eventType": EventType
+  });
+  const Error2 = IDL.Variant({
+    "DecodeError": IDL.Null,
+    "NotAllowed": IDL.Null,
+    "NotFound": IDL.Null,
+    "NotAuthorized": IDL.Null,
+    "AlreadyExists": IDL.Null
+  });
+  const Result = IDL.Variant({ "ok": IDL.Null, "err": Error2 });
+  const PrincipalName = IDL.Text;
+  const Euro2024EventId = IDL.Nat;
   const PredictionSet = IDL.Record({
     "goalAssister": PlayerId,
     "winner": TeamId,
@@ -4224,6 +4219,14 @@ const idlFactory = ({ IDL }) => {
     "groupFPrediction": PredictionSet,
     "principalId": PrincipalName,
     "r16Prediction": PredictionSet
+  });
+  const Euro2024EventDTO = IDL.Record({
+    "eventId": Euro2024EventId,
+    "fixtureId": FixtureId,
+    "playerId": PlayerId,
+    "stage": TournamentStage,
+    "teamId": TeamId,
+    "eventType": EventType
   });
   const AccountBalancesDTO = IDL.Record({
     "icpBalance": IDL.Nat64,
@@ -4250,23 +4253,7 @@ const idlFactory = ({ IDL }) => {
     "activeSeasonId": IDL.Nat16,
     "activeSeasonName": IDL.Text
   });
-  const FixtureId = IDL.Nat32;
-  const EventType = IDL.Variant({
-    "RedCard": IDL.Null,
-    "GoalScored": IDL.Null,
-    "StageLost": IDL.Null,
-    "StageWon": IDL.Null,
-    "YellowCard": IDL.Null,
-    "GoalAssisted": IDL.Null
-  });
-  const Euro2024EventDTO = IDL.Record({
-    "fixtureId": FixtureId,
-    "stageId": IDL.Nat8,
-    "playerId": PlayerId,
-    "teamId": TeamId,
-    "eventType": EventType
-  });
-  const Result_7 = IDL.Variant({
+  const Result_10 = IDL.Variant({
     "ok": IDL.Vec(Euro2024EventDTO),
     "err": Error2
   });
@@ -4286,8 +4273,26 @@ const idlFactory = ({ IDL }) => {
     "awayTeamGoals": IDL.Nat8
   });
   const DataCacheDTO = IDL.Record({ "hash": IDL.Text, "category": IDL.Text });
-  const Result_6 = IDL.Variant({ "ok": IDL.Vec(DataCacheDTO), "err": Error2 });
+  const Result_9 = IDL.Variant({ "ok": IDL.Vec(DataCacheDTO), "err": Error2 });
   const Result_1 = IDL.Variant({ "ok": Euro2024PredictionDTO, "err": Error2 });
+  const FixtureStatus = IDL.Variant({
+    "Unplayed": IDL.Null,
+    "Active": IDL.Null,
+    "Finished": IDL.Null
+  });
+  const Euro2024Fixture = IDL.Record({
+    "id": IDL.Nat8,
+    "status": FixtureStatus,
+    "awayTeamId": TeamId,
+    "homeTeamId": TeamId,
+    "stage": TournamentStage,
+    "homeGoals": IDL.Nat8,
+    "awayGoals": IDL.Nat8
+  });
+  const Result_8 = IDL.Variant({
+    "ok": IDL.Vec(Euro2024Fixture),
+    "err": Error2
+  });
   const Position = IDL.Variant({
     "Goalkeeper": IDL.Null,
     "Midfielder": IDL.Null,
@@ -4301,7 +4306,7 @@ const idlFactory = ({ IDL }) => {
     "lastName": IDL.Text,
     "firstName": IDL.Text
   });
-  const Result_5 = IDL.Variant({
+  const Result_7 = IDL.Variant({
     "ok": IDL.Vec(InternationalPlayer),
     "err": Error2
   });
@@ -4310,19 +4315,25 @@ const idlFactory = ({ IDL }) => {
     "Active": IDL.Null,
     "Completed": IDL.Null
   });
+  const Euro2024State = IDL.Record({
+    "totalManagers": IDL.Nat,
+    "stage": GameState,
+    "prizePool": IDL.Nat64
+  });
+  const Result_6 = IDL.Variant({ "ok": Euro2024State, "err": Error2 });
   const Euro2024DTO = IDL.Record({
     "totalManagers": IDL.Nat,
     "stage": GameState,
     "prizePool": IDL.Nat64
   });
-  const Result_4 = IDL.Variant({ "ok": Euro2024DTO, "err": Error2 });
+  const Result_5 = IDL.Variant({ "ok": Euro2024DTO, "err": Error2 });
   const InternationalTeam = IDL.Record({
     "id": TeamId,
     "name": IDL.Text,
     "countryCode": IDL.Text,
     "players": IDL.Vec(InternationalPlayer)
   });
-  const Result_3 = IDL.Variant({
+  const Result_4 = IDL.Variant({
     "ok": IDL.Vec(InternationalTeam),
     "err": Error2
   });
@@ -4382,6 +4393,30 @@ const idlFactory = ({ IDL }) => {
     "enteredSweepstake": IDL.Bool,
     "principalName": IDL.Text,
     "position": IDL.Text
+  });
+  const GetLeaderboardDTO = IDL.Record({
+    "totalEntries": IDL.Nat,
+    "offset": IDL.Nat,
+    "limit": IDL.Nat,
+    "entries": IDL.Vec(LeaderboardEntryDTO)
+  });
+  const Euro2024LeaderboardEntryDTO = IDL.Record({
+    "displayName": IDL.Text,
+    "totalScore": IDL.Nat,
+    "principalName": IDL.Text,
+    "position": IDL.Text,
+    "profilePicture": IDL.Opt(IDL.Vec(IDL.Nat8))
+  });
+  const Euro2024LeaderBoardDTO = IDL.Record({
+    "status": IDL.Nat8,
+    "totalEntries": IDL.Nat,
+    "winningShare": IDL.Nat64,
+    "leaderboardEntries": IDL.Vec(Euro2024LeaderboardEntryDTO),
+    "totalPot": IDL.Nat64
+  });
+  const Result_3 = IDL.Variant({
+    "ok": Euro2024LeaderBoardDTO,
+    "err": Error2
   });
   const LeaderBoardDTO = IDL.Record({
     "status": IDL.Nat8,
@@ -4449,19 +4484,24 @@ const idlFactory = ({ IDL }) => {
     "fixtures": IDL.Vec(FixtureDTO)
   });
   return IDL.Service({
+    "addEuro2024Event": IDL.Func([Euro2024Event], [Result], []),
     "addFixtureToGameweek": IDL.Func(
       [IDL.Nat16, IDL.Nat8, IDL.Nat16, IDL.Nat16],
       [Result],
       []
     ),
     "adminDelete2024Entry": IDL.Func([PrincipalName], [IDL.Bool], []),
+    "adminDelete2024Event": IDL.Func([Euro2024EventId], [IDL.Bool], []),
     "adminGetEuro2024Entries": IDL.Func(
       [IDL.Nat, IDL.Nat],
       [IDL.Vec(Euro2024PredictionDTO)],
       []
     ),
+    "adminGetEuro2024Events": IDL.Func([], [IDL.Vec(Euro2024EventDTO)], []),
     "calculateEuro2024Leaderboard": IDL.Func([], [Result], []),
     "checkPaidButNoEntry": IDL.Func([], [IDL.Bool], []),
+    "closeEuro2024Entries": IDL.Func([], [Result], []),
+    "completeEuro2024Competition": IDL.Func([], [Result], []),
     "createSeason": IDL.Func([IDL.Text, IDL.Nat16], [Result], []),
     "createTeam": IDL.Func([IDL.Text], [Result], []),
     "deleteFixture": IDL.Func([IDL.Nat16, IDL.Nat8, IDL.Nat32], [Result], []),
@@ -4469,17 +4509,20 @@ const idlFactory = ({ IDL }) => {
     "deleteTeam": IDL.Func([IDL.Nat16], [Result], []),
     "getAccountBalances": IDL.Func([], [AccountBalancesDTO], []),
     "getAdminDTO": IDL.Func([], [AdminDTO], ["query"]),
-    "getAllEvents": IDL.Func([], [Result_7], []),
+    "getAllEvents": IDL.Func([], [Result_10], []),
     "getCorrectPredictionsDTO": IDL.Func(
       [IDL.Nat16, IDL.Nat8, IDL.Nat32, IDL.Nat, IDL.Nat],
       [CorrectPredictionsDTO],
       []
     ),
-    "getDataHashes": IDL.Func([], [Result_6], ["query"]),
+    "getDataHashes": IDL.Func([], [Result_9], ["query"]),
     "getEuro2024DTO": IDL.Func([], [Result_1], ["query"]),
-    "getEuro2024Players": IDL.Func([], [Result_5], ["query"]),
-    "getEuro2024StateDTO": IDL.Func([], [Result_4], ["query"]),
-    "getEuro2024Teams": IDL.Func([], [Result_3], ["query"]),
+    "getEuro2024Events": IDL.Func([], [IDL.Vec(Euro2024EventDTO)], []),
+    "getEuro2024Fixtures": IDL.Func([], [Result_8], []),
+    "getEuro2024Players": IDL.Func([], [Result_7], ["query"]),
+    "getEuro2024State": IDL.Func([], [Result_6], ["query"]),
+    "getEuro2024StateDTO": IDL.Func([], [Result_5], ["query"]),
+    "getEuro2024Teams": IDL.Func([], [Result_4], ["query"]),
     "getEuroPotBalance": IDL.Func([], [IDL.Nat64], []),
     "getFPLAccountBalance": IDL.Func([], [AccountBalanceDTO], []),
     "getFPLAccountBalanceDTO": IDL.Func([], [AccountBalanceDTO], []),
@@ -4497,6 +4540,7 @@ const idlFactory = ({ IDL }) => {
     "getGameweeks": IDL.Func([IDL.Nat16], [IDL.Vec(Gameweek)], ["query"]),
     "getHistoryDTO": IDL.Func([IDL.Nat16], [HistoryDTO], ["query"]),
     "getHomeDTO": IDL.Func([], [HomeDTO], ["query"]),
+    "getLeaderboard": IDL.Func([GetLeaderboardDTO], [Result_3], ["query"]),
     "getLeaderboardDTO": IDL.Func(
       [IDL.Nat16, IDL.Nat8, IDL.Nat, IDL.Nat],
       [LeaderBoardDTO],
@@ -4505,6 +4549,7 @@ const idlFactory = ({ IDL }) => {
     "getPayoutDTO": IDL.Func([], [PayoutDTO], []),
     "getPlayDTO": IDL.Func([], [PlayDTO], ["query"]),
     "getProfileDTO": IDL.Func([], [Result_2], []),
+    "getPublicEuro2024DTO": IDL.Func([IDL.Text], [Result_1], ["query"]),
     "getSeason": IDL.Func([IDL.Nat16], [IDL.Opt(Season)], ["query"]),
     "getSeasons": IDL.Func([], [IDL.Vec(Season)], ["query"]),
     "getTeams": IDL.Func([], [IDL.Vec(Team)], ["query"]),
@@ -4519,7 +4564,10 @@ const idlFactory = ({ IDL }) => {
     "isAdmin": IDL.Func([], [IDL.Bool], ["query"]),
     "isDisplayNameValid": IDL.Func([IDL.Text], [IDL.Bool], ["query"]),
     "isWalletValid": IDL.Func([IDL.Text], [IDL.Bool], ["query"]),
+    "openEuro2024Entries": IDL.Func([], [Result], []),
     "payoutSweepstake": IDL.Func([], [Result], []),
+    "recalculateLeaderboard": IDL.Func([], [Result], []),
+    "resetEuro2024Fixtures": IDL.Func([], [Result], []),
     "setEuroSystemState": IDL.Func([GameState], [Result], []),
     "setSystemState": IDL.Func([IDL.Nat16, IDL.Nat8], [Result], []),
     "submitEuro2024Prediction": IDL.Func(
@@ -4556,7 +4604,7 @@ const idlFactory = ({ IDL }) => {
     "withdrawICP": IDL.Func([IDL.Float64], [Result], [])
   });
 };
-var define_process_env_default$3 = { FOOTBALL_GOD_BACKEND_CANISTER_ID: "44kin-waaaa-aaaal-qbxra-cai", FOOTBALL_GOD_FRONTEND_CANISTER_ID: "43loz-3yaaa-aaaal-qbxrq-cai", DFX_NETWORK: "ic" };
+var define_process_env_default$3 = { __CANDID_UI_CANISTER_ID: "ahw5u-keaaa-aaaaa-qaaha-cai", FOOTBALL_GOD_BACKEND_CANISTER_ID: "ajuq4-ruaaa-aaaaa-qaaga-cai", FOOTBALL_GOD_FRONTEND_CANISTER_ID: "aovwi-4maaa-aaaaa-qaagq-cai", DFX_NETWORK: "local" };
 const canisterId = define_process_env_default$3.CANISTER_ID_FOOTBALL_GOD_BACKEND;
 const createActor = (canisterId2, options2 = {}) => {
   const agent = options2.agent || new HttpAgent({ ...options2.agentOptions });
@@ -4564,6 +4612,14 @@ const createActor = (canisterId2, options2 = {}) => {
     console.warn(
       "Detected both agent and agentOptions passed to createActor. Ignoring agentOptions and proceeding with the provided agent."
     );
+  }
+  {
+    agent.fetchRootKey().catch((err) => {
+      console.warn(
+        "Unable to fetch root key. Check to ensure that your local replica is running"
+      );
+      console.error(err);
+    });
   }
   return Actor.createActor(idlFactory, {
     agent,
@@ -4575,7 +4631,7 @@ canisterId ? createActor(canisterId) : void 0;
 class ActorFactory {
   static createActor(idlFactory2, canisterId2 = "", identity = null, options2 = null) {
     const hostOptions = {
-      host: `https://${canisterId2}.icp-api.io`,
+      host: `http://localhost:8080/?canisterId=qhbym-qaaaa-aaaaa-aaafq-cai`,
       identity
     };
     if (!options2) {
@@ -4588,6 +4644,14 @@ class ActorFactory {
       options2.agentOptions.host = hostOptions.host;
     }
     const agent = new HttpAgent({ ...options2.agentOptions });
+    {
+      agent.fetchRootKey().catch((err) => {
+        console.warn(
+          "Unable to fetch root key. Ensure your local replica is running"
+        );
+        console.error(err);
+      });
+    }
     return Actor.createActor(idlFactory2, {
       agent,
       canisterId: canisterId2,
@@ -4596,7 +4660,7 @@ class ActorFactory {
   }
   static getAgent(canisterId2 = "", identity = null, options2 = null) {
     const hostOptions = {
-      host: `https://${canisterId2}.icp-api.io`,
+      host: `http://localhost:8080/?canisterId=qhbym-qaaaa-aaaaa-aaafq-cai`,
       identity
     };
     if (!options2) {
@@ -4657,50 +4721,155 @@ function replacer(key2, value) {
 function isError(response) {
   return response && response.err !== void 0;
 }
+var define_process_env_default$2 = { __CANDID_UI_CANISTER_ID: "ahw5u-keaaa-aaaaa-qaaha-cai", FOOTBALL_GOD_BACKEND_CANISTER_ID: "ajuq4-ruaaa-aaaaa-qaaga-cai", FOOTBALL_GOD_FRONTEND_CANISTER_ID: "aovwi-4maaa-aaaaa-qaagq-cai", DFX_NETWORK: "local" };
+function createEuro2024Store() {
+  const { subscribe: subscribe2, set } = writable(null);
+  let actor = ActorFactory.createActor(
+    idlFactory,
+    define_process_env_default$2.FOOTBALL_GOD_BACKEND_CANISTER_ID
+  );
+  async function sync() {
+    let result = await actor.getEuro2024StateDTO();
+    console.log(result);
+    if (isError(result)) {
+      console.error("Error syncing euro 2024 store");
+      return;
+    }
+    let updatedEuro2024StateData = result.ok;
+    set(updatedEuro2024StateData);
+  }
+  async function getEuro2024State() {
+    const identityActor = await ActorFactory.createIdentityActor(
+      authStore,
+      define_process_env_default$2.FOOTBALL_GOD_BACKEND_CANISTER_ID
+    );
+    let result = await identityActor.getEuro2024State();
+    return result;
+  }
+  async function getPotBalance() {
+    const identityActor = await ActorFactory.createIdentityActor(
+      authStore,
+      define_process_env_default$2.FOOTBALL_GOD_BACKEND_CANISTER_ID
+    );
+    let result = await identityActor.getEuroPotBalance();
+    return result;
+  }
+  async function getTotalEntries() {
+    const identityActor = await ActorFactory.createIdentityActor(
+      authStore,
+      define_process_env_default$2.FOOTBALL_GOD_BACKEND_CANISTER_ID
+    );
+    let result = await identityActor.getTotalEntries();
+    return result;
+  }
+  async function getPrediction(principalId) {
+    const identityActor = await ActorFactory.createIdentityActor(
+      authStore,
+      define_process_env_default$2.FOOTBALL_GOD_BACKEND_CANISTER_ID
+    );
+    console.log(principalId);
+    let result = await identityActor.getPublicEuro2024DTO(principalId);
+    console.log(result);
+    if (isError(result)) {
+      console.error("error fetching prediction");
+    }
+    return result.ok;
+  }
+  async function getFixtures() {
+    const identityActor = await ActorFactory.createIdentityActor(
+      authStore,
+      define_process_env_default$2.FOOTBALL_GOD_BACKEND_CANISTER_ID
+    );
+    let result = await identityActor.getEuro2024Fixtures();
+    console.log("result");
+    console.log(result);
+    if (isError(result)) {
+      console.error("error fetching euro 2024 fixtures", result);
+      return [];
+    }
+    console.log(result);
+    return result.ok;
+  }
+  async function getLeaderboard(offset, limit) {
+    const identityActor = await ActorFactory.createIdentityActor(
+      authStore,
+      define_process_env_default$2.FOOTBALL_GOD_BACKEND_CANISTER_ID
+    );
+    let dto = {
+      totalEntries: 0n,
+      offset,
+      limit,
+      entries: []
+    };
+    let result = await identityActor.getLeaderboard(dto);
+    console.log("result");
+    console.log(result);
+    if (isError(result)) {
+      console.error("error fetching euro 2024 fixtures", result);
+    }
+    console.log(result);
+    return result.ok;
+  }
+  async function getEvents() {
+    const identityActor = await ActorFactory.createIdentityActor(
+      authStore,
+      define_process_env_default$2.FOOTBALL_GOD_BACKEND_CANISTER_ID
+    );
+    let entries = await identityActor.getEuro2024Events();
+    return entries;
+  }
+  return {
+    subscribe: subscribe2,
+    sync,
+    getEuro2024State,
+    getPotBalance,
+    getTotalEntries,
+    getFixtures,
+    getLeaderboard,
+    getPrediction,
+    getEvents
+  };
+}
+const euro2024Store = createEuro2024Store();
+const css$2 = {
+  code: ".overlay-panel.svelte-a3qity{position:absolute;bottom:0;right:0}",
+  map: null
+};
+const Page$c = create_ssr_component(($$result, $$props, $$bindings, slots) => {
+  let $$unsubscribe_authSignedInStore;
+  let $$unsubscribe_countdown;
+  $$unsubscribe_authSignedInStore = subscribe(authSignedInStore, (value) => value);
+  const countdown = writable("");
+  $$unsubscribe_countdown = subscribe(countdown, (value) => value);
+  let interval;
+  onDestroy(() => {
+    clearInterval(interval);
+  });
+  $$result.css.add(css$2);
+  $$unsubscribe_authSignedInStore();
+  $$unsubscribe_countdown();
+  return `${validate_component(Layout, "Layout").$$render($$result, {}, {}, {
+    default: () => {
+      return `${`${validate_component(Spinner, "Spinner").$$render($$result, {}, {}, {})}`}`;
+    }
+  })}`;
+});
 const pageSize = 10;
-const Admin_euro2024 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
+const Admin_euro2024_entries = create_ssr_component(($$result, $$props, $$bindings, slots) => {
   let currentPage = 1;
   let entries = [];
-  return `<div class="p-4"><p data-svelte-h="svelte-k0jqut">Euro 2024 Entries:</p> <div class="overflow-x-auto flex-1"><div class="flex justify-between border border-gray-700 py-2 bg-light-gray border-b border-gray-700" data-svelte-h="svelte-1vms2iz"><div class="w-6/12">PrincipalId</div> <div class="w-3/12">Entry Date</div> <div class="w-3/12"></div></div> ${each(entries, (entry, index) => {
-    return `<div class="flex items-center justify-between py-2 border-b border-gray-700 cursor-pointer"><div class="w-6/12">${escape(entry.principalId)}</div> <div class="w-3/12">${escape(formatUnixDateToReadable(Number(entry.entryTime)))}</div> <div class="w-3/12"><button data-svelte-h="svelte-m1cq8q">Delete</button></div> </div>`;
+  return `${``} <div class="p-4"><div class="overflow-x-auto flex-1"><div class="flex justify-between border border-gray-700 py-2 bg-light-gray border-b border-gray-700" data-svelte-h="svelte-1vms2iz"><div class="w-6/12">PrincipalId</div> <div class="w-3/12">Entry Date</div> <div class="w-3/12"></div></div> ${each(entries, (entry, index) => {
+    return `<div class="flex items-center justify-between py-2 border-b border-gray-700 cursor-pointer"><div class="w-6/12">${escape(entry.principalId)}</div> <div class="w-3/12">${escape(formatUnixDateToReadable(Number(entry.entryTime)))}</div> <div class="w-3/12"><button data-svelte-h="svelte-189gxcl">Delete</button></div> </div>`;
   })}</div></div> <div class="justify-center mt-4 pb-4 overflow-x-auto"><div class="flex space-x-1 min-w-max">${each(Array(Math.ceil(entries.length / pageSize)), (_, index) => {
     return `<button${add_attribute("class", `px-4 py-2 rounded-md ${index + 1 === currentPage ? "fpl-button" : ""}`, 0)}>${escape(index + 1)} </button>`;
   })}</div></div>    `;
 });
-const Page$9 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
-  return `${validate_component(Layout, "Layout").$$render($$result, {}, {}, {
-    default: () => {
-      return `<div class="relative bg-gray-800 text-white mt-2 mr-2 rounded-lg"><p class="text-2xl p-8" data-svelte-h="svelte-e3xv4p">Admin</p> <div class="bg-panel rounded-md"><ul class="flex bg-light-gray contained-text border-b border-gray-700"><li${add_attribute("class", `mr-1 md:mr-4 ${"active-tab"}`, 0)}><button${add_attribute(
-        "class",
-        `p-2 ${"text-white"}`,
-        0
-      )}>Euro 2024</button></li> <li${add_attribute("class", `mr-1 md:mr-4 ${""}`, 0)}><button${add_attribute(
-        "class",
-        `p-2 ${"text-gray-400"}`,
-        0
-      )}>Premier League</button></li></ul> ${`${validate_component(Admin_euro2024, "AdminEuro2024").$$render($$result, {}, {}, {})}`}</div></div>`;
-    }
-  })}`;
-});
-const Page$8 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
-  let { title = "Betting Unavailable" } = $$props;
-  let { message = "Betting is currently unavailable in your region." } = $$props;
-  if ($$props.title === void 0 && $$bindings.title && title !== void 0)
-    $$bindings.title(title);
-  if ($$props.message === void 0 && $$bindings.message && message !== void 0)
-    $$bindings.message(message);
-  return `  ${validate_component(Layout, "Layout").$$render($$result, {}, {}, {
-    default: () => {
-      return `<div class="min-h-screen flex items-center justify-center bg-gray-100"><div class="max-w-md w-full bg-white shadow-lg rounded-lg p-6 text-center p-8"><h1 class="text-2xl font-bold text-gray-800 mb-4">${escape(title)}</h1> <p class="text-gray-600">${escape(message)}</p></div></div>`;
-    }
-  })}`;
-});
-var define_process_env_default$2 = { FOOTBALL_GOD_BACKEND_CANISTER_ID: "44kin-waaaa-aaaal-qbxra-cai", FOOTBALL_GOD_FRONTEND_CANISTER_ID: "43loz-3yaaa-aaaal-qbxrq-cai", DFX_NETWORK: "ic" };
+var define_process_env_default$1 = { __CANDID_UI_CANISTER_ID: "ahw5u-keaaa-aaaaa-qaaha-cai", FOOTBALL_GOD_BACKEND_CANISTER_ID: "ajuq4-ruaaa-aaaaa-qaaga-cai", FOOTBALL_GOD_FRONTEND_CANISTER_ID: "aovwi-4maaa-aaaaa-qaagq-cai", DFX_NETWORK: "local" };
 function createTeamStore() {
   const { subscribe: subscribe2, set } = writable([]);
   let actor = ActorFactory.createActor(
     idlFactory,
-    define_process_env_default$2.FOOTBALL_GOD_BACKEND_CANISTER_ID
+    define_process_env_default$1.FOOTBALL_GOD_BACKEND_CANISTER_ID
   );
   async function sync() {
     const category = "teams";
@@ -4741,12 +4910,12 @@ function createTeamStore() {
   };
 }
 const teamStore = createTeamStore();
-var define_process_env_default$1 = { FOOTBALL_GOD_BACKEND_CANISTER_ID: "44kin-waaaa-aaaal-qbxra-cai", FOOTBALL_GOD_FRONTEND_CANISTER_ID: "43loz-3yaaa-aaaal-qbxrq-cai", DFX_NETWORK: "ic" };
+var define_process_env_default = { __CANDID_UI_CANISTER_ID: "ahw5u-keaaa-aaaaa-qaaha-cai", FOOTBALL_GOD_BACKEND_CANISTER_ID: "ajuq4-ruaaa-aaaaa-qaaga-cai", FOOTBALL_GOD_FRONTEND_CANISTER_ID: "aovwi-4maaa-aaaaa-qaagq-cai", DFX_NETWORK: "local" };
 function createPlayerStore() {
   const { subscribe: subscribe2, set } = writable([]);
   let actor = ActorFactory.createActor(
     idlFactory,
-    define_process_env_default$1.FOOTBALL_GOD_BACKEND_CANISTER_ID
+    define_process_env_default.FOOTBALL_GOD_BACKEND_CANISTER_ID
   );
   async function sync() {
     const category = "players";
@@ -4787,56 +4956,82 @@ function createPlayerStore() {
   };
 }
 const playerStore = createPlayerStore();
-var define_process_env_default = { FOOTBALL_GOD_BACKEND_CANISTER_ID: "44kin-waaaa-aaaal-qbxra-cai", FOOTBALL_GOD_FRONTEND_CANISTER_ID: "43loz-3yaaa-aaaal-qbxrq-cai", DFX_NETWORK: "ic" };
-function createEuro2024Store() {
-  const { subscribe: subscribe2, set } = writable(null);
-  let actor = ActorFactory.createActor(
-    idlFactory,
-    define_process_env_default.FOOTBALL_GOD_BACKEND_CANISTER_ID
-  );
-  async function sync() {
-    let result = await actor.getEuro2024StateDTO();
-    console.log(result);
-    if (isError(result)) {
-      console.error("Error syncing euro 2024 store");
-      return;
+const Page$b = create_ssr_component(($$result, $$props, $$bindings, slots) => {
+  return `${validate_component(Layout, "Layout").$$render($$result, {}, {}, {
+    default: () => {
+      return `<div class="relative bg-gray-800 text-white mt-2 mr-2 rounded-lg"><p class="text-2xl p-8" data-svelte-h="svelte-e3xv4p">Admin</p> <div class="bg-panel rounded-md p-2"><ul class="flex bg-light-gray contained-text border-b border-gray-700"><li${add_attribute("class", `mr-1 md:mr-4 ${"active-tab"}`, 0)}><button${add_attribute(
+        "class",
+        `p-2 ${"text-white"}`,
+        0
+      )}>Euro 2024 Entries</button></li> <li${add_attribute("class", `mr-1 md:mr-4 ${""}`, 0)}><button${add_attribute(
+        "class",
+        `p-2 ${"text-gray-400"}`,
+        0
+      )}>Euro 2024 Events</button></li></ul> <div class="flex w-100 bg-OPENFPL p-4 my-4"><button class="bg-OPENFPLPURPLE mx-4 p-4 rounded-md" data-svelte-h="svelte-149u5mp">Close Euro 2024 Entries</button> <button class="bg-OPENFPLPURPLE mx-4 p-4 rounded-md" data-svelte-h="svelte-n58rcp">Open Euro 2024 Entries</button> <button class="bg-OPENFPLPURPLE mx-4 p-4 rounded-md" data-svelte-h="svelte-1a9fkjn">Complete Euro 2024 Competition</button> <button class="bg-OPENFPLPURPLE mx-4 p-4 rounded-md" data-svelte-h="svelte-1p9lklt">Recalculate Leaderboard</button></div> ${`${validate_component(Admin_euro2024_entries, "AdminEuro2024Entries").$$render($$result, {}, {}, {})}`}</div></div>`;
     }
-    let updatedEuro2024StateData = result.ok;
-    set(updatedEuro2024StateData);
-  }
-  async function getEuro2024State() {
-    let euro2024State;
-    subscribe2((value) => {
-      euro2024State = value;
-    })();
-    return euro2024State;
-  }
-  async function getPotBalance() {
-    const identityActor = await ActorFactory.createIdentityActor(
-      authStore,
-      define_process_env_default.FOOTBALL_GOD_BACKEND_CANISTER_ID
-    );
-    let result = await identityActor.getEuroPotBalance();
-    return result;
-  }
-  async function getTotalEntries() {
-    const identityActor = await ActorFactory.createIdentityActor(
-      authStore,
-      define_process_env_default.FOOTBALL_GOD_BACKEND_CANISTER_ID
-    );
-    let result = await identityActor.getTotalEntries();
-    return result;
-  }
-  return {
-    subscribe: subscribe2,
-    sync,
-    getEuro2024State,
-    getPotBalance,
-    getTotalEntries
-  };
-}
-const euro2024Store = createEuro2024Store();
-const Page$7 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
+  })}`;
+});
+const css$1 = {
+  code: ".tab-active.svelte-1uspj1d{--tw-bg-opacity:1;background-color:rgb(59 130 246 / var(--tw-bg-opacity));--tw-text-opacity:1;color:rgb(255 255 255 / var(--tw-text-opacity))\n}",
+  map: null
+};
+const itemsPerPage = 10;
+const Page$a = create_ssr_component(($$result, $$props, $$bindings, slots) => {
+  let $contractTypeFilter, $$unsubscribe_contractTypeFilter;
+  let $filteredPlayers, $$unsubscribe_filteredPlayers;
+  let $paginatedPlayers, $$unsubscribe_paginatedPlayers;
+  let $currentPage, $$unsubscribe_currentPage;
+  const players = writable([]);
+  const contractTypeFilter = writable(1);
+  $$unsubscribe_contractTypeFilter = subscribe(contractTypeFilter, (value) => $contractTypeFilter = value);
+  const currentPage = writable(1);
+  $$unsubscribe_currentPage = subscribe(currentPage, (value) => $currentPage = value);
+  const filteredPlayers = derived([players, contractTypeFilter], ([$players, $contractTypeFilter2]) => {
+    return $players.filter((player) => $contractTypeFilter2 === null || player.contractType === $contractTypeFilter2).sort((a, b) => b.value - a.value);
+  });
+  $$unsubscribe_filteredPlayers = subscribe(filteredPlayers, (value) => $filteredPlayers = value);
+  const paginatedPlayers = derived([filteredPlayers, currentPage], ([$filteredPlayers2, $currentPage2]) => {
+    const start = ($currentPage2 - 1) * itemsPerPage;
+    return $filteredPlayers2.slice(start, start + itemsPerPage);
+  });
+  $$unsubscribe_paginatedPlayers = subscribe(paginatedPlayers, (value) => $paginatedPlayers = value);
+  $$result.css.add(css$1);
+  $$unsubscribe_contractTypeFilter();
+  $$unsubscribe_filteredPlayers();
+  $$unsubscribe_paginatedPlayers();
+  $$unsubscribe_currentPage();
+  return `${validate_component(Layout, "Layout").$$render($$result, {}, {}, {
+    default: () => {
+      return `<div class="container mx-auto p-4"><h1 class="text-2xl font-bold mb-4" data-svelte-h="svelte-5vgaps">Contracts Center</h1> <div class="tabs mb-4 flex space-x-2">${each([1, 2, 3, 4, 5], (type) => {
+        return `<button class="${[
+          "px-4 py-2 rounded-lg svelte-1uspj1d",
+          $contractTypeFilter === type ? "tab-active" : ""
+        ].join(" ").trim()}">Contract Type ${escape(type)} </button>`;
+      })}</div> ${$filteredPlayers.length === 0 ? `${validate_component(Spinner, "Spinner").$$render($$result, {}, {}, {})}` : `<table class="min-w-full bg-white rounded-lg overflow-hidden shadow-lg"><thead class="text-white" data-svelte-h="svelte-1bjt2vy"><tr><th class="w-1/6 py-3 px-4 uppercase font-semibold text-sm">First Name</th> <th class="w-1/6 py-3 px-4 uppercase font-semibold text-sm">Last Name</th> <th class="w-1/6 py-3 px-4 uppercase font-semibold text-sm">Shirt Number</th> <th class="w-1/6 py-3 px-4 uppercase font-semibold text-sm">Value</th> <th class="w-1/6 py-3 px-4 uppercase font-semibold text-sm">YTD Earnings</th></tr></thead> <tbody class="">${each($paginatedPlayers, (player) => {
+        return `<tr><td class="w-1/6 py-3 px-4">${escape(player.firstName)}</td> <td class="w-1/6 py-3 px-4">${escape(player.lastName)}</td> <td class="w-1/6 py-3 px-4">${escape(player.shirtNumber)}</td> <td class="w-1/6 py-3 px-4">${escape(player.value)}</td> <td class="w-1/6 py-3 px-4">${escape(player.ytdEarnings)}</td> </tr>`;
+      })}</tbody></table> <div class="mt-4 flex justify-center space-x-2">${each(Array(Math.ceil($filteredPlayers.length / itemsPerPage)).fill(0), (_, index) => {
+        return `<button class="${[
+          "px-3 py-1 rounded-full",
+          (index + 1 === $currentPage ? "bg-blue-500" : "") + " " + (index + 1 === $currentPage ? "text-white" : "")
+        ].join(" ").trim()}">${escape(index + 1)} </button>`;
+      })}</div>`}</div>`;
+    }
+  })}`;
+});
+const Page$9 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
+  let { title = "Betting Unavailable" } = $$props;
+  let { message = "Betting is currently unavailable in your region." } = $$props;
+  if ($$props.title === void 0 && $$bindings.title && title !== void 0)
+    $$bindings.title(title);
+  if ($$props.message === void 0 && $$bindings.message && message !== void 0)
+    $$bindings.message(message);
+  return `  ${validate_component(Layout, "Layout").$$render($$result, {}, {}, {
+    default: () => {
+      return `<div class="min-h-screen flex items-center justify-center bg-gray-100"><div class="max-w-md w-full bg-white shadow-lg rounded-lg p-6 text-center p-8"><h1 class="text-2xl font-bold text-gray-800 mb-4">${escape(title)}</h1> <p class="text-gray-600">${escape(message)}</p></div></div>`;
+    }
+  })}`;
+});
+const Page$8 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
   let loadingText;
   let $$unsubscribe_playerStore;
   let $$unsubscribe_teamStore;
@@ -4870,7 +5065,7 @@ const Page$7 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
     }
   })}`;
 });
-const Page$6 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
+const Page$7 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
   const games = [
     {
       title: "Euro 2024",
@@ -4887,7 +5082,7 @@ const Page$6 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
     }
   })}`;
 });
-const Page$5 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
+const Page$6 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
   let loadingText;
   let $authSignedInStore, $$unsubscribe_authSignedInStore;
   $$unsubscribe_authSignedInStore = subscribe(authSignedInStore, (value) => $authSignedInStore = value);
@@ -4899,8 +5094,12 @@ const Page$5 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
     }
   })}`;
 });
-const Page$4 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
-  return ``;
+const Page$5 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
+  return `${validate_component(Layout, "Layout").$$render($$result, {}, {}, {
+    default: () => {
+      return `<div class="bg-panel mt-4"><h1 class="p-4 mx-1 default-header" data-svelte-h="svelte-1bmq93s">Euro 2024 Leaderboard</h1> <div class="flex flex-row p-4" data-svelte-h="svelte-15mkq1d"><div class="w-1/6"><p>Pos</p></div> <div class="w-3/6"><p>Username</p></div> <div class="w-1/6"><p>Points</p></div> <div class="w-1/6"><p>View</p></div></div> ${`${validate_component(Spinner, "Spinner").$$render($$result, {}, {}, {})}`}</div>`;
+    }
+  })}`;
 });
 const Vision = create_ssr_component(($$result, $$props, $$bindings, slots) => {
   return `<div class="m-4" data-svelte-h="svelte-1e280wp"><h1 class="default-header">Our Vision</h1> <p class="my-4">FootballGod will provide a much needed fixed-odds betting
@@ -4940,15 +5139,31 @@ const Vision = create_ssr_component(($$result, $$props, $$bindings, slots) => {
     FootballGod&#39;s ability to bring about positive change in the football
     community using the IC.</p> <br> <br></div>`;
 });
-const Page$3 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
+const Page$4 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
   return `${validate_component(Layout, "Layout").$$render($$result, {}, {}, {
     default: () => {
       return `<div class="bg-panel mt-4"><h1 class="p-4 mx-1 default-header" data-svelte-h="svelte-14v1lwf">FootballGod Lightpaper</h1> <ul class="flex flex-nowrap overflow-x-auto bg-light-gray border-b border-gray-700 px-4 pt-2"><li${add_attribute("class", `mr-4 ${"active-tab"}`, 0)}><button${add_attribute("class", `p-2 ${"text-white"}`, 0)}>Vision</button></li></ul> ${`${validate_component(Vision, "Vision").$$render($$result, {}, {}, {})}`}</div>`;
     }
   })}`;
 });
-const Page$2 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
+const Page$3 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
   return `     `;
+});
+const css = {
+  code: ".bg-panel.svelte-1rn56bm{background-color:#f0f0f0;border-radius:8px}.default-header.svelte-1rn56bm{color:#333}",
+  map: null
+};
+const Page$2 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
+  let $page, $$unsubscribe_page;
+  $$unsubscribe_page = subscribe(page, (value) => $page = value);
+  $$result.css.add(css);
+  $page.url.searchParams.get("id");
+  $$unsubscribe_page();
+  return `${validate_component(Layout, "Layout").$$render($$result, {}, {}, {
+    default: () => {
+      return `<div class="bg-panel mt-4 svelte-1rn56bm"><h1 class="p-4 mx-1 default-header svelte-1rn56bm" data-svelte-h="svelte-1cmu2ta">Euro 2024 Prediction</h1> ${`<div data-svelte-h="svelte-194gxkm">Loading...</div>`}</div>`;
+    }
+  })}`;
 });
 const Page$1 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
   return ``;
@@ -4963,7 +5178,7 @@ const Page = create_ssr_component(($$result, $$props, $$bindings, slots) => {
 export {
   Error$1 as E,
   Layout$1 as L,
-  Page$a as P,
+  Page$c as P,
   Server as S,
   set_building as a,
   set_manifest as b,
@@ -4973,16 +5188,18 @@ export {
   set_read_implementation as f,
   get_hooks as g,
   set_safe_public_env as h,
-  Page$9 as i,
-  Page$8 as j,
-  Page$7 as k,
-  Page$6 as l,
-  Page$5 as m,
-  Page$4 as n,
+  Page$b as i,
+  Page$a as j,
+  Page$9 as k,
+  Page$8 as l,
+  Page$7 as m,
+  Page$6 as n,
   options as o,
-  Page$3 as p,
-  Page$2 as q,
-  Page$1 as r,
+  Page$5 as p,
+  Page$4 as q,
+  Page$3 as r,
   set_assets as s,
-  Page as t
+  Page$2 as t,
+  Page$1 as u,
+  Page as v
 };
