@@ -659,6 +659,35 @@
         {@const yellowCardCount = getBonusCount("YellowCard")}
         {@const redCardCount = getBonusCount("RedCard")}
         
+        {@const r16WinnerCorrect = events.find(x => Object.keys(x.stage)[0] == "RoundOf16" && Object.keys(x.eventType)[0] == "RoundWon" && x.teamId == prediction.r16Prediction.winner) != undefined}
+        {@const r16LoserCorrect = events.find(x => Object.keys(x.stage)[0] == "RoundOf16" && Object.keys(x.eventType)[0] == "RoundLost" && x.teamId == prediction.r16Prediction.loser) != undefined}
+        {@const r16ScorerCorrect = events.find(x => Object.keys(x.stage)[0] == "RoundOf16" && Object.keys(x.eventType)[0] == "GoalScored" && x.teamId == prediction.r16Prediction.goalScorer) != undefined}
+        {@const r16AssisterCorrect = events.find(x => Object.keys(x.stage)[0] == "RoundOf16" && Object.keys(x.eventType)[0] == "GoalAssisted" && x.teamId == prediction.r16Prediction.goalAssister) != undefined}
+        {@const r16YellowCardCorrect = events.find(x => Object.keys(x.stage)[0] == "RoundOf16" && Object.keys(x.eventType)[0] == "YellowCard" && x.teamId == prediction.r16Prediction.yellowCard) != undefined}
+        {@const r16RedCardCorrect = events.find(x => Object.keys(x.stage)[0] == "RoundOf16" && Object.keys(x.eventType)[0] == "RedCard" && x.teamId == prediction.r16Prediction.redCard) != undefined}
+
+        {@const qfWinnerCorrect = events.find(x => Object.keys(x.stage)[0] == "QuarterFinal" && Object.keys(x.eventType)[0] == "RoundWon" && x.teamId == prediction.qfPrediction.winner) != undefined}
+        {@const qfLoserCorrect = events.find(x => Object.keys(x.stage)[0] == "QuarterFinal" && Object.keys(x.eventType)[0] == "RoundLost" && x.teamId == prediction.qfPrediction.loser) != undefined}
+        {@const qfScorerCorrect = events.find(x => Object.keys(x.stage)[0] == "QuarterFinal" && Object.keys(x.eventType)[0] == "GoalScored" && x.teamId == prediction.qfPrediction.goalScorer) != undefined}
+        {@const qfAssisterCorrect = events.find(x => Object.keys(x.stage)[0] == "QuarterFinal" && Object.keys(x.eventType)[0] == "GoalAssisted" && x.teamId == prediction.qfPrediction.goalAssister) != undefined}
+        {@const qfYellowCardCorrect = events.find(x => Object.keys(x.stage)[0] == "QuarterFinal" && Object.keys(x.eventType)[0] == "YellowCard" && x.teamId == prediction.qfPrediction.yellowCard) != undefined}
+        {@const qfRedCardCorrect = events.find(x => Object.keys(x.stage)[0] == "QuarterFinal" && Object.keys(x.eventType)[0] == "RedCard" && x.teamId == prediction.qfPrediction.redCard) != undefined}
+
+        {@const sfWinnerCorrect = events.find(x => Object.keys(x.stage)[0] == "SemiFinal" && Object.keys(x.eventType)[0] == "RoundWon" && x.teamId == prediction.sfPrediction.winner) != undefined}
+        {@const sfLoserCorrect = events.find(x => Object.keys(x.stage)[0] == "SemiFinal" && Object.keys(x.eventType)[0] == "RoundLost" && x.teamId == prediction.sfPrediction.loser) != undefined}
+        {@const sfScorerCorrect = events.find(x => Object.keys(x.stage)[0] == "SemiFinal" && Object.keys(x.eventType)[0] == "GoalScored" && x.teamId == prediction.sfPrediction.goalScorer) != undefined}
+        {@const sfAssisterCorrect = events.find(x => Object.keys(x.stage)[0] == "SemiFinal" && Object.keys(x.eventType)[0] == "GoalAssisted" && x.teamId == prediction.sfPrediction.goalAssister) != undefined}
+        {@const sfYellowCardCorrect = events.find(x => Object.keys(x.stage)[0] == "SemiFinal" && Object.keys(x.eventType)[0] == "YellowCard" && x.teamId == prediction.sfPrediction.yellowCard) != undefined}
+        {@const sfRedCardCorrect = events.find(x => Object.keys(x.stage)[0] == "SemiFinal" && Object.keys(x.eventType)[0] == "RedCard" && x.teamId == prediction.sfPrediction.redCard) != undefined}
+
+        {@const fWinnerCorrect = events.find(x => Object.keys(x.stage)[0] == "Final" && Object.keys(x.eventType)[0] == "RoundWon" && x.teamId == prediction.fPrediction.winner) != undefined}
+        {@const fLoserCorrect = events.find(x => Object.keys(x.stage)[0] == "Final" && Object.keys(x.eventType)[0] == "RoundLost" && x.teamId == prediction.fPrediction.loser) != undefined}
+        {@const fScorerCorrect = events.find(x => Object.keys(x.stage)[0] == "Final" && Object.keys(x.eventType)[0] == "GoalScored" && x.teamId == prediction.fPrediction.goalScorer) != undefined}
+        {@const fAssisterCorrect = events.find(x => Object.keys(x.stage)[0] == "Final" && Object.keys(x.eventType)[0] == "GoalAssisted" && x.teamId == prediction.fPrediction.goalAssister) != undefined}
+        {@const fYellowCardCorrect = events.find(x => Object.keys(x.stage)[0] == "Final" && Object.keys(x.eventType)[0] == "YellowCard" && x.teamId == prediction.fPrediction.yellowCard) != undefined}
+        {@const fRedCardCorrect = events.find(x => Object.keys(x.stage)[0] == "Final" && Object.keys(x.eventType)[0] == "RedCard" && x.teamId == prediction.fPrediction.redCard) != undefined}
+
+        
         <h1 class="my-4 default-header">Total Score: {prediction.totalScore}</h1>
         <div class="flex flex-col">
             <p>Group Winner Selections:</p>
@@ -748,7 +777,7 @@
                 </div>
                 
                 <div class="w-3/12">Bonus ({stageWonCount}/6): 0</div>
-                <div class="w-3/12">Total: 0</div>
+                <div class="w-3/12">Total: {(stageWonCount * 5) + (stageWonCount > 2 ? (stageWonCount * 5) : 0)}</div>
             </div>
         </div>
 
@@ -841,7 +870,7 @@
                 
                 
                 <div class="w-3/12">Bonus ({stageLostCount}/6): 0</div>
-                <div class="w-3/12">Total: 0</div>
+                <div class="w-3/12">Total: {(stageLostCount * 5) + (stageLostCount > 2 ? (stageLostCount * 5) : 0)}</div>
             </div>
         </div>
 
@@ -939,7 +968,7 @@
                 </div>
                 
                 <div class="w-3/12">Bonus ({goalScorerCount}/6): 0</div>
-                <div class="w-3/12">Total: 0</div>
+                <div class="w-3/12">Total: {(goalScorerCount * 10) + (goalScorerCount > 2 ? (goalScorerCount * 10) : 0)}</div>
             </div>
         </div>
 
@@ -1037,7 +1066,7 @@
                 </div>
                 
                 <div class="w-3/12">Bonus ({goalAssisterCount}/6): 0</div>
-                <div class="w-3/12">Total: 0</div>
+                <div class="w-3/12">Total: {(goalAssisterCount * 10) + (goalAssisterCount > 2 ? (goalAssisterCount * 10) : 0)}</div>
             </div>
         </div>
 
@@ -1135,7 +1164,7 @@
                 </div>
                 
                 <div class="w-3/12">Bonus ({yellowCardCount}/6): 0</div>
-                <div class="w-3/12">Total: 0</div>
+                <div class="w-3/12">Total: {(yellowCardCount * 5) + (yellowCardCount > 2 ? (yellowCardCount * 5) : 0)}</div>
             </div>
         </div>
 
@@ -1233,7 +1262,7 @@
                 </div>
                 
                 <div class="w-3/12">Bonus ({redCardCount}/6): 0</div>
-                <div class="w-3/12">Total: 0</div>
+                <div class="w-3/12">Total: {(redCardCount * 10) + (redCardCount > 2 ? (redCardCount * 10) : 0)}</div>
             </div>
         </div>
 
@@ -1250,7 +1279,7 @@
                     {:else}
                         Both Correct Bonus (No): 0
                     {/if}</div>
-                <div class="w-3/12">Total: 0</div>
+                <div class="w-3/12">Total: {(r16WinnerCorrect ? 10 : 0) + (r16LoserCorrect ? 10 : 0) + (r16WinnerCorrect && r16LoserCorrect ? 40 : 0)}</div>
             </div>
         </div>
 
@@ -1267,7 +1296,7 @@
                     {:else}
                         Both Correct Bonus (No): 0
                     {/if}</div>
-                <div class="w-3/12">Total: 0</div>
+                    <div class="w-3/12">Total: {(r16ScorerCorrect ? 20 : 0) + (r16AssisterCorrect ? 20 : 0) + (r16ScorerCorrect && r16AssisterCorrect ? 80 : 0)}</div>
             </div>
         </div>
 
@@ -1307,7 +1336,7 @@
                     {:else}
                         Both Correct Bonus (No): 0
                     {/if}</div>
-                <div class="w-3/12">Total: 0</div>
+                    <div class="w-3/12">Total: {(r16ScorerCorrect ? 10 : 0) + (r16AssisterCorrect ? 20 : 0) + (r16ScorerCorrect && r16AssisterCorrect ? 60 : 0)}</div>
             </div>
         </div>
 
@@ -1324,7 +1353,7 @@
                     {:else}
                         Both Correct Bonus (No): 0
                     {/if}</div>
-                <div class="w-3/12">Total: 0</div>
+                    <div class="w-3/12">Total: {(qfWinnerCorrect ? 15 : 0) + (qfLoserCorrect ? 15 : 0) + (qfWinnerCorrect && qfLoserCorrect ? 60 : 0)}</div>
             </div>
         </div>
 
@@ -1341,7 +1370,7 @@
                     {:else}
                         Both Correct Bonus (No): 0
                     {/if}</div>
-                <div class="w-3/12">Total: 0</div>
+                    <div class="w-3/12">Total: {(qfScorerCorrect ? 30 : 0) + (qfAssisterCorrect ? 30 : 0) + (qfScorerCorrect && qfWinnerCorrect ? 120 : 0)}</div>
             </div>
         </div>
 
@@ -1381,85 +1410,7 @@
                     {:else}
                         Both Correct Bonus (No): 0
                     {/if}</div>
-                <div class="w-3/12">Total: 0</div>
-            </div>
-        </div>
-        
-
-
-
-
-        <div class="flex flex-col">
-            <p>Quarter Final Match Results:</p>
-            <div class="flex flex-row">
-                <div class="w-3/12">-</div>
-                <div class="w-3/12">-</div>
-
-                <div class="w-3/12">
-                    {#if prediction.qfPrediction.winner > 0 && prediction.qfPrediction.loser > 0}
-                        {@const bonusPoints = getKnockOutBonusPoints("QF", "Result")}
-                        Both Correct Bonus ({bonusPoints > 0 ? 'Yes' : 'No'}): {bonusPoints}
-                    {:else}
-                        Both Correct Bonus (No): 0
-                    {/if}</div>
-                <div class="w-3/12">Total: 0</div>
-            </div>
-        </div>
-
-        <div class="flex flex-col">
-            <p>Quarter Final Scorer Results:</p>
-            <div class="flex flex-row">
-                <div class="w-3/12">-</div>
-                <div class="w-3/12">-</div>
-
-                <div class="w-3/12">
-                    {#if prediction.qfPrediction.goalScorer > 0 && prediction.qfPrediction.goalAssister > 0}
-                        {@const bonusPoints = getKnockOutBonusPoints("QF", "Goals")}
-                        Both Correct Bonus ({bonusPoints > 0 ? 'Yes' : 'No'}): {bonusPoints}
-                    {:else}
-                        Both Correct Bonus (No): 0
-                    {/if}</div>
-                <div class="w-3/12">Total: 0</div>
-            </div>
-        </div>
-
-        <div class="flex flex-col">
-            <p>Quarter Final Card Results:</p>
-            <div class="flex flex-row">
-                <div class="w-3/12">
-                    {#if prediction.qfPrediction.winner > 0}
-                        {$teamStore.find(x => x.id == prediction.qfPrediction.winner)?.countryCode }
-                    
-                        {#await getFlagComponent($teamStore.find(x => x.id == prediction.qfPrediction.winner)?.countryCode ?? "") then FlagComponent}
-                            {#if FlagComponent}
-                                <svelte:component this={FlagComponent} className="w-6 ml-4" />
-                            {/if}
-                        {/await}
-                    {:else }
-                        <p>-</p>
-                    {/if}
-                </div>
-                <div class="w-3/12">
-                    {#if prediction.qfPrediction.loser > 0}
-                        {$teamStore.find(x => x.id == prediction.qfPrediction.loser)?.countryCode }
-                    
-                        {#await getFlagComponent($teamStore.find(x => x.id == prediction.qfPrediction.loser)?.countryCode ?? "") then FlagComponent}
-                            {#if FlagComponent}
-                                <svelte:component this={FlagComponent} className="w-6 ml-4" />
-                            {/if}
-                        {/await}
-                    {:else }
-                        <p>-</p>
-                    {/if}
-                </div>
-                <div class="w-3/12">
-                    {#if prediction.qfPrediction.yellowCard > 0 && prediction.qfPrediction.redCard > 0}
-                        {@const bonusPoints = getKnockOutBonusPoints("QF", "Cards")}
-                        Both Correct Bonus ({bonusPoints > 0 ? 'Yes' : 'No'}): {bonusPoints}
-                    {:else}
-                        Both Correct Bonus (No): 0
-                    {/if}</div>
-                <div class="w-3/12">Total: 0</div>
+                    <div class="w-3/12">Total: {(qfYellowCardCorrect ? 15 : 0) + (qfRedCardCorrect ? 30 : 0) + (qfYellowCardCorrect && qfRedCardCorrect ? 90 : 0)}</div>
             </div>
         </div>
         
@@ -1477,7 +1428,7 @@
                     {:else}
                         Both Correct Bonus (No): 0
                     {/if}</div>
-                <div class="w-3/12">Total: 0</div>
+                    <div class="w-3/12">Total: {(sfWinnerCorrect ? 20 : 0) + (sfLoserCorrect ? 20 : 0) + (sfWinnerCorrect && sfLoserCorrect ? 80 : 0)}</div>
             </div>
         </div>
 
@@ -1494,7 +1445,7 @@
                     {:else}
                         Both Correct Bonus (No): 0
                     {/if}</div>
-                <div class="w-3/12">Total: 0</div>
+                    <div class="w-3/12">Total: {(sfScorerCorrect ? 40 : 0) + (sfAssisterCorrect ? 40 : 0) + (sfScorerCorrect && sfAssisterCorrect ? 160 : 0)}</div>
             </div>
         </div>
 
@@ -1534,7 +1485,7 @@
                     {:else}
                         Both Correct Bonus (No): 0
                     {/if}</div>
-                <div class="w-3/12">Total: 0</div>
+                    <div class="w-3/12">Total: {(sfYellowCardCorrect ? 20 : 0) + (sfRedCardCorrect ? 40 : 0) + (sfYellowCardCorrect && sfRedCardCorrect ? 120 : 0)}</div>
             </div>
         </div>
 
@@ -1553,7 +1504,7 @@
                     {:else}
                         Both Correct Bonus (No): 0
                     {/if}</div>
-                <div class="w-3/12">Total: 0</div>
+                    <div class="w-3/12">Total: {(fWinnerCorrect ? 25 : 0) + (fLoserCorrect ? 25 : 0) + (fWinnerCorrect && fLoserCorrect ? 100 : 0)}</div>
             </div>
         </div>
 
@@ -1570,7 +1521,7 @@
                     {:else}
                         Both Correct Bonus (No): 0
                     {/if}</div>
-                <div class="w-3/12">Total: 0</div>
+                    <div class="w-3/12">Total: {(fScorerCorrect ? 50 : 0) + (fAssisterCorrect ? 50 : 0) + (fScorerCorrect && fAssisterCorrect ? 200 : 0)}</div>
             </div>
         </div>
 
@@ -1610,7 +1561,7 @@
                     {:else}
                         Both Correct Bonus (No): 0
                     {/if}</div>
-                <div class="w-3/12">Total: 0</div>
+                    <div class="w-3/12">Total: {(fYellowCardCorrect ? 25 : 0) + (fRedCardCorrect ? 50 : 0) + (fRedCardCorrect && fYellowCardCorrect ? 150 : 0)}</div>
             </div>
         </div>
 
