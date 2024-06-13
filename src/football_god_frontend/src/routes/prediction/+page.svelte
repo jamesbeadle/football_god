@@ -5,7 +5,7 @@
     import { page } from "$app/stores";
     import { teamStore } from "$lib/stores/teams.store";
     import { playerStore } from "$lib/stores/player.store";
-    import type { Euro2024EventDTO, Euro2024PredictionDTO, PredictionSet } from "../../../../declarations/football_god_backend/football_god_backend.did";
+    import type { Euro2024EventDTO, Euro2024PredictionDTO } from "../../../../declarations/football_god_backend/football_god_backend.did";
     
     
     let isLoading = true;
@@ -250,81 +250,63 @@
                 switch(grouping){
                     case "Result":
 
-                        let winnerId = events.find(x => 
+                        let winnerEvent = events.find(x => 
                                 Object.keys(x.stage)[0] == "RoundOf16" && 
-                                Object.keys(x.eventType)[0] == "Winner")!.teamId;
+                                Object.keys(x.eventType)[0] == "StageWon");
 
 
-                        let loserId = events.find(x => 
+                        let loserEvent = events.find(x => 
                                 Object.keys(x.stage)[0] == "RoundOf16" && 
-                                Object.keys(x.eventType)[0] == "Loser")!.teamId;
+                                Object.keys(x.eventType)[0] == "StageLost");
 
-                        if(!winnerId || !loserId){
+                        if(!winnerEvent || !loserEvent){
                             return 0;
                         }
 
-                        if(prediction.r16Prediction.winner == 
-                            events.find(x => 
-                                Object.keys(x.stage)[0] == "RoundOf16" && 
-                                Object.keys(x.eventType)[0] == "Winner")!.teamId
-                            && prediction.r16Prediction.loser == 
-                            events.find(x => 
-                                Object.keys(x.stage)[0] == "RoundOf16" && 
-                                Object.keys(x.eventType)[0] == "Loser")!.teamId
+                        if(prediction.r16Prediction.winner == winnerEvent.teamId
+                            && prediction.r16Prediction.loser == loserEvent.teamId
                             ) {
                                 return 40;
                             }
                         break;
                     case "Goals":
 
-                        let goalScorerId = events.find(x => 
+                        let goalScorerEvent = events.find(x => 
                                 Object.keys(x.stage)[0] == "RoundOf16" && 
-                                Object.keys(x.eventType)[0] == "GoalScored")!.playerId;
+                                Object.keys(x.eventType)[0] == "GoalScored");
 
 
-                        let goalAssisterId = events.find(x => 
+                        let goalAssisterEvent = events.find(x => 
                                 Object.keys(x.stage)[0] == "RoundOf16" && 
-                                Object.keys(x.eventType)[0] == "GoalAssisted")!.playerId;
+                                Object.keys(x.eventType)[0] == "GoalAssisted");
 
-                        if(!goalScorerId || !goalAssisterId){
+                        if(!goalScorerEvent || !goalAssisterEvent){
                             return 0;
                         }
 
-                        if(prediction.r16Prediction.goalScorer == 
-                            events.find(x => 
-                                Object.keys(x.stage)[0] == "RoundOf16" && 
-                                Object.keys(x.eventType)[0] == "GoalScored")!.playerId
-                            && prediction.r16Prediction.goalAssister == 
-                            events.find(x => 
-                                Object.keys(x.stage)[0] == "RoundOf16" && 
-                                Object.keys(x.eventType)[0] == "GoalAssisted")!.playerId
+                        if(prediction.r16Prediction.goalScorer == goalScorerEvent.playerId
+                            && prediction.r16Prediction.goalAssister == goalAssisterEvent.playerId
                             ) {
                                 return 80;
                             }
                         break;
                     case "Cards":
 
-                        let yellowCardId = events.find(x => 
+                        let yellowCardEvent = events.find(x => 
                                 Object.keys(x.stage)[0] == "RoundOf16" && 
-                                Object.keys(x.eventType)[0] == "YellowCard")!.playerId;
+                                Object.keys(x.eventType)[0] == "YellowCard");
 
 
-                        let redCardId = events.find(x => 
+                        let redCardEvent = events.find(x => 
                                 Object.keys(x.stage)[0] == "RoundOf16" && 
-                                Object.keys(x.eventType)[0] == "RedCard")!.playerId;
+                                Object.keys(x.eventType)[0] == "RedCard");
 
-                        if(!yellowCardId || !redCardId){
+                        if(!yellowCardEvent || !redCardEvent){
                             return 0;
                         }
 
-                        if(prediction.r16Prediction.yellowCard == 
-                            events.find(x => 
-                                Object.keys(x.stage)[0] == "RoundOf16" && 
-                                Object.keys(x.eventType)[0] == "YellowCard")!.playerId
-                            && prediction.r16Prediction.redCard == 
-                            events.find(x => 
-                                Object.keys(x.stage)[0] == "RoundOf16" && 
-                                Object.keys(x.eventType)[0] == "RedCard")!.playerId
+                        if(prediction.r16Prediction.yellowCard == yellowCardEvent.playerId
+                            && prediction.r16Prediction.redCard == redCardEvent.playerId
                             ) {
                                 return 80;
                             }
@@ -335,81 +317,63 @@
                 switch(grouping){
                     case "Result":
 
-                        let winnerId = events.find(x => 
+                        let winnerEvent = events.find(x => 
                                 Object.keys(x.stage)[0] == "QuarterFinal" && 
-                                Object.keys(x.eventType)[0] == "Winner")!.teamId;
+                                Object.keys(x.eventType)[0] == "StageWon");
 
 
-                        let loserId = events.find(x => 
+                        let loserEvent = events.find(x => 
                                 Object.keys(x.stage)[0] == "QuarterFinal" && 
-                                Object.keys(x.eventType)[0] == "Loser")!.teamId;
+                                Object.keys(x.eventType)[0] == "StageLost");
 
-                        if(!winnerId || !loserId){
+                        if(!winnerEvent || !loserEvent){
                             return 0;
                         }
 
-                        if(prediction.qfPrediction.winner == 
-                            events.find(x => 
-                                Object.keys(x.stage)[0] == "QuarterFinal" && 
-                                Object.keys(x.eventType)[0] == "Winner")!.teamId
-                            && prediction.qfPrediction.loser == 
-                            events.find(x => 
-                                Object.keys(x.stage)[0] == "QuarterFinal" && 
-                                Object.keys(x.eventType)[0] == "Loser")!.teamId
+                        if(prediction.qfPrediction.winner == winnerEvent.teamId
+                            && prediction.qfPrediction.loser == loserEvent.teamId
                             ) {
                                 return 40;
                             }
                         break;
                     case "Goals":
 
-                        let goalScorerId = events.find(x => 
+                        let goalScorerEvent = events.find(x => 
                                 Object.keys(x.stage)[0] == "QuarterFinal" && 
-                                Object.keys(x.eventType)[0] == "GoalScored")!.playerId;
+                                Object.keys(x.eventType)[0] == "GoalScored");
 
 
-                        let goalAssisterId = events.find(x => 
+                        let goalAssisterEvent = events.find(x => 
                                 Object.keys(x.stage)[0] == "QuarterFinal" && 
-                                Object.keys(x.eventType)[0] == "GoalAssisted")!.playerId;
+                                Object.keys(x.eventType)[0] == "GoalAssisted");
 
-                        if(!goalScorerId || !goalAssisterId){
+                        if(!goalScorerEvent || !goalAssisterEvent){
                             return 0;
                         }
 
-                        if(prediction.qfPrediction.goalScorer == 
-                            events.find(x => 
-                                Object.keys(x.stage)[0] == "QuarterFinal" && 
-                                Object.keys(x.eventType)[0] == "GoalScored")!.playerId
-                            && prediction.qfPrediction.goalAssister == 
-                            events.find(x => 
-                                Object.keys(x.stage)[0] == "QuarterFinal" && 
-                                Object.keys(x.eventType)[0] == "GoalAssisted")!.playerId
+                        if(prediction.qfPrediction.goalScorer == goalScorerEvent.playerId
+                            && prediction.qfPrediction.goalAssister == goalAssisterEvent.playerId
                             ) {
                                 return 80;
                             }
                         break;
                     case "Cards":
 
-                        let yellowCardId = events.find(x => 
+                        let yellowCardEvent = events.find(x => 
                                 Object.keys(x.stage)[0] == "QuarterFinal" && 
-                                Object.keys(x.eventType)[0] == "YellowCard")!.playerId;
+                                Object.keys(x.eventType)[0] == "YellowCard");
 
 
-                        let redCardId = events.find(x => 
+                        let redCardEvent = events.find(x => 
                                 Object.keys(x.stage)[0] == "QuarterFinal" && 
-                                Object.keys(x.eventType)[0] == "RedCard")!.playerId;
+                                Object.keys(x.eventType)[0] == "RedCard");
 
-                        if(!yellowCardId || !redCardId){
+                        if(!yellowCardEvent || !redCardEvent){
                             return 0;
                         }
 
-                        if(prediction.qfPrediction.yellowCard == 
-                            events.find(x => 
-                                Object.keys(x.stage)[0] == "QuarterFinal" && 
-                                Object.keys(x.eventType)[0] == "YellowCard")!.playerId
-                            && prediction.qfPrediction.redCard == 
-                            events.find(x => 
-                                Object.keys(x.stage)[0] == "QuarterFinal" && 
-                                Object.keys(x.eventType)[0] == "RedCard")!.playerId
+                        if(prediction.qfPrediction.yellowCard == yellowCardEvent.playerId
+                            && prediction.qfPrediction.redCard == redCardEvent.playerId
                             ) {
                                 return 80;
                             }
@@ -420,81 +384,63 @@
                 switch(grouping){
                     case "Result":
 
-                        let winnerId = events.find(x => 
+                        let winnerEvent = events.find(x => 
                                 Object.keys(x.stage)[0] == "SemiFinal" && 
-                                Object.keys(x.eventType)[0] == "Winner")!.teamId;
+                                Object.keys(x.eventType)[0] == "StageWon");
 
 
-                        let loserId = events.find(x => 
+                        let loserEvent = events.find(x => 
                                 Object.keys(x.stage)[0] == "SemiFinal" && 
-                                Object.keys(x.eventType)[0] == "Loser")!.teamId;
+                                Object.keys(x.eventType)[0] == "StageLost");
 
-                        if(!winnerId || !loserId){
+                        if(!winnerEvent || !loserEvent){
                             return 0;
                         }
 
-                        if(prediction.sfPrediction.winner == 
-                            events.find(x => 
-                                Object.keys(x.stage)[0] == "SemiFinal" && 
-                                Object.keys(x.eventType)[0] == "Winner")!.teamId
-                            && prediction.sfPrediction.loser == 
-                            events.find(x => 
-                                Object.keys(x.stage)[0] == "SemiFinal" && 
-                                Object.keys(x.eventType)[0] == "Loser")!.teamId
+                        if(prediction.sfPrediction.winner == winnerEvent.teamId
+                            && prediction.sfPrediction.loser == loserEvent.teamId
                             ) {
                                 return 40;
                             }
                         break;
                     case "Goals":
 
-                        let goalScorerId = events.find(x => 
+                        let goalScorerEvent = events.find(x => 
                                 Object.keys(x.stage)[0] == "SemiFinal" && 
-                                Object.keys(x.eventType)[0] == "GoalScored")!.playerId;
+                                Object.keys(x.eventType)[0] == "GoalScored");
 
 
-                        let goalAssisterId = events.find(x => 
+                        let goalAssisterEvent = events.find(x => 
                                 Object.keys(x.stage)[0] == "SemiFinal" && 
-                                Object.keys(x.eventType)[0] == "GoalAssisted")!.playerId;
+                                Object.keys(x.eventType)[0] == "GoalAssisted");
 
-                        if(!goalScorerId || !goalAssisterId){
+                        if(!goalScorerEvent || !goalAssisterEvent){
                             return 0;
                         }
 
-                        if(prediction.sfPrediction.goalScorer == 
-                            events.find(x => 
-                                Object.keys(x.stage)[0] == "SemiFinal" && 
-                                Object.keys(x.eventType)[0] == "GoalScored")!.playerId
-                            && prediction.sfPrediction.goalAssister == 
-                            events.find(x => 
-                                Object.keys(x.stage)[0] == "SemiFinal" && 
-                                Object.keys(x.eventType)[0] == "GoalAssisted")!.playerId
+                        if(prediction.sfPrediction.goalScorer == goalScorerEvent.playerId
+                            && prediction.sfPrediction.goalAssister == goalAssisterEvent.playerId
                             ) {
                                 return 80;
                             }
                         break;
                     case "Cards":
 
-                        let yellowCardId = events.find(x => 
+                        let yellowCardEvent = events.find(x => 
                                 Object.keys(x.stage)[0] == "SemiFinal" && 
-                                Object.keys(x.eventType)[0] == "YellowCard")!.playerId;
+                                Object.keys(x.eventType)[0] == "YellowCard");
 
 
-                        let redCardId = events.find(x => 
+                        let redCardEvent = events.find(x => 
                                 Object.keys(x.stage)[0] == "SemiFinal" && 
-                                Object.keys(x.eventType)[0] == "RedCard")!.playerId;
+                                Object.keys(x.eventType)[0] == "RedCard");
 
-                        if(!yellowCardId || !redCardId){
+                        if(!yellowCardEvent || !redCardEvent){
                             return 0;
                         }
 
-                        if(prediction.sfPrediction.yellowCard == 
-                            events.find(x => 
-                                Object.keys(x.stage)[0] == "SemiFinal" && 
-                                Object.keys(x.eventType)[0] == "YellowCard")!.playerId
-                            && prediction.sfPrediction.redCard == 
-                            events.find(x => 
-                                Object.keys(x.stage)[0] == "SemiFinal" && 
-                                Object.keys(x.eventType)[0] == "RedCard")!.playerId
+                        if(prediction.sfPrediction.yellowCard == yellowCardEvent.playerId
+                            && prediction.sfPrediction.redCard == redCardEvent.playerId
                             ) {
                                 return 80;
                             }
@@ -505,81 +451,63 @@
                 switch(grouping){
                     case "Result":
 
-                        let winnerId = events.find(x => 
+                        let winnerEvent = events.find(x => 
                                 Object.keys(x.stage)[0] == "Final" && 
-                                Object.keys(x.eventType)[0] == "Winner")!.teamId;
+                                Object.keys(x.eventType)[0] == "StageWon");
 
 
-                        let loserId = events.find(x => 
+                        let loserEvent = events.find(x => 
                                 Object.keys(x.stage)[0] == "Final" && 
-                                Object.keys(x.eventType)[0] == "Loser")!.teamId;
+                                Object.keys(x.eventType)[0] == "StageLost");
 
-                        if(!winnerId || !loserId){
+                        if(!winnerEvent || !loserEvent){
                             return 0;
                         }
 
-                        if(prediction.fPrediction.winner == 
-                            events.find(x => 
-                                Object.keys(x.stage)[0] == "Final" && 
-                                Object.keys(x.eventType)[0] == "Winner")!.teamId
-                            && prediction.fPrediction.loser == 
-                            events.find(x => 
-                                Object.keys(x.stage)[0] == "Final" && 
-                                Object.keys(x.eventType)[0] == "Loser")!.teamId
+                        if(prediction.fPrediction.winner == winnerEvent.teamId
+                            && prediction.fPrediction.loser == loserEvent.teamId
                             ) {
                                 return 40;
                             }
                         break;
                     case "Goals":
 
-                        let goalScorerId = events.find(x => 
+                        let goalScorerEvent = events.find(x => 
                                 Object.keys(x.stage)[0] == "Final" && 
-                                Object.keys(x.eventType)[0] == "GoalScored")!.playerId;
+                                Object.keys(x.eventType)[0] == "GoalScored");
 
 
-                        let goalAssisterId = events.find(x => 
+                        let goalAssisterEvent = events.find(x => 
                                 Object.keys(x.stage)[0] == "Final" && 
-                                Object.keys(x.eventType)[0] == "GoalAssisted")!.playerId;
+                                Object.keys(x.eventType)[0] == "GoalAssisted");
 
-                        if(!goalScorerId || !goalAssisterId){
+                        if(!goalScorerEvent || !goalAssisterEvent){
                             return 0;
                         }
 
-                        if(prediction.fPrediction.goalScorer == 
-                            events.find(x => 
-                                Object.keys(x.stage)[0] == "Final" && 
-                                Object.keys(x.eventType)[0] == "GoalScored")!.playerId
-                            && prediction.fPrediction.goalAssister == 
-                            events.find(x => 
-                                Object.keys(x.stage)[0] == "Final" && 
-                                Object.keys(x.eventType)[0] == "GoalAssisted")!.playerId
+                        if(prediction.fPrediction.goalScorer == goalScorerEvent.playerId
+                            && prediction.fPrediction.goalAssister == goalAssisterEvent.playerId
                             ) {
                                 return 80;
                             }
                         break;
                     case "Cards":
 
-                        let yellowCardId = events.find(x => 
+                        let yellowCardEvent = events.find(x => 
                                 Object.keys(x.stage)[0] == "Final" && 
-                                Object.keys(x.eventType)[0] == "YellowCard")!.playerId;
+                                Object.keys(x.eventType)[0] == "YellowCard")!;
 
 
-                        let redCardId = events.find(x => 
+                        let redCardEvent = events.find(x => 
                                 Object.keys(x.stage)[0] == "Final" && 
-                                Object.keys(x.eventType)[0] == "RedCard")!.playerId;
+                                Object.keys(x.eventType)[0] == "RedCard")!;
 
-                        if(!yellowCardId || !redCardId){
+                        if(!yellowCardEvent || !redCardEvent){
                             return 0;
                         }
 
-                        if(prediction.fPrediction.yellowCard == 
-                            events.find(x => 
-                                Object.keys(x.stage)[0] == "Final" && 
-                                Object.keys(x.eventType)[0] == "YellowCard")!.playerId
-                            && prediction.fPrediction.redCard == 
-                            events.find(x => 
-                                Object.keys(x.stage)[0] == "Final" && 
-                                Object.keys(x.eventType)[0] == "RedCard")!.playerId
+                        if(prediction.fPrediction.yellowCard == yellowCardEvent.playerId
+                            && prediction.fPrediction.redCard == redCardEvent.playerId
                             ) {
                                 return 80;
                             }
@@ -1269,8 +1197,22 @@
         <div class="flex flex-col">
             <p>Round Of 16 Match Results:</p>
             <div class="flex flex-row">
-                <div class="w-3/12">-</div>
-                <div class="w-3/12">-</div>
+                <div class="w-3/12 flex flex-row">
+                    {$teamStore.find(x => x.id == prediction.r16Prediction.winner)?.countryCode }
+                    {#await getFlagComponent($teamStore.find(x => x.id == prediction.r16Prediction.winner)?.countryCode ?? "") then FlagComponent}
+                        {#if FlagComponent}
+                            <svelte:component this={FlagComponent} className="w-6 ml-4" />
+                        {/if}
+                    {/await}
+                </div>
+                <div class="w-3/12 flex flex-row">
+                    {$teamStore.find(x => x.id == prediction.r16Prediction.loser)?.countryCode }
+                    {#await getFlagComponent($teamStore.find(x => x.id == prediction.r16Prediction.loser)?.countryCode ?? "") then FlagComponent}
+                        {#if FlagComponent}
+                            <svelte:component this={FlagComponent} className="w-6 ml-4" />
+                        {/if}
+                    {/await}
+                </div>
 
                 <div class="w-3/12">
                     {#if prediction.r16Prediction.winner > 0 && prediction.r16Prediction.loser > 0}
@@ -1304,10 +1246,10 @@
             <p>Round Of 16 Card Results:</p>
             <div class="flex flex-row">
                 <div class="w-3/12">
-                    {#if prediction.r16Prediction.winner > 0}
-                        {$teamStore.find(x => x.id == prediction.r16Prediction.winner)?.countryCode }
+                    {#if prediction.r16Prediction.yellowCard > 0}
+                        {$teamStore.find(x => x.id == prediction.r16Prediction.yellowCard)?.countryCode }
                     
-                        {#await getFlagComponent($teamStore.find(x => x.id == prediction.r16Prediction.winner)?.countryCode ?? "") then FlagComponent}
+                        {#await getFlagComponent($teamStore.find(x => x.id == prediction.r16Prediction.yellowCard)?.countryCode ?? "") then FlagComponent}
                             {#if FlagComponent}
                                 <svelte:component this={FlagComponent} className="w-6 ml-4" />
                             {/if}
@@ -1317,10 +1259,10 @@
                     {/if}
                 </div>
                 <div class="w-3/12">
-                    {#if prediction.r16Prediction.loser > 0}
-                        {$teamStore.find(x => x.id == prediction.r16Prediction.loser)?.countryCode }
+                    {#if prediction.r16Prediction.redCard > 0}
+                        {$teamStore.find(x => x.id == prediction.r16Prediction.redCard)?.countryCode }
                     
-                        {#await getFlagComponent($teamStore.find(x => x.id == prediction.r16Prediction.loser)?.countryCode ?? "") then FlagComponent}
+                        {#await getFlagComponent($teamStore.find(x => x.id == prediction.r16Prediction.redCard)?.countryCode ?? "") then FlagComponent}
                             {#if FlagComponent}
                                 <svelte:component this={FlagComponent} className="w-6 ml-4" />
                             {/if}
@@ -1336,15 +1278,29 @@
                     {:else}
                         Both Correct Bonus (No): 0
                     {/if}</div>
-                    <div class="w-3/12">Total: {(r16ScorerCorrect ? 10 : 0) + (r16AssisterCorrect ? 20 : 0) + (r16ScorerCorrect && r16AssisterCorrect ? 60 : 0)}</div>
+                    <div class="w-3/12">Total: {(r16YellowCardCorrect ? 10 : 0) + (r16RedCardCorrect ? 20 : 0) + (r16YellowCardCorrect && r16RedCardCorrect ? 60 : 0)}</div>
             </div>
         </div>
 
         <div class="flex flex-col">
             <p>Quarter Final Match Results:</p>
             <div class="flex flex-row">
-                <div class="w-3/12">-</div>
-                <div class="w-3/12">-</div>
+                <div class="w-3/12 flex flex-row">
+                    {$teamStore.find(x => x.id == prediction.qfPrediction.winner)?.countryCode }
+                    {#await getFlagComponent($teamStore.find(x => x.id == prediction.qfPrediction.winner)?.countryCode ?? "") then FlagComponent}
+                        {#if FlagComponent}
+                            <svelte:component this={FlagComponent} className="w-6 ml-4" />
+                        {/if}
+                    {/await}
+                </div>
+                <div class="w-3/12 flex flex-row">
+                    {$teamStore.find(x => x.id == prediction.qfPrediction.loser)?.countryCode }
+                    {#await getFlagComponent($teamStore.find(x => x.id == prediction.qfPrediction.loser)?.countryCode ?? "") then FlagComponent}
+                        {#if FlagComponent}
+                            <svelte:component this={FlagComponent} className="w-6 ml-4" />
+                        {/if}
+                    {/await}
+                </div>
 
                 <div class="w-3/12">
                     {#if prediction.qfPrediction.winner > 0 && prediction.qfPrediction.loser > 0}
@@ -1378,10 +1334,10 @@
             <p>Quarter Final Card Results:</p>
             <div class="flex flex-row">
                 <div class="w-3/12">
-                    {#if prediction.qfPrediction.winner > 0}
-                        {$teamStore.find(x => x.id == prediction.qfPrediction.winner)?.countryCode }
+                    {#if prediction.qfPrediction.yellowCard > 0}
+                        {$teamStore.find(x => x.id == prediction.qfPrediction.yellowCard)?.countryCode }
                     
-                        {#await getFlagComponent($teamStore.find(x => x.id == prediction.qfPrediction.winner)?.countryCode ?? "") then FlagComponent}
+                        {#await getFlagComponent($teamStore.find(x => x.id == prediction.qfPrediction.yellowCard)?.countryCode ?? "") then FlagComponent}
                             {#if FlagComponent}
                                 <svelte:component this={FlagComponent} className="w-6 ml-4" />
                             {/if}
@@ -1391,10 +1347,10 @@
                     {/if}
                 </div>
                 <div class="w-3/12">
-                    {#if prediction.qfPrediction.loser > 0}
-                        {$teamStore.find(x => x.id == prediction.qfPrediction.loser)?.countryCode }
+                    {#if prediction.qfPrediction.redCard > 0}
+                        {$teamStore.find(x => x.id == prediction.qfPrediction.redCard)?.countryCode }
                     
-                        {#await getFlagComponent($teamStore.find(x => x.id == prediction.qfPrediction.loser)?.countryCode ?? "") then FlagComponent}
+                        {#await getFlagComponent($teamStore.find(x => x.id == prediction.qfPrediction.redCard)?.countryCode ?? "") then FlagComponent}
                             {#if FlagComponent}
                                 <svelte:component this={FlagComponent} className="w-6 ml-4" />
                             {/if}
@@ -1418,8 +1374,23 @@
         <div class="flex flex-col">
             <p>Semi Final Match Results:</p>
             <div class="flex flex-row">
-                <div class="w-3/12">-</div>
-                <div class="w-3/12">-</div>
+                
+                <div class="w-3/12 flex flex-row">
+                    {$teamStore.find(x => x.id == prediction.sfPrediction.winner)?.countryCode }
+                    {#await getFlagComponent($teamStore.find(x => x.id == prediction.sfPrediction.winner)?.countryCode ?? "") then FlagComponent}
+                        {#if FlagComponent}
+                            <svelte:component this={FlagComponent} className="w-6 ml-4" />
+                        {/if}
+                    {/await}
+                </div>
+                <div class="w-3/12 flex flex-row">
+                    {$teamStore.find(x => x.id == prediction.sfPrediction.loser)?.countryCode }
+                    {#await getFlagComponent($teamStore.find(x => x.id == prediction.sfPrediction.loser)?.countryCode ?? "") then FlagComponent}
+                        {#if FlagComponent}
+                            <svelte:component this={FlagComponent} className="w-6 ml-4" />
+                        {/if}
+                    {/await}
+                </div>
 
                 <div class="w-3/12">
                     {#if prediction.sfPrediction.winner > 0 && prediction.sfPrediction.loser > 0}
@@ -1494,8 +1465,25 @@
         <div class="flex flex-col">
             <p>Final Match Results:</p>
             <div class="flex flex-row">
-                <div class="w-3/12">-</div>
-                <div class="w-3/12">-</div>
+                
+
+
+                <div class="w-3/12 flex flex-row">
+                    {$teamStore.find(x => x.id == prediction.fPrediction.winner)?.countryCode }
+                    {#await getFlagComponent($teamStore.find(x => x.id == prediction.fPrediction.winner)?.countryCode ?? "") then FlagComponent}
+                        {#if FlagComponent}
+                            <svelte:component this={FlagComponent} className="w-6 ml-4" />
+                        {/if}
+                    {/await}
+                </div>
+                <div class="w-3/12 flex flex-row">
+                    {$teamStore.find(x => x.id == prediction.fPrediction.loser)?.countryCode }
+                    {#await getFlagComponent($teamStore.find(x => x.id == prediction.fPrediction.loser)?.countryCode ?? "") then FlagComponent}
+                        {#if FlagComponent}
+                            <svelte:component this={FlagComponent} className="w-6 ml-4" />
+                        {/if}
+                    {/await}
+                </div>
 
                 <div class="w-3/12">
                     {#if prediction.fPrediction.winner > 0 && prediction.fPrediction.loser > 0}
@@ -1564,9 +1552,6 @@
                     <div class="w-3/12">Total: {(fYellowCardCorrect ? 25 : 0) + (fRedCardCorrect ? 50 : 0) + (fRedCardCorrect && fYellowCardCorrect ? 150 : 0)}</div>
             </div>
         </div>
-
-
-
       {/if}
     </div>
   </Layout>
