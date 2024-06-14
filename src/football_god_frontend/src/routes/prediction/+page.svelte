@@ -1429,21 +1429,21 @@
                     
                 </div>
 
-                <div class="w-3/12 flex flex-row items-center">
+                <div class="w-3/12 flex flex-row items-center text-sm sm:text-base justify-center">
                     {#if prediction.r16Prediction.winner > 0 && prediction.r16Prediction.loser > 0}
                         {@const bonusPoints = getKnockOutBonusPoints("R16", "Result")}
                         Both Correct Bonus ({bonusPoints > 0 ? 'Yes' : 'No'}): {bonusPoints}
                     {:else}
                         Both Correct Bonus (No): 0
                     {/if}</div>
-                <div class="w-3/12 flex flex-row items-center">Total: {(r16WinnerCorrect ? 10 : 0) + (r16LoserCorrect ? 10 : 0) + (r16WinnerCorrect && r16LoserCorrect ? 40 : 0)}</div>
+                <div class="w-3/12 flex flex-row items-center text-sm sm:text-base justify-center">Total: {(r16WinnerCorrect ? 10 : 0) + (r16LoserCorrect ? 10 : 0) + (r16WinnerCorrect && r16LoserCorrect ? 40 : 0)}</div>
             </div>
         </div>
 
         <div class="flex flex-col bg-blue-600 p-2">
             <p>Round Of 16 Goal Results:</p>
             <div class="flex flex-row flex-wrap items-center">
-                <div class="w-3/12 flex flex-row items-center">
+                <div class="w-3/12 flex flex-row items-center text-sm sm:text-base justify-center md:justify-normal p-1">
                     {#await getFlagComponent($teamStore.find(x => x.id == $playerStore.find(x => x.id == prediction.r16Prediction.goalScorer)?.teamId)?.countryCode ?? "") then FlagComponent}
                         {#if FlagComponent}
                             <svelte:component this={FlagComponent} className="w-4 sm:w-6 md:w-6 mr-1" />
@@ -1455,7 +1455,7 @@
                     {/if}
                 
                 </div>
-                <div class="w-3/12 flex flex-row items-center">
+                <div class="w-3/12 flex flex-row items-center text-sm sm:text-base justify-center md:justify-normal p-1">
                     {#await getFlagComponent($teamStore.find(x => x.id == $playerStore.find(x => x.id == prediction.r16Prediction.goalAssister)?.teamId)?.countryCode ?? "") then FlagComponent}
                         {#if FlagComponent}
                             <svelte:component this={FlagComponent} className="w-4 sm:w-6 md:w-6 mr-1" />
@@ -1467,21 +1467,21 @@
                     {/if}
                 </div>
 
-                <div class="w-3/12 flex flex-row items-center">
+                <div class="w-3/12 flex flex-row items-center text-sm sm:text-base justify-center">
                     {#if prediction.r16Prediction.goalScorer > 0 && prediction.r16Prediction.goalAssister > 0}
                         {@const bonusPoints = getKnockOutBonusPoints("R16", "Goals")}
                         Both Correct Bonus ({bonusPoints > 0 ? 'Yes' : 'No'}): {bonusPoints}
                     {:else}
                         Both Correct Bonus (No): 0
                     {/if}</div>
-                <div class="w-3/12 flex flex-row items-center">Total: {(r16ScorerCorrect ? 20 : 0) + (r16AssisterCorrect ? 20 : 0) + (r16ScorerCorrect && r16AssisterCorrect ? 80 : 0)}</div>
+                <div class="w-3/12 flex flex-row items-center text-sm sm:text-base justify-center">Total: {(r16ScorerCorrect ? 20 : 0) + (r16AssisterCorrect ? 20 : 0) + (r16ScorerCorrect && r16AssisterCorrect ? 80 : 0)}</div>
             </div>
         </div>
 
         <div class="flex flex-col bg-blue-300 text-gray-700 p-2 rounded-b-md">
             <p>Round Of 16 Card Results:</p>
             <div class="flex flex-row flex-wrap items-center">
-                <div class="w-3/12 flex flex-row items-center">
+                <div class="w-3/12 flex flex-row items-center text-sm sm:text-base justify-center md:justify-normal p-1">
                     {#if prediction.r16Prediction.yellowCard > 0}
                         {#await getFlagComponent($teamStore.find(x => x.id == $playerStore.find(x => x.id == prediction.r16Prediction.yellowCard)?.teamId)?.countryCode ?? "") then FlagComponent}
                             {#if FlagComponent}
@@ -1497,7 +1497,7 @@
                         <p>-</p>
                     {/if}
                 </div>
-                <div class="w-3/12 flex flex-row items-center">
+                <div class="w-3/12 flex flex-row items-center text-sm sm:text-base justify-center md:justify-normal p-1">
                     {#if prediction.r16Prediction.redCard > 0}
                         {#await getFlagComponent($teamStore.find(x => x.id == $playerStore.find(x => x.id == prediction.r16Prediction.redCard)?.teamId)?.countryCode ?? "") then FlagComponent}
                             {#if FlagComponent}
@@ -1513,21 +1513,21 @@
                         <p>-</p>
                     {/if}
                 </div>
-                <div class="w-3/12 flex flex-row items-center">
+                <div class="w-3/12 flex flex-row items-center text-sm sm:text-base justify-center">
                     {#if prediction.r16Prediction.yellowCard > 0 && prediction.r16Prediction.redCard > 0}
                         {@const bonusPoints = getKnockOutBonusPoints("R16", "Cards")}
                         Both Correct Bonus ({bonusPoints > 0 ? 'Yes' : 'No'}): {bonusPoints}
                     {:else}
                         Both Correct Bonus (No): 0
                     {/if}</div>
-                    <div class="w-3/12 flex flex-row items-center">Total: {(r16YellowCardCorrect ? 10 : 0) + (r16RedCardCorrect ? 20 : 0) + (r16YellowCardCorrect && r16RedCardCorrect ? 60 : 0)}</div>
+                    <div class="w-3/12 flex flex-row items-center text-sm sm:text-base justify-center">Total: {(r16YellowCardCorrect ? 10 : 0) + (r16RedCardCorrect ? 20 : 0) + (r16YellowCardCorrect && r16RedCardCorrect ? 60 : 0)}</div>
             </div>
         </div>
 
         <div class="flex flex-col bg-blue-900 p-2 mt-4 rounded-t-md">
             <p>Quarter Final Match Results:</p>
             <div class="flex flex-row flex-wrap items-center">
-                <div class="w-3/12 flex flex-row items-center">
+                <div class="w-3/12 flex flex-row items-center text-sm sm:text-base justify-center md:justify-normal p-1">
                     {#await getFlagComponent($teamStore.find(x => x.id == prediction.qfPrediction.winner)?.countryCode ?? "") then FlagComponent}
                         {#if FlagComponent}
                             <svelte:component this={FlagComponent} className="w-4 sm:w-6 md:w-6 mr-1" />
@@ -1538,7 +1538,7 @@
                         <CorrectIcon className="w-4 md:w-6 px-1" />
                     {/if}
                 </div>
-                <div class="w-3/12 flex flex-row items-center">
+                <div class="w-3/12 flex flex-row items-center text-sm sm:text-base justify-center md:justify-normal p-1">
                     {#await getFlagComponent($teamStore.find(x => x.id == prediction.qfPrediction.loser)?.countryCode ?? "") then FlagComponent}
                         {#if FlagComponent}
                             <svelte:component this={FlagComponent} className="w-4 sm:w-6 md:w-6 mr-1" />
@@ -1552,21 +1552,21 @@
                     
                 </div>
 
-                <div class="w-3/12 flex flex-row items-center">
+                <div class="w-3/12 flex flex-row items-center text-sm sm:text-base justify-center">
                     {#if prediction.qfPrediction.winner > 0 && prediction.qfPrediction.loser > 0}
                         {@const bonusPoints = getKnockOutBonusPoints("QF", "Result")}
                         Both Correct Bonus ({bonusPoints > 0 ? 'Yes' : 'No'}): {bonusPoints}
                     {:else}
                         Both Correct Bonus (No): 0
                     {/if}</div>
-                    <div class="w-3/12 flex flex-row items-center">Total: {(qfWinnerCorrect ? 15 : 0) + (qfLoserCorrect ? 15 : 0) + (qfWinnerCorrect && qfLoserCorrect ? 60 : 0)}</div>
+                    <div class="w-3/12 flex flex-row items-center text-sm sm:text-base justify-center">Total: {(qfWinnerCorrect ? 15 : 0) + (qfLoserCorrect ? 15 : 0) + (qfWinnerCorrect && qfLoserCorrect ? 60 : 0)}</div>
             </div>
         </div>
 
         <div class="flex flex-col bg-blue-600 p-2">
             <p>Quarter Final Goal Results:</p>
             <div class="flex flex-row flex-wrap items-center">
-                <div class="w-3/12 flex flex-row items-center">
+                <div class="w-3/12 flex flex-row items-center text-sm sm:text-base justify-center md:justify-normal p-1">
                     {#await getFlagComponent($teamStore.find(x => x.id == $playerStore.find(x => x.id == prediction.qfPrediction.goalScorer)?.teamId)?.countryCode ?? "") then FlagComponent}
                         {#if FlagComponent}
                             <svelte:component this={FlagComponent} className="w-4 sm:w-6 md:w-6 mr-1" />
@@ -1578,7 +1578,7 @@
                         <CorrectIcon className="w-4 md:w-6 px-1" />
                     {/if}
                 </div>
-                <div class="w-3/12 flex flex-row items-center">
+                <div class="w-3/12 flex flex-row items-center text-sm sm:text-base justify-center md:justify-normal p-1">
                     {#await getFlagComponent($teamStore.find(x => x.id == $playerStore.find(x => x.id == prediction.qfPrediction.goalAssister)?.teamId)?.countryCode ?? "") then FlagComponent}
                         {#if FlagComponent}
                             <svelte:component this={FlagComponent} className="w-4 sm:w-6 md:w-6 mr-1" />
@@ -1591,21 +1591,21 @@
                     {/if}
                 </div>
 
-                <div class="w-3/12 flex flex-row items-center">
+                <div class="w-3/12 flex flex-row items-center text-sm sm:text-base justify-center">
                     {#if prediction.qfPrediction.goalScorer > 0 && prediction.qfPrediction.goalAssister > 0}
                         {@const bonusPoints = getKnockOutBonusPoints("QF", "Goals")}
                         Both Correct Bonus ({bonusPoints > 0 ? 'Yes' : 'No'}): {bonusPoints}
                     {:else}
                         Both Correct Bonus (No): 0
                     {/if}</div>
-                    <div class="w-3/12 flex flex-row items-center">Total: {(qfScorerCorrect ? 30 : 0) + (qfAssisterCorrect ? 30 : 0) + (qfScorerCorrect && qfWinnerCorrect ? 120 : 0)}</div>
+                    <div class="w-3/12 flex flex-row items-center text-sm sm:text-base justify-center">Total: {(qfScorerCorrect ? 30 : 0) + (qfAssisterCorrect ? 30 : 0) + (qfScorerCorrect && qfWinnerCorrect ? 120 : 0)}</div>
             </div>
         </div>
 
         <div class="flex flex-col bg-blue-300 text-gray-700 p-2 rounded-b-md">
             <p>Quarter Final Card Results:</p>
             <div class="flex flex-row flex-wrap items-center">
-                <div class="w-3/12 flex flex-row items-center">
+                <div class="w-3/12 flex flex-row items-center text-sm sm:text-base justify-center md:justify-normal p-1">
                     {#if prediction.qfPrediction.yellowCard > 0}
                         {#await getFlagComponent($teamStore.find(x => x.id == $playerStore.find(x => x.id == prediction.qfPrediction.yellowCard)?.teamId)?.countryCode ?? "") then FlagComponent}
                             {#if FlagComponent}
@@ -1621,7 +1621,7 @@
                         <p>-</p>
                     {/if}
                 </div>
-                <div class="w-3/12 flex flex-row items-center">
+                <div class="w-3/12 flex flex-row items-center text-sm sm:text-base justify-center md:justify-normal p-1">
                     {#if prediction.qfPrediction.redCard > 0}
                         {#await getFlagComponent($teamStore.find(x => x.id == $playerStore.find(x => x.id == prediction.qfPrediction.redCard)?.teamId)?.countryCode ?? "") then FlagComponent}
                             {#if FlagComponent}
@@ -1636,14 +1636,14 @@
                         <p>-</p>
                     {/if}
                 </div>
-                <div class="w-3/12 flex flex-row items-center">
+                <div class="w-3/12 flex flex-row items-center text-sm sm:text-base justify-center">
                     {#if prediction.qfPrediction.yellowCard > 0 && prediction.qfPrediction.redCard > 0}
                         {@const bonusPoints = getKnockOutBonusPoints("QF", "Cards")}
                         Both Correct Bonus ({bonusPoints > 0 ? 'Yes' : 'No'}): {bonusPoints}
                     {:else}
                         Both Correct Bonus (No): 0
                     {/if}</div>
-                    <div class="w-3/12 flex flex-row items-center">Total: {(qfYellowCardCorrect ? 15 : 0) + (qfRedCardCorrect ? 30 : 0) + (qfYellowCardCorrect && qfRedCardCorrect ? 90 : 0)}</div>
+                    <div class="w-3/12 flex flex-row items-center text-sm sm:text-base justify-center">Total: {(qfYellowCardCorrect ? 15 : 0) + (qfRedCardCorrect ? 30 : 0) + (qfYellowCardCorrect && qfRedCardCorrect ? 90 : 0)}</div>
             </div>
         </div>
         
@@ -1652,7 +1652,7 @@
             <p>Semi Final Match Results:</p>
             <div class="flex flex-row flex-wrap items-center">
                 
-                <div class="w-3/12 flex flex-row items-center">
+                <div class="w-3/12 flex flex-row items-center text-sm sm:text-base justify-center md:justify-normal p-1">
                     {#await getFlagComponent($teamStore.find(x => x.id == prediction.sfPrediction.winner)?.countryCode ?? "") then FlagComponent}
                     {#if FlagComponent}
                         <svelte:component this={FlagComponent} className="w-4 sm:w-6 md:w-6 mr-1" />
@@ -1663,7 +1663,7 @@
                         <CorrectIcon className="w-4 md:w-6 px-1" />
                     {/if}
                 </div>
-                <div class="w-3/12 flex flex-row items-center">
+                <div class="w-3/12 flex flex-row items-center text-sm sm:text-base justify-center md:justify-normal p-1">
                     {#await getFlagComponent($teamStore.find(x => x.id == prediction.sfPrediction.loser)?.countryCode ?? "") then FlagComponent}
                         {#if FlagComponent}
                             <svelte:component this={FlagComponent} className="w-4 sm:w-6 md:w-6 mr-1" />
@@ -1676,14 +1676,14 @@
                     
                 </div>
 
-                <div class="w-3/12 flex flex-row items-center">
+                <div class="w-3/12 flex flex-row items-center text-sm sm:text-base justify-center">
                     {#if prediction.sfPrediction.winner > 0 && prediction.sfPrediction.loser > 0}
                         {@const bonusPoints = getKnockOutBonusPoints("SF", "Result")}
                         Both Correct Bonus ({bonusPoints > 0 ? 'Yes' : 'No'}): {bonusPoints}
                     {:else}
                         Both Correct Bonus (No): 0
                     {/if}</div>
-                    <div class="w-3/12 flex flex-row items-center">Total: {(sfWinnerCorrect ? 20 : 0) + (sfLoserCorrect ? 20 : 0) + (sfWinnerCorrect && sfLoserCorrect ? 80 : 0)}</div>
+                    <div class="w-3/12 flex flex-row items-center text-sm sm:text-base justify-center">Total: {(sfWinnerCorrect ? 20 : 0) + (sfLoserCorrect ? 20 : 0) + (sfWinnerCorrect && sfLoserCorrect ? 80 : 0)}</div>
             </div>
         </div>
 
@@ -1691,7 +1691,7 @@
             <p>Semi Final Goal Results:</p>
             <div class="flex flex-row flex-wrap items-center">
                 
-                <div class="w-3/12 flex flex-row items-center">
+                <div class="w-3/12 flex flex-row items-center text-sm sm:text-base justify-center md:justify-normal p-1">
                     {#await getFlagComponent($teamStore.find(x => x.id == $playerStore.find(x => x.id == prediction.sfPrediction.goalScorer)?.teamId)?.countryCode ?? "") then FlagComponent}
                         {#if FlagComponent}
                             <svelte:component this={FlagComponent} className="w-4 sm:w-6 md:w-6 mr-1" />
@@ -1703,7 +1703,7 @@
                         <CorrectIcon className="w-4 md:w-6 px-1" />
                     {/if}
                 </div>
-                <div class="w-3/12 flex flex-row items-center">
+                <div class="w-3/12 flex flex-row items-center text-sm sm:text-base justify-center md:justify-normal p-1">
                     {#await getFlagComponent($teamStore.find(x => x.id == $playerStore.find(x => x.id == prediction.sfPrediction.goalAssister)?.teamId)?.countryCode ?? "") then FlagComponent}
                         {#if FlagComponent}
                             <svelte:component this={FlagComponent} className="w-4 sm:w-6 md:w-6 mr-1" />
@@ -1715,21 +1715,21 @@
                     {/if}
                 </div>
 
-                <div class="w-3/12 flex flex-row items-center">
+                <div class="w-3/12 flex flex-row items-center text-sm sm:text-base justify-center">
                     {#if prediction.sfPrediction.goalScorer > 0 && prediction.sfPrediction.goalAssister > 0}
                         {@const bonusPoints = getKnockOutBonusPoints("SF", "Goals")}
                         Both Correct Bonus ({bonusPoints > 0 ? 'Yes' : 'No'}): {bonusPoints}
                     {:else}
                         Both Correct Bonus (No): 0
                     {/if}</div>
-                    <div class="w-3/12 flex flex-row items-center">Total: {(sfScorerCorrect ? 40 : 0) + (sfAssisterCorrect ? 40 : 0) + (sfScorerCorrect && sfAssisterCorrect ? 160 : 0)}</div>
+                    <div class="w-3/12 flex flex-row items-center text-sm sm:text-base justify-center">Total: {(sfScorerCorrect ? 40 : 0) + (sfAssisterCorrect ? 40 : 0) + (sfScorerCorrect && sfAssisterCorrect ? 160 : 0)}</div>
             </div>
         </div>
 
         <div class="flex flex-col bg-blue-300 text-gray-700 p-2 rounded-b-md">
             <p>Semi Final Card Results:</p>
             <div class="flex flex-row flex-wrap items-center">
-                <div class="w-3/12 flex flex-row items-center">
+                <div class="w-3/12 flex flex-row items-center text-sm sm:text-base justify-center md:justify-normal p-1">
                     {#if prediction.sfPrediction.yellowCard > 0}
 
                         {#await getFlagComponent($teamStore.find(x => x.id == $playerStore.find(x => x.id == prediction.sfPrediction.yellowCard)?.teamId)?.countryCode ?? "") then FlagComponent}
@@ -1745,7 +1745,7 @@
                         <p>-</p>
                     {/if}
                 </div>
-                <div class="w-3/12 flex flex-row items-center">
+                <div class="w-3/12 flex flex-row items-center text-sm sm:text-base justify-center md:justify-normal p-1">
                     {#if prediction.sfPrediction.redCard > 0}
 
                         {#await getFlagComponent($teamStore.find(x => x.id == $playerStore.find(x => x.id == prediction.sfPrediction.redCard)?.teamId)?.countryCode ?? "") then FlagComponent}
@@ -1761,14 +1761,14 @@
                         <p>-</p>
                     {/if}
                 </div>
-                <div class="w-3/12 flex flex-row items-center">
+                <div class="w-3/12 flex flex-row items-center text-sm sm:text-base justify-center">
                     {#if prediction.sfPrediction.yellowCard > 0 && prediction.sfPrediction.redCard > 0}
                         {@const bonusPoints = getKnockOutBonusPoints("SF", "Cards")}
                         Both Correct Bonus ({bonusPoints > 0 ? 'Yes' : 'No'}): {bonusPoints}
                     {:else}
                         Both Correct Bonus (No): 0
                     {/if}</div>
-                    <div class="w-3/12 flex flex-row items-center">Total: {(sfYellowCardCorrect ? 20 : 0) + (sfRedCardCorrect ? 40 : 0) + (sfYellowCardCorrect && sfRedCardCorrect ? 120 : 0)}</div>
+                    <div class="w-3/12 flex flex-row items-center text-sm sm:text-base justify-center">Total: {(sfYellowCardCorrect ? 20 : 0) + (sfRedCardCorrect ? 40 : 0) + (sfYellowCardCorrect && sfRedCardCorrect ? 120 : 0)}</div>
             </div>
         </div>
 
@@ -1778,7 +1778,7 @@
                 
 
 
-                <div class="w-3/12 flex flex-row items-center">
+                <div class="w-3/12 flex flex-row items-center text-sm sm:text-base justify-center md:justify-normal p-1">
                     {#await getFlagComponent($teamStore.find(x => x.id == prediction.fPrediction.winner)?.countryCode ?? "") then FlagComponent}
                         {#if FlagComponent}
                             <svelte:component this={FlagComponent} className="w-4 sm:w-6 md:w-6 mr-1" />
@@ -1790,7 +1790,7 @@
                         <CorrectIcon className="w-4 md:w-6 px-1" />
                     {/if}
                 </div>
-                <div class="w-3/12 flex flex-row items-center">
+                <div class="w-3/12 flex flex-row items-center text-sm sm:text-base justify-center md:justify-normal p-1">
                     {#await getFlagComponent($teamStore.find(x => x.id == prediction.fPrediction.loser)?.countryCode ?? "") then FlagComponent}
                         {#if FlagComponent}
                             <svelte:component this={FlagComponent} className="w-4 sm:w-6 md:w-6 mr-1" />
@@ -1804,14 +1804,14 @@
                     
                 </div>
 
-                <div class="w-3/12 flex flex-row items-center">
+                <div class="w-3/12 flex flex-row items-center text-sm sm:text-base justify-center">
                     {#if prediction.fPrediction.winner > 0 && prediction.fPrediction.loser > 0}
                         {@const bonusPoints = getKnockOutBonusPoints("F", "Result")}
                         Both Correct Bonus ({bonusPoints > 0 ? 'Yes' : 'No'}): {bonusPoints}
                     {:else}
                         Both Correct Bonus (No): 0
                     {/if}</div>
-                    <div class="w-3/12 flex flex-row items-center">Total: {(fWinnerCorrect ? 25 : 0) + (fLoserCorrect ? 25 : 0) + (fWinnerCorrect && fLoserCorrect ? 100 : 0)}</div>
+                    <div class="w-3/12 flex flex-row items-center text-sm sm:text-base justify-center">Total: {(fWinnerCorrect ? 25 : 0) + (fLoserCorrect ? 25 : 0) + (fWinnerCorrect && fLoserCorrect ? 100 : 0)}</div>
             </div>
         </div>
 
@@ -1819,7 +1819,7 @@
             <p>Final Goal Results:</p>
             <div class="flex flex-row items-center">
                 
-                <div class="w-3/12 flex flex-row items-center">
+                <div class="w-3/12 flex flex-row items-center text-sm sm:text-base justify-center">
                     {#await getFlagComponent($teamStore.find(x => x.id == $playerStore.find(x => x.id == prediction.fPrediction.goalScorer)?.teamId)?.countryCode ?? "") then FlagComponent}
                         {#if FlagComponent}
                             <svelte:component this={FlagComponent} className="w-4 sm:w-6 md:w-6 mr-1" />
@@ -1831,7 +1831,7 @@
                         <CorrectIcon className="w-4 md:w-6 px-1" />
                     {/if}
                 </div>
-                <div class="w-3/12 flex flex-row items-center">
+                <div class="w-3/12 flex flex-row items-center text-sm sm:text-base justify-center">
                     {#await getFlagComponent($teamStore.find(x => x.id == $playerStore.find(x => x.id == prediction.fPrediction.goalAssister)?.teamId)?.countryCode ?? "") then FlagComponent}
                         {#if FlagComponent}
                             <svelte:component this={FlagComponent} className="w-4 sm:w-6 md:w-6 mr-1" />
@@ -1843,21 +1843,21 @@
                     {/if}
                 </div>
 
-                <div class="w-3/12 flex flex-row items-center">
+                <div class="w-3/12 flex flex-row items-center text-sm sm:text-base justify-center">
                     {#if prediction.fPrediction.goalScorer > 0 && prediction.fPrediction.goalAssister > 0}
                         {@const bonusPoints = getKnockOutBonusPoints("F", "Goals")}
                         Both Correct Bonus ({bonusPoints > 0 ? 'Yes' : 'No'}): {bonusPoints}
                     {:else}
                         Both Correct Bonus (No): 0
                     {/if}</div>
-                    <div class="w-3/12 flex flex-row items-center">Total: {(fScorerCorrect ? 50 : 0) + (fAssisterCorrect ? 50 : 0) + (fScorerCorrect && fAssisterCorrect ? 200 : 0)}</div>
+                    <div class="w-3/12 flex flex-row items-center text-sm sm:text-base justify-center">Total: {(fScorerCorrect ? 50 : 0) + (fAssisterCorrect ? 50 : 0) + (fScorerCorrect && fAssisterCorrect ? 200 : 0)}</div>
             </div>
         </div>
 
         <div class="flex flex-col bg-blue-300 text-gray-700 p-2 rounded-b-md">
             <p>Final Card Results:</p>
             <div class="flex flex-row items-center">
-                <div class="w-3/12 flex flex-row items-center">
+                <div class="w-3/12 flex flex-row items-center text-sm sm:text-base justify-center md:justify-normal p-1">
                     {#if prediction.fPrediction.yellowCard > 0}
                         {#await getFlagComponent($teamStore.find(x => x.id == $playerStore.find(x => x.id == prediction.fPrediction.yellowCard)?.teamId)?.countryCode ?? "") then FlagComponent}
                             {#if FlagComponent}
@@ -1873,7 +1873,7 @@
                         <p>-</p>
                     {/if}
                 </div>
-                <div class="w-3/12 flex flex-row items-center">
+                <div class="w-3/12 flex flex-row items-center text-sm sm:text-base justify-center md:justify-normal p-1">
                     {#if prediction.fPrediction.redCard > 0}
                         {#await getFlagComponent($teamStore.find(x => x.id == $playerStore.find(x => x.id == prediction.fPrediction.redCard)?.teamId)?.countryCode ?? "") then FlagComponent}
                             {#if FlagComponent}
@@ -1888,21 +1888,16 @@
                         <p>-</p>
                     {/if}
                 </div>
-                <div class="w-3/12 flex flex-row items-center">
+                <div class="w-3/12 flex flex-row items-center text-sm sm:text-base justify-center">
                     {#if prediction.fPrediction.yellowCard > 0 && prediction.fPrediction.redCard > 0}
                         {@const bonusPoints = getKnockOutBonusPoints("F", "Cards")}
                         Both Correct Bonus ({bonusPoints > 0 ? 'Yes' : 'No'}): {bonusPoints}
                     {:else}
                         Both Correct Bonus (No): 0
                     {/if}</div>
-                    <div class="w-3/12 flex flex-row items-center">Total: {(fYellowCardCorrect ? 25 : 0) + (fRedCardCorrect ? 50 : 0) + (fRedCardCorrect && fYellowCardCorrect ? 150 : 0)}</div>
+                    <div class="w-3/12 flex flex-row items-center text-sm sm:text-base justify-center">Total: {(fYellowCardCorrect ? 25 : 0) + (fRedCardCorrect ? 50 : 0) + (fRedCardCorrect && fYellowCardCorrect ? 150 : 0)}</div>
             </div>
         </div>
-
-
-
-
-
 
       {/if}
     </div>
