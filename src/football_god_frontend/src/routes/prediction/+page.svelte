@@ -659,7 +659,7 @@
 
         
         <h1 class="my-4 default-header">Total Score: {prediction.totalScore}</h1>
-        <div class="flex flex-col bg-blue-800 p-2 rounded-t-md">
+        <div class="flex flex-col bg-blue-800 p-2 rounded-t-md border-OPENFPLPURPLE border-t-2 border-x-2">
             <p>Group Winner Selections:</p>
             <div class="flex flex-row flex-wrap items-center">
                 
@@ -768,7 +768,7 @@
 
 
 
-        <div class="flex flex-col bg-blue-700 p-2">
+        <div class="flex flex-col bg-blue-700 p-2 border-x-2 border-OPENFPLPURPLE">
             <p>Group Loser Selections:</p>
             <div class="flex flex-row flex-wrap items-center">
                 <div class="w-6/12 md:w-1/12 flex flex-row items-center text-xs sm:text-base">
@@ -882,7 +882,7 @@
             </div>
         </div>
 
-        <div class="flex flex-col bg-blue-800 p-2">
+        <div class="flex flex-col bg-blue-800 p-2 border-x-2 border-OPENFPLPURPLE">
             <p>Group Scorer Selections:</p>
             <div class="flex flex-row flex-wrap items-center">
                 <div class="w-6/12 md:w-1/12 flex flex-row items-center text-xs sm:text-base">
@@ -1018,7 +1018,7 @@
             </div>
         </div>
 
-        <div class="flex flex-col bg-blue-700 p-2">
+        <div class="flex flex-col bg-blue-700 p-2 border-x-2 border-OPENFPLPURPLE">
             <p>Group Assister Selections:</p>
             <div class="flex flex-row flex-wrap items-center">
                 <div class="w-6/12 md:w-1/12 flex flex-row items-center text-xs sm:text-base">
@@ -1145,7 +1145,7 @@
             </div>
         </div>
 
-        <div class="flex flex-col bg-blue-800 p-2">
+        <div class="flex flex-col bg-blue-800 p-2 border-x-2 border-OPENFPLPURPLE">
             <p>Group Yellow Card Selections:</p>
             <div class="flex flex-row flex-wrap items-center">
                 <div class="w-6/12 md:w-1/12 flex flex-row items-center text-xs sm:text-base">
@@ -1276,7 +1276,7 @@
             </div>
         </div>
 
-        <div class="flex flex-col bg-blue-700 p-2 rounded-b-md">
+        <div class="flex flex-col bg-blue-700 p-2 rounded-b-md border-x-2 border-b-2 border-OPENFPLPURPLE">
             <p>Group Red Card Selections:</p>
             <div class="flex flex-row flex-wrap items-center">
                 <div class="w-6/12 md:w-1/12 flex flex-row items-center text-xs sm:text-base">
@@ -1402,7 +1402,7 @@
             </div>
         </div>
 
-        <div class="flex flex-col bg-blue-900 p-2 mt-4 rounded-t-md">
+        <div class="flex flex-col bg-blue-900 p-2 mt-4 rounded-t-md border-x-2 border-OPENFPLPURPLE border-t-2">
             <p>Round Of 16 Match Results:</p>
             <div class="flex flex-row flex-wrap items-center">
                 <div class="w-3/12 flex flex-row items-center">
@@ -1440,7 +1440,7 @@
             </div>
         </div>
 
-        <div class="flex flex-col bg-blue-600 p-2">
+        <div class="flex flex-col bg-blue-600 p-2 border-x-2 border-OPENFPLPURPLE">
             <p>Round Of 16 Goal Results:</p>
             <div class="flex flex-row flex-wrap items-center">
                 <div class="w-3/12 flex flex-row items-center text-sm sm:text-base justify-center md:justify-normal p-1">
@@ -1478,7 +1478,7 @@
             </div>
         </div>
 
-        <div class="flex flex-col bg-blue-300 text-gray-700 p-2 rounded-b-md">
+        <div class="flex flex-col bg-blue-300 text-gray-700 p-2 rounded-b-md border-x-2 border-OPENFPLPURPLE border-b-2">
             <p>Round Of 16 Card Results:</p>
             <div class="flex flex-row flex-wrap items-center">
                 <div class="w-3/12 flex flex-row items-center text-sm sm:text-base justify-center md:justify-normal p-1">
@@ -1524,7 +1524,7 @@
             </div>
         </div>
 
-        <div class="flex flex-col bg-blue-900 p-2 mt-4 rounded-t-md">
+        <div class="flex flex-col bg-blue-900 p-2 mt-4 rounded-t-md border-x-2 border-OPENFPLPURPLE border-t-2">
             <p>Quarter Final Match Results:</p>
             <div class="flex flex-row flex-wrap items-center">
                 <div class="w-3/12 flex flex-row items-center text-sm sm:text-base justify-center md:justify-normal p-1">
@@ -1563,7 +1563,7 @@
             </div>
         </div>
 
-        <div class="flex flex-col bg-blue-600 p-2">
+        <div class="flex flex-col bg-blue-600 p-2 border-x-2 border-OPENFPLPURPLE">
             <p>Quarter Final Goal Results:</p>
             <div class="flex flex-row flex-wrap items-center">
                 <div class="w-3/12 flex flex-row items-center text-sm sm:text-base justify-center md:justify-normal p-1">
@@ -1602,7 +1602,7 @@
             </div>
         </div>
 
-        <div class="flex flex-col bg-blue-300 text-gray-700 p-2 rounded-b-md">
+        <div class="flex flex-col bg-blue-300 text-gray-700 p-2 rounded-b-md border-x-2 border-OPENFPLPURPLE border-b-2">
             <p>Quarter Final Card Results:</p>
             <div class="flex flex-row flex-wrap items-center">
                 <div class="w-3/12 flex flex-row items-center text-sm sm:text-base justify-center md:justify-normal p-1">
@@ -1648,7 +1648,7 @@
         </div>
         
 
-        <div class="flex flex-col bg-blue-900 p-2 mt-4 rounded-t-md">
+        <div class="flex flex-col bg-blue-900 p-2 mt-4 rounded-t-md border-x-2 border-OPENFPLPURPLE border-t-2">
             <p>Semi Final Match Results:</p>
             <div class="flex flex-row flex-wrap items-center">
                 
@@ -1687,7 +1687,7 @@
             </div>
         </div>
 
-        <div class="flex flex-col bg-blue-600 p-2">
+        <div class="flex flex-col bg-blue-600 p-2 border-x-2 border-OPENFPLPURPLE">
             <p>Semi Final Goal Results:</p>
             <div class="flex flex-row flex-wrap items-center">
                 
@@ -1726,7 +1726,7 @@
             </div>
         </div>
 
-        <div class="flex flex-col bg-blue-300 text-gray-700 p-2 rounded-b-md">
+        <div class="flex flex-col bg-blue-300 text-gray-700 p-2 rounded-b-md border-x-2 border-OPENFPLPURPLE border-b-2">
             <p>Semi Final Card Results:</p>
             <div class="flex flex-row flex-wrap items-center">
                 <div class="w-3/12 flex flex-row items-center text-sm sm:text-base justify-center md:justify-normal p-1">
@@ -1772,7 +1772,7 @@
             </div>
         </div>
 
-        <div class="flex flex-col bg-blue-900 p-2 mt-4 rounded-t-md">
+        <div class="flex flex-col bg-blue-900 p-2 mt-4 rounded-t-md rounded-b-md border-x-2 border-OPENFPLPURPLE border-t-2">
             <p>Final Match Results:</p>
             <div class="flex flex-row flex-wrap items-center">
                 
@@ -1815,7 +1815,7 @@
             </div>
         </div>
 
-        <div class="flex flex-col bg-blue-600 p-2">
+        <div class="flex flex-col bg-blue-600 border-x-2 border-OPENFPLPURPLE p-2">
             <p>Final Goal Results:</p>
             <div class="flex flex-row items-center">
                 
@@ -1854,7 +1854,7 @@
             </div>
         </div>
 
-        <div class="flex flex-col bg-blue-300 text-gray-700 p-2 rounded-b-md">
+        <div class="flex flex-col bg-blue-300 text-gray-700 p-2 rounded-b-md border-x-2 border-OPENFPLPURPLE border-b-2">
             <p>Final Card Results:</p>
             <div class="flex flex-row items-center">
                 <div class="w-3/12 flex flex-row items-center text-sm sm:text-base justify-center md:justify-normal p-1">
