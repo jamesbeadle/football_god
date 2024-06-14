@@ -1384,6 +1384,7 @@ actor Self {
     return #ok(euro2024Instance.getEuro2024Fixtures());
   };
 
+  //TODO: REMOVE
   public shared ({ caller }) func resetEuro2024Fixtures() : async Result.Result<(), T.Error> { //REMOVE
     return #ok(euro2024Instance.resetEuro2024Fixtures());
   };
@@ -1416,8 +1417,6 @@ actor Self {
   public shared query func getEuro2024State() : async Result.Result<T.Euro2024State, T.Error> {
     return #ok(euro2024Instance.getState());
   };
-
-  //ODO get another users team
   
   //TODO: get and pay winners
 

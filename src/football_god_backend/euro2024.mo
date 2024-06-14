@@ -369,7 +369,7 @@ module {
       let (principalName, score) = sortedEntries[i];
 
       if (i == 0 or score != lastScore) {
-        currentPosition += 1;
+        currentPosition := currentPosition + 1;
         if (tieInProgress) {
           leaderboardBuffer.add({
             principalName = sortedEntries[i-1].0;
@@ -463,7 +463,7 @@ module {
       if (previousScore == null or previousScore != ?entry.score) {
         previousScore := ?entry.score;
         let updatedEntry = { entry with position = position };
-        position += 1;
+        position := position + 1;
         return updatedEntry;
       } else {
         return { entry with positionText = "-" };
@@ -507,9 +507,10 @@ module {
         },
       );
       if (Option.isSome(groupAWinnerMatch)) {
-        totalScore += 5;
-        totalCorrectWinners += 1;
-        correctWinnersScore += 5;
+        totalScore := totalScore + 5;
+        Debug.print(debug_show totalScore);
+        totalCorrectWinners := totalCorrectWinners + 1;
+        correctWinnersScore := correctWinnersScore +  5;
       };
 
       let groupALoserMatch = Array.find<T.Euro2024Event>(
@@ -519,9 +520,9 @@ module {
         },
       );
       if (Option.isSome(groupALoserMatch)) {
-        totalScore += 5;
-        totalCorrectLosers += 1;
-        correctLosersScore += 5;
+        totalScore := totalScore + 5;
+        totalCorrectLosers := totalCorrectLosers + 1;
+        correctLosersScore := correctLosersScore +  5;
       };
 
       let groupAScorerMatch = Array.find<T.Euro2024Event>(
@@ -531,9 +532,9 @@ module {
         },
       );
       if (Option.isSome(groupAScorerMatch)) {
-        totalScore += 10;
-        totalCorrectScorers += 1;
-        correctScorersScore += 10;
+        totalScore := totalScore + 10;
+        totalCorrectScorers := totalCorrectScorers + 1;
+        correctScorersScore := correctScorersScore +  10;
       };
 
       let groupAAssisterMatch = Array.find<T.Euro2024Event>(
@@ -543,9 +544,9 @@ module {
         },
       );
       if (Option.isSome(groupAAssisterMatch)) {
-        totalScore += 10;
-        totalCorrectScorers += 1;
-        correctScorersScore += 10;
+        totalScore := totalScore + 10;
+        totalCorrectScorers := totalCorrectScorers + 1;
+        correctScorersScore := correctScorersScore +  10;
       };
 
       let groupAYellowMatch = Array.find<T.Euro2024Event>(
@@ -555,9 +556,9 @@ module {
         },
       );
       if (Option.isSome(groupAYellowMatch)) {
-        totalScore += 5;
-        totalCorrectScorers += 1;
-        correctScorersScore += 5;
+        totalScore := totalScore + 5;
+        totalCorrectScorers := totalCorrectScorers + 1;
+        correctScorersScore := correctScorersScore +  5;
       };
 
       let groupARedMatch = Array.find<T.Euro2024Event>(
@@ -567,9 +568,9 @@ module {
         },
       );
       if (Option.isSome(groupARedMatch)) {
-        totalScore += 10;
-        totalCorrectScorers += 1;
-        correctScorersScore += 10;
+        totalScore := totalScore + 10;
+        totalCorrectScorers := totalCorrectScorers + 1;
+        correctScorersScore := correctScorersScore +  10;
       };
 
       //B
@@ -588,9 +589,10 @@ module {
         },
       );
       if (Option.isSome(groupBWinnerMatch)) {
-        totalScore += 5;
-        totalCorrectWinners += 1;
-        correctWinnersScore += 5;
+        totalScore := totalScore + 5;
+        Debug.print(debug_show totalScore);
+        totalCorrectWinners := totalCorrectWinners + 1;
+        correctWinnersScore := correctWinnersScore +  5;
       };
 
       let groupBLoserMatch = Array.find<T.Euro2024Event>(
@@ -600,9 +602,9 @@ module {
         },
       );
       if (Option.isSome(groupBLoserMatch)) {
-        totalScore += 5;
-        totalCorrectLosers += 1;
-        correctLosersScore += 5;
+        totalScore := totalScore + 5;
+        totalCorrectLosers := totalCorrectLosers + 1;
+        correctLosersScore := correctLosersScore +  5;
       };
 
       let groupBScorerMatch = Array.find<T.Euro2024Event>(
@@ -612,9 +614,9 @@ module {
         },
       );
       if (Option.isSome(groupBScorerMatch)) {
-        totalScore += 10;
-        totalCorrectScorers += 1;
-        correctScorersScore += 10;
+        totalScore := totalScore + 10;
+        totalCorrectScorers := totalCorrectScorers + 1;
+        correctScorersScore := correctScorersScore +  10;
       };
 
       let groupBAssisterMatch = Array.find<T.Euro2024Event>(
@@ -624,9 +626,9 @@ module {
         },
       );
       if (Option.isSome(groupBAssisterMatch)) {
-        totalScore += 10;
-        totalCorrectScorers += 1;
-        correctScorersScore += 10;
+        totalScore := totalScore + 10;
+        totalCorrectScorers := totalCorrectScorers + 1;
+        correctScorersScore := correctScorersScore +  10;
       };
 
       let groupBYellowMatch = Array.find<T.Euro2024Event>(
@@ -636,9 +638,9 @@ module {
         },
       );
       if (Option.isSome(groupBYellowMatch)) {
-        totalScore += 5;
-        totalCorrectScorers += 1;
-        correctScorersScore += 5;
+        totalScore := totalScore + 5;
+        totalCorrectScorers := totalCorrectScorers + 1;
+        correctScorersScore := correctScorersScore +  5;
       };
 
       let groupBRedMatch = Array.find<T.Euro2024Event>(
@@ -648,9 +650,9 @@ module {
         },
       );
       if (Option.isSome(groupBRedMatch)) {
-        totalScore += 10;
-        totalCorrectScorers += 1;
-        correctScorersScore += 10;
+        totalScore := totalScore + 10;
+        totalCorrectScorers := totalCorrectScorers + 1;
+        correctScorersScore := correctScorersScore +  10;
       };
 
       //C
@@ -669,9 +671,10 @@ module {
         },
       );
       if (Option.isSome(groupCWinnerMatch)) {
-        totalScore += 5;
-        totalCorrectWinners += 1;
-        correctWinnersScore += 5;
+        totalScore := totalScore + 5;
+        Debug.print(debug_show totalScore);
+        totalCorrectWinners := totalCorrectWinners + 1;
+        correctWinnersScore := correctWinnersScore +  5;
       };
 
       let groupCLoserMatch = Array.find<T.Euro2024Event>(
@@ -681,9 +684,9 @@ module {
         },
       );
       if (Option.isSome(groupCLoserMatch)) {
-        totalScore += 5;
-        totalCorrectLosers += 1;
-        correctLosersScore += 5;
+        totalScore := totalScore + 5;
+        totalCorrectLosers := totalCorrectLosers + 1;
+        correctLosersScore := correctLosersScore +  5;
       };
 
       let groupCScorerMatch = Array.find<T.Euro2024Event>(
@@ -693,9 +696,9 @@ module {
         },
       );
       if (Option.isSome(groupCScorerMatch)) {
-        totalScore += 10;
-        totalCorrectScorers += 1;
-        correctScorersScore += 10;
+        totalScore := totalScore + 10;
+        totalCorrectScorers := totalCorrectScorers + 1;
+        correctScorersScore := correctScorersScore +  10;
       };
 
       let groupCAssisterMatch = Array.find<T.Euro2024Event>(
@@ -705,9 +708,9 @@ module {
         },
       );
       if (Option.isSome(groupCAssisterMatch)) {
-        totalScore += 10;
-        totalCorrectScorers += 1;
-        correctScorersScore += 10;
+        totalScore := totalScore + 10;
+        totalCorrectScorers := totalCorrectScorers + 1;
+        correctScorersScore := correctScorersScore +  10;
       };
 
       let groupCYellowMatch = Array.find<T.Euro2024Event>(
@@ -717,9 +720,9 @@ module {
         },
       );
       if (Option.isSome(groupCYellowMatch)) {
-        totalScore += 5;
-        totalCorrectScorers += 1;
-        correctScorersScore += 5;
+        totalScore := totalScore + 5;
+        totalCorrectScorers := totalCorrectScorers + 1;
+        correctScorersScore := correctScorersScore +  5;
       };
 
       let groupCRedMatch = Array.find<T.Euro2024Event>(
@@ -729,9 +732,9 @@ module {
         },
       );
       if (Option.isSome(groupCRedMatch)) {
-        totalScore += 10;
-        totalCorrectScorers += 1;
-        correctScorersScore += 10;
+        totalScore := totalScore + 10;
+        totalCorrectScorers := totalCorrectScorers + 1;
+        correctScorersScore := correctScorersScore +  10;
       };
 
       //D
@@ -750,9 +753,10 @@ module {
         },
       );
       if (Option.isSome(groupDWinnerMatch)) {
-        totalScore += 5;
-        totalCorrectWinners += 1;
-        correctWinnersScore += 5;
+        totalScore := totalScore + 5;
+        Debug.print(debug_show totalScore);
+        totalCorrectWinners := totalCorrectWinners + 1;
+        correctWinnersScore := correctWinnersScore +  5;
       };
 
       let groupDLoserMatch = Array.find<T.Euro2024Event>(
@@ -762,9 +766,9 @@ module {
         },
       );
       if (Option.isSome(groupDLoserMatch)) {
-        totalScore += 5;
-        totalCorrectLosers += 1;
-        correctLosersScore += 5;
+        totalScore := totalScore + 5;
+        totalCorrectLosers := totalCorrectLosers + 1;
+        correctLosersScore := correctLosersScore +  5;
       };
 
       let groupDScorerMatch = Array.find<T.Euro2024Event>(
@@ -774,9 +778,9 @@ module {
         },
       );
       if (Option.isSome(groupDScorerMatch)) {
-        totalScore += 10;
-        totalCorrectScorers += 1;
-        correctScorersScore += 10;
+        totalScore := totalScore + 10;
+        totalCorrectScorers := totalCorrectScorers + 1;
+        correctScorersScore := correctScorersScore +  10;
       };
 
       let groupDAssisterMatch = Array.find<T.Euro2024Event>(
@@ -786,9 +790,9 @@ module {
         },
       );
       if (Option.isSome(groupDAssisterMatch)) {
-        totalScore += 10;
-        totalCorrectScorers += 1;
-        correctScorersScore += 10;
+        totalScore := totalScore + 10;
+        totalCorrectScorers := totalCorrectScorers + 1;
+        correctScorersScore := correctScorersScore +  10;
       };
 
       let groupDYellowMatch = Array.find<T.Euro2024Event>(
@@ -798,9 +802,9 @@ module {
         },
       );
       if (Option.isSome(groupDYellowMatch)) {
-        totalScore += 5;
-        totalCorrectScorers += 1;
-        correctScorersScore += 5;
+        totalScore := totalScore + 5;
+        totalCorrectScorers := totalCorrectScorers + 1;
+        correctScorersScore := correctScorersScore +  5;
       };
 
       let groupDRedMatch = Array.find<T.Euro2024Event>(
@@ -810,9 +814,9 @@ module {
         },
       );
       if (Option.isSome(groupDRedMatch)) {
-        totalScore += 10;
-        totalCorrectScorers += 1;
-        correctScorersScore += 10;
+        totalScore := totalScore + 10;
+        totalCorrectScorers := totalCorrectScorers + 1;
+        correctScorersScore := correctScorersScore +  10;
       };
 
       //E
@@ -831,9 +835,10 @@ module {
         },
       );
       if (Option.isSome(groupEWinnerMatch)) {
-        totalScore += 5;
-        totalCorrectWinners += 1;
-        correctWinnersScore += 5;
+        totalScore := totalScore + 5;
+        Debug.print(debug_show totalScore);
+        totalCorrectWinners := totalCorrectWinners + 1;
+        correctWinnersScore := correctWinnersScore +  5;
       };
 
       let groupELoserMatch = Array.find<T.Euro2024Event>(
@@ -843,9 +848,9 @@ module {
         },
       );
       if (Option.isSome(groupELoserMatch)) {
-        totalScore += 5;
-        totalCorrectLosers += 1;
-        correctLosersScore += 5;
+        totalScore := totalScore + 5;
+        totalCorrectLosers := totalCorrectLosers + 1;
+        correctLosersScore := correctLosersScore +  5;
       };
 
       let groupEScorerMatch = Array.find<T.Euro2024Event>(
@@ -855,9 +860,9 @@ module {
         },
       );
       if (Option.isSome(groupEScorerMatch)) {
-        totalScore += 10;
-        totalCorrectScorers += 1;
-        correctScorersScore += 10;
+        totalScore := totalScore + 10;
+        totalCorrectScorers := totalCorrectScorers + 1;
+        correctScorersScore := correctScorersScore +  10;
       };
 
       let groupEAssisterMatch = Array.find<T.Euro2024Event>(
@@ -867,9 +872,9 @@ module {
         },
       );
       if (Option.isSome(groupEAssisterMatch)) {
-        totalScore += 10;
-        totalCorrectScorers += 1;
-        correctScorersScore += 10;
+        totalScore := totalScore + 10;
+        totalCorrectScorers := totalCorrectScorers + 1;
+        correctScorersScore := correctScorersScore +  10;
       };
 
       let groupEYellowMatch = Array.find<T.Euro2024Event>(
@@ -879,9 +884,9 @@ module {
         },
       );
       if (Option.isSome(groupEYellowMatch)) {
-        totalScore += 5;
-        totalCorrectScorers += 1;
-        correctScorersScore += 5;
+        totalScore := totalScore + 5;
+        totalCorrectScorers := totalCorrectScorers + 1;
+        correctScorersScore := correctScorersScore +  5;
       };
 
       let groupERedMatch = Array.find<T.Euro2024Event>(
@@ -891,9 +896,9 @@ module {
         },
       );
       if (Option.isSome(groupERedMatch)) {
-        totalScore += 10;
-        totalCorrectScorers += 1;
-        correctScorersScore += 10;
+        totalScore := totalScore + 10;
+        totalCorrectScorers := totalCorrectScorers + 1;
+        correctScorersScore := correctScorersScore +  10;
       };
 
       //F
@@ -912,9 +917,10 @@ module {
         },
       );
       if (Option.isSome(groupFWinnerMatch)) {
-        totalScore += 5;
-        totalCorrectWinners += 1;
-        correctWinnersScore += 5;
+        totalScore := totalScore + 5;
+        Debug.print(debug_show totalScore);
+        totalCorrectWinners := totalCorrectWinners + 1;
+        correctWinnersScore := correctWinnersScore +  5;
       };
 
       let groupFLoserMatch = Array.find<T.Euro2024Event>(
@@ -924,9 +930,9 @@ module {
         },
       );
       if (Option.isSome(groupFLoserMatch)) {
-        totalScore += 5;
-        totalCorrectLosers += 1;
-        correctLosersScore += 5;
+        totalScore := totalScore + 5;
+        totalCorrectLosers := totalCorrectLosers + 1;
+        correctLosersScore := correctLosersScore +  5;
       };
 
       let groupFScorerMatch = Array.find<T.Euro2024Event>(
@@ -936,9 +942,9 @@ module {
         },
       );
       if (Option.isSome(groupFScorerMatch)) {
-        totalScore += 10;
-        totalCorrectScorers += 1;
-        correctScorersScore += 10;
+        totalScore := totalScore + 10;
+        totalCorrectScorers := totalCorrectScorers + 1;
+        correctScorersScore := correctScorersScore +  10;
       };
 
       let groupFAssisterMatch = Array.find<T.Euro2024Event>(
@@ -948,9 +954,9 @@ module {
         },
       );
       if (Option.isSome(groupFAssisterMatch)) {
-        totalScore += 10;
-        totalCorrectScorers += 1;
-        correctScorersScore += 10;
+        totalScore := totalScore + 10;
+        totalCorrectScorers := totalCorrectScorers + 1;
+        correctScorersScore := correctScorersScore +  10;
       };
 
       let groupFYellowMatch = Array.find<T.Euro2024Event>(
@@ -960,9 +966,9 @@ module {
         },
       );
       if (Option.isSome(groupFYellowMatch)) {
-        totalScore += 5;
-        totalCorrectScorers += 1;
-        correctScorersScore += 5;
+        totalScore := totalScore + 5;
+        totalCorrectScorers := totalCorrectScorers + 1;
+        correctScorersScore := correctScorersScore +  5;
       };
 
       let groupFRedMatch = Array.find<T.Euro2024Event>(
@@ -972,39 +978,39 @@ module {
         },
       );
       if (Option.isSome(groupFRedMatch)) {
-        totalScore += 10;
-        totalCorrectScorers += 1;
-        correctScorersScore += 10;
+        totalScore := totalScore + 10;
+        totalCorrectScorers := totalCorrectScorers + 1;
+        correctScorersScore := correctScorersScore +  10;
       };
 
       //Group Stage Winner Bonus
       if(totalCorrectWinners >= 3){
-        totalScore += correctWinnersScore;
+        totalScore := totalScore + correctWinnersScore;
       };
 
       //Group Stage Loser Bonus
       if(totalCorrectLosers >= 3){
-        totalScore += correctLosersScore;
+        totalScore := totalScore + correctLosersScore;
       };
 
       //Group Stage Scorer Bonus
       if(totalCorrectScorers >= 3){
-        totalScore += correctScorersScore;
+        totalScore := totalScore + correctScorersScore;
       };
 
       //Group Stage Assister Bonus
       if(totalCorrectAssisters >= 3){
-        totalScore += correctAssistersScore;
+        totalScore := totalScore + correctAssistersScore;
       };
 
       //Group Stage Yellow Card Bonus
       if(totalCorrectYellowCards >= 3){
-        totalScore += correctYellowCardsScore;
+        totalScore := totalScore + correctYellowCardsScore;
       };
 
       //Group Stage Red Card Bonus
       if(totalCorrectRedCards >= 3){
-        totalScore += correctRedCardScore;
+        totalScore := totalScore + correctRedCardScore;
       };
 
       //R16
@@ -1022,7 +1028,7 @@ module {
         },
       );
       if (Option.isSome(r16WinnerMatch)) {
-        totalScore += 10;
+        totalScore := totalScore + 10;
       };
 
       let r16LoserMatch = Array.find<T.Euro2024Event>(
@@ -1032,12 +1038,12 @@ module {
         },
       );
       if (Option.isSome(r16LoserMatch)) {
-        totalScore += 10;
+        totalScore := totalScore + 10;
       };
 
       //Bonus
       if(Option.isSome(r16WinnerMatch) and Option.isSome(r16LoserMatch)){
-        totalScore += 40;
+        totalScore := totalScore + 40;
       };
 
       let r16ScorerMatch = Array.find<T.Euro2024Event>(
@@ -1047,7 +1053,7 @@ module {
         },
       );
       if (Option.isSome(r16ScorerMatch)) {
-        totalScore += 20;
+        totalScore := totalScore + 20;
       };
 
       let r16AssisterMatch = Array.find<T.Euro2024Event>(
@@ -1057,12 +1063,12 @@ module {
         },
       );
       if (Option.isSome(r16AssisterMatch)) {
-        totalScore += 20;
+        totalScore := totalScore + 20;
       };
 
       //Bonus
       if(Option.isSome(r16ScorerMatch) and Option.isSome(r16AssisterMatch)){
-        totalScore += 80;
+        totalScore := totalScore + 80;
       };
 
       let r16YellowCardMatch = Array.find<T.Euro2024Event>(
@@ -1072,7 +1078,7 @@ module {
         },
       );
       if (Option.isSome(r16YellowCardMatch)) {
-        totalScore += 10;
+        totalScore := totalScore + 10;
       };
 
       let r16RedCardMatch = Array.find<T.Euro2024Event>(
@@ -1082,12 +1088,12 @@ module {
         },
       );
       if (Option.isSome(r16RedCardMatch)) {
-        totalScore += 20;
+        totalScore := totalScore + 20;
       };
 
       //Bonus
       if(Option.isSome(r16YellowCardMatch) and Option.isSome(r16RedCardMatch)){
-        totalScore += 60;
+        totalScore := totalScore + 60;
       };
 
       //QF
@@ -1105,7 +1111,7 @@ module {
         },
       );
       if (Option.isSome(qfWinnerMatch)) {
-        totalScore += 15;
+        totalScore := totalScore + 15;
       };
 
       let qfLoserMatch = Array.find<T.Euro2024Event>(
@@ -1115,12 +1121,12 @@ module {
         },
       );
       if (Option.isSome(qfLoserMatch)) {
-        totalScore += 15;
+        totalScore := totalScore + 15;
       };
 
       //Bonus
       if(Option.isSome(qfWinnerMatch) and Option.isSome(qfLoserMatch)){
-        totalScore += 60;
+        totalScore := totalScore + 60;
       };
 
       let qfScorerMatch = Array.find<T.Euro2024Event>(
@@ -1130,7 +1136,7 @@ module {
         },
       );
       if (Option.isSome(qfScorerMatch)) {
-        totalScore += 30;
+        totalScore := totalScore + 30;
       };
 
       let qfAssisterMatch = Array.find<T.Euro2024Event>(
@@ -1140,12 +1146,12 @@ module {
         },
       );
       if (Option.isSome(qfAssisterMatch)) {
-        totalScore += 30;
+        totalScore := totalScore + 30;
       };
 
       //Bonus
       if(Option.isSome(qfScorerMatch) and Option.isSome(qfAssisterMatch)){
-        totalScore += 120;
+        totalScore := totalScore + 120;
       };
 
       let qfYellowCardMatch = Array.find<T.Euro2024Event>(
@@ -1155,7 +1161,7 @@ module {
         },
       );
       if (Option.isSome(qfYellowCardMatch)) {
-        totalScore += 15;
+        totalScore := totalScore + 15;
       };
 
       let qfRedCardMatch = Array.find<T.Euro2024Event>(
@@ -1165,12 +1171,12 @@ module {
         },
       );
       if (Option.isSome(qfRedCardMatch)) {
-        totalScore += 30;
+        totalScore := totalScore + 30;
       };
 
       //Bonus
       if(Option.isSome(qfYellowCardMatch) and Option.isSome(qfRedCardMatch)){
-        totalScore += 90;
+        totalScore := totalScore + 90;
       };
 
 
@@ -1189,7 +1195,7 @@ module {
         },
       );
       if (Option.isSome(sfWinnerMatch)) {
-        totalScore += 20;
+        totalScore := totalScore + 20;
       };
 
       let sfLoserMatch = Array.find<T.Euro2024Event>(
@@ -1199,12 +1205,12 @@ module {
         },
       );
       if (Option.isSome(sfLoserMatch)) {
-        totalScore += 20;
+        totalScore := totalScore + 20;
       };
 
       //Bonus
       if(Option.isSome(sfWinnerMatch) and Option.isSome(sfLoserMatch)){
-        totalScore += 80;
+        totalScore := totalScore + 80;
       };
 
       let sfScorerMatch = Array.find<T.Euro2024Event>(
@@ -1214,7 +1220,7 @@ module {
         },
       );
       if (Option.isSome(sfScorerMatch)) {
-        totalScore += 40;
+        totalScore := totalScore + 40;
       };
 
       let sfAssisterMatch = Array.find<T.Euro2024Event>(
@@ -1224,12 +1230,12 @@ module {
         },
       );
       if (Option.isSome(sfAssisterMatch)) {
-        totalScore += 40;
+        totalScore := totalScore + 40;
       };
 
       //Bonus
       if(Option.isSome(sfScorerMatch) and Option.isSome(sfAssisterMatch)){
-        totalScore += 160;
+        totalScore := totalScore + 160;
       };
 
       let sfYellowCardMatch = Array.find<T.Euro2024Event>(
@@ -1239,7 +1245,7 @@ module {
         },
       );
       if (Option.isSome(sfYellowCardMatch)) {
-        totalScore += 20;
+        totalScore := totalScore + 20;
       };
 
       let sfRedCardMatch = Array.find<T.Euro2024Event>(
@@ -1249,12 +1255,12 @@ module {
         },
       );
       if (Option.isSome(sfRedCardMatch)) {
-        totalScore += 40;
+        totalScore := totalScore + 40;
       };
 
       //Bonus
       if(Option.isSome(sfYellowCardMatch) and Option.isSome(sfRedCardMatch)){
-        totalScore += 120;
+        totalScore := totalScore + 120;
       };
 
       //F
@@ -1272,7 +1278,8 @@ module {
         },
       );
       if (Option.isSome(fWinnerMatch)) {
-        totalScore += 25;
+        totalScore := totalScore + 25;
+        Debug.print(debug_show totalScore);
       };
 
       let fLoserMatch = Array.find<T.Euro2024Event>(
@@ -1282,12 +1289,14 @@ module {
         },
       );
       if (Option.isSome(fLoserMatch)) {
-        totalScore += 25;
+        totalScore := totalScore + 25;
+        Debug.print(debug_show totalScore);
       };
 
       //Bonus
       if(Option.isSome(fWinnerMatch) and Option.isSome(fLoserMatch)){
-        totalScore += 100;
+        totalScore := totalScore + 100;
+        Debug.print(debug_show totalScore);
       };
 
       let fScorerMatch = Array.find<T.Euro2024Event>(
@@ -1297,7 +1306,7 @@ module {
         },
       );
       if (Option.isSome(fScorerMatch)) {
-        totalScore += 50;
+        totalScore := totalScore + 50;
       };
 
       let fAssisterMatch = Array.find<T.Euro2024Event>(
@@ -1307,12 +1316,12 @@ module {
         },
       );
       if (Option.isSome(fAssisterMatch)) {
-        totalScore += 50;
+        totalScore := totalScore + 50;
       };
 
       //Bonus
       if(Option.isSome(fScorerMatch) and Option.isSome(fAssisterMatch)){
-        totalScore += 200;
+        totalScore := totalScore + 200;
       };
 
       let fYellowCardMatch = Array.find<T.Euro2024Event>(
@@ -1322,7 +1331,7 @@ module {
         },
       );
       if (Option.isSome(fYellowCardMatch)) {
-        totalScore += 25;
+        totalScore := totalScore + 25;
       };
 
       let fRedCardMatch = Array.find<T.Euro2024Event>(
@@ -1332,12 +1341,12 @@ module {
         },
       );
       if (Option.isSome(fRedCardMatch)) {
-        totalScore += 50;
+        totalScore := totalScore + 50;
       };
 
       //Bonus
       if(Option.isSome(fYellowCardMatch) and Option.isSome(fRedCardMatch)){
-        totalScore += 150;
+        totalScore := totalScore + 150;
       };
         
       return totalScore;
@@ -1407,7 +1416,7 @@ module {
         stage = euroEvent.stage;
         teamId = euroEvent.teamId;
       });
-      nextEventId += 1;
+      nextEventId := nextEventId + 1;
       events := Buffer.toArray(eventBuffer);
       calculateLeaderboard();
     };

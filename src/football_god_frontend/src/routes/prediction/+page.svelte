@@ -1819,7 +1819,7 @@
             <p>Final Goal Results:</p>
             <div class="flex flex-row items-center">
                 
-                <div class="w-3/12 flex flex-row items-center text-sm sm:text-base justify-center">
+                <div class="w-3/12 flex flex-row items-center text-sm sm:text-base justify-center md:justify-normal">
                     {#await getFlagComponent($teamStore.find(x => x.id == $playerStore.find(x => x.id == prediction.fPrediction.goalScorer)?.teamId)?.countryCode ?? "") then FlagComponent}
                         {#if FlagComponent}
                             <svelte:component this={FlagComponent} className="w-4 sm:w-6 md:w-6 mr-1" />
@@ -1831,7 +1831,7 @@
                         <CorrectIcon className="w-6 sm:w-8 md:w-6 px-1" />
                     {/if}
                 </div>
-                <div class="w-3/12 flex flex-row items-center text-sm sm:text-base justify-center">
+                <div class="w-3/12 flex flex-row items-center text-sm sm:text-base justify-center md:justify-normal">
                     {#await getFlagComponent($teamStore.find(x => x.id == $playerStore.find(x => x.id == prediction.fPrediction.goalAssister)?.teamId)?.countryCode ?? "") then FlagComponent}
                         {#if FlagComponent}
                             <svelte:component this={FlagComponent} className="w-4 sm:w-6 md:w-6 mr-1" />
@@ -1843,14 +1843,14 @@
                     {/if}
                 </div>
 
-                <div class="w-3/12 flex flex-row items-center text-sm sm:text-base justify-center">
+                <div class="w-3/12 flex flex-row items-center text-sm sm:text-base justify-center md:justify-normal">
                     {#if prediction.fPrediction.goalScorer > 0 && prediction.fPrediction.goalAssister > 0}
                         {@const bonusPoints = getKnockOutBonusPoints("F", "Goals")}
                         Both Correct Bonus ({bonusPoints > 0 ? 'Yes' : 'No'}): {bonusPoints}
                     {:else}
                         Both Correct Bonus (No): 0
                     {/if}</div>
-                    <div class="w-3/12 flex flex-row items-center text-sm sm:text-base justify-center">Total: {(fScorerCorrect ? 50 : 0) + (fAssisterCorrect ? 50 : 0) + (fScorerCorrect && fAssisterCorrect ? 200 : 0)}</div>
+                    <div class="w-3/12 flex flex-row items-center text-sm sm:text-base justify-center md:justify-normal">Total: {(fScorerCorrect ? 50 : 0) + (fAssisterCorrect ? 50 : 0) + (fScorerCorrect && fAssisterCorrect ? 200 : 0)}</div>
             </div>
         </div>
 
