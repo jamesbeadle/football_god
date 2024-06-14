@@ -1,17 +1,15 @@
 <script lang="ts">
     import { SvelteComponent, onMount } from "svelte";
-    import Layout from "../Layout.svelte";
-    import { euro2024Store } from "$lib/stores/euro2024.store";
     import { page } from "$app/stores";
     import { teamStore } from "$lib/stores/teams.store";
     import { playerStore } from "$lib/stores/player.store";
+    import { euro2024Store } from "$lib/stores/euro2024.store";
+    import Layout from "../Layout.svelte";
     import type { Euro2024EventDTO, Euro2024PredictionDTO } from "../../../../declarations/football_god_backend/football_god_backend.did";
-    
     
     let isLoading = true;
     let prediction: Euro2024PredictionDTO;
     let events: Euro2024EventDTO[] = [];
-    let points: number = 0;
     
     $: id = $page.url.searchParams.get("id");
     
@@ -31,8 +29,8 @@
     };
   
     onMount(async () => {
-        await fetchPrediction();
         await teamStore.sync();
+        await fetchPrediction();
     });
 
     function getBonusCount(eventType: string): number{
@@ -571,8 +569,8 @@
   </script>
   
   <Layout>
-    <div class="bg-panel mt-4 p-4">
-      <h1 class="my-4 default-header">Euro 2024 Prediction</h1>
+    <div class="bg-panel mt-2 p-4">
+      <h1 class="my-2 default-header">Euro 2024 Prediction</h1>
       {#if isLoading}
         <div>Loading...</div>
       {:else}

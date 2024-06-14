@@ -27,7 +27,6 @@
   $: links = $authSignedInStore ? [
     { name: "Home", icon: HomeIcon, href: "/" },
     { name: "Euro 2024", icon: StarIcon, href: "/euro2024" },
-    { name: "Match Betting", icon: BettingIcon, href: "/betting" },
     { name: "Mini Games", icon: GamesIcon, href: "/games" },
     { name: "Profile", icon: ProfileIcon, href: "/profile" },
   ] : 

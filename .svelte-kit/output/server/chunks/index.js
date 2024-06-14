@@ -3485,7 +3485,7 @@ const options = {
 		<div class="error">
 			<span class="status">` + status + '</span>\n			<div class="message">\n				<h1>' + message + "</h1>\n			</div>\n		</div>\n	</body>\n</html>\n"
   },
-  version_hash: "1ghntwe"
+  version_hash: "2vlxwb"
 };
 async function get_hooks() {
   return {};
@@ -3745,7 +3745,7 @@ const initBusyStore = () => {
 const busyStore = initBusyStore();
 const busy = derived(busyStore, ($busyStore) => $busyStore.length > 0);
 const busyMessage = derived(busyStore, ($busyStore) => $busyStore.reverse().find(({ text: text2 }) => nonNullish(text2))?.text);
-const css$8 = {
+const css$7 = {
   code: ".medium.svelte-85668t{--spinner-size:30px}.small.svelte-85668t{--spinner-size:calc(var(--line-height-standard) * 1rem)}.tiny.svelte-85668t{--spinner-size:calc(var(--line-height-standard) * 0.5rem)}svg.svelte-85668t{width:var(--spinner-size);height:var(--spinner-size);animation:spinner-linear-rotate 2000ms linear infinite;position:absolute;top:calc(50% - var(--spinner-size) / 2);left:calc(50% - var(--spinner-size) / 2);--radius:45px;--circumference:calc(3.1415926536 * var(--radius) * 2);--start:calc((1 - 0.05) * var(--circumference));--end:calc((1 - 0.8) * var(--circumference))}svg.inline.svelte-85668t{display:inline-block;position:relative}circle.svelte-85668t{stroke-dasharray:var(--circumference);stroke-width:10%;transform-origin:50% 50% 0;transition-property:stroke;animation-name:spinner-stroke-rotate-100;animation-duration:4000ms;animation-timing-function:cubic-bezier(0.35, 0, 0.25, 1);animation-iteration-count:infinite;fill:transparent;stroke:currentColor;transition:stroke-dashoffset 225ms linear}@keyframes spinner-linear-rotate{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}@keyframes spinner-stroke-rotate-100{0%{stroke-dashoffset:var(--start);transform:rotate(0)}12.5%{stroke-dashoffset:var(--end);transform:rotate(0)}12.5001%{stroke-dashoffset:var(--end);transform:rotateX(180deg) rotate(72.5deg)}25%{stroke-dashoffset:var(--start);transform:rotateX(180deg) rotate(72.5deg)}25.0001%{stroke-dashoffset:var(--start);transform:rotate(270deg)}37.5%{stroke-dashoffset:var(--end);transform:rotate(270deg)}37.5001%{stroke-dashoffset:var(--end);transform:rotateX(180deg) rotate(161.5deg)}50%{stroke-dashoffset:var(--start);transform:rotateX(180deg) rotate(161.5deg)}50.0001%{stroke-dashoffset:var(--start);transform:rotate(180deg)}62.5%{stroke-dashoffset:var(--end);transform:rotate(180deg)}62.5001%{stroke-dashoffset:var(--end);transform:rotateX(180deg) rotate(251.5deg)}75%{stroke-dashoffset:var(--start);transform:rotateX(180deg) rotate(251.5deg)}75.0001%{stroke-dashoffset:var(--start);transform:rotate(90deg)}87.5%{stroke-dashoffset:var(--end);transform:rotate(90deg)}87.5001%{stroke-dashoffset:var(--end);transform:rotateX(180deg) rotate(341.5deg)}100%{stroke-dashoffset:var(--start);transform:rotateX(180deg) rotate(341.5deg)}}",
   map: null
 };
@@ -3756,10 +3756,10 @@ const Spinner = create_ssr_component(($$result, $$props, $$bindings, slots) => {
     $$bindings.inline(inline);
   if ($$props.size === void 0 && $$bindings.size && size !== void 0)
     $$bindings.size(size);
-  $$result.css.add(css$8);
+  $$result.css.add(css$7);
   return `  <svg class="${[escape(null_to_empty(size), true) + " svelte-85668t", inline ? "inline" : ""].join(" ").trim()}" preserveAspectRatio="xMidYMid meet" focusable="false" aria-hidden="true" data-tid="spinner" viewBox="0 0 100 100"><circle cx="50%" cy="50%" r="45" class="svelte-85668t"></circle></svg>`;
 });
-const css$7 = {
+const css$6 = {
   code: "div.svelte-14plyno{z-index:calc(var(--z-index) + 1000);position:fixed;top:0;right:0;bottom:0;left:0;background:var(--backdrop);color:var(--backdrop-contrast)}.content.svelte-14plyno{display:flex;flex-direction:column;justify-content:center;align-items:center}p.svelte-14plyno{padding-bottom:var(--padding);max-width:calc(var(--section-max-width) / 2)}",
   map: null
 };
@@ -3768,7 +3768,7 @@ const BusyScreen = create_ssr_component(($$result, $$props, $$bindings, slots) =
   let $busyMessage, $$unsubscribe_busyMessage;
   $$unsubscribe_busy = subscribe(busy, (value) => $busy = value);
   $$unsubscribe_busyMessage = subscribe(busyMessage, (value) => $busyMessage = value);
-  $$result.css.add(css$7);
+  $$result.css.add(css$6);
   $$unsubscribe_busy();
   $$unsubscribe_busyMessage();
   return ` ${$busy ? `<div data-tid="busy" class="svelte-14plyno"><div class="content svelte-14plyno">${nonNullish($busyMessage) ? `<p class="svelte-14plyno">${escape($busyMessage)}</p>` : ``} <span>${validate_component(Spinner, "Spinner").$$render($$result, { inline: true }, {}, {})}</span></div></div>` : ``}`;
@@ -3791,7 +3791,7 @@ const IconError = create_ssr_component(($$result, $$props, $$bindings, slots) =>
     $$bindings.size(size);
   return `  <svg xmlns="http://www.w3.org/2000/svg"${add_attribute("height", size, 0)} viewBox="0 0 24 24"${add_attribute("width", size, 0)} fill="currentColor"><path d="M0 0h24v24H0z" fill="none"></path><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"></path></svg>`;
 });
-const css$6 = {
+const css$5 = {
   code: "svg.svelte-1lui9gh{vertical-align:middle}",
   map: null
 };
@@ -3799,7 +3799,7 @@ const IconInfo = create_ssr_component(($$result, $$props, $$bindings, slots) => 
   let { size = `${DEFAULT_ICON_SIZE}px` } = $$props;
   if ($$props.size === void 0 && $$bindings.size && size !== void 0)
     $$bindings.size(size);
-  $$result.css.add(css$6);
+  $$result.css.add(css$5);
   return `  <svg${add_attribute("width", size, 0)}${add_attribute("height", size, 0)} viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" data-tid="icon-info" class="svelte-1lui9gh"><path d="M10.2222 17.5C14.3643 17.5 17.7222 14.1421 17.7222 10C17.7222 5.85786 14.3643 2.5 10.2222 2.5C6.08003 2.5 2.72217 5.85786 2.72217 10C2.72217 14.1421 6.08003 17.5 10.2222 17.5Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path><path d="M10.2222 13.3333V10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path><path d="M10.2222 6.66699H10.2305" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg>`;
 });
 const IconWarning = create_ssr_component(($$result, $$props, $$bindings, slots) => {
@@ -3925,7 +3925,7 @@ const initToastsStore = () => {
   };
 };
 const toastsStore = initToastsStore();
-const css$5 = {
+const css$4 = {
   code: ".toast.svelte-w1j1kj.svelte-w1j1kj{display:flex;justify-content:space-between;align-items:center;gap:var(--padding-1_5x);background:var(--overlay-background);color:var(--overlay-background-contrast);--button-secondary-background:var(--focus-background);border-radius:var(--border-radius);box-shadow:var(--strong-shadow, 8px 8px 16px 0 rgba(0, 0, 0, 0.25));padding:var(--padding-1_5x);box-sizing:border-box}.toast.inverted.svelte-w1j1kj.svelte-w1j1kj{background:var(--toast-inverted-background);color:var(--toast-inverted-background-contrast)}.toast.svelte-w1j1kj .icon.svelte-w1j1kj{line-height:0}.toast.svelte-w1j1kj .icon.success.svelte-w1j1kj{color:var(--positive-emphasis)}.toast.svelte-w1j1kj .icon.info.svelte-w1j1kj{color:var(--primary)}.toast.svelte-w1j1kj .icon.warn.svelte-w1j1kj{color:var(--warning-emphasis-shade)}.toast.svelte-w1j1kj .icon.error.svelte-w1j1kj{color:var(--negative-emphasis)}.toast.svelte-w1j1kj .msg.svelte-w1j1kj{flex-grow:1;margin:0;word-break:break-word}.toast.svelte-w1j1kj .msg.scroll.svelte-w1j1kj{overflow-y:auto;max-height:calc(var(--font-size-standard) * 3 * 1.3);line-height:normal}.toast.svelte-w1j1kj .msg.truncate.svelte-w1j1kj{white-space:var(--text-white-space, nowrap);overflow:hidden;text-overflow:ellipsis}.toast.svelte-w1j1kj .msg.truncate .title.svelte-w1j1kj{white-space:var(--text-white-space, nowrap);overflow:hidden;text-overflow:ellipsis}.toast.svelte-w1j1kj .msg.clamp.svelte-w1j1kj{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:3;overflow:hidden}.toast.svelte-w1j1kj .msg.clamp .title.svelte-w1j1kj{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden}.toast.svelte-w1j1kj .title.svelte-w1j1kj{display:block;font-size:var(--font-size-standard);line-height:var(--line-height-standard);font-weight:var(--font-weight-bold);line-height:normal}.toast.svelte-w1j1kj button.close.svelte-w1j1kj{padding:0;line-height:0;color:inherit}",
   map: null
 };
@@ -3963,7 +3963,7 @@ const Toast = create_ssr_component(($$result, $$props, $$bindings, slots) => {
   onDestroy(cleanUpAutoHide);
   if ($$props.msg === void 0 && $$bindings.msg && msg !== void 0)
     $$bindings.msg(msg);
-  $$result.css.add(css$5);
+  $$result.css.add(css$4);
   ({ text: text2, level, spinner, title, overflow, position, icon, theme: theme2, renderAsHtml } = msg);
   scroll = overflow === void 0 || overflow === "scroll";
   truncate = overflow === "truncate";
@@ -3974,7 +3974,7 @@ const Toast = create_ssr_component(($$result, $$props, $$bindings, slots) => {
     (truncate ? "truncate" : "") + " " + (clamp ? "clamp" : "") + " " + (scroll ? "scroll" : "")
   ].join(" ").trim()}"${add_attribute("style", minHeightMessage, 0)}>${nonNullish(title) ? `<span class="title svelte-w1j1kj">${escape(title)}</span>` : ``} ${renderAsHtml ? `${validate_component(Html, "Html").$$render($$result, { text: text2 }, {}, {})}` : `${escape(text2)}`}</p> <button class="close svelte-w1j1kj"${add_attribute("aria-label", $i18n.core.close, 0)}>${validate_component(IconClose, "IconClose").$$render($$result, {}, {}, {})}</button> </div>`;
 });
-const css$4 = {
+const css$3 = {
   code: ".wrapper.svelte-24m335{position:fixed;left:50%;transform:translate(-50%, 0);bottom:calc(var(--layout-bottom-offset, 0) + var(--padding-2x));width:calc(100% - var(--padding-8x) - var(--padding-0_5x));display:flex;flex-direction:column;gap:var(--padding);z-index:var(--toast-info-z-index)}.wrapper.error.svelte-24m335{z-index:var(--toast-error-z-index)}@media(min-width: 1024px){.wrapper.svelte-24m335{max-width:calc(var(--section-max-width) - var(--padding-2x))}}.top.svelte-24m335{top:calc(var(--header-height) + var(--padding-3x));bottom:unset;width:calc(100% - var(--padding-6x))}@media(min-width: 1024px){.top.svelte-24m335{right:var(--padding-2x);left:unset;transform:none;max-width:calc(var(--section-max-width) / 1.5 - var(--padding-2x))}}",
   map: null
 };
@@ -3988,7 +3988,7 @@ const Toasts = create_ssr_component(($$result, $$props, $$bindings, slots) => {
   let hasErrors;
   if ($$props.position === void 0 && $$bindings.position && position !== void 0)
     $$bindings.position(position);
-  $$result.css.add(css$4);
+  $$result.css.add(css$3);
   toasts = $toastsStore.filter(({ position: pos }) => (pos ?? "bottom") === position);
   hasErrors = toasts.find(({ level }) => ["error", "warn"].includes(level)) !== void 0;
   $$unsubscribe_toastsStore();
@@ -4017,15 +4017,6 @@ const HomeIcon = create_ssr_component(($$result, $$props, $$bindings, slots) => 
   if ($$props.fill === void 0 && $$bindings.fill && fill !== void 0)
     $$bindings.fill(fill);
   return `<svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true"${add_attribute("class", className, 0)} fill="currentColor" viewBox="0 0 24 24"><path d="M21 10C21.1313 10 21.2614 9.97419 21.3827 9.92395C21.5041 9.8737 21.6143 9.80005 21.7072 9.70718C21.8 9.61432 21.8737 9.50406 21.9239 9.38272C21.9742 9.26138 22 9.13133 22 9V6C22.0001 5.79017 21.9341 5.58565 21.8114 5.41544C21.6887 5.24524 21.5155 5.11799 21.3164 5.05176L12.3164 2.05176C12.111 1.9834 11.889 1.9834 11.6836 2.05176L2.68359 5.05176C2.48449 5.11799 2.31131 5.24524 2.18861 5.41544C2.0659 5.58565 1.99991 5.79017 2 6V9C1.99997 9.13133 2.02581 9.26138 2.07605 9.38272C2.12629 9.50406 2.19995 9.61432 2.29282 9.70718C2.38568 9.80005 2.49594 9.8737 2.61728 9.92395C2.73862 9.97419 2.86867 10 3 10H4V17.1843C3.41674 17.3897 2.91137 17.7707 2.55327 18.2748C2.19517 18.779 2.0019 19.3816 2 20V22C1.99997 22.1313 2.02581 22.2614 2.07605 22.3827C2.12629 22.5041 2.19995 22.6143 2.29282 22.7072C2.38568 22.8 2.49594 22.8737 2.61728 22.9239C2.73862 22.9742 2.86867 23 3 23H21C21.1313 23 21.2614 22.9742 21.3827 22.9239C21.5041 22.8737 21.6143 22.8 21.7072 22.7072C21.8 22.6143 21.8737 22.5041 21.9239 22.3827C21.9742 22.2614 22 22.1313 22 22V20C21.9981 19.3816 21.8048 18.779 21.4467 18.2748C21.0886 17.7707 20.5833 17.3897 20 17.1843V10H21ZM20 21H4V20C4.00026 19.7349 4.10571 19.4807 4.29319 19.2932C4.48066 19.1057 4.73486 19.0003 5 19H19C19.2651 19.0003 19.5193 19.1057 19.7068 19.2932C19.8943 19.4807 19.9997 19.7349 20 20V21ZM6 17V10H8V17H6ZM10 17V10H14V17H10ZM16 17V10H18V17H16ZM4 8V6.7207L12 4.0537L20 6.7207V8H4Z"${add_attribute("fill", fill, 0)}></path></svg>`;
-});
-const BettingIcon = create_ssr_component(($$result, $$props, $$bindings, slots) => {
-  let { className = "" } = $$props;
-  let { fill = "white" } = $$props;
-  if ($$props.className === void 0 && $$bindings.className && className !== void 0)
-    $$bindings.className(className);
-  if ($$props.fill === void 0 && $$bindings.fill && fill !== void 0)
-    $$bindings.fill(fill);
-  return `<svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true"${add_attribute("class", className, 0)} fill="currentColor" viewBox="0 0 24 24"><path d="M22 17H2C1.73478 17 1.48043 17.1054 1.29289 17.2929C1.10536 17.4804 1 17.7348 1 18C1 18.2652 1.10536 18.5196 1.29289 18.7071C1.48043 18.8946 1.73478 19 2 19H22C22.2652 19 22.5196 18.8946 22.7071 18.7071C22.8946 18.5196 23 18.2652 23 18C23 17.7348 22.8946 17.4804 22.7071 17.2929C22.5196 17.1054 22.2652 17 22 17ZM22 21H2C1.73478 21 1.48043 21.1054 1.29289 21.2929C1.10536 21.4804 1 21.7348 1 22C1 22.2652 1.10536 22.5196 1.29289 22.7071C1.48043 22.8946 1.73478 23 2 23H22C22.2652 23 22.5196 22.8946 22.7071 22.7071C22.8946 22.5196 23 22.2652 23 22C23 21.7348 22.8946 21.4804 22.7071 21.2929C22.5196 21.1054 22.2652 21 22 21ZM6 7C5.80222 7 5.60888 7.05865 5.44443 7.16853C5.27998 7.27841 5.15181 7.43459 5.07612 7.61732C5.00043 7.80004 4.98063 8.00111 5.01921 8.19509C5.0578 8.38907 5.15304 8.56725 5.29289 8.70711C5.43275 8.84696 5.61093 8.9422 5.80491 8.98079C5.99889 9.01937 6.19996 8.99957 6.38268 8.92388C6.56541 8.84819 6.72159 8.72002 6.83147 8.55557C6.94135 8.39112 7 8.19778 7 8C7 7.73478 6.89464 7.48043 6.70711 7.29289C6.51957 7.10536 6.26522 7 6 7ZM20 1H4C3.20435 1 2.44129 1.31607 1.87868 1.87868C1.31607 2.44129 1 3.20435 1 4V12C1 12.7956 1.31607 13.5587 1.87868 14.1213C2.44129 14.6839 3.20435 15 4 15H20C20.7956 15 21.5587 14.6839 22.1213 14.1213C22.6839 13.5587 23 12.7956 23 12V4C23 3.20435 22.6839 2.44129 22.1213 1.87868C21.5587 1.31607 20.7956 1 20 1ZM21 12C21 12.2652 20.8946 12.5196 20.7071 12.7071C20.5196 12.8946 20.2652 13 20 13H4C3.73478 13 3.48043 12.8946 3.29289 12.7071C3.10536 12.5196 3 12.2652 3 12V4C3 3.73478 3.10536 3.48043 3.29289 3.29289C3.48043 3.10536 3.73478 3 4 3H20C20.2652 3 20.5196 3.10536 20.7071 3.29289C20.8946 3.48043 21 3.73478 21 4V12ZM12 5C11.4067 5 10.8266 5.17595 10.3333 5.50559C9.83994 5.83524 9.45542 6.30377 9.22836 6.85195C9.0013 7.40013 8.94189 8.00333 9.05764 8.58527C9.1734 9.16721 9.45912 9.70176 9.87868 10.1213C10.2982 10.5409 10.8328 10.8266 11.4147 10.9424C11.9967 11.0581 12.5999 10.9987 13.1481 10.7716C13.6962 10.5446 14.1648 10.1601 14.4944 9.66671C14.8241 9.17336 15 8.59334 15 8C15 7.20435 14.6839 6.44129 14.1213 5.87868C13.5587 5.31607 12.7956 5 12 5ZM12 9C11.8022 9 11.6089 8.94135 11.4444 8.83147C11.28 8.72159 11.1518 8.56541 11.0761 8.38268C11.0004 8.19996 10.9806 7.99889 11.0192 7.80491C11.0578 7.61093 11.153 7.43275 11.2929 7.29289C11.4327 7.15304 11.6109 7.0578 11.8049 7.01921C11.9989 6.98063 12.2 7.00043 12.3827 7.07612C12.5654 7.15181 12.7216 7.27998 12.8315 7.44443C12.9414 7.60888 13 7.80222 13 8C13 8.26522 12.8946 8.51957 12.7071 8.70711C12.5196 8.89464 12.2652 9 12 9ZM18 7C17.8022 7 17.6089 7.05865 17.4444 7.16853C17.28 7.27841 17.1518 7.43459 17.0761 7.61732C17.0004 7.80004 16.9806 8.00111 17.0192 8.19509C17.0578 8.38907 17.153 8.56725 17.2929 8.70711C17.4327 8.84696 17.6109 8.9422 17.8049 8.98079C17.9989 9.01937 18.2 8.99957 18.3827 8.92388C18.5654 8.84819 18.7216 8.72002 18.8315 8.55557C18.9414 8.39112 19 8.19778 19 8C19 7.73478 18.8946 7.48043 18.7071 7.29289C18.5196 7.10536 18.2652 7 18 7Z"${add_attribute("fill", fill, 0)}></path></svg>`;
 });
 const GamesIcon = create_ssr_component(($$result, $$props, $$bindings, slots) => {
   let { className = "" } = $$props;
@@ -4069,7 +4060,7 @@ const Tooltip = create_ssr_component(($$result, $$props, $$bindings, slots) => {
     $$bindings.text(text2);
   return `<button class="relative flex items-center w-6 max-w-6 text-sm">${slots.default ? slots.default({}) : ``} ${``}</button>`;
 });
-const css$3 = {
+const css$2 = {
   code: ".transition-width.svelte-frwh1m{transition:width 200ms}a.active.svelte-frwh1m{color:white !important}",
   map: null
 };
@@ -4091,18 +4082,13 @@ const Layout = create_ssr_component(($$result, $$props, $$bindings, slots) => {
       return;
     }
   };
-  $$result.css.add(css$3);
+  $$result.css.add(css$2);
   links = $authSignedInStore ? [
     { name: "Home", icon: HomeIcon, href: "/" },
     {
       name: "Euro 2024",
       icon: StarIcon,
       href: "/euro2024"
-    },
-    {
-      name: "Match Betting",
-      icon: BettingIcon,
-      href: "/betting"
     },
     {
       name: "Mini Games",
@@ -4730,7 +4716,6 @@ function createEuro2024Store() {
   );
   async function sync() {
     let result = await actor.getEuro2024StateDTO();
-    console.log(result);
     if (isError(result)) {
       console.error("Error syncing euro 2024 store");
       return;
@@ -4739,11 +4724,7 @@ function createEuro2024Store() {
     set(updatedEuro2024StateData);
   }
   async function getEuro2024State() {
-    const identityActor = await ActorFactory.createIdentityActor(
-      authStore,
-      define_process_env_default$2.FOOTBALL_GOD_BACKEND_CANISTER_ID
-    );
-    let result = await identityActor.getEuro2024State();
+    let result = await actor.getEuro2024State();
     return result;
   }
   async function getPotBalance() {
@@ -4767,9 +4748,7 @@ function createEuro2024Store() {
       authStore,
       define_process_env_default$2.FOOTBALL_GOD_BACKEND_CANISTER_ID
     );
-    console.log(principalId);
     let result = await identityActor.getPublicEuro2024DTO(principalId);
-    console.log(result);
     if (isError(result)) {
       console.error("error fetching prediction");
     }
@@ -4781,13 +4760,10 @@ function createEuro2024Store() {
       define_process_env_default$2.FOOTBALL_GOD_BACKEND_CANISTER_ID
     );
     let result = await identityActor.getEuro2024Fixtures();
-    console.log("result");
-    console.log(result);
     if (isError(result)) {
       console.error("error fetching euro 2024 fixtures", result);
       return [];
     }
-    console.log(result);
     return result.ok;
   }
   async function getLeaderboard(offset, limit) {
@@ -4802,12 +4778,9 @@ function createEuro2024Store() {
       entries: []
     };
     let result = await identityActor.getLeaderboard(dto);
-    console.log("result");
-    console.log(result);
     if (isError(result)) {
       console.error("error fetching euro 2024 fixtures", result);
     }
-    console.log(result);
     return result.ok;
   }
   async function getEvents() {
@@ -4831,7 +4804,7 @@ function createEuro2024Store() {
   };
 }
 const euro2024Store = createEuro2024Store();
-const css$2 = {
+const css$1 = {
   code: ".overlay-panel.svelte-a3qity{position:absolute;bottom:0;right:0}",
   map: null
 };
@@ -4845,7 +4818,7 @@ const Page$c = create_ssr_component(($$result, $$props, $$bindings, slots) => {
   onDestroy(() => {
     clearInterval(interval);
   });
-  $$result.css.add(css$2);
+  $$result.css.add(css$1);
   $$unsubscribe_authSignedInStore();
   $$unsubscribe_countdown();
   return `${validate_component(Layout, "Layout").$$render($$result, {}, {}, {
@@ -4971,7 +4944,7 @@ const Page$b = create_ssr_component(($$result, $$props, $$bindings, slots) => {
     }
   })}`;
 });
-const css$1 = {
+const css = {
   code: ".tab-active.svelte-1uspj1d{--tw-bg-opacity:1;background-color:rgb(59 130 246 / var(--tw-bg-opacity));--tw-text-opacity:1;color:rgb(255 255 255 / var(--tw-text-opacity))\n}",
   map: null
 };
@@ -4995,7 +4968,7 @@ const Page$a = create_ssr_component(($$result, $$props, $$bindings, slots) => {
     return $filteredPlayers2.slice(start, start + itemsPerPage);
   });
   $$unsubscribe_paginatedPlayers = subscribe(paginatedPlayers, (value) => $paginatedPlayers = value);
-  $$result.css.add(css$1);
+  $$result.css.add(css);
   $$unsubscribe_contractTypeFilter();
   $$unsubscribe_filteredPlayers();
   $$unsubscribe_paginatedPlayers();
@@ -5149,19 +5122,20 @@ const Page$4 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
 const Page$3 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
   return `     `;
 });
-const css = {
-  code: ".bg-panel.svelte-1rn56bm{background-color:#f0f0f0;border-radius:8px}.default-header.svelte-1rn56bm{color:#333}",
-  map: null
-};
 const Page$2 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
   let $page, $$unsubscribe_page;
+  let $$unsubscribe_teamStore;
+  let $$unsubscribe_playerStore;
   $$unsubscribe_page = subscribe(page, (value) => $page = value);
-  $$result.css.add(css);
+  $$unsubscribe_teamStore = subscribe(teamStore, (value) => value);
+  $$unsubscribe_playerStore = subscribe(playerStore, (value) => value);
   $page.url.searchParams.get("id");
   $$unsubscribe_page();
+  $$unsubscribe_teamStore();
+  $$unsubscribe_playerStore();
   return `${validate_component(Layout, "Layout").$$render($$result, {}, {}, {
     default: () => {
-      return `<div class="bg-panel mt-4 svelte-1rn56bm"><h1 class="p-4 mx-1 default-header svelte-1rn56bm" data-svelte-h="svelte-1cmu2ta">Euro 2024 Prediction</h1> ${`<div data-svelte-h="svelte-194gxkm">Loading...</div>`}</div>`;
+      return `<div class="bg-panel mt-2 p-4"><h1 class="my-2 default-header" data-svelte-h="svelte-od2mk5">Euro 2024 Prediction</h1> ${`<div data-svelte-h="svelte-194gxkm">Loading...</div>`}</div>`;
     }
   })}`;
 });

@@ -343,47 +343,88 @@ module {
       );
     };
 
-    public func calculateLeaderboard(){
+  public func calculateLeaderboard() {
+    var entryMap : TrieMap.TrieMap<T.PrincipalName, Nat> = TrieMap.TrieMap<T.PrincipalName, Nat>(Text.equal, Text.hash);
 
-      var entryMap : TrieMap.TrieMap<T.PrincipalName, Nat> = TrieMap.TrieMap<T.PrincipalName, Nat>(Text.equal, Text.hash);
+    for(entry in userPredictions.entries()) {
+      let score = calculateScore(entry.1);
+      entryMap.put(entry.0, score);
+      updatePredictionScore(entry.0, score);
+    };
 
-      for(entry in userPredictions.entries()){
-        entryMap.put(entry.0, calculateScore(entry.1));
-        updatePredictionScore(entry.0, calculateScore(entry.1));
+    let entries = Iter.toArray(entryMap.entries());
+    let sortedEntries = Array.sort<(T.PrincipalName, Nat)>(entries, func((_: T.PrincipalName, scoreA: Nat), (_: T.PrincipalName, scoreB: Nat)) : Order.Order {
+      if (scoreA > scoreB) { return #less }; // Sort from highest to lowest
+      if (scoreA == scoreB) { return #equal };
+      return #greater;
+    });
+
+    var leaderboardBuffer = Buffer.fromArray<T.LeaderboardEntry>([]);
+    var currentPosition : Nat = 0;
+    var lastScore : Nat = 0;
+    var lastPositionText : Text = "";
+    var tieInProgress : Bool = false;
+
+    for (i in Iter.range(0, sortedEntries.size() - 1)) {
+      let (principalName, score) = sortedEntries[i];
+
+      if (i == 0 or score != lastScore) {
+        currentPosition += 1;
+        if (tieInProgress) {
+          leaderboardBuffer.add({
+            principalName = sortedEntries[i-1].0;
+            position = currentPosition - 1;
+            positionText = "T" # Nat.toText(currentPosition - 1);
+            score = lastScore;
+          });
+          tieInProgress := false;
+        };
+        lastPositionText := Nat.toText(currentPosition);
+      } else {
+        if (not tieInProgress) {
+          let prevEntry = leaderboardBuffer.removeLast();
+          switch(prevEntry){
+            case (null){  };
+            case (?foundPrevEntry){
+              leaderboardBuffer.add({
+                principalName = foundPrevEntry.principalName;
+                position = foundPrevEntry.position;
+                positionText = "T" # foundPrevEntry.positionText;
+                score = foundPrevEntry.score;
+              });
+              lastPositionText := "-";
+              tieInProgress := true;
+            }
+          }
+        } else {
+          lastPositionText := "-";
+        }
       };
 
-      let entries = Iter.toArray(entryMap.entries());
-      let sortedEntries = Array.sort<(T.PrincipalName, Nat)>(entries, func((_: T.PrincipalName, scoreA: Nat), (_: T.PrincipalName, scoreB: Nat)) : Order.Order {
-          if (scoreA < scoreB) { return #less };
-          if (scoreA == scoreB) { return #equal };
-          return #greater;
+      leaderboardBuffer.add({
+        principalName = principalName;
+        position = currentPosition;
+        positionText = lastPositionText;
+        score = score;
       });
 
-      var leaderboardBuffer = Buffer.fromArray<T.LeaderboardEntry>([]);
-      var currentPosition : Nat = 0;
-      var lastScore : Nat = 0;
-      var lastPositionText : Text = "";
-
-      for (i in Iter.range(0, sortedEntries.size() - 1)) {
-        let (principalName, score) = sortedEntries[i];
-        
-        if (i == 0 or score != lastScore) {
-            currentPosition += 1;
-            lastPositionText := Nat.toText(currentPosition);
-        };
-
-        leaderboardBuffer.add({
-            principalName = principalName;
-            position = currentPosition;
-            positionText = lastPositionText;
-            score = score;
-        });
-
-        lastScore := score;
+      lastScore := score;
     };
+
+    // Handle the last entry if it was part of a tie
+    if (tieInProgress) {
+      leaderboardBuffer.add({
+        principalName = sortedEntries[sortedEntries.size() - 1].0;
+        position = currentPosition;
+        positionText = "T" # Nat.toText(currentPosition);
+        score = lastScore;
+      });
+    };
+
     let entriesWithPositionText = generatePositionText(List.fromArray(Buffer.toArray(leaderboardBuffer))); 
     leaderboardEntries := List.toArray<T.LeaderboardEntry>(entriesWithPositionText);
   };
+
 
   private func updatePredictionScore(principalId: T.PrincipalName, score: Nat){
       let currentPrediction = userPredictions.get(principalId);
