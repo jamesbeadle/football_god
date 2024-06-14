@@ -18,13 +18,18 @@
     import { euro2024Store } from "$lib/stores/euro2024.store";
     import { authSignedInStore } from "$lib/derived/auth.derived";
     import { authStore, type AuthSignInParams } from "$lib/stores/auth.store";
+    import { goto } from "$app/navigation";
    
     let isLoading = true;
     let principalId = "";
     $: loadingText = "Loading, please wait...";
   
     onMount(async () => {
-      await authStore.sync();
+      authStore.subscribe((store) => {
+        if(store.identity == null || store.identity == undefined){
+          goto('/');
+        }
+      });
       isLoading = false;
     });
   

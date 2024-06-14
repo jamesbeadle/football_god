@@ -16,18 +16,16 @@
   import { fade } from "svelte/transition";
   import "../app.css";
   import { page } from "$app/stores";
-  import { goto } from "$app/navigation";
   import ProfileIcon from "$lib/icons/ProfileIcon.svelte";
-    import LogoutIcon from "$lib/icons/LogoutIcon.svelte";
-    import { signOut } from "$lib/services/auth.services";
-    import Tooltip from "$lib/components/tooltip.svelte";
-  
+  import LogoutIcon from "$lib/icons/LogoutIcon.svelte";
+  import { signOut } from "$lib/services/auth.services";
+  import Tooltip from "$lib/components/tooltip.svelte";
 
   let isExpanded = writable(false);
   $: links = $authSignedInStore ? [
     { name: "Home", icon: HomeIcon, href: "/" },
     { name: "Euro 2024", icon: StarIcon, href: "/euro2024" },
-    { name: "Mini Games", icon: GamesIcon, href: "/games" },
+    { name: "Games", icon: GamesIcon, href: "/games" },
     { name: "Profile", icon: ProfileIcon, href: "/profile" },
   ] : 
   [
@@ -82,9 +80,8 @@
     authStore.signIn(params);
   }
 
-  function handleLogout() {
-    authStore.signOut();
-    goto("/");
+  async function handleLogout() {
+    await authStore.signOut();
   }
 
 

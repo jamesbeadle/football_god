@@ -2,10 +2,20 @@
     import AdminEuro2024Entries from "$lib/components/admin/admin_euro2024_entries.svelte";
     import AdminEuro2024Events from "$lib/components/admin/admin_euro2024_events.svelte";
     import { adminStore } from "$lib/stores/admin.store";
+    import { onMount } from "svelte";
     import Layout from "../Layout.svelte";
+    import { authStore } from "$lib/stores/auth.store";
+    import { goto } from "$app/navigation";
 
     let activeTab: string = "euro2024entries";
-
+    onMount(async () => {
+      await authStore.sync();
+      authStore.subscribe((store) => {
+        if(store.identity == null || store.identity == undefined){
+          goto('/');
+        }
+      });
+    });
 
     function setActiveTab(tab: string): void {
         activeTab = tab;

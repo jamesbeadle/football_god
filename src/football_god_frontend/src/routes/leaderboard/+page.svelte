@@ -9,14 +9,15 @@
     let offset = 0n;
     let totalEntries = 0n;
     let entries: Euro2024LeaderboardEntryDTO[] = [];
+    let currentPage = 1;
     
     const fetchLeaderboard = async () => {
         isLoading = true;
         try {
-        await euro2024Store.sync();
-        let result = await euro2024Store.getLeaderboard(offset, limit);
-        entries = result.leaderboardEntries;
-        totalEntries = result.totalEntries;
+            await euro2024Store.sync();
+            let result = await euro2024Store.getLeaderboard(offset, limit);
+            entries = result.leaderboardEntries;
+            totalEntries = result.totalEntries;
         } catch {
             console.error("Error fetching leaderboard");
         } finally {
@@ -27,6 +28,7 @@
     onMount(fetchLeaderboard);
 
     function goToPage(page: number): void {
+        currentPage = page;
         offset = (BigInt(page) - 1n) * limit;
         fetchLeaderboard();
     }
@@ -77,11 +79,14 @@
 
             <div class="flex justify-center py-4 mt-4">
                 {#each Array(Math.ceil(Number(totalEntries) / Number(limit))) as _, i}
-                    <button class="mx-1 px-2 py-1 bg-OPENFPL" on:click={() => goToPage(i + 1)}>
+                    <button 
+                        class={`mx-1 px-2 py-1 ${currentPage === i + 1 ? 'bg-OPENFPL' : 'bg-gray-500'}`} 
+                        on:click={() => goToPage(i + 1)}>
                         {i + 1}
                     </button>
                 {/each}
             </div>
+
           
         {/if}
     </div>

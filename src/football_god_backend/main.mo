@@ -1231,6 +1231,8 @@ actor Self {
 
   public shared query func getPublicEuro2024DTO(principalId: Text) : async Result.Result<DTOs.Euro2024PredictionDTO, T.Error> {
 
+    let state = euro2024Instance.getState();
+    assert state.stage != #Selecting;
     let prediction = euro2024Instance.getPredictions(principalId);
     switch (prediction) {
       case (null) {
