@@ -503,7 +503,7 @@ module {
       let groupAWinnerMatch = Array.find<T.Euro2024Event>(
         events,
         func(event : T.Euro2024Event) : Bool {
-          return event.teamId == predictionAWinner and event.eventType == #StageWon;
+          return event.teamId == predictionAWinner and event.eventType == #StageWon and event.stage == #GroupA;
         },
       );
       if (Option.isSome(groupAWinnerMatch)) {
@@ -516,7 +516,7 @@ module {
       let groupALoserMatch = Array.find<T.Euro2024Event>(
         events,
         func(event : T.Euro2024Event) : Bool {
-          return event.teamId == predictionALoser and event.eventType == #StageLost;
+          return event.teamId == predictionALoser and event.eventType == #StageLost and event.stage == #GroupA;
         },
       );
       if (Option.isSome(groupALoserMatch)) {
@@ -528,7 +528,7 @@ module {
       let groupAScorerMatch = Array.find<T.Euro2024Event>(
         events,
         func(event : T.Euro2024Event) : Bool {
-          return event.playerId == predictionAScorer and event.eventType == #GoalScored;
+          return event.playerId == predictionAScorer and event.eventType == #GoalScored and event.stage == #GroupA;
         },
       );
       if (Option.isSome(groupAScorerMatch)) {
@@ -540,37 +540,37 @@ module {
       let groupAAssisterMatch = Array.find<T.Euro2024Event>(
         events,
         func(event : T.Euro2024Event) : Bool {
-          return event.playerId == predictionAAssister and event.eventType == #GoalAssisted;
+          return event.playerId == predictionAAssister and event.eventType == #GoalAssisted and event.stage == #GroupA;
         },
       );
       if (Option.isSome(groupAAssisterMatch)) {
         totalScore := totalScore + 10;
-        totalCorrectScorers := totalCorrectScorers + 1;
-        correctScorersScore := correctScorersScore +  10;
+        totalCorrectAssisters := totalCorrectAssisters + 1;
+        correctAssistersScore := correctAssistersScore +  10;
       };
 
       let groupAYellowMatch = Array.find<T.Euro2024Event>(
         events,
         func(event : T.Euro2024Event) : Bool {
-          return event.playerId == predictionAYellowCard and event.eventType == #YellowCard;
+          return event.playerId == predictionAYellowCard and event.eventType == #YellowCard and event.stage == #GroupA;
         },
       );
       if (Option.isSome(groupAYellowMatch)) {
         totalScore := totalScore + 5;
-        totalCorrectScorers := totalCorrectScorers + 1;
-        correctScorersScore := correctScorersScore +  5;
+        totalCorrectYellowCards := totalCorrectYellowCards + 1;
+        correctYellowCardsScore := correctYellowCardsScore +  5;
       };
 
       let groupARedMatch = Array.find<T.Euro2024Event>(
         events,
         func(event : T.Euro2024Event) : Bool {
-          return event.playerId == predictionARedCard and event.eventType == #RedCard;
+          return event.playerId == predictionARedCard and event.eventType == #RedCard and event.stage == #GroupA;
         },
       );
       if (Option.isSome(groupARedMatch)) {
         totalScore := totalScore + 10;
-        totalCorrectScorers := totalCorrectScorers + 1;
-        correctScorersScore := correctScorersScore +  10;
+        totalCorrectRedCards := totalCorrectRedCards + 1;
+        correctRedCardScore := correctRedCardScore +  10;
       };
 
       //B
@@ -585,7 +585,7 @@ module {
       let groupBWinnerMatch = Array.find<T.Euro2024Event>(
         events,
         func(event : T.Euro2024Event) : Bool {
-          return event.teamId == predictionBWinner and event.eventType == #StageWon;
+          return event.teamId == predictionBWinner and event.eventType == #StageWon and event.stage == #GroupB;
         },
       );
       if (Option.isSome(groupBWinnerMatch)) {
@@ -598,7 +598,7 @@ module {
       let groupBLoserMatch = Array.find<T.Euro2024Event>(
         events,
         func(event : T.Euro2024Event) : Bool {
-          return event.teamId == predictionBLoser and event.eventType == #StageLost;
+          return event.teamId == predictionBLoser and event.eventType == #StageLost and event.stage == #GroupB;
         },
       );
       if (Option.isSome(groupBLoserMatch)) {
@@ -610,7 +610,7 @@ module {
       let groupBScorerMatch = Array.find<T.Euro2024Event>(
         events,
         func(event : T.Euro2024Event) : Bool {
-          return event.playerId == predictionBScorer and event.eventType == #GoalScored;
+          return event.playerId == predictionBScorer and event.eventType == #GoalScored and event.stage == #GroupB;
         },
       );
       if (Option.isSome(groupBScorerMatch)) {
@@ -622,37 +622,37 @@ module {
       let groupBAssisterMatch = Array.find<T.Euro2024Event>(
         events,
         func(event : T.Euro2024Event) : Bool {
-          return event.playerId == predictionBAssister and event.eventType == #GoalAssisted;
+          return event.playerId == predictionBAssister and event.eventType == #GoalAssisted and event.stage == #GroupB;
         },
       );
       if (Option.isSome(groupBAssisterMatch)) {
         totalScore := totalScore + 10;
-        totalCorrectScorers := totalCorrectScorers + 1;
-        correctScorersScore := correctScorersScore +  10;
+        totalCorrectAssisters := totalCorrectAssisters + 1;
+        correctAssistersScore := correctAssistersScore +  10;
       };
 
       let groupBYellowMatch = Array.find<T.Euro2024Event>(
         events,
         func(event : T.Euro2024Event) : Bool {
-          return event.playerId == predictionBYellowCard and event.eventType == #YellowCard;
+          return event.playerId == predictionBYellowCard and event.eventType == #YellowCard and event.stage == #GroupB;
         },
       );
       if (Option.isSome(groupBYellowMatch)) {
         totalScore := totalScore + 5;
-        totalCorrectScorers := totalCorrectScorers + 1;
-        correctScorersScore := correctScorersScore +  5;
+        totalCorrectYellowCards := totalCorrectYellowCards + 1;
+        correctYellowCardsScore := correctYellowCardsScore +  5;
       };
 
       let groupBRedMatch = Array.find<T.Euro2024Event>(
         events,
         func(event : T.Euro2024Event) : Bool {
-          return event.playerId == predictionBRedCard and event.eventType == #RedCard;
+          return event.playerId == predictionBRedCard and event.eventType == #RedCard and event.stage == #GroupB;
         },
       );
       if (Option.isSome(groupBRedMatch)) {
         totalScore := totalScore + 10;
-        totalCorrectScorers := totalCorrectScorers + 1;
-        correctScorersScore := correctScorersScore +  10;
+        totalCorrectRedCards := totalCorrectRedCards + 1;
+        correctRedCardScore := correctRedCardScore +  10;
       };
 
       //C
@@ -667,7 +667,7 @@ module {
       let groupCWinnerMatch = Array.find<T.Euro2024Event>(
         events,
         func(event : T.Euro2024Event) : Bool {
-          return event.teamId == predictionCWinner and event.eventType == #StageWon;
+          return event.teamId == predictionCWinner and event.eventType == #StageWon and event.stage == #GroupC;
         },
       );
       if (Option.isSome(groupCWinnerMatch)) {
@@ -680,7 +680,7 @@ module {
       let groupCLoserMatch = Array.find<T.Euro2024Event>(
         events,
         func(event : T.Euro2024Event) : Bool {
-          return event.teamId == predictionCLoser and event.eventType == #StageLost;
+          return event.teamId == predictionCLoser and event.eventType == #StageLost and event.stage == #GroupC;
         },
       );
       if (Option.isSome(groupCLoserMatch)) {
@@ -692,7 +692,7 @@ module {
       let groupCScorerMatch = Array.find<T.Euro2024Event>(
         events,
         func(event : T.Euro2024Event) : Bool {
-          return event.playerId == predictionCScorer and event.eventType == #GoalScored;
+          return event.playerId == predictionCScorer and event.eventType == #GoalScored and event.stage == #GroupC;
         },
       );
       if (Option.isSome(groupCScorerMatch)) {
@@ -704,37 +704,37 @@ module {
       let groupCAssisterMatch = Array.find<T.Euro2024Event>(
         events,
         func(event : T.Euro2024Event) : Bool {
-          return event.playerId == predictionCAssister and event.eventType == #GoalAssisted;
+          return event.playerId == predictionCAssister and event.eventType == #GoalAssisted and event.stage == #GroupC;
         },
       );
       if (Option.isSome(groupCAssisterMatch)) {
         totalScore := totalScore + 10;
-        totalCorrectScorers := totalCorrectScorers + 1;
-        correctScorersScore := correctScorersScore +  10;
+        totalCorrectAssisters := totalCorrectAssisters + 1;
+        correctAssistersScore := correctAssistersScore +  10;
       };
 
       let groupCYellowMatch = Array.find<T.Euro2024Event>(
         events,
         func(event : T.Euro2024Event) : Bool {
-          return event.playerId == predictionCYellowCard and event.eventType == #YellowCard;
+          return event.playerId == predictionCYellowCard and event.eventType == #YellowCard and event.stage == #GroupC;
         },
       );
       if (Option.isSome(groupCYellowMatch)) {
         totalScore := totalScore + 5;
-        totalCorrectScorers := totalCorrectScorers + 1;
-        correctScorersScore := correctScorersScore +  5;
+        totalCorrectYellowCards := totalCorrectYellowCards + 1;
+        correctYellowCardsScore := correctYellowCardsScore +  5;
       };
 
       let groupCRedMatch = Array.find<T.Euro2024Event>(
         events,
         func(event : T.Euro2024Event) : Bool {
-          return event.playerId == predictionCRedCard and event.eventType == #RedCard;
+          return event.playerId == predictionCRedCard and event.eventType == #RedCard and event.stage == #GroupC;
         },
       );
       if (Option.isSome(groupCRedMatch)) {
         totalScore := totalScore + 10;
-        totalCorrectScorers := totalCorrectScorers + 1;
-        correctScorersScore := correctScorersScore +  10;
+        totalCorrectRedCards := totalCorrectRedCards + 1;
+        correctRedCardScore := correctRedCardScore +  10;
       };
 
       //D
@@ -749,7 +749,7 @@ module {
       let groupDWinnerMatch = Array.find<T.Euro2024Event>(
         events,
         func(event : T.Euro2024Event) : Bool {
-          return event.teamId == predictionDWinner and event.eventType == #StageWon;
+          return event.teamId == predictionDWinner and event.eventType == #StageWon and event.stage == #GroupD;
         },
       );
       if (Option.isSome(groupDWinnerMatch)) {
@@ -762,7 +762,7 @@ module {
       let groupDLoserMatch = Array.find<T.Euro2024Event>(
         events,
         func(event : T.Euro2024Event) : Bool {
-          return event.teamId == predictionDLoser and event.eventType == #StageLost;
+          return event.teamId == predictionDLoser and event.eventType == #StageLost and event.stage == #GroupD;
         },
       );
       if (Option.isSome(groupDLoserMatch)) {
@@ -774,7 +774,7 @@ module {
       let groupDScorerMatch = Array.find<T.Euro2024Event>(
         events,
         func(event : T.Euro2024Event) : Bool {
-          return event.playerId == predictionDScorer and event.eventType == #GoalScored;
+          return event.playerId == predictionDScorer and event.eventType == #GoalScored and event.stage == #GroupD;
         },
       );
       if (Option.isSome(groupDScorerMatch)) {
@@ -786,37 +786,37 @@ module {
       let groupDAssisterMatch = Array.find<T.Euro2024Event>(
         events,
         func(event : T.Euro2024Event) : Bool {
-          return event.playerId == predictionDAssister and event.eventType == #GoalAssisted;
+          return event.playerId == predictionDAssister and event.eventType == #GoalAssisted and event.stage == #GroupD;
         },
       );
       if (Option.isSome(groupDAssisterMatch)) {
         totalScore := totalScore + 10;
-        totalCorrectScorers := totalCorrectScorers + 1;
-        correctScorersScore := correctScorersScore +  10;
+        totalCorrectAssisters := totalCorrectAssisters + 1;
+        correctAssistersScore := correctAssistersScore +  10;
       };
 
       let groupDYellowMatch = Array.find<T.Euro2024Event>(
         events,
         func(event : T.Euro2024Event) : Bool {
-          return event.playerId == predictionDYellowCard and event.eventType == #YellowCard;
+          return event.playerId == predictionDYellowCard and event.eventType == #YellowCard and event.stage == #GroupD;
         },
       );
       if (Option.isSome(groupDYellowMatch)) {
         totalScore := totalScore + 5;
-        totalCorrectScorers := totalCorrectScorers + 1;
-        correctScorersScore := correctScorersScore +  5;
+        totalCorrectYellowCards := totalCorrectYellowCards + 1;
+        correctYellowCardsScore := correctYellowCardsScore +  5;
       };
 
       let groupDRedMatch = Array.find<T.Euro2024Event>(
         events,
         func(event : T.Euro2024Event) : Bool {
-          return event.playerId == predictionDRedCard and event.eventType == #RedCard;
+          return event.playerId == predictionDRedCard and event.eventType == #RedCard and event.stage == #GroupD;
         },
       );
       if (Option.isSome(groupDRedMatch)) {
         totalScore := totalScore + 10;
-        totalCorrectScorers := totalCorrectScorers + 1;
-        correctScorersScore := correctScorersScore +  10;
+        totalCorrectRedCards := totalCorrectRedCards + 1;
+        correctRedCardScore := correctRedCardScore +  10;
       };
 
       //E
@@ -831,7 +831,7 @@ module {
       let groupEWinnerMatch = Array.find<T.Euro2024Event>(
         events,
         func(event : T.Euro2024Event) : Bool {
-          return event.teamId == predictionEWinner and event.eventType == #StageWon;
+          return event.teamId == predictionEWinner and event.eventType == #StageWon and event.stage == #GroupE;
         },
       );
       if (Option.isSome(groupEWinnerMatch)) {
@@ -844,7 +844,7 @@ module {
       let groupELoserMatch = Array.find<T.Euro2024Event>(
         events,
         func(event : T.Euro2024Event) : Bool {
-          return event.teamId == predictionELoser and event.eventType == #StageLost;
+          return event.teamId == predictionELoser and event.eventType == #StageLost and event.stage == #GroupE;
         },
       );
       if (Option.isSome(groupELoserMatch)) {
@@ -856,7 +856,7 @@ module {
       let groupEScorerMatch = Array.find<T.Euro2024Event>(
         events,
         func(event : T.Euro2024Event) : Bool {
-          return event.playerId == predictionEScorer and event.eventType == #GoalScored;
+          return event.playerId == predictionEScorer and event.eventType == #GoalScored and event.stage == #GroupE;
         },
       );
       if (Option.isSome(groupEScorerMatch)) {
@@ -868,37 +868,37 @@ module {
       let groupEAssisterMatch = Array.find<T.Euro2024Event>(
         events,
         func(event : T.Euro2024Event) : Bool {
-          return event.playerId == predictionEAssister and event.eventType == #GoalAssisted;
+          return event.playerId == predictionEAssister and event.eventType == #GoalAssisted and event.stage == #GroupE;
         },
       );
       if (Option.isSome(groupEAssisterMatch)) {
         totalScore := totalScore + 10;
-        totalCorrectScorers := totalCorrectScorers + 1;
-        correctScorersScore := correctScorersScore +  10;
+        totalCorrectAssisters := totalCorrectAssisters + 1;
+        correctAssistersScore := correctAssistersScore +  10;
       };
 
       let groupEYellowMatch = Array.find<T.Euro2024Event>(
         events,
         func(event : T.Euro2024Event) : Bool {
-          return event.playerId == predictionEYellowCard and event.eventType == #YellowCard;
+          return event.playerId == predictionEYellowCard and event.eventType == #YellowCard and event.stage == #GroupE;
         },
       );
       if (Option.isSome(groupEYellowMatch)) {
         totalScore := totalScore + 5;
-        totalCorrectScorers := totalCorrectScorers + 1;
-        correctScorersScore := correctScorersScore +  5;
+        totalCorrectYellowCards := totalCorrectYellowCards + 1;
+        correctYellowCardsScore := correctYellowCardsScore +  5;
       };
 
       let groupERedMatch = Array.find<T.Euro2024Event>(
         events,
         func(event : T.Euro2024Event) : Bool {
-          return event.playerId == predictionERedCard and event.eventType == #RedCard;
+          return event.playerId == predictionERedCard and event.eventType == #RedCard and event.stage == #GroupE;
         },
       );
       if (Option.isSome(groupERedMatch)) {
         totalScore := totalScore + 10;
-        totalCorrectScorers := totalCorrectScorers + 1;
-        correctScorersScore := correctScorersScore +  10;
+        totalCorrectRedCards := totalCorrectRedCards + 1;
+        correctRedCardScore := correctRedCardScore +  10;
       };
 
       //F
@@ -913,7 +913,7 @@ module {
       let groupFWinnerMatch = Array.find<T.Euro2024Event>(
         events,
         func(event : T.Euro2024Event) : Bool {
-          return event.teamId == predictionFWinner and event.eventType == #StageWon;
+          return event.teamId == predictionFWinner and event.eventType == #StageWon and event.stage == #GroupF;
         },
       );
       if (Option.isSome(groupFWinnerMatch)) {
@@ -926,7 +926,7 @@ module {
       let groupFLoserMatch = Array.find<T.Euro2024Event>(
         events,
         func(event : T.Euro2024Event) : Bool {
-          return event.teamId == predictionFLoser and event.eventType == #StageLost;
+          return event.teamId == predictionFLoser and event.eventType == #StageLost and event.stage == #GroupF;
         },
       );
       if (Option.isSome(groupFLoserMatch)) {
@@ -938,7 +938,7 @@ module {
       let groupFScorerMatch = Array.find<T.Euro2024Event>(
         events,
         func(event : T.Euro2024Event) : Bool {
-          return event.playerId == predictionFScorer and event.eventType == #GoalScored;
+          return event.playerId == predictionFScorer and event.eventType == #GoalScored and event.stage == #GroupF;
         },
       );
       if (Option.isSome(groupFScorerMatch)) {
@@ -950,42 +950,49 @@ module {
       let groupFAssisterMatch = Array.find<T.Euro2024Event>(
         events,
         func(event : T.Euro2024Event) : Bool {
-          return event.playerId == predictionFAssister and event.eventType == #GoalAssisted;
+          return event.playerId == predictionFAssister and event.eventType == #GoalAssisted and event.stage == #GroupF;
         },
       );
       if (Option.isSome(groupFAssisterMatch)) {
         totalScore := totalScore + 10;
-        totalCorrectScorers := totalCorrectScorers + 1;
-        correctScorersScore := correctScorersScore +  10;
+        totalCorrectAssisters := totalCorrectAssisters + 1;
+        correctAssistersScore := correctAssistersScore +  10;
       };
 
       let groupFYellowMatch = Array.find<T.Euro2024Event>(
         events,
         func(event : T.Euro2024Event) : Bool {
-          return event.playerId == predictionFYellowCard and event.eventType == #YellowCard;
+          return event.playerId == predictionFYellowCard and event.eventType == #YellowCard and event.stage == #GroupF;
         },
       );
       if (Option.isSome(groupFYellowMatch)) {
         totalScore := totalScore + 5;
-        totalCorrectScorers := totalCorrectScorers + 1;
-        correctScorersScore := correctScorersScore +  5;
+        totalCorrectYellowCards := totalCorrectYellowCards + 1;
+        correctYellowCardsScore := correctYellowCardsScore +  5;
       };
 
       let groupFRedMatch = Array.find<T.Euro2024Event>(
         events,
         func(event : T.Euro2024Event) : Bool {
-          return event.playerId == predictionFRedCard and event.eventType == #RedCard;
+          return event.playerId == predictionFRedCard and event.eventType == #RedCard and event.stage == #GroupF;
         },
       );
       if (Option.isSome(groupFRedMatch)) {
         totalScore := totalScore + 10;
-        totalCorrectScorers := totalCorrectScorers + 1;
-        correctScorersScore := correctScorersScore +  10;
+        totalCorrectRedCards := totalCorrectRedCards + 1;
+        correctRedCardScore := correctRedCardScore +  10;
       };
 
       //Group Stage Winner Bonus
+      Debug.print("Total correct winners");
+      Debug.print(debug_show totalCorrectWinners);
+
       if(totalCorrectWinners >= 3){
+      Debug.print(debug_show "totalScore");
+      Debug.print(debug_show totalScore);
         totalScore := totalScore + correctWinnersScore;
+      Debug.print(debug_show "2soc");
+      Debug.print(debug_show totalScore);
       };
 
       //Group Stage Loser Bonus
@@ -1013,6 +1020,8 @@ module {
         totalScore := totalScore + correctRedCardScore;
       };
 
+      Debug.print(debug_show "3");
+      Debug.print(debug_show totalScore);
       //R16
       let predictionR16Winner = entry.r16Prediction.winner;
       let predictionR16Loser = entry.r16Prediction.loser;
@@ -1024,7 +1033,7 @@ module {
       let r16WinnerMatch = Array.find<T.Euro2024Event>(
         events,
         func(event : T.Euro2024Event) : Bool {
-          return event.teamId == predictionR16Winner and event.eventType == #StageWon;
+          return event.teamId == predictionR16Winner and event.eventType == #StageWon and event.stage == #RoundOf16;
         },
       );
       if (Option.isSome(r16WinnerMatch)) {
@@ -1034,7 +1043,7 @@ module {
       let r16LoserMatch = Array.find<T.Euro2024Event>(
         events,
         func(event : T.Euro2024Event) : Bool {
-          return event.teamId == predictionR16Loser and event.eventType == #StageLost;
+          return event.teamId == predictionR16Loser and event.eventType == #StageLost and event.stage == #RoundOf16;
         },
       );
       if (Option.isSome(r16LoserMatch)) {
@@ -1049,7 +1058,7 @@ module {
       let r16ScorerMatch = Array.find<T.Euro2024Event>(
         events,
         func(event : T.Euro2024Event) : Bool {
-          return event.playerId == predictionR16Scorer and event.eventType == #GoalScored;
+          return event.playerId == predictionR16Scorer and event.eventType == #GoalScored and event.stage == #RoundOf16;
         },
       );
       if (Option.isSome(r16ScorerMatch)) {
@@ -1059,7 +1068,7 @@ module {
       let r16AssisterMatch = Array.find<T.Euro2024Event>(
         events,
         func(event : T.Euro2024Event) : Bool {
-          return event.playerId == predictionR16Assister and event.eventType == #GoalAssisted;
+          return event.playerId == predictionR16Assister and event.eventType == #GoalAssisted and event.stage == #RoundOf16;
         },
       );
       if (Option.isSome(r16AssisterMatch)) {
@@ -1074,7 +1083,7 @@ module {
       let r16YellowCardMatch = Array.find<T.Euro2024Event>(
         events,
         func(event : T.Euro2024Event) : Bool {
-          return event.playerId == predictionR16YellowCard and event.eventType == #YellowCard;
+          return event.playerId == predictionR16YellowCard and event.eventType == #YellowCard and event.stage == #RoundOf16;
         },
       );
       if (Option.isSome(r16YellowCardMatch)) {
@@ -1084,7 +1093,7 @@ module {
       let r16RedCardMatch = Array.find<T.Euro2024Event>(
         events,
         func(event : T.Euro2024Event) : Bool {
-          return event.playerId == predictionR16RedCard and event.eventType == #RedCard;
+          return event.playerId == predictionR16RedCard and event.eventType == #RedCard and event.stage == #RoundOf16;
         },
       );
       if (Option.isSome(r16RedCardMatch)) {
@@ -1096,6 +1105,8 @@ module {
         totalScore := totalScore + 60;
       };
 
+      Debug.print(debug_show "4");
+      Debug.print(debug_show totalScore);
       //QF
       let predictionQFWinner = entry.qfPrediction.winner;
       let predictionQFLoser = entry.qfPrediction.loser;
@@ -1107,7 +1118,7 @@ module {
       let qfWinnerMatch = Array.find<T.Euro2024Event>(
         events,
         func(event : T.Euro2024Event) : Bool {
-          return event.teamId == predictionQFWinner and event.eventType == #StageWon;
+          return event.teamId == predictionQFWinner and event.eventType == #StageWon and event.stage == #QuarterFinal;
         },
       );
       if (Option.isSome(qfWinnerMatch)) {
@@ -1117,7 +1128,7 @@ module {
       let qfLoserMatch = Array.find<T.Euro2024Event>(
         events,
         func(event : T.Euro2024Event) : Bool {
-          return event.teamId == predictionQFLoser and event.eventType == #StageLost;
+          return event.teamId == predictionQFLoser and event.eventType == #StageLost and event.stage == #QuarterFinal;
         },
       );
       if (Option.isSome(qfLoserMatch)) {
@@ -1132,7 +1143,7 @@ module {
       let qfScorerMatch = Array.find<T.Euro2024Event>(
         events,
         func(event : T.Euro2024Event) : Bool {
-          return event.playerId == predictionQFScorer and event.eventType == #GoalScored;
+          return event.playerId == predictionQFScorer and event.eventType == #GoalScored and event.stage == #QuarterFinal;
         },
       );
       if (Option.isSome(qfScorerMatch)) {
@@ -1142,7 +1153,7 @@ module {
       let qfAssisterMatch = Array.find<T.Euro2024Event>(
         events,
         func(event : T.Euro2024Event) : Bool {
-          return event.playerId == predictionQFAssister and event.eventType == #GoalAssisted;
+          return event.playerId == predictionQFAssister and event.eventType == #GoalAssisted and event.stage == #QuarterFinal;
         },
       );
       if (Option.isSome(qfAssisterMatch)) {
@@ -1157,7 +1168,7 @@ module {
       let qfYellowCardMatch = Array.find<T.Euro2024Event>(
         events,
         func(event : T.Euro2024Event) : Bool {
-          return event.playerId == predictionQFYellowCard and event.eventType == #YellowCard;
+          return event.playerId == predictionQFYellowCard and event.eventType == #YellowCard and event.stage == #QuarterFinal;
         },
       );
       if (Option.isSome(qfYellowCardMatch)) {
@@ -1167,7 +1178,7 @@ module {
       let qfRedCardMatch = Array.find<T.Euro2024Event>(
         events,
         func(event : T.Euro2024Event) : Bool {
-          return event.playerId == predictionQFRedCard and event.eventType == #RedCard;
+          return event.playerId == predictionQFRedCard and event.eventType == #RedCard and event.stage == #QuarterFinal;
         },
       );
       if (Option.isSome(qfRedCardMatch)) {
@@ -1180,6 +1191,8 @@ module {
       };
 
 
+      Debug.print(debug_show "5");
+      Debug.print(debug_show totalScore);
       //SF
       let predictionSFWinner = entry.sfPrediction.winner;
       let predictionSFLoser = entry.sfPrediction.loser;
@@ -1191,7 +1204,7 @@ module {
       let sfWinnerMatch = Array.find<T.Euro2024Event>(
         events,
         func(event : T.Euro2024Event) : Bool {
-          return event.teamId == predictionSFWinner and event.eventType == #StageWon;
+          return event.teamId == predictionSFWinner and event.eventType == #StageWon and event.stage == #SemiFinal;
         },
       );
       if (Option.isSome(sfWinnerMatch)) {
@@ -1201,7 +1214,7 @@ module {
       let sfLoserMatch = Array.find<T.Euro2024Event>(
         events,
         func(event : T.Euro2024Event) : Bool {
-          return event.teamId == predictionSFLoser and event.eventType == #StageLost;
+          return event.teamId == predictionSFLoser and event.eventType == #StageLost and event.stage == #SemiFinal;
         },
       );
       if (Option.isSome(sfLoserMatch)) {
@@ -1216,7 +1229,7 @@ module {
       let sfScorerMatch = Array.find<T.Euro2024Event>(
         events,
         func(event : T.Euro2024Event) : Bool {
-          return event.playerId == predictionSFScorer and event.eventType == #GoalScored;
+          return event.playerId == predictionSFScorer and event.eventType == #GoalScored and event.stage == #SemiFinal;
         },
       );
       if (Option.isSome(sfScorerMatch)) {
@@ -1226,7 +1239,7 @@ module {
       let sfAssisterMatch = Array.find<T.Euro2024Event>(
         events,
         func(event : T.Euro2024Event) : Bool {
-          return event.playerId == predictionSFAssister and event.eventType == #GoalAssisted;
+          return event.playerId == predictionSFAssister and event.eventType == #GoalAssisted and event.stage == #SemiFinal;
         },
       );
       if (Option.isSome(sfAssisterMatch)) {
@@ -1241,7 +1254,7 @@ module {
       let sfYellowCardMatch = Array.find<T.Euro2024Event>(
         events,
         func(event : T.Euro2024Event) : Bool {
-          return event.playerId == predictionSFYellowCard and event.eventType == #YellowCard;
+          return event.playerId == predictionSFYellowCard and event.eventType == #YellowCard and event.stage == #SemiFinal;
         },
       );
       if (Option.isSome(sfYellowCardMatch)) {
@@ -1251,7 +1264,7 @@ module {
       let sfRedCardMatch = Array.find<T.Euro2024Event>(
         events,
         func(event : T.Euro2024Event) : Bool {
-          return event.playerId == predictionSFRedCard and event.eventType == #RedCard;
+          return event.playerId == predictionSFRedCard and event.eventType == #RedCard and event.stage == #SemiFinal;
         },
       );
       if (Option.isSome(sfRedCardMatch)) {
@@ -1263,6 +1276,8 @@ module {
         totalScore := totalScore + 120;
       };
 
+      Debug.print(debug_show "6");
+      Debug.print(debug_show totalScore);
       //F
       let predictionFinalWinner = entry.fPrediction.winner;
       let predictionFinalLoser = entry.fPrediction.loser;
@@ -1274,7 +1289,7 @@ module {
       let fWinnerMatch = Array.find<T.Euro2024Event>(
         events,
         func(event : T.Euro2024Event) : Bool {
-          return event.teamId == predictionFinalWinner and event.eventType == #StageWon;
+          return event.teamId == predictionFinalWinner and event.eventType == #StageWon and event.stage == #Final;
         },
       );
       if (Option.isSome(fWinnerMatch)) {
@@ -1285,7 +1300,7 @@ module {
       let fLoserMatch = Array.find<T.Euro2024Event>(
         events,
         func(event : T.Euro2024Event) : Bool {
-          return event.teamId == predictionFinalLoser and event.eventType == #StageLost;
+          return event.teamId == predictionFinalLoser and event.eventType == #StageLost and event.stage == #Final;
         },
       );
       if (Option.isSome(fLoserMatch)) {
@@ -1302,7 +1317,7 @@ module {
       let fScorerMatch = Array.find<T.Euro2024Event>(
         events,
         func(event : T.Euro2024Event) : Bool {
-          return event.playerId == predictionFinalScorer and event.eventType == #GoalScored;
+          return event.playerId == predictionFinalScorer and event.eventType == #GoalScored and event.stage == #Final;
         },
       );
       if (Option.isSome(fScorerMatch)) {
@@ -1312,7 +1327,7 @@ module {
       let fAssisterMatch = Array.find<T.Euro2024Event>(
         events,
         func(event : T.Euro2024Event) : Bool {
-          return event.playerId == predictionFinalAssister and event.eventType == #GoalAssisted;
+          return event.playerId == predictionFinalAssister and event.eventType == #GoalAssisted and event.stage == #Final;
         },
       );
       if (Option.isSome(fAssisterMatch)) {
@@ -1327,7 +1342,7 @@ module {
       let fYellowCardMatch = Array.find<T.Euro2024Event>(
         events,
         func(event : T.Euro2024Event) : Bool {
-          return event.playerId == predictionFinalYellowCard and event.eventType == #YellowCard;
+          return event.playerId == predictionFinalYellowCard and event.eventType == #YellowCard and event.stage == #Final;
         },
       );
       if (Option.isSome(fYellowCardMatch)) {
@@ -1337,7 +1352,7 @@ module {
       let fRedCardMatch = Array.find<T.Euro2024Event>(
         events,
         func(event : T.Euro2024Event) : Bool {
-          return event.playerId == predictionFinalRedCard and event.eventType == #RedCard;
+          return event.playerId == predictionFinalRedCard and event.eventType == #RedCard and event.stage == #Final;
         },
       );
       if (Option.isSome(fRedCardMatch)) {

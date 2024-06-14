@@ -87,7 +87,7 @@
         "Our new game 'Transfer Kings' is coming soon.",
       link: "https://transferkings.xyz",
       image: "transferkings.png",
-      buttonText: "Play",
+      buttonText: "Rules",
     },
     {
       title: "OpenFPL",
