@@ -672,7 +672,7 @@
                     {/await}
                         {$teamStore.find(x => x.id == prediction.groupAPrediction.winner)?.countryCode }
                         {#if isCorrect("GroupA", "StageWon", prediction.groupAPrediction.winner, "Team")}
-                            <CorrectIcon className="w-4 sm:w-8 md:w-6 px-1" />
+                            <CorrectIcon className="w-6 sm:w-8 md:w-6 px-1" />
                         {/if}
                     {:else }
                         <p>-</p>
@@ -687,7 +687,7 @@
                     {/await}
                         {$teamStore.find(x => x.id == prediction.groupBPrediction.winner)?.countryCode }
                         {#if isCorrect("GroupB", "StageWon", prediction.groupBPrediction.winner, "Team")}
-                            <CorrectIcon className="w-4 md:w-6 px-1" />
+                            <CorrectIcon className="w-6 sm:w-8 md:w-6 px-1" />
                         {/if}
                     
                     {:else }
@@ -703,7 +703,7 @@
                     {/await}
                         {$teamStore.find(x => x.id == prediction.groupCPrediction.winner)?.countryCode }
                         {#if isCorrect("GroupC", "StageWon", prediction.groupCPrediction.winner, "Team")}
-                            <CorrectIcon className="w-4 md:w-6 px-1" />
+                            <CorrectIcon className="w-6 sm:w-8 md:w-6 px-1" />
                         {/if}
                     
                     {:else }
@@ -719,7 +719,7 @@
                     {/await}
                         {$teamStore.find(x => x.id == prediction.groupDPrediction.winner)?.countryCode }
                         {#if isCorrect("GroupD", "StageWon", prediction.groupDPrediction.winner, "Team")}
-                            <CorrectIcon className="w-4 md:w-6 px-1" />
+                            <CorrectIcon className="w-6 sm:w-8 md:w-6 px-1" />
                         {/if}
                     
                     {:else }
@@ -735,7 +735,7 @@
                     {/await}
                         {$teamStore.find(x => x.id == prediction.groupEPrediction.winner)?.countryCode }
                         {#if isCorrect("GroupE", "StageWon", prediction.groupEPrediction.winner, "Team")}
-                            <CorrectIcon className="w-4 md:w-6 px-1" />
+                            <CorrectIcon className="w-6 sm:w-8 md:w-6 px-1" />
                         {/if}
                     
                     {:else }
@@ -751,7 +751,7 @@
                     {/await}
                         {$teamStore.find(x => x.id == prediction.groupFPrediction.winner)?.countryCode }
                         {#if isCorrect("GroupF", "StageWon", prediction.groupFPrediction.winner, "Team")}
-                            <CorrectIcon className="w-4 md:w-6 px-1" />
+                            <CorrectIcon className="w-6 sm:w-8 md:w-6 px-1" />
                         {/if}
                     
                     {:else }
@@ -780,7 +780,7 @@
                     {/await}
                         {$teamStore.find(x => x.id == prediction.groupAPrediction.loser)?.countryCode }
                         {#if isCorrect("GroupA", "StageLost", prediction.groupAPrediction.loser, "Team")}
-                            <CorrectIcon className="w-4 md:w-6 px-1" />
+                            <CorrectIcon className="w-6 sm:w-8 md:w-6 px-1" />
                         {/if}
                     
                     {:else }
@@ -796,7 +796,7 @@
                     {/await}
                         {$teamStore.find(x => x.id == prediction.groupBPrediction.loser)?.countryCode }
                         {#if isCorrect("GroupB", "StageLost", prediction.groupBPrediction.loser, "Team")}
-                            <CorrectIcon className="w-4 md:w-6 px-1" />
+                            <CorrectIcon className="w-6 sm:w-8 md:w-6 px-1" />
                         {/if}
                     
                     {:else }
@@ -812,7 +812,7 @@
                     {/await}
                         {$teamStore.find(x => x.id == prediction.groupCPrediction.loser)?.countryCode }
                         {#if isCorrect("GroupC", "StageLost", prediction.groupCPrediction.loser, "Team")}
-                            <CorrectIcon className="w-4 md:w-6 px-1" />
+                            <CorrectIcon className="w-6 sm:w-8 md:w-6 px-1" />
                         {/if}
                     
                     {:else }
@@ -829,7 +829,7 @@
                     {/await}
                         {$teamStore.find(x => x.id == prediction.groupDPrediction.loser)?.countryCode }
                         {#if isCorrect("GroupD", "StageLost", prediction.groupDPrediction.loser, "Team")}
-                            <CorrectIcon className="w-4 md:w-6 px-1" />
+                            <CorrectIcon className="w-6 sm:w-8 md:w-6 px-1" />
                         {/if}
                     
                     {:else }
@@ -847,7 +847,7 @@
                     {/await}
                         {$teamStore.find(x => x.id == prediction.groupEPrediction.loser)?.countryCode }
                         {#if isCorrect("GroupE", "StageLost", prediction.groupEPrediction.loser, "Team")}
-                            <CorrectIcon className="w-4 md:w-6 px-1" />
+                            <CorrectIcon className="w-6 sm:w-8 md:w-6 px-1" />
                         {/if}
                     
                     {:else }
@@ -865,7 +865,7 @@
                     {/await}
                         {$teamStore.find(x => x.id == prediction.groupFPrediction.loser)?.countryCode }
                         {#if isCorrect("GroupF", "StageLost", prediction.groupFPrediction.loser, "Team")}
-                            <CorrectIcon className="w-4 md:w-6 px-1" />
+                            <CorrectIcon className="w-6 sm:w-8 md:w-6 px-1" />
                         {/if}
                     
                     {:else }
@@ -896,7 +896,7 @@
                         {player?.lastName.length == 0 ? player?.firstName.substring(0, 3) : player?.lastName.substring(0, 3)}
 
                         {#if isCorrect("GroupA", "GoalScored", prediction.groupAPrediction.goalScorer, "Player")}
-                            <CorrectIcon className="w-4 md:w-6 px-1" />
+                            <CorrectIcon className="w-6 sm:w-8 md:w-6 px-1" />
                         {/if}
 
                     
@@ -915,7 +915,7 @@
                         {player?.lastName.length == 0 ? player?.firstName.substring(0, 3) : player?.lastName.substring(0, 3)}
 
                         {#if isCorrect("GroupB", "GoalScored", prediction.groupBPrediction.goalScorer, "Player")}
-                            <CorrectIcon className="w-4 md:w-6 px-1" />
+                            <CorrectIcon className="w-6 sm:w-8 md:w-6 px-1" />
                         {/if}
 
 
@@ -935,7 +935,7 @@
                         {player?.lastName.length == 0 ? player?.firstName.substring(0, 3) : player?.lastName.substring(0, 3)}
 
                         {#if isCorrect("GroupC", "GoalScored", prediction.groupCPrediction.goalScorer, "Player")}
-                            <CorrectIcon className="w-4 md:w-6 px-1" />
+                            <CorrectIcon className="w-6 sm:w-8 md:w-6 px-1" />
                         {/if}
 
 
@@ -956,7 +956,7 @@
                         {player?.lastName.length == 0 ? player?.firstName.substring(0, 3) : player?.lastName.substring(0, 3)}
 
                         {#if isCorrect("GroupD", "GoalScored", prediction.groupDPrediction.goalScorer, "Player")}
-                            <CorrectIcon className="w-4 md:w-6 px-1" />
+                            <CorrectIcon className="w-6 sm:w-8 md:w-6 px-1" />
                         {/if}
 
 
@@ -978,7 +978,7 @@
                         {player?.lastName.length == 0 ? player?.firstName.substring(0, 3) : player?.lastName.substring(0, 3)}
 
                         {#if isCorrect("GroupE", "GoalScored", prediction.groupEPrediction.goalScorer, "Player")}
-                            <CorrectIcon className="w-4 md:w-6 px-1" />
+                            <CorrectIcon className="w-6 sm:w-8 md:w-6 px-1" />
                         {/if}
 
 
@@ -1000,7 +1000,7 @@
                         {player?.lastName.length == 0 ? player?.firstName.substring(0, 3) : player?.lastName.substring(0, 3)}
 
                         {#if isCorrect("GroupF", "GoalScored", prediction.groupFPrediction.goalScorer, "Player")}
-                            <CorrectIcon className="w-4 md:w-6 px-1" />
+                            <CorrectIcon className="w-6 sm:w-8 md:w-6 px-1" />
                         {/if}
 
 
@@ -1032,7 +1032,7 @@
                         {player?.lastName.length == 0 ? player?.firstName.substring(0, 3) : player?.lastName.substring(0, 3)}
 
                         {#if isCorrect("GroupA", "GoalAssisted", prediction.groupAPrediction.goalAssister, "Player")}
-                            <CorrectIcon className="w-4 md:w-6 px-1" />
+                            <CorrectIcon className="w-6 sm:w-8 md:w-6 px-1" />
                         {/if}
 
 
@@ -1052,7 +1052,7 @@
                         {player?.lastName.length == 0 ? player?.firstName.substring(0, 3) : player?.lastName.substring(0, 3)}
 
                         {#if isCorrect("GroupB", "GoalAssisted", prediction.groupBPrediction.goalAssister, "Player")}
-                            <CorrectIcon className="w-4 md:w-6 px-1" />
+                            <CorrectIcon className="w-6 sm:w-8 md:w-6 px-1" />
                         {/if}
                     
                     {:else }
@@ -1070,7 +1070,7 @@
                         {player?.lastName.length == 0 ? player?.firstName.substring(0, 3) : player?.lastName.substring(0, 3)}
 
                         {#if isCorrect("GroupC", "GoalAssisted", prediction.groupCPrediction.goalAssister, "Player")}
-                            <CorrectIcon className="w-4 md:w-6 px-1" />
+                            <CorrectIcon className="w-6 sm:w-8 md:w-6 px-1" />
                         {/if}
                     
                     {:else }
@@ -1089,7 +1089,7 @@
                         {player?.lastName.length == 0 ? player?.firstName.substring(0, 3) : player?.lastName.substring(0, 3)}
 
                         {#if isCorrect("GroupD", "GoalAssisted", prediction.groupDPrediction.goalAssister, "Player")}
-                            <CorrectIcon className="w-4 md:w-6 px-1" />
+                            <CorrectIcon className="w-6 sm:w-8 md:w-6 px-1" />
                         {/if}
                     
                     {:else }
@@ -1109,7 +1109,7 @@
                         {player?.lastName.length == 0 ? player?.firstName.substring(0, 3) : player?.lastName.substring(0, 3)}
 
                         {#if isCorrect("GroupE", "GoalAssisted", prediction.groupEPrediction.goalAssister, "Player")}
-                            <CorrectIcon className="w-4 md:w-6 px-1" />
+                            <CorrectIcon className="w-6 sm:w-8 md:w-6 px-1" />
                         {/if}
                     
                     {:else }
@@ -1129,7 +1129,7 @@
                         {player?.lastName.length == 0 ? player?.firstName.substring(0, 3) : player?.lastName.substring(0, 3)}
 
                         {#if isCorrect("GroupF", "GoalAssisted", prediction.groupFPrediction.goalAssister, "Player")}
-                            <CorrectIcon className="w-4 md:w-6 px-1" />
+                            <CorrectIcon className="w-6 sm:w-8 md:w-6 px-1" />
                         {/if}
                     
                     {:else }
@@ -1159,7 +1159,7 @@
                         {player?.lastName.length == 0 ? player?.firstName.substring(0, 3) : player?.lastName.substring(0, 3)}
 
                         {#if isCorrect("GroupA", "YellowCard", prediction.groupAPrediction.yellowCard, "Player")}
-                            <CorrectIcon className="w-4 md:w-6 px-1" />
+                            <CorrectIcon className="w-6 sm:w-8 md:w-6 px-1" />
                         {/if}
                     
                     {:else }
@@ -1177,7 +1177,7 @@
                         {player?.lastName.length == 0 ? player?.firstName.substring(0, 3) : player?.lastName.substring(0, 3)}
 
                         {#if isCorrect("GroupB", "YellowCard", prediction.groupBPrediction.yellowCard, "Player")}
-                            <CorrectIcon className="w-4 md:w-6 px-1" />
+                            <CorrectIcon className="w-6 sm:w-8 md:w-6 px-1" />
                         {/if}
 
                     
@@ -1197,7 +1197,7 @@
 
 
                         {#if isCorrect("GroupC", "YellowCard", prediction.groupCPrediction.yellowCard, "Player")}
-                            <CorrectIcon className="w-4 md:w-6 px-1" />
+                            <CorrectIcon className="w-6 sm:w-8 md:w-6 px-1" />
                         {/if}
                     
                     {:else }
@@ -1217,7 +1217,7 @@
 
 
                         {#if isCorrect("GroupD", "YellowCard", prediction.groupDPrediction.yellowCard, "Player")}
-                            <CorrectIcon className="w-4 md:w-6 px-1" />
+                            <CorrectIcon className="w-6 sm:w-8 md:w-6 px-1" />
                         {/if}
 
                     
@@ -1239,7 +1239,7 @@
 
 
                         {#if isCorrect("GroupE", "YellowCard", prediction.groupEPrediction.yellowCard, "Player")}
-                            <CorrectIcon className="w-4 md:w-6 px-1" />
+                            <CorrectIcon className="w-6 sm:w-8 md:w-6 px-1" />
                         {/if}
                     
                     {:else }
@@ -1260,7 +1260,7 @@
 
 
                         {#if isCorrect("GroupF", "YellowCard", prediction.groupFPrediction.yellowCard, "Player")}
-                            <CorrectIcon className="w-4 md:w-6 px-1" />
+                            <CorrectIcon className="w-6 sm:w-8 md:w-6 px-1" />
                         {/if}
                     
                     {:else }
@@ -1291,7 +1291,7 @@
 
 
                         {#if isCorrect("GroupA", "RedCard", prediction.groupAPrediction.redCard, "Player")}
-                            <CorrectIcon className="w-4 md:w-6 px-1" />
+                            <CorrectIcon className="w-6 sm:w-8 md:w-6 px-1" />
                         {/if}
                     
                     {:else }
@@ -1309,7 +1309,7 @@
                         {player?.lastName.length == 0 ? player?.firstName.substring(0, 3) : player?.lastName.substring(0, 3)}
 
                         {#if isCorrect("GroupB", "RedCard", prediction.groupBPrediction.redCard, "Player")}
-                            <CorrectIcon className="w-4 md:w-6 px-1" />
+                            <CorrectIcon className="w-6 sm:w-8 md:w-6 px-1" />
                         {/if}
                     
                     {:else }
@@ -1327,7 +1327,7 @@
                         {player?.lastName.length == 0 ? player?.firstName.substring(0, 3) : player?.lastName.substring(0, 3)}
 
                         {#if isCorrect("GroupC", "RedCard", prediction.groupCPrediction.redCard, "Player")}
-                            <CorrectIcon className="w-4 md:w-6 px-1" />
+                            <CorrectIcon className="w-6 sm:w-8 md:w-6 px-1" />
                         {/if}
                     
                     {:else }
@@ -1346,7 +1346,7 @@
                         {player?.lastName.length == 0 ? player?.firstName.substring(0, 3) : player?.lastName.substring(0, 3)}
 
                         {#if isCorrect("GroupD", "RedCard", prediction.groupDPrediction.redCard, "Player")}
-                            <CorrectIcon className="w-4 md:w-6 px-1" />
+                            <CorrectIcon className="w-6 sm:w-8 md:w-6 px-1" />
                         {/if}
                     
                     {:else }
@@ -1366,7 +1366,7 @@
                         {player?.lastName.length == 0 ? player?.firstName.substring(0, 3) : player?.lastName.substring(0, 3)}
 
                         {#if isCorrect("GroupE", "RedCard", prediction.groupEPrediction.redCard, "Player")}
-                            <CorrectIcon className="w-4 md:w-6 px-1" />
+                            <CorrectIcon className="w-6 sm:w-8 md:w-6 px-1" />
                         {/if}
                     
                     {:else }
@@ -1386,7 +1386,7 @@
                         {player?.lastName.length == 0 ? player?.firstName.substring(0, 3) : player?.lastName.substring(0, 3)}
 
                         {#if isCorrect("GroupF", "RedCard", prediction.groupFPrediction.redCard, "Player")}
-                            <CorrectIcon className="w-4 md:w-6 px-1" />
+                            <CorrectIcon className="w-6 sm:w-8 md:w-6 px-1" />
                         {/if}
                     
                     {:else }
@@ -1413,7 +1413,7 @@
                     {/await}
                     {$teamStore.find(x => x.id == prediction.r16Prediction.winner)?.countryCode }
                     {#if isCorrect("RoundOf16", "StageWon", prediction.r16Prediction.winner, "Team")}
-                        <CorrectIcon className="w-4 md:w-6 px-1" />
+                        <CorrectIcon className="w-6 sm:w-8 md:w-6 px-1" />
                     {/if}
                 </div>
                 <div class="w-3/12 flex flex-row items-center">
@@ -1424,7 +1424,7 @@
                     {/await}
                     {$teamStore.find(x => x.id == prediction.r16Prediction.loser)?.countryCode }
                     {#if isCorrect("RoundOf16", "StageLost", prediction.r16Prediction.loser, "Team")}
-                        <CorrectIcon className="w-4 md:w-6 px-1" />
+                        <CorrectIcon className="w-6 sm:w-8 md:w-6 px-1" />
                     {/if}
                     
                 </div>
@@ -1451,7 +1451,7 @@
                     {/await}
                     {$playerStore.find(x => x.id == prediction.r16Prediction.goalScorer)?.firstName} {$playerStore.find(x => x.id == prediction.r16Prediction.goalScorer)?.lastName}
                     {#if isCorrect("RoundOf16", "GoalScored", prediction.r16Prediction.goalScorer, "Player")}
-                        <CorrectIcon className="w-4 md:w-6 px-1" />
+                        <CorrectIcon className="w-6 sm:w-8 md:w-6 px-1" />
                     {/if}
                 
                 </div>
@@ -1463,7 +1463,7 @@
                     {/await}
                     {$playerStore.find(x => x.id == prediction.r16Prediction.goalAssister)?.firstName} {$playerStore.find(x => x.id == prediction.r16Prediction.goalAssister)?.lastName}
                     {#if isCorrect("RoundOf16", "GoalAssisted", prediction.r16Prediction.goalAssister, "Player")}
-                        <CorrectIcon className="w-4 md:w-6 px-1" />
+                        <CorrectIcon className="w-6 sm:w-8 md:w-6 px-1" />
                     {/if}
                 </div>
 
@@ -1490,7 +1490,7 @@
                         {/await}
                         {$playerStore.find(x => x.id == prediction.r16Prediction.yellowCard)?.firstName} {$playerStore.find(x => x.id == prediction.r16Prediction.yellowCard)?.lastName}
                         {#if isCorrect("RoundOf16", "YellowCard", prediction.r16Prediction.yellowCard, "Player")}
-                            <CorrectIcon className="w-4 md:w-6 px-1" />
+                            <CorrectIcon className="w-6 sm:w-8 md:w-6 px-1" />
                         {/if}
 
                     {:else }
@@ -1506,7 +1506,7 @@
                         {/await}
                         {$playerStore.find(x => x.id == prediction.r16Prediction.redCard)?.firstName} {$playerStore.find(x => x.id == prediction.r16Prediction.redCard)?.lastName}
                         {#if isCorrect("RoundOf16", "RedCard", prediction.r16Prediction.redCard, "Player")}
-                            <CorrectIcon className="w-4 md:w-6 px-1" />
+                            <CorrectIcon className="w-6 sm:w-8 md:w-6 px-1" />
                         {/if}
                     
                     {:else }
@@ -1535,7 +1535,7 @@
                     {/await}
                     {$teamStore.find(x => x.id == prediction.qfPrediction.winner)?.countryCode }
                     {#if isCorrect("QuarterFinal", "StageWon", prediction.qfPrediction.winner, "Team")}
-                        <CorrectIcon className="w-4 md:w-6 px-1" />
+                        <CorrectIcon className="w-6 sm:w-8 md:w-6 px-1" />
                     {/if}
                 </div>
                 <div class="w-3/12 flex flex-row items-center text-sm sm:text-base justify-center md:justify-normal p-1">
@@ -1547,7 +1547,7 @@
 
                     {$teamStore.find(x => x.id == prediction.qfPrediction.loser)?.countryCode }
                     {#if isCorrect("QuarterFinal", "StageLost", prediction.qfPrediction.loser, "Team")}
-                        <CorrectIcon className="w-4 md:w-6 px-1" />
+                        <CorrectIcon className="w-6 sm:w-8 md:w-6 px-1" />
                     {/if}
                     
                 </div>
@@ -1575,7 +1575,7 @@
                     {$playerStore.find(x => x.id == prediction.qfPrediction.goalScorer)?.firstName} {$playerStore.find(x => x.id == prediction.qfPrediction.goalScorer)?.lastName}
                 
                     {#if isCorrect("QuarterFinal", "GoalScored", prediction.qfPrediction.goalScorer, "Player")}
-                        <CorrectIcon className="w-4 md:w-6 px-1" />
+                        <CorrectIcon className="w-6 sm:w-8 md:w-6 px-1" />
                     {/if}
                 </div>
                 <div class="w-3/12 flex flex-row items-center text-sm sm:text-base justify-center md:justify-normal p-1">
@@ -1587,7 +1587,7 @@
                     {$playerStore.find(x => x.id == prediction.qfPrediction.goalAssister)?.firstName} {$playerStore.find(x => x.id == prediction.qfPrediction.goalAssister)?.lastName}
                 
                     {#if isCorrect("QuarterFinal", "GoalAssisted", prediction.qfPrediction.goalAssister, "Player")}
-                        <CorrectIcon className="w-4 md:w-6 px-1" />
+                        <CorrectIcon className="w-6 sm:w-8 md:w-6 px-1" />
                     {/if}
                 </div>
 
@@ -1615,7 +1615,7 @@
                         {$playerStore.find(x => x.id == prediction.qfPrediction.yellowCard)?.firstName} {$playerStore.find(x => x.id == prediction.qfPrediction.yellowCard)?.lastName}
                         
                         {#if isCorrect("QuarterFinal", "YellowCard", prediction.qfPrediction.yellowCard, "Player")}
-                            <CorrectIcon className="w-4 md:w-6 px-1" />
+                            <CorrectIcon className="w-6 sm:w-8 md:w-6 px-1" />
                         {/if}
                     {:else }
                         <p>-</p>
@@ -1630,7 +1630,7 @@
                         {/await}
                         {$playerStore.find(x => x.id == prediction.qfPrediction.redCard)?.firstName} {$playerStore.find(x => x.id == prediction.qfPrediction.redCard)?.lastName}
                         {#if isCorrect("QuarterFinal", "RedCard", prediction.qfPrediction.redCard, "Player")}
-                            <CorrectIcon className="w-4 md:w-6 px-1" />
+                            <CorrectIcon className="w-6 sm:w-8 md:w-6 px-1" />
                         {/if}
                     {:else }
                         <p>-</p>
@@ -1660,7 +1660,7 @@
                 {/await}
                     {$teamStore.find(x => x.id == prediction.sfPrediction.winner)?.countryCode }
                     {#if isCorrect("SemiFinal", "StageWon", prediction.sfPrediction.winner, "Team")}
-                        <CorrectIcon className="w-4 md:w-6 px-1" />
+                        <CorrectIcon className="w-6 sm:w-8 md:w-6 px-1" />
                     {/if}
                 </div>
                 <div class="w-3/12 flex flex-row items-center text-sm sm:text-base justify-center md:justify-normal p-1">
@@ -1671,7 +1671,7 @@
                     {/await}
                     {$teamStore.find(x => x.id == prediction.sfPrediction.loser)?.countryCode }
                     {#if isCorrect("SemiFinal", "StageLost", prediction.sfPrediction.loser, "Team")}
-                        <CorrectIcon className="w-4 md:w-6 px-1" />
+                        <CorrectIcon className="w-6 sm:w-8 md:w-6 px-1" />
                     {/if}
                     
                 </div>
@@ -1700,7 +1700,7 @@
                     {$playerStore.find(x => x.id == prediction.sfPrediction.goalScorer)?.firstName} {$playerStore.find(x => x.id == prediction.sfPrediction.goalScorer)?.lastName}
                 
                     {#if isCorrect("SemiFinal", "GoalScored", prediction.sfPrediction.goalScorer, "Player")}
-                        <CorrectIcon className="w-4 md:w-6 px-1" />
+                        <CorrectIcon className="w-6 sm:w-8 md:w-6 px-1" />
                     {/if}
                 </div>
                 <div class="w-3/12 flex flex-row items-center text-sm sm:text-base justify-center md:justify-normal p-1">
@@ -1711,7 +1711,7 @@
                     {/await}
                     {$playerStore.find(x => x.id == prediction.sfPrediction.goalAssister)?.firstName} {$playerStore.find(x => x.id == prediction.sfPrediction.goalAssister)?.lastName}
                     {#if isCorrect("SemiFinal", "GoalAssisted", prediction.sfPrediction.goalAssister, "Player")}
-                        <CorrectIcon className="w-4 md:w-6 px-1" />
+                        <CorrectIcon className="w-6 sm:w-8 md:w-6 px-1" />
                     {/if}
                 </div>
 
@@ -1739,7 +1739,7 @@
                         {/await}
                         {$playerStore.find(x => x.id == prediction.sfPrediction.yellowCard)?.firstName} {$playerStore.find(x => x.id == prediction.sfPrediction.yellowCard)?.lastName}
                         {#if isCorrect("SemiFinal", "YellowCard", prediction.sfPrediction.yellowCard, "Player")}
-                            <CorrectIcon className="w-4 md:w-6 px-1" />
+                            <CorrectIcon className="w-6 sm:w-8 md:w-6 px-1" />
                         {/if}
                     {:else }
                         <p>-</p>
@@ -1755,7 +1755,7 @@
                         {/await}
                         {$playerStore.find(x => x.id == prediction.sfPrediction.redCard)?.firstName} {$playerStore.find(x => x.id == prediction.sfPrediction.redCard)?.lastName}
                         {#if isCorrect("SemiFinal", "RedCard", prediction.sfPrediction.redCard, "Player")}
-                            <CorrectIcon className="w-4 md:w-6 px-1" />
+                            <CorrectIcon className="w-6 sm:w-8 md:w-6 px-1" />
                         {/if}
                     {:else }
                         <p>-</p>
@@ -1787,7 +1787,7 @@
 
                     {$teamStore.find(x => x.id == prediction.fPrediction.winner)?.countryCode }
                     {#if isCorrect("Final", "StageWon", prediction.fPrediction.winner, "Team")}
-                        <CorrectIcon className="w-4 md:w-6 px-1" />
+                        <CorrectIcon className="w-6 sm:w-8 md:w-6 px-1" />
                     {/if}
                 </div>
                 <div class="w-3/12 flex flex-row items-center text-sm sm:text-base justify-center md:justify-normal p-1">
@@ -1799,7 +1799,7 @@
                     
                     {$teamStore.find(x => x.id == prediction.fPrediction.loser)?.countryCode }
                     {#if isCorrect("Final", "StageLost", prediction.fPrediction.loser, "Team")}
-                        <CorrectIcon className="w-4 md:w-6 px-1" />
+                        <CorrectIcon className="w-6 sm:w-8 md:w-6 px-1" />
                     {/if}
                     
                 </div>
@@ -1828,7 +1828,7 @@
                     {$playerStore.find(x => x.id == prediction.fPrediction.goalScorer)?.firstName} {$playerStore.find(x => x.id == prediction.fPrediction.goalScorer)?.lastName}
                 
                     {#if isCorrect("Final", "GoalScored", prediction.fPrediction.goalScorer, "Player")}
-                        <CorrectIcon className="w-4 md:w-6 px-1" />
+                        <CorrectIcon className="w-6 sm:w-8 md:w-6 px-1" />
                     {/if}
                 </div>
                 <div class="w-3/12 flex flex-row items-center text-sm sm:text-base justify-center">
@@ -1839,7 +1839,7 @@
                     {/await}
                     {$playerStore.find(x => x.id == prediction.fPrediction.goalAssister)?.firstName} {$playerStore.find(x => x.id == prediction.fPrediction.goalAssister)?.lastName}
                     {#if isCorrect("Final", "GoalAssisted", prediction.fPrediction.goalAssister, "Player")}
-                        <CorrectIcon className="w-4 md:w-6 px-1" />
+                        <CorrectIcon className="w-6 sm:w-8 md:w-6 px-1" />
                     {/if}
                 </div>
 
@@ -1866,7 +1866,7 @@
                         {/await}
                         {$playerStore.find(x => x.id == prediction.fPrediction.yellowCard)?.firstName} {$playerStore.find(x => x.id == prediction.fPrediction.yellowCard)?.lastName}
                         {#if isCorrect("Final", "YellowCard", prediction.fPrediction.yellowCard, "Player")}
-                            <CorrectIcon className="w-4 md:w-6 px-1" />
+                            <CorrectIcon className="w-6 sm:w-8 md:w-6 px-1" />
                         {/if}
                         
                     {:else }
@@ -1882,7 +1882,7 @@
                         {/await}
                         {$playerStore.find(x => x.id == prediction.fPrediction.redCard)?.firstName} {$playerStore.find(x => x.id == prediction.fPrediction.redCard)?.lastName}
                         {#if isCorrect("Final", "RedCard", prediction.fPrediction.redCard, "Player")}
-                            <CorrectIcon className="w-4 md:w-6 px-1" />
+                            <CorrectIcon className="w-6 sm:w-8 md:w-6 px-1" />
                         {/if}
                     {:else }
                         <p>-</p>
