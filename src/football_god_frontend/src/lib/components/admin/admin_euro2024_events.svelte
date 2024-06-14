@@ -1,17 +1,30 @@
 <script lang="ts">
     import { adminStore } from "$lib/stores/admin.store";
+    import { playerStore } from "$lib/stores/player.store";
+    import { teamStore } from "$lib/stores/teams.store";
     import { onMount } from "svelte";
     import type { Euro2024EventDTO, Euro2024EventId } from "../../../../../declarations/football_god_backend/football_god_backend.did";
     import AddEuro2024Event from "./add_euro2024_event.svelte";
     import ConfirmDeleteEvent from "./confirm_delete_event.svelte";
+    import { Spinner } from "@dfinity/gix-components";
 
     let events: Euro2024EventDTO[] = [];
     let showAddEventModal = false;
     let showDeleteConfirm = false;
     let selectedEventId: bigint = -1n;
+    let isLoading = true;
 
     onMount(async () => {
-        events = await adminStore.getEuro2024Events();
+        try{
+            await playerStore.sync();
+            await teamStore.sync();
+            events = await adminStore.getEuro2024Events();
+        } catch(error){
+            console.log("error getting events", error);
+        } finally {
+            isLoading = false;
+        }
+        
     });
 
     async function handleAddEvent(){
@@ -50,52 +63,64 @@
 
 </script>
 
-{#if showAddEventModal}
-    <AddEuro2024Event onConfirm={confirmAddEvent} onClose={handleHideAddEvent} visible={showAddEventModal} />
-{/if}
-{#if showDeleteConfirm}
-    <ConfirmDeleteEvent onConfirm={confirmDeleteEvent} onClose={handleHideDeleteConfirm} visible={showDeleteConfirm} eventId={selectedEventId} />
-{/if}
-<div class="p-4">
-    <div class="flex">
-        <button on:click={handleAddEvent}>Add Event</button>
-    </div>
-    <div class="overflow-x-auto flex-1">
-        <div
-          class="flex justify-between border border-gray-700 py-2 bg-light-gray border-b border-gray-700"
-        >
-          <div class="w-1/12"></div>
-          <div class="w-2/12">Stage</div>
-          <div class="w-3/12">Fixture</div>
-          <div class="w-2/12">Event Type</div>
-          <div class="w-3/12">Event Detail</div>
-          <div class="w-1/12"></div>
-        </div>
-    
-        {#each events as event, index}
-          <div
-            class="flex items-center justify-between py-2 border-b border-gray-700 cursor-pointer"
-          >
-            <div class="w-6/12">
-                {index}
-            </div>
-            <div class="w-6/12">
-                {event.stage}
-            </div>
-            <div class="w-6/12">
-                {event.fixtureId}
-            </div>
-            <div class="w-6/12">
-                {event.eventType}
-            </div>
-            <div class="w-6/12">
-                {event.playerId} or {event.fixtureId}
-            </div>
+{#if isLoading}
+    <Spinner />
+{:else}
 
-            <div class="w-3/12">
-                <button on:click={() => deleteEvent(event.eventId)}>Delete</button>
+    {#if showAddEventModal}
+        <AddEuro2024Event onConfirm={confirmAddEvent} onClose={handleHideAddEvent} visible={showAddEventModal} />
+    {/if}
+    {#if showDeleteConfirm}
+        <ConfirmDeleteEvent onConfirm={confirmDeleteEvent} onClose={handleHideDeleteConfirm} visible={showDeleteConfirm} eventId={selectedEventId} />
+    {/if}
+    <div class="p-4">
+        <div class="flex">
+            <button class="bg-OPENFPLPURPLE px-4 py-2 rounded-md mb-4" on:click={handleAddEvent}>Add Event</button>
+        </div>
+        <div class="overflow-x-auto flex-1">
+            <div
+            class="flex justify-between border border-gray-700 py-2 bg-light-gray border-b border-gray-700"
+            >
+            <div class="w-1/12"></div>
+            <div class="w-2/12">Stage</div>
+            <div class="w-3/12">Fixture</div>
+            <div class="w-2/12">Event Type</div>
+            <div class="w-3/12">Event Detail</div>
+            <div class="w-1/12"></div>
             </div>
-          </div>
-        {/each}
+        
+            {#each events as event, index}
+            <div
+                class="flex items-center justify-between py-2 border-b border-gray-700 cursor-pointer"
+            >
+                <div class="w-1/12 text-center">
+                    {index}
+                </div>
+                <div class="w-2/12">
+                    {Object.keys(event.stage)[0]}
+                </div>
+                <div class="w-3/12">
+                    {event.fixtureId}
+                </div>
+                <div class="w-2/12">
+                    {Object.keys(event.eventType)[0]}
+                </div>
+                <div class="w-3/12">
+                    {#if event.playerId > 0}
+                        {@const player = $playerStore.find(x => x.id == event.playerId)}
+                        {player?.firstName} {player?.lastName} 
+                    {/if}
+                    {#if event.teamId > 0}
+                        {$teamStore.find(x => x.id == event.teamId)?.name} 
+                    {/if}
+                </div>
+
+                <div class="w-1/12">
+                    <button class="bg-OPENFPLPURPLE px-4 py-2 rounded-md" on:click={() => deleteEvent(event.eventId)}>Delete</button>
+                </div>
+            </div>
+            {/each}
+        </div>
     </div>
-</div>
+
+{/if}

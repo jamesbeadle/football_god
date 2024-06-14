@@ -1,19 +1,15 @@
 import { writable } from "svelte/store";
 import { idlFactory } from "../../../../declarations/football_god_backend";
 import type {
-  DataCacheDTO,
   Euro2024DTO,
   Euro2024EventDTO,
   Euro2024Fixture,
   Euro2024LeaderBoardDTO,
   Euro2024PredictionDTO,
   GetLeaderboardDTO,
-  InternationalPlayer,
-  InternationalTeam,
 } from "../../../../declarations/football_god_backend/football_god_backend.did";
 import { ActorFactory } from "../../utils/ActorFactory";
 import { isError, replacer } from "../utils/helpers";
-import { userStore } from "./user.store";
 import { authStore } from "./auth.store";
 
 function createEuro2024Store() {
@@ -60,11 +56,8 @@ function createEuro2024Store() {
   async function getPrediction(
     principalId: string,
   ): Promise<Euro2024PredictionDTO> {
-    const identityActor: any = await ActorFactory.createIdentityActor(
-      authStore,
-      process.env.FOOTBALL_GOD_BACKEND_CANISTER_ID ?? "",
-    );
-    let result = await identityActor.getPublicEuro2024DTO(principalId);
+    let result = await actor.getPublicEuro2024DTO(principalId);
+    
     if (isError(result)) {
       console.error("error fetching prediction");
     }
@@ -88,10 +81,7 @@ function createEuro2024Store() {
     offset: bigint,
     limit: bigint,
   ): Promise<Euro2024LeaderBoardDTO> {
-    const identityActor: any = await ActorFactory.createIdentityActor(
-      authStore,
-      process.env.FOOTBALL_GOD_BACKEND_CANISTER_ID ?? "",
-    );
+
 
     let dto: GetLeaderboardDTO = {
       totalEntries: 0n,
@@ -100,7 +90,7 @@ function createEuro2024Store() {
       entries: [],
     };
 
-    let result = await identityActor.getLeaderboard(dto);
+    let result = await actor.getLeaderboard(dto);
     if (isError(result)) {
       console.error("error fetching euro 2024 fixtures", result);
     }
@@ -108,11 +98,7 @@ function createEuro2024Store() {
   }
 
   async function getEvents(): Promise<Euro2024EventDTO[]> {
-    const identityActor: any = await ActorFactory.createIdentityActor(
-      authStore,
-      process.env.FOOTBALL_GOD_BACKEND_CANISTER_ID ?? "",
-    );
-    let entries = await identityActor.getEuro2024Events();
+    let entries = await actor.getEuro2024Events();
     return entries;
   }
 
