@@ -364,7 +364,7 @@
                         if(prediction.qfPrediction.winner == winnerEvent.teamId
                             && prediction.qfPrediction.loser == loserEvent.teamId
                             ) {
-                                return 40;
+                                return 60;
                             }
                         break;
                     case "Goals":
@@ -385,7 +385,7 @@
                         if(prediction.qfPrediction.goalScorer == goalScorerEvent.playerId
                             && prediction.qfPrediction.goalAssister == goalAssisterEvent.playerId
                             ) {
-                                return 80;
+                                return 120;
                             }
                         break;
                     case "Cards":
@@ -406,7 +406,7 @@
                         if(prediction.qfPrediction.yellowCard == yellowCardEvent.playerId
                             && prediction.qfPrediction.redCard == redCardEvent.playerId
                             ) {
-                                return 80;
+                                return 90;
                             }
                         break;
                 }
@@ -431,7 +431,7 @@
                         if(prediction.sfPrediction.winner == winnerEvent.teamId
                             && prediction.sfPrediction.loser == loserEvent.teamId
                             ) {
-                                return 40;
+                                return 80;
                             }
                         break;
                     case "Goals":
@@ -452,7 +452,7 @@
                         if(prediction.sfPrediction.goalScorer == goalScorerEvent.playerId
                             && prediction.sfPrediction.goalAssister == goalAssisterEvent.playerId
                             ) {
-                                return 80;
+                                return 160;
                             }
                         break;
                     case "Cards":
@@ -473,7 +473,7 @@
                         if(prediction.sfPrediction.yellowCard == yellowCardEvent.playerId
                             && prediction.sfPrediction.redCard == redCardEvent.playerId
                             ) {
-                                return 80;
+                                return 120;
                             }
                         break;
                 }
@@ -498,7 +498,7 @@
                         if(prediction.fPrediction.winner == winnerEvent.teamId
                             && prediction.fPrediction.loser == loserEvent.teamId
                             ) {
-                                return 40;
+                                return 100;
                             }
                         break;
                     case "Goals":
@@ -519,7 +519,7 @@
                         if(prediction.fPrediction.goalScorer == goalScorerEvent.playerId
                             && prediction.fPrediction.goalAssister == goalAssisterEvent.playerId
                             ) {
-                                return 80;
+                                return 200;
                             }
                         break;
                     case "Cards":
@@ -540,7 +540,7 @@
                         if(prediction.fPrediction.yellowCard == yellowCardEvent.playerId
                             && prediction.fPrediction.redCard == redCardEvent.playerId
                             ) {
-                                return 80;
+                                return 150;
                             }
                         break;
                 }
@@ -629,29 +629,29 @@
         {@const yellowCardCount = getBonusCount("YellowCard")}
         {@const redCardCount = getBonusCount("RedCard")}
         
-        {@const r16WinnerCorrect = events.find(x => Object.keys(x.stage)[0] == "RoundOf16" && Object.keys(x.eventType)[0] == "RoundWon" && x.teamId == prediction.r16Prediction.winner) != undefined}
-        {@const r16LoserCorrect = events.find(x => Object.keys(x.stage)[0] == "RoundOf16" && Object.keys(x.eventType)[0] == "RoundLost" && x.teamId == prediction.r16Prediction.loser) != undefined}
+        {@const r16WinnerCorrect = events.find(x => Object.keys(x.stage)[0] == "RoundOf16" && Object.keys(x.eventType)[0] == "StageWon" && x.teamId == prediction.r16Prediction.winner) != undefined}
+        {@const r16LoserCorrect = events.find(x => Object.keys(x.stage)[0] == "RoundOf16" && Object.keys(x.eventType)[0] == "StageLost" && x.teamId == prediction.r16Prediction.loser) != undefined}
         {@const r16ScorerCorrect = events.find(x => Object.keys(x.stage)[0] == "RoundOf16" && Object.keys(x.eventType)[0] == "GoalScored" && x.teamId == prediction.r16Prediction.goalScorer) != undefined}
         {@const r16AssisterCorrect = events.find(x => Object.keys(x.stage)[0] == "RoundOf16" && Object.keys(x.eventType)[0] == "GoalAssisted" && x.teamId == prediction.r16Prediction.goalAssister) != undefined}
         {@const r16YellowCardCorrect = events.find(x => Object.keys(x.stage)[0] == "RoundOf16" && Object.keys(x.eventType)[0] == "YellowCard" && x.teamId == prediction.r16Prediction.yellowCard) != undefined}
         {@const r16RedCardCorrect = events.find(x => Object.keys(x.stage)[0] == "RoundOf16" && Object.keys(x.eventType)[0] == "RedCard" && x.teamId == prediction.r16Prediction.redCard) != undefined}
 
-        {@const qfWinnerCorrect = events.find(x => Object.keys(x.stage)[0] == "QuarterFinal" && Object.keys(x.eventType)[0] == "RoundWon" && x.teamId == prediction.qfPrediction.winner) != undefined}
-        {@const qfLoserCorrect = events.find(x => Object.keys(x.stage)[0] == "QuarterFinal" && Object.keys(x.eventType)[0] == "RoundLost" && x.teamId == prediction.qfPrediction.loser) != undefined}
+        {@const qfWinnerCorrect = events.find(x => Object.keys(x.stage)[0] == "QuarterFinal" && Object.keys(x.eventType)[0] == "StageWon" && x.teamId == prediction.qfPrediction.winner) != undefined}
+        {@const qfLoserCorrect = events.find(x => Object.keys(x.stage)[0] == "QuarterFinal" && Object.keys(x.eventType)[0] == "StageLost" && x.teamId == prediction.qfPrediction.loser) != undefined}
         {@const qfScorerCorrect = events.find(x => Object.keys(x.stage)[0] == "QuarterFinal" && Object.keys(x.eventType)[0] == "GoalScored" && x.teamId == prediction.qfPrediction.goalScorer) != undefined}
         {@const qfAssisterCorrect = events.find(x => Object.keys(x.stage)[0] == "QuarterFinal" && Object.keys(x.eventType)[0] == "GoalAssisted" && x.teamId == prediction.qfPrediction.goalAssister) != undefined}
         {@const qfYellowCardCorrect = events.find(x => Object.keys(x.stage)[0] == "QuarterFinal" && Object.keys(x.eventType)[0] == "YellowCard" && x.teamId == prediction.qfPrediction.yellowCard) != undefined}
         {@const qfRedCardCorrect = events.find(x => Object.keys(x.stage)[0] == "QuarterFinal" && Object.keys(x.eventType)[0] == "RedCard" && x.teamId == prediction.qfPrediction.redCard) != undefined}
 
-        {@const sfWinnerCorrect = events.find(x => Object.keys(x.stage)[0] == "SemiFinal" && Object.keys(x.eventType)[0] == "RoundWon" && x.teamId == prediction.sfPrediction.winner) != undefined}
-        {@const sfLoserCorrect = events.find(x => Object.keys(x.stage)[0] == "SemiFinal" && Object.keys(x.eventType)[0] == "RoundLost" && x.teamId == prediction.sfPrediction.loser) != undefined}
+        {@const sfWinnerCorrect = events.find(x => Object.keys(x.stage)[0] == "SemiFinal" && Object.keys(x.eventType)[0] == "StageWon" && x.teamId == prediction.sfPrediction.winner) != undefined}
+        {@const sfLoserCorrect = events.find(x => Object.keys(x.stage)[0] == "SemiFinal" && Object.keys(x.eventType)[0] == "StageLost" && x.teamId == prediction.sfPrediction.loser) != undefined}
         {@const sfScorerCorrect = events.find(x => Object.keys(x.stage)[0] == "SemiFinal" && Object.keys(x.eventType)[0] == "GoalScored" && x.teamId == prediction.sfPrediction.goalScorer) != undefined}
         {@const sfAssisterCorrect = events.find(x => Object.keys(x.stage)[0] == "SemiFinal" && Object.keys(x.eventType)[0] == "GoalAssisted" && x.teamId == prediction.sfPrediction.goalAssister) != undefined}
         {@const sfYellowCardCorrect = events.find(x => Object.keys(x.stage)[0] == "SemiFinal" && Object.keys(x.eventType)[0] == "YellowCard" && x.teamId == prediction.sfPrediction.yellowCard) != undefined}
         {@const sfRedCardCorrect = events.find(x => Object.keys(x.stage)[0] == "SemiFinal" && Object.keys(x.eventType)[0] == "RedCard" && x.teamId == prediction.sfPrediction.redCard) != undefined}
 
-        {@const fWinnerCorrect = events.find(x => Object.keys(x.stage)[0] == "Final" && Object.keys(x.eventType)[0] == "RoundWon" && x.teamId == prediction.fPrediction.winner) != undefined}
-        {@const fLoserCorrect = events.find(x => Object.keys(x.stage)[0] == "Final" && Object.keys(x.eventType)[0] == "RoundLost" && x.teamId == prediction.fPrediction.loser) != undefined}
+        {@const fWinnerCorrect = events.find(x => Object.keys(x.stage)[0] == "Final" && Object.keys(x.eventType)[0] == "StageWon" && x.teamId == prediction.fPrediction.winner) != undefined}
+        {@const fLoserCorrect = events.find(x => Object.keys(x.stage)[0] == "Final" && Object.keys(x.eventType)[0] == "StageLost" && x.teamId == prediction.fPrediction.loser) != undefined}
         {@const fScorerCorrect = events.find(x => Object.keys(x.stage)[0] == "Final" && Object.keys(x.eventType)[0] == "GoalScored" && x.teamId == prediction.fPrediction.goalScorer) != undefined}
         {@const fAssisterCorrect = events.find(x => Object.keys(x.stage)[0] == "Final" && Object.keys(x.eventType)[0] == "GoalAssisted" && x.teamId == prediction.fPrediction.goalAssister) != undefined}
         {@const fYellowCardCorrect = events.find(x => Object.keys(x.stage)[0] == "Final" && Object.keys(x.eventType)[0] == "YellowCard" && x.teamId == prediction.fPrediction.yellowCard) != undefined}
@@ -759,7 +759,7 @@
                     {/if}
                 </div>
                 <div class="w-full md:w-6/12 flex flex-wrap flex-row items-center mt-2 md:mt-0 md:px-4">
-                  <div class="w-full md:w-1/2 text-sm md:text-base">Bonus ({stageWonCount}/6): 0</div>
+                  <div class="w-full md:w-1/2 text-sm md:text-base">Bonus ({stageWonCount}/6): {stageWonCount > 2 ? stageWonCount * 5 : 0}</div>
                   <div class="w-full md:w-1/2 text-sm md:text-base">Total: {(stageWonCount * 5) + (stageWonCount > 2 ? (stageWonCount * 5) : 0)}</div>
                 </div>
                 
@@ -875,7 +875,7 @@
                 
                 
                 <div class="w-full md:w-6/12 flex flex-wrap flex-row items-center mt-2 md:mt-0 md:px-4">
-                    <div class="w-full md:w-1/2 text-sm md:text-base">Bonus ({stageLostCount}/6): 0</div>
+                    <div class="w-full md:w-1/2 text-sm md:text-base">Bonus ({stageLostCount}/6): {stageLostCount > 2 ? stageLostCount * 5 : 0}</div>
                     <div class="w-full md:w-1/2 text-sm md:text-base">Total: {(stageLostCount * 5) + (stageLostCount > 2 ? (stageLostCount * 5) : 0)}</div>
                 </div>     
                 
@@ -1011,7 +1011,7 @@
                 </div>
 
                 <div class="w-full md:w-6/12 flex flex-wrap flex-row items-center mt-2 md:mt-0 md:px-4">
-                    <div class="w-full md:w-1/2 text-sm md:text-base">Bonus ({goalScorerCount}/6): 0</div>
+                    <div class="w-full md:w-1/2 text-sm md:text-base">Bonus ({goalScorerCount}/6): {goalScorerCount > 2 ? goalScorerCount * 10 : 0}</div>
                     <div class="w-full md:w-1/2 text-sm md:text-base">Total: {(goalScorerCount * 10) + (goalScorerCount > 2 ? (goalScorerCount * 10) : 0)}</div>
                 </div>     
                 
@@ -1138,7 +1138,7 @@
                 </div>
 
                 <div class="w-full md:w-6/12 flex flex-wrap flex-row items-center mt-2 md:mt-0 md:px-4">
-                    <div class="w-full md:w-1/2 text-sm md:text-base">Bonus ({goalAssisterCount}/6): 0</div>
+                    <div class="w-full md:w-1/2 text-sm md:text-base">Bonus ({goalAssisterCount}/6): {goalAssisterCount > 2 ? goalAssisterCount * 10 : 0}</div>
                     <div class="w-full md:w-1/2 text-sm md:text-base">Total: {(goalAssisterCount * 10) + (goalAssisterCount > 2 ? (goalAssisterCount * 10) : 0)}</div>
                 </div>     
                 
@@ -1269,7 +1269,7 @@
                 </div>
                 
                 <div class="w-full md:w-6/12 flex flex-wrap flex-row items-center mt-2 md:mt-0 md:px-4">
-                    <div class="w-full md:w-1/2 text-sm md:text-base">Bonus ({yellowCardCount}/6): 0</div>
+                    <div class="w-full md:w-1/2 text-sm md:text-base">Bonus ({yellowCardCount}/6): {yellowCardCount > 2 ? yellowCardCount * 5 : 0}</div>
                     <div class="w-full md:w-1/2 text-sm md:text-base">Total: {(yellowCardCount * 5) + (yellowCardCount > 2 ? (yellowCardCount * 5) : 0)}</div>
                 </div>     
                 
@@ -1395,7 +1395,7 @@
                 </div>
                 
                 <div class="w-full md:w-6/12 flex flex-wrap flex-row items-center mt-2 md:mt-0 md:px-4">
-                    <div class="w-full md:w-1/2 text-sm md:text-base">Bonus ({redCardCount}/6): 0</div>
+                    <div class="w-full md:w-1/2 text-sm md:text-base">Bonus ({redCardCount}/6): {redCardCount > 2 ? redCardCount * 10 : 0}</div>
                     <div class="w-full md:w-1/2 text-sm md:text-base">Total: {(redCardCount * 10) + (redCardCount > 2 ? (redCardCount * 10) : 0)}</div>
                 </div>     
                 
@@ -1772,7 +1772,7 @@
             </div>
         </div>
 
-        <div class="flex flex-col bg-blue-900 p-2 mt-4 rounded-t-md rounded-b-md border-x-2 border-OPENFPLPURPLE border-t-2">
+        <div class="flex flex-col bg-blue-900 p-2 mt-4 rounded-t-md border-x-2 border-OPENFPLPURPLE border-t-2">
             <p>Final Match Results:</p>
             <div class="flex flex-row flex-wrap items-center">
                 
