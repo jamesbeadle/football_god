@@ -494,7 +494,6 @@ module {
         totalCorrectScorers += 1;
         correctScorersScore += 10;
       };
-      Debug.print(debug_show totalScore);
 
       let groupAAssisterMatch = Array.find<T.Euro2024Event>(
         events,
@@ -507,7 +506,6 @@ module {
         totalCorrectScorers += 1;
         correctScorersScore += 10;
       };
-      Debug.print(debug_show totalScore);
 
       let groupAYellowMatch = Array.find<T.Euro2024Event>(
         events,
@@ -520,7 +518,6 @@ module {
         totalCorrectScorers += 1;
         correctScorersScore += 5;
       };
-      Debug.print(debug_show totalScore);
 
       let groupARedMatch = Array.find<T.Euro2024Event>(
         events,
@@ -533,7 +530,6 @@ module {
         totalCorrectScorers += 1;
         correctScorersScore += 10;
       };
-      Debug.print(debug_show totalScore);
 
       //B
 
@@ -567,7 +563,6 @@ module {
         totalCorrectLosers += 1;
         correctLosersScore += 5;
       };
-      Debug.print(debug_show totalScore);
 
       let groupBScorerMatch = Array.find<T.Euro2024Event>(
         events,
@@ -580,7 +575,6 @@ module {
         totalCorrectScorers += 1;
         correctScorersScore += 10;
       };
-      Debug.print(debug_show totalScore);
 
       let groupBAssisterMatch = Array.find<T.Euro2024Event>(
         events,
@@ -593,7 +587,6 @@ module {
         totalCorrectScorers += 1;
         correctScorersScore += 10;
       };
-      Debug.print(debug_show totalScore);
 
       let groupBYellowMatch = Array.find<T.Euro2024Event>(
         events,
@@ -606,7 +599,6 @@ module {
         totalCorrectScorers += 1;
         correctScorersScore += 5;
       };
-      Debug.print(debug_show totalScore);
 
       let groupBRedMatch = Array.find<T.Euro2024Event>(
         events,
@@ -619,7 +611,6 @@ module {
         totalCorrectScorers += 1;
         correctScorersScore += 10;
       };
-      Debug.print(debug_show totalScore);
 
       //C
 
@@ -641,7 +632,6 @@ module {
         totalCorrectWinners += 1;
         correctWinnersScore += 5;
       };
-      Debug.print(debug_show totalScore);
 
       let groupCLoserMatch = Array.find<T.Euro2024Event>(
         events,
@@ -654,7 +644,6 @@ module {
         totalCorrectLosers += 1;
         correctLosersScore += 5;
       };
-      Debug.print(debug_show totalScore);
 
       let groupCScorerMatch = Array.find<T.Euro2024Event>(
         events,
@@ -667,7 +656,6 @@ module {
         totalCorrectScorers += 1;
         correctScorersScore += 10;
       };
-      Debug.print(debug_show totalScore);
 
       let groupCAssisterMatch = Array.find<T.Euro2024Event>(
         events,
@@ -680,7 +668,6 @@ module {
         totalCorrectScorers += 1;
         correctScorersScore += 10;
       };
-      Debug.print(debug_show totalScore);
 
       let groupCYellowMatch = Array.find<T.Euro2024Event>(
         events,
@@ -693,7 +680,6 @@ module {
         totalCorrectScorers += 1;
         correctScorersScore += 5;
       };
-      Debug.print(debug_show totalScore);
 
       let groupCRedMatch = Array.find<T.Euro2024Event>(
         events,
@@ -706,7 +692,6 @@ module {
         totalCorrectScorers += 1;
         correctScorersScore += 10;
       };
-      Debug.print(debug_show totalScore);
 
       //D
 
@@ -1048,7 +1033,6 @@ module {
       if (Option.isSome(r16YellowCardMatch)) {
         totalScore += 10;
       };
-      Debug.print(debug_show totalScore);
 
       let r16RedCardMatch = Array.find<T.Euro2024Event>(
         events,
@@ -1264,7 +1248,6 @@ module {
       if(Option.isSome(fWinnerMatch) and Option.isSome(fLoserMatch)){
         totalScore += 100;
       };
-      Debug.print(debug_show totalScore);
 
       let fScorerMatch = Array.find<T.Euro2024Event>(
         events,
@@ -1315,8 +1298,6 @@ module {
       if(Option.isSome(fYellowCardMatch) and Option.isSome(fRedCardMatch)){
         totalScore += 150;
       };
-      Debug.print(debug_show totalScore);
-
         
       return totalScore;
     };

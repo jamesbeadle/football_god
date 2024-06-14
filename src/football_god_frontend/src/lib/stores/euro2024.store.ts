@@ -25,7 +25,6 @@ function createEuro2024Store() {
 
   async function sync() {
     let result = await actor.getEuro2024StateDTO();
-    console.log(result);
     if (isError(result)) {
       console.error("Error syncing euro 2024 store");
       return;
@@ -36,12 +35,7 @@ function createEuro2024Store() {
   }
 
   async function getEuro2024State() {
-    const identityActor: any = await ActorFactory.createIdentityActor(
-      authStore,
-      process.env.FOOTBALL_GOD_BACKEND_CANISTER_ID ?? "",
-    );
-
-    let result = await identityActor.getEuro2024State();
+    let result = await actor.getEuro2024State();
     return result;
   }
 
@@ -70,9 +64,7 @@ function createEuro2024Store() {
       authStore,
       process.env.FOOTBALL_GOD_BACKEND_CANISTER_ID ?? "",
     );
-    console.log(principalId);
     let result = await identityActor.getPublicEuro2024DTO(principalId);
-    console.log(result);
     if (isError(result)) {
       console.error("error fetching prediction");
     }
@@ -85,13 +77,10 @@ function createEuro2024Store() {
       process.env.FOOTBALL_GOD_BACKEND_CANISTER_ID ?? "",
     );
     let result = await identityActor.getEuro2024Fixtures();
-    console.log("result");
-    console.log(result);
     if (isError(result)) {
       console.error("error fetching euro 2024 fixtures", result);
       return [];
     }
-    console.log(result);
     return result.ok;
   }
 
@@ -112,12 +101,9 @@ function createEuro2024Store() {
     };
 
     let result = await identityActor.getLeaderboard(dto);
-    console.log("result");
-    console.log(result);
     if (isError(result)) {
       console.error("error fetching euro 2024 fixtures", result);
     }
-    console.log(result);
     return result.ok;
   }
 

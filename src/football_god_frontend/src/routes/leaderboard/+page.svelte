@@ -15,7 +15,6 @@
         try {
         await euro2024Store.sync();
         let result = await euro2024Store.getLeaderboard(offset, limit);
-        console.log(result)
         entries = result.leaderboardEntries;
         totalEntries = result.totalEntries;
         } catch {

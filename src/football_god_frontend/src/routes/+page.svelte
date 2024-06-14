@@ -37,7 +37,6 @@
       });
 
       await euro2024Store.sync();
-
       let result = await euro2024Store.getEuro2024State();
       if(isError(result)){
         console.error("Error loading Euro2024 state: ", result)

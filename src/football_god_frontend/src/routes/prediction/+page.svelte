@@ -22,11 +22,7 @@
         await playerStore.sync();
         let result = await euro2024Store.getPrediction(id ?? "");
         prediction = result;
-        console.log(prediction)
-        console.log("prediction")
         events = await euro2024Store.getEvents();
-        console.log("events")
-        console.log(events)
       } catch {
         console.error("Error fetching events");
       } finally {

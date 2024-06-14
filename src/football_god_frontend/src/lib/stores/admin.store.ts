@@ -29,8 +29,6 @@ function createAdminStore() {
     );
     let entries = await identityActor.adminGetEuro2024Events();
 
-    console.log("entries");
-    console.log(entries);
     return entries;
   }
 

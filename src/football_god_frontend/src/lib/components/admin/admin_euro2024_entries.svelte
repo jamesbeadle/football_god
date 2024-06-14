@@ -14,7 +14,6 @@
 
     onMount(async () => {
         entries = await adminStore.getEuro2024Entries(currentPage, pageSize);
-        console.log(entries)
     });
 
     function goToPage(page: number) {

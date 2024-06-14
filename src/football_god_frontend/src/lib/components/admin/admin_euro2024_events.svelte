@@ -12,7 +12,6 @@
 
     onMount(async () => {
         events = await adminStore.getEuro2024Events();
-        console.log(events)
     });
 
     async function handleAddEvent(){
@@ -47,8 +46,6 @@
 
     async function deleteEvent(eventId: Euro2024EventId){
         let result = await adminStore.deleteEuro2024Event(eventId);
-        console.log("delete event");
-        console.log(result);
     };
 
 </script>

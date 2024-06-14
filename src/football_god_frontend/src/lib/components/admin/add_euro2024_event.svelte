@@ -50,7 +50,7 @@
           filteredTeams = $teamStore;
           players = $playerStore;
       } catch {
-          console.log("error fetching data");
+          console.error("error fetching data");
       } finally {
           isLoading = false;
       }
