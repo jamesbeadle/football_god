@@ -76,7 +76,7 @@
     {
       title: "Whitepaper",
       content: "Read the FootballGod whitepaper.",
-      link: "/whitepaper",
+      link: "/lightpaper",
       icon: null,
       image: "whitepaper.jpg",
       buttonText: "Read",
@@ -84,7 +84,7 @@
     {
       title: "Transfer Kings",
       content:
-        "Our new game 'Transfer Kings' is coming soon.",
+        "Get your unique 'Transfer Kings' agent name today.",
       link: "https://transferkings.xyz",
       image: "transferkings.png",
       buttonText: "Rules",

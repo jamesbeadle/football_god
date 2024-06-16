@@ -20,7 +20,7 @@
             await teamStore.sync();
             events = await adminStore.getEuro2024Events();
         } catch(error){
-            console.log("error getting events", error);
+            console.error("error getting events", error);
         } finally {
             isLoading = false;
         }

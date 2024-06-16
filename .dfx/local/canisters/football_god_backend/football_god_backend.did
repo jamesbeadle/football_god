@@ -468,7 +468,6 @@ service : {
   openEuro2024Entries: () -> (Result);
   payoutSweepstake: () -> (Result);
   recalculateLeaderboard: () -> (Result);
-  resetEuro2024Fixtures: () -> (Result);
   setEuroSystemState: (GameState) -> (Result);
   setSystemState: (nat16, nat8) -> (Result);
   submitEuro2024Prediction: (Euro2024PredictionDTO) -> (Result);

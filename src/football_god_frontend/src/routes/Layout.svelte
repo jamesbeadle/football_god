@@ -24,8 +24,7 @@
   let isExpanded = writable(false);
   $: links = $authSignedInStore ? [
     { name: "Home", icon: HomeIcon, href: "/" },
-    { name: "Euro 2024", icon: StarIcon, href: "/euro2024" },
-    { name: "Games", icon: GamesIcon, href: "/games" },
+    { name: "Euro 2024", icon: StarIcon, href:  "/leaderboard" },
     { name: "Profile", icon: ProfileIcon, href: "/profile" },
   ] : 
   [

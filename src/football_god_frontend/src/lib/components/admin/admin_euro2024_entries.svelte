@@ -6,7 +6,7 @@
     import ConfirmDeleteEntry from "./confirm_delete_entry.svelte";
 
     let currentPage = 1;
-    const pageSize = 10;
+    const pageSize = 100;
 
     let entries: Euro2024PredictionDTO[] = [];
     let showDeleteConfirm = false;

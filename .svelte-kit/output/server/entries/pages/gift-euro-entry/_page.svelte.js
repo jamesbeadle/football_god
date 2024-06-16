@@ -1,4 +1,4 @@
-import { n } from "../../../chunks/index.js";
+import { l } from "../../../chunks/index.js";
 import "@dfinity/utils";
 import "dompurify";
 import "@dfinity/auth-client";
@@ -7,5 +7,5 @@ import "@dfinity/ledger-icrc";
 import "@dfinity/principal";
 import "@dfinity/candid/lib/cjs/idl.js";
 export {
-  n as default
+  l as default
 };

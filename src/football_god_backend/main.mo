@@ -1384,11 +1384,6 @@ actor Self {
     return #ok(euro2024Instance.getEuro2024Fixtures());
   };
 
-  //TODO: REMOVE
-  public shared ({ caller }) func resetEuro2024Fixtures() : async Result.Result<(), T.Error> { //REMOVE
-    return #ok(euro2024Instance.resetEuro2024Fixtures());
-  };
-
   public shared query func getLeaderboard(dto: DTOs.GetLeaderboardDTO) : async Result.Result<DTOs.Euro2024LeaderBoardDTO, T.Error> {
     return euro2024Instance.getEuro2024LeaderboardDTO(dto);
   };

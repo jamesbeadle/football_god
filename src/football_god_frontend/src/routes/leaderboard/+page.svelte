@@ -16,7 +16,10 @@
         try {
             await euro2024Store.sync();
             let result = await euro2024Store.getLeaderboard(offset, limit);
-            entries = result.leaderboardEntries;
+            
+            const uniqueEntries = filterUniqueEntries(result.leaderboardEntries);
+            entries = uniqueEntries;
+
             totalEntries = result.totalEntries;
         } catch {
             console.error("Error fetching leaderboard");
@@ -24,6 +27,19 @@
         isLoading = false;
         }
     };
+
+    const filterUniqueEntries = (entries: Euro2024LeaderboardEntryDTO[]) => {
+        const seen = new Set();
+        return entries.filter(entry => {
+            if (seen.has(entry.principalName)) {
+                return false;
+            } else {
+                seen.add(entry.principalName);
+                return true;
+            }
+        });
+    };
+
     
     onMount(fetchLeaderboard);
 
@@ -63,7 +79,7 @@
                         <p>{entry.position}</p>
                     </div>
                     <div class="w-3/6">
-                        <p>{entry.displayName}</p>
+                        <p>{entry.displayName == entry.principalName ? 'Unset' : entry.displayName}</p>
                     </div>
                     <div class="w-1/6">
                         <p>{entry.totalScore}</p>

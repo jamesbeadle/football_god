@@ -57,7 +57,7 @@ function createEuro2024Store() {
     principalId: string,
   ): Promise<Euro2024PredictionDTO> {
     let result = await actor.getPublicEuro2024DTO(principalId);
-    
+
     if (isError(result)) {
       console.error("error fetching prediction");
     }
@@ -81,8 +81,6 @@ function createEuro2024Store() {
     offset: bigint,
     limit: bigint,
   ): Promise<Euro2024LeaderBoardDTO> {
-
-
     let dto: GetLeaderboardDTO = {
       totalEntries: 0n,
       offset: offset,
