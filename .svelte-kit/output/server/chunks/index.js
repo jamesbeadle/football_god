@@ -3485,7 +3485,7 @@ const options = {
 		<div class="error">
 			<span class="status">` + status + '</span>\n			<div class="message">\n				<h1>' + message + "</h1>\n			</div>\n		</div>\n	</body>\n</html>\n"
   },
-  version_hash: "1cnrazb"
+  version_hash: "1ltorx5"
 };
 async function get_hooks() {
   return {};
@@ -5004,25 +5004,35 @@ const Page$1 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
   })}`;
 });
 const Vision = create_ssr_component(($$result, $$props, $$bindings, slots) => {
-  return `<div class="flex flex-col space-y-2" data-svelte-h="svelte-4nafbu"><h1 class="text-2xl">Vision</h1> <p>Coming soon.</p></div>`;
+  return `<div class="flex flex-col space-y-2" data-svelte-h="svelte-1jobdhn"><h1 class="text-2xl">Vision</h1> <p>FootballGod is the home of football on the Internet Computer blockchain, 
+    containing unique games which enhance a football fans experience.</p> <p>Our games are designed to reward fans for their footballing knowledge in our utility token $FOOTBALL.</p> <h1 class="text-xl">The Internet Computer</h1> <p>The Internet Computer Protocol has provided the world with a foundation
+    for genuine decentralisation. This leap in technology allows us to transform how we as business interact with the 
+    Software as a Service (SaaS) platforms we are increasingly reliant on.</p></div>`;
 });
 const Product = create_ssr_component(($$result, $$props, $$bindings, slots) => {
-  return `<div class="flex flex-col space-y-2" data-svelte-h="svelte-1vcgj2t"><h1 class="text-2xl">Product</h1> <p>Coming soon.</p></div>`;
+  return `<div class="flex flex-col space-y-2" data-svelte-h="svelte-1v3bzuj"><h1 class="text-2xl">Product</h1> <p>FootballGod is already live, running mini games for the Premier League and Euro 2024. 
+    Next we introduce larger games, the first being <a href="https://transferkings.xyz" target="_blank" class="text-DARK">Transfer Kings</a>, 
+    allowing you to become your own football agent. Transfer Kings has been specifically designed to keep people invested in the FootballGod ecosystem for a number of years.</p> <p>The second phase of FootballGod is to introduce fixed odds football betting to the platform. 
+    This functionality will be restricted worldwide, only accessible as gambling licenses in each country are identified.</p> <p>Further FootballGod games are in the works, each integrating the $FOOTBALL token for prizes. 
+    As our user base grows, more games will be introduced that utilise our valuable football data and reward users with $FOOTBALL tokens for their participation.</p></div>`;
 });
 const Dao = create_ssr_component(($$result, $$props, $$bindings, slots) => {
-  return `<div class="flex flex-col space-y-2" data-svelte-h="svelte-1dxviuc"><h1 class="text-2xl">The FootballGod DAO</h1> <p>Coming soon.</p></div>`;
+  return `<div class="flex flex-col space-y-2" data-svelte-h="svelte-1m86430"><h1 class="text-2xl">The FootballGod DAO</h1> <p>Details of the FootballGod DAO will be released soon.</p></div>`;
 });
 const Marketing = create_ssr_component(($$result, $$props, $$bindings, slots) => {
-  return `<div class="flex flex-col space-y-2" data-svelte-h="svelte-1snwie"><h1 class="text-2xl">Marketing</h1> <p>Coming soon.</p></div>`;
+  return `<div class="flex flex-col space-y-2" data-svelte-h="svelte-7gxhp9"><h1 class="text-2xl">Marketing</h1> <p>FootballGod is developed by <a href="https://waterwaylabs.xyz" target="_blank" class="text-DARK">Waterway Labs</a>.</p> <p>Waterway Labs are developing a variety of applications aimed to introduce people &amp; businesses to the ICP blockchain.
+        Waterway Labs is UK based, with a plan to introduce a wide range of football fans to FootballGod. Our plan is to introduce fans to the platform in each UK city we visit, inviting users to win $FOOTBALL tokens through real life football games.</p> <p>All content will appear on our Youtube channel and podcast, giving FootballGod a variety of channels for exposure.</p></div>`;
 });
 const Roadmap = create_ssr_component(($$result, $$props, $$bindings, slots) => {
-  return `<div class="flex flex-col space-y-2" data-svelte-h="svelte-1afx0pq"><h1 class="text-2xl">Roadmap</h1> <p>Coming soon.</p></div>`;
+  return `<div class="flex flex-col space-y-2" data-svelte-h="svelte-t9z569"><h1 class="text-2xl">Roadmap</h1> <div class="space-y-4"><h1 class="text-xl">Initial Phase: Mini Games</h1> <p>2024: Transfer Kings</p> <ul class="list-disc px-4"><li>The beginning of Transfer Kings, allowing IC users to become their own football agent to earn $FOOTBALL tokens.</li></ul> <p>2024: Score Predictor</p> <ul class="list-disc px-4"><li>The original footballgod predictor game makes a return for the 2024/25 season.</li></ul></div></div>`;
 });
 const Team = create_ssr_component(($$result, $$props, $$bindings, slots) => {
-  return `<div class="flex flex-col space-y-2" data-svelte-h="svelte-afqur5"><h1 class="text-2xl">Team</h1> <p>Coming soon.</p></div>`;
+  return `<div class="flex flex-col space-y-2" data-svelte-h="svelte-1l31po5"><h1 class="text-2xl">Team</h1> <p>Waterway Labs developed OpenFPL, a current Premier League football based DAO on the Internet Computer blockchain.</p> <p>The Waterway Labs team is in the process of expansion, bringing on a new Managing &amp; Operations Director in June 2024. This allows the founder, James Beadle, to focus on the development of FootballGod.</p> <p>Other team members will be announced in the coming months.</p></div>`;
 });
 const System_architecture = create_ssr_component(($$result, $$props, $$bindings, slots) => {
-  return `<div class="flex flex-col space-y-2" data-svelte-h="svelte-1emuhg"><h1 class="text-2xl">System Architecture</h1> <p>Coming soon.</p></div>`;
+  return `<div class="flex flex-col space-y-2" data-svelte-h="svelte-1irf8r3"><h1 class="text-2xl">System Architecture</h1> <p>FootballGod has the following core canisters:</p> <ul><li>Players Canister: 
+            Stores all information on each football player&#39;s career from in game events to career achievements.</li> <li>Events Canister: All sports event</li> <li>Users Canister: Horizontally scaled canisters to store all user information.</li> <li>Index Canister: Used to map information between canisters.</li> <li>Odds Canister: 
+            Stores all live and historical odds information for all games.</li></ul> <p>If a user purchases a private agency, a single canister is created to manage the agency data.</p></div>`;
 });
 const css = {
   code: ".pip.svelte-1ubgm3v{width:10px;height:10px;background-color:gray;border-radius:50%;margin:0 2px}.pip.is-active.svelte-1ubgm3v{--tw-bg-opacity:1;background-color:rgb(26 26 29 / var(--tw-bg-opacity))}@media(min-width: 640px){.pip.svelte-1ubgm3v{width:12px;height:12px}}",

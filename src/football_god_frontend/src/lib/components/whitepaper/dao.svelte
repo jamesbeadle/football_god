@@ -2,7 +2,6 @@
     <h1 class="text-2xl">The FootballGod DAO</h1>
     
     <p>
-        Coming soon.
+        Details of the FootballGod DAO will be released soon.
     </p>
-
 </div>
