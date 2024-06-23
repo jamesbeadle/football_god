@@ -16,7 +16,6 @@
   let isLoggedIn = false;
   let isLoading = true;
   let euro2024State: Euro2024State;
-  const countdown = writable("");
 
   type TileData = {
     title: string;
@@ -45,18 +44,6 @@
 
       euro2024State = result.ok;
       
-      const endDate = new Date("June 14, 2024 20:00:00 GMT+0100").getTime();
-      const updateCountdown = () => {
-        const now = new Date().getTime();
-        const distance = endDate - now;
-        const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-        const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-        countdown.set(`Kick Off: ${days}d ${hours}h ${minutes}m`);
-      };
-
-      updateCountdown(); // Run once on component mount
-      interval = setInterval(updateCountdown, 60000); // Update every minute
     } catch (error) {
       toastsError({
         msg: { text: "Error fetching homepage data." },
@@ -76,7 +63,7 @@
     {
       title: "Whitepaper",
       content: "Read the FootballGod whitepaper.",
-      link: "/lightpaper",
+      link: "/whitepaper",
       icon: null,
       image: "whitepaper.jpg",
       buttonText: "Read",
@@ -171,7 +158,6 @@
           >
             <FootballIcon className="w-6 mr-2" />
             <p class="text-white  font-bold">Euro2024&nbsp;</p>
-            <p class="text-white">| {$countdown}</p>
           </div>
         </div>
       </div>

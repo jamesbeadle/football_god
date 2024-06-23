@@ -10,7 +10,7 @@ return {
 	assets: new Set([".DS_Store",".ic-assets.json",".well-known/ic-domains",".well-known/ii-alternative-origins","FPLCoin.png","Gods.png","ICPCoin.png","banner.jpg","favicons/.DS_Store","favicons/apple-touch-icon.png","favicons/browserconfig.xml","favicons/favicon-16x16.png","favicons/favicon-32x32.png","favicons/favicon.ico","favicons/icon-192x192.png","favicons/icon-512x512.png","favicons/mstile-150x150.png","favicons/safari-pinned-tab.svg","manifest.webmanifest","openfpl.png","poppins-regular-webfont.woff2","profile_placeholder.png","transferkings.png","whitepaper.jpg"]),
 	mimeTypes: {".json":"application/json",".png":"image/png",".jpg":"image/jpeg",".xml":"text/xml",".svg":"image/svg+xml",".webmanifest":"application/manifest+json",".woff2":"font/woff2"},
 	_: {
-		client: {"start":"_app/immutable/entry/start.CO_nEimI.js","app":"_app/immutable/entry/app.Cmm2NG8q.js","imports":["_app/immutable/entry/start.CO_nEimI.js","_app/immutable/chunks/index.Hq7qCnt6.js","_app/immutable/chunks/vendor.BSedk8ia.js","_app/immutable/entry/app.Cmm2NG8q.js","_app/immutable/chunks/index.Hq7qCnt6.js","_app/immutable/chunks/vendor.BSedk8ia.js"],"stylesheets":["_app/immutable/assets/index.dzohRDD9.css","_app/immutable/assets/index.dzohRDD9.css"],"fonts":[],"uses_env_dynamic_public":false},
+		client: {"start":"_app/immutable/entry/start.DccHqGRK.js","app":"_app/immutable/entry/app.C6R4luzA.js","imports":["_app/immutable/entry/start.DccHqGRK.js","_app/immutable/chunks/index.C0cHXlGl.js","_app/immutable/chunks/vendor.BzpF_IZ2.js","_app/immutable/entry/app.C6R4luzA.js","_app/immutable/chunks/index.C0cHXlGl.js","_app/immutable/chunks/vendor.BzpF_IZ2.js"],"stylesheets":["_app/immutable/assets/index.K5qbkQve.css","_app/immutable/assets/index.K5qbkQve.css"],"fonts":[],"uses_env_dynamic_public":false},
 		nodes: [
 			__memo(() => import('./nodes/0.js')),
 			__memo(() => import('./nodes/1.js')),
@@ -68,22 +68,22 @@ return {
 				endpoint: null
 			},
 			{
-				id: "/lightpaper",
-				pattern: /^\/lightpaper\/?$/,
+				id: "/prediction",
+				pattern: /^\/prediction\/?$/,
 				params: [],
 				page: { layouts: [0,], errors: [1,], leaf: 8 },
 				endpoint: null
 			},
 			{
-				id: "/prediction",
-				pattern: /^\/prediction\/?$/,
+				id: "/profile",
+				pattern: /^\/profile\/?$/,
 				params: [],
 				page: { layouts: [0,], errors: [1,], leaf: 9 },
 				endpoint: null
 			},
 			{
-				id: "/profile",
-				pattern: /^\/profile\/?$/,
+				id: "/whitepaper",
+				pattern: /^\/whitepaper\/?$/,
 				params: [],
 				page: { layouts: [0,], errors: [1,], leaf: 10 },
 				endpoint: null

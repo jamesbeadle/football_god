@@ -3485,7 +3485,7 @@ const options = {
 		<div class="error">
 			<span class="status">` + status + '</span>\n			<div class="message">\n				<h1>' + message + "</h1>\n			</div>\n		</div>\n	</body>\n</html>\n"
   },
-  version_hash: "3h89dn"
+  version_hash: "1cnrazb"
 };
 async function get_hooks() {
   return {};
@@ -3747,7 +3747,7 @@ const initBusyStore = () => {
 const busyStore = initBusyStore();
 const busy = derived(busyStore, ($busyStore) => $busyStore.length > 0);
 const busyMessage = derived(busyStore, ($busyStore) => $busyStore.reverse().find(({ text: text2 }) => nonNullish(text2))?.text);
-const css$6 = {
+const css$7 = {
   code: ".medium.svelte-85668t{--spinner-size:30px}.small.svelte-85668t{--spinner-size:calc(var(--line-height-standard) * 1rem)}.tiny.svelte-85668t{--spinner-size:calc(var(--line-height-standard) * 0.5rem)}svg.svelte-85668t{width:var(--spinner-size);height:var(--spinner-size);animation:spinner-linear-rotate 2000ms linear infinite;position:absolute;top:calc(50% - var(--spinner-size) / 2);left:calc(50% - var(--spinner-size) / 2);--radius:45px;--circumference:calc(3.1415926536 * var(--radius) * 2);--start:calc((1 - 0.05) * var(--circumference));--end:calc((1 - 0.8) * var(--circumference))}svg.inline.svelte-85668t{display:inline-block;position:relative}circle.svelte-85668t{stroke-dasharray:var(--circumference);stroke-width:10%;transform-origin:50% 50% 0;transition-property:stroke;animation-name:spinner-stroke-rotate-100;animation-duration:4000ms;animation-timing-function:cubic-bezier(0.35, 0, 0.25, 1);animation-iteration-count:infinite;fill:transparent;stroke:currentColor;transition:stroke-dashoffset 225ms linear}@keyframes spinner-linear-rotate{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}@keyframes spinner-stroke-rotate-100{0%{stroke-dashoffset:var(--start);transform:rotate(0)}12.5%{stroke-dashoffset:var(--end);transform:rotate(0)}12.5001%{stroke-dashoffset:var(--end);transform:rotateX(180deg) rotate(72.5deg)}25%{stroke-dashoffset:var(--start);transform:rotateX(180deg) rotate(72.5deg)}25.0001%{stroke-dashoffset:var(--start);transform:rotate(270deg)}37.5%{stroke-dashoffset:var(--end);transform:rotate(270deg)}37.5001%{stroke-dashoffset:var(--end);transform:rotateX(180deg) rotate(161.5deg)}50%{stroke-dashoffset:var(--start);transform:rotateX(180deg) rotate(161.5deg)}50.0001%{stroke-dashoffset:var(--start);transform:rotate(180deg)}62.5%{stroke-dashoffset:var(--end);transform:rotate(180deg)}62.5001%{stroke-dashoffset:var(--end);transform:rotateX(180deg) rotate(251.5deg)}75%{stroke-dashoffset:var(--start);transform:rotateX(180deg) rotate(251.5deg)}75.0001%{stroke-dashoffset:var(--start);transform:rotate(90deg)}87.5%{stroke-dashoffset:var(--end);transform:rotate(90deg)}87.5001%{stroke-dashoffset:var(--end);transform:rotateX(180deg) rotate(341.5deg)}100%{stroke-dashoffset:var(--start);transform:rotateX(180deg) rotate(341.5deg)}}",
   map: null
 };
@@ -3758,10 +3758,10 @@ const Spinner = create_ssr_component(($$result, $$props, $$bindings, slots) => {
     $$bindings.inline(inline);
   if ($$props.size === void 0 && $$bindings.size && size !== void 0)
     $$bindings.size(size);
-  $$result.css.add(css$6);
+  $$result.css.add(css$7);
   return `  <svg class="${[escape(null_to_empty(size), true) + " svelte-85668t", inline ? "inline" : ""].join(" ").trim()}" preserveAspectRatio="xMidYMid meet" focusable="false" aria-hidden="true" data-tid="spinner" viewBox="0 0 100 100"><circle cx="50%" cy="50%" r="45" class="svelte-85668t"></circle></svg>`;
 });
-const css$5 = {
+const css$6 = {
   code: "div.svelte-14plyno{z-index:calc(var(--z-index) + 1000);position:fixed;top:0;right:0;bottom:0;left:0;background:var(--backdrop);color:var(--backdrop-contrast)}.content.svelte-14plyno{display:flex;flex-direction:column;justify-content:center;align-items:center}p.svelte-14plyno{padding-bottom:var(--padding);max-width:calc(var(--section-max-width) / 2)}",
   map: null
 };
@@ -3770,7 +3770,7 @@ const BusyScreen = create_ssr_component(($$result, $$props, $$bindings, slots) =
   let $busyMessage, $$unsubscribe_busyMessage;
   $$unsubscribe_busy = subscribe(busy, (value) => $busy = value);
   $$unsubscribe_busyMessage = subscribe(busyMessage, (value) => $busyMessage = value);
-  $$result.css.add(css$5);
+  $$result.css.add(css$6);
   $$unsubscribe_busy();
   $$unsubscribe_busyMessage();
   return ` ${$busy ? `<div data-tid="busy" class="svelte-14plyno"><div class="content svelte-14plyno">${nonNullish($busyMessage) ? `<p class="svelte-14plyno">${escape($busyMessage)}</p>` : ``} <span>${validate_component(Spinner, "Spinner").$$render($$result, { inline: true }, {}, {})}</span></div></div>` : ``}`;
@@ -3793,7 +3793,7 @@ const IconError = create_ssr_component(($$result, $$props, $$bindings, slots) =>
     $$bindings.size(size);
   return `  <svg xmlns="http://www.w3.org/2000/svg"${add_attribute("height", size, 0)} viewBox="0 0 24 24"${add_attribute("width", size, 0)} fill="currentColor"><path d="M0 0h24v24H0z" fill="none"></path><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"></path></svg>`;
 });
-const css$4 = {
+const css$5 = {
   code: "svg.svelte-1lui9gh{vertical-align:middle}",
   map: null
 };
@@ -3801,7 +3801,7 @@ const IconInfo = create_ssr_component(($$result, $$props, $$bindings, slots) => 
   let { size = `${DEFAULT_ICON_SIZE}px` } = $$props;
   if ($$props.size === void 0 && $$bindings.size && size !== void 0)
     $$bindings.size(size);
-  $$result.css.add(css$4);
+  $$result.css.add(css$5);
   return `  <svg${add_attribute("width", size, 0)}${add_attribute("height", size, 0)} viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" data-tid="icon-info" class="svelte-1lui9gh"><path d="M10.2222 17.5C14.3643 17.5 17.7222 14.1421 17.7222 10C17.7222 5.85786 14.3643 2.5 10.2222 2.5C6.08003 2.5 2.72217 5.85786 2.72217 10C2.72217 14.1421 6.08003 17.5 10.2222 17.5Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path><path d="M10.2222 13.3333V10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path><path d="M10.2222 6.66699H10.2305" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg>`;
 });
 const IconWarning = create_ssr_component(($$result, $$props, $$bindings, slots) => {
@@ -3927,7 +3927,7 @@ const initToastsStore = () => {
   };
 };
 const toastsStore = initToastsStore();
-const css$3 = {
+const css$4 = {
   code: ".toast.svelte-w1j1kj.svelte-w1j1kj{display:flex;justify-content:space-between;align-items:center;gap:var(--padding-1_5x);background:var(--overlay-background);color:var(--overlay-background-contrast);--button-secondary-background:var(--focus-background);border-radius:var(--border-radius);box-shadow:var(--strong-shadow, 8px 8px 16px 0 rgba(0, 0, 0, 0.25));padding:var(--padding-1_5x);box-sizing:border-box}.toast.inverted.svelte-w1j1kj.svelte-w1j1kj{background:var(--toast-inverted-background);color:var(--toast-inverted-background-contrast)}.toast.svelte-w1j1kj .icon.svelte-w1j1kj{line-height:0}.toast.svelte-w1j1kj .icon.success.svelte-w1j1kj{color:var(--positive-emphasis)}.toast.svelte-w1j1kj .icon.info.svelte-w1j1kj{color:var(--primary)}.toast.svelte-w1j1kj .icon.warn.svelte-w1j1kj{color:var(--warning-emphasis-shade)}.toast.svelte-w1j1kj .icon.error.svelte-w1j1kj{color:var(--negative-emphasis)}.toast.svelte-w1j1kj .msg.svelte-w1j1kj{flex-grow:1;margin:0;word-break:break-word}.toast.svelte-w1j1kj .msg.scroll.svelte-w1j1kj{overflow-y:auto;max-height:calc(var(--font-size-standard) * 3 * 1.3);line-height:normal}.toast.svelte-w1j1kj .msg.truncate.svelte-w1j1kj{white-space:var(--text-white-space, nowrap);overflow:hidden;text-overflow:ellipsis}.toast.svelte-w1j1kj .msg.truncate .title.svelte-w1j1kj{white-space:var(--text-white-space, nowrap);overflow:hidden;text-overflow:ellipsis}.toast.svelte-w1j1kj .msg.clamp.svelte-w1j1kj{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:3;overflow:hidden}.toast.svelte-w1j1kj .msg.clamp .title.svelte-w1j1kj{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden}.toast.svelte-w1j1kj .title.svelte-w1j1kj{display:block;font-size:var(--font-size-standard);line-height:var(--line-height-standard);font-weight:var(--font-weight-bold);line-height:normal}.toast.svelte-w1j1kj button.close.svelte-w1j1kj{padding:0;line-height:0;color:inherit}",
   map: null
 };
@@ -3965,7 +3965,7 @@ const Toast = create_ssr_component(($$result, $$props, $$bindings, slots) => {
   onDestroy(cleanUpAutoHide);
   if ($$props.msg === void 0 && $$bindings.msg && msg !== void 0)
     $$bindings.msg(msg);
-  $$result.css.add(css$3);
+  $$result.css.add(css$4);
   ({ text: text2, level, spinner, title, overflow, position, icon, theme: theme2, renderAsHtml } = msg);
   scroll = overflow === void 0 || overflow === "scroll";
   truncate = overflow === "truncate";
@@ -3976,7 +3976,7 @@ const Toast = create_ssr_component(($$result, $$props, $$bindings, slots) => {
     (truncate ? "truncate" : "") + " " + (clamp ? "clamp" : "") + " " + (scroll ? "scroll" : "")
   ].join(" ").trim()}"${add_attribute("style", minHeightMessage, 0)}>${nonNullish(title) ? `<span class="title svelte-w1j1kj">${escape(title)}</span>` : ``} ${renderAsHtml ? `${validate_component(Html, "Html").$$render($$result, { text: text2 }, {}, {})}` : `${escape(text2)}`}</p> <button class="close svelte-w1j1kj"${add_attribute("aria-label", $i18n.core.close, 0)}>${validate_component(IconClose, "IconClose").$$render($$result, {}, {}, {})}</button> </div>`;
 });
-const css$2 = {
+const css$3 = {
   code: ".wrapper.svelte-24m335{position:fixed;left:50%;transform:translate(-50%, 0);bottom:calc(var(--layout-bottom-offset, 0) + var(--padding-2x));width:calc(100% - var(--padding-8x) - var(--padding-0_5x));display:flex;flex-direction:column;gap:var(--padding);z-index:var(--toast-info-z-index)}.wrapper.error.svelte-24m335{z-index:var(--toast-error-z-index)}@media(min-width: 1024px){.wrapper.svelte-24m335{max-width:calc(var(--section-max-width) - var(--padding-2x))}}.top.svelte-24m335{top:calc(var(--header-height) + var(--padding-3x));bottom:unset;width:calc(100% - var(--padding-6x))}@media(min-width: 1024px){.top.svelte-24m335{right:var(--padding-2x);left:unset;transform:none;max-width:calc(var(--section-max-width) / 1.5 - var(--padding-2x))}}",
   map: null
 };
@@ -3990,7 +3990,7 @@ const Toasts = create_ssr_component(($$result, $$props, $$bindings, slots) => {
   let hasErrors;
   if ($$props.position === void 0 && $$bindings.position && position !== void 0)
     $$bindings.position(position);
-  $$result.css.add(css$2);
+  $$result.css.add(css$3);
   toasts = $toastsStore.filter(({ position: pos }) => (pos ?? "bottom") === position);
   hasErrors = toasts.find(({ level }) => ["error", "warn"].includes(level)) !== void 0;
   $$unsubscribe_toastsStore();
@@ -4053,7 +4053,16 @@ const Tooltip = create_ssr_component(($$result, $$props, $$bindings, slots) => {
     $$bindings.text(text2);
   return `<button class="relative flex items-center w-6 max-w-6 text-sm">${slots.default ? slots.default({}) : ``} ${``}</button>`;
 });
-const css$1 = {
+const WhitepaperIcon = create_ssr_component(($$result, $$props, $$bindings, slots) => {
+  let { className = "" } = $$props;
+  let { fill = "white" } = $$props;
+  if ($$props.className === void 0 && $$bindings.className && className !== void 0)
+    $$bindings.className(className);
+  if ($$props.fill === void 0 && $$bindings.fill && fill !== void 0)
+    $$bindings.fill(fill);
+  return `<svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true"${add_attribute("class", className, 0)} fill="currentColor" viewBox="0 0 24 24"><path d="M6 2h9l6 6v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>`;
+});
+const css$2 = {
   code: ".transition-width.svelte-frwh1m{transition:width 200ms}a.active.svelte-frwh1m{color:white !important}",
   map: null
 };
@@ -4075,7 +4084,7 @@ const Layout = create_ssr_component(($$result, $$props, $$bindings, slots) => {
       return;
     }
   };
-  $$result.css.add(css$1);
+  $$result.css.add(css$2);
   links = $authSignedInStore ? [
     { name: "Home", icon: HomeIcon, href: "/" },
     {
@@ -4087,6 +4096,11 @@ const Layout = create_ssr_component(($$result, $$props, $$bindings, slots) => {
       name: "Profile",
       icon: ProfileIcon,
       href: "/profile"
+    },
+    {
+      name: "Whitepaper",
+      icon: WhitepaperIcon,
+      href: "/whitepaper"
     }
   ] : [{ name: "Home", icon: HomeIcon, href: "/" }];
   activeRoute = $page.url.pathname;
@@ -4435,7 +4449,7 @@ const idlFactory = ({ IDL }) => {
     "year": IDL.Nat16,
     "gameweeks": List
   });
-  const Team = IDL.Record({ "id": IDL.Nat16, "name": IDL.Text });
+  const Team2 = IDL.Record({ "id": IDL.Nat16, "name": IDL.Text });
   const UserBalanceDTO = IDL.Record({
     "balance": IDL.Nat64,
     "displayName": IDL.Text,
@@ -4526,7 +4540,7 @@ const idlFactory = ({ IDL }) => {
     "getPublicEuro2024DTO": IDL.Func([IDL.Text], [Result_1], ["query"]),
     "getSeason": IDL.Func([IDL.Nat16], [IDL.Opt(Season)], ["query"]),
     "getSeasons": IDL.Func([], [IDL.Vec(Season)], ["query"]),
-    "getTeams": IDL.Func([], [IDL.Vec(Team)], ["query"]),
+    "getTeams": IDL.Func([], [IDL.Vec(Team2)], ["query"]),
     "getUserBalancesDTO": IDL.Func([IDL.Nat, IDL.Nat], [BalancesDTO], []),
     "getUserPrediction": IDL.Func([], [Result_1], []),
     "getViewPredictionDTO": IDL.Func(
@@ -4763,23 +4777,19 @@ function createEuro2024Store() {
   };
 }
 const euro2024Store = createEuro2024Store();
-const css = {
+const css$1 = {
   code: ".overlay-panel.svelte-a3qity{position:absolute;bottom:0;right:0}",
   map: null
 };
 const Page$8 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
   let $$unsubscribe_authSignedInStore;
-  let $$unsubscribe_countdown;
   $$unsubscribe_authSignedInStore = subscribe(authSignedInStore, (value) => value);
-  const countdown = writable("");
-  $$unsubscribe_countdown = subscribe(countdown, (value) => value);
   let interval;
   onDestroy(() => {
     clearInterval(interval);
   });
-  $$result.css.add(css);
+  $$result.css.add(css$1);
   $$unsubscribe_authSignedInStore();
-  $$unsubscribe_countdown();
   return `${validate_component(Layout, "Layout").$$render($$result, {}, {}, {
     default: () => {
       return `${`${validate_component(Spinner, "Spinner").$$render($$result, {}, {}, {})}`}`;
@@ -4910,7 +4920,6 @@ const Page$6 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
   let $authSignedInStore, $$unsubscribe_authSignedInStore;
   let $$unsubscribe_dots;
   let $$unsubscribe_euro2024Store;
-  let $$unsubscribe_countdown;
   $$unsubscribe_playerStore = subscribe(playerStore, (value) => value);
   $$unsubscribe_teamStore = subscribe(teamStore, (value) => value);
   $$unsubscribe_authSignedInStore = subscribe(authSignedInStore, (value) => $authSignedInStore = value);
@@ -4918,8 +4927,6 @@ const Page$6 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
   let interval;
   let dots = writable(".");
   $$unsubscribe_dots = subscribe(dots, (value) => value);
-  const countdown = writable("");
-  $$unsubscribe_countdown = subscribe(countdown, (value) => value);
   onDestroy(() => {
     clearInterval(interval);
   });
@@ -4929,7 +4936,6 @@ const Page$6 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
   $$unsubscribe_authSignedInStore();
   $$unsubscribe_dots();
   $$unsubscribe_euro2024Store();
-  $$unsubscribe_countdown();
   return `${validate_component(Layout, "Layout").$$render($$result, {}, {}, {
     default: () => {
       return `${!$authSignedInStore ? `<div class="relative bg-gray-800 text-white mt-2 mr-2 rounded-lg"><div class="bg-cover bg-center bg-no-repeat py-20 px-4" style="background-image: url('banner.jpg');"><div class="container ml-4 flex flex-col justify-between"><p class="text-xl" data-svelte-h="svelte-xwnshe">$FPL Prediction Sweepstake</p> <p class="text-4xl font-bold" data-svelte-h="svelte-1icqllx">Euro 2024</p> <p class="text-xl" data-svelte-h="svelte-1hdg5zl">Play for free or enter the $FPL sweepstake up until Friday 14th June
@@ -4973,26 +4979,7 @@ const Page$3 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
     }
   })}`;
 });
-const Vision = create_ssr_component(($$result, $$props, $$bindings, slots) => {
-  return `<div class="m-4" data-svelte-h="svelte-1dza2e7"><h1 class="default-header">Our Vision</h1> <p class="my-4">FootballGod is the hub of range of dApps built on the Internet Computer blockchain.
-    These dApps will integrate our utility token, $FOOTBALL.
-    The first dApp to be released will be Transfer Kings (<a href="https://transferkings.xyz">transferkings.xyz</a>).</p> <p class="my-4">We aim to phase in difference markets, games and features. Eventually we want
-    to provide reliable fixed-odds betting markets for every major football
-    league in the world along with games for major events like
-    international football tournaments. This will require us to obtain a gambling license, which we are working on.</p> <p class="my-4">Our vision for FootballGod encompasses a commitment to societal impact,
-    specifically through our organisation, the ICPFA. The ICPFA will be focused
-    on supporting grassroots football initiatives, demonstrating our belief in
-    FootballGod&#39;s ability to bring about positive change in the football
-    community using the IC.</p> <br> <br></div>`;
-});
 const Page$2 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
-  return `${validate_component(Layout, "Layout").$$render($$result, {}, {}, {
-    default: () => {
-      return `<div class="bg-panel mt-4"><h1 class="p-4 mx-1 default-header" data-svelte-h="svelte-14v1lwf">FootballGod Lightpaper</h1> <ul class="flex flex-nowrap overflow-x-auto bg-light-gray border-b border-gray-700 px-4 pt-2"><li${add_attribute("class", `mr-4 ${"active-tab"}`, 0)}><button${add_attribute("class", `p-2 ${"text-white"}`, 0)}>Vision</button></li></ul> ${`${validate_component(Vision, "Vision").$$render($$result, {}, {}, {})}`}</div>`;
-    }
-  })}`;
-});
-const Page$1 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
   let $page, $$unsubscribe_page;
   let $$unsubscribe_teamStore;
   let $$unsubscribe_playerStore;
@@ -5009,10 +4996,78 @@ const Page$1 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
     }
   })}`;
 });
-const Page = create_ssr_component(($$result, $$props, $$bindings, slots) => {
+const Page$1 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
   return `${validate_component(Layout, "Layout").$$render($$result, {}, {}, {
     default: () => {
       return `${`${validate_component(Spinner, "Spinner").$$render($$result, {}, {}, {})}`}`;
+    }
+  })}`;
+});
+const Vision = create_ssr_component(($$result, $$props, $$bindings, slots) => {
+  return `<div class="flex flex-col space-y-2" data-svelte-h="svelte-4nafbu"><h1 class="text-2xl">Vision</h1> <p>Coming soon.</p></div>`;
+});
+const Product = create_ssr_component(($$result, $$props, $$bindings, slots) => {
+  return `<div class="flex flex-col space-y-2" data-svelte-h="svelte-1vcgj2t"><h1 class="text-2xl">Product</h1> <p>Coming soon.</p></div>`;
+});
+const Dao = create_ssr_component(($$result, $$props, $$bindings, slots) => {
+  return `<div class="flex flex-col space-y-2" data-svelte-h="svelte-1dxviuc"><h1 class="text-2xl">The FootballGod DAO</h1> <p>Coming soon.</p></div>`;
+});
+const Marketing = create_ssr_component(($$result, $$props, $$bindings, slots) => {
+  return `<div class="flex flex-col space-y-2" data-svelte-h="svelte-1snwie"><h1 class="text-2xl">Marketing</h1> <p>Coming soon.</p></div>`;
+});
+const Roadmap = create_ssr_component(($$result, $$props, $$bindings, slots) => {
+  return `<div class="flex flex-col space-y-2" data-svelte-h="svelte-1afx0pq"><h1 class="text-2xl">Roadmap</h1> <p>Coming soon.</p></div>`;
+});
+const Team = create_ssr_component(($$result, $$props, $$bindings, slots) => {
+  return `<div class="flex flex-col space-y-2" data-svelte-h="svelte-afqur5"><h1 class="text-2xl">Team</h1> <p>Coming soon.</p></div>`;
+});
+const System_architecture = create_ssr_component(($$result, $$props, $$bindings, slots) => {
+  return `<div class="flex flex-col space-y-2" data-svelte-h="svelte-1emuhg"><h1 class="text-2xl">System Architecture</h1> <p>Coming soon.</p></div>`;
+});
+const css = {
+  code: ".pip.svelte-1ubgm3v{width:10px;height:10px;background-color:gray;border-radius:50%;margin:0 2px}.pip.is-active.svelte-1ubgm3v{--tw-bg-opacity:1;background-color:rgb(26 26 29 / var(--tw-bg-opacity))}@media(min-width: 640px){.pip.svelte-1ubgm3v{width:12px;height:12px}}",
+  map: null
+};
+const Page = create_ssr_component(($$result, $$props, $$bindings, slots) => {
+  let activeTab = "vision";
+  const tabs = [
+    { name: "Vision", component: Vision },
+    { name: "Product", component: Product },
+    { name: "DAO", component: Dao },
+    { name: "Marketing", component: Marketing },
+    { name: "Road Map", component: Roadmap },
+    { name: "Team", component: Team },
+    {
+      name: "System Architecture",
+      component: System_architecture
+    }
+  ];
+  function isActiveTab(index) {
+    return tabs[index].name.toLowerCase() === activeTab;
+  }
+  $$result.css.add(css);
+  return `${validate_component(Layout, "Layout").$$render($$result, {}, {}, {
+    default: () => {
+      return `<div class="p-2 mt-8"><div class="flex flex-col bg-OPENFPLPURPLE rounded-md rounded-b-lg xs:text-lg sm:text-xl"><div class="flex flex-row items-center px-4 border-b border-b-OPENFPLPURPLE justify-between"><div class="flex items-center">${validate_component(LogoIcon, "BlackLogoIcon").$$render(
+        $$result,
+        {
+          className: "w-4 xs:w-6 sm:w-8 mx-1 xs:mx-2 sm:mx-3 my-2"
+        },
+        {},
+        {}
+      )} <p class="p-2 xs:p-3 sm:p-4" data-svelte-h="svelte-16bfxgw">FootballGod Whitepaper</p></div></div> <div class="w-full bg-OPENFPL p-4 rounded-b-md flex flex-col text-sm xs:text-base sm:text-lg text-black">${each(tabs, ({ name, component }) => {
+        return `${activeTab === name.toLowerCase() ? `<div class="flex flex-col"><div class="flex flex-col sm:hidden text-xs"><div class="flex flex-row"><button class="w-1/2 py-2 px-4 rounded-l bg-GRAY text-white disabled:bg-LIGHT disabled:text-gray-400" ${tabs.findIndex((tab) => tab.name.toLowerCase() === activeTab) === 0 ? "disabled" : ""}>Prior Section</button> <button class="w-1/2 py-2 px-4 rounded-r bg-GRAY text-white disabled:bg-LIGHT disabled:text-gray-400" ${tabs.findIndex((tab) => tab.name.toLowerCase() === activeTab) === tabs.length - 1 ? "disabled" : ""}>Next Section
+                  </button></div> <div class="flex flex-row justify-center my-4">${each(tabs, (_, index) => {
+          return `<div class="${["pip svelte-1ubgm3v", isActiveTab(index) ? "is-active" : ""].join(" ").trim()}"></div>`;
+        })} </div></div> <div class="hidden sm:flex flex-col text-xs mb-4"><div class="flex flex-row items-center justify-between"><button class="py-2 px-4 rounded flex-grow bg-GRAY text-white disabled:bg-LIGHT disabled:text-gray-400" ${tabs.findIndex((tab) => tab.name.toLowerCase() === activeTab) === 0 ? "disabled" : ""}>Prior Section</button> <div class="flex-grow flex flex-row justify-center">${each(tabs, (_, index) => {
+          return `<div class="${["pip svelte-1ubgm3v", isActiveTab(index) ? "is-active" : ""].join(" ").trim()}"></div>`;
+        })}</div> <button class="py-2 px-4 rounded flex-grow bg-GRAY text-white disabled:bg-LIGHT disabled:text-gray-400" ${tabs.findIndex((tab) => tab.name.toLowerCase() === activeTab) === tabs.length - 1 ? "disabled" : ""}>Next Section</button> </div></div> <div class="horizontal-divider"></div> <div class="flex my-4">${validate_component(component || missing_component, "svelte:component").$$render($$result, {}, {}, {})}</div> <div class="horizontal-divider"></div> <div class="flex flex-col sm:hidden"><div class="flex flex-row justify-center my-4">${each(tabs, (_, index) => {
+          return `<div class="${["pip svelte-1ubgm3v", isActiveTab(index) ? "is-active" : ""].join(" ").trim()}"></div>`;
+        })}</div> <div class="flex flex-col sm:hidden text-xs"><div class="flex flex-row"><button class="w-1/2 py-2 px-4 rounded-l bg-GRAY text-white disabled:bg-LIGHT disabled:text-gray-400" ${tabs.findIndex((tab) => tab.name.toLowerCase() === activeTab) === 0 ? "disabled" : ""}>Prior Section</button> <button class="w-1/2 py-2 px-4 rounded-r bg-GRAY text-white disabled:bg-LIGHT disabled:text-gray-400" ${tabs.findIndex((tab) => tab.name.toLowerCase() === activeTab) === tabs.length - 1 ? "disabled" : ""}>Next Section
+                    </button></div> </div></div> <div class="hidden sm:flex flex-col text-xs mt-4"><div class="flex flex-row items-center justify-between"><button class="text-white py-2 px-4 rounded flex-grow bg-GRAY text-white disabled:bg-LIGHT disabled:text-gray-400" ${tabs.findIndex((tab) => tab.name.toLowerCase() === activeTab) === 0 ? "disabled" : ""}>Prior Section</button> <div class="flex-grow flex flex-row justify-center">${each(tabs, (_, index) => {
+          return `<div class="${["pip svelte-1ubgm3v", isActiveTab(index) ? "is-active" : ""].join(" ").trim()}"></div>`;
+        })}</div> <button class="py-2 px-4 rounded flex-grow bg-GRAY text-white disabled:bg-LIGHT disabled:text-gray-400" ${tabs.findIndex((tab) => tab.name.toLowerCase() === activeTab) === tabs.length - 1 ? "disabled" : ""}>Next Section</button> </div></div> </div>` : ``}`;
+      })}</div></div></div>`;
     }
   })}`;
 });

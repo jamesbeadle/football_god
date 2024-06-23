@@ -37,9 +37,6 @@
   let dots = writable('.');
   let dot_interval;
 
-
-  const countdown = writable("");
-
   const groupStageTeams = [
     [10, 17, 11, 22],
     [21, 4, 12, 1],
@@ -173,17 +170,6 @@
     isLoading = false;
     
     const endDate = new Date("June 14, 2024 20:00:00 GMT+0100").getTime();
-    const updateCountdown = () => {
-      const now = new Date().getTime();
-      const distance = endDate - now;
-      const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-      const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-      const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-      countdown.set(`Kick Off: ${days}d ${hours}h ${minutes}m`);
-    };
-
-    updateCountdown(); // Run once on component mount
-    interval = setInterval(updateCountdown, 60000); 
     
     await setPotBalance();
     
@@ -1179,9 +1165,6 @@
 
           <div class="flex flex-col bg-gray-700 rounded-lg overflow-hidden">
             <div class="flex flex-col justify-center h-full">
-              <p
-                class="inline-flex justify-center py-2 px-4 mx-2 border border-transparent shadow-sm font-bold rounded-md text-white"
-              >{$countdown}</p>
             </div>
           </div>
         </div>

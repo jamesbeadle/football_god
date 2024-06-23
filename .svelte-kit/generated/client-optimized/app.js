@@ -23,9 +23,9 @@ export const dictionary = {
 		"/games": [5],
 		"/gift-euro-entry": [6],
 		"/leaderboard": [7],
-		"/lightpaper": [8],
-		"/prediction": [9],
-		"/profile": [10]
+		"/prediction": [8],
+		"/profile": [9],
+		"/whitepaper": [10]
 	};
 
 export const hooks = {

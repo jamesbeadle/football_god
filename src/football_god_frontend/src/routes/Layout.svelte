@@ -20,12 +20,14 @@
   import LogoutIcon from "$lib/icons/LogoutIcon.svelte";
   import { signOut } from "$lib/services/auth.services";
   import Tooltip from "$lib/components/tooltip.svelte";
+  import WhitepaperIcon from "$lib/icons/WhitepaperIcon.svelte";
 
   let isExpanded = writable(false);
   $: links = $authSignedInStore ? [
     { name: "Home", icon: HomeIcon, href: "/" },
     { name: "Euro 2024", icon: StarIcon, href:  "/leaderboard" },
     { name: "Profile", icon: ProfileIcon, href: "/profile" },
+    { name: "Whitepaper", icon: WhitepaperIcon, href: "/whitepaper" },
   ] : 
   [
     { name: "Home", icon: HomeIcon, href: "/" }
