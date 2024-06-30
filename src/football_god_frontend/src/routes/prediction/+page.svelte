@@ -283,12 +283,14 @@
 
                         let winnerEvent = events.find(x => 
                                 Object.keys(x.stage)[0] == "RoundOf16" && 
-                                Object.keys(x.eventType)[0] == "StageWon");
+                                Object.keys(x.eventType)[0] == "StageWon" &&
+                                x.teamId == prediction.r16Prediction.winner);
 
 
                         let loserEvent = events.find(x => 
                                 Object.keys(x.stage)[0] == "RoundOf16" && 
-                                Object.keys(x.eventType)[0] == "StageLost");
+                                Object.keys(x.eventType)[0] == "StageLost" &&
+                                x.teamId == prediction.r16Prediction.loser);
 
                         if(!winnerEvent || !loserEvent){
                             return 0;
@@ -304,12 +306,14 @@
 
                         let goalScorerEvent = events.find(x => 
                                 Object.keys(x.stage)[0] == "RoundOf16" && 
-                                Object.keys(x.eventType)[0] == "GoalScored");
+                                Object.keys(x.eventType)[0] == "GoalScored" &&
+                                x.teamId == prediction.r16Prediction.goalScorer);
 
 
                         let goalAssisterEvent = events.find(x => 
                                 Object.keys(x.stage)[0] == "RoundOf16" && 
-                                Object.keys(x.eventType)[0] == "GoalAssisted");
+                                Object.keys(x.eventType)[0] == "GoalAssisted" &&
+                                x.teamId == prediction.r16Prediction.goalAssister);
 
                         if(!goalScorerEvent || !goalAssisterEvent){
                             return 0;
@@ -350,12 +354,14 @@
 
                         let winnerEvent = events.find(x => 
                                 Object.keys(x.stage)[0] == "QuarterFinal" && 
-                                Object.keys(x.eventType)[0] == "StageWon");
+                                Object.keys(x.eventType)[0] == "StageWon" &&
+                                x.teamId == prediction.qfPrediction.winner);
 
 
                         let loserEvent = events.find(x => 
                                 Object.keys(x.stage)[0] == "QuarterFinal" && 
-                                Object.keys(x.eventType)[0] == "StageLost");
+                                Object.keys(x.eventType)[0] == "StageLost" &&
+                                x.teamId == prediction.qfPrediction.loser);
 
                         if(!winnerEvent || !loserEvent){
                             return 0;
@@ -371,12 +377,14 @@
 
                         let goalScorerEvent = events.find(x => 
                                 Object.keys(x.stage)[0] == "QuarterFinal" && 
-                                Object.keys(x.eventType)[0] == "GoalScored");
+                                Object.keys(x.eventType)[0] == "GoalScored" &&
+                                x.teamId == prediction.qfPrediction.goalScorer);
 
 
                         let goalAssisterEvent = events.find(x => 
                                 Object.keys(x.stage)[0] == "QuarterFinal" && 
-                                Object.keys(x.eventType)[0] == "GoalAssisted");
+                                Object.keys(x.eventType)[0] == "GoalAssisted" &&
+                                x.teamId == prediction.qfPrediction.goalAssister);
 
                         if(!goalScorerEvent || !goalAssisterEvent){
                             return 0;
@@ -392,12 +400,14 @@
 
                         let yellowCardEvent = events.find(x => 
                                 Object.keys(x.stage)[0] == "QuarterFinal" && 
-                                Object.keys(x.eventType)[0] == "YellowCard");
+                                Object.keys(x.eventType)[0] == "YellowCard" &&
+                                x.teamId == prediction.qfPrediction.yellowCard);
 
 
                         let redCardEvent = events.find(x => 
                                 Object.keys(x.stage)[0] == "QuarterFinal" && 
-                                Object.keys(x.eventType)[0] == "RedCard");
+                                Object.keys(x.eventType)[0] == "RedCard" &&
+                                x.teamId == prediction.qfPrediction.redCard);
 
                         if(!yellowCardEvent || !redCardEvent){
                             return 0;
@@ -417,12 +427,14 @@
 
                         let winnerEvent = events.find(x => 
                                 Object.keys(x.stage)[0] == "SemiFinal" && 
-                                Object.keys(x.eventType)[0] == "StageWon");
+                                Object.keys(x.eventType)[0] == "StageWon" &&
+                                x.teamId == prediction.sfPrediction.winner);
 
 
                         let loserEvent = events.find(x => 
                                 Object.keys(x.stage)[0] == "SemiFinal" && 
-                                Object.keys(x.eventType)[0] == "StageLost");
+                                Object.keys(x.eventType)[0] == "StageLost" &&
+                                x.teamId == prediction.sfPrediction.loser);
 
                         if(!winnerEvent || !loserEvent){
                             return 0;
@@ -438,12 +450,14 @@
 
                         let goalScorerEvent = events.find(x => 
                                 Object.keys(x.stage)[0] == "SemiFinal" && 
-                                Object.keys(x.eventType)[0] == "GoalScored");
+                                Object.keys(x.eventType)[0] == "GoalScored" &&
+                                x.teamId == prediction.sfPrediction.goalScorer);
 
 
                         let goalAssisterEvent = events.find(x => 
                                 Object.keys(x.stage)[0] == "SemiFinal" && 
-                                Object.keys(x.eventType)[0] == "GoalAssisted");
+                                Object.keys(x.eventType)[0] == "GoalAssisted" &&
+                                x.teamId == prediction.sfPrediction.goalAssister);
 
                         if(!goalScorerEvent || !goalAssisterEvent){
                             return 0;
@@ -459,12 +473,14 @@
 
                         let yellowCardEvent = events.find(x => 
                                 Object.keys(x.stage)[0] == "SemiFinal" && 
-                                Object.keys(x.eventType)[0] == "YellowCard");
+                                Object.keys(x.eventType)[0] == "YellowCard" &&
+                                x.teamId == prediction.sfPrediction.yellowCard);
 
 
                         let redCardEvent = events.find(x => 
                                 Object.keys(x.stage)[0] == "SemiFinal" && 
-                                Object.keys(x.eventType)[0] == "RedCard");
+                                Object.keys(x.eventType)[0] == "RedCard" &&
+                                x.teamId == prediction.sfPrediction.redCard);
 
                         if(!yellowCardEvent || !redCardEvent){
                             return 0;
@@ -484,12 +500,14 @@
 
                         let winnerEvent = events.find(x => 
                                 Object.keys(x.stage)[0] == "Final" && 
-                                Object.keys(x.eventType)[0] == "StageWon");
+                                Object.keys(x.eventType)[0] == "StageWon" &&
+                                x.teamId == prediction.sfPrediction.winner);
 
 
                         let loserEvent = events.find(x => 
                                 Object.keys(x.stage)[0] == "Final" && 
-                                Object.keys(x.eventType)[0] == "StageLost");
+                                Object.keys(x.eventType)[0] == "StageLost" &&
+                                x.teamId == prediction.sfPrediction.loser);
 
                         if(!winnerEvent || !loserEvent){
                             return 0;
@@ -505,12 +523,14 @@
 
                         let goalScorerEvent = events.find(x => 
                                 Object.keys(x.stage)[0] == "Final" && 
-                                Object.keys(x.eventType)[0] == "GoalScored");
+                                Object.keys(x.eventType)[0] == "GoalScored" &&
+                                x.teamId == prediction.sfPrediction.goalScorer);
 
 
                         let goalAssisterEvent = events.find(x => 
                                 Object.keys(x.stage)[0] == "Final" && 
-                                Object.keys(x.eventType)[0] == "GoalAssisted");
+                                Object.keys(x.eventType)[0] == "GoalAssisted" &&
+                                x.teamId == prediction.sfPrediction.goalAssister);
 
                         if(!goalScorerEvent || !goalAssisterEvent){
                             return 0;
@@ -526,12 +546,14 @@
 
                         let yellowCardEvent = events.find(x => 
                                 Object.keys(x.stage)[0] == "Final" && 
-                                Object.keys(x.eventType)[0] == "YellowCard")!;
+                                Object.keys(x.eventType)[0] == "YellowCard" &&
+                                x.teamId == prediction.sfPrediction.yellowCard)!;
 
 
                         let redCardEvent = events.find(x => 
                                 Object.keys(x.stage)[0] == "Final" && 
-                                Object.keys(x.eventType)[0] == "RedCard")!;
+                                Object.keys(x.eventType)[0] == "RedCard" &&
+                                x.teamId == prediction.sfPrediction.redCard)!;
 
                         if(!yellowCardEvent || !redCardEvent){
                             return 0;
