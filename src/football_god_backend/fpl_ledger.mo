@@ -55,6 +55,30 @@ module {
       });
     };
 
+    public func transferBalanceBack(defaultAccount : Principal, caller : Principal, balance: Nat) : async FPLLedger.TransferResult {
+      return await ledger.icrc1_transfer({
+        memo = ?Text.encodeUtf8("0");
+        from_subaccount = ?principalToSubaccount(caller);
+        to = { owner = defaultAccount; subaccount = ?Account.defaultSubaccount()};
+        amount = balance - fpl_fee;
+        fee = ?fpl_fee;
+        created_at_time =?Nat64.fromNat(Int.abs(Time.now()));
+      });
+    };
+
+    public func transferFPLToJames(defaultAccount : Principal, james : Principal) : async FPLLedger.TransferResult {
+      let e8Amount = await getPotBalance(defaultAccount);
+      let e8s = Nat64.toNat(e8Amount);
+      return await ledger.icrc1_transfer({
+        memo = ?Text.encodeUtf8("0");
+        from_subaccount = ?Account.defaultSubaccount();
+        to = {owner = james; subaccount = null};
+        amount = e8s - fpl_fee;
+        fee = ?fpl_fee;
+        created_at_time =?Nat64.fromNat(Int.abs(Time.now()));
+      });
+    };
+
     private func principalToSubaccount(principal : Principal) : Blob {
       var sub = Buffer.Buffer<Nat8>(32);
       let subaccount_blob = Principal.toBlob(principal);
@@ -68,12 +92,12 @@ module {
       Blob.fromArray(Buffer.toArray(sub));
     };
 
-    public func transferWinnings(defaultAccount : Principal, user : Principal, amount : Float) : async () {
+    public func transferWinnings(user : Principal, amount : Float) : async () {
       let e8Amount = Nat64.toNat(Int64.toNat64(Float.toInt64(amount * 1e8)));
       let _ = await ledger.icrc1_transfer({
         memo = ?Text.encodeUtf8("0");
-        from_subaccount = null;
-        to = {owner = defaultAccount; subaccount = ?Account.principalToSubaccount(user)};
+        from_subaccount = ?Account.defaultSubaccount();
+        to = {owner = user; subaccount = null};
         amount = e8Amount - fpl_fee ;
         fee = ?fpl_fee;
         created_at_time =?Nat64.fromNat(Int.abs(Time.now()));

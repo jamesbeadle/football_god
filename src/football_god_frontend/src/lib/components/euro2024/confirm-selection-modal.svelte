@@ -26,7 +26,7 @@
       let userBalances = await userStore.getAccountBalances();
       if(userBalances){
         accountBalances = userBalances;
-        fplBalance = Number(accountBalances.fplBalance / 100_000_000n).toPrecision(4);
+        fplBalance = Number(accountBalances.fplBalance / 100_000_000n).toFixed(4);
       }
 
       if(!userBalances){
@@ -75,7 +75,7 @@
     let userBalances = await userStore.getAccountBalances();
     if(userBalances){
       accountBalances = userBalances;
-      fplBalance = Number(accountBalances.fplBalance / 100_000_000n).toPrecision(4);
+      fplBalance = Number(accountBalances.fplBalance / 100_000_000n).toFixed(4);
     }
 
     refreshingBalance = false;

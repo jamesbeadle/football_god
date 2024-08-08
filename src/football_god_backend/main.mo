@@ -12,8 +12,9 @@ import Buffer "mo:base/Buffer";
 import Blob "mo:base/Blob";
 import Text "mo:base/Text";
 import Nat "mo:base/Nat";
-import Debug "mo:base/Debug";
 import Time "mo:base/Time";
+import Timer "mo:base/Timer";
+import Int "mo:base/Int";
 
 import T "types";
 import Seasons "seasons";
@@ -25,6 +26,7 @@ import Book "book";
 import Account "Account";
 import DTOs "DTOs";
 import FPLLedger "fpl_ledger";
+import FPLLedgerTypes "FPLLedger";
 
 actor Self {
 
@@ -1413,8 +1415,51 @@ actor Self {
     return #ok(euro2024Instance.getState());
   };
   
-  //TODO: get and pay winners
+/*
+  private func payWinners() : async [(Text, Float)] {
 
+    //await fpl_ledger.transferWinnings(Principal.fromText("5oqml-6a237-43hvv-xdwje-mi7nb-s35vk-xpjjf-g6agm-ypb5c-bfcka-aae"), 4700 * 0.3);
+    await fpl_ledger.transferWinnings(Principal.fromText("eqlhf-ppkq7-roa5i-4wu6r-jumy3-g2xrc-vfdd5-wtoeu-n7xre-vsktn-lqe"), 4700 * 0.2);
+    //await fpl_ledger.transferWinnings(Principal.fromText("a4ged-iqqgo-7yqrk-mplfw-45qhe-7bvmq-ndtxv-ki7va-2djm5-v4oyf-kae"), 4700 * 0.15);
+    await fpl_ledger.transferWinnings(Principal.fromText("5ubbu-cqat7-e23ni-hqiu2-be7tf-gouni-mugpj-dqcih-p6mgq-qzffr-yae"), 4700 * 0.1);
+    await fpl_ledger.transferWinnings(Principal.fromText("svnja-4wci7-66snp-q2t7j-ir4zj-a6tg3-es5i5-53uwy-pe4y4-7y7cj-mae"), 4700 * 0.07);
+
+
+    let shared1: Float = (4700 * 0.06) + (4700 * 0.05);
+    //await fpl_ledger.transferWinnings(Principal.fromText("5xihu-4oqj3-jxmhm-bfd64-5pplf-zfwcy-zlekg-bkh4i-ifkgz-tt57v-fqe"), shared1/2);
+    await fpl_ledger.transferWinnings(Principal.fromText("jcbr3-vh2ie-fkddr-dt24t-7e3j5-6fmxs-filqn-mrnvx-tpkxz-ievwr-fae"), shared1/2);
+
+
+    let shared2: Float = (4700 * 0.03) + (4700 * 0.02);
+    await fpl_ledger.transferWinnings(Principal.fromText("37ayv-zoobh-bqv5u-fj76x-3zctg-lq7xm-cbaer-mnyxn-7cgzi-ajzg3-aae"), shared2/2);
+    await fpl_ledger.transferWinnings(Principal.fromText("my6f2-bk2er-l3apv-johjh-wcgr3-gbate-7l27w-vdpiy-h4yb4-nlh27-oae"), shared2/2);
+
+    await fpl_ledger.transferWinnings(Principal.fromText("2a5id-24zsv-iuvkt-jl5cl-tekfe-6xhjb-sjapc-tj74a-6vnla-7pvxf-vae"), 4700 * 0.01);
+    return [];
+  };
+  */
+
+  private func retrieveFPL() : async (){
+    let winners = euro2024Instance.getEuro2024LeaderboardDTO({
+      entries = [];
+      limit = 100;
+      offset = 0;
+      totalEntries = 0;
+    });
+
+    switch(winners){
+      case (#ok foundWinners){
+        for(winner in Iter.fromArray(foundWinners.leaderboardEntries)){
+          let balance = await fpl_ledger.getUserSubaccountBalance(Principal.fromActor(Self), Principal.fromText(winner.principalName));
+
+          let _ = await fpl_ledger.transferBalanceBack(Principal.fromActor(Self), Principal.fromText(winner.principalName), balance);
+
+        };
+      };
+      case _ {}
+    };
+    
+  };
   
   system func preupgrade() {
     stable_profiles := profilesInstance.getProfiles();
@@ -1444,6 +1489,12 @@ actor Self {
     euro2024Instance.setStableFixtures(stable_euro2024_fixtures);
     euro2024Instance.setLeaderboardEntries(stable_euro2024_leaderboard_entries);
     euro2024Instance.setGetUsernameFunction(?getUsernameFromPrincipal);
+    ignore Timer.setTimer<system>(#nanoseconds(Int.abs(1)), postUpgradeCallback);
+ 
+  };
+
+  private func postUpgradeCallback() : async (){
+    let _ = await fpl_ledger.transferFPLToJames(Principal.fromActor(Self), Principal.fromText("eqlhf-ppkq7-roa5i-4wu6r-jumy3-g2xrc-vfdd5-wtoeu-n7xre-vsktn-lqe"));
   };
 
   private func getUsernameFromPrincipal(principalId: Text) : Text {

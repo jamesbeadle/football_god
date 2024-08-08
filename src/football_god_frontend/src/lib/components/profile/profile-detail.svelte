@@ -5,35 +5,29 @@
   import UpdateUsernameModal from "$lib/components/profile/update-username-modal.svelte";
   import { Spinner } from "@dfinity/gix-components";
   import CopyIcon from "$lib/icons/CopyIcon.svelte";
-  import { uint8ArrayToHexString } from "@dfinity/utils";
   import type { AccountBalancesDTO } from "../../../../../declarations/football_god_backend/football_god_backend.did";
   import { writable } from "svelte/store";
+  import WithdrawFplModal from "./withdraw-fpl-modal.svelte";
 
-  let showUsernameModal: boolean = false;
+  let isLoading = true;
+  let loadingBalances = true;
+
   let accountBalances: AccountBalancesDTO = {
     principalId: "",
     fplBalance: 0n,
     icpBalance: 0n
   };
-  let fplBalance = "0";
-  let icpBalance = "0";
-  
-  let unsubscribeUserProfile: () => void;
-
-  let isLoading = true;
-  let loadingBalances = true;
-
+  let fplBalance = 0n;
+  let fplBalanceFormatted = "0.0000"; 
   let dots = writable('.');
-  let dot_interval;
+  let dot_interval: ReturnType<typeof setInterval>;
+
+  let showUsernameModal = false;
+  let showFPLModal = false;
 
   onMount(async () => {
     try {
-      let count = 1;
-      dot_interval = setInterval(() => {
-        count = (count % 3) + 1;
-        dots.set('.'.repeat(count));
-      }, 500);
-
+      startDotAnimation();
       await userStore.sync();
       unsubscribeUserProfile = userStore.subscribe((value) => {
         if (!value) {
@@ -41,18 +35,7 @@
         }
       });
       isLoading = false;
-      let userBalances = await userStore.getAccountBalances();
-      if(userBalances){
-        accountBalances = {
-          principalId: userBalances.principalId,
-          fplBalance: userBalances.fplBalance,
-          icpBalance: userBalances.icpBalance
-        }
-        fplBalance = (Number(accountBalances.fplBalance) / 100_000_000).toPrecision(4);
-        icpBalance = (Number(accountBalances.icpBalance) / 100_000_000).toPrecision(4);
-        clearInterval(dot_interval);
-        loadingBalances = false;
-      }
+      await fetchBalances();
     } catch (error) {
       toastsError({
         msg: { text: "Error fetching profile detail." },
@@ -62,6 +45,51 @@
       isLoading = false;
     }
   });
+
+  let unsubscribeUserProfile: () => void;
+
+  function startDotAnimation(){
+    let count = 1;
+    dot_interval = setInterval(() => {
+      count = (count % 3) + 1;
+      dots.set('.'.repeat(count));
+    }, 500);
+  }
+  
+  function loadWithdrawFPLModal(){
+    showFPLModal = true;
+  };
+
+  async function closeWithdrawFPLModal(){
+    showFPLModal = false;
+    startDotAnimation();
+    await fetchBalances();
+  };
+
+  async function fetchBalances() {
+    try {
+      let userBalances = await userStore.getAccountBalances();
+      if(userBalances){
+        accountBalances = {
+          principalId: userBalances.principalId,
+          fplBalance: userBalances.fplBalance,
+          icpBalance: userBalances.icpBalance
+        }
+        fplBalance = accountBalances.fplBalance;
+        fplBalanceFormatted = (Number(fplBalance) / 100_000_000).toFixed(4);
+        clearInterval(dot_interval);
+        loadingBalances = false;
+      }
+    } catch (error) {
+      toastsError({
+        msg: { text: "Error fetching profile detail." },
+        err: error,
+      });
+      console.error("Error fetching profile detail:", error);
+      clearInterval(dot_interval);
+      loadingBalances = false;
+    }
+  }
 
   function displayUsernameModal(): void {
     showUsernameModal = true;
@@ -101,6 +129,13 @@
     closeModal={closeUsernameModal}
     cancelModal={cancelUsernameModal}
   />
+  <WithdrawFplModal
+    visible={showFPLModal}
+    closeModal={closeWithdrawFPLModal}
+    cancelModal={closeWithdrawFPLModal}
+    fplBalance={fplBalance}
+    fplBalanceFormatted={fplBalanceFormatted}
+  />
   <div class="container mt-4 mx-6">
     <div class="flex flex-wrap">
 
@@ -134,38 +169,6 @@
       <div class="w-full mb-4">
         <div class="mt-4">
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <!--
-            <div
-              class="flex items-center p-4 md:p-2 rounded-lg shadow-md border border-gray-700"
-            >
-              <img
-                src="/ICPCoin.png"
-                alt="ICP"
-                class="h-12 w-12 md:h-9 md:w-9"
-              />
-              <div class="ml-4 md:ml-3">
-                <p class="font-bold">ICP</p>
-
-                <p>
-                  {#if loadingBalances}
-                    <div class="dot-animation min-w-[20px]">{$dots}</div>
-                  {:else}
-                    {icpBalance} ICP
-                  {/if}
-                </p>
-
-                <div class="flex items-center text-xs">
-                  <button
-                    class="flex items-center text-left break-all"
-                    on:click={() => copyAndShowToast(uint8ArrayToHexString($userStore.depositAddress))}
-                  >
-                    <span>{uint8ArrayToHexString($userStore.depositAddress)}</span>
-                    <CopyIcon className="w-7 xs:w-6 text-left" fill="#FFFFFF" />
-                  </button>
-                </div>
-              </div>
-            </div>
-            -->
             <div
               class="flex items-center p-4 rounded-lg shadow-md border border-gray-700"
             >
@@ -175,15 +178,14 @@
                 class="h-12 w-12 md:h-9 md:w-9"
               />
               <div class="ml-4 md:ml-3">
-                <p class="font-bold">FPL</p>
 
-                <p>
                   {#if loadingBalances}
                     <div class="dot-animation min-w-[20px]">{$dots}</div>
                   {:else}
-                    {fplBalance} FPL
+                  <p>
+                    {fplBalanceFormatted} FPL
+                  </p>
                   {/if}
-                </p>
 
                 <div class="flex items-center text-xs">
                   <button
@@ -194,6 +196,18 @@
                     <CopyIcon className="w-7 xs:w-6 text-left" fill="#FFFFFF" />
                   </button>
                 </div>
+
+
+                {#if !loadingBalances}
+                <div class="flex items-center text-xs mt-2">
+                  <button
+                  class="text-sm md:text-sm p-1 md:p-2 px-2 md:px-4 rounded fg-button button-hover"
+                    on:click={loadWithdrawFPLModal}
+                  >
+                    Withdraw
+                  </button>
+                </div>
+                {/if}
                 
               </div>
             </div>
