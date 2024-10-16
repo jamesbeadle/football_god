@@ -5,8 +5,8 @@ import Nat8 "mo:base/Nat8";
 import Array "mo:base/Array";
 import Debug "mo:base/Debug";
 
-import Types "types";
-import DTOs "DTOs";
+import Types "old_types";
+import DTOs "old_DTOs";
 
 module {
 

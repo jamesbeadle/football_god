@@ -1,4 +1,4 @@
-import T "types";
+import T "./old_types";
 import Result "mo:base/Result";
 import Map "mo:base/HashMap";
 import Text "mo:base/Text";
@@ -13,10 +13,10 @@ import Nat "mo:base/Nat";
 import Option "mo:base/Option";
 import Debug "mo:base/Debug";
 import Nat16 "mo:base/Nat16";
-import DTOs "DTOs";
+import DTOs "./old_DTOs";
 
-import Euro2024Teams "./data/euro2024_teams";
-import Euro2024Fixtures "./data/euro2024_fixtures";
+import Euro2024Teams "../data/euro2024_teams";
+import Euro2024Fixtures "../data/euro2024_fixtures";
 
 module {
 

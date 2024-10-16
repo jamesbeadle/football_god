@@ -1,32 +1,27 @@
 import List "mo:base/List";
 import Array "mo:base/Array";
-import Iter "mo:base/Iter";
 import Nat8 "mo:base/Nat8";
 import Nat16 "mo:base/Nat16";
 import Nat64 "mo:base/Nat64";
-import Int64 "mo:base/Int64";
 import Float "mo:base/Float";
 import Principal "mo:base/Principal";
 import Result "mo:base/Result";
-import Buffer "mo:base/Buffer";
 import Blob "mo:base/Blob";
 import Text "mo:base/Text";
 import Nat "mo:base/Nat";
-import Time "mo:base/Time";
 import Timer "mo:base/Timer";
 import Int "mo:base/Int";
 
-import T "types";
-import Seasons "seasons";
+import T "old_games/old_types";
+import Seasons "old_games/seasons";
 import Teams "teams";
-import Predictions "predictions";
-import Euro2024 "euro2024";
+import Predictions "old_games/predictions";
 import Profiles "profiles";
 import Book "book";
 import Account "Account";
-import DTOs "DTOs";
-import FPLLedger "fpl_ledger";
-import FPLLedgerTypes "FPLLedger";
+import DTOs "old_games/old_DTOs";
+
+import Euro2024 "old_games/euro2024";
 
 actor Self {
 
@@ -37,14 +32,13 @@ actor Self {
     Principal.fromText("eqlhf-ppkq7-roa5i-4wu6r-jumy3-g2xrc-vfdd5-wtoeu-n7xre-vsktn-lqe")  ];
 
   let profilesInstance = Profiles.Profiles();
-  let seasonsInstance = Seasons.Seasons();
+  let bookInstance = Book.Book();
+
+  //Old Instances not used
   let teamsInstance = Teams.Teams();
   let predictionsInstance = Predictions.Predictions();
-  let bookInstance = Book.Book();
   let euro2024Instance = Euro2024.Euro2024();
-  let fpl_ledger = FPLLedger.Book();
-
-  let adminAccount = "66d542934fd0be74eaef2f5542b14832799be9f85d256555927a9760dcf2ac96";
+  let seasonsInstance = Seasons.Seasons();
 
   //stable variables populated on pre upgrade
   private stable var activeSeason : Nat16 = 0;
@@ -66,10 +60,7 @@ actor Self {
   private stable var stable_euro2024_leaderboard_entries: [T.LeaderboardEntry] = [];
 
   private stable var dataCacheHashes : List.List<T.DataCache> = List.fromArray([
-    { category = "teams"; hash = "NEW_DEFAULT_VALUE" },
-    { category = "fixtures"; hash = "NEW_DEFAULT_VALUE" },
-    { category = "players"; hash = "NEW_DEFAULT_VALUE" },
-    { category = "euro_2024_state"; hash = "NEW_DEFAULT_VALUE" }
+    { category = "leagues"; hash = "NEW_DEFAULT_VALUE" }
   ]);
 
   public shared query func getDataHashes() : async Result.Result<[DTOs.DataCacheDTO], T.Error> {
@@ -88,179 +79,6 @@ actor Self {
     return isAdminForCaller(caller);
   };
 
-  //OLD HOMEPAGE
-  public shared query ({ caller }) func getHomeDTO() : async DTOs.HomeDTO {
-
-    let systemUpdating = (activeSeason == 0) or (activeGameweek == 0);
-    var activeSeasonName = "";
-    var activeGameweekNumber = activeGameweek;
-    var fixtures : [DTOs.FixtureDTO] = [];
-    var gameweekStatus = Nat8.fromNat(0);
-
-    if (not systemUpdating) {
-
-      let season = seasonsInstance.getSeason(activeSeason);
-      switch (season) {
-        case (null) {};
-        case (?s) {
-          activeSeasonName := s.name;
-        };
-      };
-
-      let gameweek = seasonsInstance.getGameweek(activeSeason, activeGameweek);
-      switch (gameweek) {
-        case (null) {};
-        case (?g) {
-          gameweekStatus := g.status;
-        };
-      };
-
-      let fixturesBuffer = Buffer.fromArray<DTOs.FixtureDTO>(fixtures);
-      let gameweekFixtures = seasonsInstance.getFixtures(activeSeason, activeGameweek);
-      switch (gameweekFixtures) {
-        case (null) {};
-        case (?fixtures) {
-          for (fixture in Iter.fromList<T.Fixture>(fixtures)) {
-            let fixtureDTO : DTOs.FixtureDTO = {
-              fixtureId = 0;
-              homeTeamId = 0;
-              awayTeamId = 0;
-              homeTeamName = teamsInstance.getTeamName(fixture.homeTeamId);
-              awayTeamName = teamsInstance.getTeamName(fixture.awayTeamId);
-              homeTeamGoals = fixture.homeGoals;
-              awayTeamGoals = fixture.awayGoals;
-              homeTeamPrediction = 0;
-              awayTeamPrediction = 0;
-              correct = false;
-              status = fixture.status;
-            };
-            fixturesBuffer.add(fixtureDTO);
-
-          };
-        };
-      };
-      fixtures := Buffer.toArray(fixturesBuffer);
-    };
-
-    var hasPredictions = false;
-    var principalName = "";
-
-    if (not Principal.isAnonymous(caller)) {
-      principalName := Principal.toText(caller);
-      hasPredictions := predictionsInstance.hasPredictions(principalName, activeSeason, activeGameweek);
-    };
-
-    let homeDTO : DTOs.HomeDTO = {
-      systemUpdating = systemUpdating;
-      activeSeasonName = activeSeasonName;
-      activeGameweekNumber = activeGameweekNumber;
-      fixtures = fixtures;
-      gameweekStatus = gameweekStatus;
-      hasPredictions = hasPredictions;
-      principalName = principalName;
-      activeSeasonId = activeSeason;
-    };
-
-    return homeDTO;
-  };
-
-  //POSSIBLY NOT USED IF FOOTBALL TOKEN
-  public shared func getGameweekPotDTO() : async DTOs.GameweekPotDTO {
-
-    var gameweekPot = Nat64.fromNat(0);
-    let systemUpdating = (activeSeason == 0) or (activeGameweek == 0);
-
-    if (not systemUpdating) {
-      let defaultSubAccount = getDefaultAccount();
-      gameweekPot := await bookInstance.getGameweekPotBalance(defaultSubAccount);
-    };
-
-    let gamweekPotDTO : DTOs.GameweekPotDTO = {
-      gameweekPot = gameweekPot;
-    };
-
-    return gamweekPotDTO;
-  };
-
-  public shared query ({ caller }) func getPlayDTO() : async DTOs.PlayDTO {
-
-    assert not Principal.isAnonymous(caller);
-    let principalName = Principal.toText(caller);
-    let systemUpdating = (activeSeason == 0) or (activeGameweek == 0);
-    var activeSeasonName = "";
-    var activeGameweekNumber = activeGameweek;
-    var fixtures : [DTOs.FixtureDTO] = [];
-    var sweepstakePaid = false;
-
-    if (not systemUpdating) {
-
-      let season = seasonsInstance.getSeason(activeSeason);
-      switch (season) {
-        case (null) {};
-        case (?s) {
-          activeSeasonName := s.name;
-        };
-      };
-
-      let fixturesBuffer = Buffer.fromArray<DTOs.FixtureDTO>(fixtures);
-      let gameweekFixtures = seasonsInstance.getFixtures(activeSeason, activeGameweek);
-      let existingPredictions = predictionsInstance.getPredictions(principalName, activeSeason, activeGameweek);
-      switch (gameweekFixtures) {
-        case (null) {};
-        case (?fixtures) {
-          for (fixture in Iter.fromList<T.Fixture>(fixtures)) {
-
-            var predictedHomeGoals = Nat8.fromNat(0);
-            var predictedAwayGoals = Nat8.fromNat(0);
-
-            let existingPrediction = Array.find<T.Prediction>(
-              existingPredictions,
-              func(prediction : T.Prediction) : Bool {
-                return prediction.fixtureId == fixture.id;
-              },
-            );
-
-            switch (existingPrediction) {
-              case (null) {};
-              case (?prediction) {
-                predictedHomeGoals := prediction.homeGoals;
-                predictedAwayGoals := prediction.awayGoals;
-                sweepstakePaid := predictionsInstance.checkSweepstakePaid(principalName, activeSeason, activeGameweek);
-              };
-            };
-
-            let fixtureDTO : DTOs.FixtureDTO = {
-              fixtureId = fixture.id;
-              homeTeamId = fixture.homeTeamId;
-              awayTeamId = fixture.awayTeamId;
-              homeTeamName = teamsInstance.getTeamName(fixture.homeTeamId);
-              awayTeamName = teamsInstance.getTeamName(fixture.awayTeamId);
-              homeTeamGoals = fixture.homeGoals;
-              awayTeamGoals = fixture.awayGoals;
-              homeTeamPrediction = predictedHomeGoals;
-              awayTeamPrediction = predictedAwayGoals;
-              correct = false;
-              status = fixture.status;
-            };
-            fixturesBuffer.add(fixtureDTO);
-
-          };
-        };
-      };
-      fixtures := Buffer.toArray(fixturesBuffer);
-    };
-
-    let playDTO : DTOs.PlayDTO = {
-      activeSeasonId = activeSeason;
-      activeSeasonName = activeSeasonName;
-      activeGameweekNumber = activeGameweekNumber;
-      fixtures = fixtures;
-      sweepstakePaid = sweepstakePaid;
-      userId = principalName;
-    };
-
-    return playDTO;
-  };
 
   public shared ({ caller }) func getFPLAccountBalanceDTO() : async DTOs.AccountBalanceDTO {
 
@@ -277,270 +95,6 @@ actor Self {
     };
 
     return accountBalanceDTO;
-  };
-
-  public shared ({ caller }) func submitPlayDTO(playDTO : DTOs.SubmitPlayDTO) : async Result.Result<(), T.Error> {
-
-    assert not Principal.isAnonymous(caller);
-    let principalName = Principal.toText(caller);
-    let profile = profilesInstance.getProfile(principalName);
-
-    if (profile == null) {
-      profilesInstance.createProfile(Principal.toText(caller), Principal.toText(caller), "", getUserDepositAccount(caller));
-    };
-
-    let currentGameweek = switch (seasonsInstance.getGameweek(activeSeason, activeGameweek)) {
-      case null { return #err(#NotAllowed) };
-      case (?gameweek) { gameweek };
-    };
-
-    if (currentGameweek.status != 1) {
-      return #err(#NotAllowed);
-    };
-
-    let validPredictions = seasonsInstance.checkValidPredictions(activeSeason, activeGameweek, playDTO.fixtures);
-
-    if (not validPredictions) {
-      return #err(#NotAllowed);
-    };
-
-    let paidForSweepstake = predictionsInstance.checkSweepstakePaid(Principal.toText(caller), activeSeason, activeGameweek);
-    var sweepstakeEntered = paidForSweepstake;
-
-    if (playDTO.enterSweepstake and not paidForSweepstake) {
-      let canAffordEntry = await bookInstance.canAffordEntry(Principal.fromActor(Self), caller);
-
-      if (not canAffordEntry) {
-        return #err(#NotAllowed);
-      };
-
-      await bookInstance.transferEntryFee(Principal.fromActor(Self), caller);
-      sweepstakeEntered := true;
-    };
-
-    return predictionsInstance.submitPredictions(principalName, activeSeason, activeGameweek, playDTO.fixtures, sweepstakeEntered);
-  };
-
-  public shared query ({ caller }) func getViewPredictionDTO(principalName : Text, seasonId : Nat16, gameweekNumber : Nat8) : async DTOs.ViewPredictionDTO {
-
-    let activePrincipal = Principal.toText(caller);
-
-    if (seasonId == activeSeason and gameweekNumber == activeGameweek and activePrincipal != principalName) {
-      let gameweek = seasonsInstance.getGameweek(activeSeason, activeGameweek);
-      switch (gameweek) {
-        case (null) {};
-        case (?g) {
-          if (g.status < 2) {
-            return {
-              seasonName = "";
-              playerName = "";
-              fixtures = [];
-              correctScores = 0;
-              totalFixtures = 0;
-            };
-          };
-        };
-      };
-    };
-
-    var seasonName = "";
-    var fixtures : [DTOs.FixtureDTO] = [];
-    var playerName = "";
-    var correctScores = Nat8.fromNat(0);
-    var totalFixtures = Nat8.fromNat(0);
-
-    let season = seasonsInstance.getSeason(seasonId);
-    switch (season) {
-      case (null) {};
-      case (?s) {
-        seasonName := s.name;
-      };
-    };
-
-    let profile = profilesInstance.getProfile(principalName);
-
-    switch profile {
-      case (null) {};
-      case (?p) {
-        playerName := p.displayName;
-      };
-    };
-
-    let fixturesBuffer = Buffer.fromArray<DTOs.FixtureDTO>(fixtures);
-    let gameweekFixtures = seasonsInstance.getFixtures(seasonId, gameweekNumber);
-    let existingPredictions = predictionsInstance.getPredictions(principalName, seasonId, gameweekNumber);
-
-    switch (gameweekFixtures) {
-      case (null) {};
-      case (?fixtures) {
-        for (fixture in Iter.fromList<T.Fixture>(fixtures)) {
-
-          var predictedHomeGoals = Nat8.fromNat(0);
-          var predictedAwayGoals = Nat8.fromNat(0);
-
-          let existingPrediction = Array.find<T.Prediction>(
-            existingPredictions,
-            func(prediction : T.Prediction) : Bool {
-              return prediction.fixtureId == fixture.id;
-            },
-          );
-
-          switch (existingPrediction) {
-            case (null) {};
-            case (?prediction) {
-              predictedHomeGoals := prediction.homeGoals;
-              predictedAwayGoals := prediction.awayGoals;
-            };
-          };
-
-          totalFixtures += 1;
-          let correctPrediction = (fixture.homeGoals == predictedHomeGoals and fixture.awayGoals == predictedAwayGoals and fixture.status > 0);
-          if (correctPrediction) {
-            correctScores += 1;
-          };
-
-          let fixtureDTO : DTOs.FixtureDTO = {
-            fixtureId = fixture.id;
-            homeTeamId = 0;
-            awayTeamId = 0;
-            homeTeamName = teamsInstance.getTeamName(fixture.homeTeamId);
-            awayTeamName = teamsInstance.getTeamName(fixture.awayTeamId);
-            homeTeamGoals = fixture.homeGoals;
-            awayTeamGoals = fixture.awayGoals;
-            homeTeamPrediction = predictedHomeGoals;
-            awayTeamPrediction = predictedAwayGoals;
-            correct = correctPrediction;
-            status = fixture.status;
-          };
-          fixturesBuffer.add(fixtureDTO);
-
-        };
-      };
-    };
-    fixtures := Buffer.toArray(fixturesBuffer);
-
-    let viewPredictionDTO : DTOs.ViewPredictionDTO = {
-      seasonName = seasonName;
-      playerName = playerName;
-      fixtures = fixtures;
-      correctScores = correctScores;
-      totalFixtures = totalFixtures;
-    };
-
-    return viewPredictionDTO;
-  };
-
-  public shared query ({ caller }) func getHistoryDTO(seasonId : Nat16) : async DTOs.HistoryDTO {
-    assert not Principal.isAnonymous(caller);
-    let principalName = Principal.toText(caller);
-
-    var activeSeasonName = "";
-    var seasons : [DTOs.SeasonDTO] = [];
-    var activeSeasonId = seasonId;
-
-    if (activeSeasonId == 0) {
-      activeSeasonId := activeSeason;
-    };
-
-    let season = seasonsInstance.getSeason(activeSeasonId);
-    switch (season) {
-      case (null) {};
-      case (?s) {
-        activeSeasonName := s.name;
-      };
-    };
-
-    let seasonsBuffer = Buffer.fromArray<DTOs.SeasonDTO>(seasons);
-    let allSeasons = seasonsInstance.getSeasons();
-
-    for (season in Iter.fromArray<T.Season>(allSeasons)) {
-      let seasonDTO : DTOs.SeasonDTO = {
-        seasonId = season.id;
-        seasonName = season.name;
-        seasonYear = season.year;
-        gameweeks = [];
-      };
-      seasonsBuffer.add(seasonDTO);
-    };
-
-    let userHistory = predictionsInstance.getUserHistory(principalName, activeSeasonId);
-
-    let historyDTO : DTOs.HistoryDTO = {
-      seasons = Buffer.toArray(seasonsBuffer);
-      activeSeasonId = activeSeasonId;
-      activeSeasonName = activeSeasonName;
-      seasonGameweeks = userHistory;
-      userId = principalName;
-    };
-
-    return historyDTO;
-  };
-
-  public shared query func getLeaderboardDTO(seasonId : Nat16, gameweekNumber : Nat8, page : Nat, count : Nat) : async DTOs.LeaderBoardDTO {
-
-    var activeSeasonId = seasonId;
-    var activeGameweekNumber = gameweekNumber;
-    var activeSeasonName = "";
-    var seasons : [DTOs.SeasonDTO] = [];
-    var totalPot = Nat64.fromNat(0);
-    var winningShare = Nat64.fromNat(0);
-    var status = Nat8.fromNat(0);
-
-    if (activeSeasonId == 0) {
-      activeSeasonId := activeSeason;
-    };
-
-    if (activeGameweekNumber == 0) {
-      activeGameweekNumber := activeGameweek;
-    };
-
-    let season = seasonsInstance.getSeason(activeSeasonId);
-    switch (season) {
-      case (null) {};
-      case (?s) {
-        activeSeasonName := s.name;
-      };
-    };
-
-    let seasonsBuffer = Buffer.fromArray<DTOs.SeasonDTO>(seasons);
-    let allSeasons = seasonsInstance.getSeasons();
-
-    for (season in Iter.fromArray<T.Season>(allSeasons)) {
-      let seasonDTO : DTOs.SeasonDTO = {
-        seasonId = season.id;
-        seasonName = season.name;
-        seasonYear = season.year;
-        gameweeks = [];
-      };
-      seasonsBuffer.add(seasonDTO);
-    };
-
-    let leaderBoardDTO = predictionsInstance.getLeaderboardDTO(activeSeasonId, activeGameweekNumber, page * count, count);
-    let leaderboardEntriesWithNames = profilesInstance.getLeaderboardEntryNames(leaderBoardDTO);
-
-    //get total pot and winning share
-    let gameweek = seasonsInstance.getGameweek(activeSeasonId, activeGameweekNumber);
-    switch (gameweek) {
-      case (null) {};
-      case (?g) {
-        totalPot := g.totalPot;
-        winningShare := g.winningShare;
-        status := g.status;
-      };
-    };
-
-    let leaderboard : DTOs.LeaderBoardDTO = {
-      seasons = Buffer.toArray(seasonsBuffer);
-      activeSeasonId = activeSeasonId;
-      activeSeasonName = activeSeasonName;
-      activeGameweekNumber = activeGameweekNumber;
-      leaderboardEntries = leaderboardEntriesWithNames.leaderboardEntries;
-      totalEntries = leaderboardEntriesWithNames.totalEntries;
-      totalPot = totalPot;
-      winningShare = winningShare;
-      status = status;
-    };
-    return leaderboard;
   };
 
   public shared ({ caller }) func getProfileDTO() : async Result.Result<DTOs.ProfileDTO, T.Error> {
@@ -616,183 +170,6 @@ actor Self {
     };
   };
 
-  public shared query ({ caller }) func getAdminDTO() : async DTOs.AdminDTO {
-    assert not Principal.isAnonymous(caller);
-    let isCallerAdmin = isAdminForCaller(caller);
-    if (isCallerAdmin == false) {
-      return {
-        activeSeasonId = 0;
-        activeSeasonName = "";
-        activeGameweekNumber = 0;
-        seasons = [];
-        activeGameweekStatus = "";
-      };
-    };
-
-    var activeSeasonId = activeSeason;
-    var activeGameweekNumber = activeGameweek;
-    var activeSeasonName = "";
-    var seasons : [DTOs.SeasonDTO] = [];
-    var activeGameweekStatus = "";
-
-    let season = seasonsInstance.getSeason(activeSeasonId);
-    switch (season) {
-      case (null) {};
-      case (?s) {
-        activeSeasonName := s.name;
-      };
-    };
-
-    let seasonsBuffer = Buffer.fromArray<DTOs.SeasonDTO>(seasons);
-    let allSeasons = seasonsInstance.getSeasons();
-
-    for (season in Iter.fromArray<T.Season>(allSeasons)) {
-      let seasonDTO : DTOs.SeasonDTO = {
-        seasonId = season.id;
-        seasonName = season.name;
-        seasonYear = season.year;
-        gameweeks = [];
-      };
-      seasonsBuffer.add(seasonDTO);
-    };
-
-    let gameweek = seasonsInstance.getGameweek(activeSeason, activeGameweek);
-    switch (gameweek) {
-      case (null) {
-        activeGameweekStatus := "Not set";
-      };
-      case (?g) {
-        switch (g.status) {
-          case (0) {
-            activeGameweekStatus := "Unopened";
-          };
-          case (1) {
-            activeGameweekStatus := "Open";
-          };
-          case (2) {
-            activeGameweekStatus := "Closed";
-          };
-          case (3) {
-            activeGameweekStatus := "Finalised";
-          };
-          case (_) {
-            activeGameweekStatus := "Not Set";
-          };
-        };
-      };
-    };
-
-    let adminDTO : DTOs.AdminDTO = {
-      activeSeasonId = activeSeasonId;
-      activeSeasonName = activeSeasonName;
-      activeGameweekNumber = activeGameweekNumber;
-      seasons = Buffer.toArray(seasonsBuffer);
-      activeGameweekStatus = activeGameweekStatus;
-    };
-
-    return adminDTO;
-  };
-
-  public shared ({ caller }) func unsetActiveState() : async Result.Result<(), T.Error> {
-
-    let isCallerAdmin = isAdminForCaller(caller);
-    if (isCallerAdmin == false) {
-      return #err(#NotAuthorized);
-    };
-
-    activeSeason := 0;
-    activeGameweek := 0;
-    return #ok(());
-  };
-
-  public shared ({ caller }) func setSystemState(seasonId : Nat16, gameweekNumber : Nat8) : async Result.Result<(), T.Error> {
-
-    let isCallerAdmin = isAdminForCaller(caller);
-    if (isCallerAdmin == false) {
-      return #err(#NotAuthorized);
-    };
-
-    activeSeason := seasonId;
-    activeGameweek := gameweekNumber;
-    return #ok(());
-  };
-
-  public shared ({ caller }) func getPayoutDTO() : async DTOs.PayoutDTO {
-    assert not Principal.isAnonymous(caller);
-    let isCallerAdmin = isAdminForCaller(caller);
-    if (isCallerAdmin == false) {
-      return {
-        activeSeasonName = "";
-        activeGameweekNumber = 0;
-        potAccountBalance = 0;
-        adminFee = 0;
-        gameweekPot = 0;
-        winnerCount = 0;
-        winnerShare = 0;
-      };
-    };
-
-    let defaultSubAccount = getDefaultAccount();
-
-    var activeSeasonName = "";
-    var activeGameweekNumber = activeGameweek;
-    var potAccountBalance = await bookInstance.getTotalBalance(defaultSubAccount);
-    var adminFee = Int64.toNat64(Float.toInt64(Float.fromInt64(Int64.fromNat64(potAccountBalance)) * 0.05));
-    var gameweekPot = await bookInstance.getGameweekPotBalance(defaultSubAccount);
-    var winnerCount = Nat64.fromNat(predictionsInstance.countWinners(activeSeason, activeGameweek));
-    var winnerShare = Nat64.fromNat(0);
-    if (winnerCount > 0) {
-      winnerShare := Int64.toNat64(Float.toInt64(Float.fromInt64(Int64.fromNat64(gameweekPot)) / Float.fromInt64(Int64.fromNat64(winnerCount))));
-    };
-
-    let season = seasonsInstance.getSeason(activeSeason);
-    switch (season) {
-      case (null) {};
-      case (?s) {
-        activeSeasonName := s.name;
-      };
-    };
-
-    let payoutDTO : DTOs.PayoutDTO = {
-      activeSeasonName = activeSeasonName;
-      activeGameweekNumber = activeGameweekNumber;
-      potAccountBalance = potAccountBalance;
-      adminFee = adminFee;
-      gameweekPot = gameweekPot;
-      winnerCount = winnerCount;
-      winnerShare = winnerShare;
-    };
-
-    return payoutDTO;
-
-  };
-
-  public shared ({ caller }) func payoutSweepstake() : async Result.Result<(), T.Error> {
-    let isCallerAdmin = isAdminForCaller(caller);
-    if (isCallerAdmin == false) {
-      return #err(#NotAuthorized);
-    };
-
-    let defaultSubAccount = getDefaultAccount();
-    let potBalance = await bookInstance.getGameweekPotBalance(defaultSubAccount);
-    let winningPrincipals = predictionsInstance.getWinnerPrincipalIds(activeSeason, activeGameweek);
-    let winnersCount = Int64.fromNat64(Nat64.fromNat(winningPrincipals.size()));
-
-    var winnerShare : Float = 0.0;
-    if (winnersCount > 0) {
-      winnerShare := Float.fromInt64(Int64.fromNat64(potBalance)) / Float.fromInt64(winnersCount);
-    };
-
-    seasonsInstance.updatePayoutInfo(activeSeason, activeGameweek, potBalance, Int64.toNat64(Float.toInt64(winnerShare)));
-
-    for (i in Iter.range(0, winningPrincipals.size() - 1)) {
-      await bookInstance.transferWinnings(Principal.fromActor(Self), Principal.fromText(winningPrincipals[i]), winnerShare);
-      predictionsInstance.updateWinnings(activeSeason, activeGameweek, winningPrincipals[i], Int64.toNat64(Float.toInt64(winnerShare)));
-    };
-
-    return await bookInstance.transferAdminFee(Principal.fromActor(Self), adminAccount);
-  };
-
   public shared ({ caller }) func getUserBalancesDTO(page : Nat, count : Nat) : async DTOs.BalancesDTO {
     assert not Principal.isAnonymous(caller);
     let isCallerAdmin = isAdminForCaller(caller);
@@ -814,227 +191,6 @@ actor Self {
     return balancesDTO;
   };
 
-  //season functions
-
-  public query func getSeasons() : async [T.Season] {
-    return seasonsInstance.getSeasons();
-  };
-
-  public query func getSeason(seasonId : Nat16) : async ?T.Season {
-    return seasonsInstance.getSeason(seasonId);
-  };
-
-  public shared ({ caller }) func createSeason(name : Text, year : Nat16) : async Result.Result<(), T.Error> {
-
-    let isCallerAdmin = isAdminForCaller(caller);
-    if (isCallerAdmin == false) {
-      return #err(#NotAuthorized);
-    };
-
-    return seasonsInstance.createSeason(name, year);
-  };
-
-  public shared ({ caller }) func updateSeason(id : Nat16, newName : Text, newYear : Nat16) : async Result.Result<(), T.Error> {
-    let isCallerAdmin = isAdminForCaller(caller);
-    if (isCallerAdmin == false) {
-      return #err(#NotAuthorized);
-    };
-
-    return seasonsInstance.updateSeason(id, newName, newYear);
-  };
-
-  public shared ({ caller }) func deleteSeason(id : Nat16) : async Result.Result<(), T.Error> {
-    let isCallerAdmin = isAdminForCaller(caller);
-    if (isCallerAdmin == false) {
-      return #err(#NotAuthorized);
-    };
-    if (activeSeason == id) {
-      activeSeason := 0;
-      activeGameweek := 0;
-    };
-    predictionsInstance.deleteSeason(id);
-    return seasonsInstance.deleteSeason(id);
-  };
-
-  //gameweek functions
-
-  public query func getGameweeks(seasonId : Nat16) : async [T.Gameweek] {
-    return seasonsInstance.getGameweeks(seasonId);
-  };
-
-  public shared ({ caller }) func updateGameweekStatus(seasonId : Nat16, gameweekNumber : Nat8, status : Nat8) : async Result.Result<(), T.Error> {
-
-    let isCallerAdmin = isAdminForCaller(caller);
-    if (isCallerAdmin == false) {
-      return #err(#NotAuthorized);
-    };
-
-    var potAccountBalance = Nat64.fromNat(0);
-    if (status == 2) {
-      let defaultSubAccount = getDefaultAccount();
-      potAccountBalance := await bookInstance.getGameweekPotBalance(defaultSubAccount);
-    };
-
-    return seasonsInstance.updateGameweekStatus(seasonId, gameweekNumber, status, potAccountBalance);
-  };
-
-  //fixture functions
-
-  public query func getFixtures(seasonId : Nat16, gameweekNumber : Nat8) : async [T.Fixture] {
-
-    let fixtures = seasonsInstance.getFixtures(seasonId, gameweekNumber);
-    switch (fixtures) {
-      case (null) { return [] };
-      case (?f) { return List.toArray(f) };
-    };
-  };
-
-  public query func getFixture(seasonId : Nat16, gameweekNumber : Nat8, fixtureId : Nat32) : async ?T.Fixture {
-    return seasonsInstance.getFixture(seasonId, gameweekNumber, fixtureId);
-  };
-
-  public shared ({ caller }) func addFixtureToGameweek(seasonId : Nat16, gameweekNumber : Nat8, homeTeamId : Nat16, awayTeamId : Nat16) : async Result.Result<(), T.Error> {
-
-    let isCallerAdmin = isAdminForCaller(caller);
-    if (isCallerAdmin == false) {
-      return #err(#NotAuthorized);
-    };
-
-    return seasonsInstance.addFixtureToGameweek(seasonId, gameweekNumber, homeTeamId, awayTeamId);
-  };
-
-  public shared ({ caller }) func updateFixture(seasonId : Nat16, gameweekNumber : Nat8, fixtureId : Nat32, homeTeamId : Nat16, awayTeamId : Nat16, fixtureStatus : Nat8, homeGoals : Nat8, awayGoals : Nat8) : async Result.Result<(), T.Error> {
-
-    let isCallerAdmin = isAdminForCaller(caller);
-    if (isCallerAdmin == false) {
-      return #err(#NotAuthorized);
-    };
-
-    seasonsInstance.updateFixture(seasonId, gameweekNumber, fixtureId, homeTeamId, awayTeamId, fixtureStatus, homeGoals, awayGoals);
-
-    let fixtures = seasonsInstance.getFixtures(seasonId, gameweekNumber);
-    switch (fixtures) {
-      case (null) { return #err(#NotAllowed) };
-      case (?f) {
-        return predictionsInstance.updatePredictionsCount(seasonId, gameweekNumber, List.toArray(f));
-      };
-    };
-
-  };
-
-  public shared ({ caller }) func deleteFixture(seasonId : Nat16, gameweekNumber : Nat8, fixtureId : Nat32) : async Result.Result<(), T.Error> {
-    let isCallerAdmin = isAdminForCaller(caller);
-    if (isCallerAdmin == false) {
-      return #err(#NotAuthorized);
-    };
-
-    seasonsInstance.deleteFixture(seasonId, gameweekNumber, fixtureId);
-
-    let fixtures = seasonsInstance.getFixtures(seasonId, gameweekNumber);
-    switch (fixtures) {
-      case (null) { return #err(#NotAllowed) };
-      case (?f) {
-        return predictionsInstance.deleteFixture(seasonId, gameweekNumber, List.toArray(f), fixtureId);
-      };
-    };
-
-  };
-
-  //team functions
-
-  public query func getTeams() : async [T.Team] {
-    return teamsInstance.getTeams();
-  };
-
-  public shared ({ caller }) func createTeam(name : Text) : async Result.Result<(), T.Error> {
-
-    let isCallerAdmin = isAdminForCaller(caller);
-    if (isCallerAdmin == false) {
-      return #err(#NotAuthorized);
-    };
-
-    return teamsInstance.createTeam(name);
-  };
-
-  public shared ({ caller }) func updateTeam(id : Nat16, newName : Text) : async Result.Result<(), T.Error> {
-    let isCallerAdmin = isAdminForCaller(caller);
-    if (isCallerAdmin == false) {
-      return #err(#NotAuthorized);
-    };
-
-    return teamsInstance.updateTeam(id, newName);
-  };
-
-  public shared ({ caller }) func deleteTeam(id : Nat16) : async Result.Result<(), T.Error> {
-    let isCallerAdmin = isAdminForCaller(caller);
-    if (isCallerAdmin == false) {
-      return #err(#NotAuthorized);
-    };
-
-    return teamsInstance.deleteTeam(id);
-  };
-
-  public shared ({ caller }) func getCorrectPredictionsDTO(seasonId : Nat16, gameweekNumber : Nat8, fixtureId : Nat32, start : Nat, count : Nat) : async DTOs.CorrectPredictionsDTO {
-    let isCallerAdmin = isAdminForCaller(caller);
-
-    let emptyPredictions : DTOs.CorrectPredictionsDTO = {
-      seasonName = "";
-      seasonId = Nat16.fromNat(0);
-      gameweekNumber = 0;
-      homeTeamName = "";
-      awayTeamName = "";
-      homeTeamGoals = 0;
-      awayTeamGoals = 0;
-      predictions = [];
-      totalEntries = 0;
-    };
-
-    if (isCallerAdmin == false) {
-      return emptyPredictions;
-    };
-
-    let fixture = seasonsInstance.getFixture(seasonId, gameweekNumber, fixtureId);
-    switch fixture {
-      case (null) { return emptyPredictions };
-      case (?foundFixture) {
-
-        let predictions = ?predictionsInstance.getCorrectPredictions(seasonId, gameweekNumber, foundFixture, start, count);
-        switch predictions {
-          case (null) { return emptyPredictions };
-          case (?foundPredictions) {
-            let predictionsWithNames = profilesInstance.getPredictionNames(foundPredictions);
-
-            var seasonName = "";
-            let season = seasonsInstance.getSeason(seasonId);
-            switch (season) {
-              case (null) {};
-              case (?s) {
-                seasonName := s.name;
-              };
-            };
-
-            var homeTeamName = teamsInstance.getTeamName(foundFixture.homeTeamId);
-            var awayTeamName = teamsInstance.getTeamName(foundFixture.awayTeamId);
-
-            let populatedPredictions : DTOs.CorrectPredictionsDTO = {
-              seasonName = seasonName;
-              seasonId = predictionsWithNames.seasonId;
-              gameweekNumber = predictionsWithNames.gameweekNumber;
-              homeTeamName = homeTeamName;
-              awayTeamName = awayTeamName;
-              homeTeamGoals = predictionsWithNames.homeTeamGoals;
-              awayTeamGoals = predictionsWithNames.awayTeamGoals;
-              predictions = predictionsWithNames.predictions;
-              totalEntries = predictionsWithNames.totalEntries;
-            };
-
-            return populatedPredictions;
-          };
-        };
-      };
-    };
-  };
-
   // Ledger functions
 
   private func getDefaultAccount() : Account.AccountIdentifier {
@@ -1045,421 +201,94 @@ actor Self {
     Account.accountIdentifier(Principal.fromActor(Self), Account.principalToSubaccount(caller));
   };
 
-  //euro 2024 functions
+  //Data Management functions
 
-  public shared ({ caller }) func submitEuro2024Prediction(euro2024PredictionDTO : DTOs.Euro2024PredictionDTO) : async Result.Result<(), T.Error> {
-    
-    assert not Principal.isAnonymous(caller);
-    let principalName = Principal.toText(caller);
-    let profile = profilesInstance.getProfile(principalName);
-    let state = euro2024Instance.getState();
-
-    if(state.stage != #Selecting){
-      return #err(#NotAllowed);
-    };
-
-    if (profile == null) {
-      profilesInstance.createProfile(Principal.toText(caller), Principal.toText(caller), "", getUserDepositAccount(caller));
-    };
-
-    let prediction = euro2024Instance.getPredictions(principalName);
-
-    switch(prediction){
-      case (null){
-
-        let transferResult = await fpl_ledger.payEuro2024EntryFee(Principal.fromActor(Self), caller);
-
-        switch(transferResult){
-          case(#Ok result){
-            return euro2024Instance.submitPredictions(principalName, euro2024PredictionDTO);
-          };
-          case _{
-            return #err(#NotAllowed);
-          };
-        }
-      };
-      case (?foundPrediction){
-        return euro2024Instance.submitPredictions(principalName, euro2024PredictionDTO);
-      };
-    };
-  };
-
-  public shared ({ caller }) func giftEntry(receiverId: T.PrincipalName) : async Result.Result<(), T.Error> {
-    
-    assert not Principal.isAnonymous(caller);
-    let receiver = profilesInstance.getProfile(receiverId);
-    let state = euro2024Instance.getState();
-
-    if(state.stage != #Selecting){
-      return #err(#NotAllowed);
-    };
-
-    if (receiver == null) {
-      profilesInstance.createProfile(receiverId, receiverId, "", getUserDepositAccount(Principal.fromText(receiverId)));
-    };
-
-    let prediction = euro2024Instance.getPredictions(receiverId);
-
-    switch(prediction){
-      case (null){
-
-        let transferResult = await fpl_ledger.payEuro2024EntryFee(Principal.fromActor(Self), caller);
-
-        switch(transferResult){
-          case(#Ok result){
-            return euro2024Instance.submitPredictions(receiverId, {
-              alreadyEntered = true;
-              entryTime = Time.now();
-              fPrediction = {
-                goalAssister = 0;
-                goalScorer = 0;
-                loser = 0;
-                redCard = 0;
-                stage = #Final;
-                winner = 0;
-                yellowCard = 0
-              };
-              groupAPrediction = {
-                goalAssister = 0;
-                goalScorer = 0;
-                loser = 0;
-                redCard = 0;
-                stage = #Final;
-                winner = 0;
-                yellowCard = 0
-              };
-              groupBPrediction = {
-                goalAssister = 0;
-                goalScorer = 0;
-                loser = 0;
-                redCard = 0;
-                stage = #Final;
-                winner = 0;
-                yellowCard = 0
-              };
-              groupCPrediction = {
-                goalAssister = 0;
-                goalScorer = 0;
-                loser = 0;
-                redCard = 0;
-                stage = #Final;
-                winner = 0;
-                yellowCard = 0
-              };
-              groupDPrediction = {
-                goalAssister = 0;
-                goalScorer = 0;
-                loser = 0;
-                redCard = 0;
-                stage = #Final;
-                winner = 0;
-                yellowCard = 0
-              };
-              groupEPrediction = {
-                goalAssister = 0;
-                goalScorer = 0;
-                loser = 0;
-                redCard = 0;
-                stage = #Final;
-                winner = 0;
-                yellowCard = 0
-              };
-              groupFPrediction = {
-                goalAssister = 0;
-                goalScorer = 0;
-                loser = 0;
-                redCard = 0;
-                stage = #Final;
-                winner = 0;
-                yellowCard = 0
-              };
-              principalId = receiverId;
-              qfPrediction = {
-                goalAssister = 0;
-                goalScorer = 0;
-                loser = 0;
-                redCard = 0;
-                stage = #Final;
-                winner = 0;
-                yellowCard = 0
-              };
-              r16Prediction = {
-                goalAssister = 0;
-                goalScorer = 0;
-                loser = 0;
-                redCard = 0;
-                stage = #Final;
-                winner = 0;
-                yellowCard = 0
-              };
-              sfPrediction = {
-                goalAssister = 0;
-                goalScorer = 0;
-                loser = 0;
-                redCard = 0;
-                stage = #Final;
-                winner = 0;
-                yellowCard = 0
-              };
-              totalScore = 0;
-            });
-          };
-          case _{
-            return #err(#NotAllowed);
-          };
-        }
-      };
-      case (?foundPrediction){
-        return #err(#AlreadyExists);
-      };
-    };
-  };
-
-  public shared query ({ caller }) func getEuro2024DTO() : async Result.Result<DTOs.Euro2024PredictionDTO, T.Error> {
-
-    assert not Principal.isAnonymous(caller);
-    let principalName = Principal.toText(caller);
-
-    let prediction = euro2024Instance.getPredictions(principalName);
-    switch (prediction) {
-      case (null) {
-        return #err(#NotFound);
-      };
-      case (?foundPrediction) {
-        return #ok(foundPrediction);
-      };
-    };
-  };
-
-  public shared query func getPublicEuro2024DTO(principalId: Text) : async Result.Result<DTOs.Euro2024PredictionDTO, T.Error> {
-
-    let state = euro2024Instance.getState();
-    assert state.stage != #Selecting;
-    let prediction = euro2024Instance.getPredictions(principalId);
-    switch (prediction) {
-      case (null) {
-        return #err(#NotFound);
-      };
-      case (?foundPrediction) {
-        return #ok(foundPrediction);
-      };
-    };
-  };
-
-  public shared query func getEuro2024Teams() : async Result.Result<[T.InternationalTeam], T.Error> {
-    return #ok(List.toArray(euro2024Instance.getTeams()));
-  };
-
-  public shared query func getEuro2024Players() : async Result.Result<[T.InternationalPlayer], T.Error> {
-    return #ok(List.toArray(euro2024Instance.getPlayers()));
-  };
-
-  public shared query func getEuro2024StateDTO() : async Result.Result<DTOs.Euro2024DTO, T.Error> {
-    return #ok(euro2024Instance.getEuro2024StateDTO());
-  };
-
-  //Admin functions for euro 2024
-  let adminPrincipalId = "4jijx-ekel7-4t2kx-32cyf-wzo3t-i4tas-qsq4k-ujnug-oxke7-o5aci-eae";
   
-  public shared ({ caller }) func submitEvent(dto: DTOs.Euro2024EventDTO) : async Result.Result<(), T.Error> {
 
-    assert not Principal.isAnonymous(caller);
-    let principalId = Principal.toText(caller);
-    assert principalId == adminPrincipalId;
-    
-    euro2024Instance.submitEvent(dto);
-    return #ok;
+  public shared query ({ caller }) func validateTransferPlayer(transferPlayerDTO : DTOs.TransferPlayerDTO) : async T.RustResult {
+    //assert Principal.toText(caller) == NetworkEnvironmentVariables.SNS_GOVERNANCE_CANISTER_ID;
+    return #Err("Governance on hold due to network issues");
+    //return seasonManager.validateTransferPlayer(transferPlayerDTO);
   };
 
-  public shared func getAllEvents() : async Result.Result<[DTOs.Euro2024EventDTO], T.Error>{
-    return #ok(euro2024Instance.getAllEvents());
-  };
-  
-  public shared ({ caller }) func calculateEuro2024Leaderboard() : async Result.Result<(), T.Error> {
-
-    assert not Principal.isAnonymous(caller);
-    let principalId = Principal.toText(caller);
-    assert principalId == adminPrincipalId;
-    
-    euro2024Instance.calculateLeaderboard(); 
-    return #ok;
-  };
-
-
-  public shared ({caller}) func getFPLAccountBalance() : async DTOs.AccountBalanceDTO {
-    
-    assert not Principal.isAnonymous(caller);
-    var accountBalance: Nat = 0;
-
-    accountBalance := await fpl_ledger.getUserAccountBalance(caller);
-    
-    let accountBalanceDTO: DTOs.AccountBalanceDTO = {
-      accountBalance = accountBalance;
+  public shared composite query func getLeagues() : async Result.Result<[DTOs.FootballLeagueDTO], T.Error> {
+    let data_canister = actor (NetworkEnvironmentVariables.DATA_CANISTER_ID) : actor {
+      getLeagues : shared query () -> async Result.Result<[T.FootballLeague], T.Error>;
     };
-
-    return accountBalanceDTO;
+    return await data_canister.getLeagues();
+    //return await dataManager.getLeagues(); //Todo implement when figure out query function
   };
 
-
-  public shared ({caller}) func getUserPrediction() : async Result.Result<DTOs.Euro2024PredictionDTO, T.Error> {
-    
-    assert not Principal.isAnonymous(caller);
-    let userPrediction = euro2024Instance.getPredictions(Principal.toText(caller));
-    switch(userPrediction){
-      case null{
-        return #err(#NotFound);
-      };
-      case (?foundUserPrediction){
-        return #ok(foundUserPrediction);
-      }
-    }
-  };
-
-  public shared ({ caller }) func setEuroSystemState(gameState: T.GameState) : async Result.Result<(), T.Error> {
-
-    let isCallerAdmin = isAdminForCaller(caller);
-    if (isCallerAdmin == false) {
-      return #err(#NotAuthorized);
+  public shared composite query func getClubs() : async Result.Result<[DTOs.ClubDTO], T.Error> {
+    let data_canister = actor (NetworkEnvironmentVariables.DATA_CANISTER_ID) : actor {
+      getClubs : shared query (leagueId: T.FootballLeagueId) -> async Result.Result<[T.Club], T.Error>;
     };
-
-    euro2024Instance.setGameState(gameState);
-    return #ok(());
+    return await data_canister.getClubs(Environment.LEAGUE_ID);
+    //return await dataManager.getClubs(Environment.LEAGUE_ID); //Todo implement when figure out query function
   };
 
-  public shared ({ caller }) func getAccountBalances() : async DTOs.AccountBalancesDTO {
-    
-    assert not Principal.isAnonymous(caller);
-    var fplAccountBalance = await fpl_ledger.getUserAccountBalance(caller);
-    var icpAccountBalance: Nat64 = 0;
-
-    let dto: DTOs.AccountBalancesDTO = {
-      principalId = Principal.toText(caller);
-      fplBalance = fplAccountBalance;
-      icpBalance = icpAccountBalance;
+  public shared composite query func getLeagueClubs(leagueId: T.FootballLeagueId) : async Result.Result<[DTOs.ClubDTO], T.Error> {
+    let data_canister = actor (NetworkEnvironmentVariables.DATA_CANISTER_ID) : actor {
+      getClubs : shared query (leagueId: T.FootballLeagueId) -> async Result.Result<[T.Club], T.Error>;
     };
-    return dto;
+    return await data_canister.getClubs(leagueId);
+    //return await dataManager.getClubs(Environment.LEAGUE_ID); //Todo implement when figure out query function
   };
 
-  public shared func getEuroPotBalance() : async Nat64 {  
-    let result = await fpl_ledger.getPotBalance(Principal.fromActor(Self));
-    return result;
+
+  public shared composite query func getFixtures(dto: Requests.RequestFixturesDTO) : async Result.Result<[DTOs.FixtureDTO], T.Error> {
+    let data_canister = actor (NetworkEnvironmentVariables.DATA_CANISTER_ID) : actor {
+      getFixtures : shared query (leagueId: T.FootballLeagueId, dto: Requests.RequestFixturesDTO) -> async Result.Result<[DTOs.FixtureDTO], T.Error>;
+    };
+    return await data_canister.getFixtures(Environment.LEAGUE_ID, dto);
+    //return await dataManager.getFixtures(Environment.LEAGUE_ID, dto); //Todo implement when figure out query function
   };
 
-  public shared ({ caller }) func checkPaidButNoEntry() : async Bool {
-    return await checkCallerPaidButNoEntry(caller);
-  };
+  public shared ({ caller }) func executeTransferPlayer(leagueId: T.FootballLeagueId, transferPlayerDTO : DTOs.TransferPlayerDTO) : async () {
+    //assert Principal.toText(caller) == NetworkEnvironmentVariables.SNS_GOVERNANCE_CANISTER_ID;
+    assert isDataAdmin(Principal.toText(caller));
+    switch(await dataManager.validateTransferPlayer(leagueId, transferPlayerDTO)){
+      case (#ok success){
 
-  private func checkCallerPaidButNoEntry(caller: Principal) : async Bool {
-    return await fpl_ledger.checkCallerPaidButNoEntry(Principal.fromActor(Self), caller);
-  };
+        let systemStateResult = seasonManager.getSystemState();
+        switch(systemStateResult){
+          case (#ok systemState){
+            let _ = await dataManager.executeTransferPlayer(leagueId, systemState.pickTeamSeasonId, systemState.pickTeamGameweek, transferPlayerDTO);
+            switch(leagueId){
+              case 1{
+                await seasonManager.updateDataHash("players");
 
-  public shared ({ caller }) func adminDelete2024Entry(principalId: T.PrincipalName) : async Bool {
-    assert isAdminForCaller(caller);
-    return euro2024Instance.adminDelete2024Entry(principalId);
-  };
+              };
+              case 2{
+                //TODO Update the cache inside openwsl - remove when moved to football god
+                let openwsl_backend_canister = actor (NetworkEnvironmentVariables.DATA_CANISTER_ID) : actor {
+                  updateDataHash : (category: Text) -> async Result.Result<(), T.Error>;
+                };
+                let _ = await openwsl_backend_canister.updateDataHash("players");
+                return;
+              };
+              case _ {
 
-  public shared ({ caller }) func adminGetEuro2024Entries(limit: Nat, offset: Nat) : async [DTOs.Euro2024PredictionDTO] {
-    assert isAdminForCaller(caller);
-    return euro2024Instance.adminGetEuro2024Entries(limit, offset);
-  };
-
-  public shared ({ caller }) func adminDelete2024Event(eventId: T.Euro2024EventId) : async Bool {
-    assert isAdminForCaller(caller);
-    return euro2024Instance.adminDelete2024Event(eventId);
-  };
-
-  public shared ({ caller }) func adminGetEuro2024Events() : async [DTOs.Euro2024EventDTO] {
-    assert isAdminForCaller(caller);
-    return euro2024Instance.adminGetEuro2024Events();
-  };
-
-  public shared func getEuro2024Events() : async [DTOs.Euro2024EventDTO] {
-    return euro2024Instance.adminGetEuro2024Events();
-  };
-
-  public shared ({ caller }) func addEuro2024Event(euroEvent: T.Euro2024Event) : async Result.Result<(), T.Error> {
-    assert isAdminForCaller(caller);
-    return #ok(euro2024Instance.addEuro2024Event(euroEvent));
-  };
-
-  public shared func getEuro2024Fixtures() : async Result.Result<[T.Euro2024Fixture], T.Error> {
-    return #ok(euro2024Instance.getEuro2024Fixtures());
-  };
-
-  public shared query func getLeaderboard(dto: DTOs.GetLeaderboardDTO) : async Result.Result<DTOs.Euro2024LeaderBoardDTO, T.Error> {
-    return euro2024Instance.getEuro2024LeaderboardDTO(dto);
-  };
-
-  public shared ({ caller }) func closeEuro2024Entries() : async Result.Result<(), T.Error> {
-    assert isAdminForCaller(caller);
-    await euro2024Instance.closeEuro2024Entries();
-  };
-
-  public shared ({ caller }) func openEuro2024Entries() : async Result.Result<(), T.Error> {
-    assert isAdminForCaller(caller);
-    await euro2024Instance.openEuro2024Entries();
-  };
-
-  public shared ({ caller }) func completeEuro2024Competition() : async Result.Result<(), T.Error> {
-    assert isAdminForCaller(caller);
-    await euro2024Instance.completeEuro2024Competition();
-  };
-
-  public shared ({ caller }) func recalculateLeaderboard() : async Result.Result<(), T.Error> {
-    assert isAdminForCaller(caller);
-    euro2024Instance.calculateLeaderboard();
-    return #ok;
-  };
-
-  public shared query func getEuro2024State() : async Result.Result<T.Euro2024State, T.Error> {
-    return #ok(euro2024Instance.getState());
-  };
-  
-/*
-  private func payWinners() : async [(Text, Float)] {
-
-    //await fpl_ledger.transferWinnings(Principal.fromText("5oqml-6a237-43hvv-xdwje-mi7nb-s35vk-xpjjf-g6agm-ypb5c-bfcka-aae"), 4700 * 0.3);
-    await fpl_ledger.transferWinnings(Principal.fromText("eqlhf-ppkq7-roa5i-4wu6r-jumy3-g2xrc-vfdd5-wtoeu-n7xre-vsktn-lqe"), 4700 * 0.2);
-    //await fpl_ledger.transferWinnings(Principal.fromText("a4ged-iqqgo-7yqrk-mplfw-45qhe-7bvmq-ndtxv-ki7va-2djm5-v4oyf-kae"), 4700 * 0.15);
-    await fpl_ledger.transferWinnings(Principal.fromText("5ubbu-cqat7-e23ni-hqiu2-be7tf-gouni-mugpj-dqcih-p6mgq-qzffr-yae"), 4700 * 0.1);
-    await fpl_ledger.transferWinnings(Principal.fromText("svnja-4wci7-66snp-q2t7j-ir4zj-a6tg3-es5i5-53uwy-pe4y4-7y7cj-mae"), 4700 * 0.07);
+              };
+            };
+          };
+          case (#err _){}
+        };      
 
 
-    let shared1: Float = (4700 * 0.06) + (4700 * 0.05);
-    //await fpl_ledger.transferWinnings(Principal.fromText("5xihu-4oqj3-jxmhm-bfd64-5pplf-zfwcy-zlekg-bkh4i-ifkgz-tt57v-fqe"), shared1/2);
-    await fpl_ledger.transferWinnings(Principal.fromText("jcbr3-vh2ie-fkddr-dt24t-7e3j5-6fmxs-filqn-mrnvx-tpkxz-ievwr-fae"), shared1/2);
-
-
-    let shared2: Float = (4700 * 0.03) + (4700 * 0.02);
-    await fpl_ledger.transferWinnings(Principal.fromText("37ayv-zoobh-bqv5u-fj76x-3zctg-lq7xm-cbaer-mnyxn-7cgzi-ajzg3-aae"), shared2/2);
-    await fpl_ledger.transferWinnings(Principal.fromText("my6f2-bk2er-l3apv-johjh-wcgr3-gbate-7l27w-vdpiy-h4yb4-nlh27-oae"), shared2/2);
-
-    await fpl_ledger.transferWinnings(Principal.fromText("2a5id-24zsv-iuvkt-jl5cl-tekfe-6xhjb-sjapc-tj74a-6vnla-7pvxf-vae"), 4700 * 0.01);
-    return [];
-  };
-  */
-
-  private func retrieveFPL() : async (){
-    let winners = euro2024Instance.getEuro2024LeaderboardDTO({
-      entries = [];
-      limit = 100;
-      offset = 0;
-      totalEntries = 0;
-    });
-
-    switch(winners){
-      case (#ok foundWinners){
-        for(winner in Iter.fromArray(foundWinners.leaderboardEntries)){
-          let balance = await fpl_ledger.getUserSubaccountBalance(Principal.fromActor(Self), Principal.fromText(winner.principalName));
-
-          let _ = await fpl_ledger.transferBalanceBack(Principal.fromActor(Self), Principal.fromText(winner.principalName), balance);
-
-        };
+        
       };
       case _ {}
     };
-    
   };
+  
+
+    //Leagues
+    //Clubs
+    //Players
+    //Fixtures
+
+
   
   system func preupgrade() {
     stable_profiles := profilesInstance.getProfiles();
@@ -1490,11 +319,13 @@ actor Self {
     euro2024Instance.setLeaderboardEntries(stable_euro2024_leaderboard_entries);
     euro2024Instance.setGetUsernameFunction(?getUsernameFromPrincipal);
     ignore Timer.setTimer<system>(#nanoseconds(Int.abs(1)), postUpgradeCallback);
- 
   };
 
   private func postUpgradeCallback() : async (){
-    let _ = await fpl_ledger.transferFPLToJames(Principal.fromActor(Self), Principal.fromText("eqlhf-ppkq7-roa5i-4wu6r-jumy3-g2xrc-vfdd5-wtoeu-n7xre-vsktn-lqe"));
+    
+    dataCacheHashes := List.fromArray([
+      { category = "leagues"; hash = "NEW_DEFAULT_VALUE" }
+    ]);
   };
 
   private func getUsernameFromPrincipal(principalId: Text) : Text {
