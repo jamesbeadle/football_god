@@ -1,130 +1,148 @@
-type ViewPredictionDTO = 
+type UpdatePlayerDTO = 
  record {
-   correctScores: nat8;
-   fixtures: vec FixtureDTO;
-   playerName: text;
-   seasonName: text;
-   totalFixtures: nat8;
+   dateOfBirth: int;
+   firstName: text;
+   lastName: text;
+   leagueId: LeagueId;
+   nationality: CountryId;
+   playerId: PlayerId;
+   position: PlayerPosition;
+   shirtNumber: nat8;
  };
-type UserBalanceDTO = 
+type UpdateLeagueDTO = 
  record {
-   balance: nat64;
-   displayName: text;
-   principalName: text;
- };
-type TournamentStage = 
- variant {
-   Final;
-   GroupA;
-   GroupB;
-   GroupC;
-   GroupD;
-   GroupE;
-   GroupF;
-   QuarterFinal;
-   RoundOf16;
-   SemiFinal;
- };
-type TeamId = nat16;
-type Team = 
- record {
-   id: nat16;
+   abbreviation: text;
+   countryId: CountryId;
+   formed: int;
+   governingBody: text;
+   leagueId: LeagueId;
+   logo: blob;
    name: text;
+   relatedGender: Gender;
+   teamCount: nat8;
  };
-type SubmitPlayDTO = 
+type UpdateClubDTO = 
  record {
-   enterSweepstake: bool;
-   fixtures: vec FixtureDTO;
- };
-type SeasonDTO = 
- record {
-   gameweeks: vec GameweekDTO;
-   seasonId: nat16;
-   seasonName: text;
-   seasonYear: nat16;
- };
-type Season = 
- record {
-   gameweeks: List;
-   id: nat16;
+   abbreviatedName: text;
+   clubId: ClubId;
+   friendlyName: text;
+   leagueId: LeagueId;
    name: text;
-   year: nat16;
+   primaryColourHex: text;
+   secondaryColourHex: text;
+   shirtType: ShirtType;
+   thirdColourHex: text;
  };
-type Result_9 = 
- variant {
-   err: Error;
-   ok: vec DataCacheDTO;
+type UnretirePlayerDTO = 
+ record {
+   leagueId: LeagueId;
+   playerId: PlayerId;
  };
-type Result_8 = 
- variant {
-   err: Error;
-   ok: vec Euro2024Fixture;
+type TransferPlayerDTO = 
+ record {
+   clubId: ClubId;
+   leagueId: LeagueId;
+   newClubId: ClubId;
+   newLeagueId: LeagueId;
+   newShirtNumber: nat8;
+   playerId: PlayerId;
  };
-type Result_7 = 
- variant {
-   err: Error;
-   ok: vec InternationalPlayer;
+type SubmitFixtureDataDTO = 
+ record {
+   fixtureId: FixtureId;
+   leagueId: LeagueId;
+   playerEventData: vec PlayerEventData;
  };
-type Result_6 = 
+type ShirtType = 
  variant {
-   err: Error;
-   ok: Euro2024State;
+   Filled;
+   Striped;
  };
-type Result_5 = 
- variant {
-   err: Error;
-   ok: Euro2024DTO;
+type SetPlayerInjuryDTO = 
+ record {
+   description: text;
+   expectedEndDate: int;
+   leagueId: LeagueId;
+   playerId: PlayerId;
  };
-type Result_4 = 
+type SeasonId = nat16;
+type RustResult = 
  variant {
-   err: Error;
-   ok: vec InternationalTeam;
+   Err: text;
+   Ok: text;
+ };
+type RevaluePlayerUpDTO = 
+ record {
+   leagueId: LeagueId;
+   playerId: PlayerId;
+ };
+type RevaluePlayerDownDTO = 
+ record {
+   leagueId: LeagueId;
+   playerId: PlayerId;
+ };
+type RetirePlayerDTO = 
+ record {
+   leagueId: LeagueId;
+   playerId: PlayerId;
+   retirementDate: int;
  };
 type Result_3 = 
  variant {
    err: Error;
-   ok: Euro2024LeaderBoardDTO;
+   ok: vec ClubDTO;
  };
 type Result_2 = 
  variant {
    err: Error;
-   ok: ProfileDTO;
- };
-type Result_10 = 
- variant {
-   err: Error;
-   ok: vec Euro2024EventDTO;
+   ok: vec FootballLeagueDTO;
  };
 type Result_1 = 
  variant {
    err: Error;
-   ok: Euro2024PredictionDTO;
+   ok: vec PlayerDTO;
  };
 type Result = 
  variant {
    err: Error;
-   ok;
+   ok: bool;
  };
-type ProfileDTO = 
+type RescheduleFixtureDTO = 
  record {
-   depositAddress: blob;
-   displayName: text;
-   fplDepositAddress: text;
-   principalName: text;
-   walletAddress: text;
+   leagueId: LeagueId;
+   postponedFixtureId: FixtureId;
+   updatedFixtureDate: int;
+   updatedFixtureGameweek: GameweekNumber;
  };
-type PrincipalName = text;
-type PredictionSet = 
+type RecallPlayerDTO = 
  record {
-   goalAssister: PlayerId;
-   goalScorer: PlayerId;
-   loser: TeamId;
-   redCard: PlayerId;
-   stage: TournamentStage;
-   winner: TeamId;
-   yellowCard: PlayerId;
+   leagueId: LeagueId;
+   playerId: PlayerId;
  };
-type Position = 
+type PromoteNewClubDTO = 
+ record {
+   abbreviatedName: text;
+   friendlyName: text;
+   leagueId: LeagueId;
+   name: text;
+   primaryColourHex: text;
+   secondaryColourHex: text;
+   shirtType: ShirtType;
+   thirdColourHex: text;
+ };
+type PostponeFixtureDTO = 
+ record {
+   fixtureId: FixtureId;
+   leagueId: LeagueId;
+ };
+type PlayerStatus = 
+ variant {
+   Active;
+   FreeAgent;
+   OnLoan;
+   Retired;
+ };
+type PlayerPosition = 
  variant {
    Defender;
    Forward;
@@ -132,233 +150,99 @@ type Position =
    Midfielder;
  };
 type PlayerId = nat16;
-type PlayDTO = 
- record {
-   activeGameweekNumber: nat8;
-   activeSeasonId: nat16;
-   activeSeasonName: text;
-   fixtures: vec FixtureDTO;
-   sweepstakePaid: bool;
-   userId: text;
+type PlayerEventType = 
+ variant {
+   Appearance;
+   CleanSheet;
+   Goal;
+   GoalAssisted;
+   GoalConceded;
+   HighestScoringPlayer;
+   KeeperSave;
+   OwnGoal;
+   PenaltyMissed;
+   PenaltySaved;
+   RedCard;
+   YellowCard;
  };
-type PayoutDTO = 
+type PlayerEventData = 
  record {
-   activeGameweekNumber: nat8;
-   activeSeasonName: text;
-   adminFee: nat64;
-   gameweekPot: nat64;
-   potAccountBalance: nat64;
-   winnerCount: nat64;
-   winnerShare: nat64;
+   clubId: ClubId;
+   eventEndMinute: nat8;
+   eventStartMinute: nat8;
+   eventType: PlayerEventType;
+   fixtureId: FixtureId;
+   playerId: nat16;
  };
-type List_1 = 
- opt record {
-       Fixture;
-       List_1;
-     };
-type List = 
- opt record {
-       Gameweek;
-       List;
-     };
-type LeaderboardEntryDTO = 
+type PlayerDTO = 
  record {
-   correctScores: nat8;
-   displayName: text;
-   enteredSweepstake: bool;
-   position: text;
-   principalName: text;
-   totalFixtures: nat8;
- };
-type LeaderBoardDTO = 
- record {
-   activeGameweekNumber: nat8;
-   activeSeasonId: nat16;
-   activeSeasonName: text;
-   leaderboardEntries: vec LeaderboardEntryDTO;
-   seasons: vec SeasonDTO;
-   status: nat8;
-   totalEntries: nat64;
-   totalPot: nat64;
-   winningShare: nat64;
- };
-type InternationalTeam = 
- record {
-   countryCode: text;
-   id: TeamId;
-   name: text;
-   players: vec InternationalPlayer;
- };
-type InternationalPlayer = 
- record {
+   clubId: ClubId;
+   dateOfBirth: int;
    firstName: text;
-   id: PlayerId;
+   id: nat16;
    lastName: text;
-   position: Position;
-   teamId: TeamId;
+   leagueId: LeagueId;
+   nationality: CountryId;
+   position: PlayerPosition;
+   shirtNumber: nat8;
+   status: PlayerStatus;
+   valueQuarterMillions: nat16;
  };
-type HomeDTO = 
+type MoveFixtureDTO = 
  record {
-   activeGameweekNumber: nat8;
-   activeSeasonId: nat16;
-   activeSeasonName: text;
-   fixtures: vec FixtureDTO;
-   gameweekStatus: nat8;
-   hasPredictions: bool;
-   principalName: text;
-   systemUpdating: bool;
+   fixtureId: FixtureId;
+   leagueId: LeagueId;
+   updatedFixtureDate: int;
+   updatedFixtureGameweek: GameweekNumber;
  };
-type HistoryDTO = 
+type LoanPlayerDTO = 
  record {
-   activeSeasonId: nat16;
-   activeSeasonName: text;
-   seasonGameweeks: vec GameweekDTO;
-   seasons: vec SeasonDTO;
-   userId: text;
+   leagueId: LeagueId;
+   loanClubId: ClubId;
+   loanEndDate: int;
+   loanLeagueId: LeagueId;
+   playerId: PlayerId;
  };
-type GetLeaderboardDTO = 
+type LeagueId = nat16;
+type Gender = 
+ variant {
+   Female;
+   Male;
+ };
+type GameweekNumber = nat8;
+type FootballLeagueDTO = 
  record {
-   entries: vec LeaderboardEntryDTO;
-   limit: nat;
-   offset: nat;
-   totalEntries: nat;
+   abbreviation: text;
+   countryId: CountryId;
+   formed: int;
+   governingBody: text;
+   id: LeagueId;
+   logo: blob;
+   name: text;
+   relatedGender: Gender;
+   teamCount: nat8;
  };
-type GameweekPotDTO = record {gameweekPot: nat64;};
-type GameweekDTO = 
- record {
-   correctScores: nat8;
-   gameweekNumber: nat8;
-   sweepstakeEntered: bool;
-   totalFixtures: nat8;
-   winnings: nat64;
- };
-type Gameweek = 
- record {
-   fixtureCount: nat8;
-   fixtures: List_1;
-   number: nat8;
-   status: nat8;
-   totalPot: nat64;
-   winningShare: nat64;
- };
-type GameState = 
+type FixtureStatusType = 
  variant {
    Active;
-   Completed;
-   Selecting;
- };
-type FixtureStatus = 
- variant {
-   Active;
-   Finished;
+   Complete;
+   Finalised;
    Unplayed;
  };
 type FixtureId = nat32;
 type FixtureDTO = 
  record {
-   awayTeamGoals: nat8;
-   awayTeamId: nat16;
-   awayTeamName: text;
-   awayTeamPrediction: nat8;
-   correct: bool;
-   fixtureId: nat32;
-   homeTeamGoals: nat8;
-   homeTeamId: nat16;
-   homeTeamName: text;
-   homeTeamPrediction: nat8;
-   status: nat8;
- };
-type Fixture = 
- record {
+   awayClubId: ClubId;
    awayGoals: nat8;
-   awayTeamId: nat16;
+   events: vec PlayerEventData;
+   gameweek: GameweekNumber;
+   highestScoringPlayerId: nat16;
+   homeClubId: ClubId;
    homeGoals: nat8;
-   homeTeamId: nat16;
    id: nat32;
-   status: nat8;
- };
-type EventType = 
- variant {
-   GoalAssisted;
-   GoalScored;
-   RedCard;
-   StageLost;
-   StageWon;
-   YellowCard;
- };
-type Euro2024State = 
- record {
-   prizePool: nat64;
-   stage: GameState;
-   totalManagers: nat;
- };
-type Euro2024PredictionDTO = 
- record {
-   alreadyEntered: bool;
-   entryTime: int;
-   fPrediction: PredictionSet;
-   groupAPrediction: PredictionSet;
-   groupBPrediction: PredictionSet;
-   groupCPrediction: PredictionSet;
-   groupDPrediction: PredictionSet;
-   groupEPrediction: PredictionSet;
-   groupFPrediction: PredictionSet;
-   principalId: PrincipalName;
-   qfPrediction: PredictionSet;
-   r16Prediction: PredictionSet;
-   sfPrediction: PredictionSet;
-   totalScore: nat16;
- };
-type Euro2024LeaderboardEntryDTO = 
- record {
-   displayName: text;
-   position: text;
-   principalName: text;
-   profilePicture: opt blob;
-   totalScore: nat;
- };
-type Euro2024LeaderBoardDTO = 
- record {
-   leaderboardEntries: vec Euro2024LeaderboardEntryDTO;
-   status: nat8;
-   totalEntries: nat;
-   totalPot: nat64;
-   winningShare: nat64;
- };
-type Euro2024Fixture = 
- record {
-   awayGoals: nat8;
-   awayTeamId: TeamId;
-   homeGoals: nat8;
-   homeTeamId: TeamId;
-   id: nat8;
-   stage: TournamentStage;
-   status: FixtureStatus;
- };
-type Euro2024EventId = nat;
-type Euro2024EventDTO = 
- record {
-   eventId: Euro2024EventId;
-   eventType: EventType;
-   fixtureId: FixtureId;
-   playerId: PlayerId;
-   stage: TournamentStage;
-   teamId: TeamId;
- };
-type Euro2024Event = 
- record {
-   eventId: nat;
-   eventType: EventType;
-   fixtureId: FixtureId;
-   playerId: PlayerId;
-   stage: TournamentStage;
-   teamId: TeamId;
- };
-type Euro2024DTO = 
- record {
-   prizePool: nat64;
-   stage: GameState;
-   totalManagers: nat;
+   kickOff: int;
+   seasonId: SeasonId;
+   status: FixtureStatusType;
  };
 type Error = 
  variant {
@@ -368,118 +252,88 @@ type Error =
    NotAuthorized;
    NotFound;
  };
-type DataCacheDTO = 
+type CreatePlayerDTO = 
  record {
-   category: text;
-   hash: text;
+   clubId: ClubId;
+   dateOfBirth: int;
+   firstName: text;
+   gender: Gender;
+   lastName: text;
+   leagueId: LeagueId;
+   nationality: CountryId;
+   position: PlayerPosition;
+   shirtNumber: nat8;
+   valueQuarterMillions: nat16;
  };
-type CorrectPredictionsDTO = 
+type CreateLeagueDTO = 
  record {
-   awayTeamGoals: nat8;
-   awayTeamName: text;
-   gameweekNumber: nat8;
-   homeTeamGoals: nat8;
-   homeTeamName: text;
-   predictions: vec CorrectPredictionDTO;
-   seasonId: nat16;
-   seasonName: text;
-   totalEntries: nat64;
+   abbreviation: text;
+   countryId: CountryId;
+   formed: int;
+   governingBody: text;
+   logo: blob;
+   name: text;
+   relatedGender: Gender;
+   teamCount: nat8;
  };
-type CorrectPredictionDTO = 
+type CountryId = nat16;
+type ClubId = nat16;
+type ClubDTO = 
  record {
-   displayName: text;
-   principalName: text;
+   abbreviatedName: text;
+   friendlyName: text;
+   id: ClubId;
+   name: text;
+   primaryColourHex: text;
+   secondaryColourHex: text;
+   shirtType: ShirtType;
+   thirdColourHex: text;
  };
-type BalancesDTO = 
+type AddInitialFixturesDTO = 
  record {
-   potAccountBalance: nat64;
-   totalEntries: nat64;
-   userBalances: vec UserBalanceDTO;
+   leagueId: LeagueId;
+   seasonFixtures: vec FixtureDTO;
  };
-type AdminDTO = 
- record {
-   activeGameweekNumber: nat8;
-   activeGameweekStatus: text;
-   activeSeasonId: nat16;
-   activeSeasonName: text;
-   seasons: vec SeasonDTO;
- };
-type AccountBalancesDTO = 
- record {
-   fplBalance: nat;
-   icpBalance: nat64;
-   principalId: PrincipalName;
- };
-type AccountBalanceDTO = record {accountBalance: nat;};
 service : {
-  addEuro2024Event: (Euro2024Event) -> (Result);
-  addFixtureToGameweek: (nat16, nat8, nat16, nat16) -> (Result);
-  adminDelete2024Entry: (PrincipalName) -> (bool);
-  adminDelete2024Event: (Euro2024EventId) -> (bool);
-  adminGetEuro2024Entries: (nat, nat) -> (vec Euro2024PredictionDTO);
-  adminGetEuro2024Events: () -> (vec Euro2024EventDTO);
-  calculateEuro2024Leaderboard: () -> (Result);
-  checkPaidButNoEntry: () -> (bool);
-  closeEuro2024Entries: () -> (Result);
-  completeEuro2024Competition: () -> (Result);
-  createSeason: (text, nat16) -> (Result);
-  createTeam: (text) -> (Result);
-  deleteFixture: (nat16, nat8, nat32) -> (Result);
-  deleteSeason: (nat16) -> (Result);
-  deleteTeam: (nat16) -> (Result);
-  getAccountBalances: () -> (AccountBalancesDTO);
-  getAdminDTO: () -> (AdminDTO) query;
-  getAllEvents: () -> (Result_10);
-  getCorrectPredictionsDTO: (nat16, nat8, nat32, nat, nat) ->
-   (CorrectPredictionsDTO);
-  getDataHashes: () -> (Result_9) query;
-  getEuro2024DTO: () -> (Result_1) query;
-  getEuro2024Events: () -> (vec Euro2024EventDTO);
-  getEuro2024Fixtures: () -> (Result_8);
-  getEuro2024Players: () -> (Result_7) query;
-  getEuro2024State: () -> (Result_6) query;
-  getEuro2024StateDTO: () -> (Result_5) query;
-  getEuro2024Teams: () -> (Result_4) query;
-  getEuroPotBalance: () -> (nat64);
-  getFPLAccountBalance: () -> (AccountBalanceDTO);
-  getFPLAccountBalanceDTO: () -> (AccountBalanceDTO);
-  getFixture: (nat16, nat8, nat32) -> (opt Fixture) query;
-  getFixtures: (nat16, nat8) -> (vec Fixture) query;
-  getGameweekPotDTO: () -> (GameweekPotDTO);
-  getGameweeks: (nat16) -> (vec Gameweek) query;
-  getHistoryDTO: (nat16) -> (HistoryDTO) query;
-  getHomeDTO: () -> (HomeDTO) query;
-  getLeaderboard: (GetLeaderboardDTO) -> (Result_3) query;
-  getLeaderboardDTO: (nat16, nat8, nat, nat) -> (LeaderBoardDTO) query;
-  getPayoutDTO: () -> (PayoutDTO);
-  getPlayDTO: () -> (PlayDTO) query;
-  getProfileDTO: () -> (Result_2);
-  getPublicEuro2024DTO: (text) -> (Result_1) query;
-  getSeason: (nat16) -> (opt Season) query;
-  getSeasons: () -> (vec Season) query;
-  getTeams: () -> (vec Team) query;
-  getUserBalancesDTO: (nat, nat) -> (BalancesDTO);
-  getUserPrediction: () -> (Result_1);
-  getViewPredictionDTO: (text, nat16, nat8) -> (ViewPredictionDTO) query;
-  giftEntry: (PrincipalName) -> (Result);
-  isAdmin: () -> (bool) query;
-  isDisplayNameValid: (text) -> (bool) query;
-  isWalletValid: (text) -> (bool) query;
-  openEuro2024Entries: () -> (Result);
-  payoutSweepstake: () -> (Result);
-  recalculateLeaderboard: () -> (Result);
-  setEuroSystemState: (GameState) -> (Result);
-  setSystemState: (nat16, nat8) -> (Result);
-  submitEuro2024Prediction: (Euro2024PredictionDTO) -> (Result);
-  submitEvent: (Euro2024EventDTO) -> (Result);
-  submitPlayDTO: (SubmitPlayDTO) -> (Result);
-  unsetActiveState: () -> (Result);
-  updateDisplayName: (text) -> (Result);
-  updateFixture: (nat16, nat8, nat32, nat16, nat16, nat8, nat8, nat8) ->
-   (Result);
-  updateGameweekStatus: (nat16, nat8, nat8) -> (Result);
-  updateSeason: (nat16, text, nat16) -> (Result);
-  updateTeam: (nat16, text) -> (Result);
-  updateWalletAddress: (text) -> (Result);
-  withdrawICP: (float64) -> (Result);
+  executeAddInitialFixtures: (LeagueId, AddInitialFixturesDTO) -> ();
+  executeCreateLeague: (CreateLeagueDTO) -> () query;
+  executeCreatePlayer: (LeagueId, CreatePlayerDTO) -> ();
+  executeLoanPlayer: (LeagueId, LoanPlayerDTO) -> ();
+  executeMoveFixture: (LeagueId, MoveFixtureDTO) -> ();
+  executePostponeFixture: (LeagueId, PostponeFixtureDTO) -> ();
+  executePromoteNewClub: (LeagueId, PromoteNewClubDTO) -> ();
+  executeRecallPlayer: (LeagueId, RecallPlayerDTO) -> ();
+  executeRescheduleFixture: (LeagueId, RescheduleFixtureDTO) -> ();
+  executeRetirePlayer: (LeagueId, RetirePlayerDTO) -> ();
+  executeRevaluePlayerDown: (LeagueId, RevaluePlayerDownDTO) -> ();
+  executeRevaluePlayerUp: (LeagueId, RevaluePlayerUpDTO) -> ();
+  executeSetPlayerInjury: (LeagueId, SetPlayerInjuryDTO) -> ();
+  executeTransferPlayer: (LeagueId, TransferPlayerDTO) -> ();
+  executeUnretirePlayer: (LeagueId, UnretirePlayerDTO) -> ();
+  executeUpdateClub: (LeagueId, UpdateClubDTO) -> ();
+  executeUpdateLeague: (UpdateLeagueDTO) -> () query;
+  executeUpdatePlayer: (LeagueId, UpdatePlayerDTO) -> ();
+  getLeagueClubs: (LeagueId) -> (Result_3) composite_query;
+  getLeagues: () -> (Result_2) composite_query;
+  getPlayers: (LeagueId) -> (Result_1) composite_query;
+  isAdmin: () -> (Result);
+  validateAddInitialFixtures: (AddInitialFixturesDTO) -> (RustResult) query;
+  validateCreateLeague: (CreateLeagueDTO) -> (RustResult) query;
+  validateCreatePlayer: (CreatePlayerDTO) -> (RustResult) query;
+  validateLoanPlayer: (LoanPlayerDTO) -> (RustResult) query;
+  validateMoveFixture: (MoveFixtureDTO) -> (RustResult) query;
+  validatePostponeFixture: (PostponeFixtureDTO) -> (RustResult) query;
+  validatePromoteNewClub: (PromoteNewClubDTO) -> (RustResult) query;
+  validateRecallPlayer: (RecallPlayerDTO) -> (RustResult) query;
+  validateRescheduleFixture: (RescheduleFixtureDTO) -> (RustResult) query;
+  validateRetirePlayer: (RetirePlayerDTO) -> (RustResult) query;
+  validateRevaluePlayerDown: (RevaluePlayerDownDTO) -> (RustResult) query;
+  validateRevaluePlayerUp: (RevaluePlayerUpDTO) -> (RustResult) query;
+  validateSetPlayerInjury: (SetPlayerInjuryDTO) -> (RustResult) query;
+  validateSubmitFixtureData: (SubmitFixtureDataDTO) -> (RustResult) query;
+  validateTransferPlayer: (TransferPlayerDTO) -> (RustResult) query;
+  validateUnretirePlayer: (UnretirePlayerDTO) -> (RustResult) query;
+  validateUpdateClub: (UpdateClubDTO) -> (RustResult) query;
+  validateUpdateLeague: (UpdateLeagueDTO) -> (RustResult) query;
+  validateUpdatePlayer: (UpdatePlayerDTO) -> (RustResult) query;
 }

@@ -150,3 +150,12 @@
 .active-tab {
   border-bottom: 4px #2ce3a6 solid;
 }
+
+.brand-button {
+  background-color: #7f56f1;
+  color: white;
+}
+.brand-button-disabled {
+  background-color: #b5a3e6;
+  color: rgb(95, 90, 90);
+}

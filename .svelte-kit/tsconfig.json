@@ -40,7 +40,10 @@
 	"exclude": [
 		"../node_modules/**",
 		"../src/football_god_frontend/src/service-worker.js",
+		"../src/football_god_frontend/src/service-worker/**/*.js",
 		"../src/football_god_frontend/src/service-worker.ts",
-		"../src/football_god_frontend/src/service-worker.d.ts"
+		"../src/football_god_frontend/src/service-worker/**/*.ts",
+		"../src/football_god_frontend/src/service-worker.d.ts",
+		"../src/football_god_frontend/src/service-worker/**/*.d.ts"
 	]
 }

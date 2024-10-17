@@ -7,9 +7,6 @@ import { nonNullish, isNullish } from "@dfinity/utils";
 import "dompurify";
 import { AuthClient } from "@dfinity/auth-client";
 import { HttpAgent, Actor } from "@dfinity/agent";
-import "@dfinity/ledger-icrc";
-import "@dfinity/principal";
-import "@dfinity/candid/lib/cjs/idl.js";
 let base = "";
 let assets = base;
 const initial = { base, assets };
@@ -30,7 +27,7 @@ const PAGE_METHODS = ["GET", "POST", "HEAD"];
 function negotiate(accept, types) {
   const parts = [];
   accept.split(",").forEach((str, i) => {
-    const match = /([^/]+)\/([^;]+)(?:;q=([0-9.]+))?/.exec(str);
+    const match = /([^/ \t]+)\/([^; \t]+)[ \t]*(?:;[ \t]*q=([0-9.]+))?/.exec(str);
     if (match) {
       const [, type, subtype, q = "1"] = match;
       parts.push({ type, subtype, q: +q, i });
@@ -403,6 +400,9 @@ function make_trackable(url, callback, search_params_callback) {
   {
     tracked[Symbol.for("nodejs.util.inspect.custom")] = (depth, opts, inspect) => {
       return inspect(url, opts);
+    };
+    tracked.searchParams[Symbol.for("nodejs.util.inspect.custom")] = (depth, opts, inspect) => {
+      return inspect(url.searchParams, opts);
     };
   }
   {
@@ -942,8 +942,18 @@ function subscribe(store, ...callbacks) {
   const unsub = store.subscribe(...callbacks);
   return unsub.unsubscribe ? () => unsub.unsubscribe() : unsub;
 }
+function compute_slots(slots) {
+  const result = {};
+  for (const key2 in slots) {
+    result[key2] = true;
+  }
+  return result;
+}
 function null_to_empty(value) {
   return value == null ? "" : value;
+}
+function custom_event(type, detail, { bubbles = false, cancelable = false } = {}) {
+  return new CustomEvent(type, { detail, bubbles, cancelable });
 }
 let current_component;
 function set_current_component(component) {
@@ -957,6 +967,25 @@ function get_current_component() {
 function onDestroy(fn) {
   get_current_component().$$.on_destroy.push(fn);
 }
+function createEventDispatcher() {
+  const component = get_current_component();
+  return (type, detail, { cancelable = false } = {}) => {
+    const callbacks = component.$$.callbacks[type];
+    if (callbacks) {
+      const event = custom_event(
+        /** @type {string} */
+        type,
+        detail,
+        { cancelable }
+      );
+      callbacks.slice().forEach((fn) => {
+        fn.call(component, event);
+      });
+      return !event.defaultPrevented;
+    }
+    return true;
+  };
+}
 function setContext(key2, context) {
   get_current_component().$$.context.set(key2, context);
   return context;
@@ -967,7 +996,7 @@ function getContext(key2) {
 function ensure_array_like(array_like_or_iterator) {
   return array_like_or_iterator?.length !== void 0 ? array_like_or_iterator : Array.from(array_like_or_iterator);
 }
-const ATTR_REGEX = /[&"]/g;
+const ATTR_REGEX = /[&"<]/g;
 const CONTENT_REGEX = /[&<]/g;
 function escape(value, is_attr = false) {
   const str = String(value);
@@ -1042,9 +1071,9 @@ function create_ssr_component(fn) {
   };
 }
 function add_attribute(name, value, boolean) {
-  if (value == null || boolean && !value)
+  if (value == null || boolean)
     return "";
-  const assignment = boolean && value === true ? "" : `="${escape(value, true)}"`;
+  const assignment = `="${escape(value, true)}"`;
   return ` ${name}${assignment}`;
 }
 const subscriber_queue = [];
@@ -1781,6 +1810,7 @@ async function render_response({
     event,
     options2,
     branch.map((b) => b.server_data),
+    csp,
     global
   );
   if (page_config.ssr && page_config.csr) {
@@ -1963,13 +1993,11 @@ ${indent}}`);
       type: "bytes"
     }),
     {
-      headers: {
-        "content-type": "text/html"
-      }
+      headers: headers2
     }
   );
 }
-function get_data(event, options2, nodes, global) {
+function get_data(event, options2, nodes, csp, global) {
   let promise_id = 1;
   let count = 0;
   const { iterator, push, done } = create_async_iterator();
@@ -1994,7 +2022,7 @@ function get_data(event, options2, nodes, global) {
           let str;
           try {
             str = devalue.uneval({ id, data, error }, replacer2);
-          } catch (e) {
+          } catch {
             error = await handle_error_and_jsonify(
               event,
               options2,
@@ -2003,8 +2031,10 @@ function get_data(event, options2, nodes, global) {
             data = void 0;
             str = devalue.uneval({ id, data, error }, replacer2);
           }
-          push(`<script>${global}.resolve(${str})<\/script>
-`);
+          push(
+            `<script${csp.script_needs_nonce ? ` nonce="${csp.nonce}"` : ""}>${global}.resolve(${str})<\/script>
+`
+          );
           if (count === 0)
             done();
         }
@@ -2071,6 +2101,7 @@ async function respond_with_error({
         event,
         state,
         node: default_layout,
+        // eslint-disable-next-line @typescript-eslint/require-await
         parent: async () => ({})
       });
       const server_data = await server_data_promise;
@@ -2078,6 +2109,7 @@ async function respond_with_error({
         event,
         fetched,
         node: default_layout,
+        // eslint-disable-next-line @typescript-eslint/require-await
         parent: async () => ({}),
         resolve_opts,
         server_data_promise,
@@ -2290,7 +2322,7 @@ function get_data_json(event, options2, nodes) {
             let str;
             try {
               str = devalue.stringify(value, reducers);
-            } catch (e) {
+            } catch {
               const error = await handle_error_and_jsonify(
                 event,
                 options2,
@@ -2389,6 +2421,8 @@ async function render_page(event, page2, options2, manifest, state, resolve_opts
     state.prerender_default = should_prerender;
     const fetched = [];
     if (get_option(nodes, "ssr") === false && !(state.prerendering && should_prerender_data)) {
+      if (DEV && action_result && !event.request.headers.has("x-sveltekit-action"))
+        ;
       return await render_response({
         branch: [],
         fetched,
@@ -2425,7 +2459,7 @@ async function render_page(event, page2, options2, manifest, state, resolve_opts
               for (let j = 0; j < i; j += 1) {
                 const parent = await server_promises[j];
                 if (parent)
-                  Object.assign(data, await parent.data);
+                  Object.assign(data, parent.data);
               }
               return data;
             }
@@ -2749,6 +2783,12 @@ function add_cookies_to_headers(headers2, cookies) {
     }
   }
 }
+let read_implementation = null;
+function set_read_implementation(fn) {
+  read_implementation = fn;
+}
+function set_manifest(_) {
+}
 function create_fetch({ event, options: options2, manifest, state, get_cookie_header, set_internal }) {
   const server_fetch = async (info, init2) => {
     const original_request = normalize_fetch_input(info, init2, event.url);
@@ -2782,14 +2822,23 @@ function create_fetch({ event, options: options2, manifest, state, get_cookie_he
         const decoded = decodeURIComponent(url.pathname);
         const filename = (decoded.startsWith(prefix) ? decoded.slice(prefix.length) : decoded).slice(1);
         const filename_html = `${filename}/index.html`;
-        const is_asset = manifest.assets.has(filename);
-        const is_asset_html = manifest.assets.has(filename_html);
+        const is_asset = manifest.assets.has(filename) || filename in manifest._.server_assets;
+        const is_asset_html = manifest.assets.has(filename_html) || filename_html in manifest._.server_assets;
         if (is_asset || is_asset_html) {
           const file = is_asset ? filename : filename_html;
           if (state.read) {
             const type = is_asset ? manifest.mimeTypes[filename.slice(filename.lastIndexOf("."))] : "text/html";
             return new Response(state.read(file), {
               headers: type ? { "content-type": type } : {}
+            });
+          } else if (read_implementation) {
+            const length = manifest._.server_assets[file];
+            const type = manifest.mimeTypes[file.slice(file.lastIndexOf("."))];
+            return new Response(read_implementation(file), {
+              headers: {
+                "Content-Length": "" + length,
+                "Content-Type": type
+              }
             });
           }
           return await fetch(request);
@@ -2821,10 +2870,13 @@ function create_fetch({ event, options: options2, manifest, state, get_cookie_he
         const set_cookie = response.headers.get("set-cookie");
         if (set_cookie) {
           for (const str of set_cookie_parser.splitCookiesString(set_cookie)) {
-            const { name, value, ...options3 } = set_cookie_parser.parseString(str);
+            const { name, value, ...options3 } = set_cookie_parser.parseString(str, {
+              decodeValues: false
+            });
             const path = options3.path ?? (url.pathname.split("/").slice(0, -1).join("/") || "/");
             set_internal(name, value, {
               path,
+              encode: (value2) => value2,
               .../** @type {import('cookie').CookieSerializeOptions} */
               options3
             });
@@ -2963,7 +3015,7 @@ async function respond(request, options2, manifest, state) {
   let rerouted_path;
   try {
     rerouted_path = options2.hooks.reroute({ url: new URL(url) }) ?? url.pathname;
-  } catch (e) {
+  } catch {
     return text("Internal Server Error", {
       status: 500
     });
@@ -2986,7 +3038,9 @@ async function respond(request, options2, manifest, state) {
     return get_public_env(request);
   }
   if (decoded.startsWith(`/${options2.app_dir}`)) {
-    return text("Not found", { status: 404 });
+    const headers22 = new Headers();
+    headers22.set("cache-control", "public, max-age=0, must-revalidate");
+    return text("Not found", { status: 404, headers: headers22 });
   }
   const is_data_request = has_data_suffix(decoded);
   let invalidated_data_nodes;
@@ -3106,6 +3160,11 @@ async function respond(request, options2, manifest, state) {
           event.platform = await state.emulator.platform({ config, prerender });
         }
       }
+    } else if (state.emulator?.platform) {
+      event.platform = await state.emulator.platform({
+        config: {},
+        prerender: !!state.prerendering?.fallback
+      });
     }
     const { cookies, new_cookies, get_cookie_header, set_internal } = get_cookies(
       request,
@@ -3395,10 +3454,6 @@ const Root = create_ssr_component(($$result, $$props, $$bindings, slots) => {
   } while (!$$settled);
   return $$rendered;
 });
-function set_read_implementation(fn) {
-}
-function set_manifest(_) {
-}
 const options = {
   app_dir: "_app",
   app_template_contains_nonce: false,
@@ -3485,7 +3540,7 @@ const options = {
 		<div class="error">
 			<span class="status">` + status + '</span>\n			<div class="message">\n				<h1>' + message + "</h1>\n			</div>\n		</div>\n	</body>\n</html>\n"
   },
-  version_hash: "1svsyic"
+  version_hash: "16lf95m"
 };
 async function get_hooks() {
   return {};
@@ -3541,6 +3596,9 @@ class Server {
       prerendering ? new Proxy({ type: "public" }, prerender_env_handler) : public_env2
     );
     set_safe_public_env(public_env2);
+    if (read) {
+      set_read_implementation(read);
+    }
     if (!this.#options.hooks) {
       try {
         const module = await get_hooks();
@@ -3583,6 +3641,11 @@ const SNAPSHOT_KEY = "sveltekit:snapshot";
 const SCROLL_KEY = "sveltekit:scroll";
 get(SCROLL_KEY) ?? {};
 get(SNAPSHOT_KEY) ?? {};
+function goto(url, opts = {}) {
+  {
+    throw new Error("Cannot call goto(...) on the server");
+  }
+}
 const getStores = () => {
   const stores = getContext("__svelte__");
   return {
@@ -3693,6 +3756,7 @@ const authSignedInStore = derived(
   authStore,
   ({ identity }) => identity !== null && identity !== void 0
 );
+const errorDetailToString = (err) => typeof err === "string" ? err : err instanceof Error ? err.message : "message" in err ? err.message : void 0;
 const DEFAULT_ICON_SIZE = 20;
 const core = {
   close: "Close",
@@ -3717,6 +3781,27 @@ const en = {
 const i18n = readable({
   lang: "en",
   ...en
+});
+const css$9 = {
+  code: ".backdrop.svelte-1mpql1{position:absolute;top:0;right:0;bottom:0;left:0;color:var(--backdrop-contrast);z-index:var(--backdrop-z-index);touch-action:manipulation;cursor:pointer}.backdrop.visible.svelte-1mpql1{background:var(--backdrop);-webkit-backdrop-filter:var(--backdrop-filter);backdrop-filter:var(--backdrop-filter)}.backdrop.disablePointerEvents.svelte-1mpql1{cursor:inherit;pointer-events:none}",
+  map: '{"version":3,"file":"Backdrop.svelte","sources":["Backdrop.svelte"],"sourcesContent":["<script>import { fade } from \\"svelte/transition\\";\\nimport { createEventDispatcher } from \\"svelte\\";\\nimport { i18n } from \\"../stores/i18n\\";\\nimport { handleKeyPress } from \\"../utils/keyboard.utils\\";\\nexport let disablePointerEvents = false;\\nexport let invisible = false;\\nconst dispatch = createEventDispatcher();\\nconst close = () => dispatch(\\"nnsClose\\");\\nconst FADE_IN_DURATION = 75;\\nconst FADE_OUT_DURATION = 250;\\n<\/script>\\n\\n<div\\n  role=\\"button\\"\\n  tabindex=\\"-1\\"\\n  aria-label={$i18n.core.close}\\n  in:fade|global={{ duration: FADE_IN_DURATION }}\\n  out:fade|global={{ duration: FADE_OUT_DURATION }}\\n  class=\\"backdrop\\"\\n  class:visible={!invisible}\\n  on:click|stopPropagation={close}\\n  on:keypress={($event) => handleKeyPress({ $event, callback: close })}\\n  class:disablePointerEvents\\n  data-tid=\\"backdrop\\"\\n/>\\n\\n<style>.backdrop {\\n  position: absolute;\\n  top: 0;\\n  right: 0;\\n  bottom: 0;\\n  left: 0;\\n  color: var(--backdrop-contrast);\\n  z-index: var(--backdrop-z-index);\\n  touch-action: manipulation;\\n  cursor: pointer;\\n}\\n.backdrop.visible {\\n  background: var(--backdrop);\\n  -webkit-backdrop-filter: var(--backdrop-filter);\\n          backdrop-filter: var(--backdrop-filter);\\n}\\n.backdrop.disablePointerEvents {\\n  cursor: inherit;\\n  pointer-events: none;\\n}</style>\\n"],"names":[],"mappings":"AA0BO,uBAAU,CACf,QAAQ,CAAE,QAAQ,CAClB,GAAG,CAAE,CAAC,CACN,KAAK,CAAE,CAAC,CACR,MAAM,CAAE,CAAC,CACT,IAAI,CAAE,CAAC,CACP,KAAK,CAAE,IAAI,mBAAmB,CAAC,CAC/B,OAAO,CAAE,IAAI,kBAAkB,CAAC,CAChC,YAAY,CAAE,YAAY,CAC1B,MAAM,CAAE,OACV,CACA,SAAS,sBAAS,CAChB,UAAU,CAAE,IAAI,UAAU,CAAC,CAC3B,uBAAuB,CAAE,IAAI,iBAAiB,CAAC,CACvC,eAAe,CAAE,IAAI,iBAAiB,CAChD,CACA,SAAS,mCAAsB,CAC7B,MAAM,CAAE,OAAO,CACf,cAAc,CAAE,IAClB"}'
+};
+const Backdrop = create_ssr_component(($$result, $$props, $$bindings, slots) => {
+  let $i18n, $$unsubscribe_i18n;
+  $$unsubscribe_i18n = subscribe(i18n, (value) => $i18n = value);
+  let { disablePointerEvents = false } = $$props;
+  let { invisible = false } = $$props;
+  createEventDispatcher();
+  if ($$props.disablePointerEvents === void 0 && $$bindings.disablePointerEvents && disablePointerEvents !== void 0)
+    $$bindings.disablePointerEvents(disablePointerEvents);
+  if ($$props.invisible === void 0 && $$bindings.invisible && invisible !== void 0)
+    $$bindings.invisible(invisible);
+  $$result.css.add(css$9);
+  $$unsubscribe_i18n();
+  return `<div role="button" tabindex="-1"${add_attribute("aria-label", $i18n.core.close, 0)} class="${[
+    "backdrop svelte-1mpql1",
+    (!invisible ? "visible" : "") + " " + (disablePointerEvents ? "disablePointerEvents" : "")
+  ].join(" ").trim()}" data-tid="backdrop"></div>`;
 });
 const layoutBottomOffset = writable(0);
 const initBusyStore = () => {
@@ -3747,9 +3832,9 @@ const initBusyStore = () => {
 const busyStore = initBusyStore();
 const busy = derived(busyStore, ($busyStore) => $busyStore.length > 0);
 const busyMessage = derived(busyStore, ($busyStore) => $busyStore.reverse().find(({ text: text2 }) => nonNullish(text2))?.text);
-const css$7 = {
+const css$8 = {
   code: ".medium.svelte-85668t{--spinner-size:30px}.small.svelte-85668t{--spinner-size:calc(var(--line-height-standard) * 1rem)}.tiny.svelte-85668t{--spinner-size:calc(var(--line-height-standard) * 0.5rem)}svg.svelte-85668t{width:var(--spinner-size);height:var(--spinner-size);animation:spinner-linear-rotate 2000ms linear infinite;position:absolute;top:calc(50% - var(--spinner-size) / 2);left:calc(50% - var(--spinner-size) / 2);--radius:45px;--circumference:calc(3.1415926536 * var(--radius) * 2);--start:calc((1 - 0.05) * var(--circumference));--end:calc((1 - 0.8) * var(--circumference))}svg.inline.svelte-85668t{display:inline-block;position:relative}circle.svelte-85668t{stroke-dasharray:var(--circumference);stroke-width:10%;transform-origin:50% 50% 0;transition-property:stroke;animation-name:spinner-stroke-rotate-100;animation-duration:4000ms;animation-timing-function:cubic-bezier(0.35, 0, 0.25, 1);animation-iteration-count:infinite;fill:transparent;stroke:currentColor;transition:stroke-dashoffset 225ms linear}@keyframes spinner-linear-rotate{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}@keyframes spinner-stroke-rotate-100{0%{stroke-dashoffset:var(--start);transform:rotate(0)}12.5%{stroke-dashoffset:var(--end);transform:rotate(0)}12.5001%{stroke-dashoffset:var(--end);transform:rotateX(180deg) rotate(72.5deg)}25%{stroke-dashoffset:var(--start);transform:rotateX(180deg) rotate(72.5deg)}25.0001%{stroke-dashoffset:var(--start);transform:rotate(270deg)}37.5%{stroke-dashoffset:var(--end);transform:rotate(270deg)}37.5001%{stroke-dashoffset:var(--end);transform:rotateX(180deg) rotate(161.5deg)}50%{stroke-dashoffset:var(--start);transform:rotateX(180deg) rotate(161.5deg)}50.0001%{stroke-dashoffset:var(--start);transform:rotate(180deg)}62.5%{stroke-dashoffset:var(--end);transform:rotate(180deg)}62.5001%{stroke-dashoffset:var(--end);transform:rotateX(180deg) rotate(251.5deg)}75%{stroke-dashoffset:var(--start);transform:rotateX(180deg) rotate(251.5deg)}75.0001%{stroke-dashoffset:var(--start);transform:rotate(90deg)}87.5%{stroke-dashoffset:var(--end);transform:rotate(90deg)}87.5001%{stroke-dashoffset:var(--end);transform:rotateX(180deg) rotate(341.5deg)}100%{stroke-dashoffset:var(--start);transform:rotateX(180deg) rotate(341.5deg)}}",
-  map: null
+  map: '{"version":3,"file":"Spinner.svelte","sources":["Spinner.svelte"],"sourcesContent":["<!-- adapted source: https://github.com/angular/components/tree/master/src/material/progress-spinner -->\\n<script>export let inline = false;\\nexport let size = \\"medium\\";\\n<\/script>\\n\\n<svg\\n  class:inline\\n  class={size}\\n  preserveAspectRatio=\\"xMidYMid meet\\"\\n  focusable=\\"false\\"\\n  aria-hidden=\\"true\\"\\n  data-tid=\\"spinner\\"\\n  viewBox=\\"0 0 100 100\\"><circle cx=\\"50%\\" cy=\\"50%\\" r=\\"45\\" /></svg\\n>\\n\\n<style>.medium {\\n  --spinner-size: 30px;\\n}\\n\\n.small {\\n  --spinner-size: calc(var(--line-height-standard) * 1rem);\\n}\\n\\n.tiny {\\n  --spinner-size: calc(var(--line-height-standard) * 0.5rem);\\n}\\n\\nsvg {\\n  width: var(--spinner-size);\\n  height: var(--spinner-size);\\n  animation: spinner-linear-rotate 2000ms linear infinite;\\n  position: absolute;\\n  top: calc(50% - var(--spinner-size) / 2);\\n  left: calc(50% - var(--spinner-size) / 2);\\n  --radius: 45px;\\n  --circumference: calc(3.1415926536 * var(--radius) * 2);\\n  --start: calc((1 - 0.05) * var(--circumference));\\n  --end: calc((1 - 0.8) * var(--circumference));\\n}\\nsvg.inline {\\n  display: inline-block;\\n  position: relative;\\n}\\n\\ncircle {\\n  stroke-dasharray: var(--circumference);\\n  stroke-width: 10%;\\n  transform-origin: 50% 50% 0;\\n  transition-property: stroke;\\n  animation-name: spinner-stroke-rotate-100;\\n  animation-duration: 4000ms;\\n  animation-timing-function: cubic-bezier(0.35, 0, 0.25, 1);\\n  animation-iteration-count: infinite;\\n  fill: transparent;\\n  stroke: currentColor;\\n  transition: stroke-dashoffset 225ms linear;\\n}\\n\\n/* -global- */\\n@keyframes -global-spinner-linear-rotate {\\n  0% {\\n    transform: rotate(0deg);\\n  }\\n  100% {\\n    transform: rotate(360deg);\\n  }\\n}\\n/* -global- */\\n@keyframes -global-spinner-stroke-rotate-100 {\\n  0% {\\n    stroke-dashoffset: var(--start);\\n    transform: rotate(0);\\n  }\\n  12.5% {\\n    stroke-dashoffset: var(--end);\\n    transform: rotate(0);\\n  }\\n  12.5001% {\\n    stroke-dashoffset: var(--end);\\n    transform: rotateX(180deg) rotate(72.5deg);\\n  }\\n  25% {\\n    stroke-dashoffset: var(--start);\\n    transform: rotateX(180deg) rotate(72.5deg);\\n  }\\n  25.0001% {\\n    stroke-dashoffset: var(--start);\\n    transform: rotate(270deg);\\n  }\\n  37.5% {\\n    stroke-dashoffset: var(--end);\\n    transform: rotate(270deg);\\n  }\\n  37.5001% {\\n    stroke-dashoffset: var(--end);\\n    transform: rotateX(180deg) rotate(161.5deg);\\n  }\\n  50% {\\n    stroke-dashoffset: var(--start);\\n    transform: rotateX(180deg) rotate(161.5deg);\\n  }\\n  50.0001% {\\n    stroke-dashoffset: var(--start);\\n    transform: rotate(180deg);\\n  }\\n  62.5% {\\n    stroke-dashoffset: var(--end);\\n    transform: rotate(180deg);\\n  }\\n  62.5001% {\\n    stroke-dashoffset: var(--end);\\n    transform: rotateX(180deg) rotate(251.5deg);\\n  }\\n  75% {\\n    stroke-dashoffset: var(--start);\\n    transform: rotateX(180deg) rotate(251.5deg);\\n  }\\n  75.0001% {\\n    stroke-dashoffset: var(--start);\\n    transform: rotate(90deg);\\n  }\\n  87.5% {\\n    stroke-dashoffset: var(--end);\\n    transform: rotate(90deg);\\n  }\\n  87.5001% {\\n    stroke-dashoffset: var(--end);\\n    transform: rotateX(180deg) rotate(341.5deg);\\n  }\\n  100% {\\n    stroke-dashoffset: var(--start);\\n    transform: rotateX(180deg) rotate(341.5deg);\\n  }\\n}</style>\\n"],"names":[],"mappings":"AAeO,qBAAQ,CACb,cAAc,CAAE,IAClB,CAEA,oBAAO,CACL,cAAc,CAAE,wCAClB,CAEA,mBAAM,CACJ,cAAc,CAAE,0CAClB,CAEA,iBAAI,CACF,KAAK,CAAE,IAAI,cAAc,CAAC,CAC1B,MAAM,CAAE,IAAI,cAAc,CAAC,CAC3B,SAAS,CAAE,qBAAqB,CAAC,MAAM,CAAC,MAAM,CAAC,QAAQ,CACvD,QAAQ,CAAE,QAAQ,CAClB,GAAG,CAAE,KAAK,GAAG,CAAC,CAAC,CAAC,IAAI,cAAc,CAAC,CAAC,CAAC,CAAC,CAAC,CAAC,CACxC,IAAI,CAAE,KAAK,GAAG,CAAC,CAAC,CAAC,IAAI,cAAc,CAAC,CAAC,CAAC,CAAC,CAAC,CAAC,CACzC,QAAQ,CAAE,IAAI,CACd,eAAe,CAAE,sCAAsC,CACvD,OAAO,CAAE,uCAAuC,CAChD,KAAK,CAAE,sCACT,CACA,GAAG,qBAAQ,CACT,OAAO,CAAE,YAAY,CACrB,QAAQ,CAAE,QACZ,CAEA,oBAAO,CACL,gBAAgB,CAAE,IAAI,eAAe,CAAC,CACtC,YAAY,CAAE,GAAG,CACjB,gBAAgB,CAAE,GAAG,CAAC,GAAG,CAAC,CAAC,CAC3B,mBAAmB,CAAE,MAAM,CAC3B,cAAc,CAAE,yBAAyB,CACzC,kBAAkB,CAAE,MAAM,CAC1B,yBAAyB,CAAE,aAAa,IAAI,CAAC,CAAC,CAAC,CAAC,CAAC,IAAI,CAAC,CAAC,CAAC,CAAC,CACzD,yBAAyB,CAAE,QAAQ,CACnC,IAAI,CAAE,WAAW,CACjB,MAAM,CAAE,YAAY,CACpB,UAAU,CAAE,iBAAiB,CAAC,KAAK,CAAC,MACtC,CAGA,WAAmB,qBAAsB,CACvC,EAAG,CACD,SAAS,CAAE,OAAO,IAAI,CACxB,CACA,IAAK,CACH,SAAS,CAAE,OAAO,MAAM,CAC1B,CACF,CAEA,WAAmB,yBAA0B,CAC3C,EAAG,CACD,iBAAiB,CAAE,IAAI,OAAO,CAAC,CAC/B,SAAS,CAAE,OAAO,CAAC,CACrB,CACA,KAAM,CACJ,iBAAiB,CAAE,IAAI,KAAK,CAAC,CAC7B,SAAS,CAAE,OAAO,CAAC,CACrB,CACA,QAAS,CACP,iBAAiB,CAAE,IAAI,KAAK,CAAC,CAC7B,SAAS,CAAE,QAAQ,MAAM,CAAC,CAAC,OAAO,OAAO,CAC3C,CACA,GAAI,CACF,iBAAiB,CAAE,IAAI,OAAO,CAAC,CAC/B,SAAS,CAAE,QAAQ,MAAM,CAAC,CAAC,OAAO,OAAO,CAC3C,CACA,QAAS,CACP,iBAAiB,CAAE,IAAI,OAAO,CAAC,CAC/B,SAAS,CAAE,OAAO,MAAM,CAC1B,CACA,KAAM,CACJ,iBAAiB,CAAE,IAAI,KAAK,CAAC,CAC7B,SAAS,CAAE,OAAO,MAAM,CAC1B,CACA,QAAS,CACP,iBAAiB,CAAE,IAAI,KAAK,CAAC,CAC7B,SAAS,CAAE,QAAQ,MAAM,CAAC,CAAC,OAAO,QAAQ,CAC5C,CACA,GAAI,CACF,iBAAiB,CAAE,IAAI,OAAO,CAAC,CAC/B,SAAS,CAAE,QAAQ,MAAM,CAAC,CAAC,OAAO,QAAQ,CAC5C,CACA,QAAS,CACP,iBAAiB,CAAE,IAAI,OAAO,CAAC,CAC/B,SAAS,CAAE,OAAO,MAAM,CAC1B,CACA,KAAM,CACJ,iBAAiB,CAAE,IAAI,KAAK,CAAC,CAC7B,SAAS,CAAE,OAAO,MAAM,CAC1B,CACA,QAAS,CACP,iBAAiB,CAAE,IAAI,KAAK,CAAC,CAC7B,SAAS,CAAE,QAAQ,MAAM,CAAC,CAAC,OAAO,QAAQ,CAC5C,CACA,GAAI,CACF,iBAAiB,CAAE,IAAI,OAAO,CAAC,CAC/B,SAAS,CAAE,QAAQ,MAAM,CAAC,CAAC,OAAO,QAAQ,CAC5C,CACA,QAAS,CACP,iBAAiB,CAAE,IAAI,OAAO,CAAC,CAC/B,SAAS,CAAE,OAAO,KAAK,CACzB,CACA,KAAM,CACJ,iBAAiB,CAAE,IAAI,KAAK,CAAC,CAC7B,SAAS,CAAE,OAAO,KAAK,CACzB,CACA,QAAS,CACP,iBAAiB,CAAE,IAAI,KAAK,CAAC,CAC7B,SAAS,CAAE,QAAQ,MAAM,CAAC,CAAC,OAAO,QAAQ,CAC5C,CACA,IAAK,CACH,iBAAiB,CAAE,IAAI,OAAO,CAAC,CAC/B,SAAS,CAAE,QAAQ,MAAM,CAAC,CAAC,OAAO,QAAQ,CAC5C,CACF"}'
 };
 const Spinner = create_ssr_component(($$result, $$props, $$bindings, slots) => {
   let { inline = false } = $$props;
@@ -3758,19 +3843,19 @@ const Spinner = create_ssr_component(($$result, $$props, $$bindings, slots) => {
     $$bindings.inline(inline);
   if ($$props.size === void 0 && $$bindings.size && size !== void 0)
     $$bindings.size(size);
-  $$result.css.add(css$7);
+  $$result.css.add(css$8);
   return `  <svg class="${[escape(null_to_empty(size), true) + " svelte-85668t", inline ? "inline" : ""].join(" ").trim()}" preserveAspectRatio="xMidYMid meet" focusable="false" aria-hidden="true" data-tid="spinner" viewBox="0 0 100 100"><circle cx="50%" cy="50%" r="45" class="svelte-85668t"></circle></svg>`;
 });
-const css$6 = {
+const css$7 = {
   code: "div.svelte-14plyno{z-index:calc(var(--z-index) + 1000);position:fixed;top:0;right:0;bottom:0;left:0;background:var(--backdrop);color:var(--backdrop-contrast)}.content.svelte-14plyno{display:flex;flex-direction:column;justify-content:center;align-items:center}p.svelte-14plyno{padding-bottom:var(--padding);max-width:calc(var(--section-max-width) / 2)}",
-  map: null
+  map: '{"version":3,"file":"BusyScreen.svelte","sources":["BusyScreen.svelte"],"sourcesContent":["<script>import { fade } from \\"svelte/transition\\";\\nimport { busy, busyMessage } from \\"../stores/busy.store\\";\\nimport Spinner from \\"./Spinner.svelte\\";\\nimport { nonNullish } from \\"@dfinity/utils\\";\\n<\/script>\\n\\n<!-- Display spinner and lock UI if busyStore is not empty -->\\n{#if $busy}\\n  <div data-tid=\\"busy\\" transition:fade|global>\\n    <div class=\\"content\\">\\n      {#if nonNullish($busyMessage)}\\n        <p>{$busyMessage}</p>\\n      {/if}\\n      <span>\\n        <Spinner inline />\\n      </span>\\n    </div>\\n  </div>\\n{/if}\\n\\n<style>div {\\n  z-index: calc(var(--z-index) + 1000);\\n  position: fixed;\\n  top: 0;\\n  right: 0;\\n  bottom: 0;\\n  left: 0;\\n  background: var(--backdrop);\\n  color: var(--backdrop-contrast);\\n}\\n\\n.content {\\n  display: flex;\\n  flex-direction: column;\\n  justify-content: center;\\n  align-items: center;\\n}\\n\\np {\\n  padding-bottom: var(--padding);\\n  max-width: calc(var(--section-max-width) / 2);\\n}</style>\\n"],"names":[],"mappings":"AAoBO,kBAAI,CACT,OAAO,CAAE,KAAK,IAAI,SAAS,CAAC,CAAC,CAAC,CAAC,IAAI,CAAC,CACpC,QAAQ,CAAE,KAAK,CACf,GAAG,CAAE,CAAC,CACN,KAAK,CAAE,CAAC,CACR,MAAM,CAAE,CAAC,CACT,IAAI,CAAE,CAAC,CACP,UAAU,CAAE,IAAI,UAAU,CAAC,CAC3B,KAAK,CAAE,IAAI,mBAAmB,CAChC,CAEA,uBAAS,CACP,OAAO,CAAE,IAAI,CACb,cAAc,CAAE,MAAM,CACtB,eAAe,CAAE,MAAM,CACvB,WAAW,CAAE,MACf,CAEA,gBAAE,CACA,cAAc,CAAE,IAAI,SAAS,CAAC,CAC9B,SAAS,CAAE,KAAK,IAAI,mBAAmB,CAAC,CAAC,CAAC,CAAC,CAAC,CAC9C"}'
 };
 const BusyScreen = create_ssr_component(($$result, $$props, $$bindings, slots) => {
   let $busy, $$unsubscribe_busy;
   let $busyMessage, $$unsubscribe_busyMessage;
   $$unsubscribe_busy = subscribe(busy, (value) => $busy = value);
   $$unsubscribe_busyMessage = subscribe(busyMessage, (value) => $busyMessage = value);
-  $$result.css.add(css$6);
+  $$result.css.add(css$7);
   $$unsubscribe_busy();
   $$unsubscribe_busyMessage();
   return ` ${$busy ? `<div data-tid="busy" class="svelte-14plyno"><div class="content svelte-14plyno">${nonNullish($busyMessage) ? `<p class="svelte-14plyno">${escape($busyMessage)}</p>` : ``} <span>${validate_component(Spinner, "Spinner").$$render($$result, { inline: true }, {}, {})}</span></div></div>` : ``}`;
@@ -3793,23 +3878,31 @@ const IconError = create_ssr_component(($$result, $$props, $$bindings, slots) =>
     $$bindings.size(size);
   return `  <svg xmlns="http://www.w3.org/2000/svg"${add_attribute("height", size, 0)} viewBox="0 0 24 24"${add_attribute("width", size, 0)} fill="currentColor"><path d="M0 0h24v24H0z" fill="none"></path><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"></path></svg>`;
 });
-const css$5 = {
+const css$6 = {
   code: "svg.svelte-1lui9gh{vertical-align:middle}",
-  map: null
+  map: '{"version":3,"file":"IconInfo.svelte","sources":["IconInfo.svelte"],"sourcesContent":["<!-- source: DFINITY foundation -->\\n<script>import { DEFAULT_ICON_SIZE } from \\"../constants/constants\\";\\nexport let size = `${DEFAULT_ICON_SIZE}px`;\\n<\/script>\\n\\n<svg\\n  width={size}\\n  height={size}\\n  viewBox=\\"0 0 20 20\\"\\n  fill=\\"none\\"\\n  xmlns=\\"http://www.w3.org/2000/svg\\"\\n  data-tid=\\"icon-info\\"\\n>\\n  <path\\n    d=\\"M10.2222 17.5C14.3643 17.5 17.7222 14.1421 17.7222 10C17.7222 5.85786 14.3643 2.5 10.2222 2.5C6.08003 2.5 2.72217 5.85786 2.72217 10C2.72217 14.1421 6.08003 17.5 10.2222 17.5Z\\"\\n    stroke=\\"currentColor\\"\\n    stroke-width=\\"1.5\\"\\n    stroke-linecap=\\"round\\"\\n    stroke-linejoin=\\"round\\"\\n  />\\n  <path\\n    d=\\"M10.2222 13.3333V10\\"\\n    stroke=\\"currentColor\\"\\n    stroke-width=\\"1.5\\"\\n    stroke-linecap=\\"round\\"\\n    stroke-linejoin=\\"round\\"\\n  />\\n  <path\\n    d=\\"M10.2222 6.66699H10.2305\\"\\n    stroke=\\"currentColor\\"\\n    stroke-width=\\"1.5\\"\\n    stroke-linecap=\\"round\\"\\n    stroke-linejoin=\\"round\\"\\n  />\\n</svg>\\n\\n<style>svg {\\n  vertical-align: middle;\\n}</style>\\n"],"names":[],"mappings":"AAoCO,kBAAI,CACT,cAAc,CAAE,MAClB"}'
 };
 const IconInfo = create_ssr_component(($$result, $$props, $$bindings, slots) => {
   let { size = `${DEFAULT_ICON_SIZE}px` } = $$props;
   if ($$props.size === void 0 && $$bindings.size && size !== void 0)
     $$bindings.size(size);
-  $$result.css.add(css$5);
+  $$result.css.add(css$6);
   return `  <svg${add_attribute("width", size, 0)}${add_attribute("height", size, 0)} viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" data-tid="icon-info" class="svelte-1lui9gh"><path d="M10.2222 17.5C14.3643 17.5 17.7222 14.1421 17.7222 10C17.7222 5.85786 14.3643 2.5 10.2222 2.5C6.08003 2.5 2.72217 5.85786 2.72217 10C2.72217 14.1421 6.08003 17.5 10.2222 17.5Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path><path d="M10.2222 13.3333V10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path><path d="M10.2222 6.66699H10.2305" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg>`;
 });
 const IconWarning = create_ssr_component(($$result, $$props, $$bindings, slots) => {
   let { size = `${DEFAULT_ICON_SIZE}px` } = $$props;
   if ($$props.size === void 0 && $$bindings.size && size !== void 0)
     $$bindings.size(size);
-  return `  <svg xmlns="http://www.w3.org/2000/svg"${add_attribute("height", size, 0)} viewBox="0 0 24 24"${add_attribute("width", size, 0)} fill="currentColor"><path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"></path></svg>`;
+  return `  <svg xmlns="http://www.w3.org/2000/svg"${add_attribute("height", size, 0)} viewBox="0 0 20 20"${add_attribute("width", size, 0)} fill="currentColor"><path fill-rule="evenodd" clip-rule="evenodd" d="M16.5324 12.6666L12.491 5.66659C11.7331 4.35394 11.354 3.69773 10.8593 3.47746C10.4278 3.28534 9.93473 3.28534 9.50322 3.47746C9.00871 3.69763 8.62985 4.35385 7.87262 5.66541L3.83048 12.6666C3.07262 13.9792 2.6938 14.6358 2.75041 15.1744C2.79978 15.6441 3.04633 16.0709 3.42847 16.3486C3.86643 16.6668 4.62382 16.6668 6.13851 16.6668H14.2243C15.739 16.6668 16.4962 16.6668 16.9342 16.3486C17.3163 16.0709 17.563 15.6441 17.6124 15.1744C17.669 14.6358 17.2903 13.9792 16.5324 12.6666ZM9.4314 13.5666C9.4314 13.1524 9.76718 12.8166 10.1814 12.8166H10.1914C10.6056 12.8166 10.9414 13.1524 10.9414 13.5666C10.9414 13.9809 10.6056 14.3166 10.1914 14.3166H10.1814C9.76718 14.3166 9.4314 13.9809 9.4314 13.5666ZM10.9314 7.73331C10.9314 7.3191 10.5956 6.98331 10.1814 6.98331C9.76718 6.98331 9.4314 7.3191 9.4314 7.73331V11.0666C9.4314 11.4809 9.76718 11.8166 10.1814 11.8166C10.5956 11.8166 10.9314 11.4809 10.9314 11.0666V7.73331Z"></path></svg>`;
 });
+let elementsCounters = {};
+const nextElementId = (prefix) => {
+  elementsCounters = {
+    ...elementsCounters,
+    [prefix]: (elementsCounters[prefix] ?? 0) + 1
+  };
+  return `${prefix}${elementsCounters[prefix]}`;
+};
 const Html = create_ssr_component(($$result, $$props, $$bindings, slots) => {
   let { text: text2 = void 0 } = $$props;
   if ($$props.text === void 0 && $$bindings.text && text2 !== void 0)
@@ -3889,6 +3982,37 @@ const initMenuStore = () => {
 };
 const menuStore = initMenuStore();
 derived(menuStore, ($menuStore) => $menuStore === Menu.COLLAPSED);
+const css$5 = {
+  code: ".modal.svelte-1bbimtl.svelte-1bbimtl{position:fixed;top:0;right:0;bottom:0;left:0;z-index:var(--modal-z-index);touch-action:initial;cursor:initial}.wrapper.svelte-1bbimtl.svelte-1bbimtl{position:absolute;top:50%;left:50%;transform:translate(-50%, -50%);display:flex;flex-direction:column;background:var(--overlay-background);color:var(--overlay-background-contrast);--button-secondary-background:var(--focus-background);overflow:hidden;box-sizing:border-box;box-shadow:var(--overlay-box-shadow)}.wrapper.svelte-1bbimtl .container-wrapper.svelte-1bbimtl{margin:var(--padding-1_5x) var(--padding-2x) auto;display:flex;flex-direction:column;gap:var(--padding-1_5x);flex:1;overflow:hidden}.wrapper.alert.svelte-1bbimtl.svelte-1bbimtl{width:var(--alert-width);max-width:var(--alert-max-width);max-height:var(--alert-max-height);border-radius:var(--alert-border-radius)}.wrapper.alert.svelte-1bbimtl .header.svelte-1bbimtl{padding:var(--alert-padding-y) var(--alert-padding-x) var(--padding)}.wrapper.alert.svelte-1bbimtl .container-wrapper.svelte-1bbimtl{margin-bottom:calc(var(--alert-padding-y) * 2 / 3)}.wrapper.alert.svelte-1bbimtl .content.svelte-1bbimtl{margin:0 0 calc(var(--alert-padding-y) / 2);padding:calc(var(--alert-padding-y) / 2) calc(var(--alert-padding-x) / 2) 0}.wrapper.alert.svelte-1bbimtl .footer.svelte-1bbimtl{padding:0 var(--alert-padding-x) calc(var(--alert-padding-y) * 2 / 3)}@media(min-width: 576px){.wrapper.alert.svelte-1bbimtl .footer.svelte-1bbimtl{justify-content:flex-end}}.wrapper.dialog.svelte-1bbimtl.svelte-1bbimtl{width:var(--dialog-width);max-width:var(--dialog-max-width);min-height:var(--dialog-min-height);height:var(--dialog-height);max-height:var(--dialog-max-height, 100%);border-radius:var(--dialog-border-radius)}@supports (-webkit-touch-callout: none){.wrapper.dialog.svelte-1bbimtl.svelte-1bbimtl{max-height:-webkit-fill-available}@media(min-width: 768px){.wrapper.dialog.svelte-1bbimtl.svelte-1bbimtl{max-height:var(--dialog-max-height, 100%)}}}.wrapper.dialog.svelte-1bbimtl .header.svelte-1bbimtl{padding:var(--dialog-padding-y) var(--padding-3x) var(--padding)}.wrapper.dialog.svelte-1bbimtl .container-wrapper.svelte-1bbimtl{margin-bottom:var(--dialog-padding-y)}.wrapper.dialog.svelte-1bbimtl .content.svelte-1bbimtl{margin:0;padding:var(--dialog-padding-y) var(--dialog-padding-x)}.header.svelte-1bbimtl.svelte-1bbimtl{display:grid;grid-template-columns:1fr auto 1fr;gap:var(--padding);z-index:var(--z-index);position:relative}.header.svelte-1bbimtl h2.svelte-1bbimtl{white-space:var(--text-white-space, nowrap);overflow:hidden;text-overflow:ellipsis;grid-column-start:2;text-align:center}.header.svelte-1bbimtl button.svelte-1bbimtl{display:flex;justify-content:center;align-items:center;padding:0;justify-self:flex-end}.header.svelte-1bbimtl button.svelte-1bbimtl:active,.header.svelte-1bbimtl button.svelte-1bbimtl:focus,.header.svelte-1bbimtl button.svelte-1bbimtl:hover{background:var(--background-shade);border-radius:var(--border-radius)}.content.svelte-1bbimtl.svelte-1bbimtl{overflow-y:var(--modal-content-overflow-y, auto);overflow-x:hidden}.container.svelte-1bbimtl.svelte-1bbimtl{position:relative;display:flex;flex-direction:column;flex:1;overflow:hidden;border-radius:16px;background:var(--overlay-content-background);color:var(--overlay-content-background-contrast)}",
+  map: '{"version":3,"file":"Modal.svelte","sources":["Modal.svelte"],"sourcesContent":["<script>import { fade } from \\"svelte/transition\\";\\nimport { createEventDispatcher } from \\"svelte\\";\\nimport { i18n } from \\"../stores/i18n\\";\\nimport IconClose from \\"../icons/IconClose.svelte\\";\\nimport Backdrop from \\"./Backdrop.svelte\\";\\nimport { nonNullish } from \\"@dfinity/utils\\";\\nimport { nextElementId } from \\"../utils/html.utils\\";\\nimport { busy } from \\"../stores/busy.store\\";\\nimport { get } from \\"svelte/store\\";\\nexport let visible = true;\\nexport let role = \\"dialog\\";\\nexport let testId = void 0;\\nexport let disablePointerEvents = false;\\nlet showHeader;\\n$: showHeader = nonNullish($$slots.title);\\nlet showFooterAlert;\\n$: showFooterAlert = nonNullish($$slots.footer) && role === \\"alert\\";\\nconst dispatch = createEventDispatcher();\\nconst close = () => dispatch(\\"nnsClose\\");\\nconst FADE_IN_DURATION = 125;\\nconst FADE_OUT_DURATION = 200;\\nconst modalTitleId = nextElementId(\\"modal-title-\\");\\nconst modalContentId = nextElementId(\\"modal-content-\\");\\nconst handleKeyDown = ({ key }) => {\\n  if (visible && !disablePointerEvents && !get(busy) && key === \\"Escape\\") {\\n    close();\\n  }\\n};\\n<\/script>\\n\\n<svelte:window on:keydown={handleKeyDown} />\\n\\n{#if visible}\\n  <div\\n    class=\\"modal\\"\\n    transition:fade|global={{ duration: 25 }}\\n    on:introend\\n    {role}\\n    data-tid={testId}\\n    aria-labelledby={showHeader ? modalTitleId : undefined}\\n    aria-describedby={modalContentId}\\n    on:click|stopPropagation\\n  >\\n    <Backdrop {disablePointerEvents} on:nnsClose />\\n    <div\\n      in:fade|global={{ duration: FADE_IN_DURATION }}\\n      out:fade|global={{ duration: FADE_OUT_DURATION }}\\n      class={`wrapper ${role}`}\\n    >\\n      {#if showHeader}\\n        <div class=\\"header\\">\\n          <h2 id={modalTitleId} data-tid=\\"modal-title\\">\\n            <slot name=\\"title\\" />\\n          </h2>\\n          {#if !disablePointerEvents}\\n            <button\\n              data-tid=\\"close-modal\\"\\n              on:click|stopPropagation={close}\\n              aria-label={$i18n.core.close}><IconClose size=\\"24px\\" /></button\\n            >\\n          {/if}\\n        </div>\\n      {/if}\\n\\n      <div class=\\"container-wrapper\\">\\n        <slot name=\\"sub-title\\" />\\n\\n        <div class=\\"container\\">\\n          <div\\n            class=\\"content\\"\\n            id={modalContentId}\\n            class:alert={role === \\"alert\\"}\\n          >\\n            <slot />\\n          </div>\\n        </div>\\n      </div>\\n\\n      {#if showFooterAlert}\\n        <div class=\\"footer toolbar\\">\\n          <slot name=\\"footer\\" />\\n        </div>\\n      {/if}\\n    </div>\\n  </div>\\n{/if}\\n\\n<style>.modal {\\n  position: fixed;\\n  top: 0;\\n  right: 0;\\n  bottom: 0;\\n  left: 0;\\n  z-index: var(--modal-z-index);\\n  touch-action: initial;\\n  cursor: initial;\\n}\\n\\n.wrapper {\\n  position: absolute;\\n  top: 50%;\\n  left: 50%;\\n  transform: translate(-50%, -50%);\\n  display: flex;\\n  flex-direction: column;\\n  background: var(--overlay-background);\\n  color: var(--overlay-background-contrast);\\n  --button-secondary-background: var(--focus-background);\\n  overflow: hidden;\\n  box-sizing: border-box;\\n  box-shadow: var(--overlay-box-shadow);\\n}\\n.wrapper .container-wrapper {\\n  margin: var(--padding-1_5x) var(--padding-2x) auto;\\n  display: flex;\\n  flex-direction: column;\\n  gap: var(--padding-1_5x);\\n  flex: 1;\\n  overflow: hidden;\\n}\\n.wrapper.alert {\\n  width: var(--alert-width);\\n  max-width: var(--alert-max-width);\\n  max-height: var(--alert-max-height);\\n  border-radius: var(--alert-border-radius);\\n}\\n.wrapper.alert .header {\\n  padding: var(--alert-padding-y) var(--alert-padding-x) var(--padding);\\n}\\n.wrapper.alert .container-wrapper {\\n  margin-bottom: calc(var(--alert-padding-y) * 2 / 3);\\n}\\n.wrapper.alert .content {\\n  margin: 0 0 calc(var(--alert-padding-y) / 2);\\n  padding: calc(var(--alert-padding-y) / 2) calc(var(--alert-padding-x) / 2) 0;\\n}\\n.wrapper.alert .footer {\\n  padding: 0 var(--alert-padding-x) calc(var(--alert-padding-y) * 2 / 3);\\n}\\n@media (min-width: 576px) {\\n  .wrapper.alert .footer {\\n    justify-content: flex-end;\\n  }\\n}\\n.wrapper.dialog {\\n  width: var(--dialog-width);\\n  max-width: var(--dialog-max-width);\\n  min-height: var(--dialog-min-height);\\n  height: var(--dialog-height);\\n  max-height: var(--dialog-max-height, 100%);\\n  border-radius: var(--dialog-border-radius);\\n}\\n@supports (-webkit-touch-callout: none) {\\n  .wrapper.dialog {\\n    max-height: -webkit-fill-available;\\n  }\\n  @media (min-width: 768px) {\\n    .wrapper.dialog {\\n      max-height: var(--dialog-max-height, 100%);\\n    }\\n  }\\n}\\n.wrapper.dialog .header {\\n  padding: var(--dialog-padding-y) var(--padding-3x) var(--padding);\\n}\\n.wrapper.dialog .container-wrapper {\\n  margin-bottom: var(--dialog-padding-y);\\n}\\n.wrapper.dialog .content {\\n  margin: 0;\\n  padding: var(--dialog-padding-y) var(--dialog-padding-x);\\n}\\n\\n.header {\\n  display: grid;\\n  grid-template-columns: 1fr auto 1fr;\\n  gap: var(--padding);\\n  z-index: var(--z-index);\\n  position: relative;\\n}\\n.header h2 {\\n  white-space: var(--text-white-space, nowrap);\\n  overflow: hidden;\\n  text-overflow: ellipsis;\\n  grid-column-start: 2;\\n  text-align: center;\\n}\\n.header button {\\n  display: flex;\\n  justify-content: center;\\n  align-items: center;\\n  padding: 0;\\n  justify-self: flex-end;\\n}\\n.header button:active, .header button:focus, .header button:hover {\\n  background: var(--background-shade);\\n  border-radius: var(--border-radius);\\n}\\n\\n.content {\\n  overflow-y: var(--modal-content-overflow-y, auto);\\n  overflow-x: hidden;\\n}\\n\\n.container {\\n  position: relative;\\n  display: flex;\\n  flex-direction: column;\\n  flex: 1;\\n  overflow: hidden;\\n  border-radius: 16px;\\n  background: var(--overlay-content-background);\\n  color: var(--overlay-content-background-contrast);\\n}</style>\\n"],"names":[],"mappings":"AAuFO,oCAAO,CACZ,QAAQ,CAAE,KAAK,CACf,GAAG,CAAE,CAAC,CACN,KAAK,CAAE,CAAC,CACR,MAAM,CAAE,CAAC,CACT,IAAI,CAAE,CAAC,CACP,OAAO,CAAE,IAAI,eAAe,CAAC,CAC7B,YAAY,CAAE,OAAO,CACrB,MAAM,CAAE,OACV,CAEA,sCAAS,CACP,QAAQ,CAAE,QAAQ,CAClB,GAAG,CAAE,GAAG,CACR,IAAI,CAAE,GAAG,CACT,SAAS,CAAE,UAAU,IAAI,CAAC,CAAC,IAAI,CAAC,CAChC,OAAO,CAAE,IAAI,CACb,cAAc,CAAE,MAAM,CACtB,UAAU,CAAE,IAAI,oBAAoB,CAAC,CACrC,KAAK,CAAE,IAAI,6BAA6B,CAAC,CACzC,6BAA6B,CAAE,uBAAuB,CACtD,QAAQ,CAAE,MAAM,CAChB,UAAU,CAAE,UAAU,CACtB,UAAU,CAAE,IAAI,oBAAoB,CACtC,CACA,uBAAQ,CAAC,iCAAmB,CAC1B,MAAM,CAAE,IAAI,cAAc,CAAC,CAAC,IAAI,YAAY,CAAC,CAAC,IAAI,CAClD,OAAO,CAAE,IAAI,CACb,cAAc,CAAE,MAAM,CACtB,GAAG,CAAE,IAAI,cAAc,CAAC,CACxB,IAAI,CAAE,CAAC,CACP,QAAQ,CAAE,MACZ,CACA,QAAQ,oCAAO,CACb,KAAK,CAAE,IAAI,aAAa,CAAC,CACzB,SAAS,CAAE,IAAI,iBAAiB,CAAC,CACjC,UAAU,CAAE,IAAI,kBAAkB,CAAC,CACnC,aAAa,CAAE,IAAI,qBAAqB,CAC1C,CACA,QAAQ,qBAAM,CAAC,sBAAQ,CACrB,OAAO,CAAE,IAAI,iBAAiB,CAAC,CAAC,IAAI,iBAAiB,CAAC,CAAC,IAAI,SAAS,CACtE,CACA,QAAQ,qBAAM,CAAC,iCAAmB,CAChC,aAAa,CAAE,KAAK,IAAI,iBAAiB,CAAC,CAAC,CAAC,CAAC,CAAC,CAAC,CAAC,CAAC,CAAC,CACpD,CACA,QAAQ,qBAAM,CAAC,uBAAS,CACtB,MAAM,CAAE,CAAC,CAAC,CAAC,CAAC,KAAK,IAAI,iBAAiB,CAAC,CAAC,CAAC,CAAC,CAAC,CAAC,CAC5C,OAAO,CAAE,KAAK,IAAI,iBAAiB,CAAC,CAAC,CAAC,CAAC,CAAC,CAAC,CAAC,KAAK,IAAI,iBAAiB,CAAC,CAAC,CAAC,CAAC,CAAC,CAAC,CAAC,CAC7E,CACA,QAAQ,qBAAM,CAAC,sBAAQ,CACrB,OAAO,CAAE,CAAC,CAAC,IAAI,iBAAiB,CAAC,CAAC,KAAK,IAAI,iBAAiB,CAAC,CAAC,CAAC,CAAC,CAAC,CAAC,CAAC,CAAC,CAAC,CACvE,CACA,MAAO,YAAY,KAAK,CAAE,CACxB,QAAQ,qBAAM,CAAC,sBAAQ,CACrB,eAAe,CAAE,QACnB,CACF,CACA,QAAQ,qCAAQ,CACd,KAAK,CAAE,IAAI,cAAc,CAAC,CAC1B,SAAS,CAAE,IAAI,kBAAkB,CAAC,CAClC,UAAU,CAAE,IAAI,mBAAmB,CAAC,CACpC,MAAM,CAAE,IAAI,eAAe,CAAC,CAC5B,UAAU,CAAE,IAAI,mBAAmB,CAAC,KAAK,CAAC,CAC1C,aAAa,CAAE,IAAI,sBAAsB,CAC3C,CACA,UAAU,CAAC,uBAAuB,IAAI,CAAE,CACtC,QAAQ,qCAAQ,CACd,UAAU,CAAE,sBACd,CACA,MAAO,YAAY,KAAK,CAAE,CACxB,QAAQ,qCAAQ,CACd,UAAU,CAAE,IAAI,mBAAmB,CAAC,KAAK,CAC3C,CACF,CACF,CACA,QAAQ,sBAAO,CAAC,sBAAQ,CACtB,OAAO,CAAE,IAAI,kBAAkB,CAAC,CAAC,IAAI,YAAY,CAAC,CAAC,IAAI,SAAS,CAClE,CACA,QAAQ,sBAAO,CAAC,iCAAmB,CACjC,aAAa,CAAE,IAAI,kBAAkB,CACvC,CACA,QAAQ,sBAAO,CAAC,uBAAS,CACvB,MAAM,CAAE,CAAC,CACT,OAAO,CAAE,IAAI,kBAAkB,CAAC,CAAC,IAAI,kBAAkB,CACzD,CAEA,qCAAQ,CACN,OAAO,CAAE,IAAI,CACb,qBAAqB,CAAE,GAAG,CAAC,IAAI,CAAC,GAAG,CACnC,GAAG,CAAE,IAAI,SAAS,CAAC,CACnB,OAAO,CAAE,IAAI,SAAS,CAAC,CACvB,QAAQ,CAAE,QACZ,CACA,sBAAO,CAAC,iBAAG,CACT,WAAW,CAAE,IAAI,kBAAkB,CAAC,OAAO,CAAC,CAC5C,QAAQ,CAAE,MAAM,CAChB,aAAa,CAAE,QAAQ,CACvB,iBAAiB,CAAE,CAAC,CACpB,UAAU,CAAE,MACd,CACA,sBAAO,CAAC,qBAAO,CACb,OAAO,CAAE,IAAI,CACb,eAAe,CAAE,MAAM,CACvB,WAAW,CAAE,MAAM,CACnB,OAAO,CAAE,CAAC,CACV,YAAY,CAAE,QAChB,CACA,sBAAO,CAAC,qBAAM,OAAO,CAAE,sBAAO,CAAC,qBAAM,MAAM,CAAE,sBAAO,CAAC,qBAAM,MAAO,CAChE,UAAU,CAAE,IAAI,kBAAkB,CAAC,CACnC,aAAa,CAAE,IAAI,eAAe,CACpC,CAEA,sCAAS,CACP,UAAU,CAAE,IAAI,0BAA0B,CAAC,KAAK,CAAC,CACjD,UAAU,CAAE,MACd,CAEA,wCAAW,CACT,QAAQ,CAAE,QAAQ,CAClB,OAAO,CAAE,IAAI,CACb,cAAc,CAAE,MAAM,CACtB,IAAI,CAAE,CAAC,CACP,QAAQ,CAAE,MAAM,CAChB,aAAa,CAAE,IAAI,CACnB,UAAU,CAAE,IAAI,4BAA4B,CAAC,CAC7C,KAAK,CAAE,IAAI,qCAAqC,CAClD"}'
+};
+const Modal = create_ssr_component(($$result, $$props, $$bindings, slots) => {
+  let $$slots = compute_slots(slots);
+  let $i18n, $$unsubscribe_i18n;
+  $$unsubscribe_i18n = subscribe(i18n, (value) => $i18n = value);
+  let { visible = true } = $$props;
+  let { role = "dialog" } = $$props;
+  let { testId = void 0 } = $$props;
+  let { disablePointerEvents = false } = $$props;
+  let showHeader;
+  let showFooterAlert;
+  createEventDispatcher();
+  const modalTitleId = nextElementId("modal-title-");
+  const modalContentId = nextElementId("modal-content-");
+  if ($$props.visible === void 0 && $$bindings.visible && visible !== void 0)
+    $$bindings.visible(visible);
+  if ($$props.role === void 0 && $$bindings.role && role !== void 0)
+    $$bindings.role(role);
+  if ($$props.testId === void 0 && $$bindings.testId && testId !== void 0)
+    $$bindings.testId(testId);
+  if ($$props.disablePointerEvents === void 0 && $$bindings.disablePointerEvents && disablePointerEvents !== void 0)
+    $$bindings.disablePointerEvents(disablePointerEvents);
+  $$result.css.add(css$5);
+  showHeader = nonNullish($$slots.title);
+  showFooterAlert = nonNullish($$slots.footer) && role === "alert";
+  $$unsubscribe_i18n();
+  return ` ${visible ? `<div class="modal svelte-1bbimtl"${add_attribute("role", role, 0)}${add_attribute("data-tid", testId, 0)}${add_attribute("aria-labelledby", showHeader ? modalTitleId : void 0, 0)}${add_attribute("aria-describedby", modalContentId, 0)}>${validate_component(Backdrop, "Backdrop").$$render($$result, { disablePointerEvents }, {}, {})} <div class="${escape(null_to_empty(`wrapper ${role}`), true) + " svelte-1bbimtl"}">${showHeader ? `<div class="header svelte-1bbimtl"><h2${add_attribute("id", modalTitleId, 0)} data-tid="modal-title" class="svelte-1bbimtl">${slots.title ? slots.title({}) : ``}</h2> ${!disablePointerEvents ? `<button data-tid="close-modal"${add_attribute("aria-label", $i18n.core.close, 0)} class="svelte-1bbimtl">${validate_component(IconClose, "IconClose").$$render($$result, { size: "24px" }, {}, {})}</button>` : ``}</div>` : ``} <div class="container-wrapper svelte-1bbimtl">${slots["sub-title"] ? slots["sub-title"]({}) : ``} <div class="container svelte-1bbimtl"><div class="${["content svelte-1bbimtl", role === "alert" ? "alert" : ""].join(" ").trim()}"${add_attribute("id", modalContentId, 0)}>${slots.default ? slots.default({}) : ``}</div></div></div> ${showFooterAlert ? `<div class="footer toolbar svelte-1bbimtl">${slots.footer ? slots.footer({}) : ``}</div>` : ``}</div></div>` : ``}`;
+});
 const initToastsStore = () => {
   const { subscribe: subscribe2, update, set } = writable([]);
   return {
@@ -3929,7 +4053,7 @@ const initToastsStore = () => {
 const toastsStore = initToastsStore();
 const css$4 = {
   code: ".toast.svelte-w1j1kj.svelte-w1j1kj{display:flex;justify-content:space-between;align-items:center;gap:var(--padding-1_5x);background:var(--overlay-background);color:var(--overlay-background-contrast);--button-secondary-background:var(--focus-background);border-radius:var(--border-radius);box-shadow:var(--strong-shadow, 8px 8px 16px 0 rgba(0, 0, 0, 0.25));padding:var(--padding-1_5x);box-sizing:border-box}.toast.inverted.svelte-w1j1kj.svelte-w1j1kj{background:var(--toast-inverted-background);color:var(--toast-inverted-background-contrast)}.toast.svelte-w1j1kj .icon.svelte-w1j1kj{line-height:0}.toast.svelte-w1j1kj .icon.success.svelte-w1j1kj{color:var(--positive-emphasis)}.toast.svelte-w1j1kj .icon.info.svelte-w1j1kj{color:var(--primary)}.toast.svelte-w1j1kj .icon.warn.svelte-w1j1kj{color:var(--warning-emphasis-shade)}.toast.svelte-w1j1kj .icon.error.svelte-w1j1kj{color:var(--negative-emphasis)}.toast.svelte-w1j1kj .msg.svelte-w1j1kj{flex-grow:1;margin:0;word-break:break-word}.toast.svelte-w1j1kj .msg.scroll.svelte-w1j1kj{overflow-y:auto;max-height:calc(var(--font-size-standard) * 3 * 1.3);line-height:normal}.toast.svelte-w1j1kj .msg.truncate.svelte-w1j1kj{white-space:var(--text-white-space, nowrap);overflow:hidden;text-overflow:ellipsis}.toast.svelte-w1j1kj .msg.truncate .title.svelte-w1j1kj{white-space:var(--text-white-space, nowrap);overflow:hidden;text-overflow:ellipsis}.toast.svelte-w1j1kj .msg.clamp.svelte-w1j1kj{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:3;overflow:hidden}.toast.svelte-w1j1kj .msg.clamp .title.svelte-w1j1kj{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden}.toast.svelte-w1j1kj .title.svelte-w1j1kj{display:block;font-size:var(--font-size-standard);line-height:var(--line-height-standard);font-weight:var(--font-weight-bold);line-height:normal}.toast.svelte-w1j1kj button.close.svelte-w1j1kj{padding:0;line-height:0;color:inherit}",
-  map: null
+  map: '{"version":3,"file":"Toast.svelte","sources":["Toast.svelte"],"sourcesContent":["<script>import { toastsStore } from \\"../stores/toasts.store\\";\\nimport { fade, fly } from \\"svelte/transition\\";\\nimport { i18n } from \\"../stores/i18n\\";\\nimport { onDestroy, onMount } from \\"svelte\\";\\nimport Spinner from \\"./Spinner.svelte\\";\\nimport IconWarning from \\"../icons/IconWarning.svelte\\";\\nimport IconClose from \\"../icons/IconClose.svelte\\";\\nimport IconInfo from \\"../icons/IconInfo.svelte\\";\\nimport IconCheckCircle from \\"../icons/IconCheckCircle.svelte\\";\\nimport IconError from \\"../icons/IconError.svelte\\";\\nimport { DEFAULT_ICON_SIZE } from \\"../constants/constants\\";\\nimport { isNullish, nonNullish } from \\"@dfinity/utils\\";\\nimport Html from \\"./Html.svelte\\";\\nexport let msg;\\nconst iconMapper = (level2) => ({\\n  [\\"success\\"]: IconCheckCircle,\\n  [\\"warn\\"]: IconWarning,\\n  [\\"error\\"]: IconError,\\n  [\\"info\\"]: IconInfo,\\n  [\\"custom\\"]: void 0\\n})[level2];\\nconst close = () => toastsStore.hide(msg.id);\\nlet text;\\nlet level;\\nlet spinner;\\nlet title;\\nlet overflow;\\nlet position;\\nlet icon;\\nlet theme;\\nlet renderAsHtml;\\n$: ({\\n  text,\\n  level,\\n  spinner,\\n  title,\\n  overflow,\\n  position,\\n  icon,\\n  theme,\\n  renderAsHtml\\n} = msg);\\nlet scroll;\\n$: scroll = overflow === void 0 || overflow === \\"scroll\\";\\nlet truncate;\\n$: truncate = overflow === \\"truncate\\";\\nlet clamp;\\n$: clamp = overflow === \\"clamp\\";\\nlet timeoutId = void 0;\\nconst autoHide = () => {\\n  const { duration } = msg;\\n  if (isNullish(duration)) {\\n    return;\\n  }\\n  timeoutId = setTimeout(close, duration);\\n};\\nconst cleanUpAutoHide = () => {\\n  if (isNullish(timeoutId)) {\\n    return;\\n  }\\n  clearTimeout(timeoutId);\\n};\\nconst minHeightMessage = `min-height: ${DEFAULT_ICON_SIZE}px;`;\\nonMount(autoHide);\\nonDestroy(cleanUpAutoHide);\\n<\/script>\\n\\n<div\\n  role=\\"dialog\\"\\n  class={`toast ${theme ?? \\"themed\\"}`}\\n  in:fly|global={{ y: (position === \\"top\\" ? -1 : 1) * 100, duration: 200 }}\\n  out:fade|global={{ delay: 100 }}\\n>\\n  <div class=\\"icon {level}\\" aria-hidden=\\"true\\">\\n    {#if spinner}\\n      <Spinner size=\\"small\\" inline />\\n    {:else if nonNullish(icon)}\\n      <svelte:component this={icon} />\\n    {:else if iconMapper(level)}\\n      <svelte:component this={iconMapper(level)} size={DEFAULT_ICON_SIZE} />\\n    {/if}\\n  </div>\\n\\n  <p\\n    class=\\"msg\\"\\n    class:truncate\\n    class:clamp\\n    class:scroll\\n    style={minHeightMessage}\\n  >\\n    {#if nonNullish(title)}\\n      <span class=\\"title\\">{title}</span>\\n    {/if}\\n    {#if renderAsHtml}\\n      <Html {text} />\\n    {:else}\\n      {text}\\n    {/if}\\n  </p>\\n\\n  <button class=\\"close\\" on:click={close} aria-label={$i18n.core.close}\\n    ><IconClose /></button\\n  >\\n</div>\\n\\n<style>.toast {\\n  display: flex;\\n  justify-content: space-between;\\n  align-items: center;\\n  gap: var(--padding-1_5x);\\n  background: var(--overlay-background);\\n  color: var(--overlay-background-contrast);\\n  --button-secondary-background: var(--focus-background);\\n  border-radius: var(--border-radius);\\n  box-shadow: var(--strong-shadow, 8px 8px 16px 0 rgba(0, 0, 0, 0.25));\\n  padding: var(--padding-1_5x);\\n  box-sizing: border-box;\\n}\\n.toast.inverted {\\n  background: var(--toast-inverted-background);\\n  color: var(--toast-inverted-background-contrast);\\n}\\n.toast .icon {\\n  line-height: 0;\\n}\\n.toast .icon.success {\\n  color: var(--positive-emphasis);\\n}\\n.toast .icon.info {\\n  color: var(--primary);\\n}\\n.toast .icon.warn {\\n  color: var(--warning-emphasis-shade);\\n}\\n.toast .icon.error {\\n  color: var(--negative-emphasis);\\n}\\n.toast .msg {\\n  flex-grow: 1;\\n  margin: 0;\\n  word-break: break-word;\\n}\\n.toast .msg.scroll {\\n  overflow-y: auto;\\n  max-height: calc(var(--font-size-standard) * 3 * 1.3);\\n  line-height: normal;\\n}\\n.toast .msg.truncate {\\n  white-space: var(--text-white-space, nowrap);\\n  overflow: hidden;\\n  text-overflow: ellipsis;\\n}\\n.toast .msg.truncate .title {\\n  white-space: var(--text-white-space, nowrap);\\n  overflow: hidden;\\n  text-overflow: ellipsis;\\n}\\n.toast .msg.clamp {\\n  display: -webkit-box;\\n  -webkit-box-orient: vertical;\\n  -webkit-line-clamp: 3;\\n  overflow: hidden;\\n}\\n.toast .msg.clamp .title {\\n  display: -webkit-box;\\n  -webkit-box-orient: vertical;\\n  -webkit-line-clamp: 2;\\n  overflow: hidden;\\n}\\n.toast .title {\\n  display: block;\\n  font-size: var(--font-size-standard);\\n  line-height: var(--line-height-standard);\\n  font-weight: var(--font-weight-bold);\\n  line-height: normal;\\n}\\n.toast button.close {\\n  padding: 0;\\n  line-height: 0;\\n  color: inherit;\\n}</style>\\n"],"names":[],"mappings":"AAyGO,kCAAO,CACZ,OAAO,CAAE,IAAI,CACb,eAAe,CAAE,aAAa,CAC9B,WAAW,CAAE,MAAM,CACnB,GAAG,CAAE,IAAI,cAAc,CAAC,CACxB,UAAU,CAAE,IAAI,oBAAoB,CAAC,CACrC,KAAK,CAAE,IAAI,6BAA6B,CAAC,CACzC,6BAA6B,CAAE,uBAAuB,CACtD,aAAa,CAAE,IAAI,eAAe,CAAC,CACnC,UAAU,CAAE,IAAI,eAAe,CAAC,mCAAmC,CAAC,CACpE,OAAO,CAAE,IAAI,cAAc,CAAC,CAC5B,UAAU,CAAE,UACd,CACA,MAAM,qCAAU,CACd,UAAU,CAAE,IAAI,2BAA2B,CAAC,CAC5C,KAAK,CAAE,IAAI,oCAAoC,CACjD,CACA,oBAAM,CAAC,mBAAM,CACX,WAAW,CAAE,CACf,CACA,oBAAM,CAAC,KAAK,sBAAS,CACnB,KAAK,CAAE,IAAI,mBAAmB,CAChC,CACA,oBAAM,CAAC,KAAK,mBAAM,CAChB,KAAK,CAAE,IAAI,SAAS,CACtB,CACA,oBAAM,CAAC,KAAK,mBAAM,CAChB,KAAK,CAAE,IAAI,wBAAwB,CACrC,CACA,oBAAM,CAAC,KAAK,oBAAO,CACjB,KAAK,CAAE,IAAI,mBAAmB,CAChC,CACA,oBAAM,CAAC,kBAAK,CACV,SAAS,CAAE,CAAC,CACZ,MAAM,CAAE,CAAC,CACT,UAAU,CAAE,UACd,CACA,oBAAM,CAAC,IAAI,qBAAQ,CACjB,UAAU,CAAE,IAAI,CAChB,UAAU,CAAE,KAAK,IAAI,oBAAoB,CAAC,CAAC,CAAC,CAAC,CAAC,CAAC,CAAC,CAAC,GAAG,CAAC,CACrD,WAAW,CAAE,MACf,CACA,oBAAM,CAAC,IAAI,uBAAU,CACnB,WAAW,CAAE,IAAI,kBAAkB,CAAC,OAAO,CAAC,CAC5C,QAAQ,CAAE,MAAM,CAChB,aAAa,CAAE,QACjB,CACA,oBAAM,CAAC,IAAI,SAAS,CAAC,oBAAO,CAC1B,WAAW,CAAE,IAAI,kBAAkB,CAAC,OAAO,CAAC,CAC5C,QAAQ,CAAE,MAAM,CAChB,aAAa,CAAE,QACjB,CACA,oBAAM,CAAC,IAAI,oBAAO,CAChB,OAAO,CAAE,WAAW,CACpB,kBAAkB,CAAE,QAAQ,CAC5B,kBAAkB,CAAE,CAAC,CACrB,QAAQ,CAAE,MACZ,CACA,oBAAM,CAAC,IAAI,MAAM,CAAC,oBAAO,CACvB,OAAO,CAAE,WAAW,CACpB,kBAAkB,CAAE,QAAQ,CAC5B,kBAAkB,CAAE,CAAC,CACrB,QAAQ,CAAE,MACZ,CACA,oBAAM,CAAC,oBAAO,CACZ,OAAO,CAAE,KAAK,CACd,SAAS,CAAE,IAAI,oBAAoB,CAAC,CACpC,WAAW,CAAE,IAAI,sBAAsB,CAAC,CACxC,WAAW,CAAE,IAAI,kBAAkB,CAAC,CACpC,WAAW,CAAE,MACf,CACA,oBAAM,CAAC,MAAM,oBAAO,CAClB,OAAO,CAAE,CAAC,CACV,WAAW,CAAE,CAAC,CACd,KAAK,CAAE,OACT"}'
 };
 const Toast = create_ssr_component(($$result, $$props, $$bindings, slots) => {
   let $i18n, $$unsubscribe_i18n;
@@ -3977,8 +4101,8 @@ const Toast = create_ssr_component(($$result, $$props, $$bindings, slots) => {
   ].join(" ").trim()}"${add_attribute("style", minHeightMessage, 0)}>${nonNullish(title) ? `<span class="title svelte-w1j1kj">${escape(title)}</span>` : ``} ${renderAsHtml ? `${validate_component(Html, "Html").$$render($$result, { text: text2 }, {}, {})}` : `${escape(text2)}`}</p> <button class="close svelte-w1j1kj"${add_attribute("aria-label", $i18n.core.close, 0)}>${validate_component(IconClose, "IconClose").$$render($$result, {}, {}, {})}</button> </div>`;
 });
 const css$3 = {
-  code: ".wrapper.svelte-24m335{position:fixed;left:50%;transform:translate(-50%, 0);bottom:calc(var(--layout-bottom-offset, 0) + var(--padding-2x));width:calc(100% - var(--padding-8x) - var(--padding-0_5x));display:flex;flex-direction:column;gap:var(--padding);z-index:var(--toast-info-z-index)}.wrapper.error.svelte-24m335{z-index:var(--toast-error-z-index)}@media(min-width: 1024px){.wrapper.svelte-24m335{max-width:calc(var(--section-max-width) - var(--padding-2x))}}.top.svelte-24m335{top:calc(var(--header-height) + var(--padding-3x));bottom:unset;width:calc(100% - var(--padding-6x))}@media(min-width: 1024px){.top.svelte-24m335{right:var(--padding-2x);left:unset;transform:none;max-width:calc(var(--section-max-width) / 1.5 - var(--padding-2x))}}",
-  map: null
+  code: ".wrapper.svelte-1iulzbj{position:fixed;left:50%;transform:translate(-50%, 0);bottom:calc(var(--layout-bottom-offset, 0) + var(--padding-2x));width:calc(100% - var(--padding-8x) - var(--padding-0_5x));display:flex;flex-direction:column;gap:var(--padding);z-index:var(--toast-info-z-index)}.wrapper.error.svelte-1iulzbj{z-index:var(--toast-error-z-index)}@media(min-width: 768px){.wrapper.svelte-1iulzbj{max-width:calc(var(--section-max-width) - var(--padding-2x))}}.top.svelte-1iulzbj{top:calc(var(--header-height) + var(--padding-3x));bottom:unset;width:calc(100% - var(--padding-6x))}@media(min-width: 768px){.top.svelte-1iulzbj{right:var(--padding-2x);left:unset;transform:none;max-width:calc(var(--section-max-width) / 1.5 - var(--padding-2x))}}",
+  map: '{"version":3,"file":"Toasts.svelte","sources":["Toasts.svelte"],"sourcesContent":["<script>import { toastsStore } from \\"../stores/toasts.store\\";\\nimport Toast from \\"./Toast.svelte\\";\\nimport { layoutBottomOffset } from \\"../stores/layout.store\\";\\nexport let position = \\"bottom\\";\\nexport let maxVisible = void 0;\\nlet toasts = [];\\n$: toasts = $toastsStore.filter(({ position: pos }) => (pos ?? \\"bottom\\") === position).slice(0, maxVisible);\\nlet hasErrors;\\n$: hasErrors = toasts.find(({ level }) => [\\"error\\", \\"warn\\"].includes(level)) !== void 0;\\n<\/script>\\n\\n{#if toasts.length > 0}\\n  <div\\n    class={`wrapper ${position}`}\\n    class:error={hasErrors}\\n    style={`--layout-bottom-offset: ${$layoutBottomOffset}px`}\\n  >\\n    {#each toasts as msg (msg.id)}\\n      <Toast {msg} />\\n    {/each}\\n  </div>\\n{/if}\\n\\n<style>.wrapper {\\n  position: fixed;\\n  left: 50%;\\n  transform: translate(-50%, 0);\\n  bottom: calc(var(--layout-bottom-offset, 0) + var(--padding-2x));\\n  width: calc(100% - var(--padding-8x) - var(--padding-0_5x));\\n  display: flex;\\n  flex-direction: column;\\n  gap: var(--padding);\\n  z-index: var(--toast-info-z-index);\\n}\\n.wrapper.error {\\n  z-index: var(--toast-error-z-index);\\n}\\n@media (min-width: 768px) {\\n  .wrapper {\\n    max-width: calc(var(--section-max-width) - var(--padding-2x));\\n  }\\n}\\n\\n.top {\\n  top: calc(var(--header-height) + var(--padding-3x));\\n  bottom: unset;\\n  width: calc(100% - var(--padding-6x));\\n}\\n@media (min-width: 768px) {\\n  .top {\\n    right: var(--padding-2x);\\n    left: unset;\\n    transform: none;\\n    max-width: calc(var(--section-max-width) / 1.5 - var(--padding-2x));\\n  }\\n}</style>\\n"],"names":[],"mappings":"AAuBO,uBAAS,CACd,QAAQ,CAAE,KAAK,CACf,IAAI,CAAE,GAAG,CACT,SAAS,CAAE,UAAU,IAAI,CAAC,CAAC,CAAC,CAAC,CAC7B,MAAM,CAAE,KAAK,IAAI,sBAAsB,CAAC,EAAE,CAAC,CAAC,CAAC,CAAC,IAAI,YAAY,CAAC,CAAC,CAChE,KAAK,CAAE,KAAK,IAAI,CAAC,CAAC,CAAC,IAAI,YAAY,CAAC,CAAC,CAAC,CAAC,IAAI,cAAc,CAAC,CAAC,CAC3D,OAAO,CAAE,IAAI,CACb,cAAc,CAAE,MAAM,CACtB,GAAG,CAAE,IAAI,SAAS,CAAC,CACnB,OAAO,CAAE,IAAI,oBAAoB,CACnC,CACA,QAAQ,qBAAO,CACb,OAAO,CAAE,IAAI,qBAAqB,CACpC,CACA,MAAO,YAAY,KAAK,CAAE,CACxB,uBAAS,CACP,SAAS,CAAE,KAAK,IAAI,mBAAmB,CAAC,CAAC,CAAC,CAAC,IAAI,YAAY,CAAC,CAC9D,CACF,CAEA,mBAAK,CACH,GAAG,CAAE,KAAK,IAAI,eAAe,CAAC,CAAC,CAAC,CAAC,IAAI,YAAY,CAAC,CAAC,CACnD,MAAM,CAAE,KAAK,CACb,KAAK,CAAE,KAAK,IAAI,CAAC,CAAC,CAAC,IAAI,YAAY,CAAC,CACtC,CACA,MAAO,YAAY,KAAK,CAAE,CACxB,mBAAK,CACH,KAAK,CAAE,IAAI,YAAY,CAAC,CACxB,IAAI,CAAE,KAAK,CACX,SAAS,CAAE,IAAI,CACf,SAAS,CAAE,KAAK,IAAI,mBAAmB,CAAC,CAAC,CAAC,CAAC,GAAG,CAAC,CAAC,CAAC,IAAI,YAAY,CAAC,CACpE,CACF"}'
 };
 const Toasts = create_ssr_component(($$result, $$props, $$bindings, slots) => {
   let $toastsStore, $$unsubscribe_toastsStore;
@@ -3986,22 +4110,39 @@ const Toasts = create_ssr_component(($$result, $$props, $$bindings, slots) => {
   $$unsubscribe_toastsStore = subscribe(toastsStore, (value) => $toastsStore = value);
   $$unsubscribe_layoutBottomOffset = subscribe(layoutBottomOffset, (value) => $layoutBottomOffset = value);
   let { position = "bottom" } = $$props;
+  let { maxVisible = void 0 } = $$props;
   let toasts = [];
   let hasErrors;
   if ($$props.position === void 0 && $$bindings.position && position !== void 0)
     $$bindings.position(position);
+  if ($$props.maxVisible === void 0 && $$bindings.maxVisible && maxVisible !== void 0)
+    $$bindings.maxVisible(maxVisible);
   $$result.css.add(css$3);
-  toasts = $toastsStore.filter(({ position: pos }) => (pos ?? "bottom") === position);
+  toasts = $toastsStore.filter(({ position: pos }) => (pos ?? "bottom") === position).slice(0, maxVisible);
   hasErrors = toasts.find(({ level }) => ["error", "warn"].includes(level)) !== void 0;
   $$unsubscribe_toastsStore();
   $$unsubscribe_layoutBottomOffset();
   return `${toasts.length > 0 ? `<div class="${[
-    escape(null_to_empty(`wrapper ${position}`), true) + " svelte-24m335",
+    escape(null_to_empty(`wrapper ${position}`), true) + " svelte-1iulzbj",
     hasErrors ? "error" : ""
   ].join(" ").trim()}"${add_attribute("style", `--layout-bottom-offset: ${$layoutBottomOffset}px`, 0)}>${each(toasts, (msg) => {
     return `${validate_component(Toast, "Toast").$$render($$result, { msg }, {}, {})}`;
   })}</div>` : ``}`;
 });
+const toastsShow = (msg) => toastsStore.show(msg);
+const toastsError = ({
+  msg: { text: text2, ...rest },
+  err
+}) => {
+  if (nonNullish(err)) {
+    console.error(err);
+  }
+  return toastsStore.show({
+    text: `${text2}${nonNullish(err) ? ` / ${errorDetailToString(err)}` : ""}`,
+    ...rest,
+    level: "error"
+  });
+};
 const LogoIcon = create_ssr_component(($$result, $$props, $$bindings, slots) => {
   let { className = "" } = $$props;
   let { fill = "white" } = $$props;
@@ -4053,18 +4194,18 @@ const Tooltip = create_ssr_component(($$result, $$props, $$bindings, slots) => {
     $$bindings.text(text2);
   return `<button class="relative flex items-center w-6 max-w-6 text-sm">${slots.default ? slots.default({}) : ``} ${``}</button>`;
 });
-const WhitepaperIcon = create_ssr_component(($$result, $$props, $$bindings, slots) => {
+const RulesIcon = create_ssr_component(($$result, $$props, $$bindings, slots) => {
   let { className = "" } = $$props;
   let { fill = "white" } = $$props;
   if ($$props.className === void 0 && $$bindings.className && className !== void 0)
     $$bindings.className(className);
   if ($$props.fill === void 0 && $$bindings.fill && fill !== void 0)
     $$bindings.fill(fill);
-  return `<svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true"${add_attribute("class", className, 0)} fill="currentColor" viewBox="0 0 24 24"><path d="M6 2h9l6 6v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>`;
+  return `<svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true"${add_attribute("class", className, 0)} fill="currentColor" viewBox="0 0 24 24"><path d="M22.9642 13.8226C22.9603 13.7638 22.9508 13.7055 22.936 13.6484L20.6313 7.51135C21.0508 7.24006 21.3957 6.86818 21.6347 6.42956C21.8738 5.99095 21.9993 5.49952 22 5C22 4.73478 21.8946 4.48043 21.7071 4.29289C21.5196 4.10536 21.2652 4 21 4C20.7348 4 20.4804 4.10536 20.2929 4.29289C20.1054 4.48043 20 4.73478 20 5C19.9999 5.22285 19.9254 5.43929 19.7884 5.61499C19.6513 5.79069 19.4595 5.91559 19.2433 5.96987C19.0272 6.02416 18.7991 6.00472 18.5953 5.91465C18.3915 5.82457 18.2235 5.66902 18.1182 5.47266C17.8616 5.01717 17.4863 4.63972 17.0324 4.38042C16.5784 4.12111 16.0627 3.98965 15.54 4H13V3C13 2.73478 12.8946 2.48043 12.7071 2.29289C12.5196 2.10536 12.2652 2 12 2C11.7348 2 11.4804 2.10536 11.2929 2.29289C11.1054 2.48043 11 2.73478 11 3V4H8.46C7.93731 3.98965 7.42158 4.12111 6.96762 4.38042C6.51366 4.63972 6.13844 5.01717 5.88184 5.47266C5.77647 5.66902 5.60855 5.82457 5.40471 5.91465C5.20088 6.00472 4.97281 6.02416 4.75668 5.96987C4.54054 5.91559 4.34872 5.79069 4.21165 5.61499C4.07457 5.43929 4.00008 5.22285 4 5C4 4.73478 3.89464 4.48043 3.70711 4.29289C3.51957 4.10536 3.26522 4 3 4C2.73478 4 2.48043 4.10536 2.29289 4.29289C2.10536 4.48043 2 4.73478 2 5C2.00065 5.49952 2.12621 5.99095 2.36525 6.42956C2.60429 6.86818 2.94922 7.24006 3.36865 7.51135L1.064 13.6484C1.04921 13.7055 1.03977 13.7638 1.03581 13.8226C1.01825 13.8805 1.00626 13.9399 1 14C1 14.0093 1.00269 14.0178 1.00275 14.0271C1.00305 14.0403 1.00575 14.0524 1.00665 14.0655C1.02222 15.1144 1.4498 16.115 2.197 16.8512C2.94421 17.5874 3.95105 18.0001 5 18.0001C6.04895 18.0001 7.05579 17.5874 7.803 16.8512C8.5502 16.115 8.97778 15.1144 8.99335 14.0655C8.9942 14.0524 8.99695 14.0403 8.99725 14.0271C8.99731 14.0178 9 14.0093 9 14C8.99376 13.9399 8.98178 13.8805 8.96423 13.8226C8.96027 13.7638 8.95083 13.7055 8.93604 13.6484L6.62866 7.50421C7.05242 7.23377 7.40114 6.86085 7.64258 6.41992C7.72984 6.2842 7.85137 6.1739 7.99489 6.10017C8.13841 6.02644 8.29885 5.99189 8.46 6H11V20H8C7.73478 20 7.48043 20.1054 7.29289 20.2929C7.10536 20.4804 7 20.7348 7 21C7 21.2652 7.10536 21.5196 7.29289 21.7071C7.48043 21.8946 7.73478 22 8 22H16C16.2652 22 16.5196 21.8946 16.7071 21.7071C16.8946 21.5196 17 21.2652 17 21C17 20.7348 16.8946 20.4804 16.7071 20.2929C16.5196 20.1054 16.2652 20 16 20H13V6H15.54C15.7011 5.9919 15.8616 6.02646 16.0051 6.10018C16.1486 6.17391 16.2701 6.2842 16.3574 6.41992C16.5988 6.86085 16.9475 7.23377 17.3713 7.50421L15.064 13.6484C15.0492 13.7055 15.0398 13.7638 15.0358 13.8226C15.0182 13.8805 15.0063 13.9399 15 14C15 14.0093 15.0027 14.0178 15.0028 14.0271C15.0031 14.0403 15.0057 14.0524 15.0066 14.0655C15.0222 15.1144 15.4498 16.115 16.197 16.8512C16.9442 17.5874 17.951 18.0001 19 18.0001C20.049 18.0001 21.0558 17.5874 21.803 16.8512C22.5502 16.115 22.9778 15.1144 22.9933 14.0655C22.9942 14.0524 22.997 14.0403 22.9972 14.0271C22.9973 14.0178 23 14.0093 23 14C22.9938 13.9399 22.9818 13.8805 22.9642 13.8226ZM5 8.85553L6.5564 13H3.4436L5 8.85553ZM6.72266 15C6.54618 15.3011 6.29479 15.5515 5.99293 15.7267C5.69107 15.9019 5.34901 15.9961 5 16C4.64903 15.9999 4.30428 15.9074 4.00036 15.7319C3.69644 15.5563 3.44405 15.3039 3.26855 15H6.72266ZM19 8.85553L20.5564 13H17.4436L19 8.85553ZM19 16C18.649 15.9999 18.3043 15.9074 18.0004 15.7319C17.6964 15.5563 17.4441 15.3039 17.2686 15H20.7227C20.5462 15.3011 20.2948 15.5515 19.9929 15.7267C19.6911 15.9019 19.349 15.9961 19 16Z"${add_attribute("fill", fill, 0)}></path></svg>`;
 });
 const css$2 = {
   code: ".transition-width.svelte-frwh1m{transition:width 200ms}a.active.svelte-frwh1m{color:white !important}",
-  map: null
+  map: `{"version":3,"file":"Layout.svelte","sources":["Layout.svelte"],"sourcesContent":["<script lang=\\"ts\\">import { onMount } from \\"svelte\\";\\nimport { browser } from \\"$app/environment\\";\\nimport { initAuthWorker } from \\"$lib/services/worker.auth.services\\";\\nimport { authStore } from \\"$lib/stores/auth-store\\";\\nimport { authSignedInStore } from \\"$lib/derived/auth.derived\\";\\nimport { toastsError } from \\"$lib/stores/toasts-store\\";\\nimport { writable } from \\"svelte/store\\";\\nimport { BusyScreen, Spinner, Toasts } from \\"@dfinity/gix-components\\";\\nimport LogoIcon from \\"$lib/icons/LogoIcon.svelte\\";\\nimport HomeIcon from \\"$lib/icons/HomeIcon.svelte\\";\\nimport BettingIcon from \\"$lib/icons/BettingIcon.svelte\\";\\nimport GamesIcon from \\"$lib/icons/GamesIcon.svelte\\";\\nimport StarIcon from \\"$lib/icons/StarIcon.svelte\\";\\nimport { fade } from \\"svelte/transition\\";\\nimport \\"../app.css\\";\\nimport { page } from \\"$app/stores\\";\\nimport ProfileIcon from \\"$lib/icons/ProfileIcon.svelte\\";\\nimport LogoutIcon from \\"$lib/icons/LogoutIcon.svelte\\";\\nimport { signOut } from \\"$lib/services/auth.services\\";\\nimport Tooltip from \\"$lib/components/tooltip.svelte\\";\\nimport WhitepaperIcon from \\"$lib/icons/WhitepaperIcon.svelte\\";\\nimport RulesIcon from \\"$lib/icons/RulesIcon.svelte\\";\\nlet isExpanded = writable(false);\\n$: links = $authSignedInStore ? [\\n    { name: \\"Home\\", icon: HomeIcon, href: \\"/\\" },\\n    { name: \\"Profile\\", icon: ProfileIcon, href: \\"/profile\\" },\\n    { name: \\"Governance\\", icon: RulesIcon, href: \\"/governance\\" },\\n    { name: \\"Admin\\", icon: StarIcon, href: \\"/admin\\" }\\n] :\\n    [\\n        { name: \\"Home\\", icon: HomeIcon, href: \\"/\\" }\\n    ];\\nlet worker;\\nconst init = async () => await Promise.all([syncAuthStore()]);\\nconst syncAuthStore = async () => {\\n    if (!browser) {\\n        return;\\n    }\\n    try {\\n        await authStore.sync();\\n    }\\n    catch (err) {\\n        toastsError({\\n            msg: {\\n                text: \\"Unexpected issue while syncing the status of your authentication.\\",\\n            },\\n            err,\\n        });\\n    }\\n};\\nonMount(async () => (worker = await initAuthWorker()));\\n$: activeRoute = $page.url.pathname;\\n$: worker, $authStore, (() => worker?.syncAuthIdle($authStore))();\\n$: (() => {\\n    if (!browser) {\\n        return;\\n    }\\n    if ($authStore === undefined) {\\n        return;\\n    }\\n    const spinner = document.querySelector(\\"body > #app-spinner\\");\\n    spinner?.remove();\\n})();\\nfunction handleLogin() {\\n    let params = {\\n        domain: import.meta.env.VITE_AUTH_PROVIDER_URL,\\n    };\\n    authStore.signIn(params);\\n}\\nasync function handleLogout() {\\n    await authStore.signOut();\\n}\\n<\/script>\\n\\n<svelte:window on:storage={syncAuthStore} />\\n{#await init()}\\n  <div in:fade>\\n    <Spinner />\\n  </div>\\n{:then _}\\n  <div class=\\"flex h-screen\\">\\n    <div\\n      class=\\"bg-GRAY text-white flex flex-col justify-between transition-width duration-300 p-5 rounded-lg m-2\\"\\n      style=\\"width: {$isExpanded ? '16rem' : '4rem'}\\"\\n    >\\n    <div class=\\"flex flex-col flex-grow\\">\\n      <button on:click={() => ($isExpanded = !$isExpanded)} class=\\"mb-4\\">\\n          <span>{$isExpanded ? \\"<<\\" : \\">>\\"}</span>\\n        </button>\\n\\n        <div class=\\"text-gray-400 flex flex-col\\">\\n          <a href=\\"/\\" class=\\"block mt-4 text-lg my-4\\">\\n            <div class=\\"flex flex-row items-center\\">\\n              <LogoIcon className=\\"w-6 mr-2\\" />\\n              {#if $isExpanded}\\n                <span\\n                  in:fade={{ duration: 200 }}\\n                  out:fade={{ delay: 0, duration: 100 }}>FootballGod</span\\n                >\\n              {/if}\\n            </div>\\n          </a>\\n          {#each links as link}\\n            <a\\n              href={link.href}\\n              class:active={activeRoute === link.href}\\n              rel=\\"prefetch\\"\\n              class=\\"block mt-4 text-lg\\"\\n            >\\n              <div class=\\"flex flex-row items-center\\">\\n\\n                <Tooltip text={link.name}>\\n                  <svelte:component\\n                    this={link.icon}\\n                    className=\\"w-6 mr-2\\"\\n                    fill={activeRoute === link.href ? \\"white\\" : \\"gray\\"}\\n                  />\\n                </Tooltip>\\n                {#if $isExpanded}\\n                  <span\\n                    in:fade={{ duration: 200 }}\\n                    out:fade={{ delay: 0, duration: 100 }}>{link.name}</span\\n                  >\\n                {/if}\\n              </div>\\n            </a>\\n          {/each}\\n        </div>\\n      </div>\\n      {#if $authSignedInStore && !$isExpanded}\\n        <button on:click={signOut} in:fade>\\n          <Tooltip text=\\"Logout\\">\\n            <LogoutIcon className=\\"max-w-6\\" />\\n          </Tooltip>\\n        </button>\\n      {/if}\\n      \\n\\n      <div class=\\"mb-4\\">\\n        {#if $isExpanded}\\n          {#if $authSignedInStore}\\n            <button on:click={handleLogout} class=\\"button-hover p-2 rounded-md text-sm w-full\\"\\n                in:fade={{ duration: 200 }}\\n                out:fade={{ delay: 0, duration: 100 }}>Disconnect</button\\n              >\\n          {:else}\\n            <button on:click={handleLogin} class=\\"bg-OPENFPL hover:bg-OPENFPL hover:text-GRAY p-2 rounded-md text-sm w-full\\"\\n                in:fade={{ duration: 200 }}\\n                out:fade={{ delay: 0, duration: 100 }}>Connect Internet Identity</button\\n              >\\n          {/if}\\n        {/if}\\n      </div>\\n    </div>\\n\\n    <div class=\\"flex-1\\">\\n      <slot />\\n    </div>\\n    <Toasts />\\n  </div>\\n{/await}\\n\\n<BusyScreen />\\n\\n<style>\\n  .transition-width {\\n    transition: width 200ms;\\n  }\\n  a.active {\\n    color: white !important;\\n  }</style>"],"names":[],"mappings":"AAqKE,+BAAkB,CAChB,UAAU,CAAE,KAAK,CAAC,KACpB,CACA,CAAC,qBAAQ,CACP,KAAK,CAAE,KAAK,CAAC,UACf"}`
 };
 const Layout = create_ssr_component(($$result, $$props, $$bindings, slots) => {
   let links;
@@ -4088,19 +4229,19 @@ const Layout = create_ssr_component(($$result, $$props, $$bindings, slots) => {
   links = $authSignedInStore ? [
     { name: "Home", icon: HomeIcon, href: "/" },
     {
-      name: "Euro 2024",
-      icon: StarIcon,
-      href: "/leaderboard"
-    },
-    {
       name: "Profile",
       icon: ProfileIcon,
       href: "/profile"
     },
     {
-      name: "Whitepaper",
-      icon: WhitepaperIcon,
-      href: "/whitepaper"
+      name: "Governance",
+      icon: RulesIcon,
+      href: "/governance"
+    },
+    {
+      name: "Admin",
+      icon: StarIcon,
+      href: "/admin"
     }
   ] : [{ name: "Home", icon: HomeIcon, href: "/" }];
   activeRoute = $page.url.pathname;
@@ -4139,39 +4280,251 @@ const Layout = create_ssr_component(($$result, $$props, $$bindings, slots) => {
     }();
   }(init2())} ${validate_component(BusyScreen, "BusyScreen").$$render($$result, {}, {}, {})}`;
 });
+function replacer(key2, value) {
+  if (typeof value === "bigint") {
+    return value.toString();
+  } else {
+    return value;
+  }
+}
+function isError(response) {
+  return response && response.err !== void 0;
+}
+function convertEvent(playerEvent) {
+  if ("Appearance" in playerEvent)
+    return 0;
+  if ("Goal" in playerEvent)
+    return 1;
+  if ("GoalAssisted" in playerEvent)
+    return 2;
+  if ("GoalConceded" in playerEvent)
+    return 3;
+  if ("KeeperSave" in playerEvent)
+    return 4;
+  if ("CleanSheet" in playerEvent)
+    return 5;
+  if ("PenaltySaved" in playerEvent)
+    return 6;
+  if ("PenaltyMissed" in playerEvent)
+    return 7;
+  if ("YellowCard" in playerEvent)
+    return 8;
+  if ("RedCard" in playerEvent)
+    return 9;
+  if ("OwnGoal" in playerEvent)
+    return 10;
+  if ("HighestScoringPlayer" in playerEvent)
+    return 11;
+  return 0;
+}
+const css$1 = {
+  code: ".overlay-panel.svelte-a3qity{position:absolute;bottom:0;right:0}",
+  map: `{"version":3,"file":"+page.svelte","sources":["+page.svelte"],"sourcesContent":["<script lang=\\"ts\\">import { onMount, onDestroy } from \\"svelte\\";\\nimport { writable } from \\"svelte/store\\";\\nimport { authSignedInStore } from \\"$lib/derived/auth.derived\\";\\nimport { authStore } from \\"$lib/stores/auth-store\\";\\nimport { toastsError } from \\"$lib/stores/toasts-store\\";\\nimport Layout from \\"./Layout.svelte\\";\\nimport FootballIcon from \\"$lib/icons/FootballIcon.svelte\\";\\nimport OpenChatIcon from \\"$lib/icons/OpenChatIcon.svelte\\";\\nimport { Spinner } from \\"@dfinity/gix-components\\";\\nimport { isError } from \\"$lib/utils/helpers\\";\\nimport OpenFplIcon from \\"$lib/icons/OpenFPLIcon.svelte\\";\\nlet isLoggedIn = false;\\nlet isLoading = true;\\nlet interval;\\nonMount(async () => {\\n    try {\\n        await authStore.sync();\\n        authStore.subscribe((store) => {\\n            isLoggedIn = store.identity !== null && store.identity !== undefined;\\n        });\\n    }\\n    catch (error) {\\n        toastsError({\\n            msg: { text: \\"Error fetching homepage data.\\" },\\n            err: error,\\n        });\\n        console.error(\\"Error fetching homepage data:\\", error);\\n    }\\n    finally {\\n        isLoading = false;\\n    }\\n});\\nonDestroy(() => {\\n    clearInterval(interval);\\n});\\nlet tiles = [\\n    {\\n        title: \\"OpenFPL\\",\\n        content: \\"Decentralised Premier League fantasy football.\\",\\n        link: \\"https://openfpl.xyz\\",\\n        image: \\"fpl.jpg\\",\\n        buttonText: \\"Play\\",\\n    },\\n    {\\n        title: \\"OpenWSL\\",\\n        content: \\"Decentralised Women's Super League fantasy football.\\",\\n        link: \\"https://openwsl.xyz\\",\\n        image: \\"wsl.jpg\\",\\n        buttonText: \\"Play\\",\\n    },\\n    {\\n        title: \\"Transfer Kings\\",\\n        content: \\"Get your unique 'Transfer Kings' agent name today.\\",\\n        link: \\"https://transferkings.xyz\\",\\n        image: \\"transferkings.png\\",\\n        buttonText: \\"Rules\\",\\n    },\\n];\\nfunction handleLogin() {\\n    let params = {\\n        domain: import.meta.env.VITE_AUTH_PROVIDER_URL,\\n    };\\n    authStore.signIn(params);\\n}\\n<\/script>\\n\\n<Layout>\\n  {#if isLoading}\\n    <Spinner />\\n  {:else}\\n    <div class=\\"relative bg-gray-800 text-white mt-2 mr-2 rounded-lg\\">\\n      <div\\n        class=\\"bg-cover bg-center bg-no-repeat py-20 px-4\\"\\n        style=\\"background-image: url('banner.jpg');\\"\\n      >\\n        <div class=\\"container ml-4 flex flex-col justify-between\\">\\n          <p class=\\"text-xl md:text-4xl font-bold\\">FootballGod</p>\\n          <p class=\\"text-sm md:text-base\\">Decentralised Football Gaming</p>\\n         \\n          <div\\n            class=\\"overlay-panel h-10 rounded-tl-lg w-11/12 md:w-2/3 lg:w-2/5 xl:w-1/4 bg-DARK flex items-center px-1 md:px-4 text-xs md:text-sm\\"\\n          >\\n            <FootballIcon className=\\"w-6 mr-2\\" />\\n            <p class=\\"text-white  font-bold\\">Football Betting coming 2025</p>\\n          </div>\\n        </div>\\n      </div>\\n    </div>\\n    <div class=\\"mr-2 py-2\\">\\n      <div class=\\"grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4\\">\\n        {#each tiles as tile}\\n          <div class=\\"bg-gray-700 rounded-lg overflow-hidden flex flex-col\\">\\n            {#if tile.image}\\n              <img\\n                class=\\"w-full h-48 object-cover\\"\\n                src={tile.image}\\n                alt={tile.title}\\n              />\\n            {/if}\\n            {#if tile.icon}\\n              <div class=\\"flex items-center justify-center h-48 bg-gray-800\\">\\n                <svelte:component this={tile.icon} className=\\"h-32 w-32\\" />\\n              </div>\\n            {/if}\\n            <div class=\\"flex flex-col justify-between flex-grow p-4\\">\\n              <div class=\\"flex-grow\\">\\n                <h3 class=\\"text-xl font-bold text-white\\">{tile.title}</h3>\\n                <p class=\\"mt-2 text-white\\">{tile.content}</p>\\n              </div>\\n              <div class=\\"mt-4 flex justify-end\\">\\n                <a\\n                  href={tile.link}\\n                  class=\\"bg-black text-white px-4 py-2 rounded\\"\\n                  target={tile.link.startsWith(\\"http\\") ? \\"_blank\\" : \\"_self\\"}\\n                  rel={tile.link.startsWith(\\"http\\") ? \\"noopener noreferrer\\" : \\"\\"}\\n                >\\n                  {tile.buttonText}\\n                </a>\\n              </div>\\n            </div>\\n          </div>\\n        {/each}\\n      </div>\\n    </div>\\n    \\n  {/if}\\n</Layout>\\n\\n<style>\\n  .overlay-container {\\n    position: relative;\\n  }\\n\\n  .overlay-panel {\\n    position: absolute;\\n    bottom: 0;\\n    right: 0;\\n  }</style>"],"names":[],"mappings":"AAqIE,4BAAe,CACb,QAAQ,CAAE,QAAQ,CAClB,MAAM,CAAE,CAAC,CACT,KAAK,CAAE,CACT"}`
+};
+const Page$5 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
+  let interval;
+  onDestroy(() => {
+    clearInterval(interval);
+  });
+  $$result.css.add(css$1);
+  return `${validate_component(Layout, "Layout").$$render($$result, {}, {}, {
+    default: () => {
+      return `${`${validate_component(Spinner, "Spinner").$$render($$result, {}, {}, {})}`}`;
+    }
+  })}`;
+});
 const idlFactory = ({ IDL }) => {
-  const List = IDL.Rec();
-  const List_1 = IDL.Rec();
+  const LeagueId = IDL.Nat16;
+  const FixtureStatusType = IDL.Variant({
+    "Unplayed": IDL.Null,
+    "Finalised": IDL.Null,
+    "Active": IDL.Null,
+    "Complete": IDL.Null
+  });
+  const SeasonId = IDL.Nat16;
+  const ClubId = IDL.Nat16;
   const FixtureId = IDL.Nat32;
-  const PlayerId = IDL.Nat16;
-  const TournamentStage = IDL.Variant({
-    "RoundOf16": IDL.Null,
-    "SemiFinal": IDL.Null,
-    "GroupA": IDL.Null,
-    "GroupB": IDL.Null,
-    "GroupC": IDL.Null,
-    "GroupD": IDL.Null,
-    "GroupE": IDL.Null,
-    "GroupF": IDL.Null,
-    "Final": IDL.Null,
-    "QuarterFinal": IDL.Null
-  });
-  const TeamId = IDL.Nat16;
-  const EventType = IDL.Variant({
+  const PlayerEventType = IDL.Variant({
+    "PenaltyMissed": IDL.Null,
+    "Goal": IDL.Null,
+    "GoalConceded": IDL.Null,
+    "Appearance": IDL.Null,
+    "PenaltySaved": IDL.Null,
     "RedCard": IDL.Null,
-    "GoalScored": IDL.Null,
-    "StageLost": IDL.Null,
-    "StageWon": IDL.Null,
+    "KeeperSave": IDL.Null,
+    "CleanSheet": IDL.Null,
     "YellowCard": IDL.Null,
-    "GoalAssisted": IDL.Null
+    "GoalAssisted": IDL.Null,
+    "OwnGoal": IDL.Null,
+    "HighestScoringPlayer": IDL.Null
   });
-  const Euro2024Event = IDL.Record({
-    "eventId": IDL.Nat,
+  const PlayerEventData = IDL.Record({
     "fixtureId": FixtureId,
+    "clubId": ClubId,
+    "playerId": IDL.Nat16,
+    "eventStartMinute": IDL.Nat8,
+    "eventEndMinute": IDL.Nat8,
+    "eventType": PlayerEventType
+  });
+  const GameweekNumber = IDL.Nat8;
+  const FixtureDTO = IDL.Record({
+    "id": IDL.Nat32,
+    "status": FixtureStatusType,
+    "highestScoringPlayerId": IDL.Nat16,
+    "seasonId": SeasonId,
+    "awayClubId": ClubId,
+    "events": IDL.Vec(PlayerEventData),
+    "homeClubId": ClubId,
+    "kickOff": IDL.Int,
+    "homeGoals": IDL.Nat8,
+    "gameweek": GameweekNumber,
+    "awayGoals": IDL.Nat8
+  });
+  const AddInitialFixturesDTO = IDL.Record({
+    "seasonFixtures": IDL.Vec(FixtureDTO),
+    "leagueId": LeagueId
+  });
+  const Gender = IDL.Variant({ "Male": IDL.Null, "Female": IDL.Null });
+  const CountryId = IDL.Nat16;
+  const CreateLeagueDTO = IDL.Record({
+    "logo": IDL.Vec(IDL.Nat8),
+    "name": IDL.Text,
+    "teamCount": IDL.Nat8,
+    "relatedGender": Gender,
+    "countryId": CountryId,
+    "abbreviation": IDL.Text,
+    "governingBody": IDL.Text,
+    "formed": IDL.Int
+  });
+  const PlayerPosition = IDL.Variant({
+    "Goalkeeper": IDL.Null,
+    "Midfielder": IDL.Null,
+    "Forward": IDL.Null,
+    "Defender": IDL.Null
+  });
+  const CreatePlayerDTO = IDL.Record({
+    "clubId": ClubId,
+    "valueQuarterMillions": IDL.Nat16,
+    "dateOfBirth": IDL.Int,
+    "nationality": CountryId,
+    "gender": Gender,
+    "shirtNumber": IDL.Nat8,
+    "position": PlayerPosition,
+    "lastName": IDL.Text,
+    "leagueId": LeagueId,
+    "firstName": IDL.Text
+  });
+  const PlayerId = IDL.Nat16;
+  const LoanPlayerDTO = IDL.Record({
+    "loanEndDate": IDL.Int,
     "playerId": PlayerId,
-    "stage": TournamentStage,
-    "teamId": TeamId,
-    "eventType": EventType
+    "loanClubId": ClubId,
+    "loanLeagueId": LeagueId,
+    "leagueId": LeagueId
+  });
+  const MoveFixtureDTO = IDL.Record({
+    "fixtureId": FixtureId,
+    "updatedFixtureGameweek": GameweekNumber,
+    "updatedFixtureDate": IDL.Int,
+    "leagueId": LeagueId
+  });
+  const PostponeFixtureDTO = IDL.Record({
+    "fixtureId": FixtureId,
+    "leagueId": LeagueId
+  });
+  const ShirtType = IDL.Variant({ "Filled": IDL.Null, "Striped": IDL.Null });
+  const PromoteNewClubDTO = IDL.Record({
+    "secondaryColourHex": IDL.Text,
+    "name": IDL.Text,
+    "friendlyName": IDL.Text,
+    "thirdColourHex": IDL.Text,
+    "abbreviatedName": IDL.Text,
+    "shirtType": ShirtType,
+    "primaryColourHex": IDL.Text,
+    "leagueId": LeagueId
+  });
+  const RecallPlayerDTO = IDL.Record({
+    "playerId": PlayerId,
+    "leagueId": LeagueId
+  });
+  const RescheduleFixtureDTO = IDL.Record({
+    "postponedFixtureId": FixtureId,
+    "updatedFixtureGameweek": GameweekNumber,
+    "updatedFixtureDate": IDL.Int,
+    "leagueId": LeagueId
+  });
+  const RetirePlayerDTO = IDL.Record({
+    "playerId": PlayerId,
+    "retirementDate": IDL.Int,
+    "leagueId": LeagueId
+  });
+  const RevaluePlayerDownDTO = IDL.Record({
+    "playerId": PlayerId,
+    "leagueId": LeagueId
+  });
+  const RevaluePlayerUpDTO = IDL.Record({
+    "playerId": PlayerId,
+    "leagueId": LeagueId
+  });
+  const SetPlayerInjuryDTO = IDL.Record({
+    "playerId": PlayerId,
+    "description": IDL.Text,
+    "leagueId": LeagueId,
+    "expectedEndDate": IDL.Int
+  });
+  const TransferPlayerDTO = IDL.Record({
+    "clubId": ClubId,
+    "newLeagueId": LeagueId,
+    "playerId": PlayerId,
+    "newShirtNumber": IDL.Nat8,
+    "newClubId": ClubId,
+    "leagueId": LeagueId
+  });
+  const UnretirePlayerDTO = IDL.Record({
+    "playerId": PlayerId,
+    "leagueId": LeagueId
+  });
+  const UpdateClubDTO = IDL.Record({
+    "clubId": ClubId,
+    "secondaryColourHex": IDL.Text,
+    "name": IDL.Text,
+    "friendlyName": IDL.Text,
+    "thirdColourHex": IDL.Text,
+    "abbreviatedName": IDL.Text,
+    "shirtType": ShirtType,
+    "primaryColourHex": IDL.Text,
+    "leagueId": LeagueId
+  });
+  const UpdateLeagueDTO = IDL.Record({
+    "logo": IDL.Vec(IDL.Nat8),
+    "name": IDL.Text,
+    "teamCount": IDL.Nat8,
+    "relatedGender": Gender,
+    "countryId": CountryId,
+    "abbreviation": IDL.Text,
+    "governingBody": IDL.Text,
+    "leagueId": LeagueId,
+    "formed": IDL.Int
+  });
+  const UpdatePlayerDTO = IDL.Record({
+    "dateOfBirth": IDL.Int,
+    "playerId": PlayerId,
+    "nationality": CountryId,
+    "shirtNumber": IDL.Nat8,
+    "position": PlayerPosition,
+    "lastName": IDL.Text,
+    "leagueId": LeagueId,
+    "firstName": IDL.Text
+  });
+  const ClubDTO = IDL.Record({
+    "id": ClubId,
+    "secondaryColourHex": IDL.Text,
+    "name": IDL.Text,
+    "friendlyName": IDL.Text,
+    "thirdColourHex": IDL.Text,
+    "abbreviatedName": IDL.Text,
+    "shirtType": ShirtType,
+    "primaryColourHex": IDL.Text
   });
   const Error2 = IDL.Variant({
     "DecodeError": IDL.Null,
@@ -4180,419 +4533,171 @@ const idlFactory = ({ IDL }) => {
     "NotAuthorized": IDL.Null,
     "AlreadyExists": IDL.Null
   });
-  const Result = IDL.Variant({ "ok": IDL.Null, "err": Error2 });
-  const PrincipalName = IDL.Text;
-  const Euro2024EventId = IDL.Nat;
-  const PredictionSet = IDL.Record({
-    "goalAssister": PlayerId,
-    "winner": TeamId,
-    "loser": TeamId,
-    "stage": TournamentStage,
-    "goalScorer": PlayerId,
-    "redCard": PlayerId,
-    "yellowCard": PlayerId
+  const Result_3 = IDL.Variant({ "ok": IDL.Vec(ClubDTO), "err": Error2 });
+  const FootballLeagueDTO = IDL.Record({
+    "id": LeagueId,
+    "logo": IDL.Vec(IDL.Nat8),
+    "name": IDL.Text,
+    "teamCount": IDL.Nat8,
+    "relatedGender": Gender,
+    "countryId": CountryId,
+    "abbreviation": IDL.Text,
+    "governingBody": IDL.Text,
+    "formed": IDL.Int
   });
-  const Euro2024PredictionDTO = IDL.Record({
-    "sfPrediction": PredictionSet,
-    "entryTime": IDL.Int,
-    "groupAPrediction": PredictionSet,
-    "groupCPrediction": PredictionSet,
-    "groupEPrediction": PredictionSet,
-    "fPrediction": PredictionSet,
-    "qfPrediction": PredictionSet,
-    "totalScore": IDL.Nat16,
-    "alreadyEntered": IDL.Bool,
-    "groupBPrediction": PredictionSet,
-    "groupDPrediction": PredictionSet,
-    "groupFPrediction": PredictionSet,
-    "principalId": PrincipalName,
-    "r16Prediction": PredictionSet
-  });
-  const Euro2024EventDTO = IDL.Record({
-    "eventId": Euro2024EventId,
-    "fixtureId": FixtureId,
-    "playerId": PlayerId,
-    "stage": TournamentStage,
-    "teamId": TeamId,
-    "eventType": EventType
-  });
-  const AccountBalancesDTO = IDL.Record({
-    "icpBalance": IDL.Nat64,
-    "principalId": PrincipalName,
-    "fplBalance": IDL.Nat
-  });
-  const GameweekDTO = IDL.Record({
-    "totalFixtures": IDL.Nat8,
-    "correctScores": IDL.Nat8,
-    "winnings": IDL.Nat64,
-    "sweepstakeEntered": IDL.Bool,
-    "gameweekNumber": IDL.Nat8
-  });
-  const SeasonDTO = IDL.Record({
-    "seasonId": IDL.Nat16,
-    "gameweeks": IDL.Vec(GameweekDTO),
-    "seasonName": IDL.Text,
-    "seasonYear": IDL.Nat16
-  });
-  const AdminDTO = IDL.Record({
-    "activeGameweekNumber": IDL.Nat8,
-    "seasons": IDL.Vec(SeasonDTO),
-    "activeGameweekStatus": IDL.Text,
-    "activeSeasonId": IDL.Nat16,
-    "activeSeasonName": IDL.Text
-  });
-  const Result_10 = IDL.Variant({
-    "ok": IDL.Vec(Euro2024EventDTO),
+  const Result_2 = IDL.Variant({
+    "ok": IDL.Vec(FootballLeagueDTO),
     "err": Error2
   });
-  const CorrectPredictionDTO = IDL.Record({
-    "displayName": IDL.Text,
-    "principalName": IDL.Text
-  });
-  const CorrectPredictionsDTO = IDL.Record({
-    "totalEntries": IDL.Nat64,
-    "predictions": IDL.Vec(CorrectPredictionDTO),
-    "awayTeamName": IDL.Text,
-    "seasonId": IDL.Nat16,
-    "homeTeamName": IDL.Text,
-    "homeTeamGoals": IDL.Nat8,
-    "seasonName": IDL.Text,
-    "gameweekNumber": IDL.Nat8,
-    "awayTeamGoals": IDL.Nat8
-  });
-  const DataCacheDTO = IDL.Record({ "hash": IDL.Text, "category": IDL.Text });
-  const Result_9 = IDL.Variant({ "ok": IDL.Vec(DataCacheDTO), "err": Error2 });
-  const Result_1 = IDL.Variant({ "ok": Euro2024PredictionDTO, "err": Error2 });
-  const FixtureStatus = IDL.Variant({
-    "Unplayed": IDL.Null,
+  const PlayerStatus = IDL.Variant({
+    "OnLoan": IDL.Null,
     "Active": IDL.Null,
-    "Finished": IDL.Null
+    "FreeAgent": IDL.Null,
+    "Retired": IDL.Null
   });
-  const Euro2024Fixture = IDL.Record({
-    "id": IDL.Nat8,
-    "status": FixtureStatus,
-    "awayTeamId": TeamId,
-    "homeTeamId": TeamId,
-    "stage": TournamentStage,
-    "homeGoals": IDL.Nat8,
-    "awayGoals": IDL.Nat8
-  });
-  const Result_8 = IDL.Variant({
-    "ok": IDL.Vec(Euro2024Fixture),
-    "err": Error2
-  });
-  const Position = IDL.Variant({
-    "Goalkeeper": IDL.Null,
-    "Midfielder": IDL.Null,
-    "Forward": IDL.Null,
-    "Defender": IDL.Null
-  });
-  const InternationalPlayer = IDL.Record({
-    "id": PlayerId,
-    "teamId": TeamId,
-    "position": Position,
+  const PlayerDTO = IDL.Record({
+    "id": IDL.Nat16,
+    "status": PlayerStatus,
+    "clubId": ClubId,
+    "valueQuarterMillions": IDL.Nat16,
+    "dateOfBirth": IDL.Int,
+    "nationality": CountryId,
+    "shirtNumber": IDL.Nat8,
+    "position": PlayerPosition,
     "lastName": IDL.Text,
+    "leagueId": LeagueId,
     "firstName": IDL.Text
   });
-  const Result_7 = IDL.Variant({
-    "ok": IDL.Vec(InternationalPlayer),
-    "err": Error2
-  });
-  const GameState = IDL.Variant({
-    "Selecting": IDL.Null,
-    "Active": IDL.Null,
-    "Completed": IDL.Null
-  });
-  const Euro2024State = IDL.Record({
-    "totalManagers": IDL.Nat,
-    "stage": GameState,
-    "prizePool": IDL.Nat64
-  });
-  const Result_6 = IDL.Variant({ "ok": Euro2024State, "err": Error2 });
-  const Euro2024DTO = IDL.Record({
-    "totalManagers": IDL.Nat,
-    "stage": GameState,
-    "prizePool": IDL.Nat64
-  });
-  const Result_5 = IDL.Variant({ "ok": Euro2024DTO, "err": Error2 });
-  const InternationalTeam = IDL.Record({
-    "id": TeamId,
-    "name": IDL.Text,
-    "countryCode": IDL.Text,
-    "players": IDL.Vec(InternationalPlayer)
-  });
-  const Result_4 = IDL.Variant({
-    "ok": IDL.Vec(InternationalTeam),
-    "err": Error2
-  });
-  const AccountBalanceDTO = IDL.Record({ "accountBalance": IDL.Nat });
-  const Fixture = IDL.Record({
-    "id": IDL.Nat32,
-    "status": IDL.Nat8,
-    "awayTeamId": IDL.Nat16,
-    "homeTeamId": IDL.Nat16,
-    "homeGoals": IDL.Nat8,
-    "awayGoals": IDL.Nat8
-  });
-  const GameweekPotDTO = IDL.Record({ "gameweekPot": IDL.Nat64 });
-  List_1.fill(IDL.Opt(IDL.Tuple(Fixture, List_1)));
-  const Gameweek = IDL.Record({
-    "status": IDL.Nat8,
-    "winningShare": IDL.Nat64,
-    "totalPot": IDL.Nat64,
-    "number": IDL.Nat8,
-    "fixtureCount": IDL.Nat8,
-    "fixtures": List_1
-  });
-  const HistoryDTO = IDL.Record({
-    "seasons": IDL.Vec(SeasonDTO),
-    "seasonGameweeks": IDL.Vec(GameweekDTO),
-    "userId": IDL.Text,
-    "activeSeasonId": IDL.Nat16,
-    "activeSeasonName": IDL.Text
-  });
-  const FixtureDTO = IDL.Record({
-    "status": IDL.Nat8,
-    "awayTeamPrediction": IDL.Nat8,
-    "fixtureId": IDL.Nat32,
-    "homeTeamPrediction": IDL.Nat8,
-    "awayTeamId": IDL.Nat16,
-    "awayTeamName": IDL.Text,
-    "homeTeamId": IDL.Nat16,
-    "correct": IDL.Bool,
-    "homeTeamName": IDL.Text,
-    "homeTeamGoals": IDL.Nat8,
-    "awayTeamGoals": IDL.Nat8
-  });
-  const HomeDTO = IDL.Record({
-    "activeGameweekNumber": IDL.Nat8,
-    "hasPredictions": IDL.Bool,
-    "systemUpdating": IDL.Bool,
-    "gameweekStatus": IDL.Nat8,
-    "activeSeasonId": IDL.Nat16,
-    "principalName": IDL.Text,
-    "activeSeasonName": IDL.Text,
-    "fixtures": IDL.Vec(FixtureDTO)
-  });
-  const LeaderboardEntryDTO = IDL.Record({
-    "totalFixtures": IDL.Nat8,
-    "correctScores": IDL.Nat8,
-    "displayName": IDL.Text,
-    "enteredSweepstake": IDL.Bool,
-    "principalName": IDL.Text,
-    "position": IDL.Text
-  });
-  const GetLeaderboardDTO = IDL.Record({
-    "totalEntries": IDL.Nat,
-    "offset": IDL.Nat,
-    "limit": IDL.Nat,
-    "entries": IDL.Vec(LeaderboardEntryDTO)
-  });
-  const Euro2024LeaderboardEntryDTO = IDL.Record({
-    "displayName": IDL.Text,
-    "totalScore": IDL.Nat,
-    "principalName": IDL.Text,
-    "position": IDL.Text,
-    "profilePicture": IDL.Opt(IDL.Vec(IDL.Nat8))
-  });
-  const Euro2024LeaderBoardDTO = IDL.Record({
-    "status": IDL.Nat8,
-    "totalEntries": IDL.Nat,
-    "winningShare": IDL.Nat64,
-    "leaderboardEntries": IDL.Vec(Euro2024LeaderboardEntryDTO),
-    "totalPot": IDL.Nat64
-  });
-  const Result_3 = IDL.Variant({
-    "ok": Euro2024LeaderBoardDTO,
-    "err": Error2
-  });
-  const LeaderBoardDTO = IDL.Record({
-    "status": IDL.Nat8,
-    "activeGameweekNumber": IDL.Nat8,
-    "totalEntries": IDL.Nat64,
-    "seasons": IDL.Vec(SeasonDTO),
-    "winningShare": IDL.Nat64,
-    "leaderboardEntries": IDL.Vec(LeaderboardEntryDTO),
-    "totalPot": IDL.Nat64,
-    "activeSeasonId": IDL.Nat16,
-    "activeSeasonName": IDL.Text
-  });
-  const PayoutDTO = IDL.Record({
-    "winnerShare": IDL.Nat64,
-    "activeGameweekNumber": IDL.Nat8,
-    "gameweekPot": IDL.Nat64,
-    "adminFee": IDL.Nat64,
-    "potAccountBalance": IDL.Nat64,
-    "winnerCount": IDL.Nat64,
-    "activeSeasonName": IDL.Text
-  });
-  const PlayDTO = IDL.Record({
-    "activeGameweekNumber": IDL.Nat8,
-    "userId": IDL.Text,
-    "sweepstakePaid": IDL.Bool,
-    "activeSeasonId": IDL.Nat16,
-    "activeSeasonName": IDL.Text,
-    "fixtures": IDL.Vec(FixtureDTO)
-  });
-  const ProfileDTO = IDL.Record({
-    "displayName": IDL.Text,
-    "fplDepositAddress": IDL.Text,
-    "walletAddress": IDL.Text,
-    "depositAddress": IDL.Vec(IDL.Nat8),
-    "principalName": IDL.Text
-  });
-  const Result_2 = IDL.Variant({ "ok": ProfileDTO, "err": Error2 });
-  List.fill(IDL.Opt(IDL.Tuple(Gameweek, List)));
-  const Season = IDL.Record({
-    "id": IDL.Nat16,
-    "name": IDL.Text,
-    "year": IDL.Nat16,
-    "gameweeks": List
-  });
-  const Team2 = IDL.Record({ "id": IDL.Nat16, "name": IDL.Text });
-  const UserBalanceDTO = IDL.Record({
-    "balance": IDL.Nat64,
-    "displayName": IDL.Text,
-    "principalName": IDL.Text
-  });
-  const BalancesDTO = IDL.Record({
-    "totalEntries": IDL.Nat64,
-    "potAccountBalance": IDL.Nat64,
-    "userBalances": IDL.Vec(UserBalanceDTO)
-  });
-  const ViewPredictionDTO = IDL.Record({
-    "totalFixtures": IDL.Nat8,
-    "correctScores": IDL.Nat8,
-    "playerName": IDL.Text,
-    "seasonName": IDL.Text,
-    "fixtures": IDL.Vec(FixtureDTO)
-  });
-  const SubmitPlayDTO = IDL.Record({
-    "enterSweepstake": IDL.Bool,
-    "fixtures": IDL.Vec(FixtureDTO)
+  const Result_1 = IDL.Variant({ "ok": IDL.Vec(PlayerDTO), "err": Error2 });
+  const Result = IDL.Variant({ "ok": IDL.Bool, "err": Error2 });
+  const RustResult = IDL.Variant({ "Ok": IDL.Text, "Err": IDL.Text });
+  const SubmitFixtureDataDTO = IDL.Record({
+    "fixtureId": FixtureId,
+    "playerEventData": IDL.Vec(PlayerEventData),
+    "leagueId": LeagueId
   });
   return IDL.Service({
-    "addEuro2024Event": IDL.Func([Euro2024Event], [Result], []),
-    "addFixtureToGameweek": IDL.Func(
-      [IDL.Nat16, IDL.Nat8, IDL.Nat16, IDL.Nat16],
-      [Result],
+    "executeAddInitialFixtures": IDL.Func(
+      [LeagueId, AddInitialFixturesDTO],
+      [],
       []
     ),
-    "adminDelete2024Entry": IDL.Func([PrincipalName], [IDL.Bool], []),
-    "adminDelete2024Event": IDL.Func([Euro2024EventId], [IDL.Bool], []),
-    "adminGetEuro2024Entries": IDL.Func(
-      [IDL.Nat, IDL.Nat],
-      [IDL.Vec(Euro2024PredictionDTO)],
+    "executeCreateLeague": IDL.Func([CreateLeagueDTO], [], ["query"]),
+    "executeCreatePlayer": IDL.Func([LeagueId, CreatePlayerDTO], [], []),
+    "executeLoanPlayer": IDL.Func([LeagueId, LoanPlayerDTO], [], []),
+    "executeMoveFixture": IDL.Func([LeagueId, MoveFixtureDTO], [], []),
+    "executePostponeFixture": IDL.Func([LeagueId, PostponeFixtureDTO], [], []),
+    "executePromoteNewClub": IDL.Func([LeagueId, PromoteNewClubDTO], [], []),
+    "executeRecallPlayer": IDL.Func([LeagueId, RecallPlayerDTO], [], []),
+    "executeRescheduleFixture": IDL.Func(
+      [LeagueId, RescheduleFixtureDTO],
+      [],
       []
     ),
-    "adminGetEuro2024Events": IDL.Func([], [IDL.Vec(Euro2024EventDTO)], []),
-    "calculateEuro2024Leaderboard": IDL.Func([], [Result], []),
-    "checkPaidButNoEntry": IDL.Func([], [IDL.Bool], []),
-    "closeEuro2024Entries": IDL.Func([], [Result], []),
-    "completeEuro2024Competition": IDL.Func([], [Result], []),
-    "createSeason": IDL.Func([IDL.Text, IDL.Nat16], [Result], []),
-    "createTeam": IDL.Func([IDL.Text], [Result], []),
-    "deleteFixture": IDL.Func([IDL.Nat16, IDL.Nat8, IDL.Nat32], [Result], []),
-    "deleteSeason": IDL.Func([IDL.Nat16], [Result], []),
-    "deleteTeam": IDL.Func([IDL.Nat16], [Result], []),
-    "getAccountBalances": IDL.Func([], [AccountBalancesDTO], []),
-    "getAdminDTO": IDL.Func([], [AdminDTO], ["query"]),
-    "getAllEvents": IDL.Func([], [Result_10], []),
-    "getCorrectPredictionsDTO": IDL.Func(
-      [IDL.Nat16, IDL.Nat8, IDL.Nat32, IDL.Nat, IDL.Nat],
-      [CorrectPredictionsDTO],
+    "executeRetirePlayer": IDL.Func([LeagueId, RetirePlayerDTO], [], []),
+    "executeRevaluePlayerDown": IDL.Func(
+      [LeagueId, RevaluePlayerDownDTO],
+      [],
       []
     ),
-    "getDataHashes": IDL.Func([], [Result_9], ["query"]),
-    "getEuro2024DTO": IDL.Func([], [Result_1], ["query"]),
-    "getEuro2024Events": IDL.Func([], [IDL.Vec(Euro2024EventDTO)], []),
-    "getEuro2024Fixtures": IDL.Func([], [Result_8], []),
-    "getEuro2024Players": IDL.Func([], [Result_7], ["query"]),
-    "getEuro2024State": IDL.Func([], [Result_6], ["query"]),
-    "getEuro2024StateDTO": IDL.Func([], [Result_5], ["query"]),
-    "getEuro2024Teams": IDL.Func([], [Result_4], ["query"]),
-    "getEuroPotBalance": IDL.Func([], [IDL.Nat64], []),
-    "getFPLAccountBalance": IDL.Func([], [AccountBalanceDTO], []),
-    "getFPLAccountBalanceDTO": IDL.Func([], [AccountBalanceDTO], []),
-    "getFixture": IDL.Func(
-      [IDL.Nat16, IDL.Nat8, IDL.Nat32],
-      [IDL.Opt(Fixture)],
+    "executeRevaluePlayerUp": IDL.Func([LeagueId, RevaluePlayerUpDTO], [], []),
+    "executeSetPlayerInjury": IDL.Func([LeagueId, SetPlayerInjuryDTO], [], []),
+    "executeTransferPlayer": IDL.Func([LeagueId, TransferPlayerDTO], [], []),
+    "executeUnretirePlayer": IDL.Func([LeagueId, UnretirePlayerDTO], [], []),
+    "executeUpdateClub": IDL.Func([LeagueId, UpdateClubDTO], [], []),
+    "executeUpdateLeague": IDL.Func([UpdateLeagueDTO], [], ["query"]),
+    "executeUpdatePlayer": IDL.Func([LeagueId, UpdatePlayerDTO], [], []),
+    "getLeagueClubs": IDL.Func([LeagueId], [Result_3], ["composite_query"]),
+    "getLeagues": IDL.Func([], [Result_2], ["composite_query"]),
+    "getPlayers": IDL.Func([LeagueId], [Result_1], ["composite_query"]),
+    "isAdmin": IDL.Func([], [Result], []),
+    "validateAddInitialFixtures": IDL.Func(
+      [AddInitialFixturesDTO],
+      [RustResult],
       ["query"]
     ),
-    "getFixtures": IDL.Func(
-      [IDL.Nat16, IDL.Nat8],
-      [IDL.Vec(Fixture)],
+    "validateCreateLeague": IDL.Func(
+      [CreateLeagueDTO],
+      [RustResult],
       ["query"]
     ),
-    "getGameweekPotDTO": IDL.Func([], [GameweekPotDTO], []),
-    "getGameweeks": IDL.Func([IDL.Nat16], [IDL.Vec(Gameweek)], ["query"]),
-    "getHistoryDTO": IDL.Func([IDL.Nat16], [HistoryDTO], ["query"]),
-    "getHomeDTO": IDL.Func([], [HomeDTO], ["query"]),
-    "getLeaderboard": IDL.Func([GetLeaderboardDTO], [Result_3], ["query"]),
-    "getLeaderboardDTO": IDL.Func(
-      [IDL.Nat16, IDL.Nat8, IDL.Nat, IDL.Nat],
-      [LeaderBoardDTO],
+    "validateCreatePlayer": IDL.Func(
+      [CreatePlayerDTO],
+      [RustResult],
       ["query"]
     ),
-    "getPayoutDTO": IDL.Func([], [PayoutDTO], []),
-    "getPlayDTO": IDL.Func([], [PlayDTO], ["query"]),
-    "getProfileDTO": IDL.Func([], [Result_2], []),
-    "getPublicEuro2024DTO": IDL.Func([IDL.Text], [Result_1], ["query"]),
-    "getSeason": IDL.Func([IDL.Nat16], [IDL.Opt(Season)], ["query"]),
-    "getSeasons": IDL.Func([], [IDL.Vec(Season)], ["query"]),
-    "getTeams": IDL.Func([], [IDL.Vec(Team2)], ["query"]),
-    "getUserBalancesDTO": IDL.Func([IDL.Nat, IDL.Nat], [BalancesDTO], []),
-    "getUserPrediction": IDL.Func([], [Result_1], []),
-    "getViewPredictionDTO": IDL.Func(
-      [IDL.Text, IDL.Nat16, IDL.Nat8],
-      [ViewPredictionDTO],
+    "validateLoanPlayer": IDL.Func([LoanPlayerDTO], [RustResult], ["query"]),
+    "validateMoveFixture": IDL.Func([MoveFixtureDTO], [RustResult], ["query"]),
+    "validatePostponeFixture": IDL.Func(
+      [PostponeFixtureDTO],
+      [RustResult],
       ["query"]
     ),
-    "giftEntry": IDL.Func([PrincipalName], [Result], []),
-    "isAdmin": IDL.Func([], [IDL.Bool], ["query"]),
-    "isDisplayNameValid": IDL.Func([IDL.Text], [IDL.Bool], ["query"]),
-    "isWalletValid": IDL.Func([IDL.Text], [IDL.Bool], ["query"]),
-    "openEuro2024Entries": IDL.Func([], [Result], []),
-    "payoutSweepstake": IDL.Func([], [Result], []),
-    "recalculateLeaderboard": IDL.Func([], [Result], []),
-    "setEuroSystemState": IDL.Func([GameState], [Result], []),
-    "setSystemState": IDL.Func([IDL.Nat16, IDL.Nat8], [Result], []),
-    "submitEuro2024Prediction": IDL.Func(
-      [Euro2024PredictionDTO],
-      [Result],
-      []
+    "validatePromoteNewClub": IDL.Func(
+      [PromoteNewClubDTO],
+      [RustResult],
+      ["query"]
     ),
-    "submitEvent": IDL.Func([Euro2024EventDTO], [Result], []),
-    "submitPlayDTO": IDL.Func([SubmitPlayDTO], [Result], []),
-    "unsetActiveState": IDL.Func([], [Result], []),
-    "updateDisplayName": IDL.Func([IDL.Text], [Result], []),
-    "updateFixture": IDL.Func(
-      [
-        IDL.Nat16,
-        IDL.Nat8,
-        IDL.Nat32,
-        IDL.Nat16,
-        IDL.Nat16,
-        IDL.Nat8,
-        IDL.Nat8,
-        IDL.Nat8
-      ],
-      [Result],
-      []
+    "validateRecallPlayer": IDL.Func(
+      [RecallPlayerDTO],
+      [RustResult],
+      ["query"]
     ),
-    "updateGameweekStatus": IDL.Func(
-      [IDL.Nat16, IDL.Nat8, IDL.Nat8],
-      [Result],
-      []
+    "validateRescheduleFixture": IDL.Func(
+      [RescheduleFixtureDTO],
+      [RustResult],
+      ["query"]
     ),
-    "updateSeason": IDL.Func([IDL.Nat16, IDL.Text, IDL.Nat16], [Result], []),
-    "updateTeam": IDL.Func([IDL.Nat16, IDL.Text], [Result], []),
-    "updateWalletAddress": IDL.Func([IDL.Text], [Result], []),
-    "withdrawICP": IDL.Func([IDL.Float64], [Result], [])
+    "validateRetirePlayer": IDL.Func(
+      [RetirePlayerDTO],
+      [RustResult],
+      ["query"]
+    ),
+    "validateRevaluePlayerDown": IDL.Func(
+      [RevaluePlayerDownDTO],
+      [RustResult],
+      ["query"]
+    ),
+    "validateRevaluePlayerUp": IDL.Func(
+      [RevaluePlayerUpDTO],
+      [RustResult],
+      ["query"]
+    ),
+    "validateSetPlayerInjury": IDL.Func(
+      [SetPlayerInjuryDTO],
+      [RustResult],
+      ["query"]
+    ),
+    "validateSubmitFixtureData": IDL.Func(
+      [SubmitFixtureDataDTO],
+      [RustResult],
+      ["query"]
+    ),
+    "validateTransferPlayer": IDL.Func(
+      [TransferPlayerDTO],
+      [RustResult],
+      ["query"]
+    ),
+    "validateUnretirePlayer": IDL.Func(
+      [UnretirePlayerDTO],
+      [RustResult],
+      ["query"]
+    ),
+    "validateUpdateClub": IDL.Func([UpdateClubDTO], [RustResult], ["query"]),
+    "validateUpdateLeague": IDL.Func(
+      [UpdateLeagueDTO],
+      [RustResult],
+      ["query"]
+    ),
+    "validateUpdatePlayer": IDL.Func(
+      [UpdatePlayerDTO],
+      [RustResult],
+      ["query"]
+    )
   });
 };
-var define_process_env_default$3 = { FOOTBALL_GOD_BACKEND_CANISTER_ID: "44kin-waaaa-aaaal-qbxra-cai", FOOTBALL_GOD_FRONTEND_CANISTER_ID: "43loz-3yaaa-aaaal-qbxrq-cai", DFX_NETWORK: "ic" };
-const canisterId = define_process_env_default$3.CANISTER_ID_FOOTBALL_GOD_BACKEND;
+var define_process_env_default$a = { FOOTBALL_GOD_BACKEND_CANISTER_ID: "44kin-waaaa-aaaal-qbxra-cai", FOOTBALL_GOD_FRONTEND_CANISTER_ID: "43loz-3yaaa-aaaal-qbxrq-cai", DFX_NETWORK: "ic" };
+const canisterId = define_process_env_default$a.CANISTER_ID_FOOTBALL_GOD_BACKEND;
 const createActor = (canisterId2, options2 = {}) => {
   const agent = options2.agent || new HttpAgent({ ...options2.agentOptions });
   if (options2.agent && options2.agentOptions) {
@@ -4672,179 +4777,39 @@ class ActorFactory {
     });
   }
 }
-function formatUnixDateToReadable(unixNano) {
-  const date = new Date(unixNano / 1e6);
-  const options2 = {
-    weekday: "long",
-    year: "numeric",
-    month: "long",
-    day: "numeric"
-  };
-  return new Intl.DateTimeFormat("en-UK", options2).format(date);
-}
-function replacer(key2, value) {
-  if (typeof value === "bigint") {
-    return value.toString();
-  } else {
-    return value;
-  }
-}
-function isError(response) {
-  return response && response.err !== void 0;
-}
-var define_process_env_default$2 = { FOOTBALL_GOD_BACKEND_CANISTER_ID: "44kin-waaaa-aaaal-qbxra-cai", FOOTBALL_GOD_FRONTEND_CANISTER_ID: "43loz-3yaaa-aaaal-qbxrq-cai", DFX_NETWORK: "ic" };
-function createEuro2024Store() {
-  const { subscribe: subscribe2, set } = writable(null);
-  let actor = ActorFactory.createActor(
-    idlFactory,
-    define_process_env_default$2.FOOTBALL_GOD_BACKEND_CANISTER_ID
-  );
-  async function sync() {
-    let result = await actor.getEuro2024StateDTO();
-    if (isError(result)) {
-      console.error("Error syncing euro 2024 store");
-      return;
-    }
-    let updatedEuro2024StateData = result.ok;
-    set(updatedEuro2024StateData);
-  }
-  async function getEuro2024State() {
-    let result = await actor.getEuro2024State();
-    return result;
-  }
-  async function getPotBalance() {
-    const identityActor = await ActorFactory.createIdentityActor(
-      authStore,
-      define_process_env_default$2.FOOTBALL_GOD_BACKEND_CANISTER_ID
+var define_process_env_default$9 = { FOOTBALL_GOD_BACKEND_CANISTER_ID: "44kin-waaaa-aaaal-qbxra-cai", FOOTBALL_GOD_FRONTEND_CANISTER_ID: "43loz-3yaaa-aaaal-qbxrq-cai", DFX_NETWORK: "ic" };
+class ClubService {
+  actor;
+  constructor() {
+    this.actor = ActorFactory.createActor(
+      idlFactory,
+      define_process_env_default$9.OPENFPL_BACKEND_CANISTER_ID
     );
-    let result = await identityActor.getEuroPotBalance();
-    return result;
   }
-  async function getTotalEntries() {
-    const identityActor = await ActorFactory.createIdentityActor(
-      authStore,
-      define_process_env_default$2.FOOTBALL_GOD_BACKEND_CANISTER_ID
-    );
-    let result = await identityActor.getTotalEntries();
-    return result;
-  }
-  async function getPrediction(principalId) {
-    let result = await actor.getPublicEuro2024DTO(principalId);
-    if (isError(result)) {
-      console.error("error fetching prediction");
-    }
+  async getClubs(leagueId) {
+    const result = await this.actor.getLeagueClubs(leagueId);
+    if (isError(result))
+      throw new Error("Failed to fetch clubs");
     return result.ok;
   }
-  async function getFixtures() {
-    const identityActor = await ActorFactory.createIdentityActor(
-      authStore,
-      define_process_env_default$2.FOOTBALL_GOD_BACKEND_CANISTER_ID
-    );
-    let result = await identityActor.getEuro2024Fixtures();
-    if (isError(result)) {
-      console.error("error fetching euro 2024 fixtures", result);
-      return [];
-    }
-    return result.ok;
-  }
-  async function getLeaderboard(offset, limit) {
-    let dto = {
-      totalEntries: 0n,
-      offset,
-      limit,
-      entries: []
-    };
-    let result = await actor.getLeaderboard(dto);
-    if (isError(result)) {
-      console.error("error fetching euro 2024 fixtures", result);
-    }
-    return result.ok;
-  }
-  async function getEvents() {
-    let entries = await actor.getEuro2024Events();
-    return entries;
+}
+function createClubStore() {
+  async function getClubs(leagueId) {
+    return new ClubService().getClubs(leagueId);
   }
   return {
-    subscribe: subscribe2,
-    sync,
-    getEuro2024State,
-    getPotBalance,
-    getTotalEntries,
-    getFixtures,
-    getLeaderboard,
-    getPrediction,
-    getEvents
+    getClubs
   };
 }
-const euro2024Store = createEuro2024Store();
-const css$1 = {
-  code: ".overlay-panel.svelte-a3qity{position:absolute;bottom:0;right:0}",
-  map: null
-};
-const Page$8 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
-  let $$unsubscribe_authSignedInStore;
-  $$unsubscribe_authSignedInStore = subscribe(authSignedInStore, (value) => value);
-  let interval;
-  onDestroy(() => {
-    clearInterval(interval);
-  });
-  $$result.css.add(css$1);
-  $$unsubscribe_authSignedInStore();
-  return `${validate_component(Layout, "Layout").$$render($$result, {}, {}, {
-    default: () => {
-      return `${`${validate_component(Spinner, "Spinner").$$render($$result, {}, {}, {})}`}`;
-    }
-  })}`;
-});
-const pageSize = 100;
-const Admin_euro2024_entries = create_ssr_component(($$result, $$props, $$bindings, slots) => {
-  let currentPage = 1;
-  let entries = [];
-  return `${``} <div class="p-4"><div class="overflow-x-auto flex-1"><div class="flex justify-between border border-gray-700 py-2 bg-light-gray border-b border-gray-700" data-svelte-h="svelte-1vms2iz"><div class="w-6/12">PrincipalId</div> <div class="w-3/12">Entry Date</div> <div class="w-3/12"></div></div> ${each(entries, (entry, index) => {
-    return `<div class="flex items-center justify-between py-2 border-b border-gray-700 cursor-pointer"><div class="w-6/12">${escape(entry.principalId)}</div> <div class="w-3/12">${escape(formatUnixDateToReadable(Number(entry.entryTime)))}</div> <div class="w-3/12"><button data-svelte-h="svelte-189gxcl">Delete</button></div> </div>`;
-  })}</div></div> <div class="justify-center mt-4 pb-4 overflow-x-auto"><div class="flex space-x-1 min-w-max">${each(Array(Math.ceil(entries.length / pageSize)), (_, index) => {
-    return `<button${add_attribute("class", `px-4 py-2 rounded-md ${index + 1 === currentPage ? "fpl-button" : ""}`, 0)}>${escape(index + 1)} </button>`;
-  })}</div></div>    `;
-});
-var define_process_env_default$1 = { FOOTBALL_GOD_BACKEND_CANISTER_ID: "44kin-waaaa-aaaal-qbxra-cai", FOOTBALL_GOD_FRONTEND_CANISTER_ID: "43loz-3yaaa-aaaal-qbxrq-cai", DFX_NETWORK: "ic" };
+const clubStore = createClubStore();
+var define_process_env_default$8 = { FOOTBALL_GOD_BACKEND_CANISTER_ID: "44kin-waaaa-aaaal-qbxra-cai", FOOTBALL_GOD_FRONTEND_CANISTER_ID: "43loz-3yaaa-aaaal-qbxrq-cai", DFX_NETWORK: "ic" };
 function createPlayerStore() {
   const { subscribe: subscribe2, set } = writable([]);
-  let actor = ActorFactory.createActor(
+  ActorFactory.createActor(
     idlFactory,
-    define_process_env_default$1.FOOTBALL_GOD_BACKEND_CANISTER_ID
+    define_process_env_default$8.FOOTBALL_GOD_BACKEND_CANISTER_ID
   );
   async function sync() {
-    const category = "players";
-    const newHashValues = await actor.getDataHashes();
-    let error = isError(newHashValues);
-    if (error) {
-      console.error("Error syncing player store");
-      return;
-    }
-    let dataCacheValues = newHashValues.ok;
-    let categoryHash = dataCacheValues.find((x) => x.category === category) ?? null;
-    const localHash = localStorage.getItem(`${category}_hash`);
-    if (categoryHash?.hash != localHash) {
-      const updatedPlayersData = await actor.getEuro2024Players();
-      if (isError(updatedPlayersData)) {
-        return [];
-      }
-      localStorage.setItem(
-        category,
-        JSON.stringify(updatedPlayersData.ok, replacer)
-      );
-      localStorage.setItem(`${category}_hash`, categoryHash?.hash ?? "");
-      set(updatedPlayersData.ok);
-    } else {
-      const cachedPlayersData = localStorage.getItem(category);
-      let cachedPlayers = [];
-      try {
-        cachedPlayers = JSON.parse(cachedPlayersData || "[]");
-      } catch (e) {
-        cachedPlayers = [];
-      }
-      set(cachedPlayers);
-    }
   }
   return {
     subscribe: subscribe2,
@@ -4852,239 +4817,1312 @@ function createPlayerStore() {
   };
 }
 const playerStore = createPlayerStore();
-var define_process_env_default = { FOOTBALL_GOD_BACKEND_CANISTER_ID: "44kin-waaaa-aaaal-qbxra-cai", FOOTBALL_GOD_FRONTEND_CANISTER_ID: "43loz-3yaaa-aaaal-qbxrq-cai", DFX_NETWORK: "ic" };
-function createTeamStore() {
+var define_process_env_default$7 = { FOOTBALL_GOD_BACKEND_CANISTER_ID: "44kin-waaaa-aaaal-qbxra-cai", FOOTBALL_GOD_FRONTEND_CANISTER_ID: "43loz-3yaaa-aaaal-qbxrq-cai", DFX_NETWORK: "ic" };
+class FixtureService {
+  actor;
+  constructor() {
+    this.actor = ActorFactory.createActor(
+      idlFactory,
+      define_process_env_default$7.FOOTBALL_GOD_BACKEND_CANISTER_ID
+    );
+  }
+  async getPostponedFixtures() {
+    const result = await this.actor.getPostponedFixtures();
+    if (isError(result))
+      throw new Error("Failed to fetch postponed fixtures");
+    return result.ok;
+  }
+  async getFixtures(seasonId) {
+    let dto = {
+      seasonId
+    };
+    const result = await this.actor.getFixtures(dto);
+    if (isError(result))
+      throw new Error("Failed to fetch fixtures");
+    return result.ok;
+  }
+}
+function createFixtureStore() {
   const { subscribe: subscribe2, set } = writable([]);
-  let actor = ActorFactory.createActor(
-    idlFactory,
-    define_process_env_default.FOOTBALL_GOD_BACKEND_CANISTER_ID
-  );
-  async function sync() {
-    const category = "teams";
-    const newHashValues = await actor.getDataHashes();
-    let error = isError(newHashValues);
-    if (error) {
-      console.error("Error syncing team store");
+  async function getPostponedFixtures() {
+    return new FixtureService().getPostponedFixtures();
+  }
+  async function getNextFixture() {
+    let fixtures = [];
+    await subscribe2((value) => {
+      fixtures = value;
+    })();
+    if (fixtures.length == 0) {
       return;
     }
-    let dataCacheValues = newHashValues.ok;
-    let categoryHash = dataCacheValues.find((x) => x.category === category) ?? null;
-    const localHash = localStorage.getItem(`${category}_hash`);
-    if (categoryHash?.hash != localHash) {
-      const updatedTeamsData = await actor.getEuro2024Teams();
-      if (isError(updatedTeamsData)) {
-        return [];
-      }
-      localStorage.setItem(
-        category,
-        JSON.stringify(updatedTeamsData.ok, replacer)
-      );
-      localStorage.setItem(`${category}_hash`, categoryHash?.hash ?? "");
-      set(updatedTeamsData.ok);
-    } else {
-      const cachedTeamsData = localStorage.getItem(category);
-      let cachedTeams = [];
-      try {
-        cachedTeams = JSON.parse(cachedTeamsData || "[]");
-      } catch (e) {
-        cachedTeams = [];
-      }
-      set(cachedTeams);
-    }
+    const now = /* @__PURE__ */ new Date();
+    return fixtures.find(
+      (fixture) => new Date(Number(fixture.kickOff) / 1e6) > now
+    );
   }
   return {
     subscribe: subscribe2,
-    sync
+    setFixtures: (fixtures) => set(fixtures),
+    getNextFixture,
+    getPostponedFixtures
   };
 }
-const teamStore = createTeamStore();
-const Page$7 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
-  return `${validate_component(Layout, "Layout").$$render($$result, {}, {}, {
+const fixtureStore = createFixtureStore();
+const Confirm_fixture_data_modal = create_ssr_component(($$result, $$props, $$bindings, slots) => {
+  let { visible = false } = $$props;
+  let { onConfirm } = $$props;
+  let { closeModal } = $$props;
+  if ($$props.visible === void 0 && $$bindings.visible && visible !== void 0)
+    $$bindings.visible(visible);
+  if ($$props.onConfirm === void 0 && $$bindings.onConfirm && onConfirm !== void 0)
+    $$bindings.onConfirm(onConfirm);
+  if ($$props.closeModal === void 0 && $$bindings.closeModal && closeModal !== void 0)
+    $$bindings.closeModal(closeModal);
+  return `${validate_component(Modal, "Modal").$$render($$result, { visible }, {}, {
     default: () => {
-      return `<div class="relative bg-gray-800 text-white mt-2 mr-2 rounded-lg"><p class="text-2xl p-8" data-svelte-h="svelte-e3xv4p">Admin</p> <div class="bg-panel rounded-md p-2"><ul class="flex bg-light-gray contained-text border-b border-gray-700"><li${add_attribute("class", `mr-1 md:mr-4 ${"active-tab"}`, 0)}><button${add_attribute(
-        "class",
-        `p-2 ${"text-white"}`,
-        0
-      )}>Euro 2024 Entries</button></li> <li${add_attribute("class", `mr-1 md:mr-4 ${""}`, 0)}><button${add_attribute(
-        "class",
-        `p-2 ${"text-gray-400"}`,
-        0
-      )}>Euro 2024 Events</button></li></ul> <div class="flex w-100 bg-OPENFPL p-4 my-4"><button class="bg-OPENFPLPURPLE mx-4 p-4 rounded-md" data-svelte-h="svelte-149u5mp">Close Euro 2024 Entries</button> <button class="bg-OPENFPLPURPLE mx-4 p-4 rounded-md" data-svelte-h="svelte-n58rcp">Open Euro 2024 Entries</button> <button class="bg-OPENFPLPURPLE mx-4 p-4 rounded-md" data-svelte-h="svelte-1a9fkjn">Complete Euro 2024 Competition</button> <button class="bg-OPENFPLPURPLE mx-4 p-4 rounded-md" data-svelte-h="svelte-1p9lklt">Recalculate Leaderboard</button></div> ${`${validate_component(Admin_euro2024_entries, "AdminEuro2024Entries").$$render($$result, {}, {}, {})}`}</div></div>`;
+      return `<div class="mx-4 p-4"><div class="flex justify-between items-center my-2"><h4 data-svelte-h="svelte-1yevh2p">Confirm Fixture Data</h4> <button class="text-black" data-svelte-h="svelte-naxdfo">✕</button></div> <div class="my-5" data-svelte-h="svelte-1kpybyt"><h1>Please confirm your fixture data.</h1> <p class="text-gray-600">You will not be able to edit your submission and entries that differ
+        from the accepted consensus data will not receive $FPL rewards. If
+        consensus has already been reached for the fixture your submission will
+        also not be counted.</p></div> <div class="flex justify-end gap-3"><button class="default-button fpl-cancel-btn" type="button" data-svelte-h="svelte-1n52tb1">Cancel</button> <button class="default-button brand-button" data-svelte-h="svelte-1expxo6">Confirm</button></div></div>`;
     }
   })}`;
 });
-const Page$6 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
-  let loadingText;
-  let $$unsubscribe_playerStore;
-  let $$unsubscribe_teamStore;
-  let $authSignedInStore, $$unsubscribe_authSignedInStore;
-  let $$unsubscribe_dots;
-  let $$unsubscribe_euro2024Store;
-  $$unsubscribe_playerStore = subscribe(playerStore, (value) => value);
-  $$unsubscribe_teamStore = subscribe(teamStore, (value) => value);
-  $$unsubscribe_authSignedInStore = subscribe(authSignedInStore, (value) => $authSignedInStore = value);
-  $$unsubscribe_euro2024Store = subscribe(euro2024Store, (value) => value);
-  let interval;
-  let dots = writable(".");
-  $$unsubscribe_dots = subscribe(dots, (value) => value);
-  onDestroy(() => {
-    clearInterval(interval);
-  });
-  loadingText = "Loading, please wait...";
-  $$unsubscribe_playerStore();
-  $$unsubscribe_teamStore();
-  $$unsubscribe_authSignedInStore();
-  $$unsubscribe_dots();
-  $$unsubscribe_euro2024Store();
-  return `${validate_component(Layout, "Layout").$$render($$result, {}, {}, {
+const Clear_draft_modal = create_ssr_component(($$result, $$props, $$bindings, slots) => {
+  let { visible = false } = $$props;
+  let { onConfirm } = $$props;
+  let { closeModal } = $$props;
+  if ($$props.visible === void 0 && $$bindings.visible && visible !== void 0)
+    $$bindings.visible(visible);
+  if ($$props.onConfirm === void 0 && $$bindings.onConfirm && onConfirm !== void 0)
+    $$bindings.onConfirm(onConfirm);
+  if ($$props.closeModal === void 0 && $$bindings.closeModal && closeModal !== void 0)
+    $$bindings.closeModal(closeModal);
+  return `${validate_component(Modal, "Modal").$$render($$result, { visible }, {}, {
     default: () => {
-      return `${!$authSignedInStore ? `<div class="relative bg-gray-800 text-white mt-2 mr-2 rounded-lg"><div class="bg-cover bg-center bg-no-repeat py-20 px-4" style="background-image: url('banner.jpg');"><div class="container ml-4 flex flex-col justify-between"><p class="text-xl" data-svelte-h="svelte-xwnshe">$FPL Prediction Sweepstake</p> <p class="text-4xl font-bold" data-svelte-h="svelte-1icqllx">Euro 2024</p> <p class="text-xl" data-svelte-h="svelte-1hdg5zl">Play for free or enter the $FPL sweepstake up until Friday 14th June
-            2024</p> ${$authSignedInStore ? `<a href="/euro2024" data-svelte-h="svelte-1bm7ttp"><button class="btn bg-DARK mt-4 py-4 w-48 rounded-md">Enter Now</button></a>` : `<button class="btn bg-DARK mt-4 py-4 w-48 rounded-md" data-svelte-h="svelte-yce1a2">Connect To Play</button>`}</div></div></div>` : `${`${validate_component(Spinner, "Spinner").$$render($$result, {}, {}, {})} <div class="fixed inset-0 flex flex-col items-center justify-center"><p class="mt-24">${escape(loadingText)}</p></div>`}`}`;
+      return `<div class="mx-4 p-4"><div class="flex justify-between items-center my-2"><h3 class="default-header" data-svelte-h="svelte-rcqdii">Clear Draft</h3> <button class="times-button" data-svelte-h="svelte-2aq7vi">×</button></div> <p data-svelte-h="svelte-idipww">Please confirm you want to clear the draft from your cache.</p> <div class="items-center py-3 flex space-x-4"><button class="default-button fpl-cancel-btn" type="button" data-svelte-h="svelte-1husm0b">Cancel</button> <button class="default-button brand-button" data-svelte-h="svelte-6k1q97">Clear</button></div></div>`;
     }
   })}`;
 });
-const Page$5 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
-  const games = [
-    {
-      title: "Euro 2024",
-      description: "Predict your way through Euro 2024 to win $FPL.",
-      imageUrl: "/FPLCoin.png",
-      link: "/euro2024"
+function createCountryStore() {
+  const { subscribe: subscribe2, set } = writable([]);
+  return {
+    subscribe: subscribe2,
+    setCountries: (countries) => set(countries)
+  };
+}
+const countryStore = createCountryStore();
+var define_process_env_default$6 = { FOOTBALL_GOD_BACKEND_CANISTER_ID: "44kin-waaaa-aaaal-qbxra-cai", FOOTBALL_GOD_FRONTEND_CANISTER_ID: "43loz-3yaaa-aaaal-qbxrq-cai", DFX_NETWORK: "ic" };
+class LeagueService {
+  actor;
+  constructor() {
+    this.actor = ActorFactory.createActor(
+      idlFactory,
+      define_process_env_default$6.FOOTBALL_GOD_BACKEND_CANISTER_ID
+    );
+  }
+  async getLeagues() {
+    const result = await this.actor.getLeagues();
+    if (isError(result))
+      throw new Error("Failed to fetch leagues");
+    return result.ok;
+  }
+  async setLeagueName(leagueId, leagueName) {
+    const identityActor = await ActorFactory.createIdentityActor(
+      authStore,
+      define_process_env_default$6.OPENFPL_BACKEND_CANISTER_ID ?? ""
+    );
+    const result = await identityActor.setLeagueName(leagueId, leagueName);
+    if (isError(result))
+      throw new Error("Failed to set league name");
+  }
+  async setAbbreviatedName(leagueId, abbreviatedName) {
+    const identityActor = await ActorFactory.createIdentityActor(
+      authStore,
+      define_process_env_default$6.OPENFPL_BACKEND_CANISTER_ID ?? ""
+    );
+    const result = await identityActor.setAbbreviatedLeagueName(
+      leagueId,
+      abbreviatedName
+    );
+    if (isError(result))
+      throw new Error("Failed to set abbreviated league name");
+  }
+  async setGoverningBody(leagueId, governingBody) {
+    const identityActor = await ActorFactory.createIdentityActor(
+      authStore,
+      define_process_env_default$6.OPENFPL_BACKEND_CANISTER_ID ?? ""
+    );
+    const result = await identityActor.setLeagueGoverningBody(
+      leagueId,
+      governingBody
+    );
+    if (isError(result))
+      throw new Error("Failed to set governing body");
+  }
+  async setGender(leagueId, gender) {
+    const identityActor = await ActorFactory.createIdentityActor(
+      authStore,
+      define_process_env_default$6.OPENFPL_BACKEND_CANISTER_ID ?? ""
+    );
+    const result = await identityActor.setLeagueGender(leagueId, gender);
+    if (isError(result))
+      throw new Error("Failed to set league gender");
+  }
+  async setDateFormed(leagueId, date) {
+    const identityActor = await ActorFactory.createIdentityActor(
+      authStore,
+      define_process_env_default$6.OPENFPL_BACKEND_CANISTER_ID ?? ""
+    );
+    const result = await identityActor.setLeagueDateFormed(leagueId, date);
+    if (isError(result))
+      throw new Error("Failed to set league formed date");
+  }
+  async setCountryId(leagueId, countryId) {
+    const identityActor = await ActorFactory.createIdentityActor(
+      authStore,
+      define_process_env_default$6.OPENFPL_BACKEND_CANISTER_ID ?? ""
+    );
+    const result = await identityActor.setLeagueCountryId(leagueId, countryId);
+    if (isError(result))
+      throw new Error("Failed to set league country");
+  }
+  async setLogo(leagueId, logo) {
+    const identityActor = await ActorFactory.createIdentityActor(
+      authStore,
+      define_process_env_default$6.OPENFPL_BACKEND_CANISTER_ID ?? ""
+    );
+    const result = await identityActor.setLeagueLogo(leagueId, logo);
+    if (isError(result))
+      throw new Error("Failed to set league logo");
+  }
+  async setTeamCount(leagueId, teamCount) {
+    const identityActor = await ActorFactory.createIdentityActor(
+      authStore,
+      define_process_env_default$6.OPENFPL_BACKEND_CANISTER_ID ?? ""
+    );
+    const result = await identityActor.setTeamCount(leagueId, teamCount);
+    if (isError(result))
+      throw new Error("Failed to set league team count");
+  }
+  async createLeague(dto) {
+    const identityActor = await ActorFactory.createIdentityActor(
+      authStore,
+      define_process_env_default$6.OPENFPL_BACKEND_CANISTER_ID ?? ""
+    );
+    const result = await identityActor.createLeague(dto);
+    if (isError(result))
+      throw new Error("Failed to create league");
+  }
+}
+function createLeagueStore() {
+  const { subscribe: subscribe2, set } = writable([]);
+  async function updateName(leagueId, leagueName) {
+    return new LeagueService().setLeagueName(leagueId, leagueName);
+  }
+  async function updateAbbreviatedName(leagueId, abbreviatedName) {
+    return new LeagueService().setAbbreviatedName(leagueId, abbreviatedName);
+  }
+  async function updateGoverningBody(leagueId, governingBody) {
+    return new LeagueService().setGoverningBody(leagueId, governingBody);
+  }
+  async function updateGender(leagueId, gender) {
+    return new LeagueService().setGender(leagueId, gender);
+  }
+  async function updateDateFormed(leagueId, dateFormed) {
+    return new LeagueService().setDateFormed(leagueId, dateFormed);
+  }
+  async function updateCountryId(leagueId, countryId) {
+    return new LeagueService().setCountryId(leagueId, countryId);
+  }
+  async function updateLogo(leagueId, logo) {
+    return new LeagueService().setLogo(leagueId, logo);
+  }
+  async function updateTeamCount(leagueId, teamCount) {
+    return new LeagueService().setTeamCount(leagueId, teamCount);
+  }
+  return {
+    subscribe: subscribe2,
+    setLeagues: (leagues) => set(leagues),
+    updateName,
+    updateAbbreviatedName,
+    updateGoverningBody,
+    updateGender,
+    updateDateFormed,
+    updateCountryId,
+    updateLogo,
+    updateTeamCount
+  };
+}
+const leagueStore = createLeagueStore();
+var define_process_env_default$5 = { FOOTBALL_GOD_BACKEND_CANISTER_ID: "44kin-waaaa-aaaal-qbxra-cai", FOOTBALL_GOD_FRONTEND_CANISTER_ID: "43loz-3yaaa-aaaal-qbxrq-cai", DFX_NETWORK: "ic" };
+class DataHashService {
+  actor;
+  constructor() {
+    this.actor = ActorFactory.createActor(
+      idlFactory,
+      define_process_env_default$5.FOOTBALL_GOD_BACKEND_CANISTER_ID
+    );
+  }
+  async getDataHashes() {
+    const result = await this.actor.getDataHashes();
+    if (isError(result))
+      throw new Error("Failed to fetch data hashes");
+    return result.ok;
+  }
+}
+var define_process_env_default$4 = { FOOTBALL_GOD_BACKEND_CANISTER_ID: "44kin-waaaa-aaaal-qbxra-cai", FOOTBALL_GOD_FRONTEND_CANISTER_ID: "43loz-3yaaa-aaaal-qbxrq-cai", DFX_NETWORK: "ic" };
+class CountryService {
+  actor;
+  constructor() {
+    this.actor = ActorFactory.createActor(
+      idlFactory,
+      define_process_env_default$4.FOOTBALL_GOD_BACKEND_CANISTER_ID
+    );
+  }
+  /*
+  async getCountries(): Promise<CountryDTO[]> {
+    const result = await this.actor.getCountries();
+    if (isError(result)) throw new Error("Failed to fetch countries");
+    return result.ok;
+  }
+    */
+}
+class StoreManager {
+  constructor() {
+    this.categories = ["countries", "leagues"];
+    this.dataHashService = new DataHashService();
+    this.countryService = new CountryService();
+    this.leagueService = new LeagueService();
+  }
+  async syncStores() {
+    const newHashes = await this.dataHashService.getDataHashes();
+    let error = isError(newHashes);
+    if (error) {
+      console.error("Error fetching data hashes.");
+      return;
     }
-  ];
-  return `  ${validate_component(Layout, "Layout").$$render($$result, {}, {}, {
-    default: () => {
-      return `<div class="min-h-screen flex flex-col p-4"><h1 class="text-3xl font-bold my-6" data-svelte-h="svelte-fogumv">Our Games</h1> <div class="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 w-full max-w-6xl">${each(games, (game) => {
-        return `<a${add_attribute("href", game.link, 0)} class="bg-OPENFPLPURPLE rounded-lg shadow-lg overflow-hidden transform transition-transform hover:scale-105"><img${add_attribute("src", game.imageUrl, 0)}${add_attribute("alt", game.title, 0)} class="w-full h-48 object-cover"> <div class="p-4"><h2 class="text-xl font-bold mb-2">${escape(game.title)}</h2> <p class="">${escape(game.description)}</p></div> </a>`;
-      })}</div></div>`;
+    for (const category of this.categories) {
+      console.log(`syncing ${category}`);
+      const categoryHash = newHashes.find((hash2) => hash2.category === category);
+      if (categoryHash?.hash !== localStorage.getItem(`${category}_hash`)) {
+        await this.syncCategory(category);
+        localStorage.setItem(`${category}_hash`, categoryHash?.hash || "");
+      } else {
+        this.loadFromCache(category);
+      }
     }
-  })}`;
-});
+  }
+  async syncCategory(category) {
+    switch (category) {
+      case "countries":
+        const updatedCountries = await this.countryService.getCountries();
+        countryStore.setCountries(updatedCountries);
+        localStorage.setItem(
+          "countries",
+          JSON.stringify(updatedCountries, replacer)
+        );
+        break;
+      case "leagues":
+        const updatedLeagues = await this.leagueService.getLeagues();
+        leagueStore.setLeagues(updatedLeagues);
+        localStorage.setItem(
+          "leagues",
+          JSON.stringify(updatedLeagues, replacer)
+        );
+        break;
+    }
+  }
+  loadFromCache(category) {
+    const cachedData = localStorage.getItem(category);
+    switch (category) {
+      case "countries":
+        const cachedCountries = JSON.parse(cachedData || "[]");
+        countryStore.setCountries(cachedCountries);
+        break;
+      case "leagues":
+        const cachedLeagues = JSON.parse(cachedData || "[]");
+        leagueStore.setLeagues(cachedLeagues);
+        break;
+    }
+  }
+}
+new StoreManager();
 const Page$4 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
-  let loadingText;
-  let $authSignedInStore, $$unsubscribe_authSignedInStore;
-  $$unsubscribe_authSignedInStore = subscribe(authSignedInStore, (value) => $authSignedInStore = value);
-  loadingText = "Loading, please wait...";
-  $$unsubscribe_authSignedInStore();
-  return `${validate_component(Layout, "Layout").$$render($$result, {}, {}, {
-    default: () => {
-      return `${!$authSignedInStore ? `<p data-svelte-h="svelte-qhegyw">Please sign in to gift an entry.</p>` : `${`${validate_component(Spinner, "Spinner").$$render($$result, {}, {}, {})} <div class="fixed inset-0 flex flex-col items-center justify-center"><p class="mt-24">${escape(loadingText)}</p></div>`}`}`;
-    }
-  })}`;
-});
-const Page$3 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
-  return `${validate_component(Layout, "Layout").$$render($$result, {}, {}, {
-    default: () => {
-      return `<div class="bg-panel mt-4"><h1 class="p-4 mx-1 default-header" data-svelte-h="svelte-1bmq93s">Euro 2024 Leaderboard</h1> <div class="flex flex-row p-4" data-svelte-h="svelte-15mkq1d"><div class="w-1/6"><p>Pos</p></div> <div class="w-3/6"><p>Username</p></div> <div class="w-1/6"><p>Points</p></div> <div class="w-1/6"><p>View</p></div></div> ${`${validate_component(Spinner, "Spinner").$$render($$result, {}, {}, {})}`}</div>`;
-    }
-  })}`;
-});
-const Page$2 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
+  let fixtureId;
+  let $playerEventData, $$unsubscribe_playerEventData = noop, $$subscribe_playerEventData = () => ($$unsubscribe_playerEventData(), $$unsubscribe_playerEventData = subscribe(playerEventData, ($$value) => $playerEventData = $$value), playerEventData);
+  let $$unsubscribe_clubStore;
+  let $selectedPlayers, $$unsubscribe_selectedPlayers;
   let $page, $$unsubscribe_page;
-  let $$unsubscribe_teamStore;
-  let $$unsubscribe_playerStore;
+  $$unsubscribe_clubStore = subscribe(clubStore, (value) => value);
   $$unsubscribe_page = subscribe(page, (value) => $page = value);
-  $$unsubscribe_teamStore = subscribe(teamStore, (value) => value);
-  $$unsubscribe_playerStore = subscribe(playerStore, (value) => value);
-  $page.url.searchParams.get("id");
-  $$unsubscribe_page();
-  $$unsubscribe_teamStore();
-  $$unsubscribe_playerStore();
-  return `${validate_component(Layout, "Layout").$$render($$result, {}, {}, {
-    default: () => {
-      return `<div class="bg-panel mt-2 p-4"><h1 class="my-2 default-header" data-svelte-h="svelte-od2mk5">Euro 2024 Prediction</h1> ${`<div data-svelte-h="svelte-194gxkm">Loading...</div>`}</div>`;
+  let showClearDraftModal = false;
+  let showConfirmDataModal = false;
+  let selectedPlayers = writable([]);
+  $$unsubscribe_selectedPlayers = subscribe(selectedPlayers, (value) => $selectedPlayers = value);
+  let playerEventData = writable([]);
+  $$subscribe_playerEventData();
+  async function confirmFixtureData() {
+    busyStore.startBusy({
+      initiator: "confirm-data",
+      text: "Saving fixture data..."
+    });
+    try {
+      localStorage.removeItem(`fixtureDraft_${fixtureId}`);
+      toastsShow({
+        text: "Fixture data saved.",
+        level: "success",
+        duration: 2e3
+      });
+      goto("/fixture-validation");
+    } catch (error) {
+      toastsError({
+        msg: { text: "Error saving fixture data." },
+        err: error
+      });
+      console.error("Error saving fixture data: ", error);
+    } finally {
+      showConfirmDataModal = false;
+      busyStore.stopBusy("confirm-data");
     }
-  })}`;
-});
-const Page$1 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
+  }
+  function clearDraft() {
+    $$subscribe_playerEventData(playerEventData = writable([]));
+    localStorage.removeItem(`fixtureDraft_${fixtureId}`);
+    toastsShow({
+      text: "Draft cleared.",
+      level: "success",
+      duration: 2e3
+    });
+    closeConfirmClearDraftModal();
+  }
+  function closeConfirmClearDraftModal() {
+    showClearDraftModal = false;
+  }
+  function closeConfirmDataModal() {
+    showConfirmDataModal = false;
+  }
+  fixtureId = Number($page.url.searchParams.get("id"));
+  $playerEventData.length == 0 || $playerEventData.filter((x) => convertEvent(x.eventType) == 0).length != $selectedPlayers.length;
+  $$unsubscribe_playerEventData();
+  $$unsubscribe_clubStore();
+  $$unsubscribe_selectedPlayers();
+  $$unsubscribe_page();
   return `${validate_component(Layout, "Layout").$$render($$result, {}, {}, {
     default: () => {
       return `${`${validate_component(Spinner, "Spinner").$$render($$result, {}, {}, {})}`}`;
     }
-  })}`;
-});
-const Vision = create_ssr_component(($$result, $$props, $$bindings, slots) => {
-  return `<div class="flex flex-col space-y-2" data-svelte-h="svelte-1jobdhn"><h1 class="text-2xl">Vision</h1> <p>FootballGod is the home of football on the Internet Computer blockchain, 
-    containing unique games which enhance a football fans experience.</p> <p>Our games are designed to reward fans for their footballing knowledge in our utility token $FOOTBALL.</p> <h1 class="text-xl">The Internet Computer</h1> <p>The Internet Computer Protocol has provided the world with a foundation
-    for genuine decentralisation. This leap in technology allows us to transform how we as business interact with the 
-    Software as a Service (SaaS) platforms we are increasingly reliant on.</p></div>`;
-});
-const Product = create_ssr_component(($$result, $$props, $$bindings, slots) => {
-  return `<div class="flex flex-col space-y-2" data-svelte-h="svelte-1v3bzuj"><h1 class="text-2xl">Product</h1> <p>FootballGod is already live, running mini games for the Premier League and Euro 2024. 
-    Next we introduce larger games, the first being <a href="https://transferkings.xyz" target="_blank" class="text-DARK">Transfer Kings</a>, 
-    allowing you to become your own football agent. Transfer Kings has been specifically designed to keep people invested in the FootballGod ecosystem for a number of years.</p> <p>The second phase of FootballGod is to introduce fixed odds football betting to the platform. 
-    This functionality will be restricted worldwide, only accessible as gambling licenses in each country are identified.</p> <p>Further FootballGod games are in the works, each integrating the $FOOTBALL token for prizes. 
-    As our user base grows, more games will be introduced that utilise our valuable football data and reward users with $FOOTBALL tokens for their participation.</p></div>`;
-});
-const Dao = create_ssr_component(($$result, $$props, $$bindings, slots) => {
-  return `<div class="flex flex-col space-y-2" data-svelte-h="svelte-1m86430"><h1 class="text-2xl">The FootballGod DAO</h1> <p>Details of the FootballGod DAO will be released soon.</p></div>`;
-});
-const Marketing = create_ssr_component(($$result, $$props, $$bindings, slots) => {
-  return `<div class="flex flex-col space-y-2" data-svelte-h="svelte-7gxhp9"><h1 class="text-2xl">Marketing</h1> <p>FootballGod is developed by <a href="https://waterwaylabs.xyz" target="_blank" class="text-DARK">Waterway Labs</a>.</p> <p>Waterway Labs are developing a variety of applications aimed to introduce people &amp; businesses to the ICP blockchain.
-        Waterway Labs is UK based, with a plan to introduce a wide range of football fans to FootballGod. Our plan is to introduce fans to the platform in each UK city we visit, inviting users to win $FOOTBALL tokens through real life football games.</p> <p>All content will appear on our Youtube channel and podcast, giving FootballGod a variety of channels for exposure.</p></div>`;
-});
-const Roadmap = create_ssr_component(($$result, $$props, $$bindings, slots) => {
-  return `<div class="flex flex-col space-y-2" data-svelte-h="svelte-t9z569"><h1 class="text-2xl">Roadmap</h1> <div class="space-y-4"><h1 class="text-xl">Initial Phase: Mini Games</h1> <p>2024: Transfer Kings</p> <ul class="list-disc px-4"><li>The beginning of Transfer Kings, allowing IC users to become their own football agent to earn $FOOTBALL tokens.</li></ul> <p>2024: Score Predictor</p> <ul class="list-disc px-4"><li>The original footballgod predictor game makes a return for the 2024/25 season.</li></ul></div></div>`;
-});
-const Team = create_ssr_component(($$result, $$props, $$bindings, slots) => {
-  return `<div class="flex flex-col space-y-2" data-svelte-h="svelte-1l31po5"><h1 class="text-2xl">Team</h1> <p>Waterway Labs developed OpenFPL, a current Premier League football based DAO on the Internet Computer blockchain.</p> <p>The Waterway Labs team is in the process of expansion, bringing on a new Managing &amp; Operations Director in June 2024. This allows the founder, James Beadle, to focus on the development of FootballGod.</p> <p>Other team members will be announced in the coming months.</p></div>`;
-});
-const System_architecture = create_ssr_component(($$result, $$props, $$bindings, slots) => {
-  return `<div class="flex flex-col space-y-2" data-svelte-h="svelte-1irf8r3"><h1 class="text-2xl">System Architecture</h1> <p>FootballGod has the following core canisters:</p> <ul><li>Players Canister: 
-            Stores all information on each football player&#39;s career from in game events to career achievements.</li> <li>Events Canister: All sports event</li> <li>Users Canister: Horizontally scaled canisters to store all user information.</li> <li>Index Canister: Used to map information between canisters.</li> <li>Odds Canister: 
-            Stores all live and historical odds information for all games.</li></ul> <p>If a user purchases a private agency, a single canister is created to manage the agency data.</p></div>`;
+  })} ${``} ${``} ${validate_component(Confirm_fixture_data_modal, "ConfirmFixtureDataModal").$$render(
+    $$result,
+    {
+      visible: showConfirmDataModal,
+      onConfirm: confirmFixtureData,
+      closeModal: closeConfirmDataModal
+    },
+    {},
+    {}
+  )} ${validate_component(Clear_draft_modal, "ClearDraftModal").$$render(
+    $$result,
+    {
+      closeModal: closeConfirmClearDraftModal,
+      visible: showClearDraftModal,
+      onConfirm: clearDraft
+    },
+    {},
+    {}
+  )}`;
 });
 const css = {
-  code: ".pip.svelte-1ubgm3v{width:10px;height:10px;background-color:gray;border-radius:50%;margin:0 2px}.pip.is-active.svelte-1ubgm3v{--tw-bg-opacity:1;background-color:rgb(26 26 29 / var(--tw-bg-opacity))}@media(min-width: 640px){.pip.svelte-1ubgm3v{width:12px;height:12px}}",
-  map: null
+  code: ".local-spinner.svelte-pvdm52{border:5px solid rgba(255, 255, 255, 0.3);border-top:5px solid white;border-radius:50%;width:50px;height:50px;position:absolute;top:50%;left:50%;transform:translate(-50%, -50%);animation:svelte-pvdm52-spin 1s linear infinite}@keyframes svelte-pvdm52-spin{0%{transform:translate(-50%, -50%) rotate(0deg)}100%{transform:translate(-50%, -50%) rotate(360deg)}}",
+  map: '{"version":3,"file":"local-spinner.svelte","sources":["local-spinner.svelte"],"sourcesContent":["<div class=\\"local-spinner\\" />\\n\\n<style>\\n  .local-spinner {\\n    border: 5px solid rgba(255, 255, 255, 0.3);\\n    border-top: 5px solid white;\\n    border-radius: 50%;\\n    width: 50px;\\n    height: 50px;\\n    position: absolute;\\n    top: 50%;\\n    left: 50%;\\n    transform: translate(-50%, -50%);\\n    animation: spin 1s linear infinite;\\n  }\\n\\n  @keyframes spin {\\n    0% {\\n      transform: translate(-50%, -50%) rotate(0deg);\\n    }\\n    100% {\\n      transform: translate(-50%, -50%) rotate(360deg);\\n    }\\n  }</style>\\n"],"names":[],"mappings":"AAGE,4BAAe,CACb,MAAM,CAAE,GAAG,CAAC,KAAK,CAAC,KAAK,GAAG,CAAC,CAAC,GAAG,CAAC,CAAC,GAAG,CAAC,CAAC,GAAG,CAAC,CAC1C,UAAU,CAAE,GAAG,CAAC,KAAK,CAAC,KAAK,CAC3B,aAAa,CAAE,GAAG,CAClB,KAAK,CAAE,IAAI,CACX,MAAM,CAAE,IAAI,CACZ,QAAQ,CAAE,QAAQ,CAClB,GAAG,CAAE,GAAG,CACR,IAAI,CAAE,GAAG,CACT,SAAS,CAAE,UAAU,IAAI,CAAC,CAAC,IAAI,CAAC,CAChC,SAAS,CAAE,kBAAI,CAAC,EAAE,CAAC,MAAM,CAAC,QAC5B,CAEA,WAAW,kBAAK,CACd,EAAG,CACD,SAAS,CAAE,UAAU,IAAI,CAAC,CAAC,IAAI,CAAC,CAAC,OAAO,IAAI,CAC9C,CACA,IAAK,CACH,SAAS,CAAE,UAAU,IAAI,CAAC,CAAC,IAAI,CAAC,CAAC,OAAO,MAAM,CAChD,CACF"}'
 };
-const Page = create_ssr_component(($$result, $$props, $$bindings, slots) => {
-  let activeTab = "vision";
-  const tabs = [
-    { name: "Vision", component: Vision },
-    { name: "Product", component: Product },
-    { name: "DAO", component: Dao },
-    { name: "Marketing", component: Marketing },
-    { name: "Road Map", component: Roadmap },
-    { name: "Team", component: Team },
-    {
-      name: "System Architecture",
-      component: System_architecture
-    }
-  ];
-  function isActiveTab(index) {
-    return tabs[index].name.toLowerCase() === activeTab;
-  }
+const Local_spinner = create_ssr_component(($$result, $$props, $$bindings, slots) => {
   $$result.css.add(css);
+  return `<div class="local-spinner svelte-pvdm52"></div>`;
+});
+const Revalue_player_up = create_ssr_component(($$result, $$props, $$bindings, slots) => {
+  let isSubmitDisabled;
+  let $$unsubscribe_playerStore;
+  let $clubStore, $$unsubscribe_clubStore;
+  $$unsubscribe_playerStore = subscribe(playerStore, (value) => value);
+  $$unsubscribe_clubStore = subscribe(clubStore, (value) => $clubStore = value);
+  let { visible } = $$props;
+  let { closeModal } = $$props;
+  let selectedPlayerId = 0;
+  let showConfirm = false;
+  if ($$props.visible === void 0 && $$bindings.visible && visible !== void 0)
+    $$bindings.visible(visible);
+  if ($$props.closeModal === void 0 && $$bindings.closeModal && closeModal !== void 0)
+    $$bindings.closeModal(closeModal);
+  isSubmitDisabled = selectedPlayerId <= 0;
+  {
+    if (isSubmitDisabled && showConfirm) {
+      showConfirm = false;
+    }
+  }
+  $$unsubscribe_playerStore();
+  $$unsubscribe_clubStore();
+  return `${validate_component(Modal, "Modal").$$render($$result, { visible }, {}, {
+    default: () => {
+      return `<div class="mx-4 p-4"><div class="flex justify-between items-center my-2"><h3 class="default-header" data-svelte-h="svelte-15yd750">Revalue Player Up</h3> <button class="times-button" data-svelte-h="svelte-jkt426">×</button></div> <div class="flex justify-start items-center w-full"><div class="w-full flex-col space-y-4 mb-2"><div class="flex-col space-y-2"><p data-svelte-h="svelte-1tp620s">Select the player&#39;s club:</p> <select class="p-2 fpl-dropdown min-w-[100px]"><option${add_attribute("value", 0, 0)} data-svelte-h="svelte-gooey4">Select Club</option>${each($clubStore, (club) => {
+        return `<option${add_attribute("value", club.id, 0)}>${escape(club.friendlyName)}</option>`;
+      })}</select></div> ${``} ${``} <div class="border-b border-gray-200"></div> <div class="items-center flex space-x-4"><button class="px-4 py-2 default-button fpl-cancel-btn min-w-[150px]" type="button" data-svelte-h="svelte-19jfrwv">Cancel</button> <button${add_attribute(
+        "class",
+        `${isSubmitDisabled ? "bg-gray-500" : "fpl-purple-btn"} 
+                        px-4 py-2 default-button min-w-[150px]`,
+        0
+      )} ${isSubmitDisabled ? "disabled" : ""}>Raise Proposal</button></div> ${showConfirm ? `<div class="items-center flex" data-svelte-h="svelte-6fi0oe"><p class="text-orange-400">Failed proposals will cost the proposer 10 $FPL tokens.</p></div> <div class="items-center flex"><button${add_attribute(
+        "class",
+        `${isSubmitDisabled ? "bg-gray-500" : "fpl-purple-btn"} 
+                            px-4 py-2 default-button w-full`,
+        0
+      )} ${isSubmitDisabled ? "disabled" : ""}>Confirm Submit Proposal</button></div>` : ``}</div></div> ${``}</div>`;
+    }
+  })}`;
+});
+const Revalue_player_down = create_ssr_component(($$result, $$props, $$bindings, slots) => {
+  let isSubmitDisabled;
+  let $$unsubscribe_playerStore;
+  let $clubStore, $$unsubscribe_clubStore;
+  $$unsubscribe_playerStore = subscribe(playerStore, (value) => value);
+  $$unsubscribe_clubStore = subscribe(clubStore, (value) => $clubStore = value);
+  let { visible } = $$props;
+  let { closeModal } = $$props;
+  let selectedPlayerId = 0;
+  let showConfirm = false;
+  if ($$props.visible === void 0 && $$bindings.visible && visible !== void 0)
+    $$bindings.visible(visible);
+  if ($$props.closeModal === void 0 && $$bindings.closeModal && closeModal !== void 0)
+    $$bindings.closeModal(closeModal);
+  isSubmitDisabled = selectedPlayerId <= 0;
+  {
+    if (isSubmitDisabled && showConfirm) {
+      showConfirm = false;
+    }
+  }
+  $$unsubscribe_playerStore();
+  $$unsubscribe_clubStore();
+  return `${validate_component(Modal, "Modal").$$render($$result, { visible }, {}, {
+    default: () => {
+      return `<div class="mx-4 p-4"><div class="flex justify-between items-center my-2"><h3 class="default-header" data-svelte-h="svelte-itffcx">Revalue Player Down</h3> <button class="times-button" data-svelte-h="svelte-jkt426">×</button></div> <div class="flex justify-start items-center w-full"><div class="w-full flex-col space-y-4 mb-2"><div class="flex-col space-y-2"><p data-svelte-h="svelte-1tp620s">Select the player&#39;s club:</p> <select class="p-2 fpl-dropdown min-w-[100px]"><option${add_attribute("value", 0, 0)} data-svelte-h="svelte-gooey4">Select Club</option>${each($clubStore, (club) => {
+        return `<option${add_attribute("value", club.id, 0)}>${escape(club.friendlyName)}</option>`;
+      })}</select></div> ${``} ${``} <div class="border-b border-gray-200"></div> <div class="items-center flex space-x-4"><button class="px-4 py-2 default-button fpl-cancel-btn min-w-[150px]" type="button" data-svelte-h="svelte-19jfrwv">Cancel</button> <button${add_attribute(
+        "class",
+        `${isSubmitDisabled ? "bg-gray-500" : "fpl-purple-btn"} 
+              px-4 py-2 default-button min-w-[150px]`,
+        0
+      )} ${isSubmitDisabled ? "disabled" : ""}>Raise Proposal</button></div> ${showConfirm ? `<div class="items-center flex" data-svelte-h="svelte-6fi0oe"><p class="text-orange-400">Failed proposals will cost the proposer 10 $FPL tokens.</p></div> <div class="items-center flex"><button${add_attribute(
+        "class",
+        `${isSubmitDisabled ? "bg-gray-500" : "fpl-purple-btn"} 
+                            px-4 py-2 default-button w-full`,
+        0
+      )} ${isSubmitDisabled ? "disabled" : ""}>Confirm Submit Proposal</button></div>` : ``}</div></div> ${``}</div>`;
+    }
+  })}`;
+});
+var define_process_env_default$3 = { FOOTBALL_GOD_BACKEND_CANISTER_ID: "44kin-waaaa-aaaal-qbxra-cai", FOOTBALL_GOD_FRONTEND_CANISTER_ID: "43loz-3yaaa-aaaal-qbxrq-cai", DFX_NETWORK: "ic" };
+const Move_fixture = create_ssr_component(($$result, $$props, $$bindings, slots) => {
+  let isSubmitDisabled;
+  let $clubStore, $$unsubscribe_clubStore;
+  let $$unsubscribe_fixtureStore;
+  $$unsubscribe_clubStore = subscribe(clubStore, (value) => $clubStore = value);
+  $$unsubscribe_fixtureStore = subscribe(fixtureStore, (value) => value);
+  let { visible } = $$props;
+  let { closeModal } = $$props;
+  let gameweeks = Array.from(
+    {
+      length: Number(define_process_env_default$3.TOTAL_GAMEWEEKS)
+    },
+    (_, i) => i + 1
+  );
+  let selectedFixtureId = 0;
+  let gameweekFixtures = [];
+  let date = "";
+  let time = "";
+  let showConfirm = false;
+  function getTeamById(teamId) {
+    return $clubStore.find((x) => x.id === teamId);
+  }
+  if ($$props.visible === void 0 && $$bindings.visible && visible !== void 0)
+    $$bindings.visible(visible);
+  if ($$props.closeModal === void 0 && $$bindings.closeModal && closeModal !== void 0)
+    $$bindings.closeModal(closeModal);
+  isSubmitDisabled = !selectedFixtureId;
+  {
+    if (isSubmitDisabled && showConfirm) {
+      showConfirm = false;
+    }
+  }
+  $$unsubscribe_clubStore();
+  $$unsubscribe_fixtureStore();
+  return `${validate_component(Modal, "Modal").$$render($$result, { visible }, {}, {
+    default: () => {
+      return `<div class="mx-4 p-4"><div class="flex justify-between items-center my-2"><h3 class="default-header" data-svelte-h="svelte-kmrp2y">Move Fixture</h3> <button class="times-button" data-svelte-h="svelte-jkt426">×</button></div> <div class="flex justify-start items-center w-full"><div class="w-full flex-col space-y-4 mb-2"><div class="flex-col space-y-2"><p data-svelte-h="svelte-1hdxidk">Select Gameweek:</p> <select class="p-2 fpl-dropdown my-4 min-w-[100px]"><option${add_attribute("value", 0, 0)} data-svelte-h="svelte-1qi0ln6">Select Gameweek</option>${each(gameweeks, (gameweek) => {
+        return `<option${add_attribute("value", gameweek, 0)}>Gameweek ${escape(gameweek)}</option>`;
+      })}</select></div> <div class="flex-col space-y-2"><p data-svelte-h="svelte-1mcsvml">Select Fixture:</p> <select class="p-2 fpl-dropdown my-4 min-w-[100px]"><option${add_attribute("value", 0, 0)} data-svelte-h="svelte-1xsaz9j">Select Fixture</option>${each(gameweekFixtures, (fixture) => {
+        let homeTeam = getTeamById(fixture.homeClubId), awayTeam = getTeamById(fixture.awayClubId);
+        return `  <option${add_attribute("value", fixture.id, 0)}>${escape(homeTeam.friendlyName)} v ${escape(awayTeam.friendlyName)}</option>`;
+      })}</select></div> <div class="border-b border-gray-200 my-4"></div> <p class="mr-2 my-2" data-svelte-h="svelte-1ct6cbi">Set new date:</p> <div class="flex flex-row my-2"><p class="mr-2" data-svelte-h="svelte-1gu3l1z">Select Date:</p> <input type="date" class="input input-bordered"${add_attribute("value", date, 0)}></div> <div class="flex flex-row my-2"><p class="mr-2" data-svelte-h="svelte-y26t78">Select Time:</p> <input type="time" class="input input-bordered"${add_attribute("value", time, 0)}></div> <div class="flex flex-row my-2 items-center"><p class="mr-2" data-svelte-h="svelte-1ullkw5">Select Gameweek:</p> <select class="p-2 fpl-dropdown my-4 min-w-[100px]"><option${add_attribute("value", 0, 0)} data-svelte-h="svelte-1kvgm78">Select New Gameweek</option>${each(gameweeks, (gameweek) => {
+        return `<option${add_attribute("value", gameweek, 0)}>Gameweek ${escape(gameweek)}</option>`;
+      })}</select></div> <div class="border-b border-gray-200"></div> <div class="items-center flex space-x-4"><button class="px-4 py-2 default-button fpl-cancel-btn min-w-[150px]" type="button" data-svelte-h="svelte-19jfrwv">Cancel</button> <button${add_attribute(
+        "class",
+        `${isSubmitDisabled ? "bg-gray-500" : "fpl-purple-btn"} 
+                        px-4 py-2 default-button min-w-[150px]`,
+        0
+      )} ${isSubmitDisabled ? "disabled" : ""}>Raise Proposal</button></div> ${showConfirm ? `<div class="items-center flex" data-svelte-h="svelte-6fi0oe"><p class="text-orange-400">Failed proposals will cost the proposer 10 $FPL tokens.</p></div> <div class="items-center flex"><button${add_attribute(
+        "class",
+        `${isSubmitDisabled ? "bg-gray-500" : "fpl-purple-btn"} 
+                            px-4 py-2 default-button w-full`,
+        0
+      )} ${isSubmitDisabled ? "disabled" : ""}>Confirm Submit Proposal</button></div>` : ``}</div></div> ${`${validate_component(Local_spinner, "LocalSpinner").$$render($$result, {}, {}, {})}`}</div>`;
+    }
+  })}`;
+});
+var define_process_env_default$2 = { FOOTBALL_GOD_BACKEND_CANISTER_ID: "44kin-waaaa-aaaal-qbxra-cai", FOOTBALL_GOD_FRONTEND_CANISTER_ID: "43loz-3yaaa-aaaal-qbxrq-cai", DFX_NETWORK: "ic" };
+const Postpone_fixture = create_ssr_component(($$result, $$props, $$bindings, slots) => {
+  let isSubmitDisabled;
+  let $clubStore, $$unsubscribe_clubStore;
+  let $$unsubscribe_fixtureStore;
+  $$unsubscribe_clubStore = subscribe(clubStore, (value) => $clubStore = value);
+  $$unsubscribe_fixtureStore = subscribe(fixtureStore, (value) => value);
+  let { visible } = $$props;
+  let { closeModal } = $$props;
+  let gameweeks = Array.from(
+    {
+      length: Number(define_process_env_default$2.TOTAL_GAMEWEEKS)
+    },
+    (_, i) => i + 1
+  );
+  let selectedFixtureId = 0;
+  let gameweekFixtures = [];
+  let showConfirm = false;
+  function getTeamById(teamId) {
+    return $clubStore.find((x) => x.id === teamId);
+  }
+  if ($$props.visible === void 0 && $$bindings.visible && visible !== void 0)
+    $$bindings.visible(visible);
+  if ($$props.closeModal === void 0 && $$bindings.closeModal && closeModal !== void 0)
+    $$bindings.closeModal(closeModal);
+  isSubmitDisabled = !selectedFixtureId;
+  {
+    if (isSubmitDisabled && showConfirm) {
+      showConfirm = false;
+    }
+  }
+  $$unsubscribe_clubStore();
+  $$unsubscribe_fixtureStore();
+  return `${validate_component(Modal, "Modal").$$render($$result, { visible }, {}, {
+    default: () => {
+      return `<div class="mx-4 p-4"><div class="flex justify-between items-center my-2"><h3 class="default-header" data-svelte-h="svelte-p6nm2f">Postpone Fixture</h3> <button class="times-button" data-svelte-h="svelte-jkt426">×</button></div> <div class="flex justify-start items-center w-full"><div class="w-full flex-col space-y-4 mb-2"><div class="flex-col space-y-2"><p data-svelte-h="svelte-1hdxidk">Select Gameweek:</p> <select class="p-2 fpl-dropdown my-4 min-w-[100px]"><option${add_attribute("value", 0, 0)} data-svelte-h="svelte-1qi0ln6">Select Gameweek</option>${each(gameweeks, (gameweek) => {
+        return `<option${add_attribute("value", gameweek, 0)}>Gameweek ${escape(gameweek)}</option>`;
+      })}</select></div> <div class="flex-col space-y-2"><p data-svelte-h="svelte-1mcsvml">Select Fixture:</p> <select class="p-2 fpl-dropdown my-4 min-w-[100px]"><option${add_attribute("value", 0, 0)} data-svelte-h="svelte-1xsaz9j">Select Fixture</option>${each(gameweekFixtures, (fixture) => {
+        let homeTeam = getTeamById(fixture.homeClubId), awayTeam = getTeamById(fixture.awayClubId);
+        return `  <option${add_attribute("value", fixture.id, 0)}>${escape(homeTeam.friendlyName)} v ${escape(awayTeam.friendlyName)}</option>`;
+      })}</select></div> <div class="border-b border-gray-200"></div> <div class="items-center flex space-x-4"><button class="px-4 py-2 default-button fpl-cancel-btn min-w-[150px]" type="button" data-svelte-h="svelte-19jfrwv">Cancel</button> <button${add_attribute(
+        "class",
+        `${isSubmitDisabled ? "bg-gray-500" : "fpl-purple-btn"} 
+                        px-4 py-2 default-button min-w-[150px]`,
+        0
+      )} ${isSubmitDisabled ? "disabled" : ""}>Raise Proposal</button></div> ${showConfirm ? `<div class="items-center flex" data-svelte-h="svelte-6fi0oe"><p class="text-orange-400">Failed proposals will cost the proposer 10 $FPL tokens.</p></div> <div class="items-center flex"><button${add_attribute(
+        "class",
+        `${isSubmitDisabled ? "bg-gray-500" : "fpl-purple-btn"} 
+                            px-4 py-2 default-button w-full`,
+        0
+      )} ${isSubmitDisabled ? "disabled" : ""}>Confirm Submit Proposal</button></div>` : ``}</div></div> ${`${validate_component(Local_spinner, "LocalSpinner").$$render($$result, {}, {}, {})}`}</div>`;
+    }
+  })}`;
+});
+var define_process_env_default$1 = { FOOTBALL_GOD_BACKEND_CANISTER_ID: "44kin-waaaa-aaaal-qbxra-cai", FOOTBALL_GOD_FRONTEND_CANISTER_ID: "43loz-3yaaa-aaaal-qbxrq-cai", DFX_NETWORK: "ic" };
+const Reschedule_fixture = create_ssr_component(($$result, $$props, $$bindings, slots) => {
+  let isSubmitDisabled;
+  let $clubStore, $$unsubscribe_clubStore;
+  $$unsubscribe_clubStore = subscribe(clubStore, (value) => $clubStore = value);
+  let { visible } = $$props;
+  let { closeModal } = $$props;
+  let gameweeks = Array.from(
+    {
+      length: Number(define_process_env_default$1.TOTAL_GAMEWEEKS)
+    },
+    (_, i) => i + 1
+  );
+  let selectedFixtureId = 0;
+  let postponedFixtures = [];
+  let date = "";
+  let time = "";
+  let showConfirm = false;
+  function getTeamById(teamId) {
+    return $clubStore.find((x) => x.id === teamId);
+  }
+  if ($$props.visible === void 0 && $$bindings.visible && visible !== void 0)
+    $$bindings.visible(visible);
+  if ($$props.closeModal === void 0 && $$bindings.closeModal && closeModal !== void 0)
+    $$bindings.closeModal(closeModal);
+  isSubmitDisabled = !selectedFixtureId;
+  {
+    if (isSubmitDisabled && showConfirm) {
+      showConfirm = false;
+    }
+  }
+  $$unsubscribe_clubStore();
+  return `${validate_component(Modal, "Modal").$$render($$result, { visible }, {}, {
+    default: () => {
+      return `<div class="mx-4 p-4"><div class="flex justify-between items-center my-2"><h3 class="default-header" data-svelte-h="svelte-q68hh1">Reschedule Fixture</h3> <button class="times-button" data-svelte-h="svelte-jkt426">×</button></div> <div class="flex justify-start items-center w-full"><div class="w-full flex-col space-y-4 mb-2"><div class="flex-col space-y-2"><p data-svelte-h="svelte-ywwbfb">Select Postponed Fixture:</p> <select class="p-2 fpl-dropdown my-4 min-w-[100px]"><option${add_attribute("value", 0, 0)} data-svelte-h="svelte-1xsaz9j">Select Fixture</option>${each(postponedFixtures, (fixture) => {
+        let homeTeam = getTeamById(fixture.homeClubId), awayTeam = getTeamById(fixture.awayClubId);
+        return `  <option${add_attribute("value", fixture.id, 0)}>${escape(homeTeam.friendlyName)} v ${escape(awayTeam.friendlyName)}</option>`;
+      })}</select></div> <div class="border-b border-gray-200"></div> <p class="mr-2 my-2" data-svelte-h="svelte-1ct6cbi">Set new date:</p> <div class="flex flex-row my-2"><p class="mr-2" data-svelte-h="svelte-1gu3l1z">Select Date:</p> <input type="date" class="input input-bordered"${add_attribute("value", date, 0)}></div> <div class="flex flex-row my-2"><p class="mr-2" data-svelte-h="svelte-y26t78">Select Time:</p> <input type="time" class="input input-bordered"${add_attribute("value", time, 0)}></div> <div class="flex flex-row my-2 items-center"><p class="mr-2" data-svelte-h="svelte-1ullkw5">Select Gameweek:</p> <select class="p-2 fpl-dropdown min-w-[100px]"><option${add_attribute("value", 0, 0)} data-svelte-h="svelte-1kvgm78">Select New Gameweek</option>${each(gameweeks, (gameweek) => {
+        return `<option${add_attribute("value", gameweek, 0)}>Gameweek ${escape(gameweek)}</option>`;
+      })}</select></div> <div class="border-b border-gray-200"></div> <div class="items-center flex space-x-4"><button class="px-4 py-2 default-button fpl-cancel-btn min-w-[150px]" type="button" data-svelte-h="svelte-19jfrwv">Cancel</button> <button${add_attribute(
+        "class",
+        `${isSubmitDisabled ? "bg-gray-500" : "fpl-purple-btn"} 
+                        px-4 py-2 default-button min-w-[150px]`,
+        0
+      )} ${isSubmitDisabled ? "disabled" : ""}>Raise Proposal</button></div> ${showConfirm ? `<div class="items-center flex" data-svelte-h="svelte-6fi0oe"><p class="text-orange-400">Failed proposals will cost the proposer 10 $FPL tokens.</p></div> <div class="items-center flex"><button${add_attribute(
+        "class",
+        `${isSubmitDisabled ? "bg-gray-500" : "fpl-purple-btn"} 
+                            px-4 py-2 default-button w-full`,
+        0
+      )} ${isSubmitDisabled ? "disabled" : ""}>Confirm Submit Proposal</button></div>` : ``}</div></div> ${`${validate_component(Local_spinner, "LocalSpinner").$$render($$result, {}, {}, {})}`}</div>`;
+    }
+  })}`;
+});
+const Loan_player = create_ssr_component(($$result, $$props, $$bindings, slots) => {
+  let isSubmitDisabled;
+  let $$unsubscribe_playerStore;
+  let $clubStore, $$unsubscribe_clubStore;
+  $$unsubscribe_playerStore = subscribe(playerStore, (value) => value);
+  $$unsubscribe_clubStore = subscribe(clubStore, (value) => $clubStore = value);
+  let { visible } = $$props;
+  let { closeModal } = $$props;
+  let selectedPlayerId = 0;
+  let showConfirm = false;
+  if ($$props.visible === void 0 && $$bindings.visible && visible !== void 0)
+    $$bindings.visible(visible);
+  if ($$props.closeModal === void 0 && $$bindings.closeModal && closeModal !== void 0)
+    $$bindings.closeModal(closeModal);
+  isSubmitDisabled = selectedPlayerId <= 0;
+  {
+    if (isSubmitDisabled && showConfirm) {
+      showConfirm = false;
+    }
+  }
+  $$unsubscribe_playerStore();
+  $$unsubscribe_clubStore();
+  return `${validate_component(Modal, "Modal").$$render($$result, { visible }, {}, {
+    default: () => {
+      return `<div class="mx-4 p-4"><div class="flex justify-between items-center my-2"><h3 class="default-header" data-svelte-h="svelte-yv1guj">Loan Player</h3> <button class="times-button" data-svelte-h="svelte-2aq7vi">×</button></div> <div class="flex justify-start items-center w-full"><div class="w-full flex-col space-y-4 mb-2"><div class="flex-col space-y-2"><p data-svelte-h="svelte-1tp620s">Select the player&#39;s club:</p> <select class="p-2 fpl-dropdown min-w-[100px]"><option${add_attribute("value", 0, 0)} data-svelte-h="svelte-gooey4">Select Club</option>${each($clubStore, (club) => {
+        return `<option${add_attribute("value", club.id, 0)}>${escape(club.friendlyName)}</option>`;
+      })}</select></div> ${``} <div class="border-b border-gray-200"></div> <div class="items-center flex space-x-4"><button class="px-4 py-2 default-button fpl-cancel-btn min-w-[150px]" type="button" data-svelte-h="svelte-19jfrwv">Cancel</button> <button${add_attribute(
+        "class",
+        `${isSubmitDisabled ? "bg-gray-500" : "fpl-purple-btn"} 
+                        px-4 py-2 default-button min-w-[150px]`,
+        0
+      )} ${isSubmitDisabled ? "disabled" : ""}>Raise Proposal</button></div> ${showConfirm ? `<div class="items-center flex" data-svelte-h="svelte-6fi0oe"><p class="text-orange-400">Failed proposals will cost the proposer 10 $FPL tokens.</p></div> <div class="items-center flex"><button${add_attribute(
+        "class",
+        `${isSubmitDisabled ? "bg-gray-500" : "fpl-purple-btn"} 
+                            px-4 py-2 default-button w-full`,
+        0
+      )} ${isSubmitDisabled ? "disabled" : ""}>Confirm Submit Proposal</button></div>` : ``}</div></div> ${``}</div>`;
+    }
+  })}`;
+});
+const Transfer_player = create_ssr_component(($$result, $$props, $$bindings, slots) => {
+  let isSubmitDisabled;
+  let $$unsubscribe_playerStore;
+  let $leagueStore, $$unsubscribe_leagueStore;
+  $$unsubscribe_playerStore = subscribe(playerStore, (value) => value);
+  $$unsubscribe_leagueStore = subscribe(leagueStore, (value) => $leagueStore = value);
+  let { visible } = $$props;
+  let { closeModal } = $$props;
+  let selectedCurrentLeagueId = 0;
+  let showConfirm = false;
+  if ($$props.visible === void 0 && $$bindings.visible && visible !== void 0)
+    $$bindings.visible(visible);
+  if ($$props.closeModal === void 0 && $$bindings.closeModal && closeModal !== void 0)
+    $$bindings.closeModal(closeModal);
+  isSubmitDisabled = selectedCurrentLeagueId <= 0;
+  {
+    if (isSubmitDisabled && showConfirm) {
+      showConfirm = false;
+    }
+  }
+  $$unsubscribe_playerStore();
+  $$unsubscribe_leagueStore();
+  return `${validate_component(Modal, "Modal").$$render($$result, { visible }, {}, {
+    default: () => {
+      return `<div class="mx-4 p-4"><div class="flex justify-between items-center my-2"><h3 class="default-header" data-svelte-h="svelte-eogsmc">Transfer Player</h3> <button class="times-button" data-svelte-h="svelte-jkt426">×</button></div> <div class="flex justify-start items-center w-full"><div class="w-full flex-col space-y-4 mb-2"><p data-svelte-h="svelte-1yqgbrz">Select the player&#39;s league:</p> <select class="p-2 fpl-dropdown min-w-[100px]"><option${add_attribute("value", 0, 0)} data-svelte-h="svelte-1ctg2hj">Select League</option>${each($leagueStore, (league) => {
+        return `<option${add_attribute("value", league.id, 0)}>${escape(league.name)}</option>`;
+      })}</select> ${``} ${``} <div class="border-b border-gray-200"></div> <div class="items-center flex space-x-4"><button class="px-4 py-2 default-button fpl-cancel-btn min-w-[150px]" type="button" data-svelte-h="svelte-19jfrwv">Cancel</button> <button${add_attribute(
+        "class",
+        `${isSubmitDisabled ? "bg-gray-500" : "fpl-purple-btn"} 
+                        px-4 py-2 default-button min-w-[150px]`,
+        0
+      )} ${isSubmitDisabled ? "disabled" : ""}>Raise Proposal</button></div> ${showConfirm ? `<div class="items-center flex" data-svelte-h="svelte-6fi0oe"><p class="text-orange-400">Failed proposals will cost the proposer 10 $FPL tokens.</p></div> <div class="items-center flex"><button${add_attribute(
+        "class",
+        `${isSubmitDisabled ? "bg-gray-500" : "fpl-purple-btn"} 
+                            px-4 py-2 default-button w-full`,
+        0
+      )} ${isSubmitDisabled ? "disabled" : ""}>Confirm Submit Proposal</button></div>` : ``}</div></div> ${``}</div>`;
+    }
+  })}`;
+});
+const Recall_player = create_ssr_component(($$result, $$props, $$bindings, slots) => {
+  let isSubmitDisabled;
+  let $clubStore, $$unsubscribe_clubStore;
+  $$unsubscribe_clubStore = subscribe(clubStore, (value) => $clubStore = value);
+  let { visible } = $$props;
+  let { closeModal } = $$props;
+  let selectedPlayerId = 0;
+  let showConfirm = false;
+  if ($$props.visible === void 0 && $$bindings.visible && visible !== void 0)
+    $$bindings.visible(visible);
+  if ($$props.closeModal === void 0 && $$bindings.closeModal && closeModal !== void 0)
+    $$bindings.closeModal(closeModal);
+  isSubmitDisabled = selectedPlayerId <= 0;
+  {
+    if (isSubmitDisabled && showConfirm) {
+      showConfirm = false;
+    }
+  }
+  $$unsubscribe_clubStore();
+  return `${validate_component(Modal, "Modal").$$render($$result, { visible }, {}, {
+    default: () => {
+      return `<div class="mx-4 p-4"><div class="flex justify-between items-center my-2"><h3 class="default-header" data-svelte-h="svelte-awztf2">Recall Player</h3> <button class="times-button" data-svelte-h="svelte-jkt426">×</button></div> <div class="flex justify-start items-center w-full"><div class="w-full flex-col space-y-4 mb-2"><div class="flex-col space-y-2"><p data-svelte-h="svelte-1tp620s">Select the player&#39;s club:</p> <select class="p-2 fpl-dropdown min-w-[100px]"><option${add_attribute("value", 0, 0)} data-svelte-h="svelte-gooey4">Select Club</option>${each($clubStore, (club) => {
+        return `<option${add_attribute("value", club.id, 0)}>${escape(club.friendlyName)}</option>`;
+      })}</select></div> ${``} <div class="border-b border-gray-200"></div> <div class="items-center flex space-x-4"><button class="px-4 py-2 default-button fpl-cancel-btn min-w-[150px]" type="button" data-svelte-h="svelte-19jfrwv">Cancel</button> <button${add_attribute(
+        "class",
+        `${isSubmitDisabled ? "bg-gray-500" : "fpl-purple-btn"} 
+                        px-4 py-2 default-button min-w-[150px]`,
+        0
+      )} ${isSubmitDisabled ? "disabled" : ""}>Raise Proposal</button></div> ${showConfirm ? `<div class="items-center flex" data-svelte-h="svelte-6fi0oe"><p class="text-orange-400">Failed proposals will cost the proposer 10 $FPL tokens.</p></div> <div class="items-center flex"><button${add_attribute(
+        "class",
+        `${isSubmitDisabled ? "bg-gray-500" : "fpl-purple-btn"} 
+                            px-4 py-2 default-button w-full`,
+        0
+      )} ${isSubmitDisabled ? "disabled" : ""}>Confirm Submit Proposal</button></div>` : ``}</div></div> ${`${validate_component(Local_spinner, "LocalSpinner").$$render($$result, {}, {}, {})}`}</div>`;
+    }
+  })}`;
+});
+const Create_player = create_ssr_component(($$result, $$props, $$bindings, slots) => {
+  let $$unsubscribe_clubStore;
+  let $$unsubscribe_countryStore;
+  $$unsubscribe_clubStore = subscribe(clubStore, (value) => value);
+  $$unsubscribe_countryStore = subscribe(countryStore, (value) => value);
+  let { visible } = $$props;
+  let { closeModal } = $$props;
+  if ($$props.visible === void 0 && $$bindings.visible && visible !== void 0)
+    $$bindings.visible(visible);
+  if ($$props.closeModal === void 0 && $$bindings.closeModal && closeModal !== void 0)
+    $$bindings.closeModal(closeModal);
+  $$unsubscribe_clubStore();
+  $$unsubscribe_countryStore();
+  return `${validate_component(Modal, "Modal").$$render($$result, { visible }, {}, {
+    default: () => {
+      return `<div class="mx-4 p-4"><div class="flex justify-between items-center my-2"><h3 class="default-header" data-svelte-h="svelte-9uabtx">Create Player</h3> <button class="times-button" data-svelte-h="svelte-jkt426">×</button></div> ${`${validate_component(Local_spinner, "LocalSpinner").$$render($$result, {}, {}, {})}`}</div>`;
+    }
+  })}`;
+});
+const Update_player = create_ssr_component(($$result, $$props, $$bindings, slots) => {
+  let isSubmitDisabled;
+  let $$unsubscribe_playerStore;
+  let $clubStore, $$unsubscribe_clubStore;
+  $$unsubscribe_playerStore = subscribe(playerStore, (value) => value);
+  $$unsubscribe_clubStore = subscribe(clubStore, (value) => $clubStore = value);
+  let { visible } = $$props;
+  let { closeModal } = $$props;
+  let firstName = "";
+  let lastName = "";
+  let shirtNumber;
+  let nationalityId;
+  let displayDOB = "";
+  let showConfirm = false;
+  if ($$props.visible === void 0 && $$bindings.visible && visible !== void 0)
+    $$bindings.visible(visible);
+  if ($$props.closeModal === void 0 && $$bindings.closeModal && closeModal !== void 0)
+    $$bindings.closeModal(closeModal);
+  isSubmitDisabled = firstName.length > 50 || lastName.length == 0 || lastName.length > 50 || shirtNumber <= 0 || shirtNumber > 99 || displayDOB == "" || nationalityId <= 0;
+  {
+    if (isSubmitDisabled && showConfirm) {
+      showConfirm = false;
+    }
+  }
+  $$unsubscribe_playerStore();
+  $$unsubscribe_clubStore();
+  return `${validate_component(Modal, "Modal").$$render($$result, { visible }, {}, {
+    default: () => {
+      return `<div class="mx-4 p-4"><div class="flex justify-between items-center my-2"><h3 class="default-header" data-svelte-h="svelte-111jmmy">Update Player</h3> <button class="times-button" data-svelte-h="svelte-jkt426">×</button></div> <div class="flex justify-start items-center w-full"><div class="w-full flex-col space-y-4 mb-2"><div class="flex-col space-y-2"><p data-svelte-h="svelte-1tp620s">Select the player&#39;s club:</p> <select class="p-2 fpl-dropdown min-w-[100px]"><option${add_attribute("value", 0, 0)} data-svelte-h="svelte-gooey4">Select Club</option>${each($clubStore, (club) => {
+        return `<option${add_attribute("value", club.id, 0)}>${escape(club.friendlyName)}</option>`;
+      })}</select></div> ${``} <div class="border-b border-gray-200"></div> <div class="items-center flex space-x-4"><button class="px-4 py-2 default-button fpl-cancel-btn min-w-[150px]" type="button" data-svelte-h="svelte-19jfrwv">Cancel</button> <button${add_attribute(
+        "class",
+        `${isSubmitDisabled ? "bg-gray-500" : "fpl-purple-btn"} 
+                        px-4 py-2 default-button min-w-[150px]`,
+        0
+      )} ${isSubmitDisabled ? "disabled" : ""}>Raise Proposal</button></div> ${showConfirm ? `<div class="items-center flex" data-svelte-h="svelte-6fi0oe"><p class="text-orange-400">Failed proposals will cost the proposer 10 $FPL tokens.</p></div> <div class="items-center flex"><button${add_attribute(
+        "class",
+        `${isSubmitDisabled ? "bg-gray-500" : "fpl-purple-btn"} 
+                            px-4 py-2 default-button w-full`,
+        0
+      )} ${isSubmitDisabled ? "disabled" : ""}>Confirm Submit Proposal</button></div>` : ``}</div></div> ${`${validate_component(Local_spinner, "LocalSpinner").$$render($$result, {}, {}, {})}`}</div>`;
+    }
+  })}`;
+});
+const Set_player_injury = create_ssr_component(($$result, $$props, $$bindings, slots) => {
+  let isSubmitDisabled;
+  let $$unsubscribe_playerStore;
+  let $clubStore, $$unsubscribe_clubStore;
+  $$unsubscribe_playerStore = subscribe(playerStore, (value) => value);
+  $$unsubscribe_clubStore = subscribe(clubStore, (value) => $clubStore = value);
+  let { visible } = $$props;
+  let { closeModal } = $$props;
+  let selectedPlayerId = 0;
+  let showConfirm = false;
+  if ($$props.visible === void 0 && $$bindings.visible && visible !== void 0)
+    $$bindings.visible(visible);
+  if ($$props.closeModal === void 0 && $$bindings.closeModal && closeModal !== void 0)
+    $$bindings.closeModal(closeModal);
+  isSubmitDisabled = selectedPlayerId <= 0;
+  {
+    if (isSubmitDisabled && showConfirm) {
+      showConfirm = false;
+    }
+  }
+  $$unsubscribe_playerStore();
+  $$unsubscribe_clubStore();
+  return `${validate_component(Modal, "Modal").$$render($$result, { visible }, {}, {
+    default: () => {
+      return `<div class="mx-4 p-4"><div class="flex justify-between items-center my-2"><h3 class="default-header" data-svelte-h="svelte-1epdx5w">Set Player Injury</h3> <button class="times-button" data-svelte-h="svelte-jkt426">×</button></div> <div class="flex justify-start items-center w-full"><div class="w-full flex-col space-y-4 mb-2"><p data-svelte-h="svelte-1tp620s">Select the player&#39;s club:</p> <select class="p-2 fpl-dropdown min-w-[100px]"><option${add_attribute("value", 0, 0)} data-svelte-h="svelte-gooey4">Select Club</option>${each($clubStore, (club) => {
+        return `<option${add_attribute("value", club.id, 0)}>${escape(club.friendlyName)}</option>`;
+      })}</select> ${``} <div class="border-b border-gray-200"></div> <div class="items-center flex space-x-4"><button class="px-4 py-2 default-button fpl-cancel-btn min-w-[150px]" type="button" data-svelte-h="svelte-19jfrwv">Cancel</button> <button${add_attribute(
+        "class",
+        `${isSubmitDisabled ? "bg-gray-500" : "fpl-purple-btn"} 
+                        px-4 py-2 default-button min-w-[150px]`,
+        0
+      )} ${isSubmitDisabled ? "disabled" : ""}>Raise Proposal</button></div> ${showConfirm ? `<div class="items-center flex" data-svelte-h="svelte-6fi0oe"><p class="text-orange-400">Failed proposals will cost the proposer 10 $FPL tokens.</p></div> <div class="items-center flex"><button${add_attribute(
+        "class",
+        `${isSubmitDisabled ? "bg-gray-500" : "fpl-purple-btn"} 
+                            px-4 py-2 default-button w-full`,
+        0
+      )} ${isSubmitDisabled ? "disabled" : ""}>Confirm Submit Proposal</button></div>` : ``}</div></div> ${`${validate_component(Local_spinner, "LocalSpinner").$$render($$result, {}, {}, {})}`}</div>`;
+    }
+  })}`;
+});
+const Retire_player = create_ssr_component(($$result, $$props, $$bindings, slots) => {
+  let isSubmitDisabled;
+  let $$unsubscribe_playerStore;
+  let $clubStore, $$unsubscribe_clubStore;
+  $$unsubscribe_playerStore = subscribe(playerStore, (value) => value);
+  $$unsubscribe_clubStore = subscribe(clubStore, (value) => $clubStore = value);
+  let { visible } = $$props;
+  let { closeModal } = $$props;
+  let selectedPlayerId = 0;
+  let showConfirm = false;
+  if ($$props.visible === void 0 && $$bindings.visible && visible !== void 0)
+    $$bindings.visible(visible);
+  if ($$props.closeModal === void 0 && $$bindings.closeModal && closeModal !== void 0)
+    $$bindings.closeModal(closeModal);
+  isSubmitDisabled = selectedPlayerId <= 0;
+  {
+    if (isSubmitDisabled && showConfirm) {
+      showConfirm = false;
+    }
+  }
+  $$unsubscribe_playerStore();
+  $$unsubscribe_clubStore();
+  return `${validate_component(Modal, "Modal").$$render($$result, { visible }, {}, {
+    default: () => {
+      return `<div class="mx-4 p-4"><div class="flex justify-between items-center my-2"><h3 class="default-header" data-svelte-h="svelte-181rwt8">Retire Player</h3> <button class="times-button" data-svelte-h="svelte-jkt426">×</button></div> <div class="flex justify-start items-center w-full"><div class="w-full flex-col space-y-4 mb-2"><p data-svelte-h="svelte-1tp620s">Select the player&#39;s club:</p> <select class="p-2 fpl-dropdown min-w-[100px]"><option${add_attribute("value", 0, 0)} data-svelte-h="svelte-gooey4">Select Club</option>${each($clubStore, (club) => {
+        return `<option${add_attribute("value", club.id, 0)}>${escape(club.friendlyName)}</option>`;
+      })}</select> ${``} <div class="border-b border-gray-200"></div> <div class="items-center flex space-x-4"><button class="px-4 py-2 default-button fpl-cancel-btn min-w-[150px]" type="button" data-svelte-h="svelte-19jfrwv">Cancel</button> <button${add_attribute(
+        "class",
+        `${isSubmitDisabled ? "bg-gray-500" : "fpl-purple-btn"} 
+                        px-4 py-2 default-button min-w-[150px]`,
+        0
+      )} ${isSubmitDisabled ? "disabled" : ""}>Raise Proposal</button></div> ${showConfirm ? `<div class="items-center flex" data-svelte-h="svelte-6fi0oe"><p class="text-orange-400">Failed proposals will cost the proposer 10 $FPL tokens.</p></div> <div class="items-center flex"><button${add_attribute(
+        "class",
+        `${isSubmitDisabled ? "bg-gray-500" : "fpl-purple-btn"} 
+                            px-4 py-2 default-button w-full`,
+        0
+      )} ${isSubmitDisabled ? "disabled" : ""}>Confirm Submit Proposal</button></div>` : ``}</div></div> ${``}</div>`;
+    }
+  })}`;
+});
+const Unretire_player = create_ssr_component(($$result, $$props, $$bindings, slots) => {
+  let isSubmitDisabled;
+  let $clubStore, $$unsubscribe_clubStore;
+  $$unsubscribe_clubStore = subscribe(clubStore, (value) => $clubStore = value);
+  let { visible } = $$props;
+  let { closeModal } = $$props;
+  let selectedPlayerId = 0;
+  let showConfirm = false;
+  if ($$props.visible === void 0 && $$bindings.visible && visible !== void 0)
+    $$bindings.visible(visible);
+  if ($$props.closeModal === void 0 && $$bindings.closeModal && closeModal !== void 0)
+    $$bindings.closeModal(closeModal);
+  isSubmitDisabled = selectedPlayerId <= 0;
+  {
+    if (isSubmitDisabled && showConfirm) {
+      showConfirm = false;
+    }
+  }
+  $$unsubscribe_clubStore();
+  return `${validate_component(Modal, "Modal").$$render($$result, { visible }, {}, {
+    default: () => {
+      return `<div class="mx-4 p-4"><div class="flex justify-between items-center my-2"><h3 class="default-header" data-svelte-h="svelte-1s9cm8h">Unretire Player</h3> <button class="times-button" data-svelte-h="svelte-jkt426">×</button></div> <div class="flex justify-start items-center w-full"><div class="w-full flex-col space-y-4 mb-2"><div class="flex-col space-y-2"><p data-svelte-h="svelte-1tp620s">Select the player&#39;s club:</p> <select class="p-2 fpl-dropdown min-w-[100px]"><option${add_attribute("value", 0, 0)} data-svelte-h="svelte-gooey4">Select Club</option>${each($clubStore, (club) => {
+        return `<option${add_attribute("value", club.id, 0)}>${escape(club.friendlyName)}</option>`;
+      })}</select></div> ${``} <div class="border-b border-gray-200"></div> <div class="items-center flex space-x-4"><button class="px-4 py-2 default-button fpl-cancel-btn min-w-[150px]" type="button" data-svelte-h="svelte-19jfrwv">Cancel</button> <button${add_attribute(
+        "class",
+        `${isSubmitDisabled ? "bg-gray-500" : "fpl-purple-btn"} 
+                        px-4 py-2 default-button min-w-[150px]`,
+        0
+      )} ${isSubmitDisabled ? "disabled" : ""}>Raise Proposal</button></div> ${showConfirm ? `<div class="items-center flex" data-svelte-h="svelte-6fi0oe"><p class="text-orange-400">Failed proposals will cost the proposer 10 $FPL tokens.</p></div> <div class="items-center flex"><button${add_attribute(
+        "class",
+        `${isSubmitDisabled ? "bg-gray-500" : "fpl-purple-btn"} 
+                            px-4 py-2 default-button w-full`,
+        0
+      )} ${isSubmitDisabled ? "disabled" : ""}>Confirm Submit Proposal</button></div>` : ``}</div></div> ${`${validate_component(Local_spinner, "LocalSpinner").$$render($$result, {}, {}, {})}`}</div>`;
+    }
+  })}`;
+});
+const Promote_new_club = create_ssr_component(($$result, $$props, $$bindings, slots) => {
+  let isSubmitDisabled;
+  let { visible } = $$props;
+  let { closeModal } = $$props;
+  let name = "";
+  let friendlyName = "";
+  let abbreviatedName = "";
+  let primaryColourHex = "";
+  let secondaryColourHex = "";
+  let thirdColourHex = "";
+  let showConfirm = false;
+  let shirtTypes = [{ Filled: null }, { Striped: null }];
+  if ($$props.visible === void 0 && $$bindings.visible && visible !== void 0)
+    $$bindings.visible(visible);
+  if ($$props.closeModal === void 0 && $$bindings.closeModal && closeModal !== void 0)
+    $$bindings.closeModal(closeModal);
+  isSubmitDisabled = name.length <= 0 || name.length > 100 || friendlyName.length <= 0 || friendlyName.length > 50 || abbreviatedName.length != 3;
+  {
+    if (isSubmitDisabled && showConfirm) {
+      showConfirm = false;
+    }
+  }
+  return `${validate_component(Modal, "Modal").$$render($$result, { visible }, {}, {
+    default: () => {
+      return `<div class="mx-4 p-4"><div class="flex justify-between items-center my-2"><h3 class="default-header" data-svelte-h="svelte-6c6oto">Promote New Club</h3> <button class="times-button" data-svelte-h="svelte-jkt426">×</button></div> <div class="flex justify-start items-center w-full"><div class="w-full flex-col space-y-4 mb-2"><input type="text" class="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-black" placeholder="Club Full Name"${add_attribute("value", name, 0)}> <input type="text" class="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-black" placeholder="Club Friendly Name"${add_attribute("value", name, 0)}> <input type="text" class="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-black" placeholder="Abbreviated Name"${add_attribute("value", abbreviatedName, 0)}> <input type="color" class="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"${add_attribute("value", primaryColourHex, 0)}> <input type="color" class="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"${add_attribute("value", secondaryColourHex, 0)}> <input type="color" class="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"${add_attribute("value", thirdColourHex, 0)}> <select class="p-2 fpl-dropdown my-4 min-w-[100px]">${each(shirtTypes, (shirt) => {
+        return `<option${add_attribute("value", shirt, 0)}>${escape(shirt)}</option>`;
+      })}</select> <div class="border-b border-gray-200"></div> <div class="items-center flex space-x-4"><button class="px-4 py-2 default-button fpl-cancel-btn min-w-[150px]" type="button" data-svelte-h="svelte-19jfrwv">Cancel</button> <button${add_attribute(
+        "class",
+        `${isSubmitDisabled ? "bg-gray-500" : "fpl-purple-btn"} 
+                        px-4 py-2 default-button min-w-[150px]`,
+        0
+      )} ${isSubmitDisabled ? "disabled" : ""}>Raise Proposal</button></div> ${showConfirm ? `<div class="items-center flex" data-svelte-h="svelte-6fi0oe"><p class="text-orange-400">Failed proposals will cost the proposer 10 $FPL tokens.</p></div> <div class="items-center flex"><button${add_attribute(
+        "class",
+        `${isSubmitDisabled ? "bg-gray-500" : "fpl-purple-btn"} 
+                            px-4 py-2 default-button w-full`,
+        0
+      )} ${isSubmitDisabled ? "disabled" : ""}>Confirm Submit Proposal</button></div>` : ``}</div></div> ${``}</div>`;
+    }
+  })}`;
+});
+const Update_club = create_ssr_component(($$result, $$props, $$bindings, slots) => {
+  let isSubmitDisabled;
+  let $clubStore, $$unsubscribe_clubStore;
+  $$unsubscribe_clubStore = subscribe(clubStore, (value) => $clubStore = value);
+  let { visible } = $$props;
+  let { closeModal } = $$props;
+  let selectedClubId = 0;
+  let showConfirm = false;
+  if ($$props.visible === void 0 && $$bindings.visible && visible !== void 0)
+    $$bindings.visible(visible);
+  if ($$props.closeModal === void 0 && $$bindings.closeModal && closeModal !== void 0)
+    $$bindings.closeModal(closeModal);
+  isSubmitDisabled = selectedClubId <= 0;
+  {
+    if (isSubmitDisabled && showConfirm) {
+      showConfirm = false;
+    }
+  }
+  $$unsubscribe_clubStore();
+  return `${validate_component(Modal, "Modal").$$render($$result, { visible }, {}, {
+    default: () => {
+      return `<div class="mx-4 p-4"><div class="flex justify-between items-center my-2"><h3 class="default-header" data-svelte-h="svelte-1p20ean">Update Club</h3> <button class="times-button" data-svelte-h="svelte-jkt426">×</button></div> <div class="flex justify-start items-center w-full"><div class="w-full flex-col space-y-4 mb-2"><select class="p-2 fpl-dropdown min-w-[100px]"><option${add_attribute("value", 0, 0)} data-svelte-h="svelte-gooey4">Select Club</option>${each($clubStore, (club) => {
+        return `<option${add_attribute("value", club.id, 0)}>${escape(club.friendlyName)}</option>`;
+      })}</select> ${``} <div class="border-b border-gray-200"></div> <div class="items-center flex space-x-4"><button class="px-4 py-2 default-button fpl-cancel-btn min-w-[150px]" type="button" data-svelte-h="svelte-19jfrwv">Cancel</button> <button${add_attribute(
+        "class",
+        `${isSubmitDisabled ? "bg-gray-500" : "fpl-purple-btn"} 
+                        px-4 py-2 default-button min-w-[150px]`,
+        0
+      )} ${isSubmitDisabled ? "disabled" : ""}>Raise Proposal</button></div> ${showConfirm ? `<div class="items-center flex" data-svelte-h="svelte-6fi0oe"><p class="text-orange-400">Failed proposals will cost the proposer 10 $FPL tokens.</p></div> <div class="items-center flex"><button${add_attribute(
+        "class",
+        `${isSubmitDisabled ? "bg-gray-500" : "fpl-purple-btn"} 
+                            px-4 py-2 default-button w-full`,
+        0
+      )} ${isSubmitDisabled ? "disabled" : ""}>Confirm Submit Proposal</button></div>` : ``}</div></div> ${`${validate_component(Local_spinner, "LocalSpinner").$$render($$result, {}, {}, {})}`}</div>`;
+    }
+  })}`;
+});
+var define_process_env_default = { FOOTBALL_GOD_BACKEND_CANISTER_ID: "44kin-waaaa-aaaal-qbxra-cai", FOOTBALL_GOD_FRONTEND_CANISTER_ID: "43loz-3yaaa-aaaal-qbxrq-cai", DFX_NETWORK: "ic" };
+const Add_fixture_data = create_ssr_component(($$result, $$props, $$bindings, slots) => {
+  let isSubmitDisabled;
+  let $clubStore, $$unsubscribe_clubStore;
+  let $$unsubscribe_fixtureStore;
+  $$unsubscribe_clubStore = subscribe(clubStore, (value) => $clubStore = value);
+  $$unsubscribe_fixtureStore = subscribe(fixtureStore, (value) => value);
+  let { visible } = $$props;
+  let { closeModal } = $$props;
+  let gameweeks = Array.from(
+    {
+      length: Number(define_process_env_default.TOTAL_GAMEWEEKS)
+    },
+    (_, i) => i + 1
+  );
+  let selectedFixtureId;
+  let gameweekFixtures = [];
+  function getTeamById(teamId) {
+    return $clubStore.find((x) => x.id === teamId);
+  }
+  if ($$props.visible === void 0 && $$bindings.visible && visible !== void 0)
+    $$bindings.visible(visible);
+  if ($$props.closeModal === void 0 && $$bindings.closeModal && closeModal !== void 0)
+    $$bindings.closeModal(closeModal);
+  isSubmitDisabled = !selectedFixtureId;
+  $$unsubscribe_clubStore();
+  $$unsubscribe_fixtureStore();
+  return `${validate_component(Modal, "Modal").$$render($$result, { visible }, {}, {
+    default: () => {
+      return `<div class="mx-4 p-4"><div class="flex justify-between items-center my-2"><h3 class="default-header" data-svelte-h="svelte-5slgzo">Add Fixture Data</h3> <button class="times-button" data-svelte-h="svelte-2aq7vi">×</button></div> <div class="flex justify-start items-center w-full"><div class="w-full flex-col space-y-4 mb-2"><div class="flex-col space-y-2"><p data-svelte-h="svelte-1hdxidk">Select Gameweek:</p> <select class="p-2 fpl-dropdown my-4 min-w-[100px]">${each(gameweeks, (gameweek) => {
+        return `<option${add_attribute("value", gameweek, 0)}>Gameweek ${escape(gameweek)}</option>`;
+      })}</select></div> <div class="flex-col space-y-2"><p data-svelte-h="svelte-1mcsvml">Select Fixture:</p> <select class="p-2 fpl-dropdown my-4 min-w-[100px]">${each(gameweekFixtures, (fixture) => {
+        let homeTeam = getTeamById(fixture.homeClubId), awayTeam = getTeamById(fixture.awayClubId);
+        return `  <option${add_attribute("value", fixture.id, 0)}>${escape(homeTeam.friendlyName)} v ${escape(awayTeam.friendlyName)}</option>`;
+      })}</select></div> <div class="border-b border-gray-200"></div> <div class="items-center flex space-x-4"><button class="px-4 py-2 default-button fpl-cancel-btn min-w-[150px]" type="button" data-svelte-h="svelte-1cdq9j1">Cancel</button> <button${add_attribute(
+        "class",
+        `${isSubmitDisabled ? "bg-gray-500" : "fpl-purple-btn"} 
+                        px-4 py-2 default-button min-w-[150px]`,
+        0
+      )} ${isSubmitDisabled ? "disabled" : ""}>Add Fixture Data</button></div></div></div> ${`${validate_component(Local_spinner, "LocalSpinner").$$render($$result, {}, {}, {})}`}</div>`;
+    }
+  })}`;
+});
+const Page$3 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
+  let showRevaluePlayerUpModal = false;
+  let showRevaluePlayerDownModal = false;
+  let showMoveFixtureModal = false;
+  let showPostponeFixtureModal = false;
+  let showRescheduleFixtureModal = false;
+  let showLoanPlayerModal = false;
+  let showTransferPlayerModal = false;
+  let showRecallPlayerModal = false;
+  let showCreatePlayerModal = false;
+  let showUpdatePlayerModal = false;
+  let showSetPlayerInjuryModal = false;
+  let showRetirePlayerModal = false;
+  let showUnretirePlayerModal = false;
+  let showPromoteNewClubModal = false;
+  let showUpdateClubModal = false;
+  let showAddFixtureDataModal = false;
+  function hideRevaluePlayerUpModal() {
+    showRevaluePlayerUpModal = false;
+  }
+  function hideRevaluePlayerDownModal() {
+    showRevaluePlayerDownModal = false;
+  }
+  function hideMoveFixturesModal() {
+    showMoveFixtureModal = false;
+  }
+  function hidePostponeFixturesModal() {
+    showPostponeFixtureModal = false;
+  }
+  function hideRescehduleFixturesModal() {
+    showRescheduleFixtureModal = false;
+  }
+  function hideLoanPlayerModal() {
+    showLoanPlayerModal = false;
+  }
+  function hideTransferPlayerModal() {
+    showTransferPlayerModal = false;
+  }
+  function hideRecallPlayerModal() {
+    showRecallPlayerModal = false;
+  }
+  function hideCreatePlayerModal() {
+    showCreatePlayerModal = false;
+  }
+  function hideUpdatePlayerModal() {
+    showUpdatePlayerModal = false;
+  }
+  function hideSetPlayerInjuryModal() {
+    showSetPlayerInjuryModal = false;
+  }
+  function hideRetirePlayerModal() {
+    showRetirePlayerModal = false;
+  }
+  function hideUnretirePlayerModal() {
+    showUnretirePlayerModal = false;
+  }
+  function hidePromoteNewClubModal() {
+    showPromoteNewClubModal = false;
+  }
+  function hideUpdateClubModal() {
+    showUpdateClubModal = false;
+  }
+  function hideAddFixtureDataModal() {
+    showAddFixtureDataModal = false;
+  }
   return `${validate_component(Layout, "Layout").$$render($$result, {}, {}, {
     default: () => {
-      return `<div class="p-2 mt-8"><div class="flex flex-col bg-OPENFPLPURPLE rounded-md rounded-b-lg xs:text-lg sm:text-xl"><div class="flex flex-row items-center px-4 border-b border-b-OPENFPLPURPLE justify-between"><div class="flex items-center">${validate_component(LogoIcon, "BlackLogoIcon").$$render(
+      return `${validate_component(Revalue_player_up, "RevaluePlayerUp").$$render(
         $$result,
         {
-          className: "w-4 xs:w-6 sm:w-8 mx-1 xs:mx-2 sm:mx-3 my-2"
+          visible: showRevaluePlayerUpModal,
+          closeModal: hideRevaluePlayerUpModal
         },
         {},
         {}
-      )} <p class="p-2 xs:p-3 sm:p-4" data-svelte-h="svelte-16bfxgw">FootballGod Whitepaper</p></div></div> <div class="w-full bg-OPENFPL p-4 rounded-b-md flex flex-col text-sm xs:text-base sm:text-lg text-black">${each(tabs, ({ name, component }) => {
-        return `${activeTab === name.toLowerCase() ? `<div class="flex flex-col"><div class="flex flex-col sm:hidden text-xs"><div class="flex flex-row"><button class="w-1/2 py-2 px-4 rounded-l bg-GRAY text-white disabled:bg-LIGHT disabled:text-gray-400" ${tabs.findIndex((tab) => tab.name.toLowerCase() === activeTab) === 0 ? "disabled" : ""}>Prior Section</button> <button class="w-1/2 py-2 px-4 rounded-r bg-GRAY text-white disabled:bg-LIGHT disabled:text-gray-400" ${tabs.findIndex((tab) => tab.name.toLowerCase() === activeTab) === tabs.length - 1 ? "disabled" : ""}>Next Section
-                  </button></div> <div class="flex flex-row justify-center my-4">${each(tabs, (_, index) => {
-          return `<div class="${["pip svelte-1ubgm3v", isActiveTab(index) ? "is-active" : ""].join(" ").trim()}"></div>`;
-        })} </div></div> <div class="hidden sm:flex flex-col text-xs mb-4"><div class="flex flex-row items-center justify-between"><button class="py-2 px-4 rounded flex-grow bg-GRAY text-white disabled:bg-LIGHT disabled:text-gray-400" ${tabs.findIndex((tab) => tab.name.toLowerCase() === activeTab) === 0 ? "disabled" : ""}>Prior Section</button> <div class="flex-grow flex flex-row justify-center">${each(tabs, (_, index) => {
-          return `<div class="${["pip svelte-1ubgm3v", isActiveTab(index) ? "is-active" : ""].join(" ").trim()}"></div>`;
-        })}</div> <button class="py-2 px-4 rounded flex-grow bg-GRAY text-white disabled:bg-LIGHT disabled:text-gray-400" ${tabs.findIndex((tab) => tab.name.toLowerCase() === activeTab) === tabs.length - 1 ? "disabled" : ""}>Next Section</button> </div></div> <div class="horizontal-divider"></div> <div class="flex my-4">${validate_component(component || missing_component, "svelte:component").$$render($$result, {}, {}, {})}</div> <div class="horizontal-divider"></div> <div class="flex flex-col sm:hidden"><div class="flex flex-row justify-center my-4">${each(tabs, (_, index) => {
-          return `<div class="${["pip svelte-1ubgm3v", isActiveTab(index) ? "is-active" : ""].join(" ").trim()}"></div>`;
-        })}</div> <div class="flex flex-col sm:hidden text-xs"><div class="flex flex-row"><button class="w-1/2 py-2 px-4 rounded-l bg-GRAY text-white disabled:bg-LIGHT disabled:text-gray-400" ${tabs.findIndex((tab) => tab.name.toLowerCase() === activeTab) === 0 ? "disabled" : ""}>Prior Section</button> <button class="w-1/2 py-2 px-4 rounded-r bg-GRAY text-white disabled:bg-LIGHT disabled:text-gray-400" ${tabs.findIndex((tab) => tab.name.toLowerCase() === activeTab) === tabs.length - 1 ? "disabled" : ""}>Next Section
-                    </button></div> </div></div> <div class="hidden sm:flex flex-col text-xs mt-4"><div class="flex flex-row items-center justify-between"><button class="text-white py-2 px-4 rounded flex-grow bg-GRAY text-white disabled:bg-LIGHT disabled:text-gray-400" ${tabs.findIndex((tab) => tab.name.toLowerCase() === activeTab) === 0 ? "disabled" : ""}>Prior Section</button> <div class="flex-grow flex flex-row justify-center">${each(tabs, (_, index) => {
-          return `<div class="${["pip svelte-1ubgm3v", isActiveTab(index) ? "is-active" : ""].join(" ").trim()}"></div>`;
-        })}</div> <button class="py-2 px-4 rounded flex-grow bg-GRAY text-white disabled:bg-LIGHT disabled:text-gray-400" ${tabs.findIndex((tab) => tab.name.toLowerCase() === activeTab) === tabs.length - 1 ? "disabled" : ""}>Next Section</button> </div></div> </div>` : ``}`;
-      })}</div></div></div>`;
+      )} ${validate_component(Revalue_player_down, "RevaluePlayerDown").$$render(
+        $$result,
+        {
+          visible: showRevaluePlayerDownModal,
+          closeModal: hideRevaluePlayerDownModal
+        },
+        {},
+        {}
+      )}  ${validate_component(Move_fixture, "MoveFixture").$$render(
+        $$result,
+        {
+          visible: showMoveFixtureModal,
+          closeModal: hideMoveFixturesModal
+        },
+        {},
+        {}
+      )} ${validate_component(Postpone_fixture, "PostponeFixture").$$render(
+        $$result,
+        {
+          visible: showPostponeFixtureModal,
+          closeModal: hidePostponeFixturesModal
+        },
+        {},
+        {}
+      )} ${validate_component(Reschedule_fixture, "RescheduleFixture").$$render(
+        $$result,
+        {
+          visible: showRescheduleFixtureModal,
+          closeModal: hideRescehduleFixturesModal
+        },
+        {},
+        {}
+      )} ${validate_component(Loan_player, "LoanPlayer").$$render(
+        $$result,
+        {
+          visible: showLoanPlayerModal,
+          closeModal: hideLoanPlayerModal
+        },
+        {},
+        {}
+      )} ${validate_component(Transfer_player, "TransferPlayer").$$render(
+        $$result,
+        {
+          visible: showTransferPlayerModal,
+          closeModal: hideTransferPlayerModal
+        },
+        {},
+        {}
+      )} ${validate_component(Recall_player, "RecallPlayer").$$render(
+        $$result,
+        {
+          visible: showRecallPlayerModal,
+          closeModal: hideRecallPlayerModal
+        },
+        {},
+        {}
+      )} ${validate_component(Create_player, "CreatePlayer").$$render(
+        $$result,
+        {
+          visible: showCreatePlayerModal,
+          closeModal: hideCreatePlayerModal
+        },
+        {},
+        {}
+      )} ${validate_component(Update_player, "UpdatePlayer").$$render(
+        $$result,
+        {
+          visible: showUpdatePlayerModal,
+          closeModal: hideUpdatePlayerModal
+        },
+        {},
+        {}
+      )} ${validate_component(Set_player_injury, "SetPlayerInjury").$$render(
+        $$result,
+        {
+          visible: showSetPlayerInjuryModal,
+          closeModal: hideSetPlayerInjuryModal
+        },
+        {},
+        {}
+      )} ${validate_component(Retire_player, "RetirePlayer").$$render(
+        $$result,
+        {
+          visible: showRetirePlayerModal,
+          closeModal: hideRetirePlayerModal
+        },
+        {},
+        {}
+      )} ${validate_component(Unretire_player, "UnretirePlayer").$$render(
+        $$result,
+        {
+          visible: showUnretirePlayerModal,
+          closeModal: hideUnretirePlayerModal
+        },
+        {},
+        {}
+      )} ${validate_component(Promote_new_club, "PromoteNewClub").$$render(
+        $$result,
+        {
+          visible: showPromoteNewClubModal,
+          closeModal: hidePromoteNewClubModal
+        },
+        {},
+        {}
+      )} ${validate_component(Update_club, "UpdateClub").$$render(
+        $$result,
+        {
+          visible: showUpdateClubModal,
+          closeModal: hideUpdateClubModal
+        },
+        {},
+        {}
+      )} ${validate_component(Add_fixture_data, "AddFixtureData").$$render(
+        $$result,
+        {
+          visible: showAddFixtureDataModal,
+          closeModal: hideAddFixtureDataModal
+        },
+        {},
+        {}
+      )} <div class="m-4"><div class="bg-panel rounded-md"><ul class="flex rounded-t-lg bg-light-gray border-b border-gray-700 px-4 pt-2" data-svelte-h="svelte-18bk998"><li class="mr-4 active-tab"><button class="text-white">Raise Proposal</button></li></ul> <p class="m-4" data-svelte-h="svelte-fij59x">Player proposals</p> <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mt-4 mx-4"><div class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"><div class="flex items-center w-full"><button class="rounded brand-button px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full" data-svelte-h="svelte-it9i8d">Revalue Player Up</button></div></div> <div class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"><div class="flex items-center space-x-4 w-full"><button class="rounded brand-button px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full" data-svelte-h="svelte-162gghh">Revalue Player Down</button></div></div> <div class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"><div class="flex items-center space-x-4 w-full"><button class="rounded brand-button px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full" data-svelte-h="svelte-eo89tb">Loan Player</button></div></div> <div class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"><div class="flex items-center space-x-4 w-full"><button class="rounded brand-button px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full" data-svelte-h="svelte-1horqjh">Transfer Player</button></div></div> <div class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"><div class="flex items-center space-x-4 w-full"><button class="rounded brand-button px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full" data-svelte-h="svelte-1o7npyh">Recall Player</button></div></div> <div class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"><div class="flex items-center space-x-4 w-full"><button class="rounded brand-button px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full" data-svelte-h="svelte-1tjdvh7">Create Player</button></div></div> <div class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"><div class="flex items-center space-x-4 w-full"><button class="rounded brand-button px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full" data-svelte-h="svelte-1jm3yzd">Update Player</button></div></div> <div class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"><div class="flex items-center space-x-4 w-full"><button class="rounded brand-button px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full" data-svelte-h="svelte-1wgcz4h">Set Player Injury</button></div></div> <div class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"><div class="flex items-center space-x-4 w-full"><button class="rounded brand-button px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full" data-svelte-h="svelte-t832j9">Retire Player</button></div></div> <div class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"><div class="flex items-center space-x-4 w-full"><button class="rounded brand-button px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full" data-svelte-h="svelte-vfv4v">Unretire Player</button></div></div></div> <p class="m-4" data-svelte-h="svelte-11opyhx">Fixture proposals</p> <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mt-4 mx-4"><div class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"><div class="flex items-center space-x-4 w-full"><button class="rounded brand-button px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full" data-svelte-h="svelte-1h7i74h">Add Fixture Data</button></div></div> <div class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"><div class="flex items-center space-x-4 w-full"><button class="rounded brand-button px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full" data-svelte-h="svelte-1len8y5">Add Initial Fixtures</button></div></div> <div class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"><div class="flex items-center space-x-4 w-full"><button class="rounded brand-button px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full" data-svelte-h="svelte-1tke3sh">Move Fixture</button></div></div> <div class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"><div class="flex items-center space-x-4 w-full"><button class="rounded brand-button px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full" data-svelte-h="svelte-1xc0i1">Postpone Fixture</button></div></div> <div class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"><div class="flex items-center space-x-4 w-full"><button class="rounded brand-button px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full" data-svelte-h="svelte-165m7nx">Reschedule Fixture</button></div></div></div> <p class="m-4" data-svelte-h="svelte-ujx3lm">Club proposals</p> <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mt-4 mx-4 mb-4"><div class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"><div class="flex items-center space-x-4 w-full"><button class="rounded brand-button px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full" data-svelte-h="svelte-148s19b">Promote New Club</button></div></div> <div class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"><div class="flex items-center space-x-4 w-full"><button class="rounded brand-button px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full" data-svelte-h="svelte-u5583t">Update Club</button></div></div></div></div></div>`;
     }
   })}`;
+});
+const Page$2 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
+  return `${validate_component(Layout, "Layout").$$render($$result, {}, {}, {
+    default: () => {
+      return `${``} ${``}  ${``} ${``} ${``} ${``} ${``} ${``} ${``} ${``} ${``} ${``} ${``} ${``} ${``} ${``} <div class="m-4"><div class="bg-panel rounded-md"><ul class="flex rounded-t-lg bg-light-gray border-b border-gray-700 px-4 pt-2" data-svelte-h="svelte-np8kws"><li class="mr-4 active-tab"><button class="text-white">Raise Proposal</button></li></ul> <p class="m-4" data-svelte-h="svelte-fij59x">Player proposals</p> <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mt-4 mx-4"><div class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"><div class="flex items-center w-full"><button class="rounded brand-button-disabled px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full" disabled data-svelte-h="svelte-n2i7ls">Revalue Player Up</button></div></div> <div class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"><div class="flex items-center space-x-4 w-full"><button class="rounded brand-button-disabled px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full" data-svelte-h="svelte-7bnqg4">Revalue Player Down</button></div></div> <div class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"><div class="flex items-center space-x-4 w-full"><button class="rounded brand-button-disabled px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full" data-svelte-h="svelte-62vsgi">Loan Player</button></div></div> <div class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"><div class="flex items-center space-x-4 w-full"><button class="rounded brand-button px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full" data-svelte-h="svelte-mo36vx">Transfer Player</button></div></div> <div class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"><div class="flex items-center space-x-4 w-full"><button class="rounded brand-button-disabled px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full" data-svelte-h="svelte-1gx3714">Recall Player</button></div></div> <div class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"><div class="flex items-center space-x-4 w-full"><button class="rounded brand-button-disabled px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full" data-svelte-h="svelte-onko7i">Create Player</button></div></div> <div class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"><div class="flex items-center space-x-4 w-full"><button class="rounded brand-button-disabled px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full" data-svelte-h="svelte-1g1x96w">Update Player</button></div></div> <div class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"><div class="flex items-center space-x-4 w-full"><button class="rounded brand-button-disabled px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full" data-svelte-h="svelte-1li5d4w">Set Player Injury</button></div></div> <div class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"><div class="flex items-center space-x-4 w-full"><button class="rounded brand-button-disabled px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full" data-svelte-h="svelte-cyyj0k">Retire Player</button></div></div> <div class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"><div class="flex items-center space-x-4 w-full"><button class="rounded brand-button-disabled px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full" data-svelte-h="svelte-4w9f42">Unretire Player</button></div></div></div> <p class="m-4" data-svelte-h="svelte-11opyhx">Fixture proposals</p> <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mt-4 mx-4"><div class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"><div class="flex items-center space-x-4 w-full"><button class="rounded brand-button-disabled px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full" data-svelte-h="svelte-4vf6rk">Add Fixture Data</button></div></div> <div class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"><div class="flex items-center space-x-4 w-full"><button class="rounded brand-button-disabled px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full" data-svelte-h="svelte-1b7p7y4">Add Initial Fixtures</button></div></div> <div class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"><div class="flex items-center space-x-4 w-full"><button class="rounded brand-button-disabled px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full" data-svelte-h="svelte-18l7kps">Move Fixture</button></div></div> <div class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"><div class="flex items-center space-x-4 w-full"><button class="rounded brand-button-disabled px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full" data-svelte-h="svelte-ge63i0">Postpone Fixture</button></div></div> <div class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"><div class="flex items-center space-x-4 w-full"><button class="rounded brand-button-disabled px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full" data-svelte-h="svelte-j9ola4">Reschedule Fixture</button></div></div></div> <p class="m-4" data-svelte-h="svelte-ujx3lm">Club proposals</p> <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mt-4 mx-4 mb-4"><div class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"><div class="flex items-center space-x-4 w-full"><button class="rounded brand-button-disabled px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full" data-svelte-h="svelte-b4cle">Promote New Club</button></div></div> <div class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"><div class="flex items-center space-x-4 w-full"><button class="rounded brand-button-disabled px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full" data-svelte-h="svelte-ugy92w">Update Club</button></div></div></div></div></div>`;
+    }
+  })}`;
+});
+const Page$1 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
+  onDestroy(() => {
+  });
+  return `${validate_component(Layout, "Layout").$$render($$result, {}, {}, {
+    default: () => {
+      return `${`${validate_component(Spinner, "Spinner").$$render($$result, {}, {}, {})}`}`;
+    }
+  })} `;
+});
+const Page = create_ssr_component(($$result, $$props, $$bindings, slots) => {
+  return ``;
 });
 export {
   Error$1 as E,
   Layout$1 as L,
-  Page$8 as P,
+  Page$5 as P,
   Server as S,
   set_building as a,
   set_manifest as b,
@@ -5094,14 +6132,11 @@ export {
   set_read_implementation as f,
   get_hooks as g,
   set_safe_public_env as h,
-  Page$7 as i,
-  Page$6 as j,
-  Page$5 as k,
-  Page$4 as l,
-  Page$3 as m,
-  Page$2 as n,
+  Page$4 as i,
+  Page$3 as j,
+  Page$2 as k,
+  Page$1 as l,
+  Page as m,
   options as o,
-  Page$1 as p,
-  Page as q,
   set_assets as s
 };

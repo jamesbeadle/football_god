@@ -1,5 +1,5 @@
-import { authStore, type AuthSignInParams } from "$lib/stores/auth.store";
-import { toastsClean, toastsError, toastsShow } from "$lib/stores/toasts.store";
+import { authStore, type AuthSignInParams } from "$lib/stores/auth-store";
+import { toastsClean, toastsError, toastsShow } from "$lib/stores/toasts-store";
 import type { ToastMsg } from "$lib/types/toast";
 import { replaceHistory } from "$lib/utils/route.utils";
 import type { ToastLevel } from "@dfinity/gix-components";

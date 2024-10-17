@@ -1,11 +1,8 @@
 {
 	"/": [],
+	"/add-fixture-data": [],
+	"/add-proposal": [],
 	"/admin": [],
-	"/euro2024": [],
-	"/games": [],
-	"/gift-euro-entry": [],
-	"/leaderboard": [],
-	"/prediction": [],
-	"/profile": [],
-	"/whitepaper": []
+	"/governance": [],
+	"/profile": []
 }

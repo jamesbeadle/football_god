@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { userStore } from "$lib/stores/user.store";
-  import { toastsError, toastsShow } from "$lib/stores/toasts.store";
+  import { userStore } from "$lib/stores/user-store";
+  import { toastsError, toastsShow } from "$lib/stores/toasts-store";
   import { Modal, busyStore } from "@dfinity/gix-components";
 
   export let visible: boolean;

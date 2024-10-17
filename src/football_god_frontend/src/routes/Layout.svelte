@@ -3,9 +3,9 @@
   import { browser } from "$app/environment";
   import { initAuthWorker } from "$lib/services/worker.auth.services";
 
-  import { authStore, type AuthSignInParams, type AuthStoreData } from "$lib/stores/auth.store";
+  import { authStore, type AuthSignInParams, type AuthStoreData } from "$lib/stores/auth-store";
   import { authSignedInStore } from "$lib/derived/auth.derived";
-  import { toastsError } from "$lib/stores/toasts.store";
+  import { toastsError } from "$lib/stores/toasts-store";
   import { writable } from "svelte/store";
   import { BusyScreen, Spinner, Toasts } from "@dfinity/gix-components";
   import LogoIcon from "$lib/icons/LogoIcon.svelte";
@@ -21,13 +21,14 @@
   import { signOut } from "$lib/services/auth.services";
   import Tooltip from "$lib/components/tooltip.svelte";
   import WhitepaperIcon from "$lib/icons/WhitepaperIcon.svelte";
+    import RulesIcon from "$lib/icons/RulesIcon.svelte";
 
   let isExpanded = writable(false);
   $: links = $authSignedInStore ? [
     { name: "Home", icon: HomeIcon, href: "/" },
-    { name: "Euro 2024", icon: StarIcon, href:  "/leaderboard" },
     { name: "Profile", icon: ProfileIcon, href: "/profile" },
-    { name: "Whitepaper", icon: WhitepaperIcon, href: "/whitepaper" },
+    { name: "Governance", icon: RulesIcon, href: "/governance" },
+    { name: "Admin", icon: StarIcon, href: "/admin" }
   ] : 
   [
     { name: "Home", icon: HomeIcon, href: "/" }

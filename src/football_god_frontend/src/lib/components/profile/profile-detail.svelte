@@ -1,22 +1,16 @@
 <script lang="ts">
   import { onMount } from "svelte";
-  import { userStore } from "$lib/stores/user.store";
-  import { toastsError, toastsShow } from "$lib/stores/toasts.store";
+  import { userStore } from "$lib/stores/user-store";
+  import { toastsError, toastsShow } from "$lib/stores/toasts-store";
   import UpdateUsernameModal from "$lib/components/profile/update-username-modal.svelte";
   import { Spinner } from "@dfinity/gix-components";
   import CopyIcon from "$lib/icons/CopyIcon.svelte";
-  import type { AccountBalancesDTO } from "../../../../../declarations/football_god_backend/football_god_backend.did";
   import { writable } from "svelte/store";
   import WithdrawFplModal from "./withdraw-fpl-modal.svelte";
 
   let isLoading = true;
   let loadingBalances = true;
 
-  let accountBalances: AccountBalancesDTO = {
-    principalId: "",
-    fplBalance: 0n,
-    icpBalance: 0n
-  };
   let fplBalance = 0n;
   let fplBalanceFormatted = "0.0000"; 
   let dots = writable('.');
@@ -68,18 +62,15 @@
 
   async function fetchBalances() {
     try {
+      /*
       let userBalances = await userStore.getAccountBalances();
       if(userBalances){
-        accountBalances = {
-          principalId: userBalances.principalId,
-          fplBalance: userBalances.fplBalance,
-          icpBalance: userBalances.icpBalance
-        }
-        fplBalance = accountBalances.fplBalance;
+        fplBalance = userBalances.fplBalance;
         fplBalanceFormatted = (Number(fplBalance) / 100_000_000).toFixed(4);
         clearInterval(dot_interval);
         loadingBalances = false;
       }
+      */
     } catch (error) {
       toastsError({
         msg: { text: "Error fetching profile detail." },

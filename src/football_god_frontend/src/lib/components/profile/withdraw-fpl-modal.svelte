@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { userStore } from "$lib/stores/user.store";
-  import { toastsError, toastsShow } from "$lib/stores/toasts.store";
+  import { userStore } from "$lib/stores/user-store";
+  import { toastsError, toastsShow } from "$lib/stores/toasts-store";
   import { Modal, busyStore } from "@dfinity/gix-components";
 
   export let visible: boolean;
@@ -107,7 +107,7 @@
         />
         <button
           type="button"
-          class="text-sm md:text-sm p-1 md:p-2 px-2 md:px-4 rounded fpl-button"
+          class="text-sm md:text-sm p-1 md:p-2 px-2 md:px-4 rounded brand-button"
           on:click={setMaxWithdrawAmount}
         >
           Max

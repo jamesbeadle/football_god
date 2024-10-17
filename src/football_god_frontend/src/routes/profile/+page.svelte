@@ -1,9 +1,10 @@
+<!--
 <script lang="ts">
   import { onMount } from "svelte";
   import ProfileDetail from "$lib/components/profile/profile-detail.svelte";
   import Layout from "../Layout.svelte";
   import { Spinner } from "@dfinity/gix-components";
-    import { authStore } from "$lib/stores/auth.store";
+    import { authStore } from "$lib/stores/auth-store";
     import { goto } from "$app/navigation";
   let activeTab: string = "details";
 
@@ -48,3 +49,4 @@
     </div>
   {/if}
 </Layout>
+-->

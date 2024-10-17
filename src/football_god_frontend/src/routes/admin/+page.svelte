@@ -1,89 +1,487 @@
 <script lang="ts">
-    import AdminEuro2024Entries from "$lib/components/admin/admin_euro2024_entries.svelte";
-    import AdminEuro2024Events from "$lib/components/admin/admin_euro2024_events.svelte";
-    import { adminStore } from "$lib/stores/admin.store";
-    import { onMount } from "svelte";
     import Layout from "../Layout.svelte";
-    import { authStore } from "$lib/stores/auth.store";
-    import { goto } from "$app/navigation";
-
-    let activeTab: string = "euro2024entries";
-    onMount(async () => {
-      await authStore.sync();
-      authStore.subscribe((store) => {
-        if(store.identity == null || store.identity == undefined){
-          goto('/');
-        }
-      });
-    });
-
-    function setActiveTab(tab: string): void {
-        activeTab = tab;
+  
+    import AddInitialFixtures from "$lib/components/governance/fixture/add-initial-fixtures.svelte";
+    import RevaluePlayerUp from "$lib/components/governance/player/revalue-player-up.svelte";
+    import RevaluePlayerDown from "$lib/components/governance/player/revalue-player-down.svelte";
+    import MoveFixture from "$lib/components/governance/fixture/move-fixture.svelte";
+    import PostponeFixture from "$lib/components/governance/fixture/postpone-fixture.svelte";
+    import RescheduleFixture from "$lib/components/governance/fixture/reschedule-fixture.svelte";
+    import LoanPlayer from "$lib/components/governance/player/loan-player.svelte";
+    import TransferPlayer from "$lib/components/governance/player/transfer-player.svelte";
+    import RecallPlayer from "$lib/components/governance/player/recall-player.svelte";
+    import CreatePlayer from "$lib/components/governance/player/create-player.svelte";
+    import UpdatePlayer from "$lib/components/governance/player/update-player.svelte";
+    import SetPlayerInjury from "$lib/components/governance/player/set-player-injury.svelte";
+    import RetirePlayer from "$lib/components/governance/player/retire-player.svelte";
+    import UnretirePlayer from "$lib/components/governance/player/unretire-player.svelte";
+    import PromoteNewClub from "$lib/components/governance/club/promote-new-club.svelte";
+    import UpdateClub from "$lib/components/governance/club/update-club.svelte";
+    import AddFixtureData from "$lib/components/governance/fixture/add-fixture-data.svelte";
+  
+    let showRevaluePlayerUpModal: boolean = false;
+    let showRevaluePlayerDownModal: boolean = false;
+    let showAddInitialFixturesModal: boolean = false;
+    let showMoveFixtureModal: boolean = false;
+    let showPostponeFixtureModal: boolean = false;
+    let showRescheduleFixtureModal: boolean = false;
+    let showLoanPlayerModal: boolean = false;
+    let showTransferPlayerModal: boolean = false;
+    let showRecallPlayerModal: boolean = false;
+    let showCreatePlayerModal: boolean = false;
+    let showUpdatePlayerModal: boolean = false;
+    let showSetPlayerInjuryModal: boolean = false;
+    let showRetirePlayerModal: boolean = false;
+    let showUnretirePlayerModal: boolean = false;
+    let showPromoteNewClubModal: boolean = false;
+    let showUpdateClubModal: boolean = false;
+    let showAddFixtureDataModal: boolean = false;
+  
+    function displayRevaluePlayerUpModal(): void {
+      showRevaluePlayerUpModal = true;
     }
-
-    async function closeEuro2024Entries(){
-      adminStore.closeEuro2024Entries();
+  
+    function hideRevaluePlayerUpModal(): void {
+      showRevaluePlayerUpModal = false;
     }
-
-    async function openEuro2024Entries(){
-      adminStore.openEuro2024Entries();
+  
+    function displayRevaluePlayerDownModal(): void {
+      showRevaluePlayerDownModal = true;
     }
-
-    async function completeEuro2024Competition(){
-      adminStore.completeEuro2024Competition();
+  
+    function hideRevaluePlayerDownModal(): void {
+      showRevaluePlayerDownModal = false;
     }
-
-    async function recalculateLeaderboard(){
-      adminStore.recalculateLeaderboard();
+  
+    function displayAddInitialFixturesModal(): void {
+      showAddInitialFixturesModal = true;
     }
+  
+    function hideAddInitialFixturesModal(): void {
+      showAddInitialFixturesModal = false;
+    }
+  
+    function displayMoveFixtureModal(): void {
+      showMoveFixtureModal = true;
+    }
+  
+    function hideMoveFixturesModal(): void {
+      showMoveFixtureModal = false;
+    }
+  
+    function displayPostponeFixtureModal(): void {
+      showPostponeFixtureModal = true;
+    }
+  
+    function hidePostponeFixturesModal(): void {
+      showPostponeFixtureModal = false;
+    }
+  
+    function displayRescheduleFixtureModal(): void {
+      showRescheduleFixtureModal = true;
+    }
+  
+    function hideRescehduleFixturesModal(): void {
+      showRescheduleFixtureModal = false;
+    }
+  
+    function displayLoanPlayerModal(): void {
+      showLoanPlayerModal = true;
+    }
+  
+    function hideLoanPlayerModal(): void {
+      showLoanPlayerModal = false;
+    }
+  
+    function displayTransferPlayerModal(): void {
+      showTransferPlayerModal = true;
+    }
+  
+    function hideTransferPlayerModal(): void {
+      showTransferPlayerModal = false;
+    }
+  
+    function displayRecallPlayerModal(): void {
+      showRecallPlayerModal = true;
+    }
+  
+    function hideRecallPlayerModal(): void {
+      showRecallPlayerModal = false;
+    }
+  
+    function displayCreatePlayerModal(): void {
+      showCreatePlayerModal = true;
+    }
+  
+    function hideCreatePlayerModal(): void {
+      showCreatePlayerModal = false;
+    }
+  
+    function displayUpdatePlayerModal(): void {
+      showUpdatePlayerModal = true;
+    }
+  
+    function hideUpdatePlayerModal(): void {
+      showUpdatePlayerModal = false;
+    }
+  
+    function displaySetPlayerInjuryModal(): void {
+      showSetPlayerInjuryModal = true;
+    }
+  
+    function hideSetPlayerInjuryModal(): void {
+      showSetPlayerInjuryModal = false;
+    }
+  
+    function displayRetirePlayerModal(): void {
+      showRetirePlayerModal = true;
+    }
+  
+    function hideRetirePlayerModal(): void {
+      showRetirePlayerModal = false;
+    }
+  
+    function displayUnretirePlayerModal(): void {
+      showUnretirePlayerModal = true;
+    }
+  
+    function hideUnretirePlayerModal(): void {
+      showUnretirePlayerModal = false;
+    }
+  
+    function displayPromoteNewClubModal(): void {
+      showPromoteNewClubModal = true;
+    }
+  
+    function hidePromoteNewClubModal(): void {
+      showPromoteNewClubModal = false;
+    }
+  
+    function displayUpdateClubModal(): void {
+      showUpdateClubModal = true;
+    }
+  
+    function hideUpdateClubModal(): void {
+      showUpdateClubModal = false;
+    }
+  
+    function displayAddFixtureDataModal(): void {
+      showAddFixtureDataModal = true;
+    }
+  
+    function hideAddFixtureDataModal(): void {
+      showAddFixtureDataModal = false;
+    }
+  </script>
+  
+  <Layout>
 
-    
-</script>
-<Layout>
+    {#if showRevaluePlayerUpModal}
+      <RevaluePlayerUp
+        visible={showRevaluePlayerUpModal}
+        closeModal={hideRevaluePlayerUpModal}
+      />
+    {/if}
 
-    <div class="relative bg-gray-800 text-white mt-2 mr-2 rounded-lg">
-      <p class="text-2xl p-8">Admin</p>
-      
-      <div class="bg-panel rounded-md p-2">
+    {#if showRevaluePlayerDownModal}
+      <RevaluePlayerDown
+        visible={showRevaluePlayerDownModal}
+        closeModal={hideRevaluePlayerDownModal}
+      />
+    {/if}
+    <!--
+    <AddInitialFixtures
+      visible={showAddInitialFixturesModal}
+      closeModal={hideAddInitialFixturesModal}
+    />
+    -->
+
+    {#if showMoveFixtureModal}
+      <MoveFixture
+        visible={showMoveFixtureModal}
+        closeModal={hideMoveFixturesModal}
+      />
+    {/if}
+
+    {#if showPostponeFixtureModal}
+      <PostponeFixture
+        visible={showPostponeFixtureModal}
+        closeModal={hidePostponeFixturesModal}
+      />
+    {/if}
+
+    {#if showRescheduleFixtureModal}
+      <RescheduleFixture
+        visible={showRescheduleFixtureModal}
+        closeModal={hideRescehduleFixturesModal}
+      />
+    {/if}
+
+    {#if showLoanPlayerModal}
+      <LoanPlayer visible={showLoanPlayerModal} closeModal={hideLoanPlayerModal} />
+    {/if}
+
+    {#if showTransferPlayerModal}
+      <TransferPlayer
+        visible={showTransferPlayerModal}
+        closeModal={hideTransferPlayerModal}
+      />
+    {/if}
+
+    {#if showRecallPlayerModal}
+      <RecallPlayer
+        visible={showRecallPlayerModal}
+        closeModal={hideRecallPlayerModal}
+      />
+    {/if}
+
+    {#if showCreatePlayerModal}
+      <CreatePlayer
+        visible={showCreatePlayerModal}
+        closeModal={hideCreatePlayerModal}
+      />
+    {/if}
+
+    {#if showUpdatePlayerModal}
+      <UpdatePlayer
+        visible={showUpdatePlayerModal}
+        closeModal={hideUpdatePlayerModal}
+      />
+    {/if}
+
+    {#if showSetPlayerInjuryModal}
+      <SetPlayerInjury
+        visible={showSetPlayerInjuryModal}
+        closeModal={hideSetPlayerInjuryModal}
+      />
+    {/if}
+
+    {#if showRetirePlayerModal}
+      <RetirePlayer
+        visible={showRetirePlayerModal}
+        closeModal={hideRetirePlayerModal}
+      />
+    {/if}
+
+    {#if showUnretirePlayerModal}
+      <UnretirePlayer
+        visible={showUnretirePlayerModal}
+        closeModal={hideUnretirePlayerModal}
+      />
+    {/if}
+
+    {#if showPromoteNewClubModal}
+      <PromoteNewClub
+        visible={showPromoteNewClubModal}
+        closeModal={hidePromoteNewClubModal}
+      />
+    {/if}
+
+    {#if showUpdateClubModal}
+      <UpdateClub visible={showUpdateClubModal} closeModal={hideUpdateClubModal} />
+    {/if}
+
+    {#if showAddFixtureDataModal}
+      <AddFixtureData
+        visible={showAddFixtureDataModal}
+        closeModal={hideAddFixtureDataModal}
+      />
+    {/if}
+    <div class="m-4">
+      <div class="bg-panel rounded-md">
         <ul
-          class="flex bg-light-gray contained-text border-b border-gray-700"
+          class="flex rounded-t-lg bg-light-gray border-b border-gray-700 px-4 pt-2"
         >
-          <li
-            class={`mr-1 md:mr-4 ${activeTab === "euro2024entries" ? "active-tab" : ""}`}
-          >
-            <button
-              class={`p-2 ${
-                activeTab === "euro2024entries" ? "text-white" : "text-gray-400"
-              }`}
-              on:click={() => setActiveTab("euro2024entries")}
-            >
-              Euro 2024 Entries
-            </button>
-          </li>
-          <li
-            class={`mr-1 md:mr-4 ${activeTab === "euro2024events" ? "active-tab" : ""}`}
-          >
-            <button
-              class={`p-2 ${
-                activeTab === "euro2024events" ? "text-white" : "text-gray-400"
-              }`}
-              on:click={() => setActiveTab("euro2024events")}
-            >
-              Euro 2024 Events
-            </button>
+          <li class="mr-4 active-tab">
+            <button class="text-white">Raise Proposal</button>
           </li>
         </ul>
-        <div class="flex w-100 bg-OPENFPL p-4 my-4">
-          <button class="bg-OPENFPLPURPLE mx-4 p-4 rounded-md" on:click={closeEuro2024Entries}>Close Euro 2024 Entries</button>
-          <button class="bg-OPENFPLPURPLE mx-4 p-4 rounded-md" on:click={openEuro2024Entries}>Open Euro 2024 Entries</button>
-          <button class="bg-OPENFPLPURPLE mx-4 p-4 rounded-md" on:click={completeEuro2024Competition}>Complete Euro 2024 Competition</button>
-          <button class="bg-OPENFPLPURPLE mx-4 p-4 rounded-md" on:click={recalculateLeaderboard}>Recalculate Leaderboard</button>
+  
+        <p class="m-4">Player proposals</p>
+  
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mt-4 mx-4">
+          <div
+            class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"
+          >
+            <div class="flex items-center w-full">
+              <button
+                class="rounded brand-button-disabled px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full"
+                on:click={displayRevaluePlayerUpModal} disabled>Revalue Player Up</button
+              >
+            </div>
+          </div>
+          <div
+            class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"
+          >
+            <div class="flex items-center space-x-4 w-full">
+              <button
+                class="rounded brand-button-disabled px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full"
+                on:click={displayRevaluePlayerDownModal}
+                >Revalue Player Down</button
+              >
+            </div>
+          </div>
+          <div
+            class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"
+          >
+            <div class="flex items-center space-x-4 w-full">
+              <button
+                class="rounded brand-button-disabled px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full"
+                on:click={displayLoanPlayerModal}>Loan Player</button
+              >
+            </div>
+          </div>
+          <div
+            class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"
+          >
+            <div class="flex items-center space-x-4 w-full">
+              <button
+                class="rounded brand-button px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full"
+                on:click={displayTransferPlayerModal}>Transfer Player</button
+              >
+            </div>
+          </div>
+          <div
+            class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"
+          >
+            <div class="flex items-center space-x-4 w-full">
+              <button
+                class="rounded brand-button-disabled px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full"
+                on:click={displayRecallPlayerModal}>Recall Player</button
+              >
+            </div>
+          </div>
+          <div
+            class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"
+          >
+            <div class="flex items-center space-x-4 w-full">
+              <button
+                class="rounded brand-button-disabled px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full"
+                on:click={displayCreatePlayerModal}>Create Player</button
+              >
+            </div>
+          </div>
+          <div
+            class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"
+          >
+            <div class="flex items-center space-x-4 w-full">
+              <button
+                class="rounded brand-button-disabled px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full"
+                on:click={displayUpdatePlayerModal}>Update Player</button
+              >
+            </div>
+          </div>
+          <div
+            class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"
+          >
+            <div class="flex items-center space-x-4 w-full">
+              <button
+                class="rounded brand-button-disabled px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full"
+                on:click={displaySetPlayerInjuryModal}>Set Player Injury</button
+              >
+            </div>
+          </div>
+          <div
+            class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"
+          >
+            <div class="flex items-center space-x-4 w-full">
+              <button
+                class="rounded brand-button-disabled px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full"
+                on:click={displayRetirePlayerModal}>Retire Player</button
+              >
+            </div>
+          </div>
+          <div
+            class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"
+          >
+            <div class="flex items-center space-x-4 w-full">
+              <button
+                class="rounded brand-button-disabled px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full"
+                on:click={displayUnretirePlayerModal}>Unretire Player</button
+              >
+            </div>
+          </div>
         </div>
-        {#if activeTab === "euro2024entries"}
-          <AdminEuro2024Entries />
-        {:else if activeTab === "euro2024events"}
-          <AdminEuro2024Events />
-        {/if}
+        <p class="m-4">Fixture proposals</p>
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mt-4 mx-4">
+          <div
+            class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"
+          >
+            <div class="flex items-center space-x-4 w-full">
+              <button
+                class="rounded brand-button-disabled px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full"
+                on:click={displayAddFixtureDataModal}>Add Fixture Data</button
+              >
+            </div>
+          </div>
+          <div
+            class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"
+          >
+            <div class="flex items-center space-x-4 w-full">
+              <button
+                class="rounded brand-button-disabled px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full"
+                on:click={displayAddInitialFixturesModal}
+                >Add Initial Fixtures</button
+              >
+            </div>
+          </div>
+          <div
+            class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"
+          >
+            <div class="flex items-center space-x-4 w-full">
+              <button
+                class="rounded brand-button-disabled px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full"
+                on:click={displayMoveFixtureModal}>Move Fixture</button
+              >
+            </div>
+          </div>
+          <div
+            class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"
+          >
+            <div class="flex items-center space-x-4 w-full">
+              <button
+                class="rounded brand-button-disabled px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full"
+                on:click={displayPostponeFixtureModal}>Postpone Fixture</button
+              >
+            </div>
+          </div>
+          <div
+            class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"
+          >
+            <div class="flex items-center space-x-4 w-full">
+              <button
+                class="rounded brand-button-disabled px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full"
+                on:click={displayRescheduleFixtureModal}
+                >Reschedule Fixture</button
+              >
+            </div>
+          </div>
+        </div>
+  
+        <p class="m-4">Club proposals</p>
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mt-4 mx-4 mb-4">
+          <div
+            class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"
+          >
+            <div class="flex items-center space-x-4 w-full">
+              <button
+                class="rounded brand-button-disabled px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full"
+                on:click={displayPromoteNewClubModal}>Promote New Club</button
+              >
+            </div>
+          </div>
+          <div
+            class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"
+          >
+            <div class="flex items-center space-x-4 w-full">
+              <button
+                class="rounded brand-button-disabled px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full"
+                on:click={displayUpdateClubModal}>Update Club</button
+              >
+            </div>
+          </div>
+        </div>
       </div>
     </div>
-</Layout>
+  </Layout>
+  

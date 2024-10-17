@@ -2,20 +2,17 @@
   import { onMount, onDestroy } from "svelte";
   import { writable } from "svelte/store";
   import { authSignedInStore } from "$lib/derived/auth.derived";
-  import { authStore, type AuthSignInParams } from "$lib/stores/auth.store";
-  import { toastsError } from "$lib/stores/toasts.store";
+  import { authStore, type AuthSignInParams } from "$lib/stores/auth-store";
+  import { toastsError } from "$lib/stores/toasts-store";
   import Layout from "./Layout.svelte";
   import FootballIcon from "$lib/icons/FootballIcon.svelte";
   import OpenChatIcon from "$lib/icons/OpenChatIcon.svelte";
   import { Spinner } from "@dfinity/gix-components";
-    import { euro2024Store } from "$lib/stores/euro2024.store";
-    import type { Euro2024State } from "../../../declarations/football_god_backend/football_god_backend.did";
     import { isError } from "$lib/utils/helpers";
     import OpenFplIcon from "$lib/icons/OpenFPLIcon.svelte";
   
   let isLoggedIn = false;
   let isLoading = true;
-  let euro2024State: Euro2024State;
 
   type TileData = {
     title: string;
@@ -35,14 +32,6 @@
       authStore.subscribe((store) => {
         isLoggedIn = store.identity !== null && store.identity !== undefined;
       });
-
-      await euro2024Store.sync();
-      let result = await euro2024Store.getEuro2024State();
-      if(isError(result)){
-        console.error("Error loading Euro2024 state: ", result)
-      }
-
-      euro2024State = result.ok;
       
     } catch (error) {
       toastsError({
@@ -61,12 +50,20 @@
 
   let tiles: TileData[] = [
     {
-      title: "Whitepaper",
-      content: "Read the FootballGod whitepaper.",
-      link: "/whitepaper",
-      icon: null,
-      image: "whitepaper.jpg",
-      buttonText: "Read",
+      title: "OpenFPL",
+      content:
+        "Decentralised Premier League fantasy football.",
+      link: "https://openfpl.xyz",
+      image: "fpl.jpg",
+      buttonText: "Play",
+    },
+    {
+      title: "OpenWSL",
+      content:
+        "Decentralised Women's Super League fantasy football.",
+      link: "https://openwsl.xyz",
+      image: "wsl.jpg",
+      buttonText: "Play",
     },
     {
       title: "Transfer Kings",
@@ -75,14 +72,6 @@
       link: "https://transferkings.xyz",
       image: "transferkings.png",
       buttonText: "Rules",
-    },
-    {
-      title: "OpenFPL",
-      content:
-        "Decentralised fantasy football.",
-      link: "https://openfpl.xyz",
-      image: "openfpl.png",
-      buttonText: "Play",
     },
   ];
 
@@ -104,60 +93,14 @@
         style="background-image: url('banner.jpg');"
       >
         <div class="container ml-4 flex flex-col justify-between">
-          <p class="text-base md:text-xl">$FPL Prediction Sweepstake</p>
-          <p class="text-xl md:text-4xl font-bold">Euro 2024</p>
-          
-          {#if Object.keys(euro2024State.stage)[0] == 'Selecting'}
-          
-            <p class="text-sm md:text-xl">
-              Play for free or enter the $FPL sweepstake up until Friday 14th June
-              2024
-            </p>
-            {#if $authSignedInStore}
-              <a href="/euro2024"
-                ><button class="btn bg-DARK mt-4 py-4 w-48 rounded-md"
-                  >Enter Now</button
-                ></a
-              >
-            {:else}
-                
-              <button on:click={handleLogin} class="btn bg-DARK mt-4 py-4 w-48 rounded-md">Connect To Play</button
-            >
-            {/if}
-          
-          {/if}
-
-          {#if Object.keys(euro2024State.stage)[0] == 'Active'}
-            
-            <p class="text-sm md:text-xl">
-              Check in on the Euro 2024 Prediction Leaderboard here:
-            </p>
-            <a href="/leaderboard"
-              ><button class="btn bg-DARK mt-4 py-4 w-48 rounded-md"
-                >Leaderboard</button
-              ></a
-            >
-                
-          {/if}
-
-          {#if Object.keys(euro2024State.stage)[0] == 'Completed'}
-              
-            <p class="text-sm md:text-xl">
-              Check in our Euro 2024 Prediction Competition results here:
-            </p>
-            <a href="/leaderboard"
-              ><button class="btn bg-DARK mt-4 py-4 w-48 rounded-md"
-                >Results</button
-              ></a
-            >
-                
-          {/if}
-
+          <p class="text-xl md:text-4xl font-bold">FootballGod</p>
+          <p class="text-sm md:text-base">Decentralised Football Gaming</p>
+         
           <div
             class="overlay-panel h-10 rounded-tl-lg w-11/12 md:w-2/3 lg:w-2/5 xl:w-1/4 bg-DARK flex items-center px-1 md:px-4 text-xs md:text-sm"
           >
             <FootballIcon className="w-6 mr-2" />
-            <p class="text-white  font-bold">Euro2024&nbsp;</p>
+            <p class="text-white  font-bold">Football Betting coming 2025</p>
           </div>
         </div>
       </div>
