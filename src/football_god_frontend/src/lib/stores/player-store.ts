@@ -1,22 +1,15 @@
-import { writable } from "svelte/store";
-import { idlFactory } from "../../../../declarations/football_god_backend";
-import { ActorFactory } from "../../utils/ActorFactory";
-import { isError, replacer } from "$lib/utils/helpers";
-import type { PlayerDTO } from "../../../../declarations/football_god_backend/football_god_backend.did";
+import type { LeagueId } from "../../../../declarations/football_god_backend/football_god_backend.did";
+import { PlayerService } from "$lib/services/player-service";
 
 function createPlayerStore() {
-  const { subscribe, set } = writable<PlayerDTO[]>([]);
-
-  let actor: any = ActorFactory.createActor(
-    idlFactory,
-    process.env.FOOTBALL_GOD_BACKEND_CANISTER_ID ?? "",
-  );
-
-  async function sync() {}
+  async function getPlayers(leagueId: LeagueId) {
+    console.log("calling service to get players");
+    console.log(`league id is ${leagueId}`);
+    return new PlayerService().getPlayers(leagueId);
+  }
 
   return {
-    subscribe,
-    sync,
+    getPlayers,
   };
 }
 

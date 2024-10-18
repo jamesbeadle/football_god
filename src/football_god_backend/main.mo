@@ -58,7 +58,7 @@ actor Self {
     return await data_canister.getClubs(leagueId);
   };
 
-  public shared composite query func getPlayers(leagueId: FootballTypes.LeagueId) : async Result.Result<[DTOs.PlayerDTO], T.Error> {  
+  public shared composite query func getLeaguePlayers(leagueId: FootballTypes.LeagueId) : async Result.Result<[DTOs.PlayerDTO], T.Error> {  
     let data_canister = actor (Environment.DATA_CANISTER_ID) : actor {
       getPlayers : shared query (leagueId: FootballTypes.LeagueId) -> async Result.Result<[DTOs.PlayerDTO], T.Error>;
     };

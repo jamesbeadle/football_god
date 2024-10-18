@@ -21,7 +21,6 @@ module DTOs {
   };
 
   public type PlayerDTO = {
-    leagueId: FootballTypes.LeagueId;
     id : Nat16;
     clubId : FootballTypes.ClubId;
     position : FootballTypes.PlayerPosition;

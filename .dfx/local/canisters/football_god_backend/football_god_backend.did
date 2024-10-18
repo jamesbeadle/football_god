@@ -95,12 +95,12 @@ type Result_4 =
 type Result_3 = 
  variant {
    err: Error;
-   ok: vec FootballLeagueDTO;
+   ok: vec PlayerDTO;
  };
 type Result_2 = 
  variant {
    err: Error;
-   ok: vec PlayerDTO;
+   ok: vec FootballLeagueDTO;
  };
 type Result_1 = 
  variant {
@@ -182,7 +182,6 @@ type PlayerDTO =
    firstName: text;
    id: nat16;
    lastName: text;
-   leagueId: LeagueId;
    nationality: CountryId;
    position: PlayerPosition;
    shirtNumber: nat8;
@@ -318,8 +317,8 @@ service : {
   executeUpdatePlayer: (LeagueId, UpdatePlayerDTO) -> ();
   getCountries: () -> (Result_5) query;
   getLeagueClubs: (LeagueId) -> (Result_4) composite_query;
-  getLeagues: () -> (Result_3) composite_query;
-  getPlayers: (LeagueId) -> (Result_2) composite_query;
+  getLeaguePlayers: (LeagueId) -> (Result_3) composite_query;
+  getLeagues: () -> (Result_2) composite_query;
   getProfile: () -> (Result_1) query;
   isAdmin: () -> (Result);
   validateAddInitialFixtures: (AddInitialFixturesDTO) -> (RustResult) query;

@@ -3543,7 +3543,7 @@ const options = {
 		<div class="error">
 			<span class="status">` + status + '</span>\n			<div class="message">\n				<h1>' + message + "</h1>\n			</div>\n		</div>\n	</body>\n</html>\n"
   },
-  version_hash: "1rqqzh5"
+  version_hash: "cufhrq"
 };
 async function get_hooks() {
   return {};
@@ -4397,21 +4397,6 @@ const idlFactory = ({ IDL }) => {
     "primaryColourHex": IDL.Text
   });
   const Result_4 = IDL.Variant({ "ok": IDL.Vec(ClubDTO), "err": Error2 });
-  const FootballLeagueDTO = IDL.Record({
-    "id": LeagueId,
-    "logo": IDL.Vec(IDL.Nat8),
-    "name": IDL.Text,
-    "teamCount": IDL.Nat8,
-    "relatedGender": Gender,
-    "countryId": CountryId,
-    "abbreviation": IDL.Text,
-    "governingBody": IDL.Text,
-    "formed": IDL.Int
-  });
-  const Result_3 = IDL.Variant({
-    "ok": IDL.Vec(FootballLeagueDTO),
-    "err": Error2
-  });
   const PlayerStatus = IDL.Variant({
     "OnLoan": IDL.Null,
     "Active": IDL.Null,
@@ -4428,10 +4413,24 @@ const idlFactory = ({ IDL }) => {
     "shirtNumber": IDL.Nat8,
     "position": PlayerPosition,
     "lastName": IDL.Text,
-    "leagueId": LeagueId,
     "firstName": IDL.Text
   });
-  const Result_2 = IDL.Variant({ "ok": IDL.Vec(PlayerDTO), "err": Error2 });
+  const Result_3 = IDL.Variant({ "ok": IDL.Vec(PlayerDTO), "err": Error2 });
+  const FootballLeagueDTO = IDL.Record({
+    "id": LeagueId,
+    "logo": IDL.Vec(IDL.Nat8),
+    "name": IDL.Text,
+    "teamCount": IDL.Nat8,
+    "relatedGender": Gender,
+    "countryId": CountryId,
+    "abbreviation": IDL.Text,
+    "governingBody": IDL.Text,
+    "formed": IDL.Int
+  });
+  const Result_2 = IDL.Variant({
+    "ok": IDL.Vec(FootballLeagueDTO),
+    "err": Error2
+  });
   const PrincipalId = IDL.Text;
   const ProfileDTO = IDL.Record({
     "username": IDL.Text,
@@ -4481,8 +4480,8 @@ const idlFactory = ({ IDL }) => {
     "executeUpdatePlayer": IDL.Func([LeagueId, UpdatePlayerDTO], [], []),
     "getCountries": IDL.Func([], [Result_5], ["query"]),
     "getLeagueClubs": IDL.Func([LeagueId], [Result_4], ["composite_query"]),
-    "getLeagues": IDL.Func([], [Result_3], ["composite_query"]),
-    "getPlayers": IDL.Func([LeagueId], [Result_2], ["composite_query"]),
+    "getLeaguePlayers": IDL.Func([LeagueId], [Result_3], ["composite_query"]),
+    "getLeagues": IDL.Func([], [Result_2], ["composite_query"]),
     "getProfile": IDL.Func([], [Result_1], ["query"]),
     "isAdmin": IDL.Func([], [Result], []),
     "validateAddInitialFixtures": IDL.Func(
@@ -4835,6 +4834,7 @@ class ClubService {
   }
   async getClubs(leagueId) {
     const result = await this.actor.getLeagueClubs(leagueId);
+    console.log(result);
     if (isError(result))
       throw new Error("Failed to fetch clubs");
     return result.ok;
@@ -4850,17 +4850,32 @@ function createClubStore() {
 }
 const clubStore = createClubStore();
 var define_process_env_default$8 = { FOOTBALL_GOD_BACKEND_CANISTER_ID: "44kin-waaaa-aaaal-qbxra-cai", FOOTBALL_GOD_FRONTEND_CANISTER_ID: "43loz-3yaaa-aaaal-qbxrq-cai", DFX_NETWORK: "ic" };
+class PlayerService {
+  actor;
+  constructor() {
+    this.actor = ActorFactory.createActor(
+      idlFactory,
+      define_process_env_default$8.FOOTBALL_GOD_BACKEND_CANISTER_ID
+    );
+  }
+  async getPlayers(leagueId) {
+    console.log("using actor to get players");
+    console.log(`league id is ${leagueId}`);
+    const result = await this.actor.getLeaguePlayers(leagueId);
+    console.log(result);
+    if (isError(result))
+      throw new Error("Failed to fetch players");
+    return result.ok;
+  }
+}
 function createPlayerStore() {
-  const { subscribe: subscribe2, set } = writable([]);
-  ActorFactory.createActor(
-    idlFactory,
-    define_process_env_default$8.FOOTBALL_GOD_BACKEND_CANISTER_ID
-  );
-  async function sync() {
+  async function getPlayers(leagueId) {
+    console.log("calling service to get players");
+    console.log(`league id is ${leagueId}`);
+    return new PlayerService().getPlayers(leagueId);
   }
   return {
-    subscribe: subscribe2,
-    sync
+    getPlayers
   };
 }
 const playerStore = createPlayerStore();
@@ -5063,6 +5078,9 @@ class LeagueService {
 }
 function createLeagueStore() {
   const { subscribe: subscribe2, set } = writable([]);
+  async function getLeagues() {
+    return new LeagueService().getLeagues();
+  }
   async function updateName(leagueId, leagueName) {
     return new LeagueService().setLeagueName(leagueId, leagueName);
   }
@@ -5097,7 +5115,8 @@ function createLeagueStore() {
     updateDateFormed,
     updateCountryId,
     updateLogo,
-    updateTeamCount
+    updateTeamCount,
+    getLeagues
   };
 }
 const leagueStore = createLeagueStore();
@@ -5573,12 +5592,9 @@ const Loan_player = create_ssr_component(($$result, $$props, $$bindings, slots) 
 });
 const Transfer_player = create_ssr_component(($$result, $$props, $$bindings, slots) => {
   let isSubmitDisabled;
-  let $$unsubscribe_playerStore;
-  let $leagueStore, $$unsubscribe_leagueStore;
-  $$unsubscribe_playerStore = subscribe(playerStore, (value) => value);
-  $$unsubscribe_leagueStore = subscribe(leagueStore, (value) => $leagueStore = value);
   let { visible } = $$props;
   let { closeModal } = $$props;
+  let currentLeagues = [];
   let selectedCurrentLeagueId = 0;
   let showConfirm = false;
   if ($$props.visible === void 0 && $$bindings.visible && visible !== void 0)
@@ -5591,11 +5607,9 @@ const Transfer_player = create_ssr_component(($$result, $$props, $$bindings, slo
       showConfirm = false;
     }
   }
-  $$unsubscribe_playerStore();
-  $$unsubscribe_leagueStore();
   return `${validate_component(Modal, "Modal").$$render($$result, { visible }, {}, {
     default: () => {
-      return `<div class="mx-4 p-4"><div class="flex justify-between items-center my-2"><h3 class="default-header" data-svelte-h="svelte-eogsmc">Transfer Player</h3> <button class="times-button" data-svelte-h="svelte-jkt426">×</button></div> <div class="flex justify-start items-center w-full"><div class="w-full flex-col space-y-4 mb-2"><p data-svelte-h="svelte-1yqgbrz">Select the player&#39;s league:</p> <select class="p-2 fpl-dropdown min-w-[100px]"><option${add_attribute("value", 0, 0)} data-svelte-h="svelte-1ctg2hj">Select League</option>${each($leagueStore, (league) => {
+      return `<div class="mx-4 p-4"><div class="flex justify-between items-center my-2"><h3 class="default-header" data-svelte-h="svelte-eogsmc">Transfer Player</h3> <button class="times-button" data-svelte-h="svelte-jkt426">×</button></div> <div class="flex justify-start items-center w-full"><div class="w-full flex-col space-y-4 mb-2"><p data-svelte-h="svelte-1yqgbrz">Select the player&#39;s league:</p> <select class="p-2 fpl-dropdown min-w-[100px]"><option${add_attribute("value", 0, 0)} data-svelte-h="svelte-1ctg2hj">Select League</option>${each(currentLeagues, (league) => {
         return `<option${add_attribute("value", league.id, 0)}>${escape(league.name)}</option>`;
       })}</select> ${``} ${``} <div class="border-b border-gray-200"></div> <div class="items-center flex space-x-4"><button class="px-4 py-2 default-button fpl-cancel-btn min-w-[150px]" type="button" data-svelte-h="svelte-19jfrwv">Cancel</button> <button${add_attribute(
         "class",

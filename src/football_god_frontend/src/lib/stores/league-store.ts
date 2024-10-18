@@ -9,6 +9,10 @@ import type {
 function createLeagueStore() {
   const { subscribe, set } = writable<FootballLeagueDTO[]>([]);
 
+  async function getLeagues() {
+    return new LeagueService().getLeagues();
+  }
+
   async function updateName(
     leagueId: LeagueId,
     leagueName: string,
@@ -76,6 +80,7 @@ function createLeagueStore() {
     updateCountryId,
     updateLogo,
     updateTeamCount,
+    getLeagues,
   };
 }
 
