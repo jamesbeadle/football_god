@@ -7,6 +7,7 @@
   import CopyIcon from "$lib/icons/CopyIcon.svelte";
   import { writable } from "svelte/store";
   import WithdrawFplModal from "./withdraw-fpl-modal.svelte";
+    import { authStore } from "$lib/stores/auth-store";
 
   let isLoading = true;
   let loadingBalances = true;
@@ -15,6 +16,8 @@
   let fplBalanceFormatted = "0.0000"; 
   let dots = writable('.');
   let dot_interval: ReturnType<typeof setInterval>;
+  let username = "";
+  let principalId = "";
 
   let showUsernameModal = false;
   let showFPLModal = false;
@@ -23,10 +26,14 @@
     try {
       startDotAnimation();
       await userStore.sync();
+      await authStore.sync();
+      principalId = $authStore.identity?.getPrincipal().toText() ?? "";
+      console.log($authStore.identity?.getPrincipal().toText());
       unsubscribeUserProfile = userStore.subscribe((value) => {
         if (!value) {
           return;
         }
+        username = value.username;
       });
       isLoading = false;
       await fetchBalances();
@@ -132,9 +139,9 @@
 
       <div class="w-full mb-4 md:mb-0">
         <div class="mt-2 md:mt-1 rounded-lg">
-          <p class="mb-1 text-xs">Display Name:</p>
+          <p class="mb-1 text-xs">Username:</p>
           <h2 class="default-header mb-1 md:mb-2">
-            {$userStore?.displayName == $userStore.principalName ? "Not Set" : $userStore?.displayName}
+            {username == principalId ? "Not Set" : principalId}
           </h2>
           <button
             class="text-sm md:text-sm p-1 md:p-2 px-2 md:px-4 rounded fg-button button-hover"
@@ -147,9 +154,9 @@
           <div class="flex items-center">
             <button
               class="flex items-center text-left text-xxs break-all"
-              on:click={() => copyAndShowToast($userStore.principalName)}
+              on:click={() => copyAndShowToast(principalId)}
             >
-              <span>{$userStore.principalName}</span>
+              <span>{ principalId }</span>
               <CopyIcon className="w-7 xs:w-6 text-left" fill="#FFFFFF" />
             </button>
           </div>
@@ -181,9 +188,9 @@
                 <div class="flex items-center text-xs">
                   <button
                     class="flex items-center text-left break-all"
-                    on:click={() => copyAndShowToast($userStore.fplDepositAddress)}
+                    on:click={() => copyAndShowToast(principalId)}
                   >
-                    <span>{$userStore.fplDepositAddress}</span>
+                    <span>{principalId}</span>
                     <CopyIcon className="w-7 xs:w-6 text-left" fill="#FFFFFF" />
                   </button>
                 </div>

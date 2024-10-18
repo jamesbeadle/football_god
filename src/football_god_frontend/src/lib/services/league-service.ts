@@ -1,6 +1,7 @@
 import { authStore } from "$lib/stores/auth-store";
 import { idlFactory } from "../../../../declarations/football_god_backend";
 import type {
+  CreateLeagueDTO,
   FootballLeagueDTO,
   Gender,
   LeagueId,
@@ -27,7 +28,7 @@ export class LeagueService {
   async setLeagueName(leagueId: LeagueId, leagueName: string): Promise<void> {
     const identityActor: any = await ActorFactory.createIdentityActor(
       authStore,
-      process.env.OPENFPL_BACKEND_CANISTER_ID ?? "",
+      process.env.FOOTBALL_GOD_BACKEND_CANISTER_ID ?? "",
     );
 
     const result = await identityActor.setLeagueName(leagueId, leagueName);
@@ -40,7 +41,7 @@ export class LeagueService {
   ): Promise<void> {
     const identityActor: any = await ActorFactory.createIdentityActor(
       authStore,
-      process.env.OPENFPL_BACKEND_CANISTER_ID ?? "",
+      process.env.FOOTBALL_GOD_BACKEND_CANISTER_ID ?? "",
     );
 
     const result = await identityActor.setAbbreviatedLeagueName(
@@ -57,7 +58,7 @@ export class LeagueService {
   ): Promise<void> {
     const identityActor: any = await ActorFactory.createIdentityActor(
       authStore,
-      process.env.OPENFPL_BACKEND_CANISTER_ID ?? "",
+      process.env.FOOTBALL_GOD_BACKEND_CANISTER_ID ?? "",
     );
 
     const result = await identityActor.setLeagueGoverningBody(
@@ -70,7 +71,7 @@ export class LeagueService {
   async setGender(leagueId: LeagueId, gender: Gender): Promise<void> {
     const identityActor: any = await ActorFactory.createIdentityActor(
       authStore,
-      process.env.OPENFPL_BACKEND_CANISTER_ID ?? "",
+      process.env.FOOTBALL_GOD_BACKEND_CANISTER_ID ?? "",
     );
 
     const result = await identityActor.setLeagueGender(leagueId, gender);
@@ -80,7 +81,7 @@ export class LeagueService {
   async setDateFormed(leagueId: LeagueId, date: BigInt): Promise<void> {
     const identityActor: any = await ActorFactory.createIdentityActor(
       authStore,
-      process.env.OPENFPL_BACKEND_CANISTER_ID ?? "",
+      process.env.FOOTBALL_GOD_BACKEND_CANISTER_ID ?? "",
     );
 
     const result = await identityActor.setLeagueDateFormed(leagueId, date);
@@ -90,7 +91,7 @@ export class LeagueService {
   async setCountryId(leagueId: LeagueId, countryId: number): Promise<void> {
     const identityActor: any = await ActorFactory.createIdentityActor(
       authStore,
-      process.env.OPENFPL_BACKEND_CANISTER_ID ?? "",
+      process.env.FOOTBALL_GOD_BACKEND_CANISTER_ID ?? "",
     );
 
     const result = await identityActor.setLeagueCountryId(leagueId, countryId);
@@ -100,7 +101,7 @@ export class LeagueService {
   async setLogo(leagueId: LeagueId, logo: Uint8Array): Promise<void> {
     const identityActor: any = await ActorFactory.createIdentityActor(
       authStore,
-      process.env.OPENFPL_BACKEND_CANISTER_ID ?? "",
+      process.env.FOOTBALL_GOD_BACKEND_CANISTER_ID ?? "",
     );
 
     const result = await identityActor.setLeagueLogo(leagueId, logo);
@@ -110,7 +111,7 @@ export class LeagueService {
   async setTeamCount(leagueId: LeagueId, teamCount: number): Promise<void> {
     const identityActor: any = await ActorFactory.createIdentityActor(
       authStore,
-      process.env.OPENFPL_BACKEND_CANISTER_ID ?? "",
+      process.env.FOOTBALL_GOD_BACKEND_CANISTER_ID ?? "",
     );
 
     const result = await identityActor.setTeamCount(leagueId, teamCount);
@@ -120,7 +121,7 @@ export class LeagueService {
   async createLeague(dto: CreateLeagueDTO): Promise<void> {
     const identityActor: any = await ActorFactory.createIdentityActor(
       authStore,
-      process.env.OPENFPL_BACKEND_CANISTER_ID ?? "",
+      process.env.FOOTBALL_GOD_BACKEND_CANISTER_ID ?? "",
     );
 
     const result = await identityActor.createLeague(dto);

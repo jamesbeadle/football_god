@@ -7,6 +7,9 @@ import { nonNullish, isNullish } from "@dfinity/utils";
 import "dompurify";
 import { AuthClient } from "@dfinity/auth-client";
 import { HttpAgent, Actor } from "@dfinity/agent";
+import "@dfinity/ledger-icrc";
+import "@dfinity/principal";
+import "@dfinity/candid/lib/cjs/idl.js";
 let base = "";
 let assets = base;
 const initial = { base, assets };
@@ -3540,7 +3543,7 @@ const options = {
 		<div class="error">
 			<span class="status">` + status + '</span>\n			<div class="message">\n				<h1>' + message + "</h1>\n			</div>\n		</div>\n	</body>\n</html>\n"
   },
-  version_hash: "16lf95m"
+  version_hash: "1rqqzh5"
 };
 async function get_hooks() {
   return {};
@@ -4203,136 +4206,6 @@ const RulesIcon = create_ssr_component(($$result, $$props, $$bindings, slots) =>
     $$bindings.fill(fill);
   return `<svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true"${add_attribute("class", className, 0)} fill="currentColor" viewBox="0 0 24 24"><path d="M22.9642 13.8226C22.9603 13.7638 22.9508 13.7055 22.936 13.6484L20.6313 7.51135C21.0508 7.24006 21.3957 6.86818 21.6347 6.42956C21.8738 5.99095 21.9993 5.49952 22 5C22 4.73478 21.8946 4.48043 21.7071 4.29289C21.5196 4.10536 21.2652 4 21 4C20.7348 4 20.4804 4.10536 20.2929 4.29289C20.1054 4.48043 20 4.73478 20 5C19.9999 5.22285 19.9254 5.43929 19.7884 5.61499C19.6513 5.79069 19.4595 5.91559 19.2433 5.96987C19.0272 6.02416 18.7991 6.00472 18.5953 5.91465C18.3915 5.82457 18.2235 5.66902 18.1182 5.47266C17.8616 5.01717 17.4863 4.63972 17.0324 4.38042C16.5784 4.12111 16.0627 3.98965 15.54 4H13V3C13 2.73478 12.8946 2.48043 12.7071 2.29289C12.5196 2.10536 12.2652 2 12 2C11.7348 2 11.4804 2.10536 11.2929 2.29289C11.1054 2.48043 11 2.73478 11 3V4H8.46C7.93731 3.98965 7.42158 4.12111 6.96762 4.38042C6.51366 4.63972 6.13844 5.01717 5.88184 5.47266C5.77647 5.66902 5.60855 5.82457 5.40471 5.91465C5.20088 6.00472 4.97281 6.02416 4.75668 5.96987C4.54054 5.91559 4.34872 5.79069 4.21165 5.61499C4.07457 5.43929 4.00008 5.22285 4 5C4 4.73478 3.89464 4.48043 3.70711 4.29289C3.51957 4.10536 3.26522 4 3 4C2.73478 4 2.48043 4.10536 2.29289 4.29289C2.10536 4.48043 2 4.73478 2 5C2.00065 5.49952 2.12621 5.99095 2.36525 6.42956C2.60429 6.86818 2.94922 7.24006 3.36865 7.51135L1.064 13.6484C1.04921 13.7055 1.03977 13.7638 1.03581 13.8226C1.01825 13.8805 1.00626 13.9399 1 14C1 14.0093 1.00269 14.0178 1.00275 14.0271C1.00305 14.0403 1.00575 14.0524 1.00665 14.0655C1.02222 15.1144 1.4498 16.115 2.197 16.8512C2.94421 17.5874 3.95105 18.0001 5 18.0001C6.04895 18.0001 7.05579 17.5874 7.803 16.8512C8.5502 16.115 8.97778 15.1144 8.99335 14.0655C8.9942 14.0524 8.99695 14.0403 8.99725 14.0271C8.99731 14.0178 9 14.0093 9 14C8.99376 13.9399 8.98178 13.8805 8.96423 13.8226C8.96027 13.7638 8.95083 13.7055 8.93604 13.6484L6.62866 7.50421C7.05242 7.23377 7.40114 6.86085 7.64258 6.41992C7.72984 6.2842 7.85137 6.1739 7.99489 6.10017C8.13841 6.02644 8.29885 5.99189 8.46 6H11V20H8C7.73478 20 7.48043 20.1054 7.29289 20.2929C7.10536 20.4804 7 20.7348 7 21C7 21.2652 7.10536 21.5196 7.29289 21.7071C7.48043 21.8946 7.73478 22 8 22H16C16.2652 22 16.5196 21.8946 16.7071 21.7071C16.8946 21.5196 17 21.2652 17 21C17 20.7348 16.8946 20.4804 16.7071 20.2929C16.5196 20.1054 16.2652 20 16 20H13V6H15.54C15.7011 5.9919 15.8616 6.02646 16.0051 6.10018C16.1486 6.17391 16.2701 6.2842 16.3574 6.41992C16.5988 6.86085 16.9475 7.23377 17.3713 7.50421L15.064 13.6484C15.0492 13.7055 15.0398 13.7638 15.0358 13.8226C15.0182 13.8805 15.0063 13.9399 15 14C15 14.0093 15.0027 14.0178 15.0028 14.0271C15.0031 14.0403 15.0057 14.0524 15.0066 14.0655C15.0222 15.1144 15.4498 16.115 16.197 16.8512C16.9442 17.5874 17.951 18.0001 19 18.0001C20.049 18.0001 21.0558 17.5874 21.803 16.8512C22.5502 16.115 22.9778 15.1144 22.9933 14.0655C22.9942 14.0524 22.997 14.0403 22.9972 14.0271C22.9973 14.0178 23 14.0093 23 14C22.9938 13.9399 22.9818 13.8805 22.9642 13.8226ZM5 8.85553L6.5564 13H3.4436L5 8.85553ZM6.72266 15C6.54618 15.3011 6.29479 15.5515 5.99293 15.7267C5.69107 15.9019 5.34901 15.9961 5 16C4.64903 15.9999 4.30428 15.9074 4.00036 15.7319C3.69644 15.5563 3.44405 15.3039 3.26855 15H6.72266ZM19 8.85553L20.5564 13H17.4436L19 8.85553ZM19 16C18.649 15.9999 18.3043 15.9074 18.0004 15.7319C17.6964 15.5563 17.4441 15.3039 17.2686 15H20.7227C20.5462 15.3011 20.2948 15.5515 19.9929 15.7267C19.6911 15.9019 19.349 15.9961 19 16Z"${add_attribute("fill", fill, 0)}></path></svg>`;
 });
-const css$2 = {
-  code: ".transition-width.svelte-frwh1m{transition:width 200ms}a.active.svelte-frwh1m{color:white !important}",
-  map: `{"version":3,"file":"Layout.svelte","sources":["Layout.svelte"],"sourcesContent":["<script lang=\\"ts\\">import { onMount } from \\"svelte\\";\\nimport { browser } from \\"$app/environment\\";\\nimport { initAuthWorker } from \\"$lib/services/worker.auth.services\\";\\nimport { authStore } from \\"$lib/stores/auth-store\\";\\nimport { authSignedInStore } from \\"$lib/derived/auth.derived\\";\\nimport { toastsError } from \\"$lib/stores/toasts-store\\";\\nimport { writable } from \\"svelte/store\\";\\nimport { BusyScreen, Spinner, Toasts } from \\"@dfinity/gix-components\\";\\nimport LogoIcon from \\"$lib/icons/LogoIcon.svelte\\";\\nimport HomeIcon from \\"$lib/icons/HomeIcon.svelte\\";\\nimport BettingIcon from \\"$lib/icons/BettingIcon.svelte\\";\\nimport GamesIcon from \\"$lib/icons/GamesIcon.svelte\\";\\nimport StarIcon from \\"$lib/icons/StarIcon.svelte\\";\\nimport { fade } from \\"svelte/transition\\";\\nimport \\"../app.css\\";\\nimport { page } from \\"$app/stores\\";\\nimport ProfileIcon from \\"$lib/icons/ProfileIcon.svelte\\";\\nimport LogoutIcon from \\"$lib/icons/LogoutIcon.svelte\\";\\nimport { signOut } from \\"$lib/services/auth.services\\";\\nimport Tooltip from \\"$lib/components/tooltip.svelte\\";\\nimport WhitepaperIcon from \\"$lib/icons/WhitepaperIcon.svelte\\";\\nimport RulesIcon from \\"$lib/icons/RulesIcon.svelte\\";\\nlet isExpanded = writable(false);\\n$: links = $authSignedInStore ? [\\n    { name: \\"Home\\", icon: HomeIcon, href: \\"/\\" },\\n    { name: \\"Profile\\", icon: ProfileIcon, href: \\"/profile\\" },\\n    { name: \\"Governance\\", icon: RulesIcon, href: \\"/governance\\" },\\n    { name: \\"Admin\\", icon: StarIcon, href: \\"/admin\\" }\\n] :\\n    [\\n        { name: \\"Home\\", icon: HomeIcon, href: \\"/\\" }\\n    ];\\nlet worker;\\nconst init = async () => await Promise.all([syncAuthStore()]);\\nconst syncAuthStore = async () => {\\n    if (!browser) {\\n        return;\\n    }\\n    try {\\n        await authStore.sync();\\n    }\\n    catch (err) {\\n        toastsError({\\n            msg: {\\n                text: \\"Unexpected issue while syncing the status of your authentication.\\",\\n            },\\n            err,\\n        });\\n    }\\n};\\nonMount(async () => (worker = await initAuthWorker()));\\n$: activeRoute = $page.url.pathname;\\n$: worker, $authStore, (() => worker?.syncAuthIdle($authStore))();\\n$: (() => {\\n    if (!browser) {\\n        return;\\n    }\\n    if ($authStore === undefined) {\\n        return;\\n    }\\n    const spinner = document.querySelector(\\"body > #app-spinner\\");\\n    spinner?.remove();\\n})();\\nfunction handleLogin() {\\n    let params = {\\n        domain: import.meta.env.VITE_AUTH_PROVIDER_URL,\\n    };\\n    authStore.signIn(params);\\n}\\nasync function handleLogout() {\\n    await authStore.signOut();\\n}\\n<\/script>\\n\\n<svelte:window on:storage={syncAuthStore} />\\n{#await init()}\\n  <div in:fade>\\n    <Spinner />\\n  </div>\\n{:then _}\\n  <div class=\\"flex h-screen\\">\\n    <div\\n      class=\\"bg-GRAY text-white flex flex-col justify-between transition-width duration-300 p-5 rounded-lg m-2\\"\\n      style=\\"width: {$isExpanded ? '16rem' : '4rem'}\\"\\n    >\\n    <div class=\\"flex flex-col flex-grow\\">\\n      <button on:click={() => ($isExpanded = !$isExpanded)} class=\\"mb-4\\">\\n          <span>{$isExpanded ? \\"<<\\" : \\">>\\"}</span>\\n        </button>\\n\\n        <div class=\\"text-gray-400 flex flex-col\\">\\n          <a href=\\"/\\" class=\\"block mt-4 text-lg my-4\\">\\n            <div class=\\"flex flex-row items-center\\">\\n              <LogoIcon className=\\"w-6 mr-2\\" />\\n              {#if $isExpanded}\\n                <span\\n                  in:fade={{ duration: 200 }}\\n                  out:fade={{ delay: 0, duration: 100 }}>FootballGod</span\\n                >\\n              {/if}\\n            </div>\\n          </a>\\n          {#each links as link}\\n            <a\\n              href={link.href}\\n              class:active={activeRoute === link.href}\\n              rel=\\"prefetch\\"\\n              class=\\"block mt-4 text-lg\\"\\n            >\\n              <div class=\\"flex flex-row items-center\\">\\n\\n                <Tooltip text={link.name}>\\n                  <svelte:component\\n                    this={link.icon}\\n                    className=\\"w-6 mr-2\\"\\n                    fill={activeRoute === link.href ? \\"white\\" : \\"gray\\"}\\n                  />\\n                </Tooltip>\\n                {#if $isExpanded}\\n                  <span\\n                    in:fade={{ duration: 200 }}\\n                    out:fade={{ delay: 0, duration: 100 }}>{link.name}</span\\n                  >\\n                {/if}\\n              </div>\\n            </a>\\n          {/each}\\n        </div>\\n      </div>\\n      {#if $authSignedInStore && !$isExpanded}\\n        <button on:click={signOut} in:fade>\\n          <Tooltip text=\\"Logout\\">\\n            <LogoutIcon className=\\"max-w-6\\" />\\n          </Tooltip>\\n        </button>\\n      {/if}\\n      \\n\\n      <div class=\\"mb-4\\">\\n        {#if $isExpanded}\\n          {#if $authSignedInStore}\\n            <button on:click={handleLogout} class=\\"button-hover p-2 rounded-md text-sm w-full\\"\\n                in:fade={{ duration: 200 }}\\n                out:fade={{ delay: 0, duration: 100 }}>Disconnect</button\\n              >\\n          {:else}\\n            <button on:click={handleLogin} class=\\"bg-OPENFPL hover:bg-OPENFPL hover:text-GRAY p-2 rounded-md text-sm w-full\\"\\n                in:fade={{ duration: 200 }}\\n                out:fade={{ delay: 0, duration: 100 }}>Connect Internet Identity</button\\n              >\\n          {/if}\\n        {/if}\\n      </div>\\n    </div>\\n\\n    <div class=\\"flex-1\\">\\n      <slot />\\n    </div>\\n    <Toasts />\\n  </div>\\n{/await}\\n\\n<BusyScreen />\\n\\n<style>\\n  .transition-width {\\n    transition: width 200ms;\\n  }\\n  a.active {\\n    color: white !important;\\n  }</style>"],"names":[],"mappings":"AAqKE,+BAAkB,CAChB,UAAU,CAAE,KAAK,CAAC,KACpB,CACA,CAAC,qBAAQ,CACP,KAAK,CAAE,KAAK,CAAC,UACf"}`
-};
-const Layout = create_ssr_component(($$result, $$props, $$bindings, slots) => {
-  let links;
-  let activeRoute;
-  let $$unsubscribe_authStore;
-  let $page, $$unsubscribe_page;
-  let $authSignedInStore, $$unsubscribe_authSignedInStore;
-  let $isExpanded, $$unsubscribe_isExpanded;
-  $$unsubscribe_authStore = subscribe(authStore, (value) => value);
-  $$unsubscribe_page = subscribe(page, (value) => $page = value);
-  $$unsubscribe_authSignedInStore = subscribe(authSignedInStore, (value) => $authSignedInStore = value);
-  let isExpanded = writable(false);
-  $$unsubscribe_isExpanded = subscribe(isExpanded, (value) => $isExpanded = value);
-  const init2 = async () => await Promise.all([syncAuthStore()]);
-  const syncAuthStore = async () => {
-    {
-      return;
-    }
-  };
-  $$result.css.add(css$2);
-  links = $authSignedInStore ? [
-    { name: "Home", icon: HomeIcon, href: "/" },
-    {
-      name: "Profile",
-      icon: ProfileIcon,
-      href: "/profile"
-    },
-    {
-      name: "Governance",
-      icon: RulesIcon,
-      href: "/governance"
-    },
-    {
-      name: "Admin",
-      icon: StarIcon,
-      href: "/admin"
-    }
-  ] : [{ name: "Home", icon: HomeIcon, href: "/" }];
-  activeRoute = $page.url.pathname;
-  $$unsubscribe_authStore();
-  $$unsubscribe_page();
-  $$unsubscribe_authSignedInStore();
-  $$unsubscribe_isExpanded();
-  return ` ${function(__value) {
-    if (is_promise(__value)) {
-      __value.then(null, noop);
-      return ` <div>${validate_component(Spinner, "Spinner").$$render($$result, {}, {}, {})}</div> `;
-    }
-    return function(_) {
-      return ` <div class="flex h-screen"><div class="bg-GRAY text-white flex flex-col justify-between transition-width duration-300 p-5 rounded-lg m-2 svelte-frwh1m" style="${"width: " + escape($isExpanded ? "16rem" : "4rem", true)}"><div class="flex flex-col flex-grow"><button class="mb-4"><span>${escape($isExpanded ? "<<" : ">>")}</span></button> <div class="text-gray-400 flex flex-col"><a href="/" class="block mt-4 text-lg my-4"><div class="flex flex-row items-center">${validate_component(LogoIcon, "LogoIcon").$$render($$result, { className: "w-6 mr-2" }, {}, {})} ${$isExpanded ? `<span data-svelte-h="svelte-judcsy">FootballGod</span>` : ``}</div></a> ${each(links, (link) => {
-        return `<a${add_attribute("href", link.href, 0)} rel="prefetch" class="${[
-          "block mt-4 text-lg svelte-frwh1m",
-          activeRoute === link.href ? "active" : ""
-        ].join(" ").trim()}"><div class="flex flex-row items-center">${validate_component(Tooltip, "Tooltip").$$render($$result, { text: link.name }, {}, {
-          default: () => {
-            return `${validate_component(link.icon || missing_component, "svelte:component").$$render(
-              $$result,
-              {
-                className: "w-6 mr-2",
-                fill: activeRoute === link.href ? "white" : "gray"
-              },
-              {},
-              {}
-            )} `;
-          }
-        })} ${$isExpanded ? `<span>${escape(link.name)}</span>` : ``}</div> </a>`;
-      })}</div></div> ${$authSignedInStore && !$isExpanded ? `<button>${validate_component(Tooltip, "Tooltip").$$render($$result, { text: "Logout" }, {}, {
-        default: () => {
-          return `${validate_component(LogoutIcon, "LogoutIcon").$$render($$result, { className: "max-w-6" }, {}, {})}`;
-        }
-      })}</button>` : ``} <div class="mb-4">${$isExpanded ? `${$authSignedInStore ? `<button class="button-hover p-2 rounded-md text-sm w-full" data-svelte-h="svelte-kl75by">Disconnect</button>` : `<button class="bg-OPENFPL hover:bg-OPENFPL hover:text-GRAY p-2 rounded-md text-sm w-full" data-svelte-h="svelte-lbywhq">Connect Internet Identity</button>`}` : ``}</div></div> <div class="flex-1">${slots.default ? slots.default({}) : ``}</div> ${validate_component(Toasts, "Toasts").$$render($$result, {}, {}, {})}</div> `;
-    }();
-  }(init2())} ${validate_component(BusyScreen, "BusyScreen").$$render($$result, {}, {}, {})}`;
-});
-function replacer(key2, value) {
-  if (typeof value === "bigint") {
-    return value.toString();
-  } else {
-    return value;
-  }
-}
-function isError(response) {
-  return response && response.err !== void 0;
-}
-function convertEvent(playerEvent) {
-  if ("Appearance" in playerEvent)
-    return 0;
-  if ("Goal" in playerEvent)
-    return 1;
-  if ("GoalAssisted" in playerEvent)
-    return 2;
-  if ("GoalConceded" in playerEvent)
-    return 3;
-  if ("KeeperSave" in playerEvent)
-    return 4;
-  if ("CleanSheet" in playerEvent)
-    return 5;
-  if ("PenaltySaved" in playerEvent)
-    return 6;
-  if ("PenaltyMissed" in playerEvent)
-    return 7;
-  if ("YellowCard" in playerEvent)
-    return 8;
-  if ("RedCard" in playerEvent)
-    return 9;
-  if ("OwnGoal" in playerEvent)
-    return 10;
-  if ("HighestScoringPlayer" in playerEvent)
-    return 11;
-  return 0;
-}
-const css$1 = {
-  code: ".overlay-panel.svelte-a3qity{position:absolute;bottom:0;right:0}",
-  map: `{"version":3,"file":"+page.svelte","sources":["+page.svelte"],"sourcesContent":["<script lang=\\"ts\\">import { onMount, onDestroy } from \\"svelte\\";\\nimport { writable } from \\"svelte/store\\";\\nimport { authSignedInStore } from \\"$lib/derived/auth.derived\\";\\nimport { authStore } from \\"$lib/stores/auth-store\\";\\nimport { toastsError } from \\"$lib/stores/toasts-store\\";\\nimport Layout from \\"./Layout.svelte\\";\\nimport FootballIcon from \\"$lib/icons/FootballIcon.svelte\\";\\nimport OpenChatIcon from \\"$lib/icons/OpenChatIcon.svelte\\";\\nimport { Spinner } from \\"@dfinity/gix-components\\";\\nimport { isError } from \\"$lib/utils/helpers\\";\\nimport OpenFplIcon from \\"$lib/icons/OpenFPLIcon.svelte\\";\\nlet isLoggedIn = false;\\nlet isLoading = true;\\nlet interval;\\nonMount(async () => {\\n    try {\\n        await authStore.sync();\\n        authStore.subscribe((store) => {\\n            isLoggedIn = store.identity !== null && store.identity !== undefined;\\n        });\\n    }\\n    catch (error) {\\n        toastsError({\\n            msg: { text: \\"Error fetching homepage data.\\" },\\n            err: error,\\n        });\\n        console.error(\\"Error fetching homepage data:\\", error);\\n    }\\n    finally {\\n        isLoading = false;\\n    }\\n});\\nonDestroy(() => {\\n    clearInterval(interval);\\n});\\nlet tiles = [\\n    {\\n        title: \\"OpenFPL\\",\\n        content: \\"Decentralised Premier League fantasy football.\\",\\n        link: \\"https://openfpl.xyz\\",\\n        image: \\"fpl.jpg\\",\\n        buttonText: \\"Play\\",\\n    },\\n    {\\n        title: \\"OpenWSL\\",\\n        content: \\"Decentralised Women's Super League fantasy football.\\",\\n        link: \\"https://openwsl.xyz\\",\\n        image: \\"wsl.jpg\\",\\n        buttonText: \\"Play\\",\\n    },\\n    {\\n        title: \\"Transfer Kings\\",\\n        content: \\"Get your unique 'Transfer Kings' agent name today.\\",\\n        link: \\"https://transferkings.xyz\\",\\n        image: \\"transferkings.png\\",\\n        buttonText: \\"Rules\\",\\n    },\\n];\\nfunction handleLogin() {\\n    let params = {\\n        domain: import.meta.env.VITE_AUTH_PROVIDER_URL,\\n    };\\n    authStore.signIn(params);\\n}\\n<\/script>\\n\\n<Layout>\\n  {#if isLoading}\\n    <Spinner />\\n  {:else}\\n    <div class=\\"relative bg-gray-800 text-white mt-2 mr-2 rounded-lg\\">\\n      <div\\n        class=\\"bg-cover bg-center bg-no-repeat py-20 px-4\\"\\n        style=\\"background-image: url('banner.jpg');\\"\\n      >\\n        <div class=\\"container ml-4 flex flex-col justify-between\\">\\n          <p class=\\"text-xl md:text-4xl font-bold\\">FootballGod</p>\\n          <p class=\\"text-sm md:text-base\\">Decentralised Football Gaming</p>\\n         \\n          <div\\n            class=\\"overlay-panel h-10 rounded-tl-lg w-11/12 md:w-2/3 lg:w-2/5 xl:w-1/4 bg-DARK flex items-center px-1 md:px-4 text-xs md:text-sm\\"\\n          >\\n            <FootballIcon className=\\"w-6 mr-2\\" />\\n            <p class=\\"text-white  font-bold\\">Football Betting coming 2025</p>\\n          </div>\\n        </div>\\n      </div>\\n    </div>\\n    <div class=\\"mr-2 py-2\\">\\n      <div class=\\"grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4\\">\\n        {#each tiles as tile}\\n          <div class=\\"bg-gray-700 rounded-lg overflow-hidden flex flex-col\\">\\n            {#if tile.image}\\n              <img\\n                class=\\"w-full h-48 object-cover\\"\\n                src={tile.image}\\n                alt={tile.title}\\n              />\\n            {/if}\\n            {#if tile.icon}\\n              <div class=\\"flex items-center justify-center h-48 bg-gray-800\\">\\n                <svelte:component this={tile.icon} className=\\"h-32 w-32\\" />\\n              </div>\\n            {/if}\\n            <div class=\\"flex flex-col justify-between flex-grow p-4\\">\\n              <div class=\\"flex-grow\\">\\n                <h3 class=\\"text-xl font-bold text-white\\">{tile.title}</h3>\\n                <p class=\\"mt-2 text-white\\">{tile.content}</p>\\n              </div>\\n              <div class=\\"mt-4 flex justify-end\\">\\n                <a\\n                  href={tile.link}\\n                  class=\\"bg-black text-white px-4 py-2 rounded\\"\\n                  target={tile.link.startsWith(\\"http\\") ? \\"_blank\\" : \\"_self\\"}\\n                  rel={tile.link.startsWith(\\"http\\") ? \\"noopener noreferrer\\" : \\"\\"}\\n                >\\n                  {tile.buttonText}\\n                </a>\\n              </div>\\n            </div>\\n          </div>\\n        {/each}\\n      </div>\\n    </div>\\n    \\n  {/if}\\n</Layout>\\n\\n<style>\\n  .overlay-container {\\n    position: relative;\\n  }\\n\\n  .overlay-panel {\\n    position: absolute;\\n    bottom: 0;\\n    right: 0;\\n  }</style>"],"names":[],"mappings":"AAqIE,4BAAe,CACb,QAAQ,CAAE,QAAQ,CAClB,MAAM,CAAE,CAAC,CACT,KAAK,CAAE,CACT"}`
-};
-const Page$5 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
-  let interval;
-  onDestroy(() => {
-    clearInterval(interval);
-  });
-  $$result.css.add(css$1);
-  return `${validate_component(Layout, "Layout").$$render($$result, {}, {}, {
-    default: () => {
-      return `${`${validate_component(Spinner, "Spinner").$$render($$result, {}, {}, {})}`}`;
-    }
-  })}`;
-});
 const idlFactory = ({ IDL }) => {
   const LeagueId = IDL.Nat16;
   const FixtureStatusType = IDL.Variant({
@@ -4381,8 +4254,7 @@ const idlFactory = ({ IDL }) => {
     "awayGoals": IDL.Nat8
   });
   const AddInitialFixturesDTO = IDL.Record({
-    "seasonFixtures": IDL.Vec(FixtureDTO),
-    "leagueId": LeagueId
+    "seasonFixtures": IDL.Vec(FixtureDTO)
   });
   const Gender = IDL.Variant({ "Male": IDL.Null, "Female": IDL.Null });
   const CountryId = IDL.Nat16;
@@ -4411,27 +4283,22 @@ const idlFactory = ({ IDL }) => {
     "shirtNumber": IDL.Nat8,
     "position": PlayerPosition,
     "lastName": IDL.Text,
-    "leagueId": LeagueId,
     "firstName": IDL.Text
   });
-  const PlayerId = IDL.Nat16;
   const LoanPlayerDTO = IDL.Record({
     "loanEndDate": IDL.Int,
-    "playerId": PlayerId,
+    "playerId": ClubId,
+    "seasonId": SeasonId,
     "loanClubId": ClubId,
-    "loanLeagueId": LeagueId,
-    "leagueId": LeagueId
+    "gameweek": GameweekNumber,
+    "loanLeagueId": LeagueId
   });
   const MoveFixtureDTO = IDL.Record({
     "fixtureId": FixtureId,
     "updatedFixtureGameweek": GameweekNumber,
-    "updatedFixtureDate": IDL.Int,
-    "leagueId": LeagueId
+    "updatedFixtureDate": IDL.Int
   });
-  const PostponeFixtureDTO = IDL.Record({
-    "fixtureId": FixtureId,
-    "leagueId": LeagueId
-  });
+  const PostponeFixtureDTO = IDL.Record({ "fixtureId": FixtureId });
   const ShirtType = IDL.Variant({ "Filled": IDL.Null, "Striped": IDL.Null });
   const PromoteNewClubDTO = IDL.Record({
     "secondaryColourHex": IDL.Text,
@@ -4440,50 +4307,42 @@ const idlFactory = ({ IDL }) => {
     "thirdColourHex": IDL.Text,
     "abbreviatedName": IDL.Text,
     "shirtType": ShirtType,
-    "primaryColourHex": IDL.Text,
-    "leagueId": LeagueId
+    "primaryColourHex": IDL.Text
   });
-  const RecallPlayerDTO = IDL.Record({
-    "playerId": PlayerId,
-    "leagueId": LeagueId
-  });
+  const RecallPlayerDTO = IDL.Record({ "playerId": ClubId });
   const RescheduleFixtureDTO = IDL.Record({
     "postponedFixtureId": FixtureId,
     "updatedFixtureGameweek": GameweekNumber,
-    "updatedFixtureDate": IDL.Int,
-    "leagueId": LeagueId
+    "updatedFixtureDate": IDL.Int
   });
   const RetirePlayerDTO = IDL.Record({
-    "playerId": PlayerId,
-    "retirementDate": IDL.Int,
-    "leagueId": LeagueId
+    "playerId": ClubId,
+    "retirementDate": IDL.Int
   });
   const RevaluePlayerDownDTO = IDL.Record({
-    "playerId": PlayerId,
-    "leagueId": LeagueId
+    "playerId": ClubId,
+    "seasonId": SeasonId,
+    "gameweek": GameweekNumber
   });
   const RevaluePlayerUpDTO = IDL.Record({
-    "playerId": PlayerId,
-    "leagueId": LeagueId
+    "playerId": ClubId,
+    "seasonId": SeasonId,
+    "gameweek": GameweekNumber
   });
   const SetPlayerInjuryDTO = IDL.Record({
-    "playerId": PlayerId,
+    "playerId": ClubId,
     "description": IDL.Text,
-    "leagueId": LeagueId,
     "expectedEndDate": IDL.Int
   });
   const TransferPlayerDTO = IDL.Record({
     "clubId": ClubId,
     "newLeagueId": LeagueId,
-    "playerId": PlayerId,
+    "playerId": ClubId,
     "newShirtNumber": IDL.Nat8,
     "newClubId": ClubId,
     "leagueId": LeagueId
   });
-  const UnretirePlayerDTO = IDL.Record({
-    "playerId": PlayerId,
-    "leagueId": LeagueId
-  });
+  const UnretirePlayerDTO = IDL.Record({ "playerId": ClubId });
   const UpdateClubDTO = IDL.Record({
     "clubId": ClubId,
     "secondaryColourHex": IDL.Text,
@@ -4492,8 +4351,7 @@ const idlFactory = ({ IDL }) => {
     "thirdColourHex": IDL.Text,
     "abbreviatedName": IDL.Text,
     "shirtType": ShirtType,
-    "primaryColourHex": IDL.Text,
-    "leagueId": LeagueId
+    "primaryColourHex": IDL.Text
   });
   const UpdateLeagueDTO = IDL.Record({
     "logo": IDL.Vec(IDL.Nat8),
@@ -4508,14 +4366,26 @@ const idlFactory = ({ IDL }) => {
   });
   const UpdatePlayerDTO = IDL.Record({
     "dateOfBirth": IDL.Int,
-    "playerId": PlayerId,
+    "playerId": ClubId,
     "nationality": CountryId,
     "shirtNumber": IDL.Nat8,
     "position": PlayerPosition,
     "lastName": IDL.Text,
-    "leagueId": LeagueId,
     "firstName": IDL.Text
   });
+  const CountryDTO = IDL.Record({
+    "id": CountryId,
+    "code": IDL.Text,
+    "name": IDL.Text
+  });
+  const Error2 = IDL.Variant({
+    "DecodeError": IDL.Null,
+    "NotAllowed": IDL.Null,
+    "NotFound": IDL.Null,
+    "NotAuthorized": IDL.Null,
+    "AlreadyExists": IDL.Null
+  });
+  const Result_5 = IDL.Variant({ "ok": IDL.Vec(CountryDTO), "err": Error2 });
   const ClubDTO = IDL.Record({
     "id": ClubId,
     "secondaryColourHex": IDL.Text,
@@ -4526,14 +4396,7 @@ const idlFactory = ({ IDL }) => {
     "shirtType": ShirtType,
     "primaryColourHex": IDL.Text
   });
-  const Error2 = IDL.Variant({
-    "DecodeError": IDL.Null,
-    "NotAllowed": IDL.Null,
-    "NotFound": IDL.Null,
-    "NotAuthorized": IDL.Null,
-    "AlreadyExists": IDL.Null
-  });
-  const Result_3 = IDL.Variant({ "ok": IDL.Vec(ClubDTO), "err": Error2 });
+  const Result_4 = IDL.Variant({ "ok": IDL.Vec(ClubDTO), "err": Error2 });
   const FootballLeagueDTO = IDL.Record({
     "id": LeagueId,
     "logo": IDL.Vec(IDL.Nat8),
@@ -4545,7 +4408,7 @@ const idlFactory = ({ IDL }) => {
     "governingBody": IDL.Text,
     "formed": IDL.Int
   });
-  const Result_2 = IDL.Variant({
+  const Result_3 = IDL.Variant({
     "ok": IDL.Vec(FootballLeagueDTO),
     "err": Error2
   });
@@ -4568,13 +4431,22 @@ const idlFactory = ({ IDL }) => {
     "leagueId": LeagueId,
     "firstName": IDL.Text
   });
-  const Result_1 = IDL.Variant({ "ok": IDL.Vec(PlayerDTO), "err": Error2 });
+  const Result_2 = IDL.Variant({ "ok": IDL.Vec(PlayerDTO), "err": Error2 });
+  const PrincipalId = IDL.Text;
+  const ProfileDTO = IDL.Record({
+    "username": IDL.Text,
+    "withdrawalAddress": IDL.Text,
+    "principalId": PrincipalId
+  });
+  const Result_1 = IDL.Variant({ "ok": ProfileDTO, "err": Error2 });
   const Result = IDL.Variant({ "ok": IDL.Bool, "err": Error2 });
   const RustResult = IDL.Variant({ "Ok": IDL.Text, "Err": IDL.Text });
+  const CalendarMonth = IDL.Nat8;
   const SubmitFixtureDataDTO = IDL.Record({
     "fixtureId": FixtureId,
-    "playerEventData": IDL.Vec(PlayerEventData),
-    "leagueId": LeagueId
+    "month": CalendarMonth,
+    "gameweek": GameweekNumber,
+    "playerEventData": IDL.Vec(PlayerEventData)
   });
   return IDL.Service({
     "executeAddInitialFixtures": IDL.Func(
@@ -4607,9 +4479,11 @@ const idlFactory = ({ IDL }) => {
     "executeUpdateClub": IDL.Func([LeagueId, UpdateClubDTO], [], []),
     "executeUpdateLeague": IDL.Func([UpdateLeagueDTO], [], ["query"]),
     "executeUpdatePlayer": IDL.Func([LeagueId, UpdatePlayerDTO], [], []),
-    "getLeagueClubs": IDL.Func([LeagueId], [Result_3], ["composite_query"]),
-    "getLeagues": IDL.Func([], [Result_2], ["composite_query"]),
-    "getPlayers": IDL.Func([LeagueId], [Result_1], ["composite_query"]),
+    "getCountries": IDL.Func([], [Result_5], ["query"]),
+    "getLeagueClubs": IDL.Func([LeagueId], [Result_4], ["composite_query"]),
+    "getLeagues": IDL.Func([], [Result_3], ["composite_query"]),
+    "getPlayers": IDL.Func([LeagueId], [Result_2], ["composite_query"]),
+    "getProfile": IDL.Func([], [Result_1], ["query"]),
     "isAdmin": IDL.Func([], [Result], []),
     "validateAddInitialFixtures": IDL.Func(
       [AddInitialFixturesDTO],
@@ -4777,13 +4651,186 @@ class ActorFactory {
     });
   }
 }
+function uint8ArrayToBase64(bytes) {
+  const binary = Array.from(bytes).map((byte) => String.fromCharCode(byte)).join("");
+  return btoa(binary);
+}
+function replacer(key2, value) {
+  if (typeof value === "bigint") {
+    return value.toString();
+  } else {
+    return value;
+  }
+}
+function isError(response) {
+  return response && response.err !== void 0;
+}
+function convertEvent(playerEvent) {
+  if ("Appearance" in playerEvent)
+    return 0;
+  if ("Goal" in playerEvent)
+    return 1;
+  if ("GoalAssisted" in playerEvent)
+    return 2;
+  if ("GoalConceded" in playerEvent)
+    return 3;
+  if ("KeeperSave" in playerEvent)
+    return 4;
+  if ("CleanSheet" in playerEvent)
+    return 5;
+  if ("PenaltySaved" in playerEvent)
+    return 6;
+  if ("PenaltyMissed" in playerEvent)
+    return 7;
+  if ("YellowCard" in playerEvent)
+    return 8;
+  if ("RedCard" in playerEvent)
+    return 9;
+  if ("OwnGoal" in playerEvent)
+    return 10;
+  if ("HighestScoringPlayer" in playerEvent)
+    return 11;
+  return 0;
+}
+function getImageURL(blob) {
+  let byteArray;
+  if (blob && typeof blob === "object" && !Array.isArray(blob)) {
+    const values = Object.values(blob);
+    if (values.length === 0) {
+      return "/profile_placeholder.png";
+    }
+    byteArray = Uint8Array.from(Object.values(blob));
+  } else if (Array.isArray(blob) && blob[0] instanceof Uint8Array) {
+    byteArray = blob[0];
+  } else if (blob instanceof Uint8Array) {
+    byteArray = blob;
+  } else if (typeof blob === "string") {
+    if (blob.startsWith("data:image")) {
+      return blob;
+    } else if (!blob.startsWith("/profile_placeholder.png")) {
+      return `data:png;base64,${blob}`;
+    }
+  }
+  if (byteArray) {
+    return `data:image/png;base64,${uint8ArrayToBase64(byteArray)}`;
+  }
+  return "/profile_placeholder.png";
+}
+const css$2 = {
+  code: ".transition-width.svelte-frwh1m{transition:width 200ms}a.active.svelte-frwh1m{color:white !important}",
+  map: `{"version":3,"file":"Layout.svelte","sources":["Layout.svelte"],"sourcesContent":["<script lang=\\"ts\\">import { onMount } from \\"svelte\\";\\nimport { browser } from \\"$app/environment\\";\\nimport { initAuthWorker } from \\"$lib/services/worker.auth.services\\";\\nimport { authStore } from \\"$lib/stores/auth-store\\";\\nimport { authSignedInStore } from \\"$lib/derived/auth.derived\\";\\nimport { toastsError } from \\"$lib/stores/toasts-store\\";\\nimport { writable } from \\"svelte/store\\";\\nimport { BusyScreen, Spinner, Toasts } from \\"@dfinity/gix-components\\";\\nimport LogoIcon from \\"$lib/icons/LogoIcon.svelte\\";\\nimport HomeIcon from \\"$lib/icons/HomeIcon.svelte\\";\\nimport StarIcon from \\"$lib/icons/StarIcon.svelte\\";\\nimport { fade } from \\"svelte/transition\\";\\nimport \\"../app.css\\";\\nimport { page } from \\"$app/stores\\";\\nimport ProfileIcon from \\"$lib/icons/ProfileIcon.svelte\\";\\nimport LogoutIcon from \\"$lib/icons/LogoutIcon.svelte\\";\\nimport { signOut } from \\"$lib/services/auth.services\\";\\nimport Tooltip from \\"$lib/components/tooltip.svelte\\";\\nimport RulesIcon from \\"$lib/icons/RulesIcon.svelte\\";\\nimport { userStore } from \\"$lib/stores/user-store\\";\\nlet isExpanded = writable(false);\\n$: links = $authSignedInStore ? [\\n    { name: \\"Home\\", icon: HomeIcon, href: \\"/\\", admin: false },\\n    { name: \\"Profile\\", icon: ProfileIcon, href: \\"/profile\\", admin: false },\\n    { name: \\"Governance\\", icon: RulesIcon, href: \\"/governance\\", admin: false },\\n    { name: \\"Admin\\", icon: StarIcon, href: \\"/admin\\", admin: true }\\n] :\\n    [\\n        { name: \\"Home\\", icon: HomeIcon, href: \\"/\\", admin: false }\\n    ];\\nlet worker;\\nlet isAdmin = false;\\nconst init = async () => await Promise.all([syncAuthStore()]);\\nconst syncAuthStore = async () => {\\n    if (!browser) {\\n        return;\\n    }\\n    try {\\n        await authStore.sync();\\n    }\\n    catch (err) {\\n        toastsError({\\n            msg: {\\n                text: \\"Unexpected issue while syncing the status of your authentication.\\",\\n            },\\n            err,\\n        });\\n    }\\n};\\nonMount(async () => {\\n    worker = await initAuthWorker();\\n    isAdmin = await userStore.isAdmin();\\n});\\n$: activeRoute = $page.url.pathname;\\n$: worker, $authStore, (() => worker?.syncAuthIdle($authStore))();\\n$: (() => {\\n    if (!browser) {\\n        return;\\n    }\\n    if ($authStore === undefined) {\\n        return;\\n    }\\n    const spinner = document.querySelector(\\"body > #app-spinner\\");\\n    spinner?.remove();\\n})();\\nfunction handleLogin() {\\n    let params = {\\n        domain: import.meta.env.VITE_AUTH_PROVIDER_URL,\\n    };\\n    authStore.signIn(params);\\n}\\nasync function handleLogout() {\\n    await authStore.signOut();\\n}\\n<\/script>\\n\\n<svelte:window on:storage={syncAuthStore} />\\n{#await init()}\\n  <div in:fade>\\n    <Spinner />\\n  </div>\\n{:then _}\\n  <div class=\\"flex h-screen\\">\\n    <div\\n      class=\\"bg-GRAY text-white flex flex-col justify-between transition-width duration-300 p-5 rounded-lg m-2\\"\\n      style=\\"width: {$isExpanded ? '16rem' : '4rem'}\\"\\n    >\\n    <div class=\\"flex flex-col flex-grow\\">\\n      <button on:click={() => ($isExpanded = !$isExpanded)} class=\\"mb-4\\">\\n          <span>{$isExpanded ? \\"<<\\" : \\">>\\"}</span>\\n        </button>\\n\\n        <div class=\\"text-gray-400 flex flex-col\\">\\n          <a href=\\"/\\" class=\\"block mt-4 text-lg my-4\\">\\n            <div class=\\"flex flex-row items-center\\">\\n              <LogoIcon className=\\"w-6 mr-2\\" />\\n              {#if $isExpanded}\\n                <span\\n                  in:fade={{ duration: 200 }}\\n                  out:fade={{ delay: 0, duration: 100 }}>FootballGod</span\\n                >\\n              {/if}\\n            </div>\\n          </a>\\n          {#each links as link}\\n            {#if link.admin}\\n              {#if isAdmin}\\n\\n                  <a\\n                  href={link.href}\\n                  class:active={activeRoute === link.href}\\n                  rel=\\"prefetch\\"\\n                  class=\\"block mt-4 text-lg\\"\\n                >\\n                  <div class=\\"flex flex-row items-center\\">\\n\\n                    <Tooltip text={link.name}>\\n                      <svelte:component\\n                        this={link.icon}\\n                        className=\\"w-6 mr-2\\"\\n                        fill={activeRoute === link.href ? \\"white\\" : \\"gray\\"}\\n                      />\\n                    </Tooltip>\\n                    {#if $isExpanded}\\n                      <span\\n                        in:fade={{ duration: 200 }}\\n                        out:fade={{ delay: 0, duration: 100 }}>{link.name}</span\\n                      >\\n                    {/if}\\n                  </div>\\n                </a>\\n              {/if}\\n            {:else}\\n              <a\\n                href={link.href}\\n                class:active={activeRoute === link.href}\\n                rel=\\"prefetch\\"\\n                class=\\"block mt-4 text-lg\\"\\n              >\\n                <div class=\\"flex flex-row items-center\\">\\n\\n                  <Tooltip text={link.name}>\\n                    <svelte:component\\n                      this={link.icon}\\n                      className=\\"w-6 mr-2\\"\\n                      fill={activeRoute === link.href ? \\"white\\" : \\"gray\\"}\\n                    />\\n                  </Tooltip>\\n                  {#if $isExpanded}\\n                    <span\\n                      in:fade={{ duration: 200 }}\\n                      out:fade={{ delay: 0, duration: 100 }}>{link.name}</span\\n                    >\\n                  {/if}\\n                </div>\\n              </a>\\n\\n            {/if}\\n          {/each}\\n        </div>\\n      </div>\\n      {#if $authSignedInStore && !$isExpanded}\\n        <button on:click={signOut} in:fade>\\n          <Tooltip text=\\"Logout\\">\\n            <LogoutIcon className=\\"max-w-6\\" />\\n          </Tooltip>\\n        </button>\\n      {/if}\\n      \\n\\n      <div class=\\"mb-4\\">\\n        {#if $isExpanded}\\n          {#if $authSignedInStore}\\n            <button on:click={handleLogout} class=\\"button-hover p-2 rounded-md text-sm w-full\\"\\n                in:fade={{ duration: 200 }}\\n                out:fade={{ delay: 0, duration: 100 }}>Disconnect</button\\n              >\\n          {:else}\\n            <button on:click={handleLogin} class=\\"bg-OPENFPL hover:bg-OPENFPL hover:text-GRAY p-2 rounded-md text-sm w-full\\"\\n                in:fade={{ duration: 200 }}\\n                out:fade={{ delay: 0, duration: 100 }}>Connect Internet Identity</button\\n              >\\n          {/if}\\n        {/if}\\n      </div>\\n    </div>\\n\\n    <div class=\\"flex-1\\">\\n      <slot />\\n    </div>\\n    <Toasts />\\n  </div>\\n{/await}\\n\\n<BusyScreen />\\n\\n<style>\\n  .transition-width {\\n    transition: width 200ms;\\n  }\\n  a.active {\\n    color: white !important;\\n  }</style>"],"names":[],"mappings":"AAqME,+BAAkB,CAChB,UAAU,CAAE,KAAK,CAAC,KACpB,CACA,CAAC,qBAAQ,CACP,KAAK,CAAE,KAAK,CAAC,UACf"}`
+};
+const Layout = create_ssr_component(($$result, $$props, $$bindings, slots) => {
+  let links;
+  let activeRoute;
+  let $$unsubscribe_authStore;
+  let $page, $$unsubscribe_page;
+  let $authSignedInStore, $$unsubscribe_authSignedInStore;
+  let $isExpanded, $$unsubscribe_isExpanded;
+  $$unsubscribe_authStore = subscribe(authStore, (value) => value);
+  $$unsubscribe_page = subscribe(page, (value) => $page = value);
+  $$unsubscribe_authSignedInStore = subscribe(authSignedInStore, (value) => $authSignedInStore = value);
+  let isExpanded = writable(false);
+  $$unsubscribe_isExpanded = subscribe(isExpanded, (value) => $isExpanded = value);
+  const init2 = async () => await Promise.all([syncAuthStore()]);
+  const syncAuthStore = async () => {
+    {
+      return;
+    }
+  };
+  $$result.css.add(css$2);
+  links = $authSignedInStore ? [
+    {
+      name: "Home",
+      icon: HomeIcon,
+      href: "/",
+      admin: false
+    },
+    {
+      name: "Profile",
+      icon: ProfileIcon,
+      href: "/profile",
+      admin: false
+    },
+    {
+      name: "Governance",
+      icon: RulesIcon,
+      href: "/governance",
+      admin: false
+    },
+    {
+      name: "Admin",
+      icon: StarIcon,
+      href: "/admin",
+      admin: true
+    }
+  ] : [
+    {
+      name: "Home",
+      icon: HomeIcon,
+      href: "/",
+      admin: false
+    }
+  ];
+  activeRoute = $page.url.pathname;
+  $$unsubscribe_authStore();
+  $$unsubscribe_page();
+  $$unsubscribe_authSignedInStore();
+  $$unsubscribe_isExpanded();
+  return ` ${function(__value) {
+    if (is_promise(__value)) {
+      __value.then(null, noop);
+      return ` <div>${validate_component(Spinner, "Spinner").$$render($$result, {}, {}, {})}</div> `;
+    }
+    return function(_) {
+      return ` <div class="flex h-screen"><div class="bg-GRAY text-white flex flex-col justify-between transition-width duration-300 p-5 rounded-lg m-2 svelte-frwh1m" style="${"width: " + escape($isExpanded ? "16rem" : "4rem", true)}"><div class="flex flex-col flex-grow"><button class="mb-4"><span>${escape($isExpanded ? "<<" : ">>")}</span></button> <div class="text-gray-400 flex flex-col"><a href="/" class="block mt-4 text-lg my-4"><div class="flex flex-row items-center">${validate_component(LogoIcon, "LogoIcon").$$render($$result, { className: "w-6 mr-2" }, {}, {})} ${$isExpanded ? `<span data-svelte-h="svelte-judcsy">FootballGod</span>` : ``}</div></a> ${each(links, (link) => {
+        return `${link.admin ? `${``}` : `<a${add_attribute("href", link.href, 0)} rel="prefetch" class="${[
+          "block mt-4 text-lg svelte-frwh1m",
+          activeRoute === link.href ? "active" : ""
+        ].join(" ").trim()}"><div class="flex flex-row items-center">${validate_component(Tooltip, "Tooltip").$$render($$result, { text: link.name }, {}, {
+          default: () => {
+            return `${validate_component(link.icon || missing_component, "svelte:component").$$render(
+              $$result,
+              {
+                className: "w-6 mr-2",
+                fill: activeRoute === link.href ? "white" : "gray"
+              },
+              {},
+              {}
+            )} `;
+          }
+        })} ${$isExpanded ? `<span>${escape(link.name)}</span>` : ``}</div> </a>`}`;
+      })}</div></div> ${$authSignedInStore && !$isExpanded ? `<button>${validate_component(Tooltip, "Tooltip").$$render($$result, { text: "Logout" }, {}, {
+        default: () => {
+          return `${validate_component(LogoutIcon, "LogoutIcon").$$render($$result, { className: "max-w-6" }, {}, {})}`;
+        }
+      })}</button>` : ``} <div class="mb-4">${$isExpanded ? `${$authSignedInStore ? `<button class="button-hover p-2 rounded-md text-sm w-full" data-svelte-h="svelte-kl75by">Disconnect</button>` : `<button class="bg-OPENFPL hover:bg-OPENFPL hover:text-GRAY p-2 rounded-md text-sm w-full" data-svelte-h="svelte-lbywhq">Connect Internet Identity</button>`}` : ``}</div></div> <div class="flex-1">${slots.default ? slots.default({}) : ``}</div> ${validate_component(Toasts, "Toasts").$$render($$result, {}, {}, {})}</div> `;
+    }();
+  }(init2())} ${validate_component(BusyScreen, "BusyScreen").$$render($$result, {}, {}, {})}`;
+});
+const css$1 = {
+  code: ".overlay-panel.svelte-a3qity{position:absolute;bottom:0;right:0}",
+  map: `{"version":3,"file":"+page.svelte","sources":["+page.svelte"],"sourcesContent":["<script lang=\\"ts\\">import { onMount, onDestroy } from \\"svelte\\";\\nimport { writable } from \\"svelte/store\\";\\nimport { authSignedInStore } from \\"$lib/derived/auth.derived\\";\\nimport { authStore } from \\"$lib/stores/auth-store\\";\\nimport { toastsError } from \\"$lib/stores/toasts-store\\";\\nimport Layout from \\"./Layout.svelte\\";\\nimport FootballIcon from \\"$lib/icons/FootballIcon.svelte\\";\\nimport OpenChatIcon from \\"$lib/icons/OpenChatIcon.svelte\\";\\nimport { Spinner } from \\"@dfinity/gix-components\\";\\nimport { isError } from \\"$lib/utils/helpers\\";\\nimport OpenFplIcon from \\"$lib/icons/OpenFPLIcon.svelte\\";\\nlet isLoggedIn = false;\\nlet isLoading = true;\\nlet interval;\\nonMount(async () => {\\n    try {\\n        await authStore.sync();\\n        authStore.subscribe((store) => {\\n            isLoggedIn = store.identity !== null && store.identity !== undefined;\\n        });\\n    }\\n    catch (error) {\\n        toastsError({\\n            msg: { text: \\"Error fetching homepage data.\\" },\\n            err: error,\\n        });\\n        console.error(\\"Error fetching homepage data:\\", error);\\n    }\\n    finally {\\n        isLoading = false;\\n    }\\n});\\nonDestroy(() => {\\n    clearInterval(interval);\\n});\\nlet tiles = [\\n    {\\n        title: \\"OpenFPL\\",\\n        content: \\"Decentralised Premier League fantasy football.\\",\\n        link: \\"https://openfpl.xyz\\",\\n        image: \\"fpl.jpg\\",\\n        buttonText: \\"Play\\",\\n    },\\n    {\\n        title: \\"OpenWSL\\",\\n        content: \\"Decentralised Women's Super League fantasy football.\\",\\n        link: \\"https://openwsl.xyz\\",\\n        image: \\"wsl.jpg\\",\\n        buttonText: \\"Play\\",\\n    },\\n    {\\n        title: \\"Transfer Kings\\",\\n        content: \\"Get your unique 'Transfer Kings' agent name today.\\",\\n        link: \\"https://transferkings.xyz\\",\\n        image: \\"transferkings.png\\",\\n        buttonText: \\"Rules\\",\\n    },\\n];\\nfunction handleLogin() {\\n    let params = {\\n        domain: import.meta.env.VITE_AUTH_PROVIDER_URL,\\n    };\\n    authStore.signIn(params);\\n}\\n<\/script>\\n\\n<Layout>\\n  {#if isLoading}\\n    <Spinner />\\n  {:else}\\n    <div class=\\"relative bg-gray-800 text-white mt-2 mr-2 rounded-lg\\">\\n      <div\\n        class=\\"bg-cover bg-center bg-no-repeat py-20 px-4\\"\\n        style=\\"background-image: url('banner.jpg');\\"\\n      >\\n        <div class=\\"container ml-4 flex flex-col justify-between\\">\\n          <p class=\\"text-xl md:text-4xl font-bold\\">FootballGod</p>\\n          <p class=\\"text-sm md:text-base\\">Decentralised Football Gaming</p>\\n         \\n          <div\\n            class=\\"overlay-panel h-10 rounded-tl-lg w-11/12 md:w-2/3 lg:w-2/5 xl:w-1/4 bg-DARK flex items-center px-1 md:px-4 text-xs md:text-sm\\"\\n          >\\n            <FootballIcon className=\\"w-6 mr-2\\" />\\n            <p class=\\"text-white  font-bold\\">Football Betting coming 2025</p>\\n          </div>\\n        </div>\\n      </div>\\n    </div>\\n    <div class=\\"mr-2 py-2\\">\\n      <div class=\\"grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4\\">\\n        {#each tiles as tile}\\n          <div class=\\"bg-gray-700 rounded-lg overflow-hidden flex flex-col\\">\\n            {#if tile.image}\\n              <img\\n                class=\\"w-full h-48 object-cover\\"\\n                src={tile.image}\\n                alt={tile.title}\\n              />\\n            {/if}\\n            {#if tile.icon}\\n              <div class=\\"flex items-center justify-center h-48 bg-gray-800\\">\\n                <svelte:component this={tile.icon} className=\\"h-32 w-32\\" />\\n              </div>\\n            {/if}\\n            <div class=\\"flex flex-col justify-between flex-grow p-4\\">\\n              <div class=\\"flex-grow\\">\\n                <h3 class=\\"text-xl font-bold text-white\\">{tile.title}</h3>\\n                <p class=\\"mt-2 text-white\\">{tile.content}</p>\\n              </div>\\n              <div class=\\"mt-4 flex justify-end\\">\\n                <a\\n                  href={tile.link}\\n                  class=\\"bg-black text-white px-4 py-2 rounded\\"\\n                  target={tile.link.startsWith(\\"http\\") ? \\"_blank\\" : \\"_self\\"}\\n                  rel={tile.link.startsWith(\\"http\\") ? \\"noopener noreferrer\\" : \\"\\"}\\n                >\\n                  {tile.buttonText}\\n                </a>\\n              </div>\\n            </div>\\n          </div>\\n        {/each}\\n      </div>\\n    </div>\\n    \\n  {/if}\\n</Layout>\\n\\n<style>\\n  .overlay-container {\\n    position: relative;\\n  }\\n\\n  .overlay-panel {\\n    position: absolute;\\n    bottom: 0;\\n    right: 0;\\n  }</style>"],"names":[],"mappings":"AAqIE,4BAAe,CACb,QAAQ,CAAE,QAAQ,CAClB,MAAM,CAAE,CAAC,CACT,KAAK,CAAE,CACT"}`
+};
+const Page$7 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
+  let interval;
+  onDestroy(() => {
+    clearInterval(interval);
+  });
+  $$result.css.add(css$1);
+  return `${validate_component(Layout, "Layout").$$render($$result, {}, {}, {
+    default: () => {
+      return `${`${validate_component(Spinner, "Spinner").$$render($$result, {}, {}, {})}`}`;
+    }
+  })}`;
+});
 var define_process_env_default$9 = { FOOTBALL_GOD_BACKEND_CANISTER_ID: "44kin-waaaa-aaaal-qbxra-cai", FOOTBALL_GOD_FRONTEND_CANISTER_ID: "43loz-3yaaa-aaaal-qbxrq-cai", DFX_NETWORK: "ic" };
 class ClubService {
   actor;
   constructor() {
     this.actor = ActorFactory.createActor(
       idlFactory,
-      define_process_env_default$9.OPENFPL_BACKEND_CANISTER_ID
+      define_process_env_default$9.FOOTBALL_GOD_BACKEND_CANISTER_ID
     );
   }
   async getClubs(leagueId) {
@@ -4929,7 +4976,7 @@ class LeagueService {
   async setLeagueName(leagueId, leagueName) {
     const identityActor = await ActorFactory.createIdentityActor(
       authStore,
-      define_process_env_default$6.OPENFPL_BACKEND_CANISTER_ID ?? ""
+      define_process_env_default$6.FOOTBALL_GOD_BACKEND_CANISTER_ID
     );
     const result = await identityActor.setLeagueName(leagueId, leagueName);
     if (isError(result))
@@ -4938,7 +4985,7 @@ class LeagueService {
   async setAbbreviatedName(leagueId, abbreviatedName) {
     const identityActor = await ActorFactory.createIdentityActor(
       authStore,
-      define_process_env_default$6.OPENFPL_BACKEND_CANISTER_ID ?? ""
+      define_process_env_default$6.FOOTBALL_GOD_BACKEND_CANISTER_ID
     );
     const result = await identityActor.setAbbreviatedLeagueName(
       leagueId,
@@ -4950,7 +4997,7 @@ class LeagueService {
   async setGoverningBody(leagueId, governingBody) {
     const identityActor = await ActorFactory.createIdentityActor(
       authStore,
-      define_process_env_default$6.OPENFPL_BACKEND_CANISTER_ID ?? ""
+      define_process_env_default$6.FOOTBALL_GOD_BACKEND_CANISTER_ID
     );
     const result = await identityActor.setLeagueGoverningBody(
       leagueId,
@@ -4962,7 +5009,7 @@ class LeagueService {
   async setGender(leagueId, gender) {
     const identityActor = await ActorFactory.createIdentityActor(
       authStore,
-      define_process_env_default$6.OPENFPL_BACKEND_CANISTER_ID ?? ""
+      define_process_env_default$6.FOOTBALL_GOD_BACKEND_CANISTER_ID
     );
     const result = await identityActor.setLeagueGender(leagueId, gender);
     if (isError(result))
@@ -4971,7 +5018,7 @@ class LeagueService {
   async setDateFormed(leagueId, date) {
     const identityActor = await ActorFactory.createIdentityActor(
       authStore,
-      define_process_env_default$6.OPENFPL_BACKEND_CANISTER_ID ?? ""
+      define_process_env_default$6.FOOTBALL_GOD_BACKEND_CANISTER_ID
     );
     const result = await identityActor.setLeagueDateFormed(leagueId, date);
     if (isError(result))
@@ -4980,7 +5027,7 @@ class LeagueService {
   async setCountryId(leagueId, countryId) {
     const identityActor = await ActorFactory.createIdentityActor(
       authStore,
-      define_process_env_default$6.OPENFPL_BACKEND_CANISTER_ID ?? ""
+      define_process_env_default$6.FOOTBALL_GOD_BACKEND_CANISTER_ID
     );
     const result = await identityActor.setLeagueCountryId(leagueId, countryId);
     if (isError(result))
@@ -4989,7 +5036,7 @@ class LeagueService {
   async setLogo(leagueId, logo) {
     const identityActor = await ActorFactory.createIdentityActor(
       authStore,
-      define_process_env_default$6.OPENFPL_BACKEND_CANISTER_ID ?? ""
+      define_process_env_default$6.FOOTBALL_GOD_BACKEND_CANISTER_ID
     );
     const result = await identityActor.setLeagueLogo(leagueId, logo);
     if (isError(result))
@@ -4998,7 +5045,7 @@ class LeagueService {
   async setTeamCount(leagueId, teamCount) {
     const identityActor = await ActorFactory.createIdentityActor(
       authStore,
-      define_process_env_default$6.OPENFPL_BACKEND_CANISTER_ID ?? ""
+      define_process_env_default$6.FOOTBALL_GOD_BACKEND_CANISTER_ID
     );
     const result = await identityActor.setTeamCount(leagueId, teamCount);
     if (isError(result))
@@ -5007,7 +5054,7 @@ class LeagueService {
   async createLeague(dto) {
     const identityActor = await ActorFactory.createIdentityActor(
       authStore,
-      define_process_env_default$6.OPENFPL_BACKEND_CANISTER_ID ?? ""
+      define_process_env_default$6.FOOTBALL_GOD_BACKEND_CANISTER_ID
     );
     const result = await identityActor.createLeague(dto);
     if (isError(result))
@@ -5147,7 +5194,7 @@ class StoreManager {
   }
 }
 new StoreManager();
-const Page$4 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
+const Page$6 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
   let fixtureId;
   let $playerEventData, $$unsubscribe_playerEventData = noop, $$subscribe_playerEventData = () => ($$unsubscribe_playerEventData(), $$unsubscribe_playerEventData = subscribe(playerEventData, ($$value) => $playerEventData = $$value), playerEventData);
   let $$unsubscribe_clubStore;
@@ -5901,7 +5948,7 @@ const Add_fixture_data = create_ssr_component(($$result, $$props, $$bindings, sl
     }
   })}`;
 });
-const Page$3 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
+const Page$5 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
   let showRevaluePlayerUpModal = false;
   let showRevaluePlayerDownModal = false;
   let showMoveFixtureModal = false;
@@ -6100,14 +6147,14 @@ const Page$3 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
     }
   })}`;
 });
-const Page$2 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
+const Page$4 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
   return `${validate_component(Layout, "Layout").$$render($$result, {}, {}, {
     default: () => {
       return `${``} ${``}  ${``} ${``} ${``} ${``} ${``} ${``} ${``} ${``} ${``} ${``} ${``} ${``} ${``} ${``} <div class="m-4"><div class="bg-panel rounded-md"><ul class="flex rounded-t-lg bg-light-gray border-b border-gray-700 px-4 pt-2" data-svelte-h="svelte-np8kws"><li class="mr-4 active-tab"><button class="text-white">Raise Proposal</button></li></ul> <p class="m-4" data-svelte-h="svelte-fij59x">Player proposals</p> <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mt-4 mx-4"><div class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"><div class="flex items-center w-full"><button class="rounded brand-button-disabled px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full" disabled data-svelte-h="svelte-n2i7ls">Revalue Player Up</button></div></div> <div class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"><div class="flex items-center space-x-4 w-full"><button class="rounded brand-button-disabled px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full" data-svelte-h="svelte-7bnqg4">Revalue Player Down</button></div></div> <div class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"><div class="flex items-center space-x-4 w-full"><button class="rounded brand-button-disabled px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full" data-svelte-h="svelte-62vsgi">Loan Player</button></div></div> <div class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"><div class="flex items-center space-x-4 w-full"><button class="rounded brand-button px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full" data-svelte-h="svelte-mo36vx">Transfer Player</button></div></div> <div class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"><div class="flex items-center space-x-4 w-full"><button class="rounded brand-button-disabled px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full" data-svelte-h="svelte-1gx3714">Recall Player</button></div></div> <div class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"><div class="flex items-center space-x-4 w-full"><button class="rounded brand-button-disabled px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full" data-svelte-h="svelte-onko7i">Create Player</button></div></div> <div class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"><div class="flex items-center space-x-4 w-full"><button class="rounded brand-button-disabled px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full" data-svelte-h="svelte-1g1x96w">Update Player</button></div></div> <div class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"><div class="flex items-center space-x-4 w-full"><button class="rounded brand-button-disabled px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full" data-svelte-h="svelte-1li5d4w">Set Player Injury</button></div></div> <div class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"><div class="flex items-center space-x-4 w-full"><button class="rounded brand-button-disabled px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full" data-svelte-h="svelte-cyyj0k">Retire Player</button></div></div> <div class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"><div class="flex items-center space-x-4 w-full"><button class="rounded brand-button-disabled px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full" data-svelte-h="svelte-4w9f42">Unretire Player</button></div></div></div> <p class="m-4" data-svelte-h="svelte-11opyhx">Fixture proposals</p> <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mt-4 mx-4"><div class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"><div class="flex items-center space-x-4 w-full"><button class="rounded brand-button-disabled px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full" data-svelte-h="svelte-4vf6rk">Add Fixture Data</button></div></div> <div class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"><div class="flex items-center space-x-4 w-full"><button class="rounded brand-button-disabled px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full" data-svelte-h="svelte-1b7p7y4">Add Initial Fixtures</button></div></div> <div class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"><div class="flex items-center space-x-4 w-full"><button class="rounded brand-button-disabled px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full" data-svelte-h="svelte-18l7kps">Move Fixture</button></div></div> <div class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"><div class="flex items-center space-x-4 w-full"><button class="rounded brand-button-disabled px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full" data-svelte-h="svelte-ge63i0">Postpone Fixture</button></div></div> <div class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"><div class="flex items-center space-x-4 w-full"><button class="rounded brand-button-disabled px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full" data-svelte-h="svelte-j9ola4">Reschedule Fixture</button></div></div></div> <p class="m-4" data-svelte-h="svelte-ujx3lm">Club proposals</p> <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mt-4 mx-4 mb-4"><div class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"><div class="flex items-center space-x-4 w-full"><button class="rounded brand-button-disabled px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full" data-svelte-h="svelte-b4cle">Promote New Club</button></div></div> <div class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"><div class="flex items-center space-x-4 w-full"><button class="rounded brand-button-disabled px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full" data-svelte-h="svelte-ugy92w">Update Club</button></div></div></div></div></div>`;
     }
   })}`;
 });
-const Page$1 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
+const Page$3 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
   onDestroy(() => {
   });
   return `${validate_component(Layout, "Layout").$$render($$result, {}, {}, {
@@ -6116,13 +6163,46 @@ const Page$1 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
     }
   })} `;
 });
+const Page$2 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
+  let $$unsubscribe_leagueStore;
+  let $$unsubscribe_countryStore;
+  let $page, $$unsubscribe_page;
+  $$unsubscribe_leagueStore = subscribe(leagueStore, (value) => value);
+  $$unsubscribe_countryStore = subscribe(countryStore, (value) => value);
+  $$unsubscribe_page = subscribe(page, (value) => $page = value);
+  Number($page.url.searchParams.get("id"));
+  $$unsubscribe_leagueStore();
+  $$unsubscribe_countryStore();
+  $$unsubscribe_page();
+  return `${validate_component(Layout, "Layout").$$render($$result, {}, {}, {
+    default: () => {
+      return `${`${validate_component(Spinner, "Spinner").$$render($$result, {}, {}, {})}`} ${``} ${``} ${``} ${``} ${``} ${``} ${``}`;
+    }
+  })}`;
+});
+const Page$1 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
+  let $leagueStore, $$unsubscribe_leagueStore;
+  $$unsubscribe_leagueStore = subscribe(leagueStore, (value) => $leagueStore = value);
+  $$unsubscribe_leagueStore();
+  return `${validate_component(Layout, "Layout").$$render($$result, {}, {}, {
+    default: () => {
+      return `<div class="page-header-wrapper flex w-full"><div class="content-panel w-full flex flex-col"><div class="flex justify-between items-center w-full mb-4"><p class="text-lg font-bold" data-svelte-h="svelte-thks37">Leagues</p> ${``}</div> ${each($leagueStore.sort((a, b) => a.id - b.id), (league) => {
+        return `<div class="flex flex-row items-center bg-gray-700 rounded shadow p-4 w-full my-2"><div class="flex items-center space-x-4 w-full"><img${add_attribute("src", getImageURL(league.logo), 0)} class="w-8" alt="logo"> <p class="flex-grow text-lg md:text-sm">${escape(league.name)}</p> <a class="mt-auto self-end"${add_attribute("href", `/league?id=${league.id}`, 0)}><button class="fpl-button text-white font-bold py-2 px-4 rounded self-end" data-svelte-h="svelte-1atebf3">View</button> </a></div> </div>`;
+      })}</div></div>`;
+    }
+  })} ${``}`;
+});
 const Page = create_ssr_component(($$result, $$props, $$bindings, slots) => {
-  return ``;
+  return `${validate_component(Layout, "Layout").$$render($$result, {}, {}, {
+    default: () => {
+      return `${`${validate_component(Spinner, "Spinner").$$render($$result, {}, {}, {})}`}`;
+    }
+  })}`;
 });
 export {
   Error$1 as E,
   Layout$1 as L,
-  Page$5 as P,
+  Page$7 as P,
   Server as S,
   set_building as a,
   set_manifest as b,
@@ -6132,11 +6212,13 @@ export {
   set_read_implementation as f,
   get_hooks as g,
   set_safe_public_env as h,
-  Page$4 as i,
-  Page$3 as j,
-  Page$2 as k,
-  Page$1 as l,
-  Page as m,
+  Page$6 as i,
+  Page$5 as j,
+  Page$4 as k,
+  Page$3 as l,
+  Page$2 as m,
+  Page$1 as n,
   options as o,
+  Page as p,
   set_assets as s
 };

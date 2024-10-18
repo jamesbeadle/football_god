@@ -10,9 +10,12 @@ import Environment "environment";
 import Base "types/base_types";
 import FootballTypes "types/football_types";
 import T "types/app_types";
+import Countries "types/Countries";
+import UserManager "managers/user_manager";
 
 actor Self {
-
+  
+  private let userManager = UserManager.UserManager(); 
   private var leagueApplications: [(FootballTypes.LeagueId, Base.CanisterId)] = [(1, Environment.OPENFPL_BACKEND_CANISTER_ID), (1, Environment.OPENWSL_BACKEND_CANISTER_ID)];
 
   public shared ({ caller }) func isAdmin() : async Result.Result<Bool, T.Error> {
@@ -23,6 +26,22 @@ actor Self {
     return Option.isSome(Array.find<Base.PrincipalId>(Environment.ADMIN_PRINCIPALS, func(dataAdmin: Base.PrincipalId) : Bool{
       dataAdmin == principalId;
     }));
+  };
+
+  public shared query ({ caller }) func getProfile() : async Result.Result<DTOs.ProfileDTO, T.Error> {
+    let profile = userManager.getProfile(Principal.toText(caller));
+    switch(profile){
+      case (?foundProfile){
+        return #ok(foundProfile);
+      };
+      case (null){
+        return #err(#NotFound);
+      }
+    }
+  };
+
+  public shared query func getCountries() : async Result.Result<[DTOs.CountryDTO], T.Error> {
+    return #ok(Countries.countries);
   };
 
   public shared composite query func getLeagues() : async Result.Result<[DTOs.FootballLeagueDTO], T.Error> {

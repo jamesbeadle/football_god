@@ -7,6 +7,7 @@ import { Principal } from "@dfinity/principal";
 import { Text } from "@dfinity/candid/lib/cjs/idl";
 import { createAgent, principalToSubAccount } from "@dfinity/utils";
 import type { OptionIdentity } from "$lib/types/identity";
+import { AdminService } from "$lib/services/admin-service";
 
 function createUserStore() {
   const { subscribe, set } = writable<any>(null);
@@ -163,7 +164,7 @@ function createUserStore() {
       process.env.FOOTBALL_GOD_BACKEND_CANISTER_ID ?? "",
     );
 
-    let getProfileResponse = await identityActor.getProfileDTO();
+    let getProfileResponse = await identityActor.getProfile();
     let error = isError(getProfileResponse);
     if (error) {
       console.error("Error fetching user profile");
@@ -174,6 +175,10 @@ function createUserStore() {
     set(profileData);
   }
 
+  async function isAdmin(): Promise<boolean> {
+    return new AdminService().isAdmin();
+  }
+
   return {
     subscribe,
     sync,
@@ -182,6 +187,7 @@ function createUserStore() {
     isUsernameAvailable,
     cacheProfile,
     withdrawFPL,
+    isAdmin,
   };
 }
 

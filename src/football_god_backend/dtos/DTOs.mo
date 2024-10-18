@@ -4,13 +4,9 @@ import FootballTypes "../types/football_types";
 module DTOs {
 
   public type ProfileDTO = {
-    principalId : Text;
-    username : Text;
-    termsAccepted : Bool;
-    profilePicture : ?Blob;
-    profilePictureType : Text;
-    favouriteClubId : ?FootballTypes.ClubId;
-    createDate : Int;
+    principalId : Base.PrincipalId;
+    username : Text; 
+    withdrawalAddress: Text;
   };
 
   public type ClubFilterDTO = {

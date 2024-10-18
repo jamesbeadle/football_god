@@ -636,3 +636,30 @@ export function convertPlayerPosition(
   if ("Forward" in playerPosition) return Position.FORWARD;
   return Position.GOALKEEPER;
 }
+
+export function getImageURL(blob: any): string {
+  let byteArray;
+  if (blob && typeof blob === "object" && !Array.isArray(blob)) {
+    const values = Object.values(blob);
+    if (values.length === 0) {
+      return "/profile_placeholder.png";
+    }
+    byteArray = Uint8Array.from(Object.values(blob));
+  } else if (Array.isArray(blob) && blob[0] instanceof Uint8Array) {
+    byteArray = blob[0];
+  } else if (blob instanceof Uint8Array) {
+    byteArray = blob;
+  } else if (typeof blob === "string") {
+    if (blob.startsWith("data:image")) {
+      return blob;
+    } else if (!blob.startsWith("/profile_placeholder.png")) {
+      return `data:png;base64,${blob}`;
+    }
+  }
+
+  if (byteArray) {
+    return `data:image/png;base64,${uint8ArrayToBase64(byteArray)}`;
+  }
+
+  return "/profile_placeholder.png";
+}

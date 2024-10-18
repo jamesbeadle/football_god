@@ -1,4 +1,3 @@
-<!--
 <script lang="ts">
   import { onMount } from "svelte";
   import ProfileDetail from "$lib/components/profile/profile-detail.svelte";
@@ -49,4 +48,3 @@
     </div>
   {/if}
 </Layout>
--->

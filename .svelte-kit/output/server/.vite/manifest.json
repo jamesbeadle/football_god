@@ -9,7 +9,7 @@
   },
   "_index.js": {
     "css": [
-      "_app/immutable/assets/index.C2dF8wF_.css"
+      "_app/immutable/assets/index.q6MxsfFp.css"
     ],
     "file": "chunks/index.js",
     "imports": [
@@ -82,6 +82,22 @@
     ],
     "isEntry": true,
     "src": "src/football_god_frontend/src/routes/governance/+page.svelte"
+  },
+  "src/football_god_frontend/src/routes/league/+page.svelte": {
+    "file": "entries/pages/league/_page.svelte.js",
+    "imports": [
+      "_index.js"
+    ],
+    "isEntry": true,
+    "src": "src/football_god_frontend/src/routes/league/+page.svelte"
+  },
+  "src/football_god_frontend/src/routes/leagues/+page.svelte": {
+    "file": "entries/pages/leagues/_page.svelte.js",
+    "imports": [
+      "_index.js"
+    ],
+    "isEntry": true,
+    "src": "src/football_god_frontend/src/routes/leagues/+page.svelte"
   },
   "src/football_god_frontend/src/routes/profile/+page.svelte": {
     "file": "entries/pages/profile/_page.svelte.js",

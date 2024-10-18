@@ -11,8 +11,8 @@ module AppTypes {
 
     public type Profile = {
         principalId : Base.PrincipalId;
-        username : Text;
-        withdrawalPrincipalId: Base.PrincipalId;
+        username : Text; 
+        withdrawalAddress: Text;
     };
 
 };
