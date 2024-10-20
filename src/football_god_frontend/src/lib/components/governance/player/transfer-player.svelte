@@ -134,7 +134,7 @@
         <p>Select the player's league:</p>
 
         <select
-          class="p-2 fpl-dropdown min-w-[100px]"
+          class="p-2 brand-dropdown min-w-[100px]"
           bind:value={selectedCurrentLeagueId}
         >
           <option value={0}>Select League</option>
@@ -147,7 +147,7 @@
           <p>Select the player's club:</p>
 
           <select
-            class="p-2 fpl-dropdown min-w-[100px]"
+            class="p-2 brand-dropdown min-w-[100px]"
             bind:value={selectedCurrentClubId}
           >
             <option value={0}>Select Club</option>
@@ -161,7 +161,7 @@
           <p>Select a player to transfer:</p>
 
           <select
-            class="p-2 fpl-dropdown my-4 min-w-[100px]"
+            class="p-2 brand-dropdown my-4 min-w-[100px]"
             bind:value={selectedPlayerId}
           >
             <option value={0}>Select Player</option>
@@ -176,7 +176,7 @@
             <p>Please select players new league:</p>
 
             <select
-              class="p-2 fpl-dropdown min-w-[100px]"
+              class="p-2 brand-dropdown min-w-[100px]"
               bind:value={transferToLeagueId}
             >
               <option value={0}>Select League</option>
@@ -188,7 +188,7 @@
             {#if transferToLeagueId > 0}
   
               <select
-                class="p-2 fpl-dropdown min-w-[100px]"
+                class="p-2 brand-dropdown min-w-[100px]"
                 bind:value={transferToClubId}
               >
                 <option value={0}>Select Club</option>

@@ -3,17 +3,9 @@
     import { toastsError } from "$lib/stores/toasts-store";
     import Layout from "../Layout.svelte";
     import { Spinner } from "@dfinity/gix-components";
-    import { storeManager } from "$lib/managers/store-manager";
     import { page } from "$app/stores";
     import { countryStore } from "$lib/stores/country-store"; 
     import { leagueStore } from "$lib/stores/league-store";
-    import UpdateNameModal from "$lib/components/league/update-name-modal.svelte";
-    import UpdateAbbreviatedNameModal from "$lib/components/league/update-abbreviated-name-modal.svelte";
-    import UpdateGoverningBodyModal from "$lib/components/league/update-governing-body-modal.svelte";
-    import UpdateGenderModal from "$lib/components/league/update-gender-modal.svelte";
-    import UpdateDateFormedModal from "$lib/components/league/update-date-formed-modal.svelte";
-    import UpdateCountryModal from "$lib/components/league/update-country-modal.svelte";
-    import UpdateLogoModal from "$lib/components/league/update-logo-modal.svelte";
     import { userStore } from "$lib/stores/user-store";
     import EditIcon from "$lib/icons/EditIcon.svelte";
     import { getImageURL } from "$lib/utils/helpers";
@@ -48,8 +40,6 @@
     });
 
     async function loadData(){
-      await storeManager.syncStores();
-      countries = $countryStore;
 
       isAdmin = await userStore.isAdmin();
       
@@ -219,7 +209,6 @@
             <div class="flex items-center justify-between">
                 <div>
                     <label for="country" class="block text-gray-300">Country</label>
-                    <p class="text-gray-200">{$countryStore.find((country) => country.id === countryId)?.name}</p>
                 </div>
                 {#if isAdmin}
                     <button class="ml-2 p-2 bg-blue-600 hover:bg-blue-500 rounded-full" on:click={() => openEditModal("country")}>
@@ -230,34 +219,6 @@
         </div>
       {/if}
     </div>
-  {/if}
-
-  {#if showEditNameModal}
-    <UpdateNameModal leagueId={id} newName={name} visible={showEditNameModal} closeModal={closeModal} cancelModal={closeModal}/>
-  {/if}
-
-  {#if showEditAbbreviatedNameModal}
-    <UpdateAbbreviatedNameModal leagueId={id} newAbbreviatedName={abbreviatedName} visible={showEditAbbreviatedNameModal} closeModal={closeModal} cancelModal={closeModal} />
-  {/if}
-
-  {#if showEditGoverningBodyModal}
-    <UpdateGoverningBodyModal leagueId={id} newGoverningBody={governingBody} visible={showEditGoverningBodyModal} closeModal={closeModal} cancelModal={closeModal} />
-  {/if}
-    
-  {#if showEditGenderModal}
-    <UpdateGenderModal leagueId={id} newGender={gender} visible={showEditGenderModal} closeModal={closeModal} cancelModal={closeModal} />
-  {/if}
-  
-  {#if showEditDateFormedModal}
-    <UpdateDateFormedModal leagueId={id} newDateFormed={dateFormed} visible={showEditDateFormedModal} closeModal={closeModal} cancelModal={closeModal} />
-  {/if}
-
-  {#if showEditCountryModal}
-    <UpdateCountryModal leagueId={id} newCountryId={countryId} visible={showEditCountryModal} closeModal={closeModal} cancelModal={closeModal} />
-  {/if}
-  
-  {#if showEditLogoModal}
-    <UpdateLogoModal leagueId={id} newLogo={logo} visible={showEditLogoModal} closeModal={closeModal} cancelModal={closeModal} />
   {/if}
 
 </Layout>

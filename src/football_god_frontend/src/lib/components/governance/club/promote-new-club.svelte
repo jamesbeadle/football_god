@@ -147,7 +147,7 @@
         />
 
         <select
-          class="p-2 fpl-dropdown my-4 min-w-[100px]"
+          class="p-2 brand-dropdown my-4 min-w-[100px]"
           bind:value={shirtType}
         >
           {#each shirtTypes as shirt}

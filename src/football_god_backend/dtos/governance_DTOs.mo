@@ -17,6 +17,7 @@ module GovernanceDTOs {
   };
 
   public type SubmitFixtureDataDTO = {
+    leagueId: FootballTypes.LeagueId;
     gameweek : FootballTypes.GameweekNumber;
     month: Base.CalendarMonth;
     fixtureId : FootballTypes.FixtureId;
@@ -42,10 +43,8 @@ module GovernanceDTOs {
     updatedFixtureGameweek : FootballTypes.GameweekNumber;
     updatedFixtureDate : Int;
   };
-
+  
   public type LoanPlayerDTO = {
-    seasonId : FootballTypes.SeasonId;
-    gameweek: FootballTypes.GameweekNumber;
     playerId : FootballTypes.ClubId;
     loanLeagueId: FootballTypes.LeagueId;
     loanClubId : FootballTypes.ClubId;
@@ -74,7 +73,6 @@ module GovernanceDTOs {
     valueQuarterMillions : Nat16;
     dateOfBirth : Int;
     nationality : Base.CountryId;
-    gender: Base.Gender;
   };
 
   public type UpdatePlayerDTO = {
@@ -133,7 +131,6 @@ module GovernanceDTOs {
     countryId: Base.CountryId;
     logo: Blob;
   };
-
 
   public type UpdateLeagueDTO = {
     leagueId: FootballTypes.LeagueId;

@@ -7,7 +7,6 @@
   import { Modal } from "@dfinity/gix-components";
   import LocalSpinner from "$lib/components/local-spinner.svelte";
   import { isError } from "$lib/utils/helpers";
-    import { storeManager } from "$lib/managers/store-manager";
     import type { PlayerDTO } from "../../../../../../declarations/football_god_backend/football_god_backend.did";
 
   export let visible: boolean;
@@ -32,7 +31,6 @@
 
   onMount(async () => {
     try {
-      await storeManager.syncStores();
       isLoading = false;
     } catch (error) {
       toastsError({
@@ -102,7 +100,7 @@
           <p>Select the player's club:</p>
 
           <select
-            class="p-2 fpl-dropdown min-w-[100px]"
+            class="p-2 brand-dropdown min-w-[100px]"
             bind:value={selectedClubId}
           >
             <option value={0}>Select Club</option>
@@ -117,7 +115,7 @@
             <p>Select a player to unretire:</p>
 
             <select
-              class="p-2 fpl-dropdown my-4 min-w-[100px]"
+              class="p-2 brand-dropdown my-4 min-w-[100px]"
               bind:value={selectedPlayerId}
             >
               <option value={0}>Select Player</option>

@@ -7,7 +7,6 @@
   //import { governanceStore } from "$lib/stores/governance-store";
   import LocalSpinner from "$lib/components/local-spinner.svelte";
   import { isError } from "$lib/utils/helpers";
-  import { storeManager } from "$lib/managers/store-manager";
   import type { ClubDTO, FixtureDTO } from "../../../../../../declarations/football_god_backend/football_god_backend.did";
 
   export let visible: boolean;
@@ -39,7 +38,6 @@
 
   onMount(async () => {
     try {
-      await storeManager.syncStores();
       loadGameweekFixtures();
     } catch (error) {
       toastsError({
@@ -100,7 +98,7 @@
         <div class="flex-col space-y-2">
           <p>Select Gameweek:</p>
           <select
-            class="p-2 fpl-dropdown my-4 min-w-[100px]"
+            class="p-2 brand-dropdown my-4 min-w-[100px]"
             bind:value={selectedGameweek}
           >
             <option value={0}>Select Gameweek</option>
@@ -113,7 +111,7 @@
         <div class="flex-col space-y-2">
           <p>Select Fixture:</p>
           <select
-            class="p-2 fpl-dropdown my-4 min-w-[100px]"
+            class="p-2 brand-dropdown my-4 min-w-[100px]"
             bind:value={selectedFixtureId}
           >
             <option value={0}>Select Fixture</option>

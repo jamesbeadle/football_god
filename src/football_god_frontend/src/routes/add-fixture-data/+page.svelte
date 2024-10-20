@@ -15,7 +15,6 @@
   import ClearDraftModal from "$lib/components/fixture-validation/clear-draft-modal.svelte";
   import { Spinner, busyStore } from "@dfinity/gix-components";
   import BadgeIcon from "$lib/icons/BadgeIcon.svelte";
-    import { storeManager } from "$lib/managers/store-manager";
     import type { ClubDTO, FixtureDTO, PlayerDTO, PlayerEventData } from "../../../../declarations/football_god_backend/football_god_backend.did";
     import { convertEvent, replacer } from "$lib/utils/helpers";
     import { adminStore } from "$lib/stores/admin-store";
@@ -54,7 +53,6 @@
   onMount(async () => {
     try {
       
-      await storeManager.syncStores();
 
       if ($clubStore.length == 0) {
         return;

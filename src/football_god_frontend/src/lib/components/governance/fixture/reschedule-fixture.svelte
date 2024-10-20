@@ -107,7 +107,7 @@
         <div class="flex-col space-y-2">
           <p>Select Postponed Fixture:</p>
           <select
-            class="p-2 fpl-dropdown my-4 min-w-[100px]"
+            class="p-2 brand-dropdown my-4 min-w-[100px]"
             bind:value={selectedFixtureId}
           >
             <option value={0}>Select Fixture</option>
@@ -135,7 +135,7 @@
           <p class="mr-2">Select Gameweek:</p>
 
           <select
-            class="p-2 fpl-dropdown min-w-[100px]"
+            class="p-2 brand-dropdown min-w-[100px]"
             bind:value={newGameweek}
           >
             <option value={0}>Select New Gameweek</option>

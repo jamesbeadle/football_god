@@ -18,11 +18,11 @@ export const server_loads = [];
 export const dictionary = {
 		"/": [2],
 		"/add-fixture-data": [3],
-		"/add-proposal": [4],
-		"/admin": [5],
-		"/governance": [6],
-		"/leagues": [8],
-		"/league": [7],
+		"/admin": [4],
+		"/governance": [5],
+		"/leagues": [7],
+		"/league": [6],
+		"/players": [8],
 		"/profile": [9]
 	};
 

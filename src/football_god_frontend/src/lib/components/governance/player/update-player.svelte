@@ -12,15 +12,21 @@
     formatUnixToDateInputValue,
     isError,
   } from "$lib/utils/helpers";
-    import { storeManager } from "$lib/managers/store-manager";
-    import type { PlayerDTO, PlayerPosition } from "../../../../../../declarations/football_god_backend/football_god_backend.did";
+    import type { ClubDTO, CountryDTO, FootballLeagueDTO, PlayerDTO, PlayerPosition, UpdatePlayerDTO } from "../../../../../../declarations/football_god_backend/football_god_backend.did";
+    import { leagueStore } from "$lib/stores/league-store";
+    import { adminStore } from "$lib/stores/admin-store";
 
   export let visible: boolean;
   export let closeModal: () => void;
 
+  let selectedLeagueId: number = 0;
   let selectedClubId: number = 0;
   let selectedPlayerId: number = 0;
+  
+  let leagues: FootballLeagueDTO[] = [];
+  let leagueClubs: ClubDTO[] = [];
   let clubPlayers: PlayerDTO[] = [];
+  let countries: CountryDTO[] = [];
 
   let position: PlayerPosition;
   let firstName: string = "";
@@ -34,11 +40,15 @@
   let isLoading = true;
   let showConfirm = false;
 
-  $: if (selectedClubId) {
+  $: if(selectedLeagueId && selectedLeagueId > 0){
+    loadLeagueClubs();
+  };
+
+  $: if (selectedClubId && selectedClubId > 0) {
     loadClubPlayers();
   }
 
-  $: if (selectedPlayerId) {
+  $: if (selectedPlayerId && selectedPlayerId > 0) {
     loadPlayer();
   }
 
@@ -58,7 +68,8 @@
 
   onMount(async () => {
     try {
-      await storeManager.syncStores();
+      countries = await countryStore.getCountries();
+      leagues = await leagueStore.getLeagues();
     } catch (error) {
       toastsError({
         msg: { text: "Error syncing player store." },
@@ -93,25 +104,18 @@
     }
 
     dateOfBirth = convertDateInputToUnixNano(displayDOB);
-    /*
-    let result = await governanceStore.updatePlayer(
-      selectedPlayerId,
-      position,
+
+    let dto: UpdatePlayerDTO = {
+      playerId: selectedPlayerId,
       firstName,
       lastName,
       shirtNumber,
       dateOfBirth,
-      nationalityId
-    );
-    if (isError(result)) {
-      isLoading = false;
-      toastsError({
-        msg: { text: "Error submitting proposal." },
-      });
-      console.error("Error submitting proposal");
-      return;
-    }
-      */
+      nationality: nationalityId,
+      position
+    };
+    
+    await adminStore.updatePlayer(selectedLeagueId, dto);
     isLoading = false;
     resetForm();
     closeModal();
@@ -131,9 +135,15 @@
     clubPlayers = [];
   }
 
+  async function loadLeagueClubs() {
+    isLoading = true;
+    leagueClubs = await clubStore.getClubs(selectedLeagueId);
+    isLoading = false;
+  }
+
   async function loadClubPlayers() {
     isLoading = true;
-    clubPlayers = $playerStore.filter((x) => x.clubId == selectedClubId);
+    clubPlayers = (await playerStore.getPlayers(selectedLeagueId)).filter((x) => x.clubId == selectedClubId);
     isLoading = false;
   }
 
@@ -188,24 +198,39 @@
 
     <div class="flex justify-start items-center w-full">
       <div class="w-full flex-col space-y-4 mb-2">
+
         <div class="flex-col space-y-2">
-          <p>Select the player's club:</p>
+          <p>Select the player's league:</p>
           <select
-            class="p-2 fpl-dropdown min-w-[100px]"
-            bind:value={selectedClubId}
+            class="p-2 brand-dropdown min-w-[100px]"
+            bind:value={selectedLeagueId}
           >
-            <option value={0}>Select Club</option>
-            {#each $clubStore as club}
-              <option value={club.id}>{club.friendlyName}</option>
+            <option value={0}>Select League</option>
+            {#each leagues as league}
+              <option value={league.id}>{league.name}</option>
             {/each}
           </select>
         </div>
+        {#if selectedLeagueId}
+          <div class="flex-col space-y-2">
+            <p>Select the player's club:</p>
+            <select
+              class="p-2 brand-dropdown min-w-[100px]"
+              bind:value={selectedClubId}
+            >
+              <option value={0}>Select Club</option>
+              {#each leagueClubs as club}
+                <option value={club.id}>{club.friendlyName}</option>
+              {/each}
+            </select>
+          </div>
+        {/if}
 
         {#if selectedClubId > 0}
           <div class="flex-col space-y-2">
             <p>Select a player to update:</p>
             <select
-              class="p-2 fpl-dropdown my-4 min-w-[100px]"
+              class="p-2 brand-dropdown my-4 min-w-[100px]"
               bind:value={selectedPlayerId}
             >
               <option value={0}>Select Player</option>
@@ -221,7 +246,7 @@
             <div class="flex-col space-y-2">
               <p>Select a player's position:</p>
               <select
-                class="p-2 fpl-dropdown my-4 min-w-[100px]"
+                class="p-2 brand-dropdown my-4 min-w-[100px]"
                 bind:value={dropdownPosition}
               >
                 <option value={0}>Goalkeeper</option>
@@ -273,10 +298,10 @@
             <div class="flex-col space-y-2">
               <p>Nationality:</p>
               <select
-                class="p-2 fpl-dropdown my-4 min-w-[100px]"
+                class="p-2 brand-dropdown my-4 min-w-[100px]"
                 bind:value={nationalityId}
               >
-                {#each $clubStore as country}
+                {#each countries as country}
                   <option value={country.id}>{country.name}</option>
                 {/each}
               </select>

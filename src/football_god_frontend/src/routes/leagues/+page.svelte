@@ -3,17 +3,15 @@
     import { toastsError } from "$lib/stores/toasts-store";
     import { leagueStore } from "$lib/stores/league-store";
     import Layout from "../Layout.svelte";
-    import { storeManager } from "$lib/managers/store-manager";
     import { getImageURL } from "$lib/utils/helpers";
     import { userStore } from "$lib/stores/user-store";
-    import AddLeagueModal from "$lib/components/league/add-league-modal.svelte";
+    import AddLeagueModal from "$lib/components/governance/league/create-league.svelte";
 
     let isAdmin = false; 
     let showAddLeague = false;
   
     onMount(async () => {
       try {
-        await storeManager.syncStores();
         isAdmin = await userStore.isAdmin();
       } catch (error) {
         toastsError({
@@ -26,7 +24,6 @@
     });
 
     async function closeModal(){
-      await storeManager.syncStores();
       showAddLeague = false;
     }
   </script>
@@ -38,7 +35,7 @@
           <p class="text-lg font-bold">Leagues</p>
           {#if isAdmin}
             <button
-              class="fpl-button text-white font-bold py-2 px-4 rounded bg-blue-500 hover:bg-blue-600"
+              class="brand-button text-white font-bold py-2 px-4 rounded bg-blue-500 hover:bg-blue-600"
               on:click={() => { showAddLeague = true ;}}
             >
               Add New
@@ -56,7 +53,7 @@
                     <p class="flex-grow text-lg md:text-sm">{league.name}</p>
                     <a class="mt-auto self-end" href={`/league?id=${league.id}`}>
                         <button
-                        class="fpl-button text-white font-bold py-2 px-4 rounded self-end"
+                        class="brand-button text-white font-bold py-2 px-4 rounded self-end"
                         >
                         View
                         </button>
@@ -69,5 +66,5 @@
   </Layout>
   
   {#if showAddLeague}
-    <AddLeagueModal visible={showAddLeague} {closeModal} cancelModal={closeModal} />
+    <AddLeagueModal visible={showAddLeague} {closeModal} />
   {/if}

@@ -473,7 +473,7 @@
             <label for="filterStatus" class="whitespace-nowrap min-w-[150px] lg:min-w-unset">Filter Status:</label>
             <select
                 id="filterStatus"
-                class="block w-full lg:w-40 py-2 text-white fpl-dropdown"
+                class="block w-full lg:w-40 py-2 text-white brand-dropdown"
                 bind:value={filterStatus}
             >
                 <option value={-1}>All</option>
@@ -490,7 +490,7 @@
             <label for="filterType" class="whitespace-nowrap min-w-[150px] lg:min-w-unset">Filter Type:</label>
             <select
                 id="filterType"
-                class="block w-full lg:w-40 py-2 text-white fpl-dropdown"
+                class="block w-full lg:w-40 py-2 text-white brand-dropdown"
                 bind:value={filterType}
             >
                 <option value={-1}>All</option>

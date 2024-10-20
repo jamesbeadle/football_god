@@ -45,6 +45,7 @@ type SubmitFixtureDataDTO =
  record {
    fixtureId: FixtureId;
    gameweek: GameweekNumber;
+   leagueId: LeagueId;
    month: CalendarMonth;
    playerEventData: vec PlayerEventData;
  };
@@ -196,12 +197,10 @@ type MoveFixtureDTO =
  };
 type LoanPlayerDTO = 
  record {
-   gameweek: GameweekNumber;
    loanClubId: ClubId;
    loanEndDate: int;
    loanLeagueId: LeagueId;
    playerId: ClubId;
-   seasonId: SeasonId;
  };
 type LeagueId = nat16;
 type Gender = 
@@ -257,7 +256,6 @@ type CreatePlayerDTO =
    clubId: ClubId;
    dateOfBirth: int;
    firstName: text;
-   gender: Gender;
    lastName: text;
    nationality: CountryId;
    position: PlayerPosition;
@@ -298,7 +296,7 @@ type CalendarMonth = nat8;
 type AddInitialFixturesDTO = record {seasonFixtures: vec FixtureDTO;};
 service : {
   executeAddInitialFixtures: (LeagueId, AddInitialFixturesDTO) -> ();
-  executeCreateLeague: (CreateLeagueDTO) -> () query;
+  executeCreateLeague: (CreateLeagueDTO) -> ();
   executeCreatePlayer: (LeagueId, CreatePlayerDTO) -> ();
   executeLoanPlayer: (LeagueId, LoanPlayerDTO) -> ();
   executeMoveFixture: (LeagueId, MoveFixtureDTO) -> ();
@@ -313,7 +311,7 @@ service : {
   executeTransferPlayer: (LeagueId, TransferPlayerDTO) -> ();
   executeUnretirePlayer: (LeagueId, UnretirePlayerDTO) -> ();
   executeUpdateClub: (LeagueId, UpdateClubDTO) -> ();
-  executeUpdateLeague: (UpdateLeagueDTO) -> () query;
+  executeUpdateLeague: (UpdateLeagueDTO) -> ();
   executeUpdatePlayer: (LeagueId, UpdatePlayerDTO) -> ();
   getCountries: () -> (Result_5) query;
   getLeagueClubs: (LeagueId) -> (Result_4) composite_query;

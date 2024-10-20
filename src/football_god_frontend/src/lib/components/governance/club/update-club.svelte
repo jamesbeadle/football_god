@@ -6,12 +6,13 @@
   import { Modal } from "@dfinity/gix-components";
   import LocalSpinner from "$lib/components/local-spinner.svelte";
   import { isError } from "$lib/utils/helpers";
-  import { storeManager } from "$lib/managers/store-manager";
-    import type { ShirtType } from "../../../../../../declarations/football_god_backend/football_god_backend.did";
+    import type { ClubDTO, CountryDTO, ShirtType } from "../../../../../../declarations/football_god_backend/football_god_backend.did";
+    import { countryStore } from "$lib/stores/country-store";
 
   export let visible: boolean;
   export let closeModal: () => void;
 
+  let selectedLeagueId: number = 0; //TODO set
   let selectedClubId: number = 0;
   let name = "";
   let friendlyName = "";
@@ -20,6 +21,8 @@
   let secondaryColourHex = "";
   let thirdColourHex = "";
   let shirtType: ShirtType = { Filled: null };
+  let countries: CountryDTO[] = [];
+  let clubs: ClubDTO[] = [];
 
   let isLoading = true;
   let showConfirm = false;
@@ -40,7 +43,7 @@
 
   onMount(async () => {
     try {
-      await storeManager.syncStores();
+      countries = await countryStore.getCountries();
     } catch (error) {
       toastsError({
         msg: { text: "Error syncing proposal data." },
@@ -121,7 +124,7 @@
   async function loadClub() {
     isLoading = true;
 
-    let clubs = $clubStore;
+    let clubs = await clubStore.getClubs(selectedLeagueId);
     let selectedClub = clubs.find((x) => x.id == selectedClubId);
 
     if (!selectedClub) {
@@ -150,11 +153,11 @@
     <div class="flex justify-start items-center w-full">
       <div class="w-full flex-col space-y-4 mb-2">
         <select
-          class="p-2 fpl-dropdown min-w-[100px]"
+          class="p-2 brand-dropdown min-w-[100px]"
           bind:value={selectedClubId}
         >
           <option value={0}>Select Club</option>
-          {#each $clubStore as club}
+          {#each clubs as club}
             <option value={club.id}>{club.friendlyName}</option>
           {/each}
         </select>
@@ -202,7 +205,7 @@
           />
 
           <select
-            class="p-2 fpl-dropdown my-4 min-w-[100px]"
+            class="p-2 brand-dropdown my-4 min-w-[100px]"
             bind:value={shirtType}
           >
             {#each shirtTypes as shirt}

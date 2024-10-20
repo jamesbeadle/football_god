@@ -9,7 +9,7 @@
   },
   "_index.js": {
     "css": [
-      "_app/immutable/assets/index.q6MxsfFp.css"
+      "_app/immutable/assets/index.CSN47-Hr.css"
     ],
     "file": "chunks/index.js",
     "imports": [
@@ -59,14 +59,6 @@
     "isEntry": true,
     "src": "src/football_god_frontend/src/routes/add-fixture-data/+page.svelte"
   },
-  "src/football_god_frontend/src/routes/add-proposal/+page.svelte": {
-    "file": "entries/pages/add-proposal/_page.svelte.js",
-    "imports": [
-      "_index.js"
-    ],
-    "isEntry": true,
-    "src": "src/football_god_frontend/src/routes/add-proposal/+page.svelte"
-  },
   "src/football_god_frontend/src/routes/admin/+page.svelte": {
     "file": "entries/pages/admin/_page.svelte.js",
     "imports": [
@@ -98,6 +90,14 @@
     ],
     "isEntry": true,
     "src": "src/football_god_frontend/src/routes/leagues/+page.svelte"
+  },
+  "src/football_god_frontend/src/routes/players/+page.svelte": {
+    "file": "entries/pages/players/_page.svelte.js",
+    "imports": [
+      "_index.js"
+    ],
+    "isEntry": true,
+    "src": "src/football_god_frontend/src/routes/players/+page.svelte"
   },
   "src/football_god_frontend/src/routes/profile/+page.svelte": {
     "file": "entries/pages/profile/_page.svelte.js",

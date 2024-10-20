@@ -159,3 +159,23 @@
   background-color: #b5a3e6;
   color: rgb(95, 90, 90);
 }
+
+.brand-dropdown {
+  color: black !important;
+  background-color: white !important;
+  border: gray 1px thin;
+  @apply rounded-sm;
+}
+
+.brand-dropdown option {
+  color: black !important;
+  background-color: white;
+  border: gray 1px thin;
+}
+
+.brand-input {
+  color: black !important;
+  background-color: white !important;
+  border: gray 1px thin;
+  @apply rounded-sm;
+}

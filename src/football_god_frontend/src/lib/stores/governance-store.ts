@@ -12,7 +12,6 @@ import { ActorFactory } from "../../utils/ActorFactory";
 import { fixtureStore } from "./fixture-store";
 import { clubStore } from "./club-store";
 import { IDL } from "@dfinity/candid";
-import { storeManager } from "$lib/managers/store-manager";
 import type {
   ClubDTO,
   FixtureDTO,
