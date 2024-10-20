@@ -1,85 +1,131 @@
 <script lang="ts">
   import { onMount } from "svelte";
-  import { Modal } from "@dfinity/gix-components";
   import { clubStore } from "$lib/stores/club-store";
-  import { playerStore } from "$lib/stores/player-store";
-  import { countryStore } from "$lib/stores/country-store";
-  //import { governanceStore } from "$lib/stores/governance-store";
+  import { Modal } from "@dfinity/gix-components";
   import LocalSpinner from "$lib/components/local-spinner.svelte";
   import { toastsError } from "$lib/stores/toasts-store";
-  import {
-    convertDateInputToUnixNano,
-    formatUnixToDateInputValue,
-    isError,
-  } from "$lib/utils/helpers";
-    import type { ClubDTO, CountryDTO, FootballLeagueDTO, PlayerDTO, PlayerPosition, UpdatePlayerDTO } from "../../../../../../declarations/football_god_backend/football_god_backend.did";
-    import { leagueStore } from "$lib/stores/league-store";
-    import { adminStore } from "$lib/stores/admin-store";
+  import type { ClubDTO, CountryDTO, PlayerDTO, UpdatePlayerDTO, FootballLeagueDTO, PlayerPosition } from "../../../../../../declarations/football_god_backend/football_god_backend.did";
+  import { convertDateInputToUnixNano, formatUnixToDateInputValue } from "$lib/utils/helpers";
+  import { adminStore } from "$lib/stores/admin-store";
+  import { leagueStore } from "$lib/stores/league-store";
+    import { countryStore } from "$lib/stores/country-store";
+    import { playerStore } from "$lib/stores/player-store";
 
   export let visible: boolean;
   export let closeModal: () => void;
 
-  let selectedLeagueId: number = 0;
-  let selectedClubId: number = 0;
-  let selectedPlayerId: number = 0;
+  export let selectedLeagueId: number = 0;
+  export let selectedClubId: number = 0;
+  export let selectedPlayerId: number = 0;
   
   let leagues: FootballLeagueDTO[] = [];
-  let leagueClubs: ClubDTO[] = [];
-  let clubPlayers: PlayerDTO[] = [];
+  let clubs: ClubDTO[] = [];
   let countries: CountryDTO[] = [];
+  let players: PlayerDTO[] = []
 
-  let position: PlayerPosition;
-  let firstName: string = "";
-  let lastName: string = "";
-  let shirtNumber: number;
-  let dateOfBirth: bigint;
-  let nationalityId: number;
-  let dropdownPosition = 0;
-  let displayDOB = "";
-
-  let isLoading = true;
+  let selectedPosition = 0;
+  let firstName = "";
+  let lastName = "";
+  let dateOfBirth = "";
+  let shirtNumber = 0;
+  let value = 0;
+  let nationalityId = 0;
+  
+  let isLoading = false;
   let showConfirm = false;
-
-  $: if(selectedLeagueId && selectedLeagueId > 0){
-    loadLeagueClubs();
-  };
-
-  $: if (selectedClubId && selectedClubId > 0) {
-    loadClubPlayers();
-  }
-
-  $: if (selectedPlayerId && selectedPlayerId > 0) {
-    loadPlayer();
-  }
+  let leaguesLoaded = false;
+  let playersLoaded = false;
 
   $: isSubmitDisabled =
-    (!isLoading && selectedPlayerId <= 0) ||
-    firstName.length > 50 ||
-    lastName.length == 0 ||
+    selectedLeagueId <= 0 ||
+    selectedPlayerId <= 0 ||
+    selectedClubId <= 0 ||
+    nationalityId <= 0 ||
+    lastName.length <= 0 ||
     lastName.length > 50 ||
+    dateOfBirth == "" ||
     shirtNumber <= 0 ||
     shirtNumber > 99 ||
-    displayDOB == "" ||
-    nationalityId <= 0;
+    selectedPosition <= 0
+    value <= 0 ||
+    value > 200 ||
+    nationalityId == 0;
 
-  $: if (isSubmitDisabled && showConfirm) {
-    showConfirm = false;
-  }
 
   onMount(async () => {
     try {
+      isLoading = true;
       countries = await countryStore.getCountries();
       leagues = await leagueStore.getLeagues();
+      leaguesLoaded = true; 
+      
+      if (selectedLeagueId > 0) {
+        await getClubs();
+      }
+
+      if(selectedClubId > 0){
+        await getPlayers();
+      }
+
+      if(selectedPlayerId > 0){
+        let player = players.find(x => x.id == selectedPlayerId);
+        if(player == null){
+          return;
+        }
+
+        let positionId = 0;
+
+        if(Object.keys(player.position)[0] == "Goalkeeper"){
+          positionId = 1;
+        }
+
+        if(Object.keys(player.position)[0] == "Defender"){
+          positionId = 2;
+        }
+
+        if(Object.keys(player.position)[0] == "Midfielder"){
+          positionId = 3;
+        }
+
+        if(Object.keys(player.position)[0] == "Forward"){
+          positionId = 4;
+        }
+        selectedPosition = positionId;
+        firstName = player?.firstName ?? "";
+        lastName = player?.lastName ?? "";
+        dateOfBirth = formatUnixToDateInputValue(Number(player?.dateOfBirth) ?? 0);
+        shirtNumber = player?.shirtNumber ?? 0;
+        value = (player?.valueQuarterMillions ?? 0) / 4;
+        nationalityId = player?.nationality ?? 0;
+      }
     } catch (error) {
       toastsError({
-        msg: { text: "Error syncing player store." },
+        msg: { text: "Error mounting create player modal." },
         err: error,
       });
-      console.error("Error syncing player store.", error);
+      console.error("Error mounting create player modal.", error);
     } finally {
       isLoading = false;
     }
   });
+
+  $: if (leaguesLoaded && selectedLeagueId > 0) {
+    getClubs();
+  }
+
+  $: if (leaguesLoaded && selectedClubId > 0) {
+    playersLoaded = false;
+    getPlayers();
+    playersLoaded = true;
+  }
+
+  async function getClubs() {
+    clubs = await clubStore.getClubs(selectedLeagueId);
+  }
+
+  async function getPlayers() {
+    players = (await playerStore.getPlayers(selectedLeagueId)).filter(x => x.clubId == selectedClubId);
+  }
 
   function raiseProposal() {
     showConfirm = true;
@@ -88,104 +134,53 @@
   async function confirmProposal() {
     isLoading = true;
 
-    switch (dropdownPosition) {
-      case 0:
-        position = { Goalkeeper: null };
-        break;
-      case 1:
-        position = { Defender: null };
-        break;
+    var position: PlayerPosition = { "Goalkeeper" : null };
+    
+    switch(selectedPosition){
       case 2:
-        position = { Midfielder: null };
+        position = { "Defender" : null }
         break;
       case 3:
-        position = { Forward: null };
+        position = { "Midfielder" : null}
         break;
+      case 4:
+        position = { "Forward" : null }
+        break;
+
     }
-
-    dateOfBirth = convertDateInputToUnixNano(displayDOB);
-
+    
     let dto: UpdatePlayerDTO = {
       playerId: selectedPlayerId,
+      position,
       firstName,
       lastName,
       shirtNumber,
-      dateOfBirth,
-      nationality: nationalityId,
-      position
+      dateOfBirth: convertDateInputToUnixNano(dateOfBirth),
+      nationality: nationalityId
     };
     
     await adminStore.updatePlayer(selectedLeagueId, dto);
-    isLoading = false;
-    resetForm();
+
     closeModal();
-  }
-
-  function resetForm() {
-    selectedClubId = 0;
-    selectedPlayerId = 0;
-    selectedPlayerId = 0;
-    position = { Goalkeeper: null };
-    firstName = "";
-    lastName = "";
-    shirtNumber = 0;
-    dateOfBirth = 0n;
-    nationalityId = 0;
-    showConfirm = false;
-    clubPlayers = [];
-  }
-
-  async function loadLeagueClubs() {
-    isLoading = true;
-    leagueClubs = await clubStore.getClubs(selectedLeagueId);
-    isLoading = false;
-  }
-
-  async function loadClubPlayers() {
-    isLoading = true;
-    clubPlayers = (await playerStore.getPlayers(selectedLeagueId)).filter((x) => x.clubId == selectedClubId);
-    isLoading = false;
-  }
-
-  async function loadPlayer() {
-    let selectedPlayer = clubPlayers.find((x) => x.id == selectedPlayerId);
-    position = selectedPlayer?.position ?? { Goalkeeper: null };
-
-    let positionText = Object.keys(
-      selectedPlayer?.position ?? { Goalkeeper: null }
-    )[0];
-
-    switch (positionText) {
-      case "Goalkeeper":
-        dropdownPosition = 0;
-        break;
-      case "Defender":
-        dropdownPosition = 1;
-        break;
-      case "Midfielder":
-        dropdownPosition = 2;
-        break;
-      case "Forward":
-        dropdownPosition = 3;
-        break;
-    }
-
-    updatePlayerInfo(selectedPlayer!);
-  }
-
-  function updatePlayerInfo(player: PlayerDTO) {
-    firstName = player.firstName ?? "";
-    lastName = player.lastName ?? "";
-    shirtNumber = player.shirtNumber ?? 0;
-    dateOfBirth = player.dateOfBirth ?? 0n;
-    nationalityId = player.nationality ?? 0;
-
-    displayDOB = formatUnixToDateInputValue(Number(player.dateOfBirth));
   }
 
   function cancelModal() {
     resetForm();
     closeModal();
+  }
+
+  function resetForm() {
+    selectedLeagueId = 0;
+    selectedClubId = 0;
+    selectedPosition = 0;
+    clubs = [];
+    firstName = "";
+    lastName = "";
+    dateOfBirth = "";
+    shirtNumber = 0;
+    value = 0;
+    nationalityId = 0;
+    isLoading = false;
   }
 </script>
 
@@ -197,10 +192,12 @@
     </div>
 
     <div class="flex justify-start items-center w-full">
-      <div class="w-full flex-col space-y-4 mb-2">
-
-        <div class="flex-col space-y-2">
+      {#if isLoading}
+        <LocalSpinner />
+      {:else}
+        <div class="w-full flex-col space-y-4 mb-2">
           <p>Select the player's league:</p>
+
           <select
             class="p-2 brand-dropdown min-w-[100px]"
             bind:value={selectedLeagueId}
@@ -210,23 +207,23 @@
               <option value={league.id}>{league.name}</option>
             {/each}
           </select>
-        </div>
-        {#if selectedLeagueId}
-          <div class="flex-col space-y-2">
+
+          {#if selectedLeagueId > 0}
             <p>Select the player's club:</p>
+
             <select
               class="p-2 brand-dropdown min-w-[100px]"
               bind:value={selectedClubId}
             >
               <option value={0}>Select Club</option>
-              {#each leagueClubs as club}
+              {#each clubs as club}
                 <option value={club.id}>{club.friendlyName}</option>
               {/each}
             </select>
-          </div>
-        {/if}
+          {/if}
 
-        {#if selectedClubId > 0}
+          {#if selectedClubId > 0}
+
           <div class="flex-col space-y-2">
             <p>Select a player to update:</p>
             <select
@@ -234,7 +231,7 @@
               bind:value={selectedPlayerId}
             >
               <option value={0}>Select Player</option>
-              {#each clubPlayers as player}
+              {#each players as player}
                 <option value={player.id}
                   >{player.firstName} {player.lastName}</option
                 >
@@ -242,22 +239,24 @@
             </select>
           </div>
 
-          {#if selectedPlayerId > 0}
+          {#if playersLoaded && selectedPlayerId > 0}
+            
             <div class="flex-col space-y-2">
-              <p>Select a player's position:</p>
+              <p>Select Position:</p>
               <select
                 class="p-2 brand-dropdown my-4 min-w-[100px]"
-                bind:value={dropdownPosition}
+                bind:value={selectedPosition}
               >
-                <option value={0}>Goalkeeper</option>
-                <option value={1}>Defender</option>
-                <option value={2}>Midfielder</option>
-                <option value={3}>Forward</option>
+                <option value={0}>Select Position</option>
+                <option value={1}>Goalkeeper</option>
+                <option value={2}>Defender</option>
+                <option value={3}>Midfielder</option>
+                <option value={4}>Forward</option>
               </select>
             </div>
-
             <div class="flex-col space-y-2">
-              <p>First name:</p>
+              <p class="py-2">First Name:</p>
+    
               <input
                 type="text"
                 class="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
@@ -265,92 +264,111 @@
                 bind:value={firstName}
               />
             </div>
-
             <div class="flex-col space-y-2">
-              <p>Last name:</p>
+              <p class="py-2">Last Name:</p>
+    
               <input
                 type="text"
-                class="w-full px-4 py-2 my-4 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
-                placeholder="Last Name"
+                class="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
+                placeholder="First Name"
                 bind:value={lastName}
               />
             </div>
-
             <div class="flex-col space-y-2">
-              <p>Shirt number:</p>
+              <p class="py-2">Shirt Number:</p>
+    
               <input
-                type="text"
-                class="w-full px-4 py-2 my-4 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
+                type="number"
+                class="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
                 placeholder="Shirt Number"
+                min="1"
+                max="99"
+                step="1"
                 bind:value={shirtNumber}
               />
             </div>
-
             <div class="flex-col space-y-2">
-              <p>Date of birth:</p>
+              <p class="py-2">Value (£m):</p>
+    
               <input
-                type="date"
-                bind:value={displayDOB}
-                class="input input-bordered"
+                type="number"
+                step="0.25"
+                class="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
+                placeholder="Value"
+                bind:value
               />
             </div>
-
             <div class="flex-col space-y-2">
-              <p>Nationality:</p>
+              <p class="py-2">Date of Birth:</p>
+    
+              <input
+                type="date"
+                bind:value={dateOfBirth}
+                class="brand-input"
+              />
+            </div>
+            <div class="flex-col space-y-2">
+              <p class="py-2">Nationality:</p>
+    
               <select
-                class="p-2 brand-dropdown my-4 min-w-[100px]"
+                class="p-2 brand-dropdown min-w-[100px] mb-2"
                 bind:value={nationalityId}
               >
+                <option value={0}>Select Nationality</option>
                 {#each countries as country}
                   <option value={country.id}>{country.name}</option>
                 {/each}
               </select>
             </div>
+
           {/if}
-        {/if}
 
-        <div class="border-b border-gray-200" />
+          {/if}
 
-        <div class="items-center flex space-x-4">
-          <button
-            class="px-4 py-2 default-button fpl-cancel-btn min-w-[150px]"
-            type="button"
-            on:click={cancelModal}
-          >
-            Cancel
-          </button>
-          <button
-            class={`${isSubmitDisabled ? "bg-gray-500" : "fpl-purple-btn"} 
-                        px-4 py-2 default-button min-w-[150px]`}
-            on:click={raiseProposal}
-            disabled={isSubmitDisabled}
-          >
-            Raise Proposal
-          </button>
-        </div>
+          <div class="border-b border-gray-200" />
 
-        {#if showConfirm}
-          <div class="items-center flex">
-            <p class="text-orange-400">
-              Failed proposals will cost the proposer 10 $FPL tokens.
-            </p>
-          </div>
-          <div class="items-center flex">
+          <div class="items-center flex space-x-4">
+            <button
+              class="px-4 py-2 default-button fpl-cancel-btn min-w-[150px]"
+              type="button"
+              on:click={cancelModal}
+            >
+              Cancel
+            </button>
             <button
               class={`${isSubmitDisabled ? "bg-gray-500" : "fpl-purple-btn"} 
-                            px-4 py-2 default-button w-full`}
-              on:click={confirmProposal}
+                          px-4 py-2 default-button min-w-[150px]`}
+              on:click={raiseProposal}
               disabled={isSubmitDisabled}
             >
-              Confirm Submit Proposal
+              Raise Proposal
             </button>
           </div>
-        {/if}
-      </div>
-    </div>
 
-    {#if isLoading}
-      <LocalSpinner />
-    {/if}
+          {#if showConfirm}
+            <div class="items-center flex">
+              <p class="text-orange-400">
+                Failed proposals will cost the proposer 10 $FPL tokens.
+              </p>
+            </div>
+            <div class="items-center flex">
+              <button
+                class={`${isSubmitDisabled ? "bg-gray-500" : "fpl-purple-btn"} 
+                              px-4 py-2 default-button w-full`}
+                on:click={confirmProposal}
+                disabled={isSubmitDisabled}
+              >
+                Confirm Submit Proposal
+              </button>
+            </div>
+          {/if}
+        </div>
+      {/if}
+    </div>
   </div>
 </Modal>
+
+
+
+
+

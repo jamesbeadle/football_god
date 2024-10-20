@@ -33,6 +33,7 @@
   let leaguesLoaded = false;
 
   $: isSubmitDisabled =
+    selectedLeagueId <= 0 ||
     selectedClubId <= 0 ||
     nationalityId <= 0 ||
     lastName.length <= 0 ||

@@ -8,6 +8,7 @@
     import type { ClubDTO, FootballLeagueDTO, PlayerDTO } from "../../../../declarations/football_god_backend/football_god_backend.did";
     import LoanPlayer from "$lib/components/governance/player/loan-player.svelte";
     import CreatePlayer from "$lib/components/governance/player/create-player.svelte";
+    import UpdatePlayer from "$lib/components/governance/player/update-player.svelte";
 
     let selectedLeagueId: number = 1;
     let selectedPositionId: number = 0;
@@ -34,6 +35,7 @@
     let showRevaluePlayerDownModal = false;
     let showRetirePlayerModal = false;
     let showCreatePlayerModal = false;
+    let showUpdatePlayerModal = false;
 
     let selectedPlayerId = 0;
 
@@ -118,6 +120,11 @@
         dropdownVisible = dropdownVisible === playerId ? null : playerId;
     }
 
+    function loadUpdatePlayer(playerId: number){
+        selectedPlayerId = playerId;
+        showUpdatePlayerModal = true;
+    }
+
     function loadTransferPlayer(playerId: number){
         selectedPlayerId = playerId;
         showTransferPlayerModal = true;
@@ -148,10 +155,10 @@
         showTransferPlayerModal = false;
         showLoanPlayerModal = false;
         showCreatePlayerModal = false;
+        showUpdatePlayerModal = false;
         showRevaluePlayerUpModal = false;
         showRevaluePlayerDownModal = false;
         showRetirePlayerModal = false;
-        showCreatePlayerModal = false;
     }
 
     function handleClickOutside(event: MouseEvent) {
@@ -233,6 +240,7 @@
                     <button class="text-white brand-button hover:bg-blue-700 px-4 py-2 rounded-lg" on:click={(event) => toggleDropdown(player.id, event)}>Actions</button>
                     {#if dropdownVisible === player.id}
                       <div class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg z-10 text-sm dropdown-menu">
+                        <button class="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100" on:click={() => loadUpdatePlayer(player.id)}>Update Player</button>
                         <button class="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100" on:click={() => loadTransferPlayer(player.id)}>Transfer Player</button>
                         <button class="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100" on:click={() => loadLoanPlayer(player.id)}>Loan Player</button>
                         <button class="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100" on:click={() => loadRevaluePlayerUp(player.id)}>Revalue Player Up</button>
@@ -257,4 +265,9 @@
 
 {#if showCreatePlayerModal}
   <CreatePlayer visible={showCreatePlayerModal} {closeModal} />
+{/if}
+
+{#if selectedPlayerId > 0 && showUpdatePlayerModal}
+    {@const selectedPlayer = filteredPlayers.find(x => x.id == selectedPlayerId) }
+    <UpdatePlayer visible={showUpdatePlayerModal} {closeModal} selectedClubId={selectedPlayer ? selectedPlayer.clubId ?? 0 : 0} {selectedPlayerId} {selectedLeagueId} />
 {/if}
