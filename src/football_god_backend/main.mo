@@ -6,6 +6,7 @@ import Option "mo:base/Option";
 import Iter "mo:base/Iter";
 import DTOs "dtos/DTOs";
 import GovernanceDTOs "dtos/governance_DTOs";
+import RequestDTOs "dtos/request_DTOs";
 import Environment "environment";
 import Base "types/base_types";
 import FootballTypes "types/football_types";
@@ -397,5 +398,53 @@ actor Self {
     return;
   };
 
+  //Admin functions for applications
+  //TODO: Remove when handed back to the SNS
+
+  public shared ({ caller }) func updateSystemState(dto : RequestDTOs.UpdateSystemStateDTO) : async () {
+    assert isDataAdmin(Principal.toText(caller));
+    let data_canister = actor (Environment.DATA_CANISTER_ID) : actor {
+      updateSystemState : (dto : RequestDTOs.UpdateSystemStateDTO) -> async Result.Result<(), T.Error>;
+    };
+    let _ = await data_canister.updateSystemState(dto);
+    return;
+  };
+
+  public shared ({ caller }) func snapshotManagers(dto : RequestDTOs.SnapshotManagersDTO) : async () {
+    assert isDataAdmin(Principal.toText(caller));
+    let data_canister = actor (Environment.DATA_CANISTER_ID) : actor {
+      snapshotManagers : (dto : RequestDTOs.SnapshotManagersDTO) -> async Result.Result<(), T.Error>;
+    };
+    let _ = await data_canister.snapshotManagers(dto);
+    return;
+  };
+
+  public shared ({ caller }) func calculateGameweekScores(dto : RequestDTOs.CalculateGameweekScoresDTO) : async () {
+    assert isDataAdmin(Principal.toText(caller));
+    let data_canister = actor (Environment.DATA_CANISTER_ID) : actor {
+      calculateGameweekScores : (dto : RequestDTOs.CalculateGameweekScoresDTO) -> async Result.Result<(), T.Error>;
+    };
+    let _ = await data_canister.calculateGameweekScores(dto);
+    return;
+  };
+
+  public shared ({ caller }) func calculateLeaderboards(dto : RequestDTOs.CalculateLeaderboardsDTO) : async () {
+    assert isDataAdmin(Principal.toText(caller));
+    let data_canister = actor (Environment.DATA_CANISTER_ID) : actor {
+      calculateLeaderboards : (dto : RequestDTOs.CalculateLeaderboardsDTO) -> async Result.Result<(), T.Error>;
+    };
+    let _ = await data_canister.calculateLeaderboards(dto);
+    return;
+  };
+
+  public shared ({ caller }) func executeCreateClub(dto : GovernanceDTOs.CreateClubDTO) : async () {
+    //assert Principal.toText(caller) == NetworkEnvironmentVariables.SNS_GOVERNANCE_CANISTER_ID;
+    assert isDataAdmin(Principal.toText(caller));
+    let data_canister = actor (Environment.DATA_CANISTER_ID) : actor {
+      createClub : (dto : GovernanceDTOs.CreateClubDTO) -> async Result.Result<(), T.Error>;
+    };
+    let _ = await data_canister.createClub(dto);
+    return;
+  };
     
 };

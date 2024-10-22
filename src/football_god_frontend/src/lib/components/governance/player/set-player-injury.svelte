@@ -7,15 +7,17 @@
   import LocalSpinner from "$lib/components/local-spinner.svelte";
   import { isError } from "$lib/utils/helpers";
   import { toastsError } from "$lib/stores/toasts-store";
-    import type { PlayerDTO } from "../../../../../../declarations/football_god_backend/football_god_backend.did";
+    import type { ClubDTO, PlayerDTO } from "../../../../../../declarations/football_god_backend/football_god_backend.did";
 
   export let visible: boolean;
   export let closeModal: () => void;
+  export let selectedLeagueId = 0;
 
   let selectedClubId: number = 0;
   let selectedPlayerId: number = 0;
   let description = "";
   let injuryEndDate = "";
+  let clubs: ClubDTO[] = [];
   let clubPlayers: PlayerDTO[] = [];
 
   let isLoading = true;
@@ -47,7 +49,7 @@
   });
 
   async function getClubPlayers() {
-    clubPlayers = $playerStore.filter((x) => x.clubId == selectedClubId);
+    clubPlayers = (await playerStore.getPlayers(selectedLeagueId)).filter((x) => x.clubId == selectedClubId);
   }
 
   function raiseProposal() {
@@ -107,7 +109,7 @@
           bind:value={selectedClubId}
         >
           <option value={0}>Select Club</option>
-          {#each $clubStore as club}
+          {#each clubs as club}
             <option value={club.id}>{club.friendlyName}</option>
           {/each}
         </select>
@@ -141,7 +143,7 @@
           <input
             type="date"
             bind:value={injuryEndDate}
-            class="input input-bordered"
+            class="brand-dropdown"
           />
         {/if}
 

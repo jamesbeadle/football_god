@@ -6,6 +6,7 @@
   import type { CountryDTO, CreateLeagueDTO, Gender } from "../../../../../../declarations/football_god_backend/football_god_backend.did";
   import { onMount } from "svelte";
   import LocalSpinner from "$lib/components/local-spinner.svelte";
+    import { AdminService } from "$lib/services/admin-service";
   
   export let visible: boolean;
   export let closeModal: () => void;
@@ -13,7 +14,7 @@
   let leagueName = "";
   let abbreviatedName = "";
   let governingBody = "";
-  let gender: Gender = { "Male" : null };
+  let selectedGender = 0;
   let dateFormed = "";
   let countryId = 0;
   let logo: Uint8Array | number[];
@@ -33,6 +34,8 @@
     governingBody.length > 50 ||
     dateFormed.length <= 0 ||
     dateFormed.length > 50 ||
+    selectedGender < 1 ||
+    selectedGender > 2 ||
     countryId <= 0;
 
   $: if (isSubmitDisabled && showConfirm) {
@@ -90,18 +93,24 @@
 
   async function confirmProposal() {
     isLoading = true;
+    
+    var leagueGender: Gender = { "Male" : null };
+    if(selectedGender == 2){
+      leagueGender = { "Female" : null };
+    }
+    
     const dto: CreateLeagueDTO = {
       name: leagueName,
       abbreviation: abbreviatedName,
       governingBody,
-      relatedGender: gender,
+      relatedGender: leagueGender,
       formed: BigInt(new Date(dateFormed).getTime() * 1_000_000),
       countryId,
-      logo: logo,
+      logo: logo ? logo : [],
       teamCount: teamCount
     };
 
-    await new LeagueService().createLeague(dto);
+    await new AdminService().createLeague(dto);
     isLoading = false;
     resetForm();
     closeModal();
@@ -111,7 +120,7 @@
     leagueName = "";
     abbreviatedName = "";
     governingBody = "";
-    gender = { "Male" : null };
+    selectedGender = 0;
     dateFormed = "";
     countryId = 0;
     logo = [];
@@ -155,7 +164,8 @@
           />
           <div class="mt-4">
             <label for="gender">Gender</label>
-            <select bind:value={gender} class="input input-bordered">
+            <select bind:value={selectedGender} class="brand-dropdown">
+              <option value="0">Select Gender</option>
               <option value="1">Male</option>
               <option value="2">Female</option>
             </select>

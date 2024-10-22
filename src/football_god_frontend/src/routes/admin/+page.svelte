@@ -345,7 +345,7 @@
     {/if}
 
     {#if showUpdateSystemStateModal}
-      
+      <UpdateSystemState visible={showUpdateSystemStateModal} closeModal={hideUpdateSystemState} />
     {/if}
 
     {#if showSnapshotManagerTeamsModal}

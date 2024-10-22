@@ -9,6 +9,7 @@
     import LoanPlayer from "$lib/components/governance/player/loan-player.svelte";
     import CreatePlayer from "$lib/components/governance/player/create-player.svelte";
     import UpdatePlayer from "$lib/components/governance/player/update-player.svelte";
+    import TransferPlayer from "$lib/components/governance/player/transfer-player.svelte";
 
     let selectedLeagueId: number = 1;
     let selectedPositionId: number = 0;
@@ -234,7 +235,11 @@
           {#each filteredPlayers.sort((a, b) => b.valueQuarterMillions - a.valueQuarterMillions) as player}
             <div class="flex flex-row items-center bg-gray-800 rounded-lg shadow p-4 w-full my-2 transition hover:bg-gray-700">
               <div class="flex items-center space-x-4 w-full">
-                <p class="flex-grow text-lg md:text-sm text-white">{player.firstName} {player.lastName} - {(player.valueQuarterMillions/4)}M</p>
+                <p class="flex-grow text-lg md:text-sm text-white">
+                  {player.firstName} {player.lastName} <br />
+                  Player ID: {player.id} <br />
+                  Value: £{(player.valueQuarterMillions/4)}M
+                </p>
                 
                 <div class="relative">
                     <button class="text-white brand-button hover:bg-blue-700 px-4 py-2 rounded-lg" on:click={(event) => toggleDropdown(player.id, event)}>Actions</button>
@@ -270,4 +275,9 @@
 {#if selectedPlayerId > 0 && showUpdatePlayerModal}
     {@const selectedPlayer = filteredPlayers.find(x => x.id == selectedPlayerId) }
     <UpdatePlayer visible={showUpdatePlayerModal} {closeModal} selectedClubId={selectedPlayer ? selectedPlayer.clubId ?? 0 : 0} {selectedPlayerId} {selectedLeagueId} />
+{/if}
+
+{#if selectedPlayerId > 0 && showTransferPlayerModal}
+    {@const selectedPlayer = filteredPlayers.find(x => x.id == selectedPlayerId) }
+    <TransferPlayer visible={showTransferPlayerModal} {closeModal} selectedClubId={selectedPlayer ? selectedPlayer.clubId ?? 0 : 0} {selectedPlayerId} {selectedLeagueId} />
 {/if}

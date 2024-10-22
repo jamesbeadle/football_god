@@ -1,3 +1,14 @@
+type UpdateSystemStateDTO = 
+ record {
+   calculationGameweek: GameweekNumber;
+   calculationMonth: CalendarMonth;
+   calculationSeasonId: SeasonId;
+   leagueId: LeagueId;
+   onHold: bool;
+   pickTeamGameweek: GameweekNumber;
+   pickTeamMonth: CalendarMonth;
+   pickTeamSeasonId: SeasonId;
+ };
 type UpdatePlayerDTO = 
  record {
    dateOfBirth: int;
@@ -48,6 +59,12 @@ type SubmitFixtureDataDTO =
    leagueId: LeagueId;
    month: CalendarMonth;
    playerEventData: vec PlayerEventData;
+ };
+type SnapshotManagersDTO = 
+ record {
+   gameweek: GameweekNumber;
+   leagueId: LeagueId;
+   seasonId: SeasonId;
  };
 type ShirtType = 
  variant {
@@ -273,6 +290,17 @@ type CreateLeagueDTO =
    relatedGender: Gender;
    teamCount: nat8;
  };
+type CreateClubDTO = 
+ record {
+   abbreviatedName: text;
+   friendlyName: text;
+   leagueId: LeagueId;
+   name: text;
+   primaryColourHex: text;
+   secondaryColourHex: text;
+   shirtType: ShirtType;
+   thirdColourHex: text;
+ };
 type CountryId = nat16;
 type CountryDTO = 
  record {
@@ -293,9 +321,24 @@ type ClubDTO =
    thirdColourHex: text;
  };
 type CalendarMonth = nat8;
+type CalculateLeaderboardsDTO = 
+ record {
+   gameweek: GameweekNumber;
+   leagueId: LeagueId;
+   seasonId: SeasonId;
+ };
+type CalculateGameweekScoresDTO = 
+ record {
+   gameweek: GameweekNumber;
+   leagueId: LeagueId;
+   seasonId: SeasonId;
+ };
 type AddInitialFixturesDTO = record {seasonFixtures: vec FixtureDTO;};
 service : {
+  calculateGameweekScores: (CalculateGameweekScoresDTO) -> ();
+  calculateLeaderboards: (CalculateLeaderboardsDTO) -> ();
   executeAddInitialFixtures: (LeagueId, AddInitialFixturesDTO) -> ();
+  executeCreateClub: (CreateClubDTO) -> ();
   executeCreateLeague: (CreateLeagueDTO) -> ();
   executeCreatePlayer: (LeagueId, CreatePlayerDTO) -> ();
   executeLoanPlayer: (LeagueId, LoanPlayerDTO) -> ();
@@ -319,6 +362,8 @@ service : {
   getLeagues: () -> (Result_2) composite_query;
   getProfile: () -> (Result_1) query;
   isAdmin: () -> (Result);
+  snapshotManagers: (SnapshotManagersDTO) -> ();
+  updateSystemState: (UpdateSystemStateDTO) -> ();
   validateAddInitialFixtures: (AddInitialFixturesDTO) -> (RustResult) query;
   validateCreateLeague: (CreateLeagueDTO) -> (RustResult) query;
   validateCreatePlayer: (CreatePlayerDTO) -> (RustResult) query;

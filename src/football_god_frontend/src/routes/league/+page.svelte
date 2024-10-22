@@ -10,6 +10,7 @@
     import EditIcon from "$lib/icons/EditIcon.svelte";
     import { getImageURL } from "$lib/utils/helpers";
     import type { CountryDTO, FootballLeagueDTO } from "../../../../declarations/football_god_backend/football_god_backend.did";
+    import LeagueClubs from "$lib/components/governance/club/league-clubs.svelte";
     
     let isLoading = true;
     let league: FootballLeagueDTO | null = null;
@@ -42,8 +43,10 @@
     async function loadData(){
 
       isAdmin = await userStore.isAdmin();
+      countries = await countryStore.getCountries();
+      let leagues = await leagueStore.getLeagues();
       
-      league = $leagueStore.find((x) => x.id == id) ?? null;
+      league = leagues.find((x) => x.id == id) ?? null;
       if (league) {
         name = league.name;
         abbreviatedName = league.abbreviation;
@@ -121,6 +124,11 @@
         <li class={`mr-4 ${activeTab === "details" ? "active-tab" : ""}`}>
           <button class={`p-2 ${activeTab === "details" ? "text-white" : "text-gray-400"}`} on:click={() => setActiveTab("details")}>
             Details
+          </button>
+        </li>
+        <li class={`mr-4 ${activeTab === "clubs" ? "active-tab" : ""}`}>
+          <button class={`p-2 ${activeTab === "clubs" ? "text-white" : "text-gray-400"}`} on:click={() => setActiveTab("clubs")}>
+            Clubs
           </button>
         </li>
         <li class={`mr-4 ${activeTab === "players" ? "active-tab" : ""}`}>
@@ -217,6 +225,9 @@
                 {/if}
             </div>
         </div>
+      {/if}
+      {#if activeTab === "clubs"}
+        <LeagueClubs leagueId={id} />
       {/if}
     </div>
   {/if}

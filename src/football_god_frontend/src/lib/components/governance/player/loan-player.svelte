@@ -25,6 +25,7 @@
   let leagues: FootballLeagueDTO[] = [];
   let clubs: ClubDTO[] = [];
   let clubPlayers: PlayerDTO[] = [];
+  let loanClubs: ClubDTO[] = [];
 
   let isLoading = false;
   let showConfirm = false;
@@ -72,8 +73,16 @@
     getClubPlayers();
   }
 
+  $: if(loanLeagueId > 0){
+    getLoanClubs();
+  };
+
   async function getClubs() {
     clubs = await clubStore.getClubs(selectedLeagueId);
+  }
+
+  async function getLoanClubs() {
+    loanClubs = await clubStore.getClubs(loanLeagueId);
   }
 
   async function getClubPlayers() {
@@ -187,7 +196,7 @@
                   bind:value={loanClubId}
                 >
                   <option value={0}>Select Club</option>
-                  {#each clubs as club}
+                  {#each loanClubs as club}
                     <option value={club.id}>{club.friendlyName}</option>
                   {/each}
                 </select>

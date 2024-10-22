@@ -12,17 +12,16 @@
   export let visible: boolean;
   export let closeModal: () => void;
 
+  export let selectedLeagueId: number = 0;
+  export let selectedClubId: number = 0;
+  export let selectedPlayerId: number = 0;
+
   let currentLeagues: FootballLeagueDTO[] = [];
   let currentClubs: ClubDTO[] = [];
   let currentPlayers: PlayerDTO[] = [];
   
-
   let transferToLeagues: FootballLeagueDTO[] = [];
   let transferToClubs: ClubDTO[] = [];
-  
-  let selectedCurrentLeagueId: number = 0;
-  let selectedCurrentClubId: number = 0;
-  let selectedPlayerId: number = 0;
   
   let transferToLeagueId: number = 0;
   let transferToClubId: number = 0;
@@ -33,14 +32,14 @@
   let showConfirm = false;
 
   $: isSubmitDisabled =
-  selectedCurrentLeagueId <= 0 || selectedCurrentClubId <= 0 || selectedPlayerId <= 0 ||
+  selectedLeagueId <= 0 || selectedClubId <= 0 || selectedPlayerId <= 0 ||
   transferToLeagueId <= 0 || transferToClubId <= 0
 
-  $: if(selectedCurrentLeagueId) {
+  $: if(selectedLeagueId) {
     getCurrentLeagueClubs();
   }
 
-  $: if (selectedCurrentClubId) {
+  $: if (selectedClubId) {
     getCurrentPlayers();
   }
 
@@ -69,13 +68,13 @@
   });
 
   async function getCurrentLeagueClubs() {
-    currentClubs = await clubStore.getClubs(selectedCurrentLeagueId);
+    currentClubs = await clubStore.getClubs(selectedLeagueId);
   }
 
   async function getCurrentPlayers() {
     console.log("getting current players")
-    console.log(`for league id ${selectedCurrentLeagueId}`)
-    currentPlayers = (await playerStore.getPlayers(selectedCurrentLeagueId)).filter(x => x.clubId == selectedCurrentClubId);
+    console.log(`for league id ${selectedLeagueId}`)
+    currentPlayers = (await playerStore.getPlayers(selectedLeagueId)).filter(x => x.clubId == selectedClubId);
   }
 
   async function getToLeagueClubs() {
@@ -89,14 +88,14 @@
   async function confirmProposal() {
     isLoading = true;
     let dto: TransferPlayerDTO = {
-      leagueId: selectedCurrentLeagueId,
-      clubId: selectedCurrentClubId,
+      leagueId: selectedLeagueId,
+      clubId: selectedClubId,
       newLeagueId: transferToLeagueId,
       playerId: selectedPlayerId,
       newClubId: transferToClubId,
       newShirtNumber: shirtNumber
     };
-    await adminStore.transferPlayer(selectedCurrentLeagueId, dto);
+    await adminStore.transferPlayer(selectedLeagueId, dto);
     isLoading = false;
     resetForm();
     closeModal();
@@ -108,8 +107,8 @@
     currentPlayers = [];
     transferToLeagues = [];
     transferToClubs = [];
-    selectedCurrentLeagueId = 0;
-    selectedCurrentClubId = 0;
+    selectedLeagueId = 0;
+    selectedClubId = 0;
     selectedPlayerId = 0;
     transferToLeagueId = 0;
     transferToClubId = 0;
@@ -135,7 +134,7 @@
 
         <select
           class="p-2 brand-dropdown min-w-[100px]"
-          bind:value={selectedCurrentLeagueId}
+          bind:value={selectedLeagueId}
         >
           <option value={0}>Select League</option>
           {#each currentLeagues as league}
@@ -143,12 +142,12 @@
           {/each}
         </select>
 
-        {#if selectedCurrentLeagueId > 0}
+        {#if selectedLeagueId > 0}
           <p>Select the player's club:</p>
 
           <select
             class="p-2 brand-dropdown min-w-[100px]"
-            bind:value={selectedCurrentClubId}
+            bind:value={selectedClubId}
           >
             <option value={0}>Select Club</option>
             {#each currentClubs as club}
@@ -157,7 +156,7 @@
           </select>
         {/if}
 
-        {#if selectedCurrentClubId > 0}
+        {#if selectedClubId > 0}
           <p>Select a player to transfer:</p>
 
           <select

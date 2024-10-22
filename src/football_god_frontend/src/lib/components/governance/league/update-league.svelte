@@ -196,7 +196,7 @@
             />
             <div class="mt-4">
               <label for="gender">Gender</label>
-              <select bind:value={gender} class="input input-bordered">
+              <select bind:value={gender} class="brand-dropdown">
                 <option value="1">Male</option>
                 <option value="2">Female</option>
               </select>
@@ -205,7 +205,7 @@
               <label for="date-formed">Team Count</label>
               <input
                 type="number"
-                class="input input-bordered"
+                class="brand-dropdown"
                 bind:value={teamCount}
               />
             </div>
@@ -213,7 +213,7 @@
               <label for="date-formed">Date Formed</label>
               <input
                 type="date"
-                class="input input-bordered"
+                class="brand-dropdown"
                 bind:value={dateFormed}
               />
             </div>

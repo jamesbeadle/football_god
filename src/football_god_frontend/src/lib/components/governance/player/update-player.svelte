@@ -8,8 +8,8 @@
   import { convertDateInputToUnixNano, formatUnixToDateInputValue } from "$lib/utils/helpers";
   import { adminStore } from "$lib/stores/admin-store";
   import { leagueStore } from "$lib/stores/league-store";
-    import { countryStore } from "$lib/stores/country-store";
-    import { playerStore } from "$lib/stores/player-store";
+  import { countryStore } from "$lib/stores/country-store";
+  import { playerStore } from "$lib/stores/player-store";
 
   export let visible: boolean;
   export let closeModal: () => void;
@@ -28,7 +28,6 @@
   let lastName = "";
   let dateOfBirth = "";
   let shirtNumber = 0;
-  let value = 0;
   let nationalityId = 0;
   
   let isLoading = false;
@@ -47,8 +46,6 @@
     shirtNumber <= 0 ||
     shirtNumber > 99 ||
     selectedPosition <= 0
-    value <= 0 ||
-    value > 200 ||
     nationalityId == 0;
 
 
@@ -95,7 +92,6 @@
         lastName = player?.lastName ?? "";
         dateOfBirth = formatUnixToDateInputValue(Number(player?.dateOfBirth) ?? 0);
         shirtNumber = player?.shirtNumber ?? 0;
-        value = (player?.valueQuarterMillions ?? 0) / 4;
         nationalityId = player?.nationality ?? 0;
       }
     } catch (error) {
@@ -178,7 +174,6 @@
     lastName = "";
     dateOfBirth = "";
     shirtNumber = 0;
-    value = 0;
     nationalityId = 0;
     isLoading = false;
   }
@@ -285,17 +280,6 @@
                 max="99"
                 step="1"
                 bind:value={shirtNumber}
-              />
-            </div>
-            <div class="flex-col space-y-2">
-              <p class="py-2">Value (£m):</p>
-    
-              <input
-                type="number"
-                step="0.25"
-                class="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
-                placeholder="Value"
-                bind:value
               />
             </div>
             <div class="flex-col space-y-2">

@@ -7,7 +7,6 @@
   
     export let visible: boolean;
     export let closeModal: () => void;
-    export let cancelModal: () => void;
 
     let applicationCanisterId: string;
     let calculationSeasonId: number;
@@ -42,18 +41,18 @@
           err: error,
         });
         console.error("Error updating system state:", error);
-        cancelModal();
+        closeModal();
       } finally {
         busyStore.stopBusy("update-name");
       }
     }
   </script>
   
-  <Modal {visible} on:nnsClose={cancelModal}>
+  <Modal {visible} on:nnsClose={closeModal}>
     <div class="mx-4 p-4">
       <div class="flex justify-between items-center my-2">
         <h3 class="default-header">Update System State</h3>
-        <button class="times-button" on:click={cancelModal}>&times;</button>
+        <button class="times-button" on:click={closeModal}>&times;</button>
       </div>
     </div>
   </Modal>

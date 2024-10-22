@@ -149,11 +149,11 @@
         <p class="mr-2 my-2">Set new date:</p>
         <div class="flex flex-row my-2">
           <p class="mr-2">Select Date:</p>
-          <input type="date" bind:value={date} class="input input-bordered" />
+          <input type="date" bind:value={date} class="brand-dropdown" />
         </div>
         <div class="flex flex-row my-2">
           <p class="mr-2">Select Time:</p>
-          <input type="time" bind:value={time} class="input input-bordered" />
+          <input type="time" bind:value={time} class="brand-dropdown" />
         </div>
         <div class="flex flex-row my-2 items-center">
           <p class="mr-2">Select Gameweek:</p>

@@ -1,14 +1,19 @@
 import { writable } from "svelte/store";
 import { AdminService } from "../services/admin-service";
 import type {
+  CalculateGameweekScoresDTO,
+  CalculateLeaderboardsDTO,
   ClubDTO,
+  CreateClubDTO,
   CreateLeagueDTO,
   CreatePlayerDTO,
   LeagueId,
   LoanPlayerDTO,
+  SnapshotManagersDTO,
   TransferPlayerDTO,
   UpdateLeagueDTO,
   UpdatePlayerDTO,
+  UpdateSystemStateDTO,
 } from "../../../../declarations/football_god_backend/football_god_backend.did";
 
 function createAdminStore() {
@@ -50,6 +55,32 @@ function createAdminStore() {
     return new AdminService().updateLeague(dto);
   }
 
+  async function updateSystemState(dto: UpdateSystemStateDTO): Promise<any> {
+    return new AdminService().updateSystemState(dto);
+  }
+
+  async function snapshotManagers(dto: SnapshotManagersDTO): Promise<any> {
+    return new AdminService().snapshotManagers(dto);
+  }
+
+  async function calculateGameweekScores(
+    dto: CalculateGameweekScoresDTO,
+  ): Promise<any> {
+    return new AdminService().calculateGameweekScores(dto);
+  }
+
+  async function calculateLeaderboards(
+    dto: CalculateLeaderboardsDTO,
+  ): Promise<any> {
+    return new AdminService().calculateLeaderboards(dto);
+  }
+
+  async function createClub(dto: CreateClubDTO): Promise<any> {
+    console.log("dto");
+    console.log(dto);
+    return new AdminService().createClub(dto);
+  }
+
   return {
     createLeague,
     updateLeague,
@@ -57,6 +88,11 @@ function createAdminStore() {
     loanPlayer,
     createPlayer,
     updatePlayer,
+    updateSystemState,
+    snapshotManagers,
+    calculateGameweekScores,
+    calculateLeaderboards,
+    createClub,
   };
 }
 
