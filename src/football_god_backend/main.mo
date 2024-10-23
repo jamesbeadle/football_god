@@ -7,11 +7,13 @@ import Iter "mo:base/Iter";
 import DTOs "dtos/DTOs";
 import GovernanceDTOs "dtos/governance_DTOs";
 import RequestDTOs "dtos/request_DTOs";
+import ResponseDtOs "dtos/response_DTOs";
 import Environment "environment";
 import Base "types/base_types";
 import FootballTypes "types/football_types";
 import T "types/app_types";
 import Countries "types/Countries";
+import ResponseDTOs "dtos/response_DTOs";
 import UserManager "managers/user_manager";
 
 actor Self {
@@ -401,13 +403,27 @@ actor Self {
   //Admin functions for applications
   //TODO: Remove when handed back to the SNS
 
-  public shared ({ caller }) func updateSystemState(dto : RequestDTOs.UpdateSystemStateDTO) : async () {
+  public shared ({ caller }) func updateSystemState(applicationName: Text, dto : RequestDTOs.UpdateSystemStateDTO) : async Result.Result<(), T.Error> {
     assert isDataAdmin(Principal.toText(caller));
-    let data_canister = actor (Environment.DATA_CANISTER_ID) : actor {
-      updateSystemState : (dto : RequestDTOs.UpdateSystemStateDTO) -> async Result.Result<(), T.Error>;
+    switch(applicationName){
+      case "OpenFPL" {
+        let backend_canister = actor (Environment.OPENFPL_BACKEND_CANISTER_ID) : actor {
+          updateSystemState : (dto : RequestDTOs.UpdateSystemStateDTO) -> async Result.Result<(), T.Error>;
+        };
+        return await backend_canister.updateSystemState(dto);
+      };
+      case "OpenWSL" {
+        
+        let backend_canister = actor (Environment.OPENWSL_BACKEND_CANISTER_ID) : actor {
+          updateSystemState : (dto : RequestDTOs.UpdateSystemStateDTO) -> async Result.Result<(), T.Error>;
+        };
+        return await backend_canister.updateSystemState(dto);
+
+      };
+      case _ {
+        return #err(#NotFound);
+      }
     };
-    let _ = await data_canister.updateSystemState(dto);
-    return;
   };
 
   public shared ({ caller }) func snapshotManagers(dto : RequestDTOs.SnapshotManagersDTO) : async () {
@@ -445,6 +461,31 @@ actor Self {
     };
     let _ = await data_canister.createClub(dto);
     return;
+  };
+
+  public shared composite query  ({ caller }) func getSystemState(applicationName: Text) : async Result.Result<ResponseDTOs.SystemStateDTO, T.Error>  {
+    //assert Principal.toText(caller) == NetworkEnvironmentVariables.SNS_GOVERNANCE_CANISTER_ID;
+    assert isDataAdmin(Principal.toText(caller));
+    switch(applicationName){
+      case "OpenFPL" {
+        
+        let backend_canister = actor (Environment.OPENFPL_BACKEND_CANISTER_ID) : actor {
+          getSystemState : shared query () -> async Result.Result<ResponseDTOs.SystemStateDTO, T.Error>;
+        };
+        return await backend_canister.getSystemState();
+      };
+      case "OpenWSL" {
+        
+        let backend_canister = actor (Environment.OPENWSL_BACKEND_CANISTER_ID) : actor {
+          getSystemState : shared query () -> async Result.Result<ResponseDTOs.SystemStateDTO, T.Error>;
+        };
+        return await backend_canister.getSystemState();
+
+      };
+      case _ {
+        return #err(#NotFound);
+      }
+    };
   };
     
 };

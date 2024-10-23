@@ -10,6 +10,7 @@ import type {
   LeagueId,
   LoanPlayerDTO,
   SnapshotManagersDTO,
+  SystemStateDTO,
   TransferPlayerDTO,
   UpdateLeagueDTO,
   UpdatePlayerDTO,
@@ -97,7 +98,18 @@ export class AdminService {
     if (isError(result)) throw new Error("Failed to update player");
   }
 
-  async updateSystemState(dto: UpdateSystemStateDTO): Promise<void> {}
+  async updateSystemState(
+    applicaitonName: string,
+    dto: UpdateSystemStateDTO,
+  ): Promise<void> {
+    const identityActor: any = await ActorFactory.createIdentityActor(
+      authStore,
+      process.env.FOOTBALL_GOD_BACKEND_CANISTER_ID ?? "",
+    );
+
+    const result = await identityActor.updateSystemState(applicaitonName, dto);
+    if (isError(result)) throw new Error("Failed to update system state");
+  }
 
   async snapshotManagers(dto: SnapshotManagersDTO): Promise<void> {}
 
@@ -127,5 +139,19 @@ export class AdminService {
 
     const result = await identityActor.executeCreateClub(dto);
     if (isError(result)) throw new Error("Failed to create club");
+  }
+
+  async getSystemState(
+    applicationName: string,
+  ): Promise<SystemStateDTO | undefined> {
+    const identityActor: any = await ActorFactory.createIdentityActor(
+      authStore,
+      process.env.FOOTBALL_GOD_BACKEND_CANISTER_ID ?? "",
+    );
+
+    const result = await identityActor.getSystemState(applicationName);
+    console.log(result);
+    if (isError(result)) throw new Error("Failed to get system state");
+    return result.ok;
   }
 }

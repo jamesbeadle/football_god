@@ -3,11 +3,13 @@ type UpdateSystemStateDTO =
    calculationGameweek: GameweekNumber;
    calculationMonth: CalendarMonth;
    calculationSeasonId: SeasonId;
-   leagueId: LeagueId;
    onHold: bool;
    pickTeamGameweek: GameweekNumber;
    pickTeamMonth: CalendarMonth;
    pickTeamSeasonId: SeasonId;
+   seasonActive: bool;
+   transferWindowActive: bool;
+   version: text;
  };
 type UpdatePlayerDTO = 
  record {
@@ -51,6 +53,19 @@ type TransferPlayerDTO =
    newLeagueId: LeagueId;
    newShirtNumber: nat8;
    playerId: ClubId;
+ };
+type SystemStateDTO = 
+ record {
+   calculationGameweek: GameweekNumber;
+   calculationMonth: CalendarMonth;
+   calculationSeasonId: SeasonId;
+   onHold: bool;
+   pickTeamGameweek: GameweekNumber;
+   pickTeamMonth: CalendarMonth;
+   pickTeamSeasonId: SeasonId;
+   seasonActive: bool;
+   transferWindowActive: bool;
+   version: text;
  };
 type SubmitFixtureDataDTO = 
  record {
@@ -100,35 +115,45 @@ type RetirePlayerDTO =
    playerId: ClubId;
    retirementDate: int;
  };
-type Result_5 = 
+type Result_7 = 
  variant {
    err: Error;
    ok: vec CountryDTO;
  };
-type Result_4 = 
+type Result_6 = 
  variant {
    err: Error;
    ok: vec ClubDTO;
  };
-type Result_3 = 
+type Result_5 = 
  variant {
    err: Error;
    ok: vec PlayerDTO;
  };
-type Result_2 = 
+type Result_4 = 
  variant {
    err: Error;
    ok: vec FootballLeagueDTO;
  };
-type Result_1 = 
+type Result_3 = 
  variant {
    err: Error;
    ok: ProfileDTO;
  };
-type Result = 
+type Result_2 = 
+ variant {
+   err: Error;
+   ok: SystemStateDTO;
+ };
+type Result_1 = 
  variant {
    err: Error;
    ok: bool;
+ };
+type Result = 
+ variant {
+   err: Error;
+   ok;
  };
 type RescheduleFixtureDTO = 
  record {
@@ -356,14 +381,15 @@ service : {
   executeUpdateClub: (LeagueId, UpdateClubDTO) -> ();
   executeUpdateLeague: (UpdateLeagueDTO) -> ();
   executeUpdatePlayer: (LeagueId, UpdatePlayerDTO) -> ();
-  getCountries: () -> (Result_5) query;
-  getLeagueClubs: (LeagueId) -> (Result_4) composite_query;
-  getLeaguePlayers: (LeagueId) -> (Result_3) composite_query;
-  getLeagues: () -> (Result_2) composite_query;
-  getProfile: () -> (Result_1) query;
-  isAdmin: () -> (Result);
+  getCountries: () -> (Result_7) query;
+  getLeagueClubs: (LeagueId) -> (Result_6) composite_query;
+  getLeaguePlayers: (LeagueId) -> (Result_5) composite_query;
+  getLeagues: () -> (Result_4) composite_query;
+  getProfile: () -> (Result_3) query;
+  getSystemState: (text) -> (Result_2) composite_query;
+  isAdmin: () -> (Result_1);
   snapshotManagers: (SnapshotManagersDTO) -> ();
-  updateSystemState: (UpdateSystemStateDTO) -> ();
+  updateSystemState: (text, UpdateSystemStateDTO) -> (Result);
   validateAddInitialFixtures: (AddInitialFixturesDTO) -> (RustResult) query;
   validateCreateLeague: (CreateLeagueDTO) -> (RustResult) query;
   validateCreatePlayer: (CreatePlayerDTO) -> (RustResult) query;

@@ -3543,7 +3543,7 @@ const options = {
 		<div class="error">
 			<span class="status">` + status + '</span>\n			<div class="message">\n				<h1>' + message + "</h1>\n			</div>\n		</div>\n	</body>\n</html>\n"
   },
-  version_hash: "1lz0dyq"
+  version_hash: "1l8p7tp"
 };
 async function get_hooks() {
   return {};
@@ -4402,7 +4402,7 @@ const idlFactory = ({ IDL }) => {
     "NotAuthorized": IDL.Null,
     "AlreadyExists": IDL.Null
   });
-  const Result_5 = IDL.Variant({ "ok": IDL.Vec(CountryDTO), "err": Error2 });
+  const Result_7 = IDL.Variant({ "ok": IDL.Vec(CountryDTO), "err": Error2 });
   const ClubDTO = IDL.Record({
     "id": ClubId,
     "secondaryColourHex": IDL.Text,
@@ -4413,7 +4413,7 @@ const idlFactory = ({ IDL }) => {
     "shirtType": ShirtType,
     "primaryColourHex": IDL.Text
   });
-  const Result_4 = IDL.Variant({ "ok": IDL.Vec(ClubDTO), "err": Error2 });
+  const Result_6 = IDL.Variant({ "ok": IDL.Vec(ClubDTO), "err": Error2 });
   const PlayerStatus = IDL.Variant({
     "OnLoan": IDL.Null,
     "Active": IDL.Null,
@@ -4432,7 +4432,7 @@ const idlFactory = ({ IDL }) => {
     "lastName": IDL.Text,
     "firstName": IDL.Text
   });
-  const Result_3 = IDL.Variant({ "ok": IDL.Vec(PlayerDTO), "err": Error2 });
+  const Result_5 = IDL.Variant({ "ok": IDL.Vec(PlayerDTO), "err": Error2 });
   const FootballLeagueDTO = IDL.Record({
     "id": LeagueId,
     "logo": IDL.Vec(IDL.Nat8),
@@ -4444,7 +4444,7 @@ const idlFactory = ({ IDL }) => {
     "governingBody": IDL.Text,
     "formed": IDL.Int
   });
-  const Result_2 = IDL.Variant({
+  const Result_4 = IDL.Variant({
     "ok": IDL.Vec(FootballLeagueDTO),
     "err": Error2
   });
@@ -4454,24 +4454,40 @@ const idlFactory = ({ IDL }) => {
     "withdrawalAddress": IDL.Text,
     "principalId": PrincipalId
   });
-  const Result_1 = IDL.Variant({ "ok": ProfileDTO, "err": Error2 });
-  const Result = IDL.Variant({ "ok": IDL.Bool, "err": Error2 });
+  const Result_3 = IDL.Variant({ "ok": ProfileDTO, "err": Error2 });
+  const CalendarMonth = IDL.Nat8;
+  const SystemStateDTO = IDL.Record({
+    "pickTeamSeasonId": SeasonId,
+    "calculationGameweek": GameweekNumber,
+    "transferWindowActive": IDL.Bool,
+    "pickTeamMonth": CalendarMonth,
+    "pickTeamGameweek": GameweekNumber,
+    "version": IDL.Text,
+    "calculationMonth": CalendarMonth,
+    "calculationSeasonId": SeasonId,
+    "onHold": IDL.Bool,
+    "seasonActive": IDL.Bool
+  });
+  const Result_2 = IDL.Variant({ "ok": SystemStateDTO, "err": Error2 });
+  const Result_1 = IDL.Variant({ "ok": IDL.Bool, "err": Error2 });
   const SnapshotManagersDTO = IDL.Record({
     "seasonId": SeasonId,
     "gameweek": GameweekNumber,
     "leagueId": LeagueId
   });
-  const CalendarMonth = IDL.Nat8;
   const UpdateSystemStateDTO = IDL.Record({
     "pickTeamSeasonId": SeasonId,
     "calculationGameweek": GameweekNumber,
+    "transferWindowActive": IDL.Bool,
     "pickTeamMonth": CalendarMonth,
     "pickTeamGameweek": GameweekNumber,
+    "version": IDL.Text,
     "calculationMonth": CalendarMonth,
     "calculationSeasonId": SeasonId,
     "onHold": IDL.Bool,
-    "leagueId": LeagueId
+    "seasonActive": IDL.Bool
   });
+  const Result = IDL.Variant({ "ok": IDL.Null, "err": Error2 });
   const RustResult = IDL.Variant({ "Ok": IDL.Text, "Err": IDL.Text });
   const SubmitFixtureDataDTO = IDL.Record({
     "fixtureId": FixtureId,
@@ -4514,14 +4530,19 @@ const idlFactory = ({ IDL }) => {
     "executeUpdateClub": IDL.Func([LeagueId, UpdateClubDTO], [], []),
     "executeUpdateLeague": IDL.Func([UpdateLeagueDTO], [], []),
     "executeUpdatePlayer": IDL.Func([LeagueId, UpdatePlayerDTO], [], []),
-    "getCountries": IDL.Func([], [Result_5], ["query"]),
-    "getLeagueClubs": IDL.Func([LeagueId], [Result_4], ["composite_query"]),
-    "getLeaguePlayers": IDL.Func([LeagueId], [Result_3], ["composite_query"]),
-    "getLeagues": IDL.Func([], [Result_2], ["composite_query"]),
-    "getProfile": IDL.Func([], [Result_1], ["query"]),
-    "isAdmin": IDL.Func([], [Result], []),
+    "getCountries": IDL.Func([], [Result_7], ["query"]),
+    "getLeagueClubs": IDL.Func([LeagueId], [Result_6], ["composite_query"]),
+    "getLeaguePlayers": IDL.Func([LeagueId], [Result_5], ["composite_query"]),
+    "getLeagues": IDL.Func([], [Result_4], ["composite_query"]),
+    "getProfile": IDL.Func([], [Result_3], ["query"]),
+    "getSystemState": IDL.Func([IDL.Text], [Result_2], ["composite_query"]),
+    "isAdmin": IDL.Func([], [Result_1], []),
     "snapshotManagers": IDL.Func([SnapshotManagersDTO], [], []),
-    "updateSystemState": IDL.Func([UpdateSystemStateDTO], [], []),
+    "updateSystemState": IDL.Func(
+      [IDL.Text, UpdateSystemStateDTO],
+      [Result],
+      []
+    ),
     "validateAddInitialFixtures": IDL.Func(
       [AddInitialFixturesDTO],
       [RustResult],
@@ -4691,6 +4712,15 @@ class ActorFactory {
 function uint8ArrayToBase64(bytes) {
   const binary = Array.from(bytes).map((byte) => String.fromCharCode(byte)).join("");
   return btoa(binary);
+}
+function formatUnixDateToSmallReadable(unixNano) {
+  const date = new Date(unixNano / 1e6);
+  const options2 = {
+    year: "numeric",
+    month: "short",
+    day: "numeric"
+  };
+  return new Intl.DateTimeFormat("en-UK", options2).format(date);
 }
 function isError(response) {
   return response && response.err !== void 0;
@@ -5058,11 +5088,13 @@ const Page$3 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
 });
 const Page$2 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
   let leagues = [];
+  let countries = [];
   return `${validate_component(Layout, "Layout").$$render($$result, {}, {}, {
     default: () => {
-      return `<div class="page-header-wrapper flex w-full"><div class="content-panel w-full flex flex-col bg-gray-900 p-6 rounded-lg shadow-lg"><div class="flex justify-between items-center w-full mb-4"><p class="text-2xl font-bold text-white" data-svelte-h="svelte-wi5ujn">League Explorer</p> <button class="brand-button bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg" data-svelte-h="svelte-1e1ktd1">+ New League</button></div> <div>${each(leagues.sort((a, b) => Number(a.id) - Number(b.id)), (league) => {
-        return `<div class="flex flex-row items-center bg-gray-700 rounded shadow p-4 w-full my-2"><div class="flex items-center space-x-4 w-full"><img${add_attribute("src", getImageURL(league.logo), 0)} class="w-8" alt="logo"> <p class="flex-grow text-lg md:text-sm">${escape(league.name)}</p> <a class="mt-auto self-end"${add_attribute("href", `/league?id=${league.id}`, 0)}><button class="brand-button text-white font-bold py-2 px-4 rounded self-end" data-svelte-h="svelte-1pbr5c4">View</button> </a></div> </div>`;
-      })}</div></div></div>`;
+      return `<div class="page-header-wrapper flex w-full py-10 bg-gradient-to-r from-blue-800 to-blue-600"><div class="container mx-auto px-6"><div class="content-panel w-full flex flex-col bg-gray-900 p-6 rounded-lg shadow-lg"><div class="flex justify-between items-center w-full mb-4"><p class="text-3xl font-bold text-white" data-svelte-h="svelte-2c7odo">League Explorer</p> ${``}</div> <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">${each(leagues.sort((a, b) => Number(a.id) - Number(b.id)), (league) => {
+        return `<div class="bg-gray-800 rounded-lg shadow-lg p-6 space-y-4 hover:bg-gray-700 transition duration-300"><div class="flex items-center"><img${add_attribute("src", getImageURL(league.logo), 0)} class="w-12 h-12 object-cover rounded-full border-2 border-gray-600" alt="logo"> <div class="ml-4"><p class="text-md font-bold text-white">${escape(league.name)}</p> <p class="text-sm text-gray-400">${escape(league.abbreviation)} - ${escape(league.governingBody)}</p> </div></div> <div class="text-sm text-gray-300 space-y-2"><p><span class="font-semibold text-gray-400" data-svelte-h="svelte-khqy94">Country:</span> ${escape(countries.find((x) => x.id == league.countryId)?.name)}</p> <p><span class="font-semibold text-gray-400" data-svelte-h="svelte-1ydbrjb">Gender:</span> ${escape(Object.keys(league.relatedGender)[0])}</p> <p><span class="font-semibold text-gray-400" data-svelte-h="svelte-15eiclk">Teams:</span> ${escape(league.teamCount)}</p> <p><span class="font-semibold text-gray-400" data-svelte-h="svelte-nw1lah">Founded:</span> ${escape(formatUnixDateToSmallReadable(Number(league.formed)))}</p></div> <a${add_attribute("href", `/league?id=${league.id}`, 0)} class="block text-right"><button class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg transition duration-300" data-svelte-h="svelte-1dgclax">View League
+              </button></a> </div>`;
+      })}</div></div></div></div>`;
     }
   })} ${``}`;
 });
@@ -5081,6 +5113,7 @@ const Page$1 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
   let allLeaguePlayers = {};
   let filteredPlayers = [];
   let dropdownVisible = null;
+  let countries = [];
   onDestroy(() => {
     document.removeEventListener("click", handleClickOutside);
   });
@@ -5126,17 +5159,19 @@ const Page$1 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
   }
   return `${validate_component(Layout, "Layout").$$render($$result, {}, {}, {
     default: () => {
-      return `<div class="page-header-wrapper flex w-full"><div class="content-panel w-full flex flex-col bg-gray-900 p-6 rounded-lg shadow-lg"><div class="flex justify-between items-center w-full mb-4"><p class="text-2xl font-bold text-white" data-svelte-h="svelte-y66z1f">Player Explorer</p> <button class="brand-button bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg" data-svelte-h="svelte-nj4q8j">+ New Player</button></div> <div class="flex flex-col md:flex-row gap-4 mb-6"><select class="form-select block w-full md:w-1/3 bg-gray-800 text-white border border-gray-700 rounded-lg focus:ring focus:ring-blue-500"><option${add_attribute("value", 0, 0)} data-svelte-h="svelte-1ctg2hj">Select League</option>${each(leagues, (league) => {
+      return `<div class="page-header-wrapper flex w-full py-10 bg-gradient-to-r from-blue-800 to-blue-600"><div class="container mx-auto px-6"><div class="content-panel w-full flex flex-col bg-gray-900 p-6 rounded-lg shadow-lg"><div class="flex justify-between items-center w-full mb-4"><p class="text-3xl font-bold text-white" data-svelte-h="svelte-408svg">Player Explorer</p> <button class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg transition duration-300" data-svelte-h="svelte-gn29tm">+ New Player</button></div> <div class="flex flex-col md:flex-row gap-4 mb-6"><select class="form-select block w-full md:w-1/3 bg-gray-800 text-white border border-gray-700 rounded-lg focus:ring focus:ring-blue-500"><option${add_attribute("value", 0, 0)} data-svelte-h="svelte-1ctg2hj">Select League</option>${each(leagues, (league) => {
         return `<option${add_attribute("value", league.id, 0)}>${escape(league.name)}</option>`;
       })}</select> <select class="form-select block w-full md:w-1/3 bg-gray-800 text-white border border-gray-700 rounded-lg focus:ring focus:ring-blue-500"><option${add_attribute("value", 0, 0)} data-svelte-h="svelte-nums51">Select Position</option>${each(positions, (position) => {
         return `<option${add_attribute("value", position.id, 0)}>${escape(position.positionName)}</option>`;
+      })}</select> <select class="form-select block w-full md:w-1/3 bg-gray-800 text-white border border-gray-700 rounded-lg focus:ring focus:ring-blue-500"><option${add_attribute("value", 0, 0)} data-svelte-h="svelte-e3ccus">Select Nationality</option>${each(countries, (country) => {
+        return `<option${add_attribute("value", country.id, 0)}>${escape(country.name)}</option>`;
       })}</select> <select class="form-select block w-full md:w-1/3 bg-gray-800 text-white border border-gray-700 rounded-lg focus:ring focus:ring-blue-500"><option${add_attribute("value", 0, 0)} data-svelte-h="svelte-gooey4">Select Club</option>${each(clubs, (club) => {
         return `<option${add_attribute("value", club.id, 0)}>${escape(club.name)}</option>`;
       })}</select> <div class="flex items-center w-full md:w-1/4"><label for="minValue" class="text-sm text-gray-400 mr-2" data-svelte-h="svelte-1dmjrnv">Min Value (M):</label> <input type="number" id="minValue" step="0.25" class="form-input bg-gray-800 text-white border border-gray-700 rounded-lg focus:ring focus:ring-blue-500 w-full"${add_attribute("value", minValue, 0)}></div> <div class="flex items-center w-full md:w-1/4"><label for="maxValue" class="text-sm text-gray-400 mr-2" data-svelte-h="svelte-em5yvn">Max Value (M):</label> <input type="number" id="maxValue" step="0.25" class="form-input bg-gray-800 text-white border border-gray-700 rounded-lg focus:ring focus:ring-blue-500 w-full"${add_attribute("value", maxValue, 0)}></div></div> <div>${each(filteredPlayers.sort((a, b) => b.valueQuarterMillions - a.valueQuarterMillions), (player) => {
         return `<div class="flex flex-row items-center bg-gray-800 rounded-lg shadow p-4 w-full my-2 transition hover:bg-gray-700"><div class="flex items-center space-x-4 w-full"><p class="flex-grow text-lg md:text-sm text-white">${escape(player.firstName)} ${escape(player.lastName)} <br>
                   Player ID: ${escape(player.id)} <br>
-                  Value: £${escape(player.valueQuarterMillions / 4)}M</p> <div class="relative"><button class="text-white brand-button hover:bg-blue-700 px-4 py-2 rounded-lg" data-svelte-h="svelte-1vez7wn">Actions</button> ${dropdownVisible === player.id ? `<div class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg z-10 text-sm dropdown-menu"><button class="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100" data-svelte-h="svelte-s4l5t9">Update Player</button> <button class="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100" data-svelte-h="svelte-1yhdw75">Transfer Player</button> <button class="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100" data-svelte-h="svelte-1230zvj">Loan Player</button> <button class="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100" data-svelte-h="svelte-1rl0ayp">Revalue Player Up</button> <button class="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100" data-svelte-h="svelte-87qhjd">Revalue Player Down</button> <button class="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100" data-svelte-h="svelte-12h1n99">Retire Player</button> </div>` : ``} </div></div> </div>`;
-      })}</div></div></div>`;
+                  Value: £${escape(player.valueQuarterMillions / 4)}M</p> <div class="relative"><button class="text-white bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg" data-svelte-h="svelte-1yml4se">Actions</button> ${dropdownVisible === player.id ? `<div class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg z-10 text-sm dropdown-menu"><button class="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100" data-svelte-h="svelte-s4l5t9">Update Player</button> <button class="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100" data-svelte-h="svelte-1yhdw75">Transfer Player</button> <button class="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100" data-svelte-h="svelte-1230zvj">Loan Player</button> <button class="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100" data-svelte-h="svelte-1rl0ayp">Revalue Player Up</button> <button class="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100" data-svelte-h="svelte-87qhjd">Revalue Player Down</button> <button class="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100" data-svelte-h="svelte-12h1n99">Retire Player</button> </div>` : ``} </div></div> </div>`;
+      })}</div></div></div></div>`;
     }
   })} ${``} ${``} ${``} ${``}`;
 });

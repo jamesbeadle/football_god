@@ -10,6 +10,7 @@ import type {
   LeagueId,
   LoanPlayerDTO,
   SnapshotManagersDTO,
+  SystemStateDTO,
   TransferPlayerDTO,
   UpdateLeagueDTO,
   UpdatePlayerDTO,
@@ -55,8 +56,17 @@ function createAdminStore() {
     return new AdminService().updateLeague(dto);
   }
 
-  async function updateSystemState(dto: UpdateSystemStateDTO): Promise<any> {
-    return new AdminService().updateSystemState(dto);
+  async function getSystemState(
+    applicationName: string,
+  ): Promise<SystemStateDTO | undefined> {
+    return new AdminService().getSystemState(applicationName);
+  }
+
+  async function updateSystemState(
+    applicaitonName: string,
+    dto: UpdateSystemStateDTO,
+  ): Promise<any> {
+    return new AdminService().updateSystemState(applicaitonName, dto);
   }
 
   async function snapshotManagers(dto: SnapshotManagersDTO): Promise<any> {
@@ -93,6 +103,7 @@ function createAdminStore() {
     calculateGameweekScores,
     calculateLeaderboards,
     createClub,
+    getSystemState,
   };
 }
 

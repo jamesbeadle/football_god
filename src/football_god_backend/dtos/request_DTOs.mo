@@ -5,14 +5,16 @@ import Base "../types/base_types";
 module GovernanceDTOs {
 
   public type UpdateSystemStateDTO = {
-    leagueId: FootballTypes.LeagueId;
-    calculationSeasonId: FootballTypes.SeasonId;
-    calculationMonth: Base.CalendarMonth;
-    calculationGameweek: FootballTypes.GameweekNumber;
-    pickTeamSeasonId: FootballTypes.SeasonId;
-    pickTeamMonth: Base.CalendarMonth;
-    pickTeamGameweek: FootballTypes.GameweekNumber;
-    onHold: Bool;
+    calculationGameweek : FootballTypes.GameweekNumber;
+    calculationMonth : Base.CalendarMonth;
+    calculationSeasonId : FootballTypes.SeasonId;
+    pickTeamGameweek : FootballTypes.GameweekNumber;
+    pickTeamSeasonId : FootballTypes.SeasonId;
+    pickTeamMonth : Base.CalendarMonth;
+    transferWindowActive : Bool;
+    onHold : Bool;
+    seasonActive: Bool;
+    version: Text;
   };
 
   public type SnapshotManagersDTO = {
