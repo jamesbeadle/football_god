@@ -93,6 +93,12 @@ type SetPlayerInjuryDTO =
    playerId: ClubId;
  };
 type SeasonId = nat16;
+type SeasonDTO = 
+ record {
+   id: SeasonId;
+   name: text;
+   year: nat16;
+ };
 type RustResult = 
  variant {
    Err: text;
@@ -115,30 +121,40 @@ type RetirePlayerDTO =
    playerId: ClubId;
    retirementDate: int;
  };
-type Result_7 = 
+type Result_9 = 
  variant {
    err: Error;
    ok: vec CountryDTO;
  };
-type Result_6 = 
+type Result_8 = 
+ variant {
+   err: Error;
+   ok: vec FixtureDTO;
+ };
+type Result_7 = 
  variant {
    err: Error;
    ok: vec ClubDTO;
  };
-type Result_5 = 
+type Result_6 = 
  variant {
    err: Error;
    ok: vec PlayerDTO;
  };
-type Result_4 = 
+type Result_5 = 
  variant {
    err: Error;
    ok: vec FootballLeagueDTO;
  };
-type Result_3 = 
+type Result_4 = 
  variant {
    err: Error;
    ok: ProfileDTO;
+ };
+type Result_3 = 
+ variant {
+   err: Error;
+   ok: vec SeasonDTO;
  };
 type Result_2 = 
  variant {
@@ -179,7 +195,12 @@ type ProfileDTO =
    withdrawalAddress: text;
  };
 type PrincipalId = text;
-type PostponeFixtureDTO = record {fixtureId: FixtureId;};
+type PostponeFixtureDTO = 
+ record {
+   fixtureId: FixtureId;
+   leagueId: LeagueId;
+   seasonId: SeasonId;
+ };
 type PlayerStatus = 
  variant {
    Active;
@@ -234,6 +255,8 @@ type PlayerDTO =
 type MoveFixtureDTO = 
  record {
    fixtureId: FixtureId;
+   leagueId: LeagueId;
+   seasonId: SeasonId;
    updatedFixtureDate: int;
    updatedFixtureGameweek: GameweekNumber;
  };
@@ -245,6 +268,11 @@ type LoanPlayerDTO =
    playerId: ClubId;
  };
 type LeagueId = nat16;
+type GetFixturesDTO = 
+ record {
+   leagueId: LeagueId;
+   seasonId: SeasonId;
+ };
 type Gender = 
  variant {
    Female;
@@ -367,8 +395,8 @@ service : {
   executeCreateLeague: (CreateLeagueDTO) -> ();
   executeCreatePlayer: (LeagueId, CreatePlayerDTO) -> ();
   executeLoanPlayer: (LeagueId, LoanPlayerDTO) -> ();
-  executeMoveFixture: (LeagueId, MoveFixtureDTO) -> ();
-  executePostponeFixture: (LeagueId, PostponeFixtureDTO) -> ();
+  executeMoveFixture: (MoveFixtureDTO) -> ();
+  executePostponeFixture: (PostponeFixtureDTO) -> ();
   executePromoteNewClub: (LeagueId, PromoteNewClubDTO) -> ();
   executeRecallPlayer: (LeagueId, RecallPlayerDTO) -> ();
   executeRescheduleFixture: (LeagueId, RescheduleFixtureDTO) -> ();
@@ -381,11 +409,13 @@ service : {
   executeUpdateClub: (LeagueId, UpdateClubDTO) -> ();
   executeUpdateLeague: (UpdateLeagueDTO) -> ();
   executeUpdatePlayer: (LeagueId, UpdatePlayerDTO) -> ();
-  getCountries: () -> (Result_7) query;
-  getLeagueClubs: (LeagueId) -> (Result_6) composite_query;
-  getLeaguePlayers: (LeagueId) -> (Result_5) composite_query;
-  getLeagues: () -> (Result_4) composite_query;
-  getProfile: () -> (Result_3) query;
+  getCountries: () -> (Result_9) query;
+  getFixtures: (GetFixturesDTO) -> (Result_8) composite_query;
+  getLeagueClubs: (LeagueId) -> (Result_7) composite_query;
+  getLeaguePlayers: (LeagueId) -> (Result_6) composite_query;
+  getLeagues: () -> (Result_5) composite_query;
+  getProfile: () -> (Result_4) query;
+  getSeasons: (LeagueId) -> (Result_3) composite_query;
   getSystemState: (text) -> (Result_2) composite_query;
   isAdmin: () -> (Result_1);
   snapshotManagers: (SnapshotManagersDTO) -> ();

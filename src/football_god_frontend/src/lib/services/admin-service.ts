@@ -7,8 +7,12 @@ import type {
   CreateClubDTO,
   CreateLeagueDTO,
   CreatePlayerDTO,
+  FixtureDTO,
+  GetFixturesDTO,
   LeagueId,
   LoanPlayerDTO,
+  MoveFixtureDTO,
+  PostponeFixtureDTO,
   SnapshotManagersDTO,
   SystemStateDTO,
   TransferPlayerDTO,
@@ -153,5 +157,37 @@ export class AdminService {
     console.log(result);
     if (isError(result)) throw new Error("Failed to get system state");
     return result.ok;
+  }
+
+  async getFixtures(dto: GetFixturesDTO): Promise<FixtureDTO[] | undefined> {
+    const identityActor: any = await ActorFactory.createIdentityActor(
+      authStore,
+      process.env.FOOTBALL_GOD_BACKEND_CANISTER_ID ?? "",
+    );
+
+    const result = await identityActor.getFixtures(dto);
+    console.log(result);
+    if (isError(result)) throw new Error("Failed to get fixtures");
+    return result.ok;
+  }
+
+  async moveFixture(dto: MoveFixtureDTO): Promise<void> {
+    const identityActor: any = await ActorFactory.createIdentityActor(
+      authStore,
+      process.env.FOOTBALL_GOD_BACKEND_CANISTER_ID ?? "",
+    );
+
+    const result = await identityActor.executeMoveFixture(dto);
+    if (isError(result)) throw new Error("Failed to move fixture");
+  }
+
+  async postponeFixture(dto: PostponeFixtureDTO): Promise<void> {
+    const identityActor: any = await ActorFactory.createIdentityActor(
+      authStore,
+      process.env.FOOTBALL_GOD_BACKEND_CANISTER_ID ?? "",
+    );
+
+    const result = await identityActor.executePostponeFixture(dto);
+    if (isError(result)) throw new Error("Failed to postpone fixture");
   }
 }

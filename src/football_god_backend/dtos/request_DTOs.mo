@@ -34,4 +34,9 @@ module GovernanceDTOs {
     seasonId: FootballTypes.SeasonId;
     gameweek: FootballTypes.GameweekNumber;
   };
+
+  public type GetFixturesDTO = {
+    leagueId: FootballTypes.LeagueId;
+    seasonId: FootballTypes.SeasonId;
+  };
 };

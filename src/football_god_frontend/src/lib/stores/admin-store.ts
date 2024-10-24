@@ -7,8 +7,12 @@ import type {
   CreateClubDTO,
   CreateLeagueDTO,
   CreatePlayerDTO,
+  FixtureDTO,
+  GetFixturesDTO,
   LeagueId,
   LoanPlayerDTO,
+  MoveFixtureDTO,
+  PostponeFixtureDTO,
   SnapshotManagersDTO,
   SystemStateDTO,
   TransferPlayerDTO,
@@ -16,6 +20,7 @@ import type {
   UpdatePlayerDTO,
   UpdateSystemStateDTO,
 } from "../../../../declarations/football_god_backend/football_god_backend.did";
+import { FixtureService } from "$lib/services/fixture-service";
 
 function createAdminStore() {
   //TODO: Create functions that call the governance endpoints directly
@@ -91,6 +96,20 @@ function createAdminStore() {
     return new AdminService().createClub(dto);
   }
 
+  async function getFixtures(
+    dto: GetFixturesDTO,
+  ): Promise<FixtureDTO[] | undefined> {
+    return new AdminService().getFixtures(dto);
+  }
+
+  async function moveFixture(dto: MoveFixtureDTO): Promise<any> {
+    return new AdminService().moveFixture(dto);
+  }
+
+  async function postponeFixture(dto: PostponeFixtureDTO): Promise<any> {
+    return new AdminService().postponeFixture(dto);
+  }
+
   return {
     createLeague,
     updateLeague,
@@ -104,6 +123,9 @@ function createAdminStore() {
     calculateLeaderboards,
     createClub,
     getSystemState,
+    getFixtures,
+    moveFixture,
+    postponeFixture,
   };
 }
 

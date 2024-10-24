@@ -6,18 +6,23 @@
   import { fixtureStore } from "$lib/stores/fixture-store";
   //import { governanceStore } from "$lib/stores/governance-store";
   import LocalSpinner from "$lib/components/local-spinner.svelte";
-  import { isError } from "$lib/utils/helpers";
-    import type { ClubDTO, FixtureDTO } from "../../../../../../declarations/football_god_backend/football_god_backend.did";
+    import type { ClubDTO, FixtureDTO, FootballLeagueDTO, MoveFixtureDTO } from "../../../../../../declarations/football_god_backend/football_god_backend.did";
+    import { adminStore } from "$lib/stores/admin-store";
+    import { leagueStore } from "$lib/stores/league-store";
+    import { convertDateTimeInputToUnixNano } from "$lib/utils/helpers";
 
   export let visible: boolean;
   export let closeModal: () => void;
-
-  let gameweeks = Array.from({ length: Number(process.env.TOTAL_GAMEWEEKS) }, (_, i) => i + 1);
-  let selectedGameweek: number = 0;
-  let newGameweek: number = 0;
-  let selectedFixtureId: number = 0;
+  let leagues: FootballLeagueDTO[] = [];
+  let clubs: ClubDTO[] = [];
+  let gameweeks: number[] = [];
   let gameweekFixtures: FixtureDTO[] = [];
 
+  export let selectedLeagueId = 0;
+  export let selectedGameweek = 0;
+  export let selectedFixtureId = 0;
+  let newGameweek = 0;
+  
   let date = "";
   let time = "";
   let dateTime = "";
@@ -31,14 +36,53 @@
     date == "" ||
     time == "";
 
-  $: if (selectedGameweek) {
+  $: if (selectedLeagueId && selectedLeagueId > 0 && selectedGameweek && selectedGameweek > 0) {
     loadGameweekFixtures();
   }
 
-  function loadGameweekFixtures() {
-    gameweekFixtures = $fixtureStore.filter(
-      (x) => x.gameweek == selectedGameweek
-    );
+  async function loadGameweekFixtures() {
+    switch(selectedLeagueId){
+      case 1:
+        gameweeks = Array.from({ length: 38 }, (_, i) => i + 1);
+        var systemState = await adminStore.getSystemState("OpenFPL");
+        if(!systemState){
+          return;
+        }
+
+
+        var openfpl_fixtures = await adminStore.getFixtures({
+            leagueId: selectedLeagueId,
+            seasonId: systemState?.calculationSeasonId
+        });
+
+        if(!openfpl_fixtures){
+          return;
+        }
+
+        gameweekFixtures = openfpl_fixtures.filter(x => x.gameweek == selectedGameweek);
+
+        break;
+      case 2:
+        gameweeks = Array.from({ length: 22 }, (_, i) => i + 1);
+        var systemState = await adminStore.getSystemState("OpenWSL");
+        if(!systemState){
+          return;
+        }
+
+        var openwsl_fixtures = await fixtureStore.getFixtures({
+            leagueId: selectedLeagueId,
+            seasonId: systemState?.calculationSeasonId
+        });
+
+        if(!openwsl_fixtures){
+          return;
+        }
+
+        gameweekFixtures = openwsl_fixtures.filter(x => x.gameweek == selectedGameweek);
+        break;
+      default:
+        break;
+    }
   }
 
   let isLoading = true;
@@ -50,7 +94,10 @@
 
   onMount(async () => {
     try {
-      loadGameweekFixtures();
+      leagues = await leagueStore.getLeagues();
+      if(selectedLeagueId > 0){
+        clubs = await clubStore.getClubs(selectedLeagueId);
+      }
     } catch (error) {
       toastsError({
         msg: { text: "Error syncing proposal data." },
@@ -62,16 +109,39 @@
     }
   });
 
-  function getTeamById(teamId: number): ClubDTO {
-    return $clubStore.find((x) => x.id === teamId)!;
-  }
-
   function raiseProposal() {
     showConfirm = true;
   }
 
   async function confirmProposal() {
     isLoading = true;
+
+    let applicationName = "";
+
+    switch(selectedLeagueId){
+      case 1:
+        applicationName = "OpenFPL";
+        break;
+      case 2:
+        applicationName = "OpenWSL";
+        break;
+      default: 
+        return;
+    }
+    
+    let systemState = await adminStore.getSystemState(applicationName);
+    if(!systemState){
+      return
+    }
+
+    let dto: MoveFixtureDTO = {
+      leagueId: selectedLeagueId,
+      seasonId: systemState.pickTeamSeasonId,
+      fixtureId : selectedFixtureId,
+      updatedFixtureGameweek : newGameweek,
+      updatedFixtureDate: convertDateTimeInputToUnixNano(dateTime)
+    };
+    await adminStore.moveFixture(dto);
     /*
     let result = await governanceStore.moveFixture(
       selectedFixtureId,
@@ -114,97 +184,116 @@
     </div>
 
     <div class="flex justify-start items-center w-full">
+
       <div class="w-full flex-col space-y-4 mb-2">
-        <div class="flex-col space-y-2">
-          <p>Select Gameweek:</p>
-          <select
-            class="p-2 brand-dropdown my-4 min-w-[100px]"
-            bind:value={selectedGameweek}
-          >
-            <option value={0}>Select Gameweek</option>
-            {#each gameweeks as gameweek}
-              <option value={gameweek}>Gameweek {gameweek}</option>
-            {/each}
-          </select>
-        </div>
 
-        <div class="flex-col space-y-2">
-          <p>Select Fixture:</p>
-          <select
-            class="p-2 brand-dropdown my-4 min-w-[100px]"
-            bind:value={selectedFixtureId}
-          >
-            <option value={0}>Select Fixture</option>
-            {#each gameweekFixtures as fixture}
-              {@const homeTeam = getTeamById(fixture.homeClubId)}
-              {@const awayTeam = getTeamById(fixture.awayClubId)}
-              <option value={fixture.id}
-                >{homeTeam.friendlyName} v {awayTeam.friendlyName}</option
-              >
-            {/each}
-          </select>
-        </div>
+        <p>Select the player's league:</p>
 
-        <div class="border-b border-gray-200 my-4" />
-        <p class="mr-2 my-2">Set new date:</p>
-        <div class="flex flex-row my-2">
-          <p class="mr-2">Select Date:</p>
-          <input type="date" bind:value={date} class="brand-dropdown" />
-        </div>
-        <div class="flex flex-row my-2">
-          <p class="mr-2">Select Time:</p>
-          <input type="time" bind:value={time} class="brand-dropdown" />
-        </div>
-        <div class="flex flex-row my-2 items-center">
-          <p class="mr-2">Select Gameweek:</p>
+        <select
+          class="p-2 brand-dropdown min-w-[100px]"
+          bind:value={selectedLeagueId}
+        >
+          <option value={0}>Select League</option>
+          {#each leagues as league}
+            <option value={league.id}>{league.name}</option>
+          {/each}
+        </select>
 
-          <select
-            class="p-2 brand-dropdown my-4 min-w-[100px]"
-            bind:value={newGameweek}
-          >
-            <option value={0}>Select New Gameweek</option>
-            {#each gameweeks as gameweek}
-              <option value={gameweek}>Gameweek {gameweek}</option>
-            {/each}
-          </select>
-        </div>
-
-        <div class="border-b border-gray-200" />
-
-        <div class="items-center flex space-x-4">
-          <button
-            class="px-4 py-2 default-button fpl-cancel-btn min-w-[150px]"
-            type="button"
-            on:click={cancelModal}
-          >
-            Cancel
-          </button>
-          <button
-            class={`${isSubmitDisabled ? "bg-gray-500" : "fpl-purple-btn"} 
-                        px-4 py-2 default-button min-w-[150px]`}
-            on:click={raiseProposal}
-            disabled={isSubmitDisabled}
-          >
-            Raise Proposal
-          </button>
-        </div>
-
-        {#if showConfirm}
-          <div class="items-center flex">
-            <p class="text-orange-400">
-              Failed proposals will cost the proposer 10 $FPL tokens.
-            </p>
+        {#if selectedLeagueId > 0}
+          
+          <div class="flex-col space-y-2">
+            <p>Select Gameweek:</p>
+            <select
+              class="p-2 brand-dropdown my-4 min-w-[100px]"
+              bind:value={selectedGameweek}
+            >
+              <option value={0}>Select Gameweek</option>
+              {#each gameweeks as gameweek}
+                <option value={gameweek}>Gameweek {gameweek}</option>
+              {/each}
+            </select>
           </div>
-          <div class="items-center flex">
+
+          <div class="flex-col space-y-2">
+            <p>Select Fixture:</p>
+            <select
+              class="p-2 brand-dropdown my-4 min-w-[100px]"
+              bind:value={selectedFixtureId}
+            >
+              <option value={0}>Select Fixture</option>
+              {#each gameweekFixtures as fixture}
+                {@const homeTeam = clubs.find(x => x.id == fixture.homeClubId)}
+                {@const awayTeam = clubs.find(x => x.id == fixture.awayClubId)}
+                <option value={fixture.id}
+                  >{homeTeam?.friendlyName} v {awayTeam?.friendlyName}</option
+                >
+              {/each}
+            </select>
+          </div>
+
+          <div class="border-b border-gray-200 my-4" />
+          <p class="mr-2 my-2">Set new date:</p>
+          <div class="flex flex-row my-2">
+            <p class="mr-2">Select Date:</p>
+            <input type="date" bind:value={date} class="brand-dropdown" />
+          </div>
+          <div class="flex flex-row my-2">
+            <p class="mr-2">Select Time:</p>
+            <input type="time" bind:value={time} class="brand-dropdown" />
+          </div>
+          <div class="flex flex-row my-2 items-center">
+            <p class="mr-2">Select Gameweek:</p>
+
+            <select
+              class="p-2 brand-dropdown my-4 min-w-[100px]"
+              bind:value={newGameweek}
+            >
+              <option value={0}>Select New Gameweek</option>
+              {#each gameweeks as gameweek}
+                <option value={gameweek}>Gameweek {gameweek}</option>
+              {/each}
+            </select>
+          </div>
+
+          <div class="border-b border-gray-200" />
+
+          <div class="items-center flex space-x-4">
+            <button
+              class="px-4 py-2 default-button fpl-cancel-btn min-w-[150px]"
+              type="button"
+              on:click={cancelModal}
+            >
+              Cancel
+            </button>
             <button
               class={`${isSubmitDisabled ? "bg-gray-500" : "fpl-purple-btn"} 
-                            px-4 py-2 default-button w-full`}
-              on:click={confirmProposal}
+                          px-4 py-2 default-button min-w-[150px]`}
+              on:click={raiseProposal}
               disabled={isSubmitDisabled}
             >
-              Confirm Submit Proposal
+              Raise Proposal
             </button>
           </div>
+
+          {#if showConfirm}
+            <div class="items-center flex">
+              <p class="text-orange-400">
+                Failed proposals will cost the proposer 10 $FPL tokens.
+              </p>
+            </div>
+            <div class="items-center flex">
+              <button
+                class={`${isSubmitDisabled ? "bg-gray-500" : "fpl-purple-btn"} 
+                              px-4 py-2 default-button w-full`}
+                on:click={confirmProposal}
+                disabled={isSubmitDisabled}
+              >
+                Confirm Submit Proposal
+              </button>
+            </div>
+          {/if}
+
+
         {/if}
       </div>
     </div>

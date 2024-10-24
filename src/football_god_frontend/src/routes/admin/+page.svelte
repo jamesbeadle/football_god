@@ -503,7 +503,7 @@
           >
             <div class="flex items-center space-x-4 w-full">
               <button
-                class="rounded brand-button-disabled px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full"
+                class="rounded brand-button px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full"
                 on:click={displayMoveFixtureModal}>Move Fixture</button
               >
             </div>

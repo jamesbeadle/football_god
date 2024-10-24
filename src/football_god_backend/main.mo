@@ -336,19 +336,23 @@ actor Self {
     return;
   };
 
-  public shared ({ caller }) func executeMoveFixture(leagueId: FootballTypes.LeagueId, dto : GovernanceDTOs.MoveFixtureDTO) : async () {
+  public shared ({ caller }) func executeMoveFixture(dto: GovernanceDTOs.MoveFixtureDTO) : async () {
     //assert Principal.toText(caller) == NetworkEnvironmentVariables.SNS_GOVERNANCE_CANISTER_ID;
     assert isDataAdmin(Principal.toText(caller));
-
-    //TODO Implement
+    let data_canister = actor (Environment.DATA_CANISTER_ID) : actor {
+      moveFixture : (dto : GovernanceDTOs.MoveFixtureDTO) -> async Result.Result<(), T.Error>;
+    };
+    let _ = await data_canister.moveFixture(dto);
     return;
   };
 
-  public shared ({ caller }) func executePostponeFixture(leagueId: FootballTypes.LeagueId, dto : GovernanceDTOs.PostponeFixtureDTO) : async () {
-    //assert Principal.toText(caller) == NetworkEnvironmentVariables.SNS_GOVERNANCE_CANISTER_ID;
+  public shared ({ caller }) func executePostponeFixture(dto : GovernanceDTOs.PostponeFixtureDTO) : async () {
+   //assert Principal.toText(caller) == NetworkEnvironmentVariables.SNS_GOVERNANCE_CANISTER_ID;
     assert isDataAdmin(Principal.toText(caller));
-
-    //TODO Implement
+    let data_canister = actor (Environment.DATA_CANISTER_ID) : actor {
+      postponeFixture : (dto : GovernanceDTOs.PostponeFixtureDTO) -> async Result.Result<(), T.Error>;
+    };
+    let _ = await data_canister.postponeFixture(dto);
     return;
   };
 
@@ -487,5 +491,27 @@ actor Self {
       }
     };
   };
+
+  public shared composite query  ({ caller }) func getSeasons(leagueId: FootballTypes.LeagueId) : async Result.Result<[DTOs.SeasonDTO], T.Error>  {
+    //assert Principal.toText(caller) == NetworkEnvironmentVariables.SNS_GOVERNANCE_CANISTER_ID;
+    assert isDataAdmin(Principal.toText(caller));
+    let data_canister = actor (Environment.DATA_CANISTER_ID) : actor {
+      getSeasons : shared query (leagueId: FootballTypes.LeagueId) -> async Result.Result<[DTOs.SeasonDTO], T.Error>;
+    };
+    return await data_canister.getSeasons(leagueId);
+  };
+
+  public shared composite query  ({ caller }) func getFixtures(dto: RequestDTOs.GetFixturesDTO) : async Result.Result<[DTOs.FixtureDTO], T.Error>  {
+    //assert Principal.toText(caller) == NetworkEnvironmentVariables.SNS_GOVERNANCE_CANISTER_ID;
+    assert isDataAdmin(Principal.toText(caller));
+    let data_canister = actor (Environment.DATA_CANISTER_ID) : actor {
+      getFixtures : shared query (dto: RequestDTOs.GetFixturesDTO) -> async Result.Result<[DTOs.FixtureDTO], T.Error>;
+    };
+    return await data_canister.getFixtures(dto);
+  };
+
+  
+
+
     
 };

@@ -99,6 +99,34 @@ export function convertDateInputToUnixNano(dateString: string): bigint {
   return BigInt(unixTimeMillis) * BigInt(1000000);
 }
 
+export function convertDateTimeInputToUnixNano(dateTimeString: string): bigint {
+  const [datePart, timePart] = dateTimeString.split("T");
+
+  const dateParts = datePart.split("-");
+  if (dateParts.length !== 3) {
+    throw new Error("Invalid date format. Expected YYYY-MM-DD");
+  }
+  const year = parseInt(dateParts[0], 10);
+  const month = parseInt(dateParts[1], 10) - 1; // Months are 0-indexed in JavaScript
+  const day = parseInt(dateParts[2], 10);
+
+  let hours = 0,
+    minutes = 0,
+    seconds = 0;
+  if (timePart) {
+    const timeParts = timePart.split(":");
+    hours = parseInt(timeParts[0], 10);
+    minutes = parseInt(timeParts[1], 10);
+    if (timeParts.length === 3) {
+      seconds = parseInt(timeParts[2], 10);
+    }
+  }
+
+  const date = new Date(year, month, day, hours, minutes, seconds);
+  const unixTimeMillis = date.getTime();
+  return BigInt(unixTimeMillis) * BigInt(1000000);
+}
+
 export function convertDateToReadable(nanoseconds: number): string {
   const milliseconds = nanoseconds / 1e6;
   const date = new Date(milliseconds);

@@ -3543,7 +3543,7 @@ const options = {
 		<div class="error">
 			<span class="status">` + status + '</span>\n			<div class="message">\n				<h1>' + message + "</h1>\n			</div>\n		</div>\n	</body>\n</html>\n"
   },
-  version_hash: "1l8p7tp"
+  version_hash: "9h5wl0"
 };
 async function get_hooks() {
   return {};
@@ -4314,9 +4314,15 @@ const idlFactory = ({ IDL }) => {
   const MoveFixtureDTO = IDL.Record({
     "fixtureId": FixtureId,
     "updatedFixtureGameweek": GameweekNumber,
-    "updatedFixtureDate": IDL.Int
+    "updatedFixtureDate": IDL.Int,
+    "seasonId": SeasonId,
+    "leagueId": LeagueId
   });
-  const PostponeFixtureDTO = IDL.Record({ "fixtureId": FixtureId });
+  const PostponeFixtureDTO = IDL.Record({
+    "fixtureId": FixtureId,
+    "seasonId": SeasonId,
+    "leagueId": LeagueId
+  });
   const PromoteNewClubDTO = IDL.Record({
     "secondaryColourHex": IDL.Text,
     "name": IDL.Text,
@@ -4402,7 +4408,12 @@ const idlFactory = ({ IDL }) => {
     "NotAuthorized": IDL.Null,
     "AlreadyExists": IDL.Null
   });
-  const Result_7 = IDL.Variant({ "ok": IDL.Vec(CountryDTO), "err": Error2 });
+  const Result_9 = IDL.Variant({ "ok": IDL.Vec(CountryDTO), "err": Error2 });
+  const GetFixturesDTO = IDL.Record({
+    "seasonId": SeasonId,
+    "leagueId": LeagueId
+  });
+  const Result_8 = IDL.Variant({ "ok": IDL.Vec(FixtureDTO), "err": Error2 });
   const ClubDTO = IDL.Record({
     "id": ClubId,
     "secondaryColourHex": IDL.Text,
@@ -4413,7 +4424,7 @@ const idlFactory = ({ IDL }) => {
     "shirtType": ShirtType,
     "primaryColourHex": IDL.Text
   });
-  const Result_6 = IDL.Variant({ "ok": IDL.Vec(ClubDTO), "err": Error2 });
+  const Result_7 = IDL.Variant({ "ok": IDL.Vec(ClubDTO), "err": Error2 });
   const PlayerStatus = IDL.Variant({
     "OnLoan": IDL.Null,
     "Active": IDL.Null,
@@ -4432,7 +4443,7 @@ const idlFactory = ({ IDL }) => {
     "lastName": IDL.Text,
     "firstName": IDL.Text
   });
-  const Result_5 = IDL.Variant({ "ok": IDL.Vec(PlayerDTO), "err": Error2 });
+  const Result_6 = IDL.Variant({ "ok": IDL.Vec(PlayerDTO), "err": Error2 });
   const FootballLeagueDTO = IDL.Record({
     "id": LeagueId,
     "logo": IDL.Vec(IDL.Nat8),
@@ -4444,7 +4455,7 @@ const idlFactory = ({ IDL }) => {
     "governingBody": IDL.Text,
     "formed": IDL.Int
   });
-  const Result_4 = IDL.Variant({
+  const Result_5 = IDL.Variant({
     "ok": IDL.Vec(FootballLeagueDTO),
     "err": Error2
   });
@@ -4454,7 +4465,13 @@ const idlFactory = ({ IDL }) => {
     "withdrawalAddress": IDL.Text,
     "principalId": PrincipalId
   });
-  const Result_3 = IDL.Variant({ "ok": ProfileDTO, "err": Error2 });
+  const Result_4 = IDL.Variant({ "ok": ProfileDTO, "err": Error2 });
+  const SeasonDTO = IDL.Record({
+    "id": SeasonId,
+    "name": IDL.Text,
+    "year": IDL.Nat16
+  });
+  const Result_3 = IDL.Variant({ "ok": IDL.Vec(SeasonDTO), "err": Error2 });
   const CalendarMonth = IDL.Nat8;
   const SystemStateDTO = IDL.Record({
     "pickTeamSeasonId": SeasonId,
@@ -4508,8 +4525,8 @@ const idlFactory = ({ IDL }) => {
     "executeCreateLeague": IDL.Func([CreateLeagueDTO], [], []),
     "executeCreatePlayer": IDL.Func([LeagueId, CreatePlayerDTO], [], []),
     "executeLoanPlayer": IDL.Func([LeagueId, LoanPlayerDTO], [], []),
-    "executeMoveFixture": IDL.Func([LeagueId, MoveFixtureDTO], [], []),
-    "executePostponeFixture": IDL.Func([LeagueId, PostponeFixtureDTO], [], []),
+    "executeMoveFixture": IDL.Func([MoveFixtureDTO], [], []),
+    "executePostponeFixture": IDL.Func([PostponeFixtureDTO], [], []),
     "executePromoteNewClub": IDL.Func([LeagueId, PromoteNewClubDTO], [], []),
     "executeRecallPlayer": IDL.Func([LeagueId, RecallPlayerDTO], [], []),
     "executeRescheduleFixture": IDL.Func(
@@ -4530,11 +4547,13 @@ const idlFactory = ({ IDL }) => {
     "executeUpdateClub": IDL.Func([LeagueId, UpdateClubDTO], [], []),
     "executeUpdateLeague": IDL.Func([UpdateLeagueDTO], [], []),
     "executeUpdatePlayer": IDL.Func([LeagueId, UpdatePlayerDTO], [], []),
-    "getCountries": IDL.Func([], [Result_7], ["query"]),
-    "getLeagueClubs": IDL.Func([LeagueId], [Result_6], ["composite_query"]),
-    "getLeaguePlayers": IDL.Func([LeagueId], [Result_5], ["composite_query"]),
-    "getLeagues": IDL.Func([], [Result_4], ["composite_query"]),
-    "getProfile": IDL.Func([], [Result_3], ["query"]),
+    "getCountries": IDL.Func([], [Result_9], ["query"]),
+    "getFixtures": IDL.Func([GetFixturesDTO], [Result_8], ["composite_query"]),
+    "getLeagueClubs": IDL.Func([LeagueId], [Result_7], ["composite_query"]),
+    "getLeaguePlayers": IDL.Func([LeagueId], [Result_6], ["composite_query"]),
+    "getLeagues": IDL.Func([], [Result_5], ["composite_query"]),
+    "getProfile": IDL.Func([], [Result_4], ["query"]),
+    "getSeasons": IDL.Func([LeagueId], [Result_3], ["composite_query"]),
     "getSystemState": IDL.Func([IDL.Text], [Result_2], ["composite_query"]),
     "isAdmin": IDL.Func([], [Result_1], []),
     "snapshotManagers": IDL.Func([SnapshotManagersDTO], [], []),
@@ -5062,7 +5081,7 @@ const Page$6 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
 const Page$5 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
   return `${validate_component(Layout, "Layout").$$render($$result, {}, {}, {
     default: () => {
-      return `${``} ${``}  ${``} ${``} ${``} ${``} ${``} ${``} ${``} ${``} ${``} ${``} ${``} ${``} ${``} ${``} ${``} ${``} ${``} ${``} ${``} <div class="m-4"><div class="bg-panel rounded-md"><ul class="flex rounded-t-lg bg-light-gray border-b border-gray-700 px-4 pt-2" data-svelte-h="svelte-np8kws"><li class="mr-4 active-tab"><button class="text-white">Raise Proposal</button></li></ul> <p class="m-4" data-svelte-h="svelte-fij59x">Player proposals</p> <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mt-4 mx-4"><div class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"><div class="flex items-center w-full"><button class="rounded brand-button-disabled px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full" disabled data-svelte-h="svelte-n2i7ls">Revalue Player Up</button></div></div> <div class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"><div class="flex items-center space-x-4 w-full"><button class="rounded brand-button-disabled px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full" disabled data-svelte-h="svelte-39kkmm">Revalue Player Down</button></div></div> <div class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"><div class="flex items-center space-x-4 w-full"><button class="rounded brand-button px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full" data-svelte-h="svelte-alegmn">Loan Player</button></div></div> <div class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"><div class="flex items-center space-x-4 w-full"><button class="rounded brand-button px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full" data-svelte-h="svelte-mo36vx">Transfer Player</button></div></div> <div class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"><div class="flex items-center space-x-4 w-full"><button class="rounded brand-button-disabled px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full" disabled data-svelte-h="svelte-15py134">Recall Player</button></div></div> <div class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"><div class="flex items-center space-x-4 w-full"><button class="rounded brand-button-disabled px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full" disabled data-svelte-h="svelte-jinex4">Create Player</button></div></div> <div class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"><div class="flex items-center space-x-4 w-full"><button class="rounded brand-button px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full" data-svelte-h="svelte-xrmno9">Update Player</button></div></div> <div class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"><div class="flex items-center space-x-4 w-full"><button class="rounded brand-button-disabled px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full" disabled data-svelte-h="svelte-q2y0ic">Set Player Injury</button></div></div> <div class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"><div class="flex items-center space-x-4 w-full"><button class="rounded brand-button-disabled px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full" disabled data-svelte-h="svelte-1spl25c">Retire Player</button></div></div> <div class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"><div class="flex items-center space-x-4 w-full"><button class="rounded brand-button-disabled px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full" disabled data-svelte-h="svelte-1j7w7go">Unretire Player</button></div></div></div> <p class="m-4" data-svelte-h="svelte-11opyhx">Fixture proposals</p> <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mt-4 mx-4"><div class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"><div class="flex items-center space-x-4 w-full"><button class="rounded brand-button-disabled px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full" data-svelte-h="svelte-4vf6rk">Add Fixture Data</button></div></div> <div class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"><div class="flex items-center space-x-4 w-full"><button class="rounded brand-button-disabled px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full" data-svelte-h="svelte-1b7p7y4">Add Initial Fixtures</button></div></div> <div class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"><div class="flex items-center space-x-4 w-full"><button class="rounded brand-button-disabled px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full" data-svelte-h="svelte-18l7kps">Move Fixture</button></div></div> <div class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"><div class="flex items-center space-x-4 w-full"><button class="rounded brand-button-disabled px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full" data-svelte-h="svelte-ge63i0">Postpone Fixture</button></div></div> <div class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"><div class="flex items-center space-x-4 w-full"><button class="rounded brand-button-disabled px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full" data-svelte-h="svelte-j9ola4">Reschedule Fixture</button></div></div></div> <p class="m-4" data-svelte-h="svelte-ujx3lm">Club proposals</p> <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mt-4 mx-4 mb-4"><div class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"><div class="flex items-center space-x-4 w-full"><button class="rounded brand-button-disabled px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full" data-svelte-h="svelte-b4cle">Promote New Club</button></div></div> <div class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"><div class="flex items-center space-x-4 w-full"><button class="rounded brand-button-disabled px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full" data-svelte-h="svelte-ugy92w">Update Club</button></div></div></div> <p class="m-4" data-svelte-h="svelte-1rqtx1h">League proposals</p> <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mt-4 mx-4 mb-4"><div class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"><div class="flex items-center space-x-4 w-full"><button class="rounded brand-button px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full" data-svelte-h="svelte-oo31tv">Create League</button></div></div> <div class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"><div class="flex items-center space-x-4 w-full"><button class="rounded brand-button px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full" data-svelte-h="svelte-pd1ikx">Update League</button></div></div></div> <p class="m-4" data-svelte-h="svelte-1aex0bi">Application Triggers</p> <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mt-4 mx-4 mb-4"><div class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"><div class="flex items-center space-x-4 w-full"><button class="rounded brand-button px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full" data-svelte-h="svelte-1rsj9ys">Update System State</button></div></div> <div class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"><div class="flex items-center space-x-4 w-full"><button class="rounded brand-button px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full" data-svelte-h="svelte-1mah1io">Snapshot Manager Teams</button></div></div> <div class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"><div class="flex items-center space-x-4 w-full"><button class="rounded brand-button px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full" data-svelte-h="svelte-7kkkey">Calculate Gameweek Scores</button></div></div> <div class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"><div class="flex items-center space-x-4 w-full"><button class="rounded brand-button px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full" data-svelte-h="svelte-1jcwn94">Calculate Leaderboards</button></div></div></div></div></div>`;
+      return `${``} ${``}  ${``} ${``} ${``} ${``} ${``} ${``} ${``} ${``} ${``} ${``} ${``} ${``} ${``} ${``} ${``} ${``} ${``} ${``} ${``} <div class="m-4"><div class="bg-panel rounded-md"><ul class="flex rounded-t-lg bg-light-gray border-b border-gray-700 px-4 pt-2" data-svelte-h="svelte-np8kws"><li class="mr-4 active-tab"><button class="text-white">Raise Proposal</button></li></ul> <p class="m-4" data-svelte-h="svelte-fij59x">Player proposals</p> <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mt-4 mx-4"><div class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"><div class="flex items-center w-full"><button class="rounded brand-button-disabled px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full" disabled data-svelte-h="svelte-n2i7ls">Revalue Player Up</button></div></div> <div class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"><div class="flex items-center space-x-4 w-full"><button class="rounded brand-button-disabled px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full" disabled data-svelte-h="svelte-39kkmm">Revalue Player Down</button></div></div> <div class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"><div class="flex items-center space-x-4 w-full"><button class="rounded brand-button px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full" data-svelte-h="svelte-alegmn">Loan Player</button></div></div> <div class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"><div class="flex items-center space-x-4 w-full"><button class="rounded brand-button px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full" data-svelte-h="svelte-mo36vx">Transfer Player</button></div></div> <div class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"><div class="flex items-center space-x-4 w-full"><button class="rounded brand-button-disabled px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full" disabled data-svelte-h="svelte-15py134">Recall Player</button></div></div> <div class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"><div class="flex items-center space-x-4 w-full"><button class="rounded brand-button-disabled px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full" disabled data-svelte-h="svelte-jinex4">Create Player</button></div></div> <div class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"><div class="flex items-center space-x-4 w-full"><button class="rounded brand-button px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full" data-svelte-h="svelte-xrmno9">Update Player</button></div></div> <div class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"><div class="flex items-center space-x-4 w-full"><button class="rounded brand-button-disabled px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full" disabled data-svelte-h="svelte-q2y0ic">Set Player Injury</button></div></div> <div class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"><div class="flex items-center space-x-4 w-full"><button class="rounded brand-button-disabled px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full" disabled data-svelte-h="svelte-1spl25c">Retire Player</button></div></div> <div class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"><div class="flex items-center space-x-4 w-full"><button class="rounded brand-button-disabled px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full" disabled data-svelte-h="svelte-1j7w7go">Unretire Player</button></div></div></div> <p class="m-4" data-svelte-h="svelte-11opyhx">Fixture proposals</p> <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mt-4 mx-4"><div class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"><div class="flex items-center space-x-4 w-full"><button class="rounded brand-button-disabled px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full" data-svelte-h="svelte-4vf6rk">Add Fixture Data</button></div></div> <div class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"><div class="flex items-center space-x-4 w-full"><button class="rounded brand-button-disabled px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full" data-svelte-h="svelte-1b7p7y4">Add Initial Fixtures</button></div></div> <div class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"><div class="flex items-center space-x-4 w-full"><button class="rounded brand-button px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full" data-svelte-h="svelte-1eoz581">Move Fixture</button></div></div> <div class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"><div class="flex items-center space-x-4 w-full"><button class="rounded brand-button-disabled px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full" data-svelte-h="svelte-ge63i0">Postpone Fixture</button></div></div> <div class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"><div class="flex items-center space-x-4 w-full"><button class="rounded brand-button-disabled px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full" data-svelte-h="svelte-j9ola4">Reschedule Fixture</button></div></div></div> <p class="m-4" data-svelte-h="svelte-ujx3lm">Club proposals</p> <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mt-4 mx-4 mb-4"><div class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"><div class="flex items-center space-x-4 w-full"><button class="rounded brand-button-disabled px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full" data-svelte-h="svelte-b4cle">Promote New Club</button></div></div> <div class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"><div class="flex items-center space-x-4 w-full"><button class="rounded brand-button-disabled px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full" data-svelte-h="svelte-ugy92w">Update Club</button></div></div></div> <p class="m-4" data-svelte-h="svelte-1rqtx1h">League proposals</p> <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mt-4 mx-4 mb-4"><div class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"><div class="flex items-center space-x-4 w-full"><button class="rounded brand-button px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full" data-svelte-h="svelte-oo31tv">Create League</button></div></div> <div class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"><div class="flex items-center space-x-4 w-full"><button class="rounded brand-button px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full" data-svelte-h="svelte-pd1ikx">Update League</button></div></div></div> <p class="m-4" data-svelte-h="svelte-1aex0bi">Application Triggers</p> <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mt-4 mx-4 mb-4"><div class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"><div class="flex items-center space-x-4 w-full"><button class="rounded brand-button px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full" data-svelte-h="svelte-1rsj9ys">Update System State</button></div></div> <div class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"><div class="flex items-center space-x-4 w-full"><button class="rounded brand-button px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full" data-svelte-h="svelte-1mah1io">Snapshot Manager Teams</button></div></div> <div class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"><div class="flex items-center space-x-4 w-full"><button class="rounded brand-button px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full" data-svelte-h="svelte-7kkkey">Calculate Gameweek Scores</button></div></div> <div class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"><div class="flex items-center space-x-4 w-full"><button class="rounded brand-button px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full" data-svelte-h="svelte-1jcwn94">Calculate Leaderboards</button></div></div></div></div></div>`;
     }
   })}`;
 });
@@ -5114,6 +5133,7 @@ const Page$1 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
   let filteredPlayers = [];
   let dropdownVisible = null;
   let countries = [];
+  let searchSurname = "";
   onDestroy(() => {
     document.removeEventListener("click", handleClickOutside);
   });
@@ -5134,7 +5154,7 @@ const Page$1 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
   }
   function filterPlayers() {
     let leaguePlayers = allLeaguePlayers[selectedLeagueId] || [];
-    filteredPlayers = leaguePlayers.filter((player) => player.valueQuarterMillions / 4 >= minValue && player.valueQuarterMillions / 4 <= maxValue);
+    filteredPlayers = leaguePlayers.filter((player) => player.valueQuarterMillions / 4 >= minValue && player.valueQuarterMillions / 4 <= maxValue && searchSurname === "");
   }
   async function filterClubs() {
     clubs = await clubStore.getClubs(selectedLeagueId);
@@ -5159,15 +5179,15 @@ const Page$1 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
   }
   return `${validate_component(Layout, "Layout").$$render($$result, {}, {}, {
     default: () => {
-      return `<div class="page-header-wrapper flex w-full py-10 bg-gradient-to-r from-blue-800 to-blue-600"><div class="container mx-auto px-6"><div class="content-panel w-full flex flex-col bg-gray-900 p-6 rounded-lg shadow-lg"><div class="flex justify-between items-center w-full mb-4"><p class="text-3xl font-bold text-white" data-svelte-h="svelte-408svg">Player Explorer</p> <button class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg transition duration-300" data-svelte-h="svelte-gn29tm">+ New Player</button></div> <div class="flex flex-col md:flex-row gap-4 mb-6"><select class="form-select block w-full md:w-1/3 bg-gray-800 text-white border border-gray-700 rounded-lg focus:ring focus:ring-blue-500"><option${add_attribute("value", 0, 0)} data-svelte-h="svelte-1ctg2hj">Select League</option>${each(leagues, (league) => {
+      return `<div class="page-header-wrapper flex w-full py-10 bg-gradient-to-r from-blue-800 to-blue-600"><div class="container mx-auto px-6"><div class="content-panel w-full flex flex-col bg-gray-900 p-6 rounded-lg shadow-lg"><div class="flex justify-between items-center w-full mb-4"><p class="text-3xl font-bold text-white" data-svelte-h="svelte-408svg">Player Explorer</p> <button class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg transition duration-300" data-svelte-h="svelte-gn29tm">+ New Player</button></div> <div class="flex flex-col gap-4 md:flex-row mb-6"><select class="form-select block w-full md:w-1/4 bg-gray-800 text-white border border-gray-700 rounded-lg focus:ring focus:ring-blue-500"><option${add_attribute("value", 0, 0)} data-svelte-h="svelte-1ctg2hj">Select League</option>${each(leagues, (league) => {
         return `<option${add_attribute("value", league.id, 0)}>${escape(league.name)}</option>`;
-      })}</select> <select class="form-select block w-full md:w-1/3 bg-gray-800 text-white border border-gray-700 rounded-lg focus:ring focus:ring-blue-500"><option${add_attribute("value", 0, 0)} data-svelte-h="svelte-nums51">Select Position</option>${each(positions, (position) => {
+      })}</select> <select class="form-select block w-full md:w-1/4 bg-gray-800 text-white border border-gray-700 rounded-lg focus:ring focus:ring-blue-500"><option${add_attribute("value", 0, 0)} data-svelte-h="svelte-nums51">Select Position</option>${each(positions, (position) => {
         return `<option${add_attribute("value", position.id, 0)}>${escape(position.positionName)}</option>`;
-      })}</select> <select class="form-select block w-full md:w-1/3 bg-gray-800 text-white border border-gray-700 rounded-lg focus:ring focus:ring-blue-500"><option${add_attribute("value", 0, 0)} data-svelte-h="svelte-e3ccus">Select Nationality</option>${each(countries, (country) => {
+      })}</select> <select class="form-select block w-full md:w-1/4 bg-gray-800 text-white border border-gray-700 rounded-lg focus:ring focus:ring-blue-500"><option${add_attribute("value", 0, 0)} data-svelte-h="svelte-e3ccus">Select Nationality</option>${each(countries, (country) => {
         return `<option${add_attribute("value", country.id, 0)}>${escape(country.name)}</option>`;
-      })}</select> <select class="form-select block w-full md:w-1/3 bg-gray-800 text-white border border-gray-700 rounded-lg focus:ring focus:ring-blue-500"><option${add_attribute("value", 0, 0)} data-svelte-h="svelte-gooey4">Select Club</option>${each(clubs, (club) => {
+      })}</select> <select class="form-select block w-full md:w-1/4 bg-gray-800 text-white border border-gray-700 rounded-lg focus:ring focus:ring-blue-500"><option${add_attribute("value", 0, 0)} data-svelte-h="svelte-gooey4">Select Club</option>${each(clubs, (club) => {
         return `<option${add_attribute("value", club.id, 0)}>${escape(club.name)}</option>`;
-      })}</select> <div class="flex items-center w-full md:w-1/4"><label for="minValue" class="text-sm text-gray-400 mr-2" data-svelte-h="svelte-1dmjrnv">Min Value (M):</label> <input type="number" id="minValue" step="0.25" class="form-input bg-gray-800 text-white border border-gray-700 rounded-lg focus:ring focus:ring-blue-500 w-full"${add_attribute("value", minValue, 0)}></div> <div class="flex items-center w-full md:w-1/4"><label for="maxValue" class="text-sm text-gray-400 mr-2" data-svelte-h="svelte-em5yvn">Max Value (M):</label> <input type="number" id="maxValue" step="0.25" class="form-input bg-gray-800 text-white border border-gray-700 rounded-lg focus:ring focus:ring-blue-500 w-full"${add_attribute("value", maxValue, 0)}></div></div> <div>${each(filteredPlayers.sort((a, b) => b.valueQuarterMillions - a.valueQuarterMillions), (player) => {
+      })}</select></div> <div class="flex flex-col gap-4 md:flex-row mb-6"><div class="flex items-center w-full md:w-1/4"><label for="minValue" class="text-sm text-gray-400 mr-2" data-svelte-h="svelte-1dmjrnv">Min Value (M):</label> <input type="number" id="minValue" step="0.25" class="form-input bg-gray-800 text-white border border-gray-700 rounded-lg focus:ring focus:ring-blue-500 w-full"${add_attribute("value", minValue, 0)}></div> <div class="flex items-center w-full md:w-1/4"><label for="maxValue" class="text-sm text-gray-400 mr-2" data-svelte-h="svelte-em5yvn">Max Value (M):</label> <input type="number" id="maxValue" step="0.25" class="form-input bg-gray-800 text-white border border-gray-700 rounded-lg focus:ring focus:ring-blue-500 w-full"${add_attribute("value", maxValue, 0)}></div></div> <div class="flex flex-col md:flex-row gap-4 mb-6"><div class="flex items-center w-full md:w-1/2"><label for="searchSurname" class="text-sm text-gray-400 mr-2" data-svelte-h="svelte-17onh20">Search by Surname:</label> <input type="text" id="searchSurname" class="form-input bg-gray-800 text-white border border-gray-700 rounded-lg focus:ring focus:ring-blue-500 w-full"${add_attribute("value", searchSurname, 0)}></div> <button class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg" data-svelte-h="svelte-1ywfz24">Search</button></div> <div>${each(filteredPlayers.sort((a, b) => b.valueQuarterMillions - a.valueQuarterMillions), (player) => {
         return `<div class="flex flex-row items-center bg-gray-800 rounded-lg shadow p-4 w-full my-2 transition hover:bg-gray-700"><div class="flex items-center space-x-4 w-full"><p class="flex-grow text-lg md:text-sm text-white">${escape(player.firstName)} ${escape(player.lastName)} <br>
                   Player ID: ${escape(player.id)} <br>
                   Value: £${escape(player.valueQuarterMillions / 4)}M</p> <div class="relative"><button class="text-white bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg" data-svelte-h="svelte-1yml4se">Actions</button> ${dropdownVisible === player.id ? `<div class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg z-10 text-sm dropdown-menu"><button class="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100" data-svelte-h="svelte-s4l5t9">Update Player</button> <button class="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100" data-svelte-h="svelte-1yhdw75">Transfer Player</button> <button class="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100" data-svelte-h="svelte-1230zvj">Loan Player</button> <button class="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100" data-svelte-h="svelte-1rl0ayp">Revalue Player Up</button> <button class="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100" data-svelte-h="svelte-87qhjd">Revalue Player Down</button> <button class="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100" data-svelte-h="svelte-12h1n99">Retire Player</button> </div>` : ``} </div></div> </div>`;

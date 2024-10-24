@@ -11,6 +11,7 @@
     import { getImageURL } from "$lib/utils/helpers";
     import type { CountryDTO, FootballLeagueDTO } from "../../../../declarations/football_god_backend/football_god_backend.did";
     import LeagueClubs from "$lib/components/governance/club/league-clubs.svelte";
+    import LeagueFixtures from "$lib/components/governance/club/league-fixtures.svelte";
     
     let isLoading = true;
     let league: FootballLeagueDTO | null = null;
@@ -41,10 +42,12 @@
     });
 
     async function loadData(){
-
+      console.log("loading details")
+      console.log(activeTab)
       isAdmin = await userStore.isAdmin();
       countries = await countryStore.getCountries();
       let leagues = await leagueStore.getLeagues();
+      console.log(leagues)
       
       league = leagues.find((x) => x.id == id) ?? null;
       if (league) {
@@ -228,6 +231,9 @@
       {/if}
       {#if activeTab === "clubs"}
         <LeagueClubs leagueId={id} />
+      {/if}
+      {#if activeTab === "fixtures"}
+        <LeagueFixtures leagueId={id} />
       {/if}
     </div>
   {/if}

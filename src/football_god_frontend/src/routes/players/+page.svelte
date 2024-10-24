@@ -42,6 +42,8 @@
   let showUpdatePlayerModal = false;
 
   let selectedPlayerId = 0;
+  let searchSurname = "";
+
 
   onMount(async () => {
     try {
@@ -109,9 +111,11 @@
         (selectedPositionId == 0 || Object.keys(player.position).includes(filterPosition)) &&
         (selectedClubId == 0 || player.clubId === selectedClubId) &&
         (selectedNationalityId == 0 || player.nationality === selectedNationalityId) &&
-        (player.valueQuarterMillions / 4) >= minValue && (player.valueQuarterMillions / 4) <= maxValue
+        (player.valueQuarterMillions / 4) >= minValue && (player.valueQuarterMillions / 4) <= maxValue &&
+        (searchSurname === "" || player.lastName.toLowerCase().includes(searchSurname.toLowerCase()))
       );
   }
+
 
   async function filterClubs() {  
       clubs = await clubStore.getClubs(selectedLeagueId);
@@ -184,6 +188,13 @@
   $: if (selectedClubId || selectedPositionId || minValue || maxValue) {
       filterPlayers();
   }
+  
+  function handleKeyPress(event: KeyboardEvent) {
+    if (event.key === "Enter") {
+      filterPlayers();
+    }
+  }
+
 </script>
 
 <Layout>
@@ -198,36 +209,38 @@
             + New Player
           </button>
         </div>
-        
-        <div class="flex flex-col md:flex-row gap-4 mb-6">
-          <select class="form-select block w-full md:w-1/3 bg-gray-800 text-white border border-gray-700 rounded-lg focus:ring focus:ring-blue-500" bind:value={selectedLeagueId} on:change={filterPlayers}>
+
+        <div class="flex flex-col gap-4 md:flex-row mb-6">
+          <select class="form-select block w-full md:w-1/4 bg-gray-800 text-white border border-gray-700 rounded-lg focus:ring focus:ring-blue-500" bind:value={selectedLeagueId} on:change={filterPlayers}>
             <option value={0}>Select League</option>
             {#each leagues as league}
               <option value={league.id}>{league.name}</option>
             {/each}
           </select>
 
-          <select class="form-select block w-full md:w-1/3 bg-gray-800 text-white border border-gray-700 rounded-lg focus:ring focus:ring-blue-500" bind:value={selectedPositionId} on:change={filterPlayers}>
+          <select class="form-select block w-full md:w-1/4 bg-gray-800 text-white border border-gray-700 rounded-lg focus:ring focus:ring-blue-500" bind:value={selectedPositionId} on:change={filterPlayers}>
             <option value={0}>Select Position</option>
             {#each positions as position}
               <option value={position.id}>{position.positionName}</option>
             {/each}
           </select>
 
-          <select class="form-select block w-full md:w-1/3 bg-gray-800 text-white border border-gray-700 rounded-lg focus:ring focus:ring-blue-500" bind:value={selectedNationalityId} on:change={filterPlayers}>
+          <select class="form-select block w-full md:w-1/4 bg-gray-800 text-white border border-gray-700 rounded-lg focus:ring focus:ring-blue-500" bind:value={selectedNationalityId} on:change={filterPlayers}>
             <option value={0}>Select Nationality</option>
             {#each countries as country}
               <option value={country.id}>{country.name}</option>
             {/each}
           </select>
 
-          <select class="form-select block w-full md:w-1/3 bg-gray-800 text-white border border-gray-700 rounded-lg focus:ring focus:ring-blue-500" bind:value={selectedClubId} on:change={filterPlayers}>
+          <select class="form-select block w-full md:w-1/4 bg-gray-800 text-white border border-gray-700 rounded-lg focus:ring focus:ring-blue-500" bind:value={selectedClubId} on:change={filterPlayers}>
             <option value={0}>Select Club</option>
             {#each clubs as club}
               <option value={club.id}>{club.name}</option>
             {/each}
           </select>
+        </div>
 
+        <div class="flex flex-col gap-4 md:flex-row mb-6">
           <div class="flex items-center w-full md:w-1/4">
             <label for="minValue" class="text-sm text-gray-400 mr-2">Min Value (M):</label>
             <input type="number" id="minValue" bind:value={minValue} step="0.25" class="form-input bg-gray-800 text-white border border-gray-700 rounded-lg focus:ring focus:ring-blue-500 w-full" on:input={filterPlayers} />
@@ -239,6 +252,14 @@
           </div>
         </div>
 
+        <div class="flex flex-col md:flex-row gap-4 mb-6">
+          <div class="flex items-center w-full md:w-1/2">
+            <label for="searchSurname" class="text-sm text-gray-400 mr-2">Search by Surname:</label>
+            <input type="text" id="searchSurname" bind:value={searchSurname} class="form-input bg-gray-800 text-white border border-gray-700 rounded-lg focus:ring focus:ring-blue-500 w-full" on:keypress={handleKeyPress} />
+          </div>
+          <button class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg" on:click={filterPlayers}>Search</button>
+        </div>
+
         <div>
           {#each filteredPlayers.sort((a, b) => b.valueQuarterMillions - a.valueQuarterMillions) as player}
             <div class="flex flex-row items-center bg-gray-800 rounded-lg shadow p-4 w-full my-2 transition hover:bg-gray-700">
@@ -246,21 +267,20 @@
                 <p class="flex-grow text-lg md:text-sm text-white">
                   {player.firstName} {player.lastName} <br />
                   Player ID: {player.id} <br />
-                  Value: £{(player.valueQuarterMillions/4)}M
+                  Value: £{(player.valueQuarterMillions / 4)}M
                 </p>
-                
                 <div class="relative">
-                    <button class="text-white bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg" on:click={(event) => toggleDropdown(player.id, event)}>Actions</button>
-                    {#if dropdownVisible === player.id}
-                      <div class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg z-10 text-sm dropdown-menu">
-                        <button class="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100" on:click={() => loadUpdatePlayer(player.id)}>Update Player</button>
-                        <button class="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100" on:click={() => loadTransferPlayer(player.id)}>Transfer Player</button>
-                        <button class="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100" on:click={() => loadLoanPlayer(player.id)}>Loan Player</button>
-                        <button class="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100" on:click={() => loadRevaluePlayerUp(player.id)}>Revalue Player Up</button>
-                        <button class="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100" on:click={() => loadRevaluePlayerDown(player.id)}>Revalue Player Down</button>
-                        <button class="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100" on:click={() => loadRetirePlayer(player.id)}>Retire Player</button>
-                      </div>
-                    {/if}
+                  <button class="text-white bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg" on:click={(event) => toggleDropdown(player.id, event)}>Actions</button>
+                  {#if dropdownVisible === player.id}
+                    <div class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg z-10 text-sm dropdown-menu">
+                      <button class="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100" on:click={() => loadUpdatePlayer(player.id)}>Update Player</button>
+                      <button class="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100" on:click={() => loadTransferPlayer(player.id)}>Transfer Player</button>
+                      <button class="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100" on:click={() => loadLoanPlayer(player.id)}>Loan Player</button>
+                      <button class="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100" on:click={() => loadRevaluePlayerUp(player.id)}>Revalue Player Up</button>
+                      <button class="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100" on:click={() => loadRevaluePlayerDown(player.id)}>Revalue Player Down</button>
+                      <button class="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100" on:click={() => loadRetirePlayer(player.id)}>Retire Player</button>
+                    </div>
+                  {/if}
                 </div>
               </div>
             </div>
@@ -270,6 +290,7 @@
     </div>
   </div>
 </Layout>
+
 
 {#if selectedPlayerId > 0 && showLoanPlayerModal}
   {@const selectedPlayer = filteredPlayers.find(x => x.id == selectedPlayerId) }
