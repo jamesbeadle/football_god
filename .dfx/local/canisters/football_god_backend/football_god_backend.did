@@ -70,15 +70,8 @@ type SystemStateDTO =
 type SubmitFixtureDataDTO = 
  record {
    fixtureId: FixtureId;
-   gameweek: GameweekNumber;
    leagueId: LeagueId;
-   month: CalendarMonth;
    playerEventData: vec PlayerEventData;
- };
-type SnapshotManagersDTO = 
- record {
-   gameweek: GameweekNumber;
-   leagueId: LeagueId;
    seasonId: SeasonId;
  };
 type ShirtType = 
@@ -178,7 +171,7 @@ type RescheduleFixtureDTO =
    updatedFixtureGameweek: GameweekNumber;
  };
 type RecallPlayerDTO = record {playerId: ClubId;};
-type PromoteNewClubDTO = 
+type PromoteClubDTO = 
  record {
    abbreviatedName: text;
    friendlyName: text;
@@ -374,22 +367,10 @@ type ClubDTO =
    thirdColourHex: text;
  };
 type CalendarMonth = nat8;
-type CalculateLeaderboardsDTO = 
- record {
-   gameweek: GameweekNumber;
-   leagueId: LeagueId;
-   seasonId: SeasonId;
- };
-type CalculateGameweekScoresDTO = 
- record {
-   gameweek: GameweekNumber;
-   leagueId: LeagueId;
-   seasonId: SeasonId;
- };
 type AddInitialFixturesDTO = record {seasonFixtures: vec FixtureDTO;};
 service : {
-  calculateGameweekScores: (CalculateGameweekScoresDTO) -> ();
-  calculateLeaderboards: (CalculateLeaderboardsDTO) -> ();
+  calculateGameweekScores: (text) -> (Result);
+  calculateLeaderboards: (text) -> (Result);
   executeAddInitialFixtures: (LeagueId, AddInitialFixturesDTO) -> ();
   executeCreateClub: (CreateClubDTO) -> ();
   executeCreateLeague: (CreateLeagueDTO) -> ();
@@ -397,13 +378,14 @@ service : {
   executeLoanPlayer: (LeagueId, LoanPlayerDTO) -> ();
   executeMoveFixture: (MoveFixtureDTO) -> ();
   executePostponeFixture: (PostponeFixtureDTO) -> ();
-  executePromoteNewClub: (LeagueId, PromoteNewClubDTO) -> ();
+  executePromoteClub: (LeagueId, PromoteClubDTO) -> ();
   executeRecallPlayer: (LeagueId, RecallPlayerDTO) -> ();
   executeRescheduleFixture: (LeagueId, RescheduleFixtureDTO) -> ();
   executeRetirePlayer: (LeagueId, RetirePlayerDTO) -> ();
   executeRevaluePlayerDown: (LeagueId, RevaluePlayerDownDTO) -> ();
   executeRevaluePlayerUp: (LeagueId, RevaluePlayerUpDTO) -> ();
   executeSetPlayerInjury: (LeagueId, SetPlayerInjuryDTO) -> ();
+  executeSubmitFixtureData: (SubmitFixtureDataDTO) -> ();
   executeTransferPlayer: (LeagueId, TransferPlayerDTO) -> ();
   executeUnretirePlayer: (LeagueId, UnretirePlayerDTO) -> ();
   executeUpdateClub: (LeagueId, UpdateClubDTO) -> ();
@@ -418,7 +400,7 @@ service : {
   getSeasons: (LeagueId) -> (Result_3) composite_query;
   getSystemState: (text) -> (Result_2) composite_query;
   isAdmin: () -> (Result_1);
-  snapshotManagers: (SnapshotManagersDTO) -> ();
+  snapshotManagers: (text) -> (Result);
   updateSystemState: (text, UpdateSystemStateDTO) -> (Result);
   validateAddInitialFixtures: (AddInitialFixturesDTO) -> (RustResult) query;
   validateCreateLeague: (CreateLeagueDTO) -> (RustResult) query;
@@ -426,7 +408,7 @@ service : {
   validateLoanPlayer: (LoanPlayerDTO) -> (RustResult) query;
   validateMoveFixture: (MoveFixtureDTO) -> (RustResult) query;
   validatePostponeFixture: (PostponeFixtureDTO) -> (RustResult) query;
-  validatePromoteNewClub: (PromoteNewClubDTO) -> (RustResult) query;
+  validatePromoteClub: (PromoteClubDTO) -> (RustResult) query;
   validateRecallPlayer: (RecallPlayerDTO) -> (RustResult) query;
   validateRescheduleFixture: (RescheduleFixtureDTO) -> (RustResult) query;
   validateRetirePlayer: (RetirePlayerDTO) -> (RustResult) query;

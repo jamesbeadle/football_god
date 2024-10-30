@@ -17,24 +17,6 @@ module GovernanceDTOs {
     version: Text;
   };
 
-  public type SnapshotManagersDTO = {
-    leagueId: FootballTypes.LeagueId;
-    seasonId: FootballTypes.SeasonId;
-    gameweek: FootballTypes.GameweekNumber;
-  };
-
-  public type CalculateGameweekScoresDTO = {
-    leagueId: FootballTypes.LeagueId;
-    seasonId: FootballTypes.SeasonId;
-    gameweek: FootballTypes.GameweekNumber;
-  };
-
-  public type CalculateLeaderboardsDTO = {
-    leagueId: FootballTypes.LeagueId;
-    seasonId: FootballTypes.SeasonId;
-    gameweek: FootballTypes.GameweekNumber;
-  };
-
   public type GetFixturesDTO = {
     leagueId: FootballTypes.LeagueId;
     seasonId: FootballTypes.SeasonId;

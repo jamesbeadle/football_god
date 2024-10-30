@@ -17,9 +17,8 @@ module GovernanceDTOs {
   };
 
   public type SubmitFixtureDataDTO = {
+    seasonId: FootballTypes.SeasonId;
     leagueId: FootballTypes.LeagueId;
-    gameweek : FootballTypes.GameweekNumber;
-    month: Base.CalendarMonth;
     fixtureId : FootballTypes.FixtureId;
     playerEventData : [FootballTypes.PlayerEventData];
   };
@@ -47,7 +46,7 @@ module GovernanceDTOs {
     updatedFixtureGameweek : FootballTypes.GameweekNumber;
     updatedFixtureDate : Int;
   };
-  
+
   public type LoanPlayerDTO = {
     playerId : FootballTypes.ClubId;
     loanLeagueId: FootballTypes.LeagueId;
@@ -115,7 +114,7 @@ module GovernanceDTOs {
     shirtType : FootballTypes.ShirtType;
   };
 
-  public type PromoteNewClubDTO = {
+  public type PromoteClubDTO = {
     name : Text;
     friendlyName : Text;
     primaryColourHex : Text;
@@ -123,6 +122,11 @@ module GovernanceDTOs {
     thirdColourHex : Text;
     abbreviatedName : Text;
     shirtType : FootballTypes.ShirtType;
+  };
+
+  public type RelegateClubDTO = {
+    leagueId: FootballTypes.LeagueId;
+    clubId: FootballTypes.ClubId;
   };
   
   public type CreateLeagueDTO = {
@@ -136,6 +140,7 @@ module GovernanceDTOs {
     logo: Blob;
   };
 
+
   public type UpdateLeagueDTO = {
     leagueId: FootballTypes.LeagueId;
     name: Text;
@@ -147,7 +152,7 @@ module GovernanceDTOs {
     countryId: Base.CountryId;
     logo: Blob;
   };
-  
+
   public type CreateClubDTO = {
     leagueId: FootballTypes.LeagueId;
     name : Text;

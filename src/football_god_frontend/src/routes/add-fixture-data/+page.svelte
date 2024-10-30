@@ -5,7 +5,6 @@
   import { writable } from "svelte/store";
   import { clubStore } from "$lib/stores/club-store";
   import { playerStore } from "$lib/stores/player-store";
-  import { fixtureStore } from "$lib/stores/fixture-store";
   import { toastsError, toastsShow } from "$lib/stores/toasts-store";
 
   import Layout from "../Layout.svelte";
@@ -15,12 +14,13 @@
   import ClearDraftModal from "$lib/components/fixture-validation/clear-draft-modal.svelte";
   import { Spinner, busyStore } from "@dfinity/gix-components";
   import BadgeIcon from "$lib/icons/BadgeIcon.svelte";
-    import type { ClubDTO, FixtureDTO, PlayerDTO, PlayerEventData } from "../../../../declarations/football_god_backend/football_god_backend.did";
-    import { convertEvent, replacer } from "$lib/utils/helpers";
-    import { adminStore } from "$lib/stores/admin-store";
+  import type { ClubDTO, FixtureDTO, FootballLeagueDTO, PlayerDTO, PlayerEventData, SubmitFixtureDataDTO } from "../../../../declarations/football_god_backend/football_god_backend.did";
+  import { convertEvent, replacer } from "$lib/utils/helpers";
+  import { adminStore } from "$lib/stores/admin-store";
 
+  let clubs: ClubDTO[] = [];
   let players: PlayerDTO[] = [];
-  let fixture: FixtureDTO | null;
+  let fixture: FixtureDTO | undefined;
   let homeTeam: ClubDTO | null;
   let awayTeam: ClubDTO | null;
 
@@ -44,6 +44,8 @@
   let isLoading = true;
 
   $: fixtureId = Number($page.url.searchParams.get("id"));
+  $: leagueId = Number($page.url.searchParams.get("league-id"));
+  $: seasonId = Number($page.url.searchParams.get("season-id"));
 
   $: isSubmitDisabled =
     $playerEventData.length == 0 ||
@@ -52,25 +54,22 @@
 
   onMount(async () => {
     try {
+      clubs = await clubStore.getClubs(leagueId);      
+      players = await playerStore.getPlayers(leagueId);
+      let fixtures = await adminStore.getFixtures({leagueId, seasonId});
       
-
-      if ($clubStore.length == 0) {
+      if (clubs.length == 0 || players.length == 0 || !fixtures) {
         return;
       }
 
-      playerStore.subscribe((value) => {
-        players = value;
-      });
-
-      fixtureStore.subscribe((value) => {
-        fixture = value.find((x) => x.id == fixtureId)!;
-        homeTeam = $clubStore.find((x) => x.id == fixture?.homeClubId)!;
-        awayTeam = $clubStore.find((x) => x.id == fixture?.awayClubId)!;
-        selectedTeam = homeTeam;
-        teamPlayers.set(players.filter((x) => x.clubId == selectedTeam?.id));
-      });
+      fixture = fixtures.find(x => x.id == fixtureId);
+    
+      homeTeam = clubs.find((x) => x.id == fixture?.homeClubId)!;
+      awayTeam = clubs.find((x) => x.id == fixture?.awayClubId)!;
+      selectedTeam = homeTeam;
+      teamPlayers.set(players.filter((x) => x.clubId == selectedTeam?.id));
+  
       loadDraft(fixtureId);
-      
     } catch (error) {
       toastsError({
         msg: { text: "Error fetching fixture information." },
@@ -107,10 +106,22 @@
     });
 
     try {
+      let dto: SubmitFixtureDataDTO = {
+        seasonId,
+        leagueId,
+        fixtureId : fixtureId,
+        playerEventData: $playerEventData
+      };
+
+      console.log("fixture data submission test")
+      console.log(dto)
+
+      return;
+      await adminStore.submitFixtureData(dto);
       /*
       await adminStore.submitFixtureData(
         fixtureId,
-        $playerEventData
+        
       );
       */
       localStorage.removeItem(`fixtureDraft_${fixtureId}`);
@@ -119,7 +130,6 @@
         level: "success",
         duration: 2000,
       });
-      goto("/fixture-validation");
     } catch (error) {
       toastsError({
         msg: { text: "Error saving fixture data." },
@@ -515,6 +525,7 @@
     {teamPlayers}
     {selectedTeam}
     closeModal={closeSelectPlayersModal}
+    {selectedPlayers}
   />
 {/if}
 

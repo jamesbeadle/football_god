@@ -3543,7 +3543,7 @@ const options = {
 		<div class="error">
 			<span class="status">` + status + '</span>\n			<div class="message">\n				<h1>' + message + "</h1>\n			</div>\n		</div>\n	</body>\n</html>\n"
   },
-  version_hash: "9h5wl0"
+  version_hash: "yqq3ku"
 };
 async function get_hooks() {
   return {};
@@ -3644,11 +3644,6 @@ const SNAPSHOT_KEY = "sveltekit:snapshot";
 const SCROLL_KEY = "sveltekit:scroll";
 get(SCROLL_KEY) ?? {};
 get(SNAPSHOT_KEY) ?? {};
-function goto(url, opts = {}) {
-  {
-    throw new Error("Cannot call goto(...) on the server");
-  }
-}
 const getStores = () => {
   const stores = getContext("__svelte__");
   return {
@@ -4207,25 +4202,22 @@ const RulesIcon = create_ssr_component(($$result, $$props, $$bindings, slots) =>
   return `<svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true"${add_attribute("class", className, 0)} fill="currentColor" viewBox="0 0 24 24"><path d="M22.9642 13.8226C22.9603 13.7638 22.9508 13.7055 22.936 13.6484L20.6313 7.51135C21.0508 7.24006 21.3957 6.86818 21.6347 6.42956C21.8738 5.99095 21.9993 5.49952 22 5C22 4.73478 21.8946 4.48043 21.7071 4.29289C21.5196 4.10536 21.2652 4 21 4C20.7348 4 20.4804 4.10536 20.2929 4.29289C20.1054 4.48043 20 4.73478 20 5C19.9999 5.22285 19.9254 5.43929 19.7884 5.61499C19.6513 5.79069 19.4595 5.91559 19.2433 5.96987C19.0272 6.02416 18.7991 6.00472 18.5953 5.91465C18.3915 5.82457 18.2235 5.66902 18.1182 5.47266C17.8616 5.01717 17.4863 4.63972 17.0324 4.38042C16.5784 4.12111 16.0627 3.98965 15.54 4H13V3C13 2.73478 12.8946 2.48043 12.7071 2.29289C12.5196 2.10536 12.2652 2 12 2C11.7348 2 11.4804 2.10536 11.2929 2.29289C11.1054 2.48043 11 2.73478 11 3V4H8.46C7.93731 3.98965 7.42158 4.12111 6.96762 4.38042C6.51366 4.63972 6.13844 5.01717 5.88184 5.47266C5.77647 5.66902 5.60855 5.82457 5.40471 5.91465C5.20088 6.00472 4.97281 6.02416 4.75668 5.96987C4.54054 5.91559 4.34872 5.79069 4.21165 5.61499C4.07457 5.43929 4.00008 5.22285 4 5C4 4.73478 3.89464 4.48043 3.70711 4.29289C3.51957 4.10536 3.26522 4 3 4C2.73478 4 2.48043 4.10536 2.29289 4.29289C2.10536 4.48043 2 4.73478 2 5C2.00065 5.49952 2.12621 5.99095 2.36525 6.42956C2.60429 6.86818 2.94922 7.24006 3.36865 7.51135L1.064 13.6484C1.04921 13.7055 1.03977 13.7638 1.03581 13.8226C1.01825 13.8805 1.00626 13.9399 1 14C1 14.0093 1.00269 14.0178 1.00275 14.0271C1.00305 14.0403 1.00575 14.0524 1.00665 14.0655C1.02222 15.1144 1.4498 16.115 2.197 16.8512C2.94421 17.5874 3.95105 18.0001 5 18.0001C6.04895 18.0001 7.05579 17.5874 7.803 16.8512C8.5502 16.115 8.97778 15.1144 8.99335 14.0655C8.9942 14.0524 8.99695 14.0403 8.99725 14.0271C8.99731 14.0178 9 14.0093 9 14C8.99376 13.9399 8.98178 13.8805 8.96423 13.8226C8.96027 13.7638 8.95083 13.7055 8.93604 13.6484L6.62866 7.50421C7.05242 7.23377 7.40114 6.86085 7.64258 6.41992C7.72984 6.2842 7.85137 6.1739 7.99489 6.10017C8.13841 6.02644 8.29885 5.99189 8.46 6H11V20H8C7.73478 20 7.48043 20.1054 7.29289 20.2929C7.10536 20.4804 7 20.7348 7 21C7 21.2652 7.10536 21.5196 7.29289 21.7071C7.48043 21.8946 7.73478 22 8 22H16C16.2652 22 16.5196 21.8946 16.7071 21.7071C16.8946 21.5196 17 21.2652 17 21C17 20.7348 16.8946 20.4804 16.7071 20.2929C16.5196 20.1054 16.2652 20 16 20H13V6H15.54C15.7011 5.9919 15.8616 6.02646 16.0051 6.10018C16.1486 6.17391 16.2701 6.2842 16.3574 6.41992C16.5988 6.86085 16.9475 7.23377 17.3713 7.50421L15.064 13.6484C15.0492 13.7055 15.0398 13.7638 15.0358 13.8226C15.0182 13.8805 15.0063 13.9399 15 14C15 14.0093 15.0027 14.0178 15.0028 14.0271C15.0031 14.0403 15.0057 14.0524 15.0066 14.0655C15.0222 15.1144 15.4498 16.115 16.197 16.8512C16.9442 17.5874 17.951 18.0001 19 18.0001C20.049 18.0001 21.0558 17.5874 21.803 16.8512C22.5502 16.115 22.9778 15.1144 22.9933 14.0655C22.9942 14.0524 22.997 14.0403 22.9972 14.0271C22.9973 14.0178 23 14.0093 23 14C22.9938 13.9399 22.9818 13.8805 22.9642 13.8226ZM5 8.85553L6.5564 13H3.4436L5 8.85553ZM6.72266 15C6.54618 15.3011 6.29479 15.5515 5.99293 15.7267C5.69107 15.9019 5.34901 15.9961 5 16C4.64903 15.9999 4.30428 15.9074 4.00036 15.7319C3.69644 15.5563 3.44405 15.3039 3.26855 15H6.72266ZM19 8.85553L20.5564 13H17.4436L19 8.85553ZM19 16C18.649 15.9999 18.3043 15.9074 18.0004 15.7319C17.6964 15.5563 17.4441 15.3039 17.2686 15H20.7227C20.5462 15.3011 20.2948 15.5515 19.9929 15.7267C19.6911 15.9019 19.349 15.9961 19 16Z"${add_attribute("fill", fill, 0)}></path></svg>`;
 });
 const idlFactory = ({ IDL }) => {
-  const SeasonId = IDL.Nat16;
-  const GameweekNumber = IDL.Nat8;
+  const Error2 = IDL.Variant({
+    "DecodeError": IDL.Null,
+    "NotAllowed": IDL.Null,
+    "NotFound": IDL.Null,
+    "NotAuthorized": IDL.Null,
+    "AlreadyExists": IDL.Null
+  });
+  const Result = IDL.Variant({ "ok": IDL.Null, "err": Error2 });
   const LeagueId = IDL.Nat16;
-  const CalculateGameweekScoresDTO = IDL.Record({
-    "seasonId": SeasonId,
-    "gameweek": GameweekNumber,
-    "leagueId": LeagueId
-  });
-  const CalculateLeaderboardsDTO = IDL.Record({
-    "seasonId": SeasonId,
-    "gameweek": GameweekNumber,
-    "leagueId": LeagueId
-  });
   const FixtureStatusType = IDL.Variant({
     "Unplayed": IDL.Null,
     "Finalised": IDL.Null,
     "Active": IDL.Null,
     "Complete": IDL.Null
   });
+  const SeasonId = IDL.Nat16;
   const ClubId = IDL.Nat16;
   const FixtureId = IDL.Nat32;
   const PlayerEventType = IDL.Variant({
@@ -4250,6 +4242,7 @@ const idlFactory = ({ IDL }) => {
     "eventEndMinute": IDL.Nat8,
     "eventType": PlayerEventType
   });
+  const GameweekNumber = IDL.Nat8;
   const FixtureDTO = IDL.Record({
     "id": IDL.Nat32,
     "status": FixtureStatusType,
@@ -4323,7 +4316,7 @@ const idlFactory = ({ IDL }) => {
     "seasonId": SeasonId,
     "leagueId": LeagueId
   });
-  const PromoteNewClubDTO = IDL.Record({
+  const PromoteClubDTO = IDL.Record({
     "secondaryColourHex": IDL.Text,
     "name": IDL.Text,
     "friendlyName": IDL.Text,
@@ -4356,6 +4349,12 @@ const idlFactory = ({ IDL }) => {
     "playerId": ClubId,
     "description": IDL.Text,
     "expectedEndDate": IDL.Int
+  });
+  const SubmitFixtureDataDTO = IDL.Record({
+    "fixtureId": FixtureId,
+    "seasonId": SeasonId,
+    "playerEventData": IDL.Vec(PlayerEventData),
+    "leagueId": LeagueId
   });
   const TransferPlayerDTO = IDL.Record({
     "clubId": ClubId,
@@ -4400,13 +4399,6 @@ const idlFactory = ({ IDL }) => {
     "id": CountryId,
     "code": IDL.Text,
     "name": IDL.Text
-  });
-  const Error2 = IDL.Variant({
-    "DecodeError": IDL.Null,
-    "NotAllowed": IDL.Null,
-    "NotFound": IDL.Null,
-    "NotAuthorized": IDL.Null,
-    "AlreadyExists": IDL.Null
   });
   const Result_9 = IDL.Variant({ "ok": IDL.Vec(CountryDTO), "err": Error2 });
   const GetFixturesDTO = IDL.Record({
@@ -4487,11 +4479,6 @@ const idlFactory = ({ IDL }) => {
   });
   const Result_2 = IDL.Variant({ "ok": SystemStateDTO, "err": Error2 });
   const Result_1 = IDL.Variant({ "ok": IDL.Bool, "err": Error2 });
-  const SnapshotManagersDTO = IDL.Record({
-    "seasonId": SeasonId,
-    "gameweek": GameweekNumber,
-    "leagueId": LeagueId
-  });
   const UpdateSystemStateDTO = IDL.Record({
     "pickTeamSeasonId": SeasonId,
     "calculationGameweek": GameweekNumber,
@@ -4504,18 +4491,10 @@ const idlFactory = ({ IDL }) => {
     "onHold": IDL.Bool,
     "seasonActive": IDL.Bool
   });
-  const Result = IDL.Variant({ "ok": IDL.Null, "err": Error2 });
   const RustResult = IDL.Variant({ "Ok": IDL.Text, "Err": IDL.Text });
-  const SubmitFixtureDataDTO = IDL.Record({
-    "fixtureId": FixtureId,
-    "month": CalendarMonth,
-    "gameweek": GameweekNumber,
-    "playerEventData": IDL.Vec(PlayerEventData),
-    "leagueId": LeagueId
-  });
   return IDL.Service({
-    "calculateGameweekScores": IDL.Func([CalculateGameweekScoresDTO], [], []),
-    "calculateLeaderboards": IDL.Func([CalculateLeaderboardsDTO], [], []),
+    "calculateGameweekScores": IDL.Func([IDL.Text], [Result], []),
+    "calculateLeaderboards": IDL.Func([IDL.Text], [Result], []),
     "executeAddInitialFixtures": IDL.Func(
       [LeagueId, AddInitialFixturesDTO],
       [],
@@ -4527,7 +4506,7 @@ const idlFactory = ({ IDL }) => {
     "executeLoanPlayer": IDL.Func([LeagueId, LoanPlayerDTO], [], []),
     "executeMoveFixture": IDL.Func([MoveFixtureDTO], [], []),
     "executePostponeFixture": IDL.Func([PostponeFixtureDTO], [], []),
-    "executePromoteNewClub": IDL.Func([LeagueId, PromoteNewClubDTO], [], []),
+    "executePromoteClub": IDL.Func([LeagueId, PromoteClubDTO], [], []),
     "executeRecallPlayer": IDL.Func([LeagueId, RecallPlayerDTO], [], []),
     "executeRescheduleFixture": IDL.Func(
       [LeagueId, RescheduleFixtureDTO],
@@ -4542,6 +4521,7 @@ const idlFactory = ({ IDL }) => {
     ),
     "executeRevaluePlayerUp": IDL.Func([LeagueId, RevaluePlayerUpDTO], [], []),
     "executeSetPlayerInjury": IDL.Func([LeagueId, SetPlayerInjuryDTO], [], []),
+    "executeSubmitFixtureData": IDL.Func([SubmitFixtureDataDTO], [], []),
     "executeTransferPlayer": IDL.Func([LeagueId, TransferPlayerDTO], [], []),
     "executeUnretirePlayer": IDL.Func([LeagueId, UnretirePlayerDTO], [], []),
     "executeUpdateClub": IDL.Func([LeagueId, UpdateClubDTO], [], []),
@@ -4556,7 +4536,7 @@ const idlFactory = ({ IDL }) => {
     "getSeasons": IDL.Func([LeagueId], [Result_3], ["composite_query"]),
     "getSystemState": IDL.Func([IDL.Text], [Result_2], ["composite_query"]),
     "isAdmin": IDL.Func([], [Result_1], []),
-    "snapshotManagers": IDL.Func([SnapshotManagersDTO], [], []),
+    "snapshotManagers": IDL.Func([IDL.Text], [Result], []),
     "updateSystemState": IDL.Func(
       [IDL.Text, UpdateSystemStateDTO],
       [Result],
@@ -4584,11 +4564,7 @@ const idlFactory = ({ IDL }) => {
       [RustResult],
       ["query"]
     ),
-    "validatePromoteNewClub": IDL.Func(
-      [PromoteNewClubDTO],
-      [RustResult],
-      ["query"]
-    ),
+    "validatePromoteClub": IDL.Func([PromoteClubDTO], [RustResult], ["query"]),
     "validateRecallPlayer": IDL.Func(
       [RecallPlayerDTO],
       [RustResult],
@@ -4647,8 +4623,8 @@ const idlFactory = ({ IDL }) => {
     )
   });
 };
-var define_process_env_default$2 = { FOOTBALL_GOD_BACKEND_CANISTER_ID: "44kin-waaaa-aaaal-qbxra-cai", FOOTBALL_GOD_FRONTEND_CANISTER_ID: "43loz-3yaaa-aaaal-qbxrq-cai", DFX_NETWORK: "ic" };
-const canisterId = define_process_env_default$2.CANISTER_ID_FOOTBALL_GOD_BACKEND;
+var define_process_env_default$3 = { FOOTBALL_GOD_BACKEND_CANISTER_ID: "44kin-waaaa-aaaal-qbxra-cai", FOOTBALL_GOD_FRONTEND_CANISTER_ID: "43loz-3yaaa-aaaal-qbxrq-cai", DFX_NETWORK: "ic" };
+const canisterId = define_process_env_default$3.CANISTER_ID_FOOTBALL_GOD_BACKEND;
 const createActor = (canisterId2, options2 = {}) => {
   const agent = options2.agent || new HttpAgent({ ...options2.agentOptions });
   if (options2.agent && options2.agentOptions) {
@@ -4794,6 +4770,181 @@ function getImageURL(blob) {
     return `data:image/png;base64,${uint8ArrayToBase64(byteArray)}`;
   }
   return "/profile_placeholder.png";
+}
+var define_process_env_default$2 = { FOOTBALL_GOD_BACKEND_CANISTER_ID: "44kin-waaaa-aaaal-qbxra-cai", FOOTBALL_GOD_FRONTEND_CANISTER_ID: "43loz-3yaaa-aaaal-qbxrq-cai", DFX_NETWORK: "ic" };
+class AdminService {
+  actor;
+  constructor() {
+    this.actor = ActorFactory.createActor(
+      idlFactory,
+      define_process_env_default$2.FOOTBALL_GOD_BACKEND_CANISTER_ID
+    );
+  }
+  async getLeagueClubs(leagueId) {
+    const result = await this.actor.getLeagueClubs(leagueId);
+    if (isError(result))
+      throw new Error("Failed to fetch league clubs");
+    return result.ok;
+  }
+  async createLeague(dto) {
+    const identityActor = await ActorFactory.createIdentityActor(
+      authStore,
+      define_process_env_default$2.FOOTBALL_GOD_BACKEND_CANISTER_ID
+    );
+    const result = await identityActor.executeCreateLeague(dto);
+    if (isError(result))
+      throw new Error("Failed to create league");
+  }
+  async updateLeague(dto) {
+    const identityActor = await ActorFactory.createIdentityActor(
+      authStore,
+      define_process_env_default$2.FOOTBALL_GOD_BACKEND_CANISTER_ID
+    );
+    const result = await identityActor.executeUpdateLeague(dto);
+    if (isError(result))
+      throw new Error("Failed to update league");
+  }
+  async transferPlayer(leagueId, dto) {
+    const identityActor = await ActorFactory.createIdentityActor(
+      authStore,
+      define_process_env_default$2.FOOTBALL_GOD_BACKEND_CANISTER_ID
+    );
+    const result = await identityActor.executeTransferPlayer(leagueId, dto);
+    if (isError(result))
+      throw new Error("Failed to transfer player");
+  }
+  async loanPlayer(leagueId, dto) {
+    const identityActor = await ActorFactory.createIdentityActor(
+      authStore,
+      define_process_env_default$2.FOOTBALL_GOD_BACKEND_CANISTER_ID
+    );
+    const result = await identityActor.executeLoanPlayer(leagueId, dto);
+    if (isError(result))
+      throw new Error("Failed to loan player");
+  }
+  async createPlayer(leagueId, dto) {
+    const identityActor = await ActorFactory.createIdentityActor(
+      authStore,
+      define_process_env_default$2.FOOTBALL_GOD_BACKEND_CANISTER_ID
+    );
+    const result = await identityActor.executeCreatePlayer(leagueId, dto);
+    if (isError(result))
+      throw new Error("Failed to creaete player");
+  }
+  async updatePlayer(leagueId, dto) {
+    const identityActor = await ActorFactory.createIdentityActor(
+      authStore,
+      define_process_env_default$2.FOOTBALL_GOD_BACKEND_CANISTER_ID
+    );
+    const result = await identityActor.executeUpdatePlayer(leagueId, dto);
+    if (isError(result))
+      throw new Error("Failed to update player");
+  }
+  async updateSystemState(applicationName, dto) {
+    const identityActor = await ActorFactory.createIdentityActor(
+      authStore,
+      define_process_env_default$2.FOOTBALL_GOD_BACKEND_CANISTER_ID
+    );
+    const result = await identityActor.updateSystemState(applicationName, dto);
+    if (isError(result))
+      throw new Error("Failed to update system state");
+  }
+  async snapshotManagers(applicationName) {
+    const identityActor = await ActorFactory.createIdentityActor(
+      authStore,
+      define_process_env_default$2.FOOTBALL_GOD_BACKEND_CANISTER_ID
+    );
+    const result = await identityActor.snapshotManagers(applicationName);
+    if (isError(result))
+      throw new Error("Failed to snapshot managers");
+  }
+  async calculateGameweekScores(applicationName) {
+    const identityActor = await ActorFactory.createIdentityActor(
+      authStore,
+      define_process_env_default$2.FOOTBALL_GOD_BACKEND_CANISTER_ID
+    );
+    const result = await identityActor.calculateGameweekScores(applicationName);
+    if (isError(result))
+      throw new Error("Failed to calculate gameweek scores");
+  }
+  async calculateLeaderboards(applicationName) {
+    const identityActor = await ActorFactory.createIdentityActor(
+      authStore,
+      define_process_env_default$2.FOOTBALL_GOD_BACKEND_CANISTER_ID
+    );
+    const result = await identityActor.calculateLeaderboards(applicationName);
+    if (isError(result))
+      throw new Error("Failed to calculate leaderboards");
+  }
+  async isAdmin() {
+    const identityActor = await ActorFactory.createIdentityActor(
+      authStore,
+      define_process_env_default$2.FOOTBALL_GOD_BACKEND_CANISTER_ID
+    );
+    const result = await identityActor.isAdmin();
+    if (isError(result)) {
+      throw new Error("Failed to check is admin");
+    }
+    return result.ok;
+  }
+  async createClub(dto) {
+    const identityActor = await ActorFactory.createIdentityActor(
+      authStore,
+      define_process_env_default$2.FOOTBALL_GOD_BACKEND_CANISTER_ID
+    );
+    const result = await identityActor.executeCreateClub(dto);
+    if (isError(result))
+      throw new Error("Failed to create club");
+  }
+  async getSystemState(applicationName) {
+    const identityActor = await ActorFactory.createIdentityActor(
+      authStore,
+      define_process_env_default$2.FOOTBALL_GOD_BACKEND_CANISTER_ID
+    );
+    const result = await identityActor.getSystemState(applicationName);
+    console.log(result);
+    if (isError(result))
+      throw new Error("Failed to get system state");
+    return result.ok;
+  }
+  async getFixtures(dto) {
+    const identityActor = await ActorFactory.createIdentityActor(
+      authStore,
+      define_process_env_default$2.FOOTBALL_GOD_BACKEND_CANISTER_ID
+    );
+    const result = await identityActor.getFixtures(dto);
+    console.log(result);
+    if (isError(result))
+      throw new Error("Failed to get fixtures");
+    return result.ok;
+  }
+  async moveFixture(dto) {
+    const identityActor = await ActorFactory.createIdentityActor(
+      authStore,
+      define_process_env_default$2.FOOTBALL_GOD_BACKEND_CANISTER_ID
+    );
+    const result = await identityActor.executeMoveFixture(dto);
+    if (isError(result))
+      throw new Error("Failed to move fixture");
+  }
+  async postponeFixture(dto) {
+    const identityActor = await ActorFactory.createIdentityActor(
+      authStore,
+      define_process_env_default$2.FOOTBALL_GOD_BACKEND_CANISTER_ID
+    );
+    const result = await identityActor.executePostponeFixture(dto);
+    if (isError(result))
+      throw new Error("Failed to postpone fixture");
+  }
+  async submitFixtureData(dto) {
+    const identityActor = await ActorFactory.createIdentityActor(
+      authStore,
+      define_process_env_default$2.FOOTBALL_GOD_BACKEND_CANISTER_ID
+    );
+    const result = await identityActor.executeSubmitFixtureData(dto);
+    if (isError(result))
+      throw new Error("Failed to submit fixture data");
+  }
 }
 const css$1 = {
   code: ".transition-width.svelte-frwh1m{transition:width 200ms}a.active.svelte-frwh1m{color:white !important}",
@@ -4994,13 +5145,84 @@ const Clear_draft_modal = create_ssr_component(($$result, $$props, $$bindings, s
     }
   })}`;
 });
+function createAdminStore() {
+  async function transferPlayer(leagueId, dto) {
+    return new AdminService().transferPlayer(leagueId, dto);
+  }
+  async function loanPlayer(leagueId, dto) {
+    return new AdminService().loanPlayer(leagueId, dto);
+  }
+  async function createPlayer(leagueId, dto) {
+    return new AdminService().createPlayer(leagueId, dto);
+  }
+  async function updatePlayer(leagueId, dto) {
+    return new AdminService().updatePlayer(leagueId, dto);
+  }
+  async function createLeague(dto) {
+    return new AdminService().createLeague(dto);
+  }
+  async function updateLeague(dto) {
+    return new AdminService().updateLeague(dto);
+  }
+  async function getSystemState(applicationName) {
+    return new AdminService().getSystemState(applicationName);
+  }
+  async function updateSystemState(applicationName, dto) {
+    return new AdminService().updateSystemState(applicationName, dto);
+  }
+  async function snapshotManagers(applicationName) {
+    return new AdminService().snapshotManagers(applicationName);
+  }
+  async function calculateGameweekScores(applicationName) {
+    return new AdminService().calculateGameweekScores(applicationName);
+  }
+  async function calculateLeaderboards(applicationName) {
+    return new AdminService().calculateLeaderboards(applicationName);
+  }
+  async function createClub(dto) {
+    console.log("dto");
+    console.log(dto);
+    return new AdminService().createClub(dto);
+  }
+  async function getFixtures(dto) {
+    return new AdminService().getFixtures(dto);
+  }
+  async function moveFixture(dto) {
+    return new AdminService().moveFixture(dto);
+  }
+  async function postponeFixture(dto) {
+    return new AdminService().postponeFixture(dto);
+  }
+  async function submitFixtureData(dto) {
+    return new AdminService().submitFixtureData(dto);
+  }
+  return {
+    createLeague,
+    updateLeague,
+    transferPlayer,
+    loanPlayer,
+    createPlayer,
+    updatePlayer,
+    updateSystemState,
+    snapshotManagers,
+    calculateGameweekScores,
+    calculateLeaderboards,
+    createClub,
+    getSystemState,
+    getFixtures,
+    moveFixture,
+    postponeFixture,
+    submitFixtureData
+  };
+}
+const adminStore = createAdminStore();
 const Page$6 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
   let fixtureId;
+  let leagueId;
+  let seasonId;
   let $playerEventData, $$unsubscribe_playerEventData = noop, $$subscribe_playerEventData = () => ($$unsubscribe_playerEventData(), $$unsubscribe_playerEventData = subscribe(playerEventData, ($$value) => $playerEventData = $$value), playerEventData);
-  let $$unsubscribe_clubStore;
   let $selectedPlayers, $$unsubscribe_selectedPlayers;
   let $page, $$unsubscribe_page;
-  $$unsubscribe_clubStore = subscribe(clubStore, (value) => value);
   $$unsubscribe_page = subscribe(page, (value) => $page = value);
   let showClearDraftModal = false;
   let showConfirmDataModal = false;
@@ -5014,13 +5236,22 @@ const Page$6 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
       text: "Saving fixture data..."
     });
     try {
+      let dto = {
+        seasonId,
+        leagueId,
+        fixtureId,
+        playerEventData: $playerEventData
+      };
+      console.log("fixture data submission test");
+      console.log(dto);
+      return;
+      await adminStore.submitFixtureData(dto);
       localStorage.removeItem(`fixtureDraft_${fixtureId}`);
       toastsShow({
         text: "Fixture data saved.",
         level: "success",
         duration: 2e3
       });
-      goto("/fixture-validation");
     } catch (error) {
       toastsError({
         msg: { text: "Error saving fixture data." },
@@ -5049,9 +5280,10 @@ const Page$6 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
     showConfirmDataModal = false;
   }
   fixtureId = Number($page.url.searchParams.get("id"));
+  leagueId = Number($page.url.searchParams.get("league-id"));
+  seasonId = Number($page.url.searchParams.get("season-id"));
   $playerEventData.length == 0 || $playerEventData.filter((x) => convertEvent(x.eventType) == 0).length != $selectedPlayers.length;
   $$unsubscribe_playerEventData();
-  $$unsubscribe_clubStore();
   $$unsubscribe_selectedPlayers();
   $$unsubscribe_page();
   return `${validate_component(Layout, "Layout").$$render($$result, {}, {}, {
@@ -5081,7 +5313,7 @@ const Page$6 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
 const Page$5 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
   return `${validate_component(Layout, "Layout").$$render($$result, {}, {}, {
     default: () => {
-      return `${``} ${``}  ${``} ${``} ${``} ${``} ${``} ${``} ${``} ${``} ${``} ${``} ${``} ${``} ${``} ${``} ${``} ${``} ${``} ${``} ${``} <div class="m-4"><div class="bg-panel rounded-md"><ul class="flex rounded-t-lg bg-light-gray border-b border-gray-700 px-4 pt-2" data-svelte-h="svelte-np8kws"><li class="mr-4 active-tab"><button class="text-white">Raise Proposal</button></li></ul> <p class="m-4" data-svelte-h="svelte-fij59x">Player proposals</p> <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mt-4 mx-4"><div class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"><div class="flex items-center w-full"><button class="rounded brand-button-disabled px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full" disabled data-svelte-h="svelte-n2i7ls">Revalue Player Up</button></div></div> <div class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"><div class="flex items-center space-x-4 w-full"><button class="rounded brand-button-disabled px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full" disabled data-svelte-h="svelte-39kkmm">Revalue Player Down</button></div></div> <div class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"><div class="flex items-center space-x-4 w-full"><button class="rounded brand-button px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full" data-svelte-h="svelte-alegmn">Loan Player</button></div></div> <div class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"><div class="flex items-center space-x-4 w-full"><button class="rounded brand-button px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full" data-svelte-h="svelte-mo36vx">Transfer Player</button></div></div> <div class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"><div class="flex items-center space-x-4 w-full"><button class="rounded brand-button-disabled px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full" disabled data-svelte-h="svelte-15py134">Recall Player</button></div></div> <div class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"><div class="flex items-center space-x-4 w-full"><button class="rounded brand-button-disabled px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full" disabled data-svelte-h="svelte-jinex4">Create Player</button></div></div> <div class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"><div class="flex items-center space-x-4 w-full"><button class="rounded brand-button px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full" data-svelte-h="svelte-xrmno9">Update Player</button></div></div> <div class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"><div class="flex items-center space-x-4 w-full"><button class="rounded brand-button-disabled px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full" disabled data-svelte-h="svelte-q2y0ic">Set Player Injury</button></div></div> <div class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"><div class="flex items-center space-x-4 w-full"><button class="rounded brand-button-disabled px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full" disabled data-svelte-h="svelte-1spl25c">Retire Player</button></div></div> <div class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"><div class="flex items-center space-x-4 w-full"><button class="rounded brand-button-disabled px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full" disabled data-svelte-h="svelte-1j7w7go">Unretire Player</button></div></div></div> <p class="m-4" data-svelte-h="svelte-11opyhx">Fixture proposals</p> <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mt-4 mx-4"><div class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"><div class="flex items-center space-x-4 w-full"><button class="rounded brand-button-disabled px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full" data-svelte-h="svelte-4vf6rk">Add Fixture Data</button></div></div> <div class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"><div class="flex items-center space-x-4 w-full"><button class="rounded brand-button-disabled px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full" data-svelte-h="svelte-1b7p7y4">Add Initial Fixtures</button></div></div> <div class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"><div class="flex items-center space-x-4 w-full"><button class="rounded brand-button px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full" data-svelte-h="svelte-1eoz581">Move Fixture</button></div></div> <div class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"><div class="flex items-center space-x-4 w-full"><button class="rounded brand-button-disabled px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full" data-svelte-h="svelte-ge63i0">Postpone Fixture</button></div></div> <div class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"><div class="flex items-center space-x-4 w-full"><button class="rounded brand-button-disabled px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full" data-svelte-h="svelte-j9ola4">Reschedule Fixture</button></div></div></div> <p class="m-4" data-svelte-h="svelte-ujx3lm">Club proposals</p> <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mt-4 mx-4 mb-4"><div class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"><div class="flex items-center space-x-4 w-full"><button class="rounded brand-button-disabled px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full" data-svelte-h="svelte-b4cle">Promote New Club</button></div></div> <div class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"><div class="flex items-center space-x-4 w-full"><button class="rounded brand-button-disabled px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full" data-svelte-h="svelte-ugy92w">Update Club</button></div></div></div> <p class="m-4" data-svelte-h="svelte-1rqtx1h">League proposals</p> <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mt-4 mx-4 mb-4"><div class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"><div class="flex items-center space-x-4 w-full"><button class="rounded brand-button px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full" data-svelte-h="svelte-oo31tv">Create League</button></div></div> <div class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"><div class="flex items-center space-x-4 w-full"><button class="rounded brand-button px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full" data-svelte-h="svelte-pd1ikx">Update League</button></div></div></div> <p class="m-4" data-svelte-h="svelte-1aex0bi">Application Triggers</p> <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mt-4 mx-4 mb-4"><div class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"><div class="flex items-center space-x-4 w-full"><button class="rounded brand-button px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full" data-svelte-h="svelte-1rsj9ys">Update System State</button></div></div> <div class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"><div class="flex items-center space-x-4 w-full"><button class="rounded brand-button px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full" data-svelte-h="svelte-1mah1io">Snapshot Manager Teams</button></div></div> <div class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"><div class="flex items-center space-x-4 w-full"><button class="rounded brand-button px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full" data-svelte-h="svelte-7kkkey">Calculate Gameweek Scores</button></div></div> <div class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"><div class="flex items-center space-x-4 w-full"><button class="rounded brand-button px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full" data-svelte-h="svelte-1jcwn94">Calculate Leaderboards</button></div></div></div></div></div>`;
+      return `${``} ${``}  ${``} ${``} ${``} ${``} ${``} ${``} ${``} ${``} ${``} ${``} ${``} ${``} ${``} ${``} ${``} ${``} ${``} ${``} ${``} <div class="m-4"><div class="bg-panel rounded-md"><ul class="flex rounded-t-lg bg-light-gray border-b border-gray-700 px-4 pt-2" data-svelte-h="svelte-np8kws"><li class="mr-4 active-tab"><button class="text-white">Raise Proposal</button></li></ul> <p class="m-4" data-svelte-h="svelte-11opyhx">Fixture proposals</p> <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mt-4 mx-4"><div class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"><div class="flex items-center space-x-4 w-full"><button class="rounded brand-button-disabled px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full" data-svelte-h="svelte-4vf6rk">Add Fixture Data</button></div></div> <div class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"><div class="flex items-center space-x-4 w-full"><button class="rounded brand-button-disabled px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full" data-svelte-h="svelte-1b7p7y4">Add Initial Fixtures</button></div></div> <div class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"><div class="flex items-center space-x-4 w-full"><button class="rounded brand-button px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full" data-svelte-h="svelte-1eoz581">Move Fixture</button></div></div> <div class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"><div class="flex items-center space-x-4 w-full"><button class="rounded brand-button-disabled px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full" data-svelte-h="svelte-ge63i0">Postpone Fixture</button></div></div> <div class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"><div class="flex items-center space-x-4 w-full"><button class="rounded brand-button-disabled px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full" data-svelte-h="svelte-j9ola4">Reschedule Fixture</button></div></div></div> <p class="m-4" data-svelte-h="svelte-ujx3lm">Club proposals</p> <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mt-4 mx-4 mb-4"><div class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"><div class="flex items-center space-x-4 w-full"><button class="rounded brand-button-disabled px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full" data-svelte-h="svelte-b4cle">Promote New Club</button></div></div> <div class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"><div class="flex items-center space-x-4 w-full"><button class="rounded brand-button-disabled px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full" data-svelte-h="svelte-ugy92w">Update Club</button></div></div></div> <p class="m-4" data-svelte-h="svelte-1rqtx1h">League proposals</p> <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mt-4 mx-4 mb-4"><div class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"><div class="flex items-center space-x-4 w-full"><button class="rounded brand-button px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full" data-svelte-h="svelte-oo31tv">Create League</button></div></div> <div class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"><div class="flex items-center space-x-4 w-full"><button class="rounded brand-button px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full" data-svelte-h="svelte-pd1ikx">Update League</button></div></div></div> <p class="m-4" data-svelte-h="svelte-1aex0bi">Application Triggers</p> <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mt-4 mx-4 mb-4"><div class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"><div class="flex items-center space-x-4 w-full"><button class="rounded brand-button px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full" data-svelte-h="svelte-1rsj9ys">Update System State</button></div></div> <div class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"><div class="flex items-center space-x-4 w-full"><button class="rounded brand-button px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full" data-svelte-h="svelte-1mah1io">Snapshot Manager Teams</button></div></div> <div class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"><div class="flex items-center space-x-4 w-full"><button class="rounded brand-button px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full" data-svelte-h="svelte-7kkkey">Calculate Gameweek Scores</button></div></div> <div class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"><div class="flex items-center space-x-4 w-full"><button class="rounded brand-button px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full" data-svelte-h="svelte-1jcwn94">Calculate Leaderboards</button></div></div></div></div></div>`;
     }
   })}`;
 });
@@ -5190,7 +5422,7 @@ const Page$1 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
       })}</select></div> <div class="flex flex-col gap-4 md:flex-row mb-6"><div class="flex items-center w-full md:w-1/4"><label for="minValue" class="text-sm text-gray-400 mr-2" data-svelte-h="svelte-1dmjrnv">Min Value (M):</label> <input type="number" id="minValue" step="0.25" class="form-input bg-gray-800 text-white border border-gray-700 rounded-lg focus:ring focus:ring-blue-500 w-full"${add_attribute("value", minValue, 0)}></div> <div class="flex items-center w-full md:w-1/4"><label for="maxValue" class="text-sm text-gray-400 mr-2" data-svelte-h="svelte-em5yvn">Max Value (M):</label> <input type="number" id="maxValue" step="0.25" class="form-input bg-gray-800 text-white border border-gray-700 rounded-lg focus:ring focus:ring-blue-500 w-full"${add_attribute("value", maxValue, 0)}></div></div> <div class="flex flex-col md:flex-row gap-4 mb-6"><div class="flex items-center w-full md:w-1/2"><label for="searchSurname" class="text-sm text-gray-400 mr-2" data-svelte-h="svelte-17onh20">Search by Surname:</label> <input type="text" id="searchSurname" class="form-input bg-gray-800 text-white border border-gray-700 rounded-lg focus:ring focus:ring-blue-500 w-full"${add_attribute("value", searchSurname, 0)}></div> <button class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg" data-svelte-h="svelte-1ywfz24">Search</button></div> <div>${each(filteredPlayers.sort((a, b) => b.valueQuarterMillions - a.valueQuarterMillions), (player) => {
         return `<div class="flex flex-row items-center bg-gray-800 rounded-lg shadow p-4 w-full my-2 transition hover:bg-gray-700"><div class="flex items-center space-x-4 w-full"><p class="flex-grow text-lg md:text-sm text-white">${escape(player.firstName)} ${escape(player.lastName)} <br>
                   Player ID: ${escape(player.id)} <br>
-                  Value: £${escape(player.valueQuarterMillions / 4)}M</p> <div class="relative"><button class="text-white bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg" data-svelte-h="svelte-1yml4se">Actions</button> ${dropdownVisible === player.id ? `<div class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg z-10 text-sm dropdown-menu"><button class="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100" data-svelte-h="svelte-s4l5t9">Update Player</button> <button class="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100" data-svelte-h="svelte-1yhdw75">Transfer Player</button> <button class="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100" data-svelte-h="svelte-1230zvj">Loan Player</button> <button class="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100" data-svelte-h="svelte-1rl0ayp">Revalue Player Up</button> <button class="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100" data-svelte-h="svelte-87qhjd">Revalue Player Down</button> <button class="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100" data-svelte-h="svelte-12h1n99">Retire Player</button> </div>` : ``} </div></div> </div>`;
+                  Value: £${escape(player.valueQuarterMillions / 4)}M</p> <div class="relative"><button class="text-white bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg" data-svelte-h="svelte-1yml4se">Actions</button> ${dropdownVisible === player.id ? `<div class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg z-10 text-sm dropdown-menu"><button class="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100" data-svelte-h="svelte-s4l5t9">Update Player</button> <button class="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100" data-svelte-h="svelte-1gw6zjx">Set Player Injury</button> <button class="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100" data-svelte-h="svelte-1yhdw75">Transfer Player</button> <button class="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100" data-svelte-h="svelte-1230zvj">Loan Player</button> <button class="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100" data-svelte-h="svelte-17xeyjp">Recall Player</button> <button class="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100" data-svelte-h="svelte-1rl0ayp">Revalue Player Up</button> <button class="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100" data-svelte-h="svelte-87qhjd">Revalue Player Down</button> <button class="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100" data-svelte-h="svelte-12h1n99">Retire Player</button> <button class="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100" data-svelte-h="svelte-4uwuhz">Unretire Player</button> </div>` : ``} </div></div> </div>`;
       })}</div></div></div></div>`;
     }
   })} ${``} ${``} ${``} ${``}`;

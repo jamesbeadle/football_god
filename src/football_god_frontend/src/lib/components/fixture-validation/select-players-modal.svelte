@@ -3,7 +3,7 @@
   import { convertPlayerPosition, getFlagComponent } from "$lib/utils/helpers";
   import BadgeIcon from "$lib/icons/BadgeIcon.svelte";
   import { writable, type Writable } from "svelte/store";
-    import type { ClubDTO, PlayerDTO } from "../../../../../declarations/football_god_backend/football_god_backend.did";
+  import type { ClubDTO, PlayerDTO } from "../../../../../declarations/football_god_backend/football_god_backend.did";
 
   export let teamPlayers: Writable<PlayerDTO[]>;  
   export let selectedTeam: ClubDTO;
@@ -23,6 +23,8 @@
       allSelectedPlayers = allSelectedPlayers.filter((x) => x.id !== player.id);
     }
     $selectedPlayers = allSelectedPlayers;
+    console.log("selected players updated")
+    console.log($selectedPlayers)
   }
 
   export let closeModal: () => void;

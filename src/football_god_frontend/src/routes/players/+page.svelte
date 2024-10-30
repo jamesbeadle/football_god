@@ -35,11 +35,14 @@
 
   let showTransferPlayerModal = false;
   let showLoanPlayerModal = false;
+  let showRecallPlayerModal = false;
   let showRevaluePlayerUpModal = false;
   let showRevaluePlayerDownModal = false;
   let showRetirePlayerModal = false;
+  let showUnretirePlayerModal = false;
   let showCreatePlayerModal = false;
   let showUpdatePlayerModal = false;
+  let showSetPlayerInjuryModal = false;
 
   let selectedPlayerId = 0;
   let searchSurname = "";
@@ -131,6 +134,11 @@
       showUpdatePlayerModal = true;
   }
 
+  function loadSetPlayerInjury(playerId: number){
+      selectedPlayerId = playerId;
+      showSetPlayerInjuryModal = true;
+  }
+
   function loadTransferPlayer(playerId: number){
       selectedPlayerId = playerId;
       showTransferPlayerModal = true;
@@ -139,6 +147,11 @@
   function loadLoanPlayer(playerId: number){
       selectedPlayerId = playerId;
       showLoanPlayerModal = true;
+  }
+
+  function loadRecallPlayer(playerId: number){
+      selectedPlayerId = playerId;
+      showRecallPlayerModal = true;
   }
 
   function loadRevaluePlayerUp(playerId: number){
@@ -156,15 +169,22 @@
       showRetirePlayerModal = true;
   }
 
+  function loadUnretirePlayer(playerId: number){
+      selectedPlayerId = playerId;
+      showUnretirePlayerModal = true;
+  }
+
   function closeModal(){
       selectedPlayerId = 0;
       showTransferPlayerModal = false;
       showLoanPlayerModal = false;
+      showRecallPlayerModal = false;
       showCreatePlayerModal = false;
       showUpdatePlayerModal = false;
       showRevaluePlayerUpModal = false;
       showRevaluePlayerDownModal = false;
       showRetirePlayerModal = false;
+      showUnretirePlayerModal = false;
   }
 
   function handleClickOutside(event: MouseEvent) {
@@ -274,11 +294,14 @@
                   {#if dropdownVisible === player.id}
                     <div class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg z-10 text-sm dropdown-menu">
                       <button class="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100" on:click={() => loadUpdatePlayer(player.id)}>Update Player</button>
+                      <button class="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100" on:click={() => loadSetPlayerInjury(player.id)}>Set Player Injury</button>
                       <button class="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100" on:click={() => loadTransferPlayer(player.id)}>Transfer Player</button>
                       <button class="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100" on:click={() => loadLoanPlayer(player.id)}>Loan Player</button>
+                      <button class="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100" on:click={() => loadRecallPlayer(player.id)}>Recall Player</button>
                       <button class="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100" on:click={() => loadRevaluePlayerUp(player.id)}>Revalue Player Up</button>
                       <button class="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100" on:click={() => loadRevaluePlayerDown(player.id)}>Revalue Player Down</button>
                       <button class="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100" on:click={() => loadRetirePlayer(player.id)}>Retire Player</button>
+                      <button class="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100" on:click={() => loadUnretirePlayer(player.id)}>Unretire Player</button>
                     </div>
                   {/if}
                 </div>

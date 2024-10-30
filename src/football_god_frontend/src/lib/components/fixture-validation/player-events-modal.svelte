@@ -2,7 +2,7 @@
   import type { Writable } from "svelte/store";
   import { Modal } from "@dfinity/gix-components";
   import { getFlagComponent } from "$lib/utils/helpers";
-    import type { PlayerDTO, PlayerEventData } from "../../../../../declarations/football_god_backend/football_god_backend.did";
+  import type { PlayerDTO, PlayerEventData } from "../../../../../declarations/football_god_backend/football_god_backend.did";
 
   export let visible = false;
   export let player: PlayerDTO;
@@ -32,6 +32,38 @@
     appearanceStart > 90 ||
     appearanceEnd < 0 ||
     appearanceEnd > 90;
+
+    $: if ($playerEventData.length > 0) {
+  goalMinutes = $playerEventData
+    .filter(event => "Goal" in event.eventType)
+    .map(event => event.eventStartMinute);
+
+  assistMinutes = $playerEventData
+    .filter(event => "GoalAssisted" in event.eventType)
+    .map(event => event.eventStartMinute);
+
+  ownGoalMinutes = $playerEventData
+    .filter(event => "OwnGoal" in event.eventType)
+    .map(event => event.eventStartMinute);
+
+  penaltySaveMinutes = $playerEventData
+    .filter(event => "PenaltySaved" in event.eventType)
+    .map(event => event.eventStartMinute);
+
+  penaltyMissedMinutes = $playerEventData
+    .filter(event => "PenaltyMissed" in event.eventType)
+    .map(event => event.eventStartMinute);
+
+  keeperSaves = $playerEventData
+    .filter(event => "KeeperSave" in event.eventType)
+    .length;
+
+  const cardEvent = $playerEventData.find(
+    event => "YellowCard" in event.eventType || "RedCard" in event.eventType
+  );
+  selectedCard = cardEvent ? ("YellowCard" in cardEvent.eventType ? 1 : 2) : 0;
+}
+
 
   function addPlayerEvents() {
     let newEvents: PlayerEventData[] = [];
@@ -101,8 +133,7 @@
     });
 
     if (selectedCard > 0) {
-      let cardType =
-        selectedCard === 1 ? { YellowCard: null } : { RedCard: null };
+      let cardType = selectedCard === 1 ? { YellowCard: null } : { RedCard: null };
       newEvents.push({
         playerId: player.id,
         eventType: cardType,
@@ -124,8 +155,7 @@
       });
     }
 
-    playerEventData.set(newEvents);
-
+    playerEventData.set([...$playerEventData, ...newEvents]);
     closeModal();
   }
 
@@ -137,16 +167,16 @@
     assistMinutes = [...assistMinutes, assistSliderValue];
   }
 
+  function addOwnGoalEvent() {
+    ownGoalMinutes = [...ownGoalMinutes, ownGoalSliderValue];
+  }
+
   function addPenaltySaveEvent() {
     penaltySaveMinutes = [...penaltySaveMinutes, penaltySaveSliderValue];
   }
 
   function addPenaltyMissEvent() {
     penaltyMissedMinutes = [...penaltyMissedMinutes, penaltyMissSliderValue];
-  }
-
-  function addOwnGoalEvent() {
-    ownGoalMinutes = [...ownGoalMinutes, ownGoalSliderValue];
   }
 
   function removeGoal(minute: number) {

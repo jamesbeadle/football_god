@@ -1,9 +1,6 @@
 import { writable } from "svelte/store";
 import { AdminService } from "../services/admin-service";
 import type {
-  CalculateGameweekScoresDTO,
-  CalculateLeaderboardsDTO,
-  ClubDTO,
   CreateClubDTO,
   CreateLeagueDTO,
   CreatePlayerDTO,
@@ -13,14 +10,13 @@ import type {
   LoanPlayerDTO,
   MoveFixtureDTO,
   PostponeFixtureDTO,
-  SnapshotManagersDTO,
+  SubmitFixtureDataDTO,
   SystemStateDTO,
   TransferPlayerDTO,
   UpdateLeagueDTO,
   UpdatePlayerDTO,
   UpdateSystemStateDTO,
 } from "../../../../declarations/football_god_backend/football_god_backend.did";
-import { FixtureService } from "$lib/services/fixture-service";
 
 function createAdminStore() {
   //TODO: Create functions that call the governance endpoints directly
@@ -68,26 +64,24 @@ function createAdminStore() {
   }
 
   async function updateSystemState(
-    applicaitonName: string,
+    applicationName: string,
     dto: UpdateSystemStateDTO,
   ): Promise<any> {
-    return new AdminService().updateSystemState(applicaitonName, dto);
+    return new AdminService().updateSystemState(applicationName, dto);
   }
 
-  async function snapshotManagers(dto: SnapshotManagersDTO): Promise<any> {
-    return new AdminService().snapshotManagers(dto);
+  async function snapshotManagers(applicationName: string): Promise<any> {
+    return new AdminService().snapshotManagers(applicationName);
   }
 
   async function calculateGameweekScores(
-    dto: CalculateGameweekScoresDTO,
+    applicationName: string,
   ): Promise<any> {
-    return new AdminService().calculateGameweekScores(dto);
+    return new AdminService().calculateGameweekScores(applicationName);
   }
 
-  async function calculateLeaderboards(
-    dto: CalculateLeaderboardsDTO,
-  ): Promise<any> {
-    return new AdminService().calculateLeaderboards(dto);
+  async function calculateLeaderboards(applicationName: string): Promise<any> {
+    return new AdminService().calculateLeaderboards(applicationName);
   }
 
   async function createClub(dto: CreateClubDTO): Promise<any> {
@@ -110,6 +104,10 @@ function createAdminStore() {
     return new AdminService().postponeFixture(dto);
   }
 
+  async function submitFixtureData(dto: SubmitFixtureDataDTO): Promise<any> {
+    return new AdminService().submitFixtureData(dto);
+  }
+
   return {
     createLeague,
     updateLeague,
@@ -126,6 +124,7 @@ function createAdminStore() {
     getFixtures,
     moveFixture,
     postponeFixture,
+    submitFixtureData,
   };
 }
 

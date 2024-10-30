@@ -4,6 +4,8 @@ import Result "mo:base/Result";
 import Text "mo:base/Text";
 import Option "mo:base/Option";
 import Iter "mo:base/Iter";
+import Timer "mo:base/Timer";
+import Int "mo:base/Int";
 import DTOs "dtos/DTOs";
 import GovernanceDTOs "dtos/governance_DTOs";
 import RequestDTOs "dtos/request_DTOs";
@@ -167,7 +169,7 @@ actor Self {
 
   //Club Validation Functions
 
-  public shared query ({ caller }) func validatePromoteNewClub(dto : GovernanceDTOs.PromoteNewClubDTO) : async Base.RustResult {
+  public shared query ({ caller }) func validatePromoteClub(dto : GovernanceDTOs.PromoteClubDTO) : async Base.RustResult {
     //assert Principal.toText(caller) == NetworkEnvironmentVariables.SNS_GOVERNANCE_CANISTER_ID;
     //return seasonManager.validatePromoteNewClub(promoteNewClubDTO);
     return #Ok("Valid");
@@ -366,7 +368,7 @@ actor Self {
 
   //Club Execution Functions
 
-  public shared ({ caller }) func executePromoteNewClub(leagueId: FootballTypes.LeagueId, dto : GovernanceDTOs.PromoteNewClubDTO) : async () {
+  public shared ({ caller }) func executePromoteClub(leagueId: FootballTypes.LeagueId, dto : GovernanceDTOs.PromoteClubDTO) : async () {
     //assert Principal.toText(caller) == NetworkEnvironmentVariables.SNS_GOVERNANCE_CANISTER_ID;
     assert isDataAdmin(Principal.toText(caller));
 
@@ -400,7 +402,20 @@ actor Self {
     let data_canister = actor (Environment.DATA_CANISTER_ID) : actor {
       updateLeague : (dto : GovernanceDTOs.UpdateLeagueDTO) -> async Result.Result<(), T.Error>;
     };
-    let _ = await data_canister.updateLeague( dto);
+    let _ = await data_canister.updateLeague(dto);
+    return;
+  };
+
+  public shared ({ caller }) func executeSubmitFixtureData(dto : GovernanceDTOs.SubmitFixtureDataDTO) : async () {
+    //assert Principal.toText(caller) == NetworkEnvironmentVariables.SNS_GOVERNANCE_CANISTER_ID;
+    //assert isDataAdmin(Principal.toText(caller));
+
+    //TODO: Implement validation check
+
+    let data_canister = actor (Environment.DATA_CANISTER_ID) : actor {
+      submitFixtureData : (dto : GovernanceDTOs.SubmitFixtureDataDTO) -> async Result.Result<(), T.Error>;
+    };
+    let _ = await data_canister.submitFixtureData(dto);
     return;
   };
 
@@ -430,31 +445,73 @@ actor Self {
     };
   };
 
-  public shared ({ caller }) func snapshotManagers(dto : RequestDTOs.SnapshotManagersDTO) : async () {
+  public shared ({ caller }) func snapshotManagers(applicationName: Text) : async Result.Result<(), T.Error> {
     assert isDataAdmin(Principal.toText(caller));
-    let data_canister = actor (Environment.DATA_CANISTER_ID) : actor {
-      snapshotManagers : (dto : RequestDTOs.SnapshotManagersDTO) -> async Result.Result<(), T.Error>;
+    switch(applicationName){
+      case "OpenFPL" {
+        let backend_canister = actor (Environment.OPENFPL_BACKEND_CANISTER_ID) : actor {
+          snapshotManagers : () -> async Result.Result<(), T.Error>;
+        };
+        return await backend_canister.snapshotManagers();
+      };
+      case "OpenWSL" {
+        
+        let backend_canister = actor (Environment.OPENWSL_BACKEND_CANISTER_ID) : actor {
+          snapshotManagers : () -> async Result.Result<(), T.Error>;
+        };
+        return await backend_canister.snapshotManagers();
+
+      };
+      case _ {
+        return #err(#NotFound);
+      }
     };
-    let _ = await data_canister.snapshotManagers(dto);
-    return;
   };
 
-  public shared ({ caller }) func calculateGameweekScores(dto : RequestDTOs.CalculateGameweekScoresDTO) : async () {
+  public shared ({ caller }) func calculateGameweekScores(applicationName: Text) : async Result.Result<(), T.Error> {
     assert isDataAdmin(Principal.toText(caller));
-    let data_canister = actor (Environment.DATA_CANISTER_ID) : actor {
-      calculateGameweekScores : (dto : RequestDTOs.CalculateGameweekScoresDTO) -> async Result.Result<(), T.Error>;
+    switch(applicationName){
+      case "OpenFPL" {
+        let backend_canister = actor (Environment.OPENFPL_BACKEND_CANISTER_ID) : actor {
+          calculateGameweekScores : () -> async Result.Result<(), T.Error>;
+        };
+        return await backend_canister.calculateGameweekScores();
+      };
+      case "OpenWSL" {
+        
+        let backend_canister = actor (Environment.OPENWSL_BACKEND_CANISTER_ID) : actor {
+          calculateGameweekScores : () -> async Result.Result<(), T.Error>;
+        };
+        return await backend_canister.calculateGameweekScores();
+
+      };
+      case _ {
+        return #err(#NotFound);
+      }
     };
-    let _ = await data_canister.calculateGameweekScores(dto);
-    return;
   };
 
-  public shared ({ caller }) func calculateLeaderboards(dto : RequestDTOs.CalculateLeaderboardsDTO) : async () {
+  public shared ({ caller }) func calculateLeaderboards(applicationName: Text) : async Result.Result<(), T.Error> {
     assert isDataAdmin(Principal.toText(caller));
-    let data_canister = actor (Environment.DATA_CANISTER_ID) : actor {
-      calculateLeaderboards : (dto : RequestDTOs.CalculateLeaderboardsDTO) -> async Result.Result<(), T.Error>;
+    switch(applicationName){
+      case "OpenFPL" {
+        let backend_canister = actor (Environment.OPENFPL_BACKEND_CANISTER_ID) : actor {
+          calculateLeaderboards : () -> async Result.Result<(), T.Error>;
+        };
+        return await backend_canister.calculateLeaderboards();
+      };
+      case "OpenWSL" {
+        
+        let backend_canister = actor (Environment.OPENWSL_BACKEND_CANISTER_ID) : actor {
+          calculateLeaderboards : () -> async Result.Result<(), T.Error>;
+        };
+        return await backend_canister.calculateLeaderboards();
+
+      };
+      case _ {
+        return #err(#NotFound);
+      }
     };
-    let _ = await data_canister.calculateLeaderboards(dto);
-    return;
   };
 
   public shared ({ caller }) func executeCreateClub(dto : GovernanceDTOs.CreateClubDTO) : async () {
@@ -510,8 +567,13 @@ actor Self {
     return await data_canister.getFixtures(dto);
   };
 
-  
+    
+  system func postupgrade() {
+    ignore Timer.setTimer<system>(#nanoseconds(Int.abs(1)), postUpgradeCallback); 
+  };
 
+  private func postUpgradeCallback() : async (){
 
+  };
     
 };

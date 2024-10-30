@@ -1,8 +1,6 @@
 import { authStore } from "$lib/stores/auth-store";
 import { idlFactory } from "../../../../declarations/football_god_backend";
 import type {
-  CalculateGameweekScoresDTO,
-  CalculateLeaderboardsDTO,
   ClubDTO,
   CreateClubDTO,
   CreateLeagueDTO,
@@ -13,7 +11,7 @@ import type {
   LoanPlayerDTO,
   MoveFixtureDTO,
   PostponeFixtureDTO,
-  SnapshotManagersDTO,
+  SubmitFixtureDataDTO,
   SystemStateDTO,
   TransferPlayerDTO,
   UpdateLeagueDTO,
@@ -103,7 +101,7 @@ export class AdminService {
   }
 
   async updateSystemState(
-    applicaitonName: string,
+    applicationName: string,
     dto: UpdateSystemStateDTO,
   ): Promise<void> {
     const identityActor: any = await ActorFactory.createIdentityActor(
@@ -111,17 +109,39 @@ export class AdminService {
       process.env.FOOTBALL_GOD_BACKEND_CANISTER_ID ?? "",
     );
 
-    const result = await identityActor.updateSystemState(applicaitonName, dto);
+    const result = await identityActor.updateSystemState(applicationName, dto);
     if (isError(result)) throw new Error("Failed to update system state");
   }
 
-  async snapshotManagers(dto: SnapshotManagersDTO): Promise<void> {}
+  async snapshotManagers(applicationName: string): Promise<void> {
+    const identityActor: any = await ActorFactory.createIdentityActor(
+      authStore,
+      process.env.FOOTBALL_GOD_BACKEND_CANISTER_ID ?? "",
+    );
 
-  async calculateGameweekScores(
-    dto: CalculateGameweekScoresDTO,
-  ): Promise<void> {}
+    const result = await identityActor.snapshotManagers(applicationName);
+    if (isError(result)) throw new Error("Failed to snapshot managers");
+  }
 
-  async calculateLeaderboards(dto: CalculateLeaderboardsDTO): Promise<void> {}
+  async calculateGameweekScores(applicationName: string): Promise<void> {
+    const identityActor: any = await ActorFactory.createIdentityActor(
+      authStore,
+      process.env.FOOTBALL_GOD_BACKEND_CANISTER_ID ?? "",
+    );
+
+    const result = await identityActor.calculateGameweekScores(applicationName);
+    if (isError(result)) throw new Error("Failed to calculate gameweek scores");
+  }
+
+  async calculateLeaderboards(applicationName: string): Promise<void> {
+    const identityActor: any = await ActorFactory.createIdentityActor(
+      authStore,
+      process.env.FOOTBALL_GOD_BACKEND_CANISTER_ID ?? "",
+    );
+
+    const result = await identityActor.calculateLeaderboards(applicationName);
+    if (isError(result)) throw new Error("Failed to calculate leaderboards");
+  }
 
   async isAdmin(): Promise<boolean> {
     const identityActor = await ActorFactory.createIdentityActor(
@@ -189,5 +209,15 @@ export class AdminService {
 
     const result = await identityActor.executePostponeFixture(dto);
     if (isError(result)) throw new Error("Failed to postpone fixture");
+  }
+
+  async submitFixtureData(dto: SubmitFixtureDataDTO): Promise<void> {
+    const identityActor: any = await ActorFactory.createIdentityActor(
+      authStore,
+      process.env.FOOTBALL_GOD_BACKEND_CANISTER_ID ?? "",
+    );
+
+    const result = await identityActor.executeSubmitFixtureData(dto);
+    if (isError(result)) throw new Error("Failed to submit fixture data");
   }
 }

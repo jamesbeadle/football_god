@@ -20,6 +20,9 @@
     import AddFixtureData from "$lib/components/governance/fixture/add-fixture-data.svelte";
     import UpdateLeague from "$lib/components/governance/league/update-league.svelte";
     import UpdateSystemState from "$lib/components/admin/update-system-state.svelte";
+    import SnapshotFantasyTeams from "$lib/components/admin/snapshot-fantasy-teams.svelte";
+    import CalculateGameweekScores from "$lib/components/admin/calculate-gameweek-scores.svelte";
+    import CalculateLeadearboards from "$lib/components/admin/calculate-leadearboards.svelte";
   
     let showRevaluePlayerUpModal: boolean = false;
     let showRevaluePlayerDownModal: boolean = false;
@@ -43,7 +46,7 @@
     let showUpdateSystemStateModal: boolean = false;
     let showSnapshotManagerTeamsModal: boolean = false;
     let showCalculateGameweekScoresModal: boolean = false;
-    let showCalculateLeaderboardsModal: boolean = true;
+    let showCalculateLeaderboardsModal: boolean = false;
     
     function displayRevaluePlayerUpModal(): void {
       showRevaluePlayerUpModal = true;
@@ -349,15 +352,15 @@
     {/if}
 
     {#if showSnapshotManagerTeamsModal}
-
+      <SnapshotFantasyTeams visible={showSnapshotManagerTeamsModal} closeModal={hideSnapshotManagerTeams} />
     {/if}
 
     {#if showCalculateGameweekScoresModal}
-
+      <CalculateGameweekScores visible={showCalculateGameweekScoresModal} closeModal={hideCalculateGameweekScores} />
     {/if}
 
     {#if showCalculateLeaderboardsModal}
-
+      <CalculateLeadearboards visible={showCalculateLeaderboardsModal} closeModal={hideCalculateLeaderboards} />
     {/if}
 
     <div class="m-4">
@@ -370,111 +373,6 @@
           </li>
         </ul>
   
-        <p class="m-4">Player proposals</p>
-  
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mt-4 mx-4">
-          <div
-            class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"
-          >
-            <div class="flex items-center w-full">
-              <button
-                class="rounded brand-button-disabled px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full"
-                on:click={displayRevaluePlayerUpModal} disabled>Revalue Player Up</button
-              >
-            </div>
-          </div>
-          <div
-            class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"
-          >
-            <div class="flex items-center space-x-4 w-full">
-              <button
-                class="rounded brand-button-disabled px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full"
-                on:click={displayRevaluePlayerDownModal} disabled
-                >Revalue Player Down</button
-              >
-            </div>
-          </div>
-          <div
-            class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"
-          >
-            <div class="flex items-center space-x-4 w-full">
-              <button
-                class="rounded brand-button px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full"
-                on:click={displayLoanPlayerModal}>Loan Player</button
-              >
-            </div>
-          </div>
-          <div
-            class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"
-          >
-            <div class="flex items-center space-x-4 w-full">
-              <button
-                class="rounded brand-button px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full"
-                on:click={displayTransferPlayerModal}>Transfer Player</button
-              >
-            </div>
-          </div>
-          <div
-            class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"
-          >
-            <div class="flex items-center space-x-4 w-full">
-              <button
-                class="rounded brand-button-disabled px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full"
-                on:click={displayRecallPlayerModal} disabled>Recall Player</button
-              >
-            </div>
-          </div>
-          <div
-            class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"
-          >
-            <div class="flex items-center space-x-4 w-full">
-              <button
-                class="rounded brand-button-disabled px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full"
-                on:click={displayCreatePlayerModal} disabled>Create Player</button
-              >
-            </div>
-          </div>
-          <div
-            class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"
-          >
-            <div class="flex items-center space-x-4 w-full">
-              <button
-                class="rounded brand-button px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full"
-                on:click={displayUpdatePlayerModal}>Update Player</button
-              >
-            </div>
-          </div>
-          <div
-            class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"
-          >
-            <div class="flex items-center space-x-4 w-full">
-              <button
-                class="rounded brand-button-disabled px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full"
-                on:click={displaySetPlayerInjuryModal} disabled>Set Player Injury</button
-              >
-            </div>
-          </div>
-          <div
-            class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"
-          >
-            <div class="flex items-center space-x-4 w-full">
-              <button
-                class="rounded brand-button-disabled px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full"
-                on:click={displayRetirePlayerModal} disabled>Retire Player</button
-              >
-            </div>
-          </div>
-          <div
-            class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"
-          >
-            <div class="flex items-center space-x-4 w-full">
-              <button
-                class="rounded brand-button-disabled px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full"
-                on:click={displayUnretirePlayerModal} disabled>Unretire Player</button
-              >
-            </div>
-          </div>
-        </div>
         <p class="m-4">Fixture proposals</p>
         <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mt-4 mx-4">
           <div
