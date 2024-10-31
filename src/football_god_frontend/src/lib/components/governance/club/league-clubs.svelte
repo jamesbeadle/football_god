@@ -12,11 +12,11 @@
   let league: FootballLeagueDTO | undefined;
   let clubs: ClubDTO[] = [];
   let showAddClub = false;
-  let isAdmin = false;
+  let isDataManager = false;
 
   onMount(async () => {
     try {
-      isAdmin = await userStore.isAdmin();
+      isDataManager = await userStore.isDataManager();
       let leagues = await leagueStore.getLeagues();
       league = leagues.find(x => x.id == leagueId);
       clubs = await clubStore.getClubs(leagueId);
@@ -41,7 +41,7 @@
     {#if league}
       <p class="text-2xl font-bold text-white">{league.name} Clubs</p>
     {/if}
-    {#if isAdmin}
+    {#if isDataManager}
       <button 
         class="brand-button bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg"
         on:click={() => { showAddClub = true; }}>

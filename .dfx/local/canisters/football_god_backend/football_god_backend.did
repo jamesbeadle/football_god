@@ -400,6 +400,7 @@ service : {
   getSeasons: (LeagueId) -> (Result_3) composite_query;
   getSystemState: (text) -> (Result_2) composite_query;
   isAdmin: () -> (Result_1);
+  isDataManager: () -> (Result_1);
   snapshotManagers: (text) -> (Result);
   updateSystemState: (text, UpdateSystemStateDTO) -> (Result);
   validateAddInitialFixtures: (AddInitialFixturesDTO) -> (RustResult) query;

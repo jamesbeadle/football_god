@@ -23,11 +23,21 @@ actor Self {
   private let userManager = UserManager.UserManager(); 
   
   public shared ({ caller }) func isAdmin() : async Result.Result<Bool, T.Error> {
-    return #ok(isDataAdmin(Principal.toText(caller)));
+    return #ok(checkAdmin(Principal.toText(caller)));
   };
   
-  private func isDataAdmin(principalId: Text) : Bool {
+  public shared ({ caller }) func isDataManager() : async Result.Result<Bool, T.Error> {
+    return #ok(checkDataManager(Principal.toText(caller)));
+  };
+  
+  private func checkAdmin(principalId: Text) : Bool {
     return Option.isSome(Array.find<Base.PrincipalId>(Environment.ADMIN_PRINCIPALS, func(dataAdmin: Base.PrincipalId) : Bool{
+      dataAdmin == principalId;
+    }));
+  };
+  
+  private func checkDataManager(principalId: Text) : Bool {
+    return Option.isSome(Array.find<Base.PrincipalId>(Environment.DATA_MANAGER_PRINCIPALS, func(dataAdmin: Base.PrincipalId) : Bool{
       dataAdmin == principalId;
     }));
   };
@@ -68,6 +78,8 @@ actor Self {
     };
     return await data_canister.getPlayers(leagueId);
   };
+
+  /* ----- Governance Data Functions ----- */
 
   //Player Validation Functions
 
@@ -200,7 +212,7 @@ actor Self {
 
   public shared ({ caller }) func executeRevaluePlayerUp(leagueId: FootballTypes.LeagueId, dto : GovernanceDTOs.RevaluePlayerUpDTO) : async () {
     //assert Principal.toText(caller) == NetworkEnvironmentVariables.SNS_GOVERNANCE_CANISTER_ID;
-    assert isDataAdmin(Principal.toText(caller));
+    assert checkDataManager(Principal.toText(caller));
 
     //TODO: Implement validation check
 
@@ -213,7 +225,7 @@ actor Self {
 
   public shared ({ caller }) func executeRevaluePlayerDown(leagueId: FootballTypes.LeagueId, dto : GovernanceDTOs.RevaluePlayerDownDTO) : async () {
     //assert Principal.toText(caller) == NetworkEnvironmentVariables.SNS_GOVERNANCE_CANISTER_ID;
-    assert isDataAdmin(Principal.toText(caller));
+    assert checkDataManager(Principal.toText(caller));
 
     //TODO: Implement validation check
 
@@ -226,7 +238,7 @@ actor Self {
 
   public shared ({ caller }) func executeTransferPlayer(leagueId: FootballTypes.LeagueId, dto : GovernanceDTOs.TransferPlayerDTO) : async () {
     //assert Principal.toText(caller) == NetworkEnvironmentVariables.SNS_GOVERNANCE_CANISTER_ID;
-    assert isDataAdmin(Principal.toText(caller));
+    assert checkDataManager(Principal.toText(caller));
 
     //TODO: Implement validation check
     
@@ -239,7 +251,7 @@ actor Self {
 
   public shared ({ caller }) func executeLoanPlayer(leagueId: FootballTypes.LeagueId, dto : GovernanceDTOs.LoanPlayerDTO) : async () {
     //assert Principal.toText(caller) == NetworkEnvironmentVariables.SNS_GOVERNANCE_CANISTER_ID;
-    assert isDataAdmin(Principal.toText(caller));
+    assert checkDataManager(Principal.toText(caller));
 
     //TODO: Implement validation check
 
@@ -252,7 +264,7 @@ actor Self {
 
   public shared ({ caller }) func executeRecallPlayer(leagueId: FootballTypes.LeagueId, dto : GovernanceDTOs.RecallPlayerDTO) : async () {
     //assert Principal.toText(caller) == NetworkEnvironmentVariables.SNS_GOVERNANCE_CANISTER_ID;
-    assert isDataAdmin(Principal.toText(caller));
+    assert checkDataManager(Principal.toText(caller));
 
     //TODO: Implement validation check
 
@@ -265,7 +277,7 @@ actor Self {
 
   public shared ({ caller }) func executeCreatePlayer(leagueId: FootballTypes.LeagueId, dto : GovernanceDTOs.CreatePlayerDTO) : async () {
     //assert Principal.toText(caller) == NetworkEnvironmentVariables.SNS_GOVERNANCE_CANISTER_ID;
-    assert isDataAdmin(Principal.toText(caller));
+    assert checkDataManager(Principal.toText(caller));
 
     //TODO: Implement validation check
 
@@ -278,7 +290,7 @@ actor Self {
 
   public shared ({ caller }) func executeUpdatePlayer(leagueId: FootballTypes.LeagueId, dto : GovernanceDTOs.UpdatePlayerDTO) : async () {
     //assert Principal.toText(caller) == NetworkEnvironmentVariables.SNS_GOVERNANCE_CANISTER_ID;
-    assert isDataAdmin(Principal.toText(caller));
+    assert checkDataManager(Principal.toText(caller));
 
     //TODO: Implement validation check
 
@@ -291,7 +303,7 @@ actor Self {
 
   public shared ({ caller }) func executeSetPlayerInjury(leagueId: FootballTypes.LeagueId, dto : GovernanceDTOs.SetPlayerInjuryDTO) : async () {
     //assert Principal.toText(caller) == NetworkEnvironmentVariables.SNS_GOVERNANCE_CANISTER_ID;
-    assert isDataAdmin(Principal.toText(caller));
+    assert checkDataManager(Principal.toText(caller));
 
     //TODO: Implement validation check
 
@@ -304,7 +316,7 @@ actor Self {
 
   public shared ({ caller }) func executeRetirePlayer(leagueId: FootballTypes.LeagueId, dto : GovernanceDTOs.RetirePlayerDTO) : async () {
     //assert Principal.toText(caller) == NetworkEnvironmentVariables.SNS_GOVERNANCE_CANISTER_ID;
-    assert isDataAdmin(Principal.toText(caller));
+    assert checkDataManager(Principal.toText(caller));
 
     //TODO: Implement validation check
 
@@ -317,7 +329,7 @@ actor Self {
 
   public shared ({ caller }) func executeUnretirePlayer(leagueId: FootballTypes.LeagueId, dto : GovernanceDTOs.UnretirePlayerDTO) : async () {
     //assert Principal.toText(caller) == NetworkEnvironmentVariables.SNS_GOVERNANCE_CANISTER_ID;
-    assert isDataAdmin(Principal.toText(caller));
+    assert checkDataManager(Principal.toText(caller));
 
     //TODO: Implement validation check
 
@@ -332,7 +344,7 @@ actor Self {
 
   public shared ({ caller }) func executeAddInitialFixtures(leagueId: FootballTypes.LeagueId, dto : GovernanceDTOs.AddInitialFixturesDTO) : async () {
     //assert Principal.toText(caller) == NetworkEnvironmentVariables.SNS_GOVERNANCE_CANISTER_ID;
-    assert isDataAdmin(Principal.toText(caller));
+    assert checkDataManager(Principal.toText(caller));
 
     //TODO Implement
     return;
@@ -340,7 +352,7 @@ actor Self {
 
   public shared ({ caller }) func executeMoveFixture(dto: GovernanceDTOs.MoveFixtureDTO) : async () {
     //assert Principal.toText(caller) == NetworkEnvironmentVariables.SNS_GOVERNANCE_CANISTER_ID;
-    assert isDataAdmin(Principal.toText(caller));
+    assert checkDataManager(Principal.toText(caller));
     let data_canister = actor (Environment.DATA_CANISTER_ID) : actor {
       moveFixture : (dto : GovernanceDTOs.MoveFixtureDTO) -> async Result.Result<(), T.Error>;
     };
@@ -350,7 +362,7 @@ actor Self {
 
   public shared ({ caller }) func executePostponeFixture(dto : GovernanceDTOs.PostponeFixtureDTO) : async () {
    //assert Principal.toText(caller) == NetworkEnvironmentVariables.SNS_GOVERNANCE_CANISTER_ID;
-    assert isDataAdmin(Principal.toText(caller));
+    assert checkDataManager(Principal.toText(caller));
     let data_canister = actor (Environment.DATA_CANISTER_ID) : actor {
       postponeFixture : (dto : GovernanceDTOs.PostponeFixtureDTO) -> async Result.Result<(), T.Error>;
     };
@@ -360,7 +372,7 @@ actor Self {
 
   public shared ({ caller }) func executeRescheduleFixture(leagueId: FootballTypes.LeagueId, dto : GovernanceDTOs.RescheduleFixtureDTO) : async () {
     //assert Principal.toText(caller) == NetworkEnvironmentVariables.SNS_GOVERNANCE_CANISTER_ID;
-    assert isDataAdmin(Principal.toText(caller));
+    assert checkDataManager(Principal.toText(caller));
 
     //TODO Implement
     return;
@@ -370,7 +382,7 @@ actor Self {
 
   public shared ({ caller }) func executePromoteClub(leagueId: FootballTypes.LeagueId, dto : GovernanceDTOs.PromoteClubDTO) : async () {
     //assert Principal.toText(caller) == NetworkEnvironmentVariables.SNS_GOVERNANCE_CANISTER_ID;
-    assert isDataAdmin(Principal.toText(caller));
+    assert checkDataManager(Principal.toText(caller));
 
     //TODO Implement
     return;
@@ -378,7 +390,7 @@ actor Self {
 
   public shared ({ caller }) func executeUpdateClub(leagueId: FootballTypes.LeagueId, dto : GovernanceDTOs.UpdateClubDTO) : async () {
     //assert Principal.toText(caller) == NetworkEnvironmentVariables.SNS_GOVERNANCE_CANISTER_ID;
-    assert isDataAdmin(Principal.toText(caller));
+    assert checkDataManager(Principal.toText(caller));
 
     //TODO Implement
     return;
@@ -388,7 +400,7 @@ actor Self {
 
   public shared ({ caller }) func executeCreateLeague(dto : GovernanceDTOs.CreateLeagueDTO) : async () {
     //assert Principal.toText(caller) == NetworkEnvironmentVariables.SNS_GOVERNANCE_CANISTER_ID;
-    assert isDataAdmin(Principal.toText(caller));
+    assert checkDataManager(Principal.toText(caller));
     let data_canister = actor (Environment.DATA_CANISTER_ID) : actor {
       createLeague : (dto : GovernanceDTOs.CreateLeagueDTO) -> async Result.Result<(), T.Error>;
     };
@@ -398,7 +410,7 @@ actor Self {
 
   public shared ({ caller }) func executeUpdateLeague(dto : GovernanceDTOs.UpdateLeagueDTO) : async () {
     //assert Principal.toText(caller) == NetworkEnvironmentVariables.SNS_GOVERNANCE_CANISTER_ID;
-    assert isDataAdmin(Principal.toText(caller));
+    assert checkDataManager(Principal.toText(caller));
     let data_canister = actor (Environment.DATA_CANISTER_ID) : actor {
       updateLeague : (dto : GovernanceDTOs.UpdateLeagueDTO) -> async Result.Result<(), T.Error>;
     };
@@ -419,11 +431,13 @@ actor Self {
     return;
   };
 
+
+  /* ----- Admin Functions ----- */
   //Admin functions for applications
   //TODO: Remove when handed back to the SNS
 
   public shared ({ caller }) func updateSystemState(applicationName: Text, dto : RequestDTOs.UpdateSystemStateDTO) : async Result.Result<(), T.Error> {
-    assert isDataAdmin(Principal.toText(caller));
+    assert checkAdmin(Principal.toText(caller));
     switch(applicationName){
       case "OpenFPL" {
         let backend_canister = actor (Environment.OPENFPL_BACKEND_CANISTER_ID) : actor {
@@ -446,7 +460,7 @@ actor Self {
   };
 
   public shared ({ caller }) func snapshotManagers(applicationName: Text) : async Result.Result<(), T.Error> {
-    assert isDataAdmin(Principal.toText(caller));
+    assert checkAdmin(Principal.toText(caller));
     switch(applicationName){
       case "OpenFPL" {
         let backend_canister = actor (Environment.OPENFPL_BACKEND_CANISTER_ID) : actor {
@@ -469,7 +483,7 @@ actor Self {
   };
 
   public shared ({ caller }) func calculateGameweekScores(applicationName: Text) : async Result.Result<(), T.Error> {
-    assert isDataAdmin(Principal.toText(caller));
+    assert checkAdmin(Principal.toText(caller));
     switch(applicationName){
       case "OpenFPL" {
         let backend_canister = actor (Environment.OPENFPL_BACKEND_CANISTER_ID) : actor {
@@ -492,7 +506,7 @@ actor Self {
   };
 
   public shared ({ caller }) func calculateLeaderboards(applicationName: Text) : async Result.Result<(), T.Error> {
-    assert isDataAdmin(Principal.toText(caller));
+    assert checkAdmin(Principal.toText(caller));
     switch(applicationName){
       case "OpenFPL" {
         let backend_canister = actor (Environment.OPENFPL_BACKEND_CANISTER_ID) : actor {
@@ -516,7 +530,7 @@ actor Self {
 
   public shared ({ caller }) func executeCreateClub(dto : GovernanceDTOs.CreateClubDTO) : async () {
     //assert Principal.toText(caller) == NetworkEnvironmentVariables.SNS_GOVERNANCE_CANISTER_ID;
-    assert isDataAdmin(Principal.toText(caller));
+    assert checkAdmin(Principal.toText(caller));
     let data_canister = actor (Environment.DATA_CANISTER_ID) : actor {
       createClub : (dto : GovernanceDTOs.CreateClubDTO) -> async Result.Result<(), T.Error>;
     };
@@ -526,7 +540,7 @@ actor Self {
 
   public shared composite query  ({ caller }) func getSystemState(applicationName: Text) : async Result.Result<ResponseDTOs.SystemStateDTO, T.Error>  {
     //assert Principal.toText(caller) == NetworkEnvironmentVariables.SNS_GOVERNANCE_CANISTER_ID;
-    assert isDataAdmin(Principal.toText(caller));
+    assert checkAdmin(Principal.toText(caller));
     switch(applicationName){
       case "OpenFPL" {
         
@@ -551,7 +565,7 @@ actor Self {
 
   public shared composite query  ({ caller }) func getSeasons(leagueId: FootballTypes.LeagueId) : async Result.Result<[DTOs.SeasonDTO], T.Error>  {
     //assert Principal.toText(caller) == NetworkEnvironmentVariables.SNS_GOVERNANCE_CANISTER_ID;
-    assert isDataAdmin(Principal.toText(caller));
+    assert checkAdmin(Principal.toText(caller));
     let data_canister = actor (Environment.DATA_CANISTER_ID) : actor {
       getSeasons : shared query (leagueId: FootballTypes.LeagueId) -> async Result.Result<[DTOs.SeasonDTO], T.Error>;
     };
@@ -560,14 +574,27 @@ actor Self {
 
   public shared composite query  ({ caller }) func getFixtures(dto: RequestDTOs.GetFixturesDTO) : async Result.Result<[DTOs.FixtureDTO], T.Error>  {
     //assert Principal.toText(caller) == NetworkEnvironmentVariables.SNS_GOVERNANCE_CANISTER_ID;
-    assert isDataAdmin(Principal.toText(caller));
+    assert checkAdmin(Principal.toText(caller));
     let data_canister = actor (Environment.DATA_CANISTER_ID) : actor {
       getFixtures : shared query (dto: RequestDTOs.GetFixturesDTO) -> async Result.Result<[DTOs.FixtureDTO], T.Error>;
     };
     return await data_canister.getFixtures(dto);
   };
 
+  /* ----- Betting Functions ----- */
     
+  //get bet
+
+  //get filtered betting history
+
+  //get event with odds
+
+  //place bet
+
+  //place multiple bets
+
+  //settle bets
+
   system func postupgrade() {
     ignore Timer.setTimer<system>(#nanoseconds(Int.abs(1)), postUpgradeCallback); 
   };

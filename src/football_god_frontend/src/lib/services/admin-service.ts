@@ -31,6 +31,30 @@ export class AdminService {
     );
   }
 
+  async isDataManager(): Promise<boolean> {
+    const identityActor = await ActorFactory.createIdentityActor(
+      authStore,
+      process.env.FOOTBALL_GOD_BACKEND_CANISTER_ID ?? "",
+    );
+    const result: any = await identityActor.isDataManager();
+    if (isError(result)) {
+      throw new Error("Failed to check is data manager");
+    }
+    return result.ok;
+  }
+
+  async isAdmin(): Promise<boolean> {
+    const identityActor = await ActorFactory.createIdentityActor(
+      authStore,
+      process.env.FOOTBALL_GOD_BACKEND_CANISTER_ID ?? "",
+    );
+    const result: any = await identityActor.isAdmin();
+    if (isError(result)) {
+      throw new Error("Failed to check is admin");
+    }
+    return result.ok;
+  }
+
   async getLeagueClubs(leagueId: LeagueId): Promise<ClubDTO[]> {
     const result = await this.actor.getLeagueClubs(leagueId);
     if (isError(result)) throw new Error("Failed to fetch league clubs");
@@ -141,18 +165,6 @@ export class AdminService {
 
     const result = await identityActor.calculateLeaderboards(applicationName);
     if (isError(result)) throw new Error("Failed to calculate leaderboards");
-  }
-
-  async isAdmin(): Promise<boolean> {
-    const identityActor = await ActorFactory.createIdentityActor(
-      authStore,
-      process.env.FOOTBALL_GOD_BACKEND_CANISTER_ID ?? "",
-    );
-    const result: any = await identityActor.isAdmin();
-    if (isError(result)) {
-      throw new Error("Failed to check is admin");
-    }
-    return result.ok;
   }
 
   async createClub(dto: CreateClubDTO): Promise<void> {

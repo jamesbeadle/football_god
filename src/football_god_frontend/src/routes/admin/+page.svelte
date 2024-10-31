@@ -17,7 +17,6 @@
     import UnretirePlayer from "$lib/components/governance/player/unretire-player.svelte";
     import PromoteNewClub from "$lib/components/governance/club/promote-new-club.svelte";
     import UpdateClub from "$lib/components/governance/club/update-club.svelte";
-    import AddFixtureData from "$lib/components/governance/fixture/add-fixture-data.svelte";
     import UpdateLeague from "$lib/components/governance/league/update-league.svelte";
     import UpdateSystemState from "$lib/components/admin/update-system-state.svelte";
     import SnapshotFantasyTeams from "$lib/components/admin/snapshot-fantasy-teams.svelte";
@@ -336,13 +335,6 @@
       <UpdateClub visible={showUpdateClubModal} closeModal={hideUpdateClubModal} />
     {/if}
 
-    {#if showAddFixtureDataModal}
-      <AddFixtureData
-        visible={showAddFixtureDataModal}
-        closeModal={hideAddFixtureDataModal}
-      />
-    {/if}
-
     {#if showUpdateLeagueModal}
       <UpdateLeague visible={showUpdateLeagueModal} closeModal={hideUpdateLeagueModal} />
     {/if}
@@ -372,110 +364,6 @@
             <button class="text-white">Raise Proposal</button>
           </li>
         </ul>
-  
-        <p class="m-4">Fixture proposals</p>
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mt-4 mx-4">
-          <div
-            class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"
-          >
-            <div class="flex items-center space-x-4 w-full">
-              <button
-                class="rounded brand-button-disabled px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full"
-                on:click={displayAddFixtureDataModal}>Add Fixture Data</button
-              >
-            </div>
-          </div>
-          <div
-            class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"
-          >
-            <div class="flex items-center space-x-4 w-full">
-              <button
-                class="rounded brand-button-disabled px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full"
-                on:click={displayAddInitialFixturesModal}
-                >Add Initial Fixtures</button
-              >
-            </div>
-          </div>
-          <div
-            class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"
-          >
-            <div class="flex items-center space-x-4 w-full">
-              <button
-                class="rounded brand-button px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full"
-                on:click={displayMoveFixtureModal}>Move Fixture</button
-              >
-            </div>
-          </div>
-          <div
-            class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"
-          >
-            <div class="flex items-center space-x-4 w-full">
-              <button
-                class="rounded brand-button-disabled px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full"
-                on:click={displayPostponeFixtureModal}>Postpone Fixture</button
-              >
-            </div>
-          </div>
-          <div
-            class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"
-          >
-            <div class="flex items-center space-x-4 w-full">
-              <button
-                class="rounded brand-button-disabled px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full"
-                on:click={displayRescheduleFixtureModal}
-                >Reschedule Fixture</button
-              >
-            </div>
-          </div>
-        </div>
-  
-        <p class="m-4">Club proposals</p>
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mt-4 mx-4 mb-4">
-          <div
-            class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"
-          >
-            <div class="flex items-center space-x-4 w-full">
-              <button
-                class="rounded brand-button-disabled px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full"
-                on:click={displayPromoteNewClubModal}>Promote New Club</button
-              >
-            </div>
-          </div>
-          <div
-            class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"
-          >
-            <div class="flex items-center space-x-4 w-full">
-              <button
-                class="rounded brand-button-disabled px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full"
-                on:click={displayUpdateClubModal}>Update Club</button
-              >
-            </div>
-          </div>
-        </div>
-  
-        <p class="m-4">League proposals</p>
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mt-4 mx-4 mb-4">
-          <div
-            class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"
-          >
-            <div class="flex items-center space-x-4 w-full">
-              <button
-                class="rounded brand-button px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full"
-                on:click={displayCreateLeagueModal}>Create League</button
-              >
-            </div>
-          </div>
-          <div
-            class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"
-          >
-            <div class="flex items-center space-x-4 w-full">
-              <button
-                class="rounded brand-button px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full"
-                on:click={displayUpdateLeagueModal}>Update League</button
-              >
-            </div>
-          </div>
-        </div>
   
         <p class="m-4">Application Triggers</p>
         <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mt-4 mx-4 mb-4">

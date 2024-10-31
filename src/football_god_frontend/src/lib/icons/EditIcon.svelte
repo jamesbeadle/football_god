@@ -8,7 +8,7 @@
   xmlns:xlink="http://www.w3.org/1999/xlink"
   aria-hidden="true"
   class={className}
-  fill="currentColor"
+  fill={fill}
   viewBox="0 0 24 24"
 >
   <path d="M12 20h9" />

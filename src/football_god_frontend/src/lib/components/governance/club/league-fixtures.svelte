@@ -15,7 +15,7 @@
   let league: FootballLeagueDTO | undefined;
   let clubs: ClubDTO[] = [];
   let fixtures: FixtureDTO[] = [];
-  let isAdmin = false;
+  let isDataManager = false;
   let selectedFixtureId: number = 0;
 
   let showMoveFixtureModal = false;
@@ -24,7 +24,7 @@
 
   onMount(async () => {
     try {
-      isAdmin = await userStore.isAdmin();
+      isDataManager = await userStore.isDataManager();
       let leagues = await leagueStore.getLeagues();
       league = leagues.find(x => x.id == leagueId);
       clubs = await clubStore.getClubs(leagueId);

@@ -16,7 +16,7 @@
     let isLoading = true;
     let league: FootballLeagueDTO | null = null;
     let countries: CountryDTO[] = [];
-    let isAdmin = false; 
+    let isDataManager = false; 
 
     let activeTab: string = "details";
     
@@ -44,7 +44,7 @@
     async function loadData(){
       console.log("loading details")
       console.log(activeTab)
-      isAdmin = await userStore.isAdmin();
+      isDataManager = await userStore.isDataManager();
       countries = await countryStore.getCountries();
       let leagues = await leagueStore.getLeagues();
       console.log(leagues)
@@ -152,7 +152,7 @@
                 <div>
                   <label for="name" class="block text-gray-300">Name</label>
                   <div class="flex flex-row items-center">
-                    {#if isAdmin}
+                    {#if isDataManager}
                       <button on:click={() => openEditModal("logo")}>
                         <img src={getImageURL(logo)} alt="logo" class="w-8 mr-1" />
                       </button>
@@ -162,7 +162,7 @@
                     <p class="text-gray-200">{name}</p>
                   </div>
                 </div>
-                {#if isAdmin}
+                {#if isDataManager}
                   <button class="ml-2 p-2 bg-blue-600 hover:bg-blue-500 rounded-full" on:click={() => openEditModal("name")}>
                     <EditIcon className="w-4 h-4 text-white" />
                   </button>
@@ -174,7 +174,7 @@
                     <label for="abbreviated-name" class="block text-gray-300">Abbreviated Name</label>
                     <p class="text-gray-200">{abbreviatedName}</p>
                 </div>
-                {#if isAdmin}
+                {#if isDataManager}
                     <button class="ml-2 p-2 bg-blue-600 hover:bg-blue-500 rounded-full" on:click={() => openEditModal("abbreviated-name")}>
                         <EditIcon className="w-4 h-4 text-white" />
                     </button>
@@ -186,7 +186,7 @@
                     <label for="governing-body" class="block text-gray-300">Governing Body</label>
                     <p class="text-gray-200">{governingBody}</p>
                 </div>
-                {#if isAdmin}
+                {#if isDataManager}
                     <button class="ml-2 p-2 bg-blue-600 hover:bg-blue-500 rounded-full" on:click={() => openEditModal("governing-body")}>
                         <EditIcon className="w-4 h-4 text-white" />
                     </button>
@@ -198,7 +198,7 @@
                     <label for="gender" class="block text-gray-300">Gender</label>
                     <p class="text-gray-200">{gender === 1 ? "Male" : "Female"}</p>
                 </div>
-                {#if isAdmin}
+                {#if isDataManager}
                     <button class="ml-2 p-2 bg-blue-600 hover:bg-blue-500 rounded-full" on:click={() => openEditModal("gender")}>
                         <EditIcon className="w-4 h-4 text-white" />
                     </button>
@@ -210,7 +210,7 @@
                     <label for="date-formed" class="block text-gray-300">Date Formed</label>
                     <p class="text-gray-200">{dateFormed}</p>
                 </div>
-                {#if isAdmin}
+                {#if isDataManager}
                     <button class="ml-2 p-2 bg-blue-600 hover:bg-blue-500 rounded-full" on:click={() => openEditModal("date-formed")}>
                         <EditIcon className="w-4 h-4 text-white" />
                     </button>
@@ -221,7 +221,7 @@
                 <div>
                     <label for="country" class="block text-gray-300">Country</label>
                 </div>
-                {#if isAdmin}
+                {#if isDataManager}
                     <button class="ml-2 p-2 bg-blue-600 hover:bg-blue-500 rounded-full" on:click={() => openEditModal("country")}>
                         <EditIcon className="w-4 h-4 text-white" />
                     </button>

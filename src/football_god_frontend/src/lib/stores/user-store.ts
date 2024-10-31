@@ -179,6 +179,10 @@ function createUserStore() {
     return new AdminService().isAdmin();
   }
 
+  async function isDataManager(): Promise<boolean> {
+    return new AdminService().isDataManager();
+  }
+
   return {
     subscribe,
     sync,
@@ -187,6 +191,7 @@ function createUserStore() {
     isUsernameAvailable,
     cacheProfile,
     withdrawFPL,
+    isDataManager,
     isAdmin,
   };
 }

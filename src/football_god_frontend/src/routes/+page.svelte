@@ -144,15 +144,3 @@
     
   {/if}
 </Layout>
-
-<style>
-  .overlay-container {
-    position: relative;
-  }
-
-  .overlay-panel {
-    position: absolute;
-    bottom: 0;
-    right: 0;
-  }
-</style>

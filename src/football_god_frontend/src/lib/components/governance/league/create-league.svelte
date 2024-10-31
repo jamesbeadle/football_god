@@ -137,7 +137,7 @@
 <Modal {visible} on:nnsClose={cancelModal}>
   <div class="mx-4 p-4">
     <div class="flex justify-between items-center my-2">
-      <h3 class="default-header">Transfer Player</h3>
+      <h3 class="default-header">Create New League</h3>
       <button class="times-button" on:click={cancelModal}>&times;</button>
     </div>
 

@@ -9,14 +9,14 @@
   import type { CountryDTO, FootballLeagueDTO } from "../../../../declarations/football_god_backend/football_god_backend.did";
     import { countryStore } from "$lib/stores/country-store";
 
-  let isAdmin = false; 
+  let isDataManager = false; 
   let showAddLeague = false;
   let leagues: FootballLeagueDTO[] = [];
   let countries: CountryDTO[] = [];
 
   onMount(async () => {
     try {
-      isAdmin = await userStore.isAdmin();
+      isDataManager = await userStore.isDataManager();
       leagues = await leagueStore.getLeagues();
       countries = await countryStore.getCountries();
     } catch (error) {
@@ -39,7 +39,7 @@
     <div class="content-panel w-full flex flex-col bg-gray-900 p-6 rounded-lg shadow-lg">
       <div class="flex justify-between items-center w-full mb-4">
         <p class="text-3xl font-bold text-white">League Explorer</p>
-        {#if isAdmin}
+        {#if isDataManager}
           <button 
             class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg transition duration-300"
             on:click={() => { showAddLeague = true; }}>
