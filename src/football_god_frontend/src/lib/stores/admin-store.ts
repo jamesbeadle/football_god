@@ -10,6 +10,7 @@ import type {
   LoanPlayerDTO,
   MoveFixtureDTO,
   PostponeFixtureDTO,
+  RemoveClubDTO,
   SubmitFixtureDataDTO,
   SystemStateDTO,
   TransferPlayerDTO,
@@ -84,10 +85,26 @@ function createAdminStore() {
     return new AdminService().calculateLeaderboards(applicationName);
   }
 
+  async function calculateWeeklyRewards(
+    applicationName: string,
+    gameweek: number,
+  ): Promise<any> {
+    return new AdminService().calculateWeeklyRewards(applicationName, gameweek);
+  }
+
+  async function payWeeklyRewards(
+    applicationName: string,
+    gameweek: number,
+  ): Promise<any> {
+    return new AdminService().payWeeklyRewards(applicationName, gameweek);
+  }
+
   async function createClub(dto: CreateClubDTO): Promise<any> {
-    console.log("dto");
-    console.log(dto);
     return new AdminService().createClub(dto);
+  }
+
+  async function removeClub(dto: RemoveClubDTO): Promise<any> {
+    return new AdminService().removeClub(dto);
   }
 
   async function getFixtures(
@@ -119,7 +136,10 @@ function createAdminStore() {
     snapshotManagers,
     calculateGameweekScores,
     calculateLeaderboards,
+    calculateWeeklyRewards,
+    payWeeklyRewards,
     createClub,
+    removeClub,
     getSystemState,
     getFixtures,
     moveFixture,

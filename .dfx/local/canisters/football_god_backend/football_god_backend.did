@@ -170,6 +170,11 @@ type RescheduleFixtureDTO =
    updatedFixtureDate: int;
    updatedFixtureGameweek: GameweekNumber;
  };
+type RemoveClubDTO = 
+ record {
+   clubId: ClubId;
+   leagueId: LeagueId;
+ };
 type RecallPlayerDTO = record {playerId: ClubId;};
 type PromoteClubDTO = 
  record {
@@ -371,6 +376,7 @@ type AddInitialFixturesDTO = record {seasonFixtures: vec FixtureDTO;};
 service : {
   calculateGameweekScores: (text) -> (Result);
   calculateLeaderboards: (text) -> (Result);
+  calculateWeeklyRewards: (text, GameweekNumber) -> (Result);
   executeAddInitialFixtures: (LeagueId, AddInitialFixturesDTO) -> ();
   executeCreateClub: (CreateClubDTO) -> ();
   executeCreateLeague: (CreateLeagueDTO) -> ();
@@ -380,6 +386,7 @@ service : {
   executePostponeFixture: (PostponeFixtureDTO) -> ();
   executePromoteClub: (LeagueId, PromoteClubDTO) -> ();
   executeRecallPlayer: (LeagueId, RecallPlayerDTO) -> ();
+  executeRemoveClub: (RemoveClubDTO) -> ();
   executeRescheduleFixture: (LeagueId, RescheduleFixtureDTO) -> ();
   executeRetirePlayer: (LeagueId, RetirePlayerDTO) -> ();
   executeRevaluePlayerDown: (LeagueId, RevaluePlayerDownDTO) -> ();
@@ -401,6 +408,7 @@ service : {
   getSystemState: (text) -> (Result_2) composite_query;
   isAdmin: () -> (Result_1);
   isDataManager: () -> (Result_1);
+  payWeeklyRewards: (text, GameweekNumber) -> (Result);
   snapshotManagers: (text) -> (Result);
   updateSystemState: (text, UpdateSystemStateDTO) -> (Result);
   validateAddInitialFixtures: (AddInitialFixturesDTO) -> (RustResult) query;

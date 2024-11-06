@@ -10,7 +10,7 @@
   import CreatePlayer from "$lib/components/governance/player/create-player.svelte";
   import UpdatePlayer from "$lib/components/governance/player/update-player.svelte";
   import TransferPlayer from "$lib/components/governance/player/transfer-player.svelte";
-    import { countryStore } from "$lib/stores/country-store";
+  import { countryStore } from "$lib/stores/country-store";
 
   let selectedLeagueId: number = 1;
   let selectedPositionId: number = 0;

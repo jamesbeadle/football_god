@@ -22,6 +22,8 @@
     import SnapshotFantasyTeams from "$lib/components/admin/snapshot-fantasy-teams.svelte";
     import CalculateGameweekScores from "$lib/components/admin/calculate-gameweek-scores.svelte";
     import CalculateLeadearboards from "$lib/components/admin/calculate-leadearboards.svelte";
+    import CalculateWeeklyRewards from "$lib/components/admin/calculate-weekly-rewards.svelte";
+    import PayWeeklyRewards from "$lib/components/admin/pay-weekly-rewards.svelte";
   
     let showRevaluePlayerUpModal: boolean = false;
     let showRevaluePlayerDownModal: boolean = false;
@@ -46,6 +48,8 @@
     let showSnapshotManagerTeamsModal: boolean = false;
     let showCalculateGameweekScoresModal: boolean = false;
     let showCalculateLeaderboardsModal: boolean = false;
+    let showCalculateWeeklyRewardsModal: boolean = false;
+    let showPayWeeklyRewardsModal: boolean = false;
     
     function displayRevaluePlayerUpModal(): void {
       showRevaluePlayerUpModal = true;
@@ -225,6 +229,18 @@
     function hideCalculateLeaderboards(): void {
       showCalculateLeaderboardsModal = false;
     }
+    function displayCalculateWeeklyRewards(): void {
+      showCalculateWeeklyRewardsModal = true;
+    }
+    function hideCalculateWeeklyRewards(): void {
+      showCalculateWeeklyRewardsModal = false;
+    }
+    function displayPayWeeklyRewards(): void {
+      showPayWeeklyRewardsModal = true;
+    }
+    function hidePayWeeklyRewards(): void {
+      showPayWeeklyRewardsModal = false;
+    }
 
   </script>
   
@@ -355,6 +371,14 @@
       <CalculateLeadearboards visible={showCalculateLeaderboardsModal} closeModal={hideCalculateLeaderboards} />
     {/if}
 
+    {#if showCalculateWeeklyRewardsModal}
+      <CalculateWeeklyRewards visible={showCalculateWeeklyRewardsModal} closeModal={hideCalculateWeeklyRewards} />
+    {/if}
+
+    {#if showPayWeeklyRewardsModal}
+      <PayWeeklyRewards visible={showPayWeeklyRewardsModal} closeModal={hidePayWeeklyRewards} />
+    {/if}
+
     <div class="m-4">
       <div class="bg-panel rounded-md">
         <ul
@@ -404,6 +428,26 @@
               <button
                 class="rounded brand-button px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full"
                 on:click={displayCalculateLeaderboards}>Calculate Leaderboards</button
+              >
+            </div>
+          </div>
+          <div
+            class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"
+          >
+            <div class="flex items-center space-x-4 w-full">
+              <button
+                class="rounded brand-button px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full"
+                on:click={displayCalculateWeeklyRewards}>Calculate Weekly Rewards</button
+              >
+            </div>
+          </div>
+          <div
+            class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"
+          >
+            <div class="flex items-center space-x-4 w-full">
+              <button
+                class="rounded brand-button px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full"
+                on:click={displayPayWeeklyRewards}>Pay weekly rewards</button
               >
             </div>
           </div>

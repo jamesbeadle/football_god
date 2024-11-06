@@ -11,6 +11,7 @@ import type {
   LoanPlayerDTO,
   MoveFixtureDTO,
   PostponeFixtureDTO,
+  RemoveClubDTO,
   SubmitFixtureDataDTO,
   SystemStateDTO,
   TransferPlayerDTO,
@@ -167,6 +168,39 @@ export class AdminService {
     if (isError(result)) throw new Error("Failed to calculate leaderboards");
   }
 
+  async calculateWeeklyRewards(
+    applicationName: string,
+    gameweek: number,
+  ): Promise<void> {
+    const identityActor: any = await ActorFactory.createIdentityActor(
+      authStore,
+      process.env.FOOTBALL_GOD_BACKEND_CANISTER_ID ?? "",
+    );
+
+    const result = await identityActor.calculateWeeklyRewards(
+      applicationName,
+      gameweek,
+    );
+    if (isError(result)) throw new Error("Failed to calculate weekly rewards");
+  }
+
+  async payWeeklyRewards(
+    applicationName: string,
+    gameweek: number,
+  ): Promise<void> {
+    const identityActor: any = await ActorFactory.createIdentityActor(
+      authStore,
+      process.env.FOOTBALL_GOD_BACKEND_CANISTER_ID ?? "",
+    );
+
+    const result = await identityActor.payWeeklyRewards(
+      applicationName,
+      gameweek,
+    );
+    console.log(result);
+    if (isError(result)) throw new Error("Failed to pay weekly rewards");
+  }
+
   async createClub(dto: CreateClubDTO): Promise<void> {
     const identityActor: any = await ActorFactory.createIdentityActor(
       authStore,
@@ -175,6 +209,16 @@ export class AdminService {
 
     const result = await identityActor.executeCreateClub(dto);
     if (isError(result)) throw new Error("Failed to create club");
+  }
+
+  async removeClub(dto: RemoveClubDTO): Promise<void> {
+    const identityActor: any = await ActorFactory.createIdentityActor(
+      authStore,
+      process.env.FOOTBALL_GOD_BACKEND_CANISTER_ID ?? "",
+    );
+
+    const result = await identityActor.executeRemoveClub(dto);
+    if (isError(result)) throw new Error("Failed to remove club");
   }
 
   async getSystemState(

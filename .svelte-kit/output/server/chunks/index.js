@@ -3543,7 +3543,7 @@ const options = {
 		<div class="error">
 			<span class="status">` + status + '</span>\n			<div class="message">\n				<h1>' + message + "</h1>\n			</div>\n		</div>\n	</body>\n</html>\n"
   },
-  version_hash: "1xfhwym"
+  version_hash: "11nfnxb"
 };
 async function get_hooks() {
   return {};
@@ -4210,6 +4210,7 @@ const idlFactory = ({ IDL }) => {
     "AlreadyExists": IDL.Null
   });
   const Result = IDL.Variant({ "ok": IDL.Null, "err": Error2 });
+  const GameweekNumber = IDL.Nat8;
   const LeagueId = IDL.Nat16;
   const FixtureStatusType = IDL.Variant({
     "Unplayed": IDL.Null,
@@ -4242,7 +4243,6 @@ const idlFactory = ({ IDL }) => {
     "eventEndMinute": IDL.Nat8,
     "eventType": PlayerEventType
   });
-  const GameweekNumber = IDL.Nat8;
   const FixtureDTO = IDL.Record({
     "id": IDL.Nat32,
     "status": FixtureStatusType,
@@ -4326,6 +4326,10 @@ const idlFactory = ({ IDL }) => {
     "primaryColourHex": IDL.Text
   });
   const RecallPlayerDTO = IDL.Record({ "playerId": ClubId });
+  const RemoveClubDTO = IDL.Record({
+    "clubId": ClubId,
+    "leagueId": LeagueId
+  });
   const RescheduleFixtureDTO = IDL.Record({
     "postponedFixtureId": FixtureId,
     "updatedFixtureGameweek": GameweekNumber,
@@ -4495,6 +4499,11 @@ const idlFactory = ({ IDL }) => {
   return IDL.Service({
     "calculateGameweekScores": IDL.Func([IDL.Text], [Result], []),
     "calculateLeaderboards": IDL.Func([IDL.Text], [Result], []),
+    "calculateWeeklyRewards": IDL.Func(
+      [IDL.Text, GameweekNumber],
+      [Result],
+      []
+    ),
     "executeAddInitialFixtures": IDL.Func(
       [LeagueId, AddInitialFixturesDTO],
       [],
@@ -4508,6 +4517,7 @@ const idlFactory = ({ IDL }) => {
     "executePostponeFixture": IDL.Func([PostponeFixtureDTO], [], []),
     "executePromoteClub": IDL.Func([LeagueId, PromoteClubDTO], [], []),
     "executeRecallPlayer": IDL.Func([LeagueId, RecallPlayerDTO], [], []),
+    "executeRemoveClub": IDL.Func([RemoveClubDTO], [], []),
     "executeRescheduleFixture": IDL.Func(
       [LeagueId, RescheduleFixtureDTO],
       [],
@@ -4537,6 +4547,7 @@ const idlFactory = ({ IDL }) => {
     "getSystemState": IDL.Func([IDL.Text], [Result_2], ["composite_query"]),
     "isAdmin": IDL.Func([], [Result_1], []),
     "isDataManager": IDL.Func([], [Result_1], []),
+    "payWeeklyRewards": IDL.Func([IDL.Text, GameweekNumber], [Result], []),
     "snapshotManagers": IDL.Func([IDL.Text], [Result], []),
     "updateSystemState": IDL.Func(
       [IDL.Text, UpdateSystemStateDTO],
@@ -4899,6 +4910,31 @@ class AdminService {
     if (isError(result))
       throw new Error("Failed to calculate leaderboards");
   }
+  async calculateWeeklyRewards(applicationName, gameweek) {
+    const identityActor = await ActorFactory.createIdentityActor(
+      authStore,
+      define_process_env_default$2.FOOTBALL_GOD_BACKEND_CANISTER_ID
+    );
+    const result = await identityActor.calculateWeeklyRewards(
+      applicationName,
+      gameweek
+    );
+    if (isError(result))
+      throw new Error("Failed to calculate weekly rewards");
+  }
+  async payWeeklyRewards(applicationName, gameweek) {
+    const identityActor = await ActorFactory.createIdentityActor(
+      authStore,
+      define_process_env_default$2.FOOTBALL_GOD_BACKEND_CANISTER_ID
+    );
+    const result = await identityActor.payWeeklyRewards(
+      applicationName,
+      gameweek
+    );
+    console.log(result);
+    if (isError(result))
+      throw new Error("Failed to pay weekly rewards");
+  }
   async createClub(dto) {
     const identityActor = await ActorFactory.createIdentityActor(
       authStore,
@@ -4907,6 +4943,15 @@ class AdminService {
     const result = await identityActor.executeCreateClub(dto);
     if (isError(result))
       throw new Error("Failed to create club");
+  }
+  async removeClub(dto) {
+    const identityActor = await ActorFactory.createIdentityActor(
+      authStore,
+      define_process_env_default$2.FOOTBALL_GOD_BACKEND_CANISTER_ID
+    );
+    const result = await identityActor.executeRemoveClub(dto);
+    if (isError(result))
+      throw new Error("Failed to remove club");
   }
   async getSystemState(applicationName) {
     const identityActor = await ActorFactory.createIdentityActor(
@@ -5186,10 +5231,17 @@ function createAdminStore() {
   async function calculateLeaderboards(applicationName) {
     return new AdminService().calculateLeaderboards(applicationName);
   }
+  async function calculateWeeklyRewards(applicationName, gameweek) {
+    return new AdminService().calculateWeeklyRewards(applicationName, gameweek);
+  }
+  async function payWeeklyRewards(applicationName, gameweek) {
+    return new AdminService().payWeeklyRewards(applicationName, gameweek);
+  }
   async function createClub(dto) {
-    console.log("dto");
-    console.log(dto);
     return new AdminService().createClub(dto);
+  }
+  async function removeClub(dto) {
+    return new AdminService().removeClub(dto);
   }
   async function getFixtures(dto) {
     return new AdminService().getFixtures(dto);
@@ -5214,7 +5266,10 @@ function createAdminStore() {
     snapshotManagers,
     calculateGameweekScores,
     calculateLeaderboards,
+    calculateWeeklyRewards,
+    payWeeklyRewards,
     createClub,
+    removeClub,
     getSystemState,
     getFixtures,
     moveFixture,
@@ -5320,7 +5375,7 @@ const Page$6 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
 const Page$5 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
   return `${validate_component(Layout, "Layout").$$render($$result, {}, {}, {
     default: () => {
-      return `${``} ${``}  ${``} ${``} ${``} ${``} ${``} ${``} ${``} ${``} ${``} ${``} ${``} ${``} ${``} ${``} ${``} ${``} ${``} ${``} <div class="m-4"><div class="bg-panel rounded-md"><ul class="flex rounded-t-lg bg-light-gray border-b border-gray-700 px-4 pt-2" data-svelte-h="svelte-np8kws"><li class="mr-4 active-tab"><button class="text-white">Raise Proposal</button></li></ul> <p class="m-4" data-svelte-h="svelte-1aex0bi">Application Triggers</p> <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mt-4 mx-4 mb-4"><div class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"><div class="flex items-center space-x-4 w-full"><button class="rounded brand-button px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full" data-svelte-h="svelte-1rsj9ys">Update System State</button></div></div> <div class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"><div class="flex items-center space-x-4 w-full"><button class="rounded brand-button px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full" data-svelte-h="svelte-1mah1io">Snapshot Manager Teams</button></div></div> <div class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"><div class="flex items-center space-x-4 w-full"><button class="rounded brand-button px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full" data-svelte-h="svelte-7kkkey">Calculate Gameweek Scores</button></div></div> <div class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"><div class="flex items-center space-x-4 w-full"><button class="rounded brand-button px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full" data-svelte-h="svelte-1jcwn94">Calculate Leaderboards</button></div></div></div></div></div>`;
+      return `${``} ${``}  ${``} ${``} ${``} ${``} ${``} ${``} ${``} ${``} ${``} ${``} ${``} ${``} ${``} ${``} ${``} ${``} ${``} ${``} ${``} ${``} <div class="m-4"><div class="bg-panel rounded-md"><ul class="flex rounded-t-lg bg-light-gray border-b border-gray-700 px-4 pt-2" data-svelte-h="svelte-np8kws"><li class="mr-4 active-tab"><button class="text-white">Raise Proposal</button></li></ul> <p class="m-4" data-svelte-h="svelte-1aex0bi">Application Triggers</p> <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mt-4 mx-4 mb-4"><div class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"><div class="flex items-center space-x-4 w-full"><button class="rounded brand-button px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full" data-svelte-h="svelte-1rsj9ys">Update System State</button></div></div> <div class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"><div class="flex items-center space-x-4 w-full"><button class="rounded brand-button px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full" data-svelte-h="svelte-1mah1io">Snapshot Manager Teams</button></div></div> <div class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"><div class="flex items-center space-x-4 w-full"><button class="rounded brand-button px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full" data-svelte-h="svelte-7kkkey">Calculate Gameweek Scores</button></div></div> <div class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"><div class="flex items-center space-x-4 w-full"><button class="rounded brand-button px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full" data-svelte-h="svelte-1jcwn94">Calculate Leaderboards</button></div></div> <div class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"><div class="flex items-center space-x-4 w-full"><button class="rounded brand-button px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full" data-svelte-h="svelte-1uagjpk">Calculate Weekly Rewards</button></div></div> <div class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"><div class="flex items-center space-x-4 w-full"><button class="rounded brand-button px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full" data-svelte-h="svelte-1ei9rog">Pay weekly rewards</button></div></div></div></div></div>`;
     }
   })}`;
 });

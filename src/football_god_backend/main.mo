@@ -528,9 +528,54 @@ actor Self {
     };
   };
 
+  public shared ({ caller }) func calculateWeeklyRewards(applicationName: Text, gameweek: FootballTypes.GameweekNumber) : async Result.Result<(), T.Error> {
+    assert checkAdmin(Principal.toText(caller));
+    switch(applicationName){
+      case "OpenFPL" {
+        let backend_canister = actor (Environment.OPENFPL_BACKEND_CANISTER_ID) : actor {
+          calculateWeeklyRewards : (gameweek: FootballTypes.GameweekNumber) -> async Result.Result<(), T.Error>;
+        };
+        return await backend_canister.calculateWeeklyRewards(gameweek);
+      };
+      case "OpenWSL" {
+        
+        let backend_canister = actor (Environment.OPENWSL_BACKEND_CANISTER_ID) : actor {
+          calculateWeeklyRewards : (gameweek: FootballTypes.GameweekNumber) -> async Result.Result<(), T.Error>;
+        };
+        return await backend_canister.calculateWeeklyRewards(gameweek);
+
+      };
+      case _ {
+        return #err(#NotFound);
+      }
+    };
+  };
+
+  public shared ({ caller }) func payWeeklyRewards(applicationName: Text, gameweek: FootballTypes.GameweekNumber) : async Result.Result<(), T.Error> {
+    assert checkAdmin(Principal.toText(caller));
+    switch(applicationName){
+      case "OpenFPL" {
+        let backend_canister = actor (Environment.OPENFPL_BACKEND_CANISTER_ID) : actor {
+          payWeeklyRewards : (gameweek: FootballTypes.GameweekNumber) -> async Result.Result<(), T.Error>;
+        };
+        return await backend_canister.payWeeklyRewards(gameweek);
+      };
+      case "OpenWSL" {
+        
+        let backend_canister = actor (Environment.OPENWSL_BACKEND_CANISTER_ID) : actor {
+          payWeeklyRewards : (gameweek: FootballTypes.GameweekNumber) -> async Result.Result<(), T.Error>;
+        };
+        return await backend_canister.payWeeklyRewards(gameweek);
+      };
+      case _ {
+        return #err(#NotFound);
+      }
+    };
+  };
+
   public shared ({ caller }) func executeCreateClub(dto : GovernanceDTOs.CreateClubDTO) : async () {
     //assert Principal.toText(caller) == NetworkEnvironmentVariables.SNS_GOVERNANCE_CANISTER_ID;
-    assert checkAdmin(Principal.toText(caller));
+    assert checkDataManager(Principal.toText(caller));
     let data_canister = actor (Environment.DATA_CANISTER_ID) : actor {
       createClub : (dto : GovernanceDTOs.CreateClubDTO) -> async Result.Result<(), T.Error>;
     };
@@ -538,9 +583,19 @@ actor Self {
     return;
   };
 
+  public shared ({ caller }) func executeRemoveClub(dto : GovernanceDTOs.RemoveClubDTO) : async () {
+    //assert Principal.toText(caller) == NetworkEnvironmentVariables.SNS_GOVERNANCE_CANISTER_ID;
+    assert checkDataManager(Principal.toText(caller));
+    let data_canister = actor (Environment.DATA_CANISTER_ID) : actor {
+      removeClub : (dto : GovernanceDTOs.RemoveClubDTO) -> async Result.Result<(), T.Error>;
+    };
+    let _ = await data_canister.removeClub(dto);
+    return;
+  };
+
   public shared composite query  ({ caller }) func getSystemState(applicationName: Text) : async Result.Result<ResponseDTOs.SystemStateDTO, T.Error>  {
     //assert Principal.toText(caller) == NetworkEnvironmentVariables.SNS_GOVERNANCE_CANISTER_ID;
-    assert checkAdmin(Principal.toText(caller));
+    assert checkDataManager(Principal.toText(caller));
     switch(applicationName){
       case "OpenFPL" {
         
@@ -565,7 +620,7 @@ actor Self {
 
   public shared composite query  ({ caller }) func getSeasons(leagueId: FootballTypes.LeagueId) : async Result.Result<[DTOs.SeasonDTO], T.Error>  {
     //assert Principal.toText(caller) == NetworkEnvironmentVariables.SNS_GOVERNANCE_CANISTER_ID;
-    assert checkAdmin(Principal.toText(caller));
+    assert checkDataManager(Principal.toText(caller));
     let data_canister = actor (Environment.DATA_CANISTER_ID) : actor {
       getSeasons : shared query (leagueId: FootballTypes.LeagueId) -> async Result.Result<[DTOs.SeasonDTO], T.Error>;
     };
@@ -574,7 +629,7 @@ actor Self {
 
   public shared composite query  ({ caller }) func getFixtures(dto: RequestDTOs.GetFixturesDTO) : async Result.Result<[DTOs.FixtureDTO], T.Error>  {
     //assert Principal.toText(caller) == NetworkEnvironmentVariables.SNS_GOVERNANCE_CANISTER_ID;
-    assert checkAdmin(Principal.toText(caller));
+    assert checkDataManager(Principal.toText(caller));
     let data_canister = actor (Environment.DATA_CANISTER_ID) : actor {
       getFixtures : shared query (dto: RequestDTOs.GetFixturesDTO) -> async Result.Result<[DTOs.FixtureDTO], T.Error>;
     };
