@@ -20,10 +20,14 @@
   import Tooltip from "$lib/components/tooltip.svelte";
   import RulesIcon from "$lib/icons/RulesIcon.svelte";
     import { userStore } from "$lib/stores/user-store";
+    import LeaguesIcon from "$lib/icons/LeaguesIcon.svelte";
+    import ShirtIcon from "$lib/icons/ShirtIcon.svelte";
 
   let isExpanded = writable(false);
   $: links = $authSignedInStore ? [
     { name: "Home", icon: HomeIcon, href: "/", admin: false },
+    { name: "Leagues", icon: LeaguesIcon, href: "/leagues", admin: false },
+    { name: "Players", icon: ShirtIcon, href: "/players", admin: false },
     { name: "Profile", icon: ProfileIcon, href: "/profile", admin: false },
     { name: "Governance", icon: RulesIcon, href: "/governance", admin: false },
     { name: "Admin", icon: StarIcon, href: "/admin", admin: true }

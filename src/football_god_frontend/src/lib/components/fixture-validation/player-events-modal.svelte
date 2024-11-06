@@ -3,6 +3,7 @@
   import { Modal } from "@dfinity/gix-components";
   import { getFlagComponent } from "$lib/utils/helpers";
   import type { PlayerDTO, PlayerEventData } from "../../../../../declarations/football_god_backend/football_god_backend.did";
+    import { onMount } from "svelte";
 
   export let visible = false;
   export let player: PlayerDTO;
@@ -33,36 +34,39 @@
     appearanceEnd < 0 ||
     appearanceEnd > 90;
 
-    $: if ($playerEventData.length > 0) {
-  goalMinutes = $playerEventData
-    .filter(event => "Goal" in event.eventType)
-    .map(event => event.eventStartMinute);
+    onMount(() => {
+      if ($playerEventData.length > 0) {
+        goalMinutes = $playerEventData
+          .filter(event => "Goal" in event.eventType)
+          .map(event => event.eventStartMinute);
 
-  assistMinutes = $playerEventData
-    .filter(event => "GoalAssisted" in event.eventType)
-    .map(event => event.eventStartMinute);
+        assistMinutes = $playerEventData
+          .filter(event => "GoalAssisted" in event.eventType)
+          .map(event => event.eventStartMinute);
 
-  ownGoalMinutes = $playerEventData
-    .filter(event => "OwnGoal" in event.eventType)
-    .map(event => event.eventStartMinute);
+        ownGoalMinutes = $playerEventData
+          .filter(event => "OwnGoal" in event.eventType)
+          .map(event => event.eventStartMinute);
 
-  penaltySaveMinutes = $playerEventData
-    .filter(event => "PenaltySaved" in event.eventType)
-    .map(event => event.eventStartMinute);
+        penaltySaveMinutes = $playerEventData
+          .filter(event => "PenaltySaved" in event.eventType)
+          .map(event => event.eventStartMinute);
 
-  penaltyMissedMinutes = $playerEventData
-    .filter(event => "PenaltyMissed" in event.eventType)
-    .map(event => event.eventStartMinute);
+        penaltyMissedMinutes = $playerEventData
+          .filter(event => "PenaltyMissed" in event.eventType)
+          .map(event => event.eventStartMinute);
 
-  keeperSaves = $playerEventData
-    .filter(event => "KeeperSave" in event.eventType)
-    .length;
+        keeperSaves = $playerEventData
+          .filter(event => "KeeperSave" in event.eventType)
+          .length;
 
-  const cardEvent = $playerEventData.find(
-    event => "YellowCard" in event.eventType || "RedCard" in event.eventType
-  );
-  selectedCard = cardEvent ? ("YellowCard" in cardEvent.eventType ? 1 : 2) : 0;
-}
+        const cardEvent = $playerEventData.find(
+          event => "YellowCard" in event.eventType || "RedCard" in event.eventType
+        );
+        selectedCard = cardEvent ? ("YellowCard" in cardEvent.eventType ? 1 : 2) : 0;
+      }
+  });
+  
 
 
   function addPlayerEvents() {
@@ -180,22 +184,27 @@
   }
 
   function removeGoal(minute: number) {
+    playerEventData.set($playerEventData.filter((m) => m.eventStartMinute !== minute && Object.keys(m.eventType)[0] != "Goal"));
     goalMinutes = goalMinutes.filter((m) => m !== minute);
   }
 
   function removeAssist(minute: number) {
+    playerEventData.set($playerEventData.filter((m) => m.eventStartMinute !== minute && Object.keys(m.eventType)[0] != "GoalAssisted"));
     assistMinutes = assistMinutes.filter((m) => m !== minute);
   }
 
   function removePenaltySave(minute: number) {
+    playerEventData.set($playerEventData.filter((m) => m.eventStartMinute !== minute && Object.keys(m.eventType)[0] != "PenaltySaved"));
     penaltySaveMinutes = penaltySaveMinutes.filter((m) => m !== minute);
   }
 
   function removePenaltyMiss(minute: number) {
+    playerEventData.set($playerEventData.filter((m) => m.eventStartMinute !== minute && Object.keys(m.eventType)[0] != "PenaltyMissed"));
     penaltyMissedMinutes = penaltyMissedMinutes.filter((m) => m !== minute);
   }
 
   function removeOwnGoal(minute: number) {
+    playerEventData.set($playerEventData.filter((m) => m.eventStartMinute !== minute && Object.keys(m.eventType)[0] != "OwnGoal"));
     ownGoalMinutes = ownGoalMinutes.filter((m) => m !== minute);
   }
 </script>
