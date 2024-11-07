@@ -11,6 +11,7 @@
   import UpdatePlayer from "$lib/components/governance/player/update-player.svelte";
   import TransferPlayer from "$lib/components/governance/player/transfer-player.svelte";
   import { countryStore } from "$lib/stores/country-store";
+    import SetFreeAgent from "$lib/components/governance/player/set-free-agent.svelte";
 
   let selectedLeagueId: number = 1;
   let selectedPositionId: number = 0;
@@ -43,6 +44,7 @@
   let showCreatePlayerModal = false;
   let showUpdatePlayerModal = false;
   let showSetPlayerInjuryModal = false;
+  let showSetFreeAgentModal = false;
 
   let selectedPlayerId = 0;
   let searchSurname = "";
@@ -174,6 +176,11 @@
       showUnretirePlayerModal = true;
   }
 
+  function loadSetFreeAgent(playerId: number) {
+      selectedPlayerId = playerId;
+      showSetFreeAgentModal = true;
+  }
+
   function closeModal(){
       selectedPlayerId = 0;
       showTransferPlayerModal = false;
@@ -185,6 +192,8 @@
       showRevaluePlayerDownModal = false;
       showRetirePlayerModal = false;
       showUnretirePlayerModal = false;
+      showSetPlayerInjuryModal = false;
+      showSetFreeAgentModal = false;
   }
 
   function handleClickOutside(event: MouseEvent) {
@@ -302,6 +311,7 @@
                       <button class="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100" on:click={() => loadRevaluePlayerDown(player.id)}>Revalue Player Down</button>
                       <button class="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100" on:click={() => loadRetirePlayer(player.id)}>Retire Player</button>
                       <button class="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100" on:click={() => loadUnretirePlayer(player.id)}>Unretire Player</button>
+                      <button class="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100" on:click={() => loadSetFreeAgent(player.id)}>Set Player As Free Agent</button>
                     </div>
                   {/if}
                 </div>
@@ -332,4 +342,9 @@
 {#if selectedPlayerId > 0 && showTransferPlayerModal}
   {@const selectedPlayer = filteredPlayers.find(x => x.id == selectedPlayerId) }
   <TransferPlayer visible={showTransferPlayerModal} {closeModal} selectedClubId={selectedPlayer ? selectedPlayer.clubId ?? 0 : 0} {selectedPlayerId} {selectedLeagueId} />
+{/if}
+
+{#if selectedPlayerId > 0 && showSetFreeAgentModal}
+  {@const selectedPlayer = filteredPlayers.find(x => x.id == selectedPlayerId) }
+  <SetFreeAgent visible={showSetFreeAgentModal} {closeModal} selectedClubId={selectedPlayer ? selectedPlayer.clubId ?? 0 : 0} {selectedPlayerId} {selectedLeagueId} />
 {/if}

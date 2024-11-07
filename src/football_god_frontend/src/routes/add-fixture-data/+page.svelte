@@ -20,21 +20,22 @@
   let clubs: ClubDTO[] = [];
   let players: PlayerDTO[] = [];
   let fixture: FixtureDTO | undefined;
+  let selectedTeam: ClubDTO | null = null;
   let homeTeam: ClubDTO | null;
   let awayTeam: ClubDTO | null;
 
+  let activeTab: string = "home";
   let showPlayerSelectionModal = false;
   let showPlayerEventModal = false;
   let showClearDraftModal = false;
   let showConfirmDataModal = false;
 
+  let selectedPlayer: PlayerDTO | null = null;
+
   let teamPlayers = writable<PlayerDTO[]>([]);
   let selectedPlayers = writable<PlayerDTO[]>([]);
-
-  let selectedTeam: ClubDTO | null = null;
-  let selectedPlayer: PlayerDTO | null = null;
   let playerEventData = writable<PlayerEventData[]>([]);
-  let activeTab: string = "home";
+
   let homeGoalsText = "";
   let awayGoalsText = "";
   let homeAssistsText = "";
@@ -112,17 +113,9 @@
         playerEventData: $playerEventData
       };
 
-      console.log("fixture data submission test")
-      console.log(dto)
 
-      return;
       await adminStore.submitFixtureData(dto);
-      /*
-      await adminStore.submitFixtureData(
-        fixtureId,
-        
-      );
-      */
+      
       localStorage.removeItem(`fixtureDraft_${fixtureId}`);
       toastsShow({
         text: "Fixture data saved.",
@@ -158,15 +151,13 @@
   }
 
   function saveDraft() {
-    let uniquePlayerIds = new Set();
+    let uniquePlayers = new Set<PlayerDTO>();
     $playerEventData.forEach((event) => {
-      uniquePlayerIds.add(event.playerId);
+      uniquePlayers.add(players.find(x => x.id == event.playerId)!);
     });
 
-    let playersFromEvents = Array.from(uniquePlayerIds);
-
     const draftData = {
-      playersFromEvents: playersFromEvents,
+      allPlayers: Array.from(uniquePlayers),
       playerEventData: $playerEventData,
     };
     const draftKey = `fixtureDraft_${fixtureId}`;
@@ -181,6 +172,7 @@
 
   function clearDraft() {
     playerEventData = writable<PlayerEventData[]>([]);
+    selectedPlayers = writable<PlayerDTO[]>([]);
     localStorage.removeItem(`fixtureDraft_${fixtureId}`);
     toastsShow({
       text: "Draft cleared.",
@@ -199,6 +191,11 @@
   function handleEditPlayerEvents(player: PlayerDTO) {
     selectedPlayer = player;
     showPlayerEventModal = true;
+  }
+
+  function handleRemovePlayer(player: PlayerDTO) {
+    selectedPlayers.set($selectedPlayers.filter((x) => x.id != player.id));
+    playerEventData.set($playerEventData.filter(x => x.playerId != player.id))
   }
 
   function closeEventPlayerEventsModal(): void {
@@ -346,6 +343,14 @@
                     ? $playerEventData?.filter((e) => e.playerId === player.id)
                         .length
                     : 0}
+                </div>
+                <div class="w-1/6 px-4">
+                  <button
+                    on:click={() => handleRemovePlayer(player)}
+                    class="rounded brand-button px-3 sm:px-2 px-3 py-1 ml-1"
+                  >
+                    Remove Player
+                  </button>
                 </div>
                 <div class="w-1/6 px-4">
                   <button
@@ -525,6 +530,7 @@
     {selectedTeam}
     closeModal={closeSelectPlayersModal}
     {selectedPlayers}
+    {playerEventData}
   />
 {/if}
 

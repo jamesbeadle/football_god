@@ -3543,7 +3543,7 @@ const options = {
 		<div class="error">
 			<span class="status">` + status + '</span>\n			<div class="message">\n				<h1>' + message + "</h1>\n			</div>\n		</div>\n	</body>\n</html>\n"
   },
-  version_hash: "x3zgzh"
+  version_hash: "5uwf7h"
 };
 async function get_hooks() {
   return {};
@@ -4349,6 +4349,11 @@ const idlFactory = ({ IDL }) => {
     "seasonId": SeasonId,
     "gameweek": GameweekNumber
   });
+  const SetFreeAgentDTO = IDL.Record({
+    "clubId": ClubId,
+    "playerId": ClubId,
+    "leagueId": LeagueId
+  });
   const SetPlayerInjuryDTO = IDL.Record({
     "playerId": ClubId,
     "description": IDL.Text,
@@ -4530,6 +4535,7 @@ const idlFactory = ({ IDL }) => {
       []
     ),
     "executeRevaluePlayerUp": IDL.Func([LeagueId, RevaluePlayerUpDTO], [], []),
+    "executeSetFreeAgent": IDL.Func([LeagueId, SetFreeAgentDTO], [], []),
     "executeSetPlayerInjury": IDL.Func([LeagueId, SetPlayerInjuryDTO], [], []),
     "executeSubmitFixtureData": IDL.Func([SubmitFixtureDataDTO], [], []),
     "executeTransferPlayer": IDL.Func([LeagueId, TransferPlayerDTO], [], []),
@@ -4599,6 +4605,11 @@ const idlFactory = ({ IDL }) => {
     ),
     "validateRevaluePlayerUp": IDL.Func(
       [RevaluePlayerUpDTO],
+      [RustResult],
+      ["query"]
+    ),
+    "validateSetFreeAgent": IDL.Func(
+      [TransferPlayerDTO],
       [RustResult],
       ["query"]
     ),
@@ -4785,6 +4796,7 @@ function getImageURL(blob) {
 }
 var define_process_env_default$2 = { FOOTBALL_GOD_BACKEND_CANISTER_ID: "44kin-waaaa-aaaal-qbxra-cai", FOOTBALL_GOD_FRONTEND_CANISTER_ID: "43loz-3yaaa-aaaal-qbxrq-cai", DFX_NETWORK: "ic" };
 class AdminService {
+  actor;
   constructor() {
     this.actor = ActorFactory.createActor(
       idlFactory,
@@ -4845,6 +4857,15 @@ class AdminService {
     const result = await identityActor.executeTransferPlayer(leagueId, dto);
     if (isError(result))
       throw new Error("Failed to transfer player");
+  }
+  async setFreeAgent(leagueId, dto) {
+    const identityActor = await ActorFactory.createIdentityActor(
+      authStore,
+      define_process_env_default$2.FOOTBALL_GOD_BACKEND_CANISTER_ID
+    );
+    const result = await identityActor.executeSetFreeAgent(leagueId, dto);
+    if (isError(result))
+      throw new Error("Failed to set player as free agent");
   }
   async loanPlayer(leagueId, dto) {
     const identityActor = await ActorFactory.createIdentityActor(
@@ -5236,6 +5257,9 @@ function createAdminStore() {
   async function transferPlayer(leagueId, dto) {
     return new AdminService().transferPlayer(leagueId, dto);
   }
+  async function setFreeAgent(leagueId, dto) {
+    return new AdminService().setFreeAgent(leagueId, dto);
+  }
   async function loanPlayer(leagueId, dto) {
     return new AdminService().loanPlayer(leagueId, dto);
   }
@@ -5294,6 +5318,7 @@ function createAdminStore() {
     createLeague,
     updateLeague,
     transferPlayer,
+    setFreeAgent,
     loanPlayer,
     createPlayer,
     updatePlayer,
@@ -5318,13 +5343,13 @@ const Page$6 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
   let leagueId;
   let seasonId;
   let $playerEventData, $$unsubscribe_playerEventData = noop, $$subscribe_playerEventData = () => ($$unsubscribe_playerEventData(), $$unsubscribe_playerEventData = subscribe(playerEventData, ($$value) => $playerEventData = $$value), playerEventData);
-  let $selectedPlayers, $$unsubscribe_selectedPlayers;
+  let $selectedPlayers, $$unsubscribe_selectedPlayers = noop, $$subscribe_selectedPlayers = () => ($$unsubscribe_selectedPlayers(), $$unsubscribe_selectedPlayers = subscribe(selectedPlayers, ($$value) => $selectedPlayers = $$value), selectedPlayers);
   let $page, $$unsubscribe_page;
   $$unsubscribe_page = subscribe(page, (value) => $page = value);
   let showClearDraftModal = false;
   let showConfirmDataModal = false;
   let selectedPlayers = writable([]);
-  $$unsubscribe_selectedPlayers = subscribe(selectedPlayers, (value) => $selectedPlayers = value);
+  $$subscribe_selectedPlayers();
   let playerEventData = writable([]);
   $$subscribe_playerEventData();
   async function confirmFixtureData() {
@@ -5339,9 +5364,6 @@ const Page$6 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
         fixtureId,
         playerEventData: $playerEventData
       };
-      console.log("fixture data submission test");
-      console.log(dto);
-      return;
       await adminStore.submitFixtureData(dto);
       localStorage.removeItem(`fixtureDraft_${fixtureId}`);
       toastsShow({
@@ -5362,6 +5384,7 @@ const Page$6 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
   }
   function clearDraft() {
     $$subscribe_playerEventData(playerEventData = writable([]));
+    $$subscribe_selectedPlayers(selectedPlayers = writable([]));
     localStorage.removeItem(`fixtureDraft_${fixtureId}`);
     toastsShow({
       text: "Draft cleared.",
@@ -5519,10 +5542,10 @@ const Page$1 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
       })}</select></div> <div class="flex flex-col gap-4 md:flex-row mb-6"><div class="flex items-center w-full md:w-1/4"><label for="minValue" class="text-sm text-gray-400 mr-2" data-svelte-h="svelte-1dmjrnv">Min Value (M):</label> <input type="number" id="minValue" step="0.25" class="form-input bg-gray-800 text-white border border-gray-700 rounded-lg focus:ring focus:ring-blue-500 w-full"${add_attribute("value", minValue, 0)}></div> <div class="flex items-center w-full md:w-1/4"><label for="maxValue" class="text-sm text-gray-400 mr-2" data-svelte-h="svelte-em5yvn">Max Value (M):</label> <input type="number" id="maxValue" step="0.25" class="form-input bg-gray-800 text-white border border-gray-700 rounded-lg focus:ring focus:ring-blue-500 w-full"${add_attribute("value", maxValue, 0)}></div></div> <div class="flex flex-col md:flex-row gap-4 mb-6"><div class="flex items-center w-full md:w-1/2"><label for="searchSurname" class="text-sm text-gray-400 mr-2" data-svelte-h="svelte-17onh20">Search by Surname:</label> <input type="text" id="searchSurname" class="form-input bg-gray-800 text-white border border-gray-700 rounded-lg focus:ring focus:ring-blue-500 w-full"${add_attribute("value", searchSurname, 0)}></div> <button class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg" data-svelte-h="svelte-1ywfz24">Search</button></div> <div>${each(filteredPlayers.sort((a, b) => b.valueQuarterMillions - a.valueQuarterMillions), (player) => {
         return `<div class="flex flex-row items-center bg-gray-800 rounded-lg shadow p-4 w-full my-2 transition hover:bg-gray-700"><div class="flex items-center space-x-4 w-full"><p class="flex-grow text-lg md:text-sm text-white">${escape(player.firstName)} ${escape(player.lastName)} <br>
                   Player ID: ${escape(player.id)} <br>
-                  Value: £${escape(player.valueQuarterMillions / 4)}M</p> <div class="relative"><button class="text-white bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg" data-svelte-h="svelte-1yml4se">Actions</button> ${dropdownVisible === player.id ? `<div class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg z-10 text-sm dropdown-menu"><button class="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100" data-svelte-h="svelte-s4l5t9">Update Player</button> <button class="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100" data-svelte-h="svelte-1gw6zjx">Set Player Injury</button> <button class="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100" data-svelte-h="svelte-1yhdw75">Transfer Player</button> <button class="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100" data-svelte-h="svelte-1230zvj">Loan Player</button> <button class="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100" data-svelte-h="svelte-17xeyjp">Recall Player</button> <button class="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100" data-svelte-h="svelte-1rl0ayp">Revalue Player Up</button> <button class="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100" data-svelte-h="svelte-87qhjd">Revalue Player Down</button> <button class="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100" data-svelte-h="svelte-12h1n99">Retire Player</button> <button class="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100" data-svelte-h="svelte-4uwuhz">Unretire Player</button> </div>` : ``} </div></div> </div>`;
+                  Value: £${escape(player.valueQuarterMillions / 4)}M</p> <div class="relative"><button class="text-white bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg" data-svelte-h="svelte-1yml4se">Actions</button> ${dropdownVisible === player.id ? `<div class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg z-10 text-sm dropdown-menu"><button class="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100" data-svelte-h="svelte-s4l5t9">Update Player</button> <button class="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100" data-svelte-h="svelte-1gw6zjx">Set Player Injury</button> <button class="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100" data-svelte-h="svelte-1yhdw75">Transfer Player</button> <button class="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100" data-svelte-h="svelte-1230zvj">Loan Player</button> <button class="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100" data-svelte-h="svelte-17xeyjp">Recall Player</button> <button class="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100" data-svelte-h="svelte-1rl0ayp">Revalue Player Up</button> <button class="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100" data-svelte-h="svelte-87qhjd">Revalue Player Down</button> <button class="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100" data-svelte-h="svelte-12h1n99">Retire Player</button> <button class="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100" data-svelte-h="svelte-4uwuhz">Unretire Player</button> <button class="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100" data-svelte-h="svelte-r1q1bs">Set Player As Free Agent</button> </div>` : ``} </div></div> </div>`;
       })}</div></div></div></div>`;
     }
-  })} ${``} ${``} ${``} ${``}`;
+  })} ${``} ${``} ${``} ${``} ${``}`;
 });
 const Page = create_ssr_component(($$result, $$props, $$bindings, slots) => {
   return `${validate_component(Layout, "Layout").$$render($$result, {}, {}, {

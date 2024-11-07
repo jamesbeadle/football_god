@@ -11,6 +11,7 @@ import type {
   MoveFixtureDTO,
   PostponeFixtureDTO,
   RemoveClubDTO,
+  SetFreeAgentDTO,
   SubmitFixtureDataDTO,
   SystemStateDTO,
   TransferPlayerDTO,
@@ -27,6 +28,13 @@ function createAdminStore() {
     dto: TransferPlayerDTO,
   ): Promise<any> {
     return new AdminService().transferPlayer(leagueId, dto);
+  }
+
+  async function setFreeAgent(
+    leagueId: LeagueId,
+    dto: SetFreeAgentDTO,
+  ): Promise<any> {
+    return new AdminService().setFreeAgent(leagueId, dto);
   }
 
   async function loanPlayer(
@@ -129,6 +137,7 @@ function createAdminStore() {
     createLeague,
     updateLeague,
     transferPlayer,
+    setFreeAgent,
     loanPlayer,
     createPlayer,
     updatePlayer,

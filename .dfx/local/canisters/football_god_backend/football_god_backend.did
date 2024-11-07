@@ -85,6 +85,12 @@ type SetPlayerInjuryDTO =
    expectedEndDate: int;
    playerId: ClubId;
  };
+type SetFreeAgentDTO = 
+ record {
+   clubId: ClubId;
+   leagueId: LeagueId;
+   playerId: ClubId;
+ };
 type SeasonId = nat16;
 type SeasonDTO = 
  record {
@@ -391,6 +397,7 @@ service : {
   executeRetirePlayer: (LeagueId, RetirePlayerDTO) -> ();
   executeRevaluePlayerDown: (LeagueId, RevaluePlayerDownDTO) -> ();
   executeRevaluePlayerUp: (LeagueId, RevaluePlayerUpDTO) -> ();
+  executeSetFreeAgent: (LeagueId, SetFreeAgentDTO) -> ();
   executeSetPlayerInjury: (LeagueId, SetPlayerInjuryDTO) -> ();
   executeSubmitFixtureData: (SubmitFixtureDataDTO) -> ();
   executeTransferPlayer: (LeagueId, TransferPlayerDTO) -> ();
@@ -423,6 +430,7 @@ service : {
   validateRetirePlayer: (RetirePlayerDTO) -> (RustResult) query;
   validateRevaluePlayerDown: (RevaluePlayerDownDTO) -> (RustResult) query;
   validateRevaluePlayerUp: (RevaluePlayerUpDTO) -> (RustResult) query;
+  validateSetFreeAgent: (TransferPlayerDTO) -> (RustResult) query;
   validateSetPlayerInjury: (SetPlayerInjuryDTO) -> (RustResult) query;
   validateSubmitFixtureData: (SubmitFixtureDataDTO) -> (RustResult) query;
   validateTransferPlayer: (TransferPlayerDTO) -> (RustResult) query;

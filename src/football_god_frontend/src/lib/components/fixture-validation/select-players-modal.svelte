@@ -2,16 +2,18 @@
   import { Modal } from "@dfinity/gix-components";
   import { convertPlayerPosition, getFlagComponent } from "$lib/utils/helpers";
   import BadgeIcon from "$lib/icons/BadgeIcon.svelte";
-  import { writable, type Writable } from "svelte/store";
-  import type { ClubDTO, PlayerDTO } from "../../../../../declarations/football_god_backend/football_god_backend.did";
-
-  export let teamPlayers: Writable<PlayerDTO[]>;  
+  import { type Writable } from "svelte/store";
+  import type { ClubDTO, PlayerDTO, PlayerEventData } from "../../../../../declarations/football_god_backend/football_god_backend.did";
+  
   export let selectedTeam: ClubDTO;
-  export let selectedPlayers = writable<PlayerDTO[]>([]);
+  export let teamPlayers: Writable<PlayerDTO[]>;
+  export let selectedPlayers: Writable<PlayerDTO[]>;
+  export let playerEventData: Writable<PlayerEventData[]>;
   export let visible = false;
 
   function handlePlayerSelection(event: Event, player: PlayerDTO) {
     const input = event.target as HTMLInputElement;
+
     let allSelectedPlayers = $selectedPlayers;
     let allTeamPlayers = $teamPlayers;
     if (input.checked) {
@@ -21,10 +23,10 @@
       }
     } else {
       allSelectedPlayers = allSelectedPlayers.filter((x) => x.id !== player.id);
+      playerEventData.set($playerEventData.filter(x => x.playerId != player.id));
     }
     $selectedPlayers = allSelectedPlayers;
-    console.log("selected players updated")
-    console.log($selectedPlayers)
+    
   }
 
   export let closeModal: () => void;

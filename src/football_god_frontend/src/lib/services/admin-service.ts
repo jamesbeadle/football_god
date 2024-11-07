@@ -12,6 +12,7 @@ import type {
   MoveFixtureDTO,
   PostponeFixtureDTO,
   RemoveClubDTO,
+  SetFreeAgentDTO,
   SubmitFixtureDataDTO,
   SystemStateDTO,
   TransferPlayerDTO,
@@ -93,6 +94,16 @@ export class AdminService {
 
     const result = await identityActor.executeTransferPlayer(leagueId, dto);
     if (isError(result)) throw new Error("Failed to transfer player");
+  }
+
+  async setFreeAgent(leagueId: number, dto: SetFreeAgentDTO): Promise<void> {
+    const identityActor: any = await ActorFactory.createIdentityActor(
+      authStore,
+      process.env.FOOTBALL_GOD_BACKEND_CANISTER_ID ?? "",
+    );
+
+    const result = await identityActor.executeSetFreeAgent(leagueId, dto);
+    if (isError(result)) throw new Error("Failed to set player as free agent");
   }
 
   async loanPlayer(leagueId: number, dto: LoanPlayerDTO): Promise<void> {

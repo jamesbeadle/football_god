@@ -105,6 +105,14 @@ actor Self {
     return #Ok("Valid");
   };
 
+  public shared query ({ caller }) func validateSetFreeAgent(dto : GovernanceDTOs.TransferPlayerDTO) : async Base.RustResult {
+    //TODO: Implement when hand canisters over to SNS
+    //assert Principal.toText(caller) == NetworkEnvironmentVariables.SNS_GOVERNANCE_CANISTER_ID;
+    //return #Err("Governance on hold due to network issues");
+    //return seasonManager.validateTransferPlayer(transferPlayerDTO);
+    return #Ok("Valid");
+  };
+
   public shared query ({ caller }) func validateLoanPlayer(dto : GovernanceDTOs.LoanPlayerDTO) : async Base.RustResult {
     //assert Principal.toText(caller) == NetworkEnvironmentVariables.SNS_GOVERNANCE_CANISTER_ID;
     //return seasonManager.validateLoanPlayer(loanPlayerDTO);
@@ -246,6 +254,19 @@ actor Self {
       transferPlayer : (leagueId: FootballTypes.LeagueId, dto : GovernanceDTOs.TransferPlayerDTO) -> async Result.Result<(), T.Error>;
     };
     let _ = await data_canister.transferPlayer(leagueId, dto);
+    return;
+  };
+
+  public shared ({ caller }) func executeSetFreeAgent(leagueId: FootballTypes.LeagueId, dto : GovernanceDTOs.SetFreeAgentDTO) : async () {
+    //assert Principal.toText(caller) == NetworkEnvironmentVariables.SNS_GOVERNANCE_CANISTER_ID;
+    assert checkDataManager(Principal.toText(caller));
+
+    //TODO: Implement validation check
+    
+    let data_canister = actor (Environment.DATA_CANISTER_ID) : actor {
+      setFreeAgent : (leagueId: FootballTypes.LeagueId, dto : GovernanceDTOs.SetFreeAgentDTO) -> async Result.Result<(), T.Error>;
+    };
+    let _ = await data_canister.setFreeAgent(leagueId, dto);
     return;
   };
 
@@ -420,10 +441,8 @@ actor Self {
 
   public shared ({ caller }) func executeSubmitFixtureData(dto : GovernanceDTOs.SubmitFixtureDataDTO) : async () {
     //assert Principal.toText(caller) == NetworkEnvironmentVariables.SNS_GOVERNANCE_CANISTER_ID;
-    //assert isDataAdmin(Principal.toText(caller));
-
-    //TODO: Implement validation check
-
+    assert checkDataManager(Principal.toText(caller));
+   
     let data_canister = actor (Environment.DATA_CANISTER_ID) : actor {
       submitFixtureData : (dto : GovernanceDTOs.SubmitFixtureDataDTO) -> async Result.Result<(), T.Error>;
     };
