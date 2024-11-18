@@ -3543,7 +3543,7 @@ const options = {
 		<div class="error">
 			<span class="status">` + status + '</span>\n			<div class="message">\n				<h1>' + message + "</h1>\n			</div>\n		</div>\n	</body>\n</html>\n"
   },
-  version_hash: "5uwf7h"
+  version_hash: "msw3q5"
 };
 async function get_hooks() {
   return {};
@@ -4362,6 +4362,7 @@ const idlFactory = ({ IDL }) => {
   const SubmitFixtureDataDTO = IDL.Record({
     "fixtureId": FixtureId,
     "seasonId": SeasonId,
+    "gameweek": GameweekNumber,
     "playerEventData": IDL.Vec(PlayerEventData),
     "leagueId": LeagueId
   });
@@ -5352,6 +5353,7 @@ const Page$6 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
   $$subscribe_selectedPlayers();
   let playerEventData = writable([]);
   $$subscribe_playerEventData();
+  let gameweek = 0;
   async function confirmFixtureData() {
     busyStore.startBusy({
       initiator: "confirm-data",
@@ -5362,6 +5364,7 @@ const Page$6 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
         seasonId,
         leagueId,
         fixtureId,
+        gameweek,
         playerEventData: $playerEventData
       };
       await adminStore.submitFixtureData(dto);

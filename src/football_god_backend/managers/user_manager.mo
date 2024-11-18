@@ -14,6 +14,7 @@ module {
 
     private var userProfiles = List.nil<T.Profile>();
 
+
     public func setData(stable_profiles : [T.Profile]) {
       userProfiles := List.fromArray(stable_profiles);
     };
@@ -205,6 +206,8 @@ module {
 
       return false;
     };
+
+    //TODO: ADD WITHDRAWAL CODE
 
   };
 };

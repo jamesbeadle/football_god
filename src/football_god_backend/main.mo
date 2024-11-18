@@ -1,46 +1,31 @@
 import Array "mo:base/Array";
+import Int "mo:base/Int";
+import Option "mo:base/Option";
 import Principal "mo:base/Principal";
 import Result "mo:base/Result";
 import Text "mo:base/Text";
-import Option "mo:base/Option";
-import Iter "mo:base/Iter";
 import Timer "mo:base/Timer";
-import Int "mo:base/Int";
+
+import T "types/app_types";
+import Base "types/base_types";
+import Countries "types/Countries";
+import FootballTypes "types/football_types";
+import Environment "environment";
+
 import DTOs "dtos/DTOs";
 import GovernanceDTOs "dtos/governance_DTOs";
 import RequestDTOs "dtos/request_DTOs";
-import ResponseDtOs "dtos/response_DTOs";
-import Environment "environment";
-import Base "types/base_types";
-import FootballTypes "types/football_types";
-import T "types/app_types";
-import Countries "types/Countries";
 import ResponseDTOs "dtos/response_DTOs";
+
 import UserManager "managers/user_manager";
+import OddsManager "managers/odds_manager";
 
 actor Self {
   
   private let userManager = UserManager.UserManager(); 
+  private let oddsManager = OddsManager.OddsManager(); 
   
-  public shared ({ caller }) func isAdmin() : async Result.Result<Bool, T.Error> {
-    return #ok(checkAdmin(Principal.toText(caller)));
-  };
-  
-  public shared ({ caller }) func isDataManager() : async Result.Result<Bool, T.Error> {
-    return #ok(checkDataManager(Principal.toText(caller)));
-  };
-  
-  private func checkAdmin(principalId: Text) : Bool {
-    return Option.isSome(Array.find<Base.PrincipalId>(Environment.ADMIN_PRINCIPALS, func(dataAdmin: Base.PrincipalId) : Bool{
-      dataAdmin == principalId;
-    }));
-  };
-  
-  private func checkDataManager(principalId: Text) : Bool {
-    return Option.isSome(Array.find<Base.PrincipalId>(Environment.DATA_MANAGER_PRINCIPALS, func(dataAdmin: Base.PrincipalId) : Bool{
-      dataAdmin == principalId;
-    }));
-  };
+  /* User management functions */
 
   public shared query ({ caller }) func getProfile() : async Result.Result<DTOs.ProfileDTO, T.Error> {
     let profile = userManager.getProfile(Principal.toText(caller));
@@ -53,6 +38,8 @@ actor Self {
       }
     }
   };
+
+  /* Data functions */
 
   public shared query func getCountries() : async Result.Result<[DTOs.CountryDTO], T.Error> {
     return #ok(Countries.countries);
@@ -79,147 +66,239 @@ actor Self {
     return await data_canister.getPlayers(leagueId);
   };
 
-  /* ----- Governance Data Functions ----- */
+  public shared composite query func getSeasons(leagueId: FootballTypes.LeagueId) : async Result.Result<[DTOs.SeasonDTO], T.Error>  {
+    let data_canister = actor (Environment.DATA_CANISTER_ID) : actor {
+      getSeasons : shared query (leagueId: FootballTypes.LeagueId) -> async Result.Result<[DTOs.SeasonDTO], T.Error>;
+    };
+    return await data_canister.getSeasons(leagueId);
+  };
+
+  public shared composite query func getFixtures(dto: RequestDTOs.GetFixturesDTO) : async Result.Result<[DTOs.FixtureDTO], T.Error>  {
+    let data_canister = actor (Environment.DATA_CANISTER_ID) : actor {
+      getFixtures : shared query (dto: RequestDTOs.GetFixturesDTO) -> async Result.Result<[DTOs.FixtureDTO], T.Error>;
+    };
+    return await data_canister.getFixtures(dto);
+  };
+
+  /* Application functions */
+
+  public shared composite query ({ caller }) func getSystemState(applicationName: Text) : async Result.Result<ResponseDTOs.SystemStateDTO, T.Error>  {
+    assert checkDataManager(Principal.toText(caller));
+    switch(applicationName){
+      case "OpenFPL" {
+        let backend_canister = actor (Environment.OPENFPL_BACKEND_CANISTER_ID) : actor {
+          getSystemState : shared query () -> async Result.Result<ResponseDTOs.SystemStateDTO, T.Error>;
+        };
+        return await backend_canister.getSystemState();
+      };
+      case "OpenWSL" {
+        let backend_canister = actor (Environment.OPENWSL_BACKEND_CANISTER_ID) : actor {
+          getSystemState : shared query () -> async Result.Result<ResponseDTOs.SystemStateDTO, T.Error>;
+        };
+        return await backend_canister.getSystemState();
+      };
+      case _ {
+        return #err(#NotFound);
+      }
+    };
+  };
+
+  /* Governance validation functions */
 
   //Player Validation Functions
 
   public shared query ({ caller }) func validateRevaluePlayerUp(dto : GovernanceDTOs.RevaluePlayerUpDTO) : async Base.RustResult {
-    //TODO: Implement when hand canisters over to SNS
-    //assert Principal.toText(caller) == NetworkEnvironmentVariables.SNS_GOVERNANCE_CANISTER_ID;
-    //Todo (DFINITY) when functionality available: Make cross subnet call to governance canister to see if proposal exists
-    //return seasonManager.validateRevaluePlayerUp(revaluePlayerUpDTO);
+    assert Principal.toText(caller) == Environment.OPENFPL_GOVERNANCE_CANISTER_ID;
+    
+    //TODO(Kelly): 
+      //What are the checks that ensure this data is always valid
+
     return #Ok("Valid");
   };
 
   public shared query ({ caller }) func validateRevaluePlayerDown(dto : GovernanceDTOs.RevaluePlayerDownDTO) : async Base.RustResult {
-    //assert Principal.toText(caller) == NetworkEnvironmentVariables.SNS_GOVERNANCE_CANISTER_ID;
-    //return seasonManager.validateRevaluePlayerDown(revaluePlayerDownDTO);
+    assert Principal.toText(caller) == Environment.OPENFPL_GOVERNANCE_CANISTER_ID;
+    
+    //TODO(Kelly): 
+      //What are the checks that ensure this data is always valid
+
     return #Ok("Valid");
   };
 
   public shared query ({ caller }) func validateTransferPlayer(dto : GovernanceDTOs.TransferPlayerDTO) : async Base.RustResult {
-    //TODO: Implement when hand canisters over to SNS
-    //assert Principal.toText(caller) == NetworkEnvironmentVariables.SNS_GOVERNANCE_CANISTER_ID;
-    //return #Err("Governance on hold due to network issues");
-    //return seasonManager.validateTransferPlayer(transferPlayerDTO);
+    assert Principal.toText(caller) == Environment.OPENFPL_GOVERNANCE_CANISTER_ID;
+    
+    //TODO(Kelly): 
+      //What are the checks that ensure this data is always valid
+
     return #Ok("Valid");
   };
 
   public shared query ({ caller }) func validateSetFreeAgent(dto : GovernanceDTOs.TransferPlayerDTO) : async Base.RustResult {
-    //TODO: Implement when hand canisters over to SNS
-    //assert Principal.toText(caller) == NetworkEnvironmentVariables.SNS_GOVERNANCE_CANISTER_ID;
-    //return #Err("Governance on hold due to network issues");
-    //return seasonManager.validateTransferPlayer(transferPlayerDTO);
+    assert Principal.toText(caller) == Environment.OPENFPL_GOVERNANCE_CANISTER_ID;
+    
+    //TODO(Kelly): 
+      //What are the checks that ensure this data is always valid
+
     return #Ok("Valid");
   };
 
   public shared query ({ caller }) func validateLoanPlayer(dto : GovernanceDTOs.LoanPlayerDTO) : async Base.RustResult {
-    //assert Principal.toText(caller) == NetworkEnvironmentVariables.SNS_GOVERNANCE_CANISTER_ID;
-    //return seasonManager.validateLoanPlayer(loanPlayerDTO);
+    assert Principal.toText(caller) == Environment.OPENFPL_GOVERNANCE_CANISTER_ID;
+    
+    //TODO(Kelly): 
+      //What are the checks that ensure this data is always valid
+
     return #Ok("Valid");
   };
 
   public shared query ({ caller }) func validateRecallPlayer(dto : GovernanceDTOs.RecallPlayerDTO) : async Base.RustResult {
-    //assert Principal.toText(caller) == NetworkEnvironmentVariables.SNS_GOVERNANCE_CANISTER_ID;
-    //return seasonManager.validateRecallPlayer(recallPlayerDTO);
+    assert Principal.toText(caller) == Environment.OPENFPL_GOVERNANCE_CANISTER_ID;
+    
+    //TODO(Kelly): 
+      //What are the checks that ensure this data is always valid
+
     return #Ok("Valid");
   };
 
   public shared query ({ caller }) func validateCreatePlayer(dto : GovernanceDTOs.CreatePlayerDTO) : async Base.RustResult {
-    //assert Principal.toText(caller) == NetworkEnvironmentVariables.SNS_GOVERNANCE_CANISTER_ID;
-    //return seasonManager.validateCreatePlayer(createPlayerDTO);
+    assert Principal.toText(caller) == Environment.OPENFPL_GOVERNANCE_CANISTER_ID;
+    
+    //TODO(Kelly): 
+      //What are the checks that ensure this data is always valid
+
     return #Ok("Valid");
   };
 
   public shared query ({ caller }) func validateUpdatePlayer(dto : GovernanceDTOs.UpdatePlayerDTO) : async Base.RustResult {
-    //assert Principal.toText(caller) == NetworkEnvironmentVariables.SNS_GOVERNANCE_CANISTER_ID;
-    //return seasonManager.validateUpdatePlayer(updatePlayerDTO);
+    assert Principal.toText(caller) == Environment.OPENFPL_GOVERNANCE_CANISTER_ID;
+    
+    //TODO(Kelly): 
+      //What are the checks that ensure this data is always valid
+
     return #Ok("Valid");
   };
 
   public shared query ({ caller }) func validateSetPlayerInjury(dto : GovernanceDTOs.SetPlayerInjuryDTO) : async Base.RustResult {
-    //assert Principal.toText(caller) == NetworkEnvironmentVariables.SNS_GOVERNANCE_CANISTER_ID;
-    //return seasonManager.validateSetPlayerInjury(setPlayerInjuryDTO);
+    assert Principal.toText(caller) == Environment.OPENFPL_GOVERNANCE_CANISTER_ID;
+    
+    //TODO(Kelly): 
+      //What are the checks that ensure this data is always valid
+
     return #Ok("Valid");
   };
 
   public shared query ({ caller }) func validateRetirePlayer(dto : GovernanceDTOs.RetirePlayerDTO) : async Base.RustResult {
-    //assert Principal.toText(caller) == NetworkEnvironmentVariables.SNS_GOVERNANCE_CANISTER_ID;
-    //return seasonManager.validateRetirePlayer(retirePlayerDTO);
+    assert Principal.toText(caller) == Environment.OPENFPL_GOVERNANCE_CANISTER_ID;
+    
+    //TODO(Kelly): 
+      //What are the checks that ensure this data is always valid
+
     return #Ok("Valid");
   };
 
   public shared query ({ caller }) func validateUnretirePlayer(dto : GovernanceDTOs.UnretirePlayerDTO) : async Base.RustResult {
-    //assert Principal.toText(caller) == NetworkEnvironmentVariables.SNS_GOVERNANCE_CANISTER_ID;
-    //return seasonManager.validateUnretirePlayer(unretirePlayerDTO);
+    assert Principal.toText(caller) == Environment.OPENFPL_GOVERNANCE_CANISTER_ID;
+    
+    //TODO(Kelly): 
+      //What are the checks that ensure this data is always valid
+
     return #Ok("Valid");
   };
 
   //Fixture Validation Functions
 
   public shared query ({ caller }) func validateAddInitialFixtures(dto : GovernanceDTOs.AddInitialFixturesDTO) : async Base.RustResult {
-    //assert Principal.toText(caller) == NetworkEnvironmentVariables.SNS_GOVERNANCE_CANISTER_ID; 
-    //return seasonManager.validateAddInitialFixtures(addInitialFixturesDTO);
+   assert Principal.toText(caller) == Environment.OPENFPL_GOVERNANCE_CANISTER_ID;
+    
+    //TODO(Kelly): 
+      //What are the checks that ensure this data is always valid
+
     return #Ok("Valid");
   };
 
   public shared query ({ caller }) func validateSubmitFixtureData(dto : GovernanceDTOs.SubmitFixtureDataDTO) : async Base.RustResult {
-    //assert Principal.toText(caller) == NetworkEnvironmentVariables.SNS_GOVERNANCE_CANISTER_ID;
-    //return seasonManager.validateSubmitFixtureData(submitFixtureData);
+    assert Principal.toText(caller) == Environment.OPENFPL_GOVERNANCE_CANISTER_ID;
+    
+    //TODO(Kelly): 
+      //What are the checks that ensure this data is always valid
+
     return #Ok("Valid");
   };
 
   public shared query ({ caller }) func validateMoveFixture(dto : GovernanceDTOs.MoveFixtureDTO) : async Base.RustResult {
-    //assert Principal.toText(caller) == NetworkEnvironmentVariables.SNS_GOVERNANCE_CANISTER_ID;
-    //return seasonManager.validateMoveFixture(moveFixtureDTO);
+    assert Principal.toText(caller) == Environment.OPENFPL_GOVERNANCE_CANISTER_ID;
+    
+    //TODO(Kelly): 
+      //What are the checks that ensure this data is always valid
+
     return #Ok("Valid");
   };
 
   public shared query ({ caller }) func validatePostponeFixture(dto : GovernanceDTOs.PostponeFixtureDTO) : async Base.RustResult {
-    //assert Principal.toText(caller) == NetworkEnvironmentVariables.SNS_GOVERNANCE_CANISTER_ID;
-    //return seasonManager.validatePostponeFixture(postponeFixtureDTO);
+    assert Principal.toText(caller) == Environment.OPENFPL_GOVERNANCE_CANISTER_ID;
+    
+    //TODO(Kelly): 
+      //What are the checks that ensure this data is always valid
+
     return #Ok("Valid");
   };
 
   public shared query ({ caller }) func validateRescheduleFixture(dto : GovernanceDTOs.RescheduleFixtureDTO) : async Base.RustResult {
-    //assert Principal.toText(caller) == NetworkEnvironmentVariables.SNS_GOVERNANCE_CANISTER_ID;
-    //return await seasonManager.validateRescheduleFixture(rescheduleFixtureDTO);
+    assert Principal.toText(caller) == Environment.OPENFPL_GOVERNANCE_CANISTER_ID;
+    
+    //TODO(Kelly): 
+      //What are the checks that ensure this data is always valid
+
     return #Ok("Valid");
   };
 
   //Club Validation Functions
 
   public shared query ({ caller }) func validatePromoteClub(dto : GovernanceDTOs.PromoteClubDTO) : async Base.RustResult {
-    //assert Principal.toText(caller) == NetworkEnvironmentVariables.SNS_GOVERNANCE_CANISTER_ID;
-    //return seasonManager.validatePromoteNewClub(promoteNewClubDTO);
+    assert Principal.toText(caller) == Environment.OPENFPL_GOVERNANCE_CANISTER_ID;
+    
+    //TODO(Kelly): 
+      //What are the checks that ensure this data is always valid
+
     return #Ok("Valid");
   };
 
   public shared query ({ caller }) func validateUpdateClub(dto : GovernanceDTOs.UpdateClubDTO) : async Base.RustResult {
-    //assert Principal.toText(caller) == NetworkEnvironmentVariables.SNS_GOVERNANCE_CANISTER_ID;
-    //return seasonManager.validateUpdateClub(updateClubDTO);
+    assert Principal.toText(caller) == Environment.OPENFPL_GOVERNANCE_CANISTER_ID;
+    
+    //TODO(Kelly): 
+      //What are the checks that ensure this data is always valid
+
     return #Ok("Valid");
   };
 
   //League Validation Functions
 
   public shared query ({ caller }) func validateCreateLeague(dto : GovernanceDTOs.CreateLeagueDTO) : async Base.RustResult {
-    //assert Principal.toText(caller) == NetworkEnvironmentVariables.SNS_GOVERNANCE_CANISTER_ID;
-    //return seasonManager.validateCreatePlayer(createPlayerDTO);
+    assert Principal.toText(caller) == Environment.OPENFPL_GOVERNANCE_CANISTER_ID;
+    
+    //TODO(Kelly): 
+      //What are the checks that ensure this data is always valid
+
     return #Ok("Valid");
   };
 
   public shared query ({ caller }) func validateUpdateLeague(dto : GovernanceDTOs.UpdateLeagueDTO) : async Base.RustResult {
-    //assert Principal.toText(caller) == NetworkEnvironmentVariables.SNS_GOVERNANCE_CANISTER_ID;
-    //return seasonManager.validateUpdatePlayer(updatePlayerDTO);
+    assert Principal.toText(caller) == Environment.OPENFPL_GOVERNANCE_CANISTER_ID;
+    
+    //TODO(Kelly): 
+      //What are the checks that ensure this data is always valid
+
     return #Ok("Valid");
   };
 
+  /* Governance execution functions */
 
   //Player Execution Functions
 
   public shared ({ caller }) func executeRevaluePlayerUp(leagueId: FootballTypes.LeagueId, dto : GovernanceDTOs.RevaluePlayerUpDTO) : async () {
-    //assert Principal.toText(caller) == NetworkEnvironmentVariables.SNS_GOVERNANCE_CANISTER_ID;
+    //assert Principal.toText(caller) == NetworkEnvironmentVariables.OPENFPL_GOVERNANCE_CANISTER_ID;
     assert checkDataManager(Principal.toText(caller));
 
     //TODO: Implement validation check
@@ -232,7 +311,7 @@ actor Self {
   };
 
   public shared ({ caller }) func executeRevaluePlayerDown(leagueId: FootballTypes.LeagueId, dto : GovernanceDTOs.RevaluePlayerDownDTO) : async () {
-    //assert Principal.toText(caller) == NetworkEnvironmentVariables.SNS_GOVERNANCE_CANISTER_ID;
+    //assert Principal.toText(caller) == NetworkEnvironmentVariables.OPENFPL_GOVERNANCE_CANISTER_ID;
     assert checkDataManager(Principal.toText(caller));
 
     //TODO: Implement validation check
@@ -245,7 +324,7 @@ actor Self {
   };
 
   public shared ({ caller }) func executeTransferPlayer(leagueId: FootballTypes.LeagueId, dto : GovernanceDTOs.TransferPlayerDTO) : async () {
-    //assert Principal.toText(caller) == NetworkEnvironmentVariables.SNS_GOVERNANCE_CANISTER_ID;
+    //assert Principal.toText(caller) == NetworkEnvironmentVariables.OPENFPL_GOVERNANCE_CANISTER_ID;
     assert checkDataManager(Principal.toText(caller));
 
     //TODO: Implement validation check
@@ -258,7 +337,7 @@ actor Self {
   };
 
   public shared ({ caller }) func executeSetFreeAgent(leagueId: FootballTypes.LeagueId, dto : GovernanceDTOs.SetFreeAgentDTO) : async () {
-    //assert Principal.toText(caller) == NetworkEnvironmentVariables.SNS_GOVERNANCE_CANISTER_ID;
+    //assert Principal.toText(caller) == NetworkEnvironmentVariables.OPENFPL_GOVERNANCE_CANISTER_ID;
     assert checkDataManager(Principal.toText(caller));
 
     //TODO: Implement validation check
@@ -271,7 +350,7 @@ actor Self {
   };
 
   public shared ({ caller }) func executeLoanPlayer(leagueId: FootballTypes.LeagueId, dto : GovernanceDTOs.LoanPlayerDTO) : async () {
-    //assert Principal.toText(caller) == NetworkEnvironmentVariables.SNS_GOVERNANCE_CANISTER_ID;
+    //assert Principal.toText(caller) == NetworkEnvironmentVariables.OPENFPL_GOVERNANCE_CANISTER_ID;
     assert checkDataManager(Principal.toText(caller));
 
     //TODO: Implement validation check
@@ -284,7 +363,7 @@ actor Self {
   };
 
   public shared ({ caller }) func executeRecallPlayer(leagueId: FootballTypes.LeagueId, dto : GovernanceDTOs.RecallPlayerDTO) : async () {
-    //assert Principal.toText(caller) == NetworkEnvironmentVariables.SNS_GOVERNANCE_CANISTER_ID;
+    //assert Principal.toText(caller) == NetworkEnvironmentVariables.OPENFPL_GOVERNANCE_CANISTER_ID;
     assert checkDataManager(Principal.toText(caller));
 
     //TODO: Implement validation check
@@ -297,7 +376,7 @@ actor Self {
   };
 
   public shared ({ caller }) func executeCreatePlayer(leagueId: FootballTypes.LeagueId, dto : GovernanceDTOs.CreatePlayerDTO) : async () {
-    //assert Principal.toText(caller) == NetworkEnvironmentVariables.SNS_GOVERNANCE_CANISTER_ID;
+    //assert Principal.toText(caller) == NetworkEnvironmentVariables.OPENFPL_GOVERNANCE_CANISTER_ID;
     assert checkDataManager(Principal.toText(caller));
 
     //TODO: Implement validation check
@@ -310,7 +389,7 @@ actor Self {
   };
 
   public shared ({ caller }) func executeUpdatePlayer(leagueId: FootballTypes.LeagueId, dto : GovernanceDTOs.UpdatePlayerDTO) : async () {
-    //assert Principal.toText(caller) == NetworkEnvironmentVariables.SNS_GOVERNANCE_CANISTER_ID;
+    //assert Principal.toText(caller) == NetworkEnvironmentVariables.OPENFPL_GOVERNANCE_CANISTER_ID;
     assert checkDataManager(Principal.toText(caller));
 
     //TODO: Implement validation check
@@ -323,7 +402,7 @@ actor Self {
   };
 
   public shared ({ caller }) func executeSetPlayerInjury(leagueId: FootballTypes.LeagueId, dto : GovernanceDTOs.SetPlayerInjuryDTO) : async () {
-    //assert Principal.toText(caller) == NetworkEnvironmentVariables.SNS_GOVERNANCE_CANISTER_ID;
+    //assert Principal.toText(caller) == NetworkEnvironmentVariables.OPENFPL_GOVERNANCE_CANISTER_ID;
     assert checkDataManager(Principal.toText(caller));
 
     //TODO: Implement validation check
@@ -336,7 +415,7 @@ actor Self {
   };
 
   public shared ({ caller }) func executeRetirePlayer(leagueId: FootballTypes.LeagueId, dto : GovernanceDTOs.RetirePlayerDTO) : async () {
-    //assert Principal.toText(caller) == NetworkEnvironmentVariables.SNS_GOVERNANCE_CANISTER_ID;
+    //assert Principal.toText(caller) == NetworkEnvironmentVariables.OPENFPL_GOVERNANCE_CANISTER_ID;
     assert checkDataManager(Principal.toText(caller));
 
     //TODO: Implement validation check
@@ -349,7 +428,7 @@ actor Self {
   };
 
   public shared ({ caller }) func executeUnretirePlayer(leagueId: FootballTypes.LeagueId, dto : GovernanceDTOs.UnretirePlayerDTO) : async () {
-    //assert Principal.toText(caller) == NetworkEnvironmentVariables.SNS_GOVERNANCE_CANISTER_ID;
+    //assert Principal.toText(caller) == NetworkEnvironmentVariables.OPENFPL_GOVERNANCE_CANISTER_ID;
     assert checkDataManager(Principal.toText(caller));
 
     //TODO: Implement validation check
@@ -364,7 +443,7 @@ actor Self {
   //Fixture Execution Functions
 
   public shared ({ caller }) func executeAddInitialFixtures(leagueId: FootballTypes.LeagueId, dto : GovernanceDTOs.AddInitialFixturesDTO) : async () {
-    //assert Principal.toText(caller) == NetworkEnvironmentVariables.SNS_GOVERNANCE_CANISTER_ID;
+    //assert Principal.toText(caller) == NetworkEnvironmentVariables.OPENFPL_GOVERNANCE_CANISTER_ID;
     assert checkDataManager(Principal.toText(caller));
 
     //TODO Implement
@@ -372,7 +451,7 @@ actor Self {
   };
 
   public shared ({ caller }) func executeMoveFixture(dto: GovernanceDTOs.MoveFixtureDTO) : async () {
-    //assert Principal.toText(caller) == NetworkEnvironmentVariables.SNS_GOVERNANCE_CANISTER_ID;
+    //assert Principal.toText(caller) == NetworkEnvironmentVariables.OPENFPL_GOVERNANCE_CANISTER_ID;
     assert checkDataManager(Principal.toText(caller));
     let data_canister = actor (Environment.DATA_CANISTER_ID) : actor {
       moveFixture : (dto : GovernanceDTOs.MoveFixtureDTO) -> async Result.Result<(), T.Error>;
@@ -382,7 +461,7 @@ actor Self {
   };
 
   public shared ({ caller }) func executePostponeFixture(dto : GovernanceDTOs.PostponeFixtureDTO) : async () {
-   //assert Principal.toText(caller) == NetworkEnvironmentVariables.SNS_GOVERNANCE_CANISTER_ID;
+   //assert Principal.toText(caller) == NetworkEnvironmentVariables.OPENFPL_GOVERNANCE_CANISTER_ID;
     assert checkDataManager(Principal.toText(caller));
     let data_canister = actor (Environment.DATA_CANISTER_ID) : actor {
       postponeFixture : (dto : GovernanceDTOs.PostponeFixtureDTO) -> async Result.Result<(), T.Error>;
@@ -392,7 +471,7 @@ actor Self {
   };
 
   public shared ({ caller }) func executeRescheduleFixture(leagueId: FootballTypes.LeagueId, dto : GovernanceDTOs.RescheduleFixtureDTO) : async () {
-    //assert Principal.toText(caller) == NetworkEnvironmentVariables.SNS_GOVERNANCE_CANISTER_ID;
+    //assert Principal.toText(caller) == NetworkEnvironmentVariables.OPENFPL_GOVERNANCE_CANISTER_ID;
     assert checkDataManager(Principal.toText(caller));
 
     //TODO Implement
@@ -402,7 +481,7 @@ actor Self {
   //Club Execution Functions
 
   public shared ({ caller }) func executePromoteClub(leagueId: FootballTypes.LeagueId, dto : GovernanceDTOs.PromoteClubDTO) : async () {
-    //assert Principal.toText(caller) == NetworkEnvironmentVariables.SNS_GOVERNANCE_CANISTER_ID;
+    //assert Principal.toText(caller) == NetworkEnvironmentVariables.OPENFPL_GOVERNANCE_CANISTER_ID;
     assert checkDataManager(Principal.toText(caller));
 
     //TODO Implement
@@ -410,7 +489,7 @@ actor Self {
   };
 
   public shared ({ caller }) func executeUpdateClub(leagueId: FootballTypes.LeagueId, dto : GovernanceDTOs.UpdateClubDTO) : async () {
-    //assert Principal.toText(caller) == NetworkEnvironmentVariables.SNS_GOVERNANCE_CANISTER_ID;
+    //assert Principal.toText(caller) == NetworkEnvironmentVariables.OPENFPL_GOVERNANCE_CANISTER_ID;
     assert checkDataManager(Principal.toText(caller));
 
     //TODO Implement
@@ -420,7 +499,7 @@ actor Self {
   //League Execution Functions
 
   public shared ({ caller }) func executeCreateLeague(dto : GovernanceDTOs.CreateLeagueDTO) : async () {
-    //assert Principal.toText(caller) == NetworkEnvironmentVariables.SNS_GOVERNANCE_CANISTER_ID;
+    //assert Principal.toText(caller) == NetworkEnvironmentVariables.OPENFPL_GOVERNANCE_CANISTER_ID;
     assert checkDataManager(Principal.toText(caller));
     let data_canister = actor (Environment.DATA_CANISTER_ID) : actor {
       createLeague : (dto : GovernanceDTOs.CreateLeagueDTO) -> async Result.Result<(), T.Error>;
@@ -430,7 +509,7 @@ actor Self {
   };
 
   public shared ({ caller }) func executeUpdateLeague(dto : GovernanceDTOs.UpdateLeagueDTO) : async () {
-    //assert Principal.toText(caller) == NetworkEnvironmentVariables.SNS_GOVERNANCE_CANISTER_ID;
+    //assert Principal.toText(caller) == NetworkEnvironmentVariables.OPENFPL_GOVERNANCE_CANISTER_ID;
     assert checkDataManager(Principal.toText(caller));
     let data_canister = actor (Environment.DATA_CANISTER_ID) : actor {
       updateLeague : (dto : GovernanceDTOs.UpdateLeagueDTO) -> async Result.Result<(), T.Error>;
@@ -440,7 +519,7 @@ actor Self {
   };
 
   public shared ({ caller }) func executeSubmitFixtureData(dto : GovernanceDTOs.SubmitFixtureDataDTO) : async () {
-    //assert Principal.toText(caller) == NetworkEnvironmentVariables.SNS_GOVERNANCE_CANISTER_ID;
+    //assert Principal.toText(caller) == NetworkEnvironmentVariables.OPENFPL_GOVERNANCE_CANISTER_ID;
     assert checkDataManager(Principal.toText(caller));
    
     let data_canister = actor (Environment.DATA_CANISTER_ID) : actor {
@@ -450,10 +529,91 @@ actor Self {
     return;
   };
 
+  public shared ({ caller }) func executeCreateClub(dto : GovernanceDTOs.CreateClubDTO) : async () {
+    //assert Principal.toText(caller) == NetworkEnvironmentVariables.OPENFPL_GOVERNANCE_CANISTER_ID;
+    assert checkDataManager(Principal.toText(caller));
+    let data_canister = actor (Environment.DATA_CANISTER_ID) : actor {
+      createClub : (dto : GovernanceDTOs.CreateClubDTO) -> async Result.Result<(), T.Error>;
+    };
+    let _ = await data_canister.createClub(dto);
+    return;
+  };
 
-  /* ----- Admin Functions ----- */
-  //Admin functions for applications
+  public shared ({ caller }) func executeRemoveClub(dto : GovernanceDTOs.RemoveClubDTO) : async () {
+    //assert Principal.toText(caller) == NetworkEnvironmentVariables.OPENFPL_GOVERNANCE_CANISTER_ID;
+    assert checkDataManager(Principal.toText(caller));
+    let data_canister = actor (Environment.DATA_CANISTER_ID) : actor {
+      removeClub : (dto : GovernanceDTOs.RemoveClubDTO) -> async Result.Result<(), T.Error>;
+    };
+    let _ = await data_canister.removeClub(dto);
+    return;
+  };
+
+  /* Betting functions */
+
+  public shared query func getBettableLeagueFixtures(leagueId: FootballTypes.LeagueId) : async Result.Result<[ResponseDTOs.BettableFixtureDTO], T.Error> {
+    return oddsManager.getBettableLeagueFixtures(leagueId);
+  };
+
+  public shared query func getBettableFixture(leagueId: FootballTypes.LeagueId, fixtureId: FootballTypes.FixtureId) : async Result.Result<[ResponseDTOs.BettableFixtureDTO], T.Error> {
+    return oddsManager.getBettableFixture(leagueId, fixtureId);
+  };
+
+  public shared ({ caller }) func placeBet(dto: RequestDTOs.SubmitBetslipDTO) : async Result.Result<(), T.Error>{
+    assert not Principal.isAnonymous(caller);
+    //TODO: Check user can place bet
+      //User has done KYC
+      //account not on hold
+      //has balance for bet
+      //bet not too big
+        //within their limits
+        //within single bet limit
+        //within site bet limit
+        //within treasury max percentage limit
+        //can have bets cos not too many placed
+    return oddsManager.placeBet(dto);
+  };
+
+  public shared ({ caller }) func getBets(dto: RequestDTOs.GetBetsDTO) : async Result.Result<(), T.Error>{
+    assert not Principal.isAnonymous(caller);
+    return oddsManager.getBets(dto);
+  };
+
+  /* Stable variable backup for managers */
+
+  //TODO
+  //User Manager
+
+  //Odds Manager
+
+  system func postupgrade() {
+    ignore Timer.setTimer<system>(#nanoseconds(Int.abs(1)), postUpgradeCallback); 
+  };
+
+  private func postUpgradeCallback() : async (){};
+
+  /* Admin functions */
   //TODO: Remove when handed back to the SNS
+
+  public shared ({ caller }) func isAdmin() : async Result.Result<Bool, T.Error> {
+    return #ok(checkAdmin(Principal.toText(caller)));
+  };
+
+  public shared ({ caller }) func isDataManager() : async Result.Result<Bool, T.Error> {
+    return #ok(checkDataManager(Principal.toText(caller)));
+  };
+  
+  private func checkAdmin(principalId: Text) : Bool {
+    return Option.isSome(Array.find<Base.PrincipalId>(Environment.ADMIN_PRINCIPALS, func(dataAdmin: Base.PrincipalId) : Bool{
+      dataAdmin == principalId;
+    }));
+  };
+  
+  private func checkDataManager(principalId: Text) : Bool {
+    return Option.isSome(Array.find<Base.PrincipalId>(Environment.DATA_MANAGER_PRINCIPALS, func(dataAdmin: Base.PrincipalId) : Bool{
+      dataAdmin == principalId;
+    }));
+  };
 
   public shared ({ caller }) func updateSystemState(applicationName: Text, dto : RequestDTOs.UpdateSystemStateDTO) : async Result.Result<(), T.Error> {
     assert checkAdmin(Principal.toText(caller));
@@ -592,89 +752,19 @@ actor Self {
     };
   };
 
-  public shared ({ caller }) func executeCreateClub(dto : GovernanceDTOs.CreateClubDTO) : async () {
-    //assert Principal.toText(caller) == NetworkEnvironmentVariables.SNS_GOVERNANCE_CANISTER_ID;
-    assert checkDataManager(Principal.toText(caller));
-    let data_canister = actor (Environment.DATA_CANISTER_ID) : actor {
-      createClub : (dto : GovernanceDTOs.CreateClubDTO) -> async Result.Result<(), T.Error>;
-    };
-    let _ = await data_canister.createClub(dto);
-    return;
+  //TODO: Remove manual betting functions when handled by game update and timer events:
+
+  public shared ({ caller }) func setFixtureToActive(fixtureId: FootballTypes.FixtureId) : async Result.Result<(), T.Error> {
+    //add active fixture id
+    return #err(#NotFound);
   };
 
-  public shared ({ caller }) func executeRemoveClub(dto : GovernanceDTOs.RemoveClubDTO) : async () {
-    //assert Principal.toText(caller) == NetworkEnvironmentVariables.SNS_GOVERNANCE_CANISTER_ID;
-    assert checkDataManager(Principal.toText(caller));
-    let data_canister = actor (Environment.DATA_CANISTER_ID) : actor {
-      removeClub : (dto : GovernanceDTOs.RemoveClubDTO) -> async Result.Result<(), T.Error>;
-    };
-    let _ = await data_canister.removeClub(dto);
-    return;
-  };
-
-  public shared composite query  ({ caller }) func getSystemState(applicationName: Text) : async Result.Result<ResponseDTOs.SystemStateDTO, T.Error>  {
-    //assert Principal.toText(caller) == NetworkEnvironmentVariables.SNS_GOVERNANCE_CANISTER_ID;
-    assert checkDataManager(Principal.toText(caller));
-    switch(applicationName){
-      case "OpenFPL" {
-        
-        let backend_canister = actor (Environment.OPENFPL_BACKEND_CANISTER_ID) : actor {
-          getSystemState : shared query () -> async Result.Result<ResponseDTOs.SystemStateDTO, T.Error>;
-        };
-        return await backend_canister.getSystemState();
-      };
-      case "OpenWSL" {
-        
-        let backend_canister = actor (Environment.OPENWSL_BACKEND_CANISTER_ID) : actor {
-          getSystemState : shared query () -> async Result.Result<ResponseDTOs.SystemStateDTO, T.Error>;
-        };
-        return await backend_canister.getSystemState();
-
-      };
-      case _ {
-        return #err(#NotFound);
-      }
-    };
-  };
-
-  public shared composite query  ({ caller }) func getSeasons(leagueId: FootballTypes.LeagueId) : async Result.Result<[DTOs.SeasonDTO], T.Error>  {
-    //assert Principal.toText(caller) == NetworkEnvironmentVariables.SNS_GOVERNANCE_CANISTER_ID;
-    assert checkDataManager(Principal.toText(caller));
-    let data_canister = actor (Environment.DATA_CANISTER_ID) : actor {
-      getSeasons : shared query (leagueId: FootballTypes.LeagueId) -> async Result.Result<[DTOs.SeasonDTO], T.Error>;
-    };
-    return await data_canister.getSeasons(leagueId);
-  };
-
-  public shared composite query  ({ caller }) func getFixtures(dto: RequestDTOs.GetFixturesDTO) : async Result.Result<[DTOs.FixtureDTO], T.Error>  {
-    //assert Principal.toText(caller) == NetworkEnvironmentVariables.SNS_GOVERNANCE_CANISTER_ID;
-    assert checkDataManager(Principal.toText(caller));
-    let data_canister = actor (Environment.DATA_CANISTER_ID) : actor {
-      getFixtures : shared query (dto: RequestDTOs.GetFixturesDTO) -> async Result.Result<[DTOs.FixtureDTO], T.Error>;
-    };
-    return await data_canister.getFixtures(dto);
-  };
-
-  /* ----- Betting Functions ----- */
+  public func setFixtureToComplete(fixtureId: FootballTypes.FixtureId) : async Result.Result<(), T.Error> {
+    //remove active fixture id
+    //update related bets
+      //payout winning bets
     
-  //get bet
-
-  //get filtered betting history
-
-  //get event with odds
-
-  //place bet
-
-  //place multiple bets
-
-  //settle bets
-
-  system func postupgrade() {
-    ignore Timer.setTimer<system>(#nanoseconds(Int.abs(1)), postUpgradeCallback); 
+    return #err(#NotFound);
   };
-
-  private func postUpgradeCallback() : async (){
-
-  };
-    
+   
 };

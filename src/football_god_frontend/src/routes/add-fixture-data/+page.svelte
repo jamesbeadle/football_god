@@ -40,6 +40,7 @@
   let awayGoalsText = "";
   let homeAssistsText = "";
   let awayAssistsText = "";
+  let gameweek = 0;
 
   let isLoading = true;
 
@@ -63,6 +64,7 @@
       }
 
       fixture = fixtures.find(x => x.id == fixtureId);
+      gameweek = fixture?.gameweek ?? 0;
     
       homeTeam = clubs.find((x) => x.id == fixture?.homeClubId)!;
       awayTeam = clubs.find((x) => x.id == fixture?.awayClubId)!;
@@ -82,20 +84,36 @@
   });
 
   function loadDraft(fixtureId: number) {
-    const draftKey = `fixtureDraft_${fixtureId}`;
-    const savedDraft = localStorage.getItem(draftKey);
-    if (savedDraft) {
+    try{
+      console.log("loading draft")
+      const draftKey = `fixtureDraft_${fixtureId}`;
+      const savedDraft = localStorage.getItem(draftKey);
+      console.log(savedDraft)
+      if (savedDraft) {
       const draftData = JSON.parse(savedDraft);
 
+      let selectedPlayersData: PlayerDTO[] = draftData.selectedPlayers;
+      console.log("selected players")
+      console.log(selectedPlayersData)
+      if(selectedPlayersData && selectedPlayersData.length > 0){
+        selectedPlayers.set(selectedPlayersData);
+      }
+
       let draftEventData = draftData.playerEventData;
+      console.log("draft Event Data")
+      console.log(draftEventData)
       if (draftEventData) {
         playerEventData.set(draftEventData);
       }
 
-      let allPlayers = draftData.allPlayers;
-      if (allPlayers) {
-        updateSelectedPlayers(allPlayers, draftEventData);
+      console.log("set to");
+      console.log($selectedPlayers);
+      console.log($playerEventData);
+
       }
+    } catch (error)  {
+      console.error("Error setting draft.", error);
+        clearDraft();
     }
   }
 
@@ -110,6 +128,7 @@
         seasonId,
         leagueId,
         fixtureId : fixtureId,
+        gameweek,
         playerEventData: $playerEventData
       };
 
@@ -134,31 +153,22 @@
     }
   }
 
-  function updateSelectedPlayers(
-    allPlayers: PlayerDTO[],
-    playerEvents: PlayerEventData[]
-  ): void {
-    const playerEventMap = new Map<number, PlayerEventData[]>();
-    playerEvents.forEach((event) => {
-      if (!playerEventMap.has(event.playerId)) {
-        playerEventMap.set(event.playerId, []);
-      }
-      playerEventMap.get(event.playerId)?.push(event);
-    });
-
-    selectedPlayers.set(allPlayers);
-    playerEventData.set(playerEvents);
-  }
-
   function saveDraft() {
     let uniquePlayers = new Set<PlayerDTO>();
     $playerEventData.forEach((event) => {
       uniquePlayers.add(players.find(x => x.id == event.playerId)!);
     });
 
+
+    let allSelectedPlayers = new Set<PlayerDTO>();
+    $selectedPlayers.forEach((player) => {
+      allSelectedPlayers.add(player);
+    });
+
     const draftData = {
       allPlayers: Array.from(uniquePlayers),
       playerEventData: $playerEventData,
+      selectedPlayers: Array.from(allSelectedPlayers)
     };
     const draftKey = `fixtureDraft_${fixtureId}`;
     localStorage.setItem(draftKey, JSON.stringify(draftData, replacer));

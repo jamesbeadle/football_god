@@ -70,6 +70,7 @@ type SystemStateDTO =
 type SubmitFixtureDataDTO = 
  record {
    fixtureId: FixtureId;
+   gameweek: GameweekNumber;
    leagueId: LeagueId;
    playerEventData: vec PlayerEventData;
    seasonId: SeasonId;

@@ -2,7 +2,7 @@
 import FootballTypes "../types/football_types";
 import Base "../types/base_types";
 
-module GovernanceDTOs {
+module RequestDTOs {
 
   public type UpdateSystemStateDTO = {
     calculationGameweek : FootballTypes.GameweekNumber;
@@ -20,5 +20,14 @@ module GovernanceDTOs {
   public type GetFixturesDTO = {
     leagueId: FootballTypes.LeagueId;
     seasonId: FootballTypes.SeasonId;
+  };
+
+  public type SubmitBetslipDTO = {
+    leagueId: FootballTypes.LeagueId;
+    seasonId: FootballTypes.SeasonId;
+  };
+
+  public type GetBetsDTO = {
+    userId: Base.PrincipalId;
   };
 };

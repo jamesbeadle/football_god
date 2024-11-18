@@ -1,7 +1,7 @@
 import FootballTypes "../types/football_types";
 import Base "../types/base_types";
 
-module GovernanceDTOs {
+module ResponseDTOs {
 
   public type SystemStateDTO = {
     calculationGameweek : FootballTypes.GameweekNumber;
@@ -14,5 +14,9 @@ module GovernanceDTOs {
     onHold : Bool;
     seasonActive: Bool;
     version: Text;
+  };
+
+  public type BettableFixtureDTO = {
+
   };
 };

@@ -20,7 +20,8 @@
   let ownGoalMinutes: number[] = [];
   let penaltySaveMinutes: number[] = [];
   let penaltyMissedMinutes: number[] = [];
-
+  let cardMinute: number = 0;
+  
   let goalSliderValue = 0;
   let assistSliderValue = 0;
   let ownGoalSliderValue = 0;
@@ -29,13 +30,25 @@
 
   let isSubmitDisabled: boolean = true;
   $: isSubmitDisabled =
-    appearanceStart < 0 ||
-    appearanceStart > 90 ||
-    appearanceEnd < 0 ||
-    appearanceEnd > 90;
+  appearanceStart < 0 ||
+  appearanceStart > 90 ||
+  appearanceEnd < 0 ||
+  appearanceEnd > 90 ||
+  (selectedCard > 0 && (cardMinute < 0 || cardMinute > 90));
+
 
   onMount(() => {
-      
+    const cardEvent = $playerEventData.find(
+      event =>
+        ("YellowCard" in event.eventType || "RedCard" in event.eventType) &&
+        event.playerId === player.id
+    );
+    selectedCard = cardEvent ? ("YellowCard" in cardEvent.eventType ? 1 : 2) : 0;
+    cardMinute = cardEvent ? cardEvent.eventStartMinute : 0;
+
+    keeperSaves = $playerEventData
+      .filter(event => "KeeperSave" in event.eventType && event.playerId == player.id)
+      .length;
   });
   
   $: if ($playerEventData.length > 0) {
@@ -59,15 +72,7 @@
           .filter(event => "PenaltyMissed" in event.eventType && event.playerId == player.id)
           .map(event => event.eventStartMinute);
 
-        keeperSaves = $playerEventData
-          .filter(event => "KeeperSave" in event.eventType && event.playerId == player.id)
-          .length;
-
-        const cardEvent = $playerEventData.find(
-          event => "YellowCard" in event.eventType || "RedCard" in event.eventType && event.playerId == player.id
-        );
-        selectedCard = cardEvent ? ("YellowCard" in cardEvent.eventType ? 1 : 2) : 0;
-      }
+       }
 
 
   function addPlayerEvents() {
@@ -137,17 +142,18 @@
       });
     });
 
-    if (selectedCard > 0) {
+    if (selectedCard > 0 && cardMinute !== null) {
       let cardType = selectedCard === 1 ? { YellowCard: null } : { RedCard: null };
       newEvents.push({
         playerId: player.id,
         eventType: cardType,
-        eventStartMinute: 0,
-        eventEndMinute: 0,
+        eventStartMinute: cardMinute,
+        eventEndMinute: cardMinute,
         fixtureId: fixtureId,
         clubId: player.clubId,
       });
     }
+
 
     for (let i = 0; i < keeperSaves; i++) {
       newEvents.push({
@@ -287,6 +293,24 @@
           </div>
         </div>
 
+        {#if Object.keys(player.position)[0] == "Goalkeeper"}
+
+          <div class="flex flex-row space-x-1">
+            <div class="flex-col space-y-2 w-full">
+              <p>Keeper Saves</p>
+              <input
+                type="number"
+                id="keeperSaves"
+                bind:value={keeperSaves}
+                class="bg-gray-900 w-full px-4 py-2 mt-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="Enter keeper saves"
+                min="0"
+                max="999"
+              />
+            </div>
+          </div>
+        {/if}
+
         <div class="flex-col space-y-2">
           <p>Select Cards:</p>
           <div class="flex flex-row">
@@ -298,6 +322,7 @@
               bind:group={selectedCard}
             />
             <p class="ml-2">No Card</p>
+            
             <input
               type="radio"
               class="form-radio h-5 w-5 text-blue-600 ml-2"
@@ -306,6 +331,7 @@
               bind:group={selectedCard}
             />
             <p class="ml-2">Yellow Card</p>
+            
             <input
               type="radio"
               class="form-radio h-5 w-5 text-blue-600 ml-2"
@@ -315,6 +341,22 @@
             />
             <p class="ml-2">Red Card</p>
           </div>
+          
+          {#if selectedCard > 0}
+            <div class="flex-col space-y-2 w-1/2">
+              <p>Minute of Card</p>
+              <input
+                type="number"
+                bind:value={cardMinute}
+                class="bg-gray-900 w-full px-4 py-2 mt-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="Enter minute"
+                min="0"
+                max="90"
+                required
+              />
+            </div>
+          {/if}
+          
         </div>
 
         <div class="flex-col space-y-2">
