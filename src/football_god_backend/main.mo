@@ -5,6 +5,11 @@ import Principal "mo:base/Principal";
 import Result "mo:base/Result";
 import Text "mo:base/Text";
 import Timer "mo:base/Timer";
+import Nat "mo:base/Nat";
+import Nat64 "mo:base/Nat64";
+import Buffer "mo:base/Buffer";
+import Float "mo:base/Float";
+import Int64 "mo:base/Int64";
 
 import T "types/app_types";
 import Base "types/base_types";
@@ -17,26 +22,26 @@ import GovernanceDTOs "dtos/governance_DTOs";
 import RequestDTOs "dtos/request_DTOs";
 import ResponseDTOs "dtos/response_DTOs";
 
+import FPLLedger "managers/fpl_ledger_manager";
 import UserManager "managers/user_manager";
 import OddsManager "managers/odds_manager";
+import BettingTypes "types/betting_types";
+import Utilities "utilities/utilities";
 
 actor Self {
-  
+
+  private let ledger = FPLLedger.FPLLedger();
   private let userManager = UserManager.UserManager(); 
   private let oddsManager = OddsManager.OddsManager(); 
   
+  private stable var openBets: [BettingTypes.BetSlip] = [];
+  private stable var totalBetsStaked: Nat64 = 0;
+  private stable var totalPotentialPayout: Nat64 = 0;
+  
   /* User management functions */
 
-  public shared query ({ caller }) func getProfile() : async Result.Result<DTOs.ProfileDTO, T.Error> {
-    let profile = userManager.getProfile(Principal.toText(caller));
-    switch(profile){
-      case (?foundProfile){
-        return #ok(foundProfile);
-      };
-      case (null){
-        return #err(#NotFound);
-      }
-    }
+  public shared ({ caller }) func getProfile() : async Result.Result<DTOs.ProfileDTO, T.Error> {
+    return await userManager.getProfile(Principal.toText(caller));
   };
 
   /* Data functions */
@@ -559,25 +564,105 @@ actor Self {
     return oddsManager.getBettableFixture(leagueId, fixtureId);
   };
 
-  public shared ({ caller }) func placeBet(dto: RequestDTOs.SubmitBetslipDTO) : async Result.Result<(), T.Error>{
+  public shared ({ caller }) func placeBet(dto: RequestDTOs.SubmitBetslipDTO) : async Result.Result<BettingTypes.BetSlip, T.Error>{
     assert not Principal.isAnonymous(caller);
-    //TODO: Check user can place bet
-      //User has done KYC
-      //account not on hold
-      //has balance for bet
-      //bet not too big
-        //within their limits
-        //within single bet limit
-        //within site bet limit
-        //within treasury max percentage limit
-        //can have bets cos not too many placed
-    return oddsManager.placeBet(dto);
+    let principalId = Principal.toText(caller);
+
+    assert await betWithinPlatformLimits(dto.totalStake);
+
+    let profileResult = await userManager.getProfile(principalId);
+    switch(profileResult){
+      case (#ok profile){
+        assert not profile.completedKYC;
+        assert not profile.accountOnPause;
+        assert profile.accountBalance >= dto.totalStake;
+        assert profile.maxBetLimit >= dto.totalStake;
+        assert profile.monthlyBetTotal + dto.totalStake <= profile.monthlyBetLimit;
+      };
+      case (#err error){
+        return #err(error);
+      }
+    };
+
+    let betslipResult = oddsManager.placeBet(dto);
+
+    switch(betslipResult){
+      case (#ok betslip){
+        let openBetsBuffer = Buffer.fromArray<BettingTypes.BetSlip>(openBets);
+        openBetsBuffer.add(betslip);
+        openBets := Buffer.toArray(openBetsBuffer);
+
+        totalBetsStaked := calculateTotalStaked();
+        totalPotentialPayout := calculateTotalPotentialPayout();
+        return #ok(betslip);
+      };
+      case (#err error){
+        return #err(error);
+      }
+    };
+  };
+
+  private func calculateTotalPotentialPayout() : Nat64 {
+    return Array.foldLeft<BettingTypes.BetSlip, Nat64>(
+        openBets,
+        0,
+        func(acc : Nat64, betslip : BettingTypes.BetSlip) : Nat64 {
+
+          let totalPayouts = Array.foldLeft<BettingTypes.Selection, Nat64>(
+            betslip.selections,
+            0,
+            func(acc: Nat64, selection: BettingTypes.Selection) : Nat64 {
+              let betPayoutFloat: Float = Utilities.convertNat64ToFloat(selection.stake) * selection.odds;
+              return acc + Utilities.convertFloatToNat64(betPayoutFloat);
+            }
+          );
+
+          return acc + totalPayouts;
+        },
+      );
+  };
+
+  private func calculateTotalStaked() : Nat64 {
+    return Array.foldLeft<BettingTypes.BetSlip, Nat64>(
+        openBets,
+        0,
+        func(acc : Nat64, betslip : BettingTypes.BetSlip) : Nat64 {
+          return acc + betslip.totalStake;
+        },
+      );
   };
 
   public shared ({ caller }) func getBets(dto: RequestDTOs.GetBetsDTO) : async Result.Result<(), T.Error>{
     assert not Principal.isAnonymous(caller);
     return oddsManager.getBets(dto);
   };
+
+  private func betWithinPlatformLimits(stake: Nat64) : async Bool {
+
+    let ledgerBalance = await ledger.getPotBalance(Principal.fromActor(Self));
+    
+    let maxSingleBetStake: Nat64 = Nat64.div(ledgerBalance, 100);
+
+    if(stake > maxSingleBetStake){
+      return false;
+    };
+    
+    if(totalPotentialPayout + stake > ledgerBalance){
+      return false;
+    };
+
+    return true;
+  };
+
+  private func settleBets(){
+
+    totalBetsStaked := calculateTotalStaked();
+    totalPotentialPayout := calculateTotalPotentialPayout();
+  };
+
+  //set betting pause period
+
+  //
 
   /* Stable variable backup for managers */
 

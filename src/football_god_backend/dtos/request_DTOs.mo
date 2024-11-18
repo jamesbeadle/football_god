@@ -25,6 +25,7 @@ module RequestDTOs {
   public type SubmitBetslipDTO = {
     leagueId: FootballTypes.LeagueId;
     seasonId: FootballTypes.SeasonId;
+    totalStake: Nat64;
   };
 
   public type GetBetsDTO = {

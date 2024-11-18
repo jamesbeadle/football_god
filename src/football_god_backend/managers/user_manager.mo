@@ -4,49 +4,41 @@ import Text "mo:base/Text";
 import Nat64 "mo:base/Nat64";
 import Blob "mo:base/Blob";
 import Buffer "mo:base/Buffer";
+import Array "mo:base/Array";
 import Account "../utilities/Account";
 import T "../types/app_types";
 import Base "../types/base_types";
+import DTOs "../dtos/DTOs";
 
 module {
 
   public class UserManager() {
 
-    private var userProfiles = List.nil<T.Profile>();
+    private var profileCanisterIds: [(Base.PrincipalId, Base.CanisterId)] = [];
+    private var uniqueProfileCanisterIds: [Base.CanisterId] = [];
+    private var activeProfileCanisterId = "";
 
+    public func getProfile(principalId : Text) : async Result.Result<DTOs.ProfileDTO, T.Error> {
 
-    public func setData(stable_profiles : [T.Profile]) {
-      userProfiles := List.fromArray(stable_profiles);
-    };
+      let profileCanisterId = Array.find(profileCanisterIds, func(profileCanisterEntry: (Base.PrincipalId, Base.CanisterId)) : Bool {
+        profileCanisterEntry.0 == principalId;
+      });
 
-    public func getProfiles() : [T.Profile] {
-      return List.toArray(
-        List.map<T.Profile, T.Profile>(
-          userProfiles,
-          func(profile : T.Profile) : T.Profile {
-            return {
-              principalId = profile.principalId;
-              username = profile.username;
-              withdrawalAddress = profile.withdrawalAddress;
-            };
-          },
-        ),
-      );
-    };
-
-    public func getProfile(principalId : Text) : ?T.Profile {
-      let foundProfile = List.find<T.Profile>(
-        userProfiles,
-        func(profile : T.Profile) : Bool {
-          return profile.principalId == principalId;
-        },
-      );
-
-      switch (foundProfile) {
-        case (null) { return null };
-        case (?profile) { return ?profile };
+      switch(profileCanisterId){
+        case (?foundCanisterId){
+          let profile_canister = actor (foundCanisterId.1) : actor {
+            getProfile : (principalId : Text) -> async Result.Result<DTOs.ProfileDTO, T.Error>;
+          };
+          return await profile_canister.getProfile(principalId);
+        };
+        case (null){
+          return #err(#NotFound);
+        }
       };
     };
+
+    /*
+
 
     public func createProfile(principalId : Base.PrincipalId, username : Text, withdrawalAddress : Text) : () {
 
@@ -206,8 +198,35 @@ module {
 
       return false;
     };
+    */
 
     //TODO: ADD WITHDRAWAL CODE
+
+    //Stable storage functions
+
+    public func getStableProfileCanisterIds() : [(Base.PrincipalId, Base.CanisterId)] {
+      return profileCanisterIds;
+    };
+
+    public func setStableProfileCanisterIds(stable_profile_canister_ids: [(Base.PrincipalId, Base.CanisterId)]) {
+      profileCanisterIds := stable_profile_canister_ids;
+    };
+
+    public func getStableUniqueProfileCanisterIds () : [Base.CanisterId] {
+      return uniqueProfileCanisterIds;
+    };
+
+    public func setStableUniqueProfileCanisterIds(stable_unique_profile_canister_ids: [Base.CanisterId]){
+      uniqueProfileCanisterIds := stable_unique_profile_canister_ids;
+    };
+
+    public func getStableActiveProfileCanisterId() : Base.CanisterId {
+      return activeProfileCanisterId;
+    };
+
+    public func setStableActiveProfileCanisterId(stable_active_profile_canister_id: Base.CanisterId) {
+      activeProfileCanisterId := stable_active_profile_canister_id;
+    };
 
   };
 };

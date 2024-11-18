@@ -1,5 +1,5 @@
 import Account "../utilities/Account";
-import FPLLedger "../interfaces/FPLLedger";
+import FPLLedgerInterface "../interfaces/FPLLedger";
 import Nat64 "mo:base/Nat64";
 import Principal "mo:base/Principal";
 import Buffer "mo:base/Buffer";
@@ -8,9 +8,9 @@ import Blob "mo:base/Blob";
 
 module {
 
-  public class Book() {
+  public class FPLLedger() {
 
-    private let ledger : FPLLedger.Interface = actor (FPLLedger.CANISTER_ID);
+    private let ledger : FPLLedgerInterface.Interface = actor (FPLLedgerInterface.CANISTER_ID);
     
     public func getPotBalance(owner : Principal) : async Nat64 {
       let balance = await ledger.icrc1_balance_of({owner; subaccount = ?Account.defaultSubaccount()});

@@ -4,12 +4,97 @@ import FootballTypes "football_types";
 
 module BettingTypes {
 
-    public type EventId = Nat;
+    /* Match odds related types */
+
+    public type MatchOdds = {
+        correctResults: TeamSelectionOdds;
+        correctScores: [ScoreSelectionOdds];
+        halfTimeScores: [ScoreSelectionOdds];
+        firstGoalscorers: [PlayerSelectionOdds];
+        lastGoalscorers: [PlayerSelectionOdds];
+        anytimeScorers: [PlayerSelectionOdds];
+        yellowCards: [PlayerSelectionOdds];
+        redCards: [PlayerSelectionOdds];
+        penaltyAwarded: TeamSelectionOdds;
+        penaltyScored: TeamSelectionOdds;
+        penaltyMissed: TeamSelectionOdds;
+        outsideBoxScorers: [PlayerSelectionOdds];
+        headerScorers: [PlayerSelectionOdds];
+        penaltyScorers: [PlayerSelectionOdds];
+        penaltyMissers: [PlayerSelectionOdds];
+        firstAssisters: [PlayerSelectionOdds];
+        lastAssist: [PlayerSelectionOdds];
+        anytimeAssist: [PlayerSelectionOdds];
+        scoresBrace: [PlayerSelectionOdds];
+        scoresHatTrick: [PlayerSelectionOdds];
+        goalsOverUnder: OverUnderSelectionOdds;
+        bothTeamsToScore: YesNoSelectionOdds;
+        halfTimeFullTimeResult: [SplitHalfTeamSelectionOdds];
+        bothTeamsToScoreAndWinner: [ClubAndYesNoSelectionOdds];
+    };
+
+    public type TeamSelectionOdds = {
+        homeOdds: Float;
+        drawOdds: Float;
+        awayOdds: Float;
+    };
+
+    public type ScoreSelectionOdds = {
+        homeGoals: Nat8;
+        awayGoals: Nat8;
+        odds: Float;
+    };
+
+    public type PlayerSelectionOdds = {
+        playerId: FootballTypes.PlayerId;
+        odds: Float;
+    };
+
+    public type OverUnderSelectionOdds = {
+        homeOdds: [OverUnderSelection];
+        awayOdds: [OverUnderSelection];
+    };
+
+    public type OverUnderSelection = {
+        margin: Float;
+        odds: Float;
+    };
+
+    public type YesNoSelectionOdds = {
+        yesOdds: Float;
+        noOdds: Float;
+    };
+
+    public type SplitHalfTeamSelectionOdds = {
+        firstHalfClubId: FootballTypes.ClubId;
+        secondHalfClubId: FootballTypes.ClubId;
+        odds: Float;
+    };
+
+    public type ClubAndYesNoSelectionOdds = {
+        clubId: FootballTypes.ClubId;
+        isYes: Bool;
+        isNo: Bool;
+    };
+
+    /* Betting slip related types */
+
+    public type BetSlip = {
+        id: Nat;
+        placedBy: Base.PrincipalId;
+        placedOn: Int;
+        status: BetStatus;
+        selections: [Selection];
+        betType: BetType;
+        totalStake: Nat64;
+    };
 
     public type Selection = {
         selectionType: Category;
         selectionDetail: SelectionDetail;
         result: SelectionResult;
+        odds: Float;
+        stake: Nat64;
     };
 
     public type SelectionResult = {
@@ -22,14 +107,6 @@ module BettingTypes {
         #Open;
         #Won;
         #Lost;
-    };
-
-    public type BetSlip = {
-        placedBy: Base.PrincipalId;
-        placedOn: Int;
-        status: BetStatus;
-        selections: [Selection];
-        betType: BetType;
     };
 
     public type Event = {
@@ -45,7 +122,7 @@ module BettingTypes {
         anytimeGoalscorer: [PlayerEventDetail];
         yellowCard: [PlayerEventDetail];
         redCard: [PlayerEventDetail];
-        penaltyTaken: [PlayerEventDetail];
+        penaltyGiven: [ClubEventDetail];
         penaltyScored: [PlayerEventDetail];
         penaltyMissed: [PlayerEventDetail];
         scoreOutsideBox: [PlayerEventDetail];
@@ -58,21 +135,17 @@ module BettingTypes {
         scoreBrace : [PlayerGroupEventDetail];
         scoreHatrick : [PlayerGroupEventDetail];
         halfTimeScore : ScoreDetail;
-        minuteBandGoalsScored : MinuteBandGoalsScoredDetail;
-        minuteBandTeamGoalsScored : MinuteBandTeamGoalsScoredDetail;
         bothTeamsToScore : BothTeamsToScoreDetail;
         halfTimeFullTimeResult : HalfTimeFullTimeResultDetail;
-        halfTimeFullTimeScore : HalfTimeFullTimeScoreDetail;
-        cornerCount : CornerCountDetail;
-        teamCornerCount : TeamCornerCountDetail;
-        halfTimeCornerCount : CornerCountDetail;
-        halfTimeTeamCornerCount : TeamCornerCountDetail;
-        asianHandicap : ScoreDetail;
         bothTeamsToScoreAndWinner : BothTeamsToScoreAndWinnerDetail;
     };
 
     public type CorrectResultDetail = {
         matchResult: MatchResult;
+    };
+
+    public type ClubEventDetail = {
+        teamId: FootballTypes.ClubId;
     };
 
     public type ScoreDetail = {
@@ -96,19 +169,6 @@ module BettingTypes {
         playerId: FootballTypes.PlayerId;
     };
 
-    public type MinuteBandGoalsScoredDetail = {
-        start: Nat8;
-        end: Nat8;
-        goalsScored: Nat8;
-    };
-
-    public type MinuteBandTeamGoalsScoredDetail = {
-        start: Nat8;
-        end: Nat8;
-        goalsScored: Nat8;
-        clubId: FootballTypes.ClubId;
-    };
-
     public type BothTeamsToScoreDetail = {
         prediction: Bool;
     };
@@ -116,22 +176,6 @@ module BettingTypes {
     public type HalfTimeFullTimeResultDetail = {
         halfTimeResult: MatchResult;
         fullTimeResult: MatchResult;
-    };
-
-    public type HalfTimeFullTimeScoreDetail = {
-        halfTimeHomeGoals: Nat8;
-        halfTimeAwayGoals: Nat8;
-        fullTimeHomeGoals: Nat8;
-        fullTimeAwayGoals: Nat8;
-    };
-
-    public type CornerCountDetail = {
-        corners: Nat8;
-    };
-
-    public type TeamCornerCountDetail = {
-        homeCorners: Nat8;
-        awayCorners: Nat8;
     };
 
     public type BothTeamsToScoreAndWinnerDetail = {
@@ -147,7 +191,7 @@ module BettingTypes {
         #AnytimeGoalscorer;
         #YellowCard;
         #RedCard;
-        #PenaltyTaken;
+        #PenaltyGiven;
         #PenaltyScored;
         #PenaltyMissed;
         #ScoreOutsideBox;
@@ -165,16 +209,8 @@ module BettingTypes {
         #GoalAssistCombo;
         #TeamScoreOverUnder;
         #HalfTimeScore;
-        #MinuteBandGoalsScored;
-        #MinuteBandTeamGoalsScored;
         #BothTeamsToScore;
         #HalfTimeFullTimeResult;
-        #HalfTimeFullTimeScore;
-        #CornerCount;
-        #TeamCornerCount;
-        #HalfTimeCornerCount;
-        #HalfTimeTeamCornerCount;
-        #AsianHandicap;
         #BothTeamsToScoreAndWinner;
     };
 
@@ -217,7 +253,7 @@ module BettingTypes {
         #AnytimeGoalscorer: [PlayerEventDetail];
         #YellowCard: [PlayerEventDetail];
         #RedCard: [PlayerEventDetail];
-        #PenaltyTaken: [PlayerEventDetail];
+        #PenaltyGiven: [PlayerEventDetail];
         #PenaltyScored: [PlayerEventDetail];
         #PenaltyMissed: [PlayerEventDetail];
         #ScoreOutsideBox: [PlayerEventDetail];
@@ -230,16 +266,8 @@ module BettingTypes {
         #ScoreBrace : [PlayerGroupEventDetail];
         #ScoreHatrick : [PlayerGroupEventDetail];
         #HalfTimeScore : ScoreDetail;
-        #MinuteBandGoalsScored : MinuteBandGoalsScoredDetail;
-        #MinuteBandTeamGoalsScored : MinuteBandTeamGoalsScoredDetail;
         #BothTeamsToScore : BothTeamsToScoreDetail;
         #HalfTimeFullTimeResult : HalfTimeFullTimeResultDetail;
-        #HalfTimeFullTimeScore : HalfTimeFullTimeScoreDetail;
-        #CornerCount : CornerCountDetail;
-        #TeamCornerCount : TeamCornerCountDetail;
-        #HalfTimeCornerCount : CornerCountDetail;
-        #HalfTimeTeamCornerCount : TeamCornerCountDetail;
-        #AsianHandicap : ScoreDetail;
         #BothTeamsToScoreAndWinner : BothTeamsToScoreAndWinnerDetail;
     };
 

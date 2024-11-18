@@ -1,6 +1,7 @@
 import T "../types/app_types";
 import Base "../types/base_types";
 import FootballTypes "../types/football_types";
+import BettingTypes "../types/betting_types";
 import Result "mo:base/Result";
 import RequestDTOs "../dtos/request_DTOs";
 import ResponseDTOs "../dtos/response_DTOs";
@@ -13,6 +14,8 @@ module {
 
     private var betslipsCanisterIds: [Base.CanisterId] = [];
     private var activeBetslipCanisterId = "";
+
+    private var cachedCalculatedOdds: [(FootballTypes.LeagueId, [(FootballTypes.FixtureId, BettingTypes.MatchOdds)])] = [];
 
     public func getStableBettableLeagueFixtureIds() : [(FootballTypes.LeagueId, [FootballTypes.FixtureId])] {
       return bettableLeagueFixtureIds;
@@ -63,7 +66,7 @@ module {
       return #err(#NotFound);
     };
 
-    public func placeBet(dto: RequestDTOs.SubmitBetslipDTO) : Result.Result<(), T.Error>{
+    public func placeBet(dto: RequestDTOs.SubmitBetslipDTO) : Result.Result<BettingTypes.BetSlip, T.Error>{
       return #err(#NotFound);
     };
 
@@ -74,7 +77,9 @@ module {
     };
 
     
-
+    public func calculatePotentialPayout(betslip: BettingTypes.BetSlip) : Nat64 {
+      return 0;
+    };
     
 
     //TODO: Complete for betting

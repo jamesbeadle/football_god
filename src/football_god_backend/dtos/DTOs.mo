@@ -6,7 +6,14 @@ module DTOs {
   public type ProfileDTO = {
     principalId : Base.PrincipalId;
     username : Text; 
+    profilePicture: ?Blob;
     withdrawalAddress: Text;
+    completedKYC: Bool;
+    accountOnPause: Bool;
+    maxBetLimit: Nat64;
+    monthlyBetLimit: Nat64;
+    monthlyBetTotal: Nat64;
+    accountBalance: Nat64;
   };
 
   public type ClubFilterDTO = {
