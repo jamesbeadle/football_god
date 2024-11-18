@@ -651,6 +651,13 @@ actor Self {
     return await userManager.getBets(dto);
   };
 
+  public shared ({ caller }) func withdraw(dto: RequestDTOs.WithdrawDTO) : async Result.Result<(), T.Error> {
+    assert not Principal.isAnonymous(caller);
+    let principalId = Principal.toText(caller);
+    assert dto.principalId == principalId;
+    return await userManager.withdraw(dto);
+  };
+
   private func calculateTotalPotentialPayout() : Nat64 {
     return Array.foldLeft<BettingTypes.BetSlip, Nat64>(
         openBets,
@@ -754,7 +761,7 @@ actor Self {
   private stable var stable_profile_canister_ids: [(Base.PrincipalId, Base.CanisterId)] = [];
   private stable var stable_unique_profile_canister_ids: [Base.CanisterId] = [];
   private stable var stable_active_profile_canister_id: Text = "";
-
+  private stable var stable_usernames: [(Base.PrincipalId, Text)] = [];
   //Odds Manager
   //TODO
 
@@ -762,10 +769,13 @@ actor Self {
     stable_profile_canister_ids := userManager.getStableProfileCanisterIds();
     stable_unique_profile_canister_ids := userManager.getStableUniqueProfileCanisterIds();
     stable_active_profile_canister_id := userManager.getStableActiveProfileCanisterId();
-
+    stable_usernames := userManager.getStableUsernames();
   };
 
   system func postupgrade() {
+
+    //TODO SET EVERYTHING IN PREUPGRADE
+
     ignore Timer.setTimer<system>(#nanoseconds(Int.abs(1)), postUpgradeCallback); 
   };
 

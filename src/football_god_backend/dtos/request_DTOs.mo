@@ -79,4 +79,9 @@ module RequestDTOs {
   public type SetMonthlyBetLimitDTO = {
     principalId: Base.PrincipalId;
   };
+
+  public type WithdrawDTO = {
+    principalId: Base.PrincipalId;
+    amount: Nat64;
+  }
 };
