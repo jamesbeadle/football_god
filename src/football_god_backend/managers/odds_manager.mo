@@ -21,16 +21,8 @@ module {
       bettableLeagueFixtureIds := stable_bettable_league_fixture_ids;
     };
 
-    public func setFixtureToActive(fixtureId: FootballTypes.FixtureId) : async Result.Result<(), T.Error> {
+    public func addBettableLeagueFixture(fixtureId: FootballTypes.FixtureId) : async Result.Result<(), T.Error> {
       //add active fixture id
-      return #err(#NotFound);
-    };
-    
-    public func setFixtureToComplete(fixtureId: FootballTypes.FixtureId) : async Result.Result<(), T.Error> {
-      //remove active fixture id
-      //update related bets
-        //payout winning bets
-      
       return #err(#NotFound);
     };
 

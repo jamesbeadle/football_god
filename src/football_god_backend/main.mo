@@ -644,18 +644,11 @@ actor Self {
     }
   };
 
-  public shared ({ caller }) func getBets(dto: RequestDTOs.GetBetsDTO) : async Result.Result<(), T.Error>{
+  public shared ({ caller }) func getBets(dto: RequestDTOs.GetBetsDTO) : async Result.Result<[BettingTypes.BetSlip], T.Error>{
     assert not Principal.isAnonymous(caller);
     let principalId = Principal.toText(caller);
     assert dto.principalId == principalId;
     return await userManager.getBets(dto);
-  };
-
-  public shared ({ caller }) func withdraw(dto: RequestDTOs.WithdrawDTO) : async Result.Result<(), T.Error> {
-    assert not Principal.isAnonymous(caller);
-    let principalId = Principal.toText(caller);
-    assert dto.principalId == principalId;
-    return await userManager.withdraw(dto);
   };
 
   private func calculateTotalPotentialPayout() : Nat64 {

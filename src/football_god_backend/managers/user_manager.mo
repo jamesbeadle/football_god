@@ -183,19 +183,6 @@ module {
       };
     };
 
-    public func settleBet(betslip: BettingTypes.BetSlip) : async () {
-
-      //Get the fixture from the data canister
-
-      //Evaluate each selection on each betslip in accordance with the bet type to determine winnings
-
-      //Pay winnings to user
-
-      //Settle the bet win lose with winnings if applicable in users canister
-
-      //Update the users totals for months etc
-    };
-
     public func getBets(dto: RequestDTOs.GetBetsDTO) : async Result.Result<[BettingTypes.BetSlip], T.Error>{
       await checkOrCreateProfile(dto.principalId);
       let userProfileCanisterId = Array.find<(Base.PrincipalId, Base.CanisterId)>(profileCanisterIds, func(entry: (Base.PrincipalId, Base.CanisterId)) : Bool {
@@ -215,15 +202,22 @@ module {
       };
     };
 
+    public func settleBet(betslip: BettingTypes.BetSlip) : async () {
+      
+      //Get the fixture from the data canister
+
+      //Evaluate each selection on each betslip in accordance with the bet type to determine winnings
+
+      //Pay winnings to user
+
+      //Settle the bet win lose with winnings if applicable in users canister
+
+      //Update the users totals for months etc
+    };
+
     private func checkOrCreateProfile(principalId: Base.PrincipalId) : async () {
       //ensure create and set active first profile canister
       //TODO
-    };
-
-    public func withdraw(dto: RequestDTOs.WithdrawDTO) : async Result.Result<(), T.Error> {
-
-      //TODO: ADD WITHDRAWAL CODE
-      return #err(#NotFound);
     };
 
     private func validWithdrawalAddress(withdrawalAddress : Text) : Bool {
