@@ -626,7 +626,7 @@ actor Self {
       }
     };
 
-    let betslipResult = await userManager.addPlacedBet(dto);
+    let betslipResult = await userManager.placeBet(dto);
     switch(betslipResult){
       case (#ok betslip){
 

@@ -25,6 +25,8 @@ module AppTypes {
         monthlyBetTotals: [(Nat16, (Base.CalendarMonth, Nat64))];
         monthlyProfitLoss: [(Nat16, (Base.CalendarMonth, Nat64))];
         bets: [BettingTypes.BetSlip];
+        termsAccepted: Bool;
+        termsAcceptedOn: Int;
     };
 
 };

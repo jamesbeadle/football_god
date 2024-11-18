@@ -59,12 +59,12 @@ module RequestDTOs {
 
   public type UpdateProfilePictureDTO = {
     principalId: Base.PrincipalId;
-    username: Text;
+    profilePicture: Blob;
   };
 
   public type UpdateWithdrawalAddressDTO = {
     principalId: Base.PrincipalId;
-    username: Text;
+    withdrawalAddress: Text;
   };
 
   public type PauseAccountDTO = {
