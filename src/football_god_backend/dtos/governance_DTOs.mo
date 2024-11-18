@@ -1,6 +1,8 @@
 import Base "../types/base_types";
 import FootballTypes "../types/football_types";
-import DTOs "DTOs";
+
+import RequestDTOs "../dtos/request_DTOs";
+import ResponseDTOs "../dtos/response_DTOs";
 
 module GovernanceDTOs {
 
@@ -25,7 +27,7 @@ module GovernanceDTOs {
   };
 
   public type AddInitialFixturesDTO = {
-    seasonFixtures : [DTOs.FixtureDTO];
+    seasonFixtures : [ResponseDTOs.FixtureDTO];
   };
 
   public type MoveFixtureDTO = {

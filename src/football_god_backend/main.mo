@@ -5,11 +5,10 @@ import Principal "mo:base/Principal";
 import Result "mo:base/Result";
 import Text "mo:base/Text";
 import Timer "mo:base/Timer";
-import Nat "mo:base/Nat";
 import Nat64 "mo:base/Nat64";
 import Buffer "mo:base/Buffer";
 import Float "mo:base/Float";
-import Int64 "mo:base/Int64";
+import Iter "mo:base/Iter";
 
 import T "types/app_types";
 import Base "types/base_types";
@@ -17,7 +16,6 @@ import Countries "types/Countries";
 import FootballTypes "types/football_types";
 import Environment "environment";
 
-import DTOs "dtos/DTOs";
 import GovernanceDTOs "dtos/governance_DTOs";
 import RequestDTOs "dtos/request_DTOs";
 import ResponseDTOs "dtos/response_DTOs";
@@ -40,47 +38,89 @@ actor Self {
   
   /* User management functions */
 
-  public shared ({ caller }) func getProfile() : async Result.Result<DTOs.ProfileDTO, T.Error> {
+  public shared ({ caller }) func getProfile() : async Result.Result<ResponseDTOs.ProfileDTO, T.Error> {
     return await userManager.getProfile(Principal.toText(caller));
+  };
+
+  public shared ({ caller }) func updateUsername(dto: RequestDTOs.UpdateUsernameDTO) : async Result.Result<(), T.Error> {
+    assert not Principal.isAnonymous(caller);
+    let principalId = Principal.toText(caller);
+    assert dto.principalId == principalId;
+    return await userManager.updateUsername(dto);
+  };
+
+  public shared ({ caller }) func updateProfilePicture(dto: RequestDTOs.UpdateProfilePictureDTO) : async Result.Result<(), T.Error> {
+    assert not Principal.isAnonymous(caller);
+    let principalId = Principal.toText(caller);
+    assert dto.principalId == principalId;
+    return await userManager.updateProfilePicture(dto);
+  };
+
+  public shared ({ caller }) func updateWithdrawalAddress(dto: RequestDTOs.UpdateWithdrawalAddressDTO) : async Result.Result<(), T.Error> {
+    assert not Principal.isAnonymous(caller);
+    let principalId = Principal.toText(caller);
+    assert dto.principalId == principalId;
+    return await userManager.updateWithdrawalAddress(dto);
+  };
+
+  public shared ({ caller }) func pauseAccount(dto: RequestDTOs.PauseAccountDTO) : async Result.Result<(), T.Error> {
+    assert not Principal.isAnonymous(caller);
+    let principalId = Principal.toText(caller);
+    assert dto.principalId == principalId;
+    return await userManager.pauseAccount(dto);
+  };
+
+  public shared ({ caller }) func setMaxBetLimit(dto: RequestDTOs.SetMaxBetLimit) : async Result.Result<(), T.Error> {
+    assert not Principal.isAnonymous(caller);
+    let principalId = Principal.toText(caller);
+    assert dto.principalId == principalId;
+    return await userManager.setMaxBetLimit(dto);
+  };
+
+  public shared ({ caller }) func setMonthlyBetLimit(dto: RequestDTOs.SetMonthlyBetLimitDTO) : async Result.Result<(), T.Error> {
+    assert not Principal.isAnonymous(caller);
+    let principalId = Principal.toText(caller);
+    assert dto.principalId == principalId;
+    return await userManager.setMonthlyBetLimit(dto);
   };
 
   /* Data functions */
 
-  public shared query func getCountries() : async Result.Result<[DTOs.CountryDTO], T.Error> {
+  public shared query func getCountries() : async Result.Result<[ResponseDTOs.CountryDTO], T.Error> {
     return #ok(Countries.countries);
   };
 
-  public shared composite query func getLeagues() : async Result.Result<[DTOs.FootballLeagueDTO], T.Error> {
+  public shared composite query func getLeagues() : async Result.Result<[ResponseDTOs.FootballLeagueDTO], T.Error> {
     let data_canister = actor (Environment.DATA_CANISTER_ID) : actor {
       getLeagues : shared query () -> async Result.Result<[FootballTypes.League], T.Error>;
     };
     return await data_canister.getLeagues();
   };
 
-  public shared composite query func getLeagueClubs(leagueId: FootballTypes.LeagueId) : async Result.Result<[DTOs.ClubDTO], T.Error> {
+  public shared composite query func getLeagueClubs(leagueId: FootballTypes.LeagueId) : async Result.Result<[ResponseDTOs.ClubDTO], T.Error> {
     let data_canister = actor (Environment.DATA_CANISTER_ID) : actor {
-      getClubs : shared query (leagueId: FootballTypes.LeagueId) -> async Result.Result<[DTOs.ClubDTO], T.Error>;
+      getClubs : shared query (leagueId: FootballTypes.LeagueId) -> async Result.Result<[ResponseDTOs.ClubDTO], T.Error>;
     };
     return await data_canister.getClubs(leagueId);
   };
 
-  public shared composite query func getLeaguePlayers(leagueId: FootballTypes.LeagueId) : async Result.Result<[DTOs.PlayerDTO], T.Error> {  
+  public shared composite query func getLeaguePlayers(leagueId: FootballTypes.LeagueId) : async Result.Result<[ResponseDTOs.PlayerDTO], T.Error> {  
     let data_canister = actor (Environment.DATA_CANISTER_ID) : actor {
-      getPlayers : shared query (leagueId: FootballTypes.LeagueId) -> async Result.Result<[DTOs.PlayerDTO], T.Error>;
+      getPlayers : shared query (leagueId: FootballTypes.LeagueId) -> async Result.Result<[ResponseDTOs.PlayerDTO], T.Error>;
     };
     return await data_canister.getPlayers(leagueId);
   };
 
-  public shared composite query func getSeasons(leagueId: FootballTypes.LeagueId) : async Result.Result<[DTOs.SeasonDTO], T.Error>  {
+  public shared composite query func getSeasons(leagueId: FootballTypes.LeagueId) : async Result.Result<[ResponseDTOs.SeasonDTO], T.Error>  {
     let data_canister = actor (Environment.DATA_CANISTER_ID) : actor {
-      getSeasons : shared query (leagueId: FootballTypes.LeagueId) -> async Result.Result<[DTOs.SeasonDTO], T.Error>;
+      getSeasons : shared query (leagueId: FootballTypes.LeagueId) -> async Result.Result<[ResponseDTOs.SeasonDTO], T.Error>;
     };
     return await data_canister.getSeasons(leagueId);
   };
 
-  public shared composite query func getFixtures(dto: RequestDTOs.GetFixturesDTO) : async Result.Result<[DTOs.FixtureDTO], T.Error>  {
+  public shared composite query func getFixtures(dto: RequestDTOs.GetFixturesDTO) : async Result.Result<[ResponseDTOs.FixtureDTO], T.Error>  {
     let data_canister = actor (Environment.DATA_CANISTER_ID) : actor {
-      getFixtures : shared query (dto: RequestDTOs.GetFixturesDTO) -> async Result.Result<[DTOs.FixtureDTO], T.Error>;
+      getFixtures : shared query (dto: RequestDTOs.GetFixturesDTO) -> async Result.Result<[ResponseDTOs.FixtureDTO], T.Error>;
     };
     return await data_canister.getFixtures(dto);
   };
@@ -531,6 +571,7 @@ actor Self {
       submitFixtureData : (dto : GovernanceDTOs.SubmitFixtureDataDTO) -> async Result.Result<(), T.Error>;
     };
     let _ = await data_canister.submitFixtureData(dto);
+    await settleBets(dto.fixtureId);
     return;
   };
 
@@ -560,13 +601,14 @@ actor Self {
     return oddsManager.getBettableLeagueFixtures(leagueId);
   };
 
-  public shared query func getBettableFixture(leagueId: FootballTypes.LeagueId, fixtureId: FootballTypes.FixtureId) : async Result.Result<[ResponseDTOs.BettableFixtureDTO], T.Error> {
+  public shared query func getBettableFixture(leagueId: FootballTypes.LeagueId, fixtureId: FootballTypes.FixtureId) : async Result.Result<[ResponseDTOs.MatchOddsDTO], T.Error> {
     return oddsManager.getBettableFixture(leagueId, fixtureId);
   };
 
   public shared ({ caller }) func placeBet(dto: RequestDTOs.SubmitBetslipDTO) : async Result.Result<BettingTypes.BetSlip, T.Error>{
     assert not Principal.isAnonymous(caller);
     let principalId = Principal.toText(caller);
+    assert dto.principalId == principalId;
 
     assert await betWithinPlatformLimits(dto.totalStake);
 
@@ -584,10 +626,10 @@ actor Self {
       }
     };
 
-    let betslipResult = oddsManager.placeBet(dto);
-
+    let betslipResult = await userManager.addPlacedBet(dto);
     switch(betslipResult){
       case (#ok betslip){
+
         let openBetsBuffer = Buffer.fromArray<BettingTypes.BetSlip>(openBets);
         openBetsBuffer.add(betslip);
         openBets := Buffer.toArray(openBetsBuffer);
@@ -599,7 +641,14 @@ actor Self {
       case (#err error){
         return #err(error);
       }
-    };
+    }
+  };
+
+  public shared ({ caller }) func getBets(dto: RequestDTOs.GetBetsDTO) : async Result.Result<(), T.Error>{
+    assert not Principal.isAnonymous(caller);
+    let principalId = Principal.toText(caller);
+    assert dto.principalId == principalId;
+    return await userManager.getBets(dto);
   };
 
   private func calculateTotalPotentialPayout() : Nat64 {
@@ -632,11 +681,6 @@ actor Self {
       );
   };
 
-  public shared ({ caller }) func getBets(dto: RequestDTOs.GetBetsDTO) : async Result.Result<(), T.Error>{
-    assert not Principal.isAnonymous(caller);
-    return oddsManager.getBets(dto);
-  };
-
   private func betWithinPlatformLimits(stake: Nat64) : async Bool {
 
     let ledgerBalance = await ledger.getPotBalance(Principal.fromActor(Self));
@@ -654,22 +698,72 @@ actor Self {
     return true;
   };
 
-  private func settleBets(){
+  private func settleBets(completedFixtureId: FootballTypes.FixtureId) : async (){
+
+    let updatedOpenBetsBuffer = Buffer.fromArray<BettingTypes.BetSlip>([]);
+    for(bet in Iter.fromArray(openBets)){
+      
+      let unsettledSelections = Array.filter<BettingTypes.Selection>(bet.selections, 
+        func(selection: BettingTypes.Selection){
+          selection.result == #Unsettled;
+        }
+      );
+
+      let unsettledFixture = Array.find<BettingTypes.Selection>(bet.selections, 
+        func(selection: BettingTypes.Selection) : Bool {
+          selection.result == #Unsettled and selection.fixtureId == completedFixtureId;
+        }
+      );
+
+      let betCompletesSlip = Array.size(unsettledSelections) == 1 and Option.isSome(unsettledFixture);
+
+      if(betCompletesSlip){
+        await userManager.settleBet(bet);
+      } else {
+        updatedOpenBetsBuffer.add({
+          betType = bet.betType;
+          id = bet.id;
+          placedBy = bet.placedBy;
+          placedOn = bet.placedOn;
+          selections = Array.map<BettingTypes.Selection, BettingTypes.Selection>(bet.selections, func(selection: BettingTypes.Selection){
+            if(selection.fixtureId == completedFixtureId){
+              return {
+                fixtureId = selection.fixtureId;
+                odds = selection.odds;
+                result = #Settled;
+                selectionDetail = selection.selectionDetail;
+                selectionType = selection.selectionType;
+                stake = selection.stake;
+              }
+            } else { return selection; };
+          });
+          status = bet.status;
+          totalStake = bet.totalStake;
+          totalWinnings = bet.totalWinnings;
+        });
+      };
+    }; 
 
     totalBetsStaked := calculateTotalStaked();
     totalPotentialPayout := calculateTotalPotentialPayout();
   };
 
-  //set betting pause period
-
-  //
-
   /* Stable variable backup for managers */
 
-  //TODO
   //User Manager
+  private stable var stable_profile_canister_ids: [(Base.PrincipalId, Base.CanisterId)] = [];
+  private stable var stable_unique_profile_canister_ids: [Base.CanisterId] = [];
+  private stable var stable_active_profile_canister_id: Text = "";
 
   //Odds Manager
+  //TODO
+
+  system func preupgrade() {
+    stable_profile_canister_ids := userManager.getStableProfileCanisterIds();
+    stable_unique_profile_canister_ids := userManager.getStableUniqueProfileCanisterIds();
+    stable_active_profile_canister_id := userManager.getStableActiveProfileCanisterId();
+
+  };
 
   system func postupgrade() {
     ignore Timer.setTimer<system>(#nanoseconds(Int.abs(1)), postUpgradeCallback); 
@@ -837,19 +931,5 @@ actor Self {
     };
   };
 
-  //TODO: Remove manual betting functions when handled by game update and timer events:
-
-  public shared ({ caller }) func setFixtureToActive(fixtureId: FootballTypes.FixtureId) : async Result.Result<(), T.Error> {
-    //add active fixture id
-    return #err(#NotFound);
-  };
-
-  public func setFixtureToComplete(fixtureId: FootballTypes.FixtureId) : async Result.Result<(), T.Error> {
-    //remove active fixture id
-    //update related bets
-      //payout winning bets
-    
-    return #err(#NotFound);
-  };
    
 };

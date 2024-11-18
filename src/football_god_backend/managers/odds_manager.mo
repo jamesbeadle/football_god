@@ -11,10 +11,6 @@ module {
   public class OddsManager() {
 
     private var bettableLeagueFixtureIds: [(FootballTypes.LeagueId, [FootballTypes.FixtureId])] = [];
-
-    private var betslipsCanisterIds: [Base.CanisterId] = [];
-    private var activeBetslipCanisterId = "";
-
     private var cachedCalculatedOdds: [(FootballTypes.LeagueId, [(FootballTypes.FixtureId, BettingTypes.MatchOdds)])] = [];
 
     public func getStableBettableLeagueFixtureIds() : [(FootballTypes.LeagueId, [FootballTypes.FixtureId])] {
@@ -23,22 +19,6 @@ module {
 
     public func setStableBettableLeagueFixtureIds(stable_bettable_league_fixture_ids: [(FootballTypes.LeagueId, [FootballTypes.FixtureId])]){
       bettableLeagueFixtureIds := stable_bettable_league_fixture_ids;
-    };
-
-    public func getStableBetslipCanisterIds() : [Base.CanisterId] {
-      return betslipsCanisterIds;
-    };
-
-    public func setStableBetslipCanisterIds(stable_betslip_canister_ids: [Base.CanisterId]){
-      betslipsCanisterIds := stable_betslip_canister_ids;
-    };
-
-    public func getStableActiveBetslipCanisterId() : Base.CanisterId {
-      return activeBetslipCanisterId;
-    };
-
-    public func setStableActiveBetslipCanisterId(stable_active_betslip_canister_id: Base.CanisterId){
-      activeBetslipCanisterId := stable_active_betslip_canister_id;
     };
 
     public func setFixtureToActive(fixtureId: FootballTypes.FixtureId) : async Result.Result<(), T.Error> {
@@ -60,25 +40,10 @@ module {
       return #err(#NotFound);
     };
 
-    public func getBettableFixture(leagueId: FootballTypes.LeagueId, fixtureId: FootballTypes.FixtureId) : Result.Result<[ResponseDTOs.BettableFixtureDTO], T.Error> {
+    public func getBettableFixture(leagueId: FootballTypes.LeagueId, fixtureId: FootballTypes.FixtureId) : Result.Result<[ResponseDTOs.MatchOddsDTO], T.Error> {
       
       //include complete range of odds
       return #err(#NotFound);
-    };
-
-    public func placeBet(dto: RequestDTOs.SubmitBetslipDTO) : Result.Result<BettingTypes.BetSlip, T.Error>{
-      return #err(#NotFound);
-    };
-
-    public func getBets(dto: RequestDTOs.GetBetsDTO) : Result.Result<(), T.Error>{
-      
-      //filter by open closed won lost
-      return #err(#NotFound);
-    };
-
-    
-    public func calculatePotentialPayout(betslip: BettingTypes.BetSlip) : Nat64 {
-      return 0;
     };
     
 

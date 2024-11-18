@@ -17,18 +17,66 @@ module RequestDTOs {
     version: Text;
   };
 
+  public type ClubFilterDTO = {
+    leagueId: FootballTypes.LeagueId;
+    clubId: FootballTypes.ClubId;
+  };
+
   public type GetFixturesDTO = {
     leagueId: FootballTypes.LeagueId;
     seasonId: FootballTypes.SeasonId;
   };
 
+  public type UpdateFixtureDTO = {
+    seasonId : FootballTypes.SeasonId;
+    fixtureId : FootballTypes.FixtureId;
+    gameweek : FootballTypes.GameweekNumber;
+    kickOff : Int;
+    status : FootballTypes.FixtureStatusType;
+  };
+
+  public type PaginationFiltersDTO = {
+    limit : Nat;
+    offset : Nat;
+  };
+
+
   public type SubmitBetslipDTO = {
+    principalId: Base.PrincipalId;
     leagueId: FootballTypes.LeagueId;
     seasonId: FootballTypes.SeasonId;
     totalStake: Nat64;
   };
 
   public type GetBetsDTO = {
-    userId: Base.PrincipalId;
+    principalId: Base.PrincipalId;
+  };
+
+  public type UpdateUsernameDTO = {
+    principalId: Base.PrincipalId;
+    username: Text;
+  };
+
+  public type UpdateProfilePictureDTO = {
+    principalId: Base.PrincipalId;
+    username: Text;
+  };
+
+  public type UpdateWithdrawalAddressDTO = {
+    principalId: Base.PrincipalId;
+    username: Text;
+  };
+
+  public type PauseAccountDTO = {
+    principalId: Base.PrincipalId;
+  };
+
+  public type SetMaxBetLimit = {
+    principalId: Base.PrincipalId;
+    maxBetLimit: Nat64;
+  };
+
+  public type SetMonthlyBetLimitDTO = {
+    principalId: Base.PrincipalId;
   };
 };

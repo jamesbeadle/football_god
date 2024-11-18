@@ -7,6 +7,7 @@ module BettingTypes {
     /* Match odds related types */
 
     public type MatchOdds = {
+        fixtureId: FootballTypes.FixtureId;
         correctResults: TeamSelectionOdds;
         correctScores: [ScoreSelectionOdds];
         halfTimeScores: [ScoreSelectionOdds];
@@ -87,6 +88,7 @@ module BettingTypes {
         selections: [Selection];
         betType: BetType;
         totalStake: Nat64;
+        totalWinnings: Nat64;
     };
 
     public type Selection = {
@@ -95,6 +97,7 @@ module BettingTypes {
         result: SelectionResult;
         odds: Float;
         stake: Nat64;
+        fixtureId: FootballTypes.FixtureId;
     };
 
     public type SelectionResult = {

@@ -8,7 +8,9 @@ import Array "mo:base/Array";
 import Account "../utilities/Account";
 import T "../types/app_types";
 import Base "../types/base_types";
-import DTOs "../dtos/DTOs";
+import RequestDTOs "../dtos/request_DTOs";
+import ResponseDTOs "../dtos/response_DTOs";
+import BettingTypes "../types/betting_types";
 
 module {
 
@@ -18,7 +20,7 @@ module {
     private var uniqueProfileCanisterIds: [Base.CanisterId] = [];
     private var activeProfileCanisterId = "";
 
-    public func getProfile(principalId : Text) : async Result.Result<DTOs.ProfileDTO, T.Error> {
+    public func getProfile(principalId : Text) : async Result.Result<ResponseDTOs.ProfileDTO, T.Error> {
 
       let profileCanisterId = Array.find(profileCanisterIds, func(profileCanisterEntry: (Base.PrincipalId, Base.CanisterId)) : Bool {
         profileCanisterEntry.0 == principalId;
@@ -27,7 +29,7 @@ module {
       switch(profileCanisterId){
         case (?foundCanisterId){
           let profile_canister = actor (foundCanisterId.1) : actor {
-            getProfile : (principalId : Text) -> async Result.Result<DTOs.ProfileDTO, T.Error>;
+            getProfile : (principalId : Text) -> async Result.Result<ResponseDTOs.ProfileDTO, T.Error>;
           };
           return await profile_canister.getProfile(principalId);
         };
@@ -35,6 +37,60 @@ module {
           return #err(#NotFound);
         }
       };
+    };
+      
+    public func updateUsername(dto: RequestDTOs.UpdateUsernameDTO) : async Result.Result<(), T.Error> {
+      return #err(#NotFound);
+    };
+
+    public func updateProfilePicture(dto: RequestDTOs.UpdateProfilePictureDTO) : async Result.Result<(), T.Error> {
+      return #err(#NotFound);
+    };
+
+    public func updateWithdrawalAddress(dto: RequestDTOs.UpdateWithdrawalAddressDTO) : async Result.Result<(), T.Error> {
+      return #err(#NotFound);
+    };
+
+    public func pauseAccount(dto: RequestDTOs.PauseAccountDTO) : async Result.Result<(), T.Error> {
+      return #err(#NotFound);
+    };
+
+    public func setMaxBetLimit(dto: RequestDTOs.SetMaxBetLimit) : async Result.Result<(), T.Error> {
+
+      //When set, it cannot be increased for 30 days.
+
+      //TODO: Cannot change if changed or set in the last 30 days
+      return #err(#NotFound);
+    };
+
+    public func setMonthlyBetLimit(dto: RequestDTOs.SetMonthlyBetLimitDTO) : async Result.Result<(), T.Error> {
+     
+      //When set, it cannot be increased for 30 days.
+     
+    //TODO: Cannot change if changed or set in the last 30 days
+      return #err(#NotFound);
+    };
+
+    public func addPlacedBet(dto: RequestDTOs.SubmitBetslipDTO) : async Result.Result<BettingTypes.BetSlip, T.Error> {
+      return #err(#NotFound); //TODO
+      //private function to update monthly bet totals should be added when a bet is placed
+    };
+
+    public func settleBet(betslip: BettingTypes.BetSlip) : async () {
+
+      //Get the fixture from the data canister
+
+      //Evaluate each selection on each betslip in accordance with the bet type to determine winnings
+
+      //Pay winnings to user
+
+      //Settle the bet win lose with winnings if applicable in users canister
+
+      //Update the users totals for months etc
+    };
+
+    public func getBets(dto: RequestDTOs.GetBetsDTO) : async Result.Result<(), T.Error>{
+      return #err(#NotFound); //TODO
     };
 
     /*
