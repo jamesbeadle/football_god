@@ -1,31 +1,33 @@
-import Result "mo:base/Result";
-import Text "mo:base/Text";
+import Account "../utilities/Account";
+import Array "mo:base/Array";
 import Blob "mo:base/Blob";
 import Buffer "mo:base/Buffer";
-import Array "mo:base/Array";
-import Option "mo:base/Option";
+import Cycles "mo:base/ExperimentalCycles";
+import Int "mo:base/Int";
 import Iter "mo:base/Iter";
+import Result "mo:base/Result";
+import Text "mo:base/Text";
+import Nat8 "mo:base/Nat8";
+import Nat64 "mo:base/Nat64";
+import Option "mo:base/Option";
+import Order "mo:base/Order";
 import Principal "mo:base/Principal";
-import Account "../utilities/Account";
+import Time "mo:base/Time";
+
 import T "../types/app_types";
 import Base "../types/base_types";
+import BettingTypes "../types/betting_types";
+import FootballTypes "../types/football_types";
 import RequestDTOs "../dtos/request_DTOs";
 import ResponseDTOs "../dtos/response_DTOs";
-import BettingTypes "../types/betting_types";
-import Environment "../environment";
-import FootballTypes "../types/football_types";
-import Utilities "../utilities/utilities";
-import Management "../utilities/Management";
 import ProfileCanister "../canister_definitions/profile-canister";
-import Cycles "mo:base/ExperimentalCycles";
-import Order "mo:base/Order";
-import Nat8 "mo:base/Nat8";
-import Time "mo:base/Time";
-import Nat64 "mo:base/Nat64";
-import Int "mo:base/Int";
-import SNSToken "../utilities/ledger";
-import Constants "../utilities/Constants";
+
 import BettingUtilities "../utilities/betting_utilities";
+import Constants "../utilities/Constants";
+import Environment "../environment";
+import Management "../utilities/Management";
+import SNSToken "../utilities/ledger";
+import Utilities "../utilities/utilities";
 
 module {
 
@@ -220,20 +222,20 @@ module {
       };
     };
 
-    public func settleBet(betslip: BettingTypes.BetSlip) : async () {
+    public func settleBet(unsettledBetslip: BettingTypes.BetSlip) : async () {
       
       let data_canister = actor (Environment.DATA_CANISTER_ID) : actor {
         getBetslipFixtures : shared query (dto: RequestDTOs.GetBetslipFixturesDTO) -> async Result.Result<[ResponseDTOs.FixtureDTO], T.Error>;
       };
       let fixturesResult = await data_canister.getBetslipFixtures({
-        selections = betslip.selections;
+        selections = unsettledBetslip.selections;
       });
 
       switch(fixturesResult){
         case (#ok betFixtures){ 
 
           let updatedSelectionBuffer = Buffer.fromArray<BettingTypes.Selection>([]);
-          label selectionLoop for(selection in Iter.fromArray(betslip.selections)){
+          label selectionLoop for(selection in Iter.fromArray(unsettledBetslip.selections)){
             let fixtureResult = Array.find<ResponseDTOs.FixtureDTO>(betFixtures, func (fixture: ResponseDTOs.FixtureDTO) : Bool {
               fixture.id == selection.fixtureId;
             });
@@ -598,6 +600,19 @@ module {
               case (null){}
             };          
           };  
+
+          let betslip: BettingTypes.BetSlip = {
+            betType = unsettledBetslip.betType;
+            id = unsettledBetslip.id;
+            placedBy = unsettledBetslip.placedBy;
+            placedOn = unsettledBetslip.placedOn;
+            result = unsettledBetslip.result;
+            selections = Buffer.toArray(updatedSelectionBuffer);
+            settledOn = unsettledBetslip.settledOn;
+            status = unsettledBetslip.status;
+            totalStake = unsettledBetslip.totalStake;
+            totalWinnings = unsettledBetslip.totalWinnings;
+          };
           
           var betResult: BettingTypes.BetResult = #Lost;
           var perfectBetResult: BettingTypes.BetResult = #Lost;
