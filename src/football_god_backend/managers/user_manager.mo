@@ -595,41 +595,237 @@ module {
           };  
           
           var betResult: BettingTypes.BetResult = #Lost;
+          var perfectBetResult: BettingTypes.BetResult = #Lost;
+          
+          let losingSelections = Array.filter<BettingTypes.Selection>(betslip.selections, func(selection: BettingTypes.Selection) {
+            selection.result == #Lost;
+          });
+          if(Array.size(losingSelections) == 0){
+            perfectBetResult := #Won;
+          };
           var totalWinnings: Nat64 = 0;
 
           switch(betslip.betType){
             case (#Single){
-              //check only one bet or void
-
-              //check if that one selection was a winner as the whole bet was a winner
-              
-
-              //Evaluate each selection on each betslip in accordance with the bet type to determine winnings
-
-              
+              if(Array.size(betslip.selections) != 1){
+                await voidBet(betslip);
+                return;
+              };
+              if(perfectBetResult == #Won){
+                totalWinnings := getCumulativeSelectionWinnings(betslip);
+                betResult := #Won;
+              };
             };
             case (#Double){
-              //(stake x odds) + stake
-                // x second selection odds + stake 
+              if(Array.size(betslip.selections) != 2){
+                await voidBet(betslip);
+                return;
+              };
+              if(perfectBetResult == #Won){
+                totalWinnings := getCumulativeSelectionWinnings(betslip);
+                betResult := #Won;
+              };
             };
-            case (#Treble){};
-            case (#FourFold){};
-            case (#FiveFold){};
-            case (#SixFold){};
-            case (#SevenFold){};
-            case (#EightFold){};
-            case (#NineFold){};
-            case (#TenFold){};
-            case (#Canadian){};
-            case (#Heinz){};
-            case (#Goliath){};
-            case (#Lucky15){};
-            case (#Lucky31){};
-            case (#Lucky63){};
-            case (#Patent){};
-            case (#SuperHeinz){};
-            case (#Trixie){};
-            case (#Yankee){};
+            case (#Treble){
+              if(Array.size(betslip.selections) != 3){
+                await voidBet(betslip);
+                return;
+              };
+              if(perfectBetResult == #Won){
+                totalWinnings := getCumulativeSelectionWinnings(betslip);
+                betResult := #Won;
+              };
+            };
+            case (#FourFold){
+              if(Array.size(betslip.selections) != 4){
+                await voidBet(betslip);
+                return;
+              };
+              if(perfectBetResult == #Won){
+                totalWinnings := getCumulativeSelectionWinnings(betslip);
+                betResult := #Won;
+              };
+            };
+            case (#FiveFold){
+              if(Array.size(betslip.selections) != 5){
+                await voidBet(betslip);
+                return;
+              };
+              if(perfectBetResult == #Won){
+                totalWinnings := getCumulativeSelectionWinnings(betslip);
+                betResult := #Won;
+              };
+            };
+            case (#SixFold){
+              if(Array.size(betslip.selections) != 6){
+                await voidBet(betslip);
+                return;
+              };
+              if(perfectBetResult == #Won){
+                totalWinnings := getCumulativeSelectionWinnings(betslip);
+                betResult := #Won;
+              };
+            };
+            case (#SevenFold){
+              if(Array.size(betslip.selections) != 7){
+                await voidBet(betslip);
+                return;
+              };
+              if(perfectBetResult == #Won){
+                totalWinnings := getCumulativeSelectionWinnings(betslip);
+                betResult := #Won;
+              };
+            };
+            case (#EightFold){
+              if(Array.size(betslip.selections) != 8){
+                await voidBet(betslip);
+                return;
+              };
+              if(perfectBetResult == #Won){
+                totalWinnings := getCumulativeSelectionWinnings(betslip);
+                betResult := #Won;
+              };
+            };
+            case (#NineFold){
+              if(Array.size(betslip.selections) != 9){
+                await voidBet(betslip);
+                return;
+              };
+              if(perfectBetResult == #Won){
+                totalWinnings := getCumulativeSelectionWinnings(betslip);
+                betResult := #Won;
+              };
+            };
+            case (#TenFold){
+              if(Array.size(betslip.selections) != 10){
+                await voidBet(betslip);
+                return;
+              };
+              if(perfectBetResult == #Won){
+                totalWinnings := getCumulativeSelectionWinnings(betslip);
+                betResult := #Won;
+              };
+            };
+            case (#Patent){
+              if(Array.size(betslip.selections) != 3){
+                await voidBet(betslip);
+                return;
+              };
+
+              totalWinnings := getPatentSelectionWinnings(betslip);
+
+              if(totalWinnings > 0){
+                betResult := #Won;
+              };
+            };
+            case (#Trixie){
+              if(Array.size(betslip.selections) != 3){
+                await voidBet(betslip);
+                return;
+              };
+
+              totalWinnings := getTrixieSelectionWinnings(betslip);
+
+              if(totalWinnings > 0){
+                betResult := #Won;
+              };
+            };
+            case (#Yankee){
+              if(Array.size(betslip.selections) != 4){
+                await voidBet(betslip);
+                return;
+              };
+
+              totalWinnings := getYankeeSelectionWinnings(betslip);
+
+              if(totalWinnings > 0){
+                betResult := #Won;
+              };
+            };
+            case (#Lucky15){
+              if(Array.size(betslip.selections) != 4){
+                await voidBet(betslip);
+                return;
+              };
+
+              totalWinnings := getLucky15SelectionWinnings(betslip);
+
+              if(totalWinnings > 0){
+                betResult := #Won;
+              };
+            };
+            case (#Lucky31){
+              if(Array.size(betslip.selections) != 5){
+                await voidBet(betslip);
+                return;
+              };
+
+              totalWinnings := getLucky31SelectionWinnings(betslip);
+
+              if(totalWinnings > 0){
+                betResult := #Won;
+              };
+            };
+            case (#Lucky63){
+              if(Array.size(betslip.selections) != 6){
+                await voidBet(betslip);
+                return;
+              };
+
+              totalWinnings := getLucky63SelectionWinnings(betslip);
+
+              if(totalWinnings > 0){
+                betResult := #Won;
+              };
+            };
+            case (#Canadian){
+              if(Array.size(betslip.selections) != 5){
+                await voidBet(betslip);
+                return;
+              };
+
+              totalWinnings := getCanadianSelectionWinnings(betslip);
+
+              if(totalWinnings > 0){
+                betResult := #Won;
+              };
+            };
+            case (#Heinz){
+              if(Array.size(betslip.selections) != 6){
+                await voidBet(betslip);
+                return;
+              };
+
+              totalWinnings := getHeinzSelectionWinnings(betslip);
+
+              if(totalWinnings > 0){
+                betResult := #Won;
+              };
+            };
+            case (#SuperHeinz){
+              if(Array.size(betslip.selections) != 7){
+                await voidBet(betslip);
+                return;
+              };
+
+              totalWinnings := getSuperHeinzSelectionWinnings(betslip);
+
+              if(totalWinnings > 0){
+                betResult := #Won;
+              };
+            };
+            case (#Goliath){
+              if(Array.size(betslip.selections) != 8){
+                await voidBet(betslip);
+                return;
+              };
+
+              totalWinnings := getGoliathSelectionWinnings(betslip);
+
+              if(totalWinnings > 0){
+                betResult := #Won;
+              };
+            };
 
           };
           
@@ -800,6 +996,76 @@ module {
     private func validProfilePicture(profilePicture : Blob) : Bool {
       let sizeInKB = Array.size(Blob.toArray(profilePicture)) / 1024;
       return (sizeInKB > 0 and sizeInKB <= 500);
+    };
+
+    private func getCumulativeSelectionWinnings(betslip: BettingTypes.BetSlip) : Nat64 {
+      let startingStake = betslip.totalStake;
+      var cumulativeWinnings = startingStake;
+      for(selection in Iter.fromArray(betslip.selections)){
+        cumulativeWinnings += (Utilities.convertFloatToNat64(selection.odds) * cumulativeWinnings);
+      };
+      return cumulativeWinnings;
+    };
+
+    private func getCanadianSelectionWinnings(betslip: BettingTypes.BetSlip) : Nat64 {
+      
+      //5 selections
+        //26 bets
+          //10 doubles
+          //10 trebles
+          //5 four folds
+          //1 five fold
+      return 0; //TODO
+    };
+
+    private func getHeinzSelectionWinnings(betslip: BettingTypes.BetSlip) : Nat64 {
+      //6 selections creating 57 bets
+      return 0; //TODO
+    };
+
+    private func getGoliathSelectionWinnings(betslip: BettingTypes.BetSlip) : Nat64 {
+      //8 selections creating 247 bets
+      return 0; //TODO
+    };
+
+    private func getLucky15SelectionWinnings(betslip: BettingTypes.BetSlip) : Nat64 {
+      //4 selections creating 15 bets
+      return 0; //TODO
+    };
+
+    private func getLucky31SelectionWinnings(betslip: BettingTypes.BetSlip) : Nat64 {
+      //5 selections creating 31 bets
+      return 0; //TODO
+    };
+
+    private func getLucky63SelectionWinnings(betslip: BettingTypes.BetSlip) : Nat64 {
+      //6 selections creating 63 bets
+      return 0; //TODO
+    };
+
+    private func getPatentSelectionWinnings(betslip: BettingTypes.BetSlip) : Nat64 {
+      //3 selections creating 7 bets
+      return 0; //TODO
+    };
+
+    private func getSuperHeinzSelectionWinnings(betslip: BettingTypes.BetSlip) : Nat64 {
+      //7 selecitons creating 120 bets
+      return 0; //TODO
+    };
+
+    private func getTrixieSelectionWinnings(betslip: BettingTypes.BetSlip) : Nat64 {
+      //3 selections creating 4 bets
+      return 0; //TODO
+    };
+
+    private func getYankeeSelectionWinnings(betslip: BettingTypes.BetSlip) : Nat64 {
+      //4 selections creating 11 bets
+      return 0; //TODO
+    };
+    
+
+    private func voidBet(betslip: BettingTypes.BetSlip) : async (){
+      //TODO
     };
 
     private func payWinnings(winnerPrincipalId: Base.PrincipalId, totalWinnings: Nat64) : async () {
