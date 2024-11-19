@@ -187,12 +187,7 @@ module ResponseDTOs {
     anytimeScorers: [BettingTypes.PlayerSelectionOdds];
     yellowCards: [BettingTypes.PlayerSelectionOdds];
     redCards: [BettingTypes.PlayerSelectionOdds];
-    penaltyAwarded: BettingTypes.TeamSelectionOdds;
-    penaltyScored: BettingTypes.TeamSelectionOdds;
     penaltyMissed: BettingTypes.TeamSelectionOdds;
-    outsideBoxScorers: [BettingTypes.PlayerSelectionOdds];
-    headerScorers: [BettingTypes.PlayerSelectionOdds];
-    penaltyScorers: [BettingTypes.PlayerSelectionOdds];
     penaltyMissers: [BettingTypes.PlayerSelectionOdds];
     firstAssisters: [BettingTypes.PlayerSelectionOdds];
     lastAssist: [BettingTypes.PlayerSelectionOdds];

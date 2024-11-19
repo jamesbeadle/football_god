@@ -1,7 +1,5 @@
 import Result "mo:base/Result";
-import List "mo:base/List";
 import Text "mo:base/Text";
-import Nat64 "mo:base/Nat64";
 import Blob "mo:base/Blob";
 import Buffer "mo:base/Buffer";
 import Array "mo:base/Array";
@@ -21,6 +19,7 @@ import Management "../utilities/Management";
 import ProfileCanister "../canister_definitions/profile-canister";
 import Cycles "mo:base/ExperimentalCycles";
 import Order "mo:base/Order";
+import Nat8 "mo:base/Nat8";
 
 module {
 
@@ -358,11 +357,12 @@ module {
                     let sortedAssists = Array.sort(
                       assists,
                       func(a : FootballTypes.PlayerEventData, b : FootballTypes.PlayerEventData) : Order.Order {
-                        if (a.eventEndMinute < b.eventEndMinute) { return #greater };
+                        if (a.eventEndMinute < b.eventEndMinute) { return #less };
                         if (a.eventEndMinute == b.eventEndMinute) { return #equal };
-                        return #less;
+                        return #greater;
                       },
                     );
+
 
                     let firstAssist = sortedAssists[0];
                     if(firstAssist.playerId == detail.playerId){
@@ -372,52 +372,215 @@ module {
                     };
                   };
                   case(#FirstGoalscorer detail){
+                    let goals = Array.filter<FootballTypes.PlayerEventData>(fixture.events, func(playerEvent: FootballTypes.PlayerEventData){
+                      playerEvent.eventType == #Goal;
+                    });
+                    
+                    if(Array.size(goals) == 0){
+                      updatedSelectionBuffer.add(createLosingSelection(selection));
+                      continue selectionLoop;
+                    };
 
+                    let sortedGoals = Array.sort(
+                      goals,
+                      func(a : FootballTypes.PlayerEventData, b : FootballTypes.PlayerEventData) : Order.Order {
+                        if (a.eventEndMinute < b.eventEndMinute) { return #less };
+                        if (a.eventEndMinute == b.eventEndMinute) { return #equal };
+                        return #greater;
+                      },
+                    );
+
+                    let firstGoal = sortedGoals[0];
+                    if(firstGoal.playerId == detail.playerId){
+                      updatedSelectionBuffer.add(createWinningSelection(selection));
+                    } else {
+                      updatedSelectionBuffer.add(createLosingSelection(selection));
+                    };
                   };
                   case(#HalfTimeFullTimeResult detail){
+                    let firstHalfHomeGoals = Array.size(Array.filter<FootballTypes.PlayerEventData>(fixture.events, func(playerEvent: FootballTypes.PlayerEventData){
+                      playerEvent.eventType == #Goal and 
+                      playerEvent.clubId == fixture.homeClubId and 
+                      playerEvent.eventEndMinute <= 45;
+                    }));
 
+                    let firstHalfAwayGoals = Array.size(Array.filter<FootballTypes.PlayerEventData>(fixture.events, func(playerEvent: FootballTypes.PlayerEventData){
+                      playerEvent.eventType == #Goal and 
+                      playerEvent.clubId == fixture.awayClubId and 
+                      playerEvent.eventEndMinute <= 45;
+                    }));
+
+                    var firstHalfResult: BettingTypes.MatchResult = #Draw;
+
+                    if(firstHalfHomeGoals > firstHalfAwayGoals) {
+                      firstHalfResult := #HomeWin;
+                    };
+
+                    if(firstHalfHomeGoals < firstHalfAwayGoals) {
+                      firstHalfResult := #AwayWin;
+                    };
+
+                    let homeGoals = Array.size(Array.filter<FootballTypes.PlayerEventData>(fixture.events, func(playerEvent: FootballTypes.PlayerEventData){
+                      playerEvent.eventType == #Goal and 
+                      playerEvent.clubId == fixture.homeClubId
+                    }));
+
+                    let awayGoals = Array.size(Array.filter<FootballTypes.PlayerEventData>(fixture.events, func(playerEvent: FootballTypes.PlayerEventData){
+                      playerEvent.eventType == #Goal and 
+                      playerEvent.clubId == fixture.awayClubId
+                    }));
+
+                    var matchResult: BettingTypes.MatchResult = #Draw;
+
+                    if(homeGoals > awayGoals) {
+                      matchResult := #HomeWin;
+                    };
+
+                    if(homeGoals < awayGoals) {
+                      matchResult := #AwayWin;
+                    };
+
+                    if(detail.halfTimeResult == firstHalfResult and detail.fullTimeResult == matchResult){
+                      updatedSelectionBuffer.add(createWinningSelection(selection));
+                    } else {
+                      updatedSelectionBuffer.add(createLosingSelection(selection));
+                    };                  
                   };
                   case(#HalfTimeScore detail){
+                    let firstHalfHomeGoals = Array.size(Array.filter<FootballTypes.PlayerEventData>(fixture.events, func(playerEvent: FootballTypes.PlayerEventData){
+                      playerEvent.eventType == #Goal and 
+                      playerEvent.clubId == fixture.homeClubId and 
+                      playerEvent.eventEndMinute <= 45;
+                    }));
 
+                    let firstHalfAwayGoals = Array.size(Array.filter<FootballTypes.PlayerEventData>(fixture.events, func(playerEvent: FootballTypes.PlayerEventData){
+                      playerEvent.eventType == #Goal and 
+                      playerEvent.clubId == fixture.awayClubId and 
+                      playerEvent.eventEndMinute <= 45;
+                    }));
+
+                    if(detail.homeGoals == Nat8.fromNat(firstHalfHomeGoals) and detail.awayGoals == Nat8.fromNat(firstHalfAwayGoals)){
+                      updatedSelectionBuffer.add(createWinningSelection(selection));
+                    } else {
+                      updatedSelectionBuffer.add(createLosingSelection(selection));
+                    };
                   };
                   case(#LastAssist detail){
+                    let assists = Array.filter<FootballTypes.PlayerEventData>(fixture.events, func(playerEvent: FootballTypes.PlayerEventData){
+                      playerEvent.eventType == #GoalAssisted;
+                    });
+                    
+                    if(Array.size(assists) == 0){
+                      updatedSelectionBuffer.add(createLosingSelection(selection));
+                      continue selectionLoop;
+                    };
 
+                    let sortedAssists = Array.sort(
+                      assists,
+                      func(a : FootballTypes.PlayerEventData, b : FootballTypes.PlayerEventData) : Order.Order {
+                        if (a.eventEndMinute < b.eventEndMinute) { return #less };
+                        if (a.eventEndMinute == b.eventEndMinute) { return #equal };
+                        return #greater;
+                      },
+                    );
+
+
+                    let lastAssist = sortedAssists[Array.size(sortedAssists) - 1];
+                    if(lastAssist.playerId == detail.playerId){
+                      updatedSelectionBuffer.add(createWinningSelection(selection));
+                    } else {
+                      updatedSelectionBuffer.add(createLosingSelection(selection));
+                    };
                   };
                   case(#LastGoalscorer detail){
+                    let goals = Array.filter<FootballTypes.PlayerEventData>(fixture.events, func(playerEvent: FootballTypes.PlayerEventData){
+                      playerEvent.eventType == #Goal;
+                    });
+                    
+                    if(Array.size(goals) == 0){
+                      updatedSelectionBuffer.add(createLosingSelection(selection));
+                      continue selectionLoop;
+                    };
 
+                    let sortedGoals = Array.sort(
+                      goals,
+                      func(a : FootballTypes.PlayerEventData, b : FootballTypes.PlayerEventData) : Order.Order {
+                        if (a.eventEndMinute < b.eventEndMinute) { return #less };
+                        if (a.eventEndMinute == b.eventEndMinute) { return #equal };
+                        return #greater;
+                      },
+                    );
+
+                    let lastGoal = sortedGoals[Array.size(sortedGoals) - 1];
+                    if(lastGoal.playerId == detail.playerId){
+                      updatedSelectionBuffer.add(createWinningSelection(selection));
+                    } else {
+                      updatedSelectionBuffer.add(createLosingSelection(selection));
+                    };
                   };
                   case(#MissPenalty detail){
+                    let foundMissedPenalty = Array.find<FootballTypes.PlayerEventData>(fixture.events, func(playerEvent: FootballTypes.PlayerEventData) : Bool {
+                      playerEvent.eventType == #PenaltyMissed and playerEvent.playerId == detail.playerId;
+                    });
 
-                  };
-                  case(#PenaltyGiven detail){
-
+                    if(Option.isSome(foundMissedPenalty)){
+                      updatedSelectionBuffer.add(createWinningSelection(selection));
+                    } else {
+                      updatedSelectionBuffer.add(createLosingSelection(selection));
+                    };
                   };
                   case(#PenaltyMissed detail){
+                    let foundMissedPenalty = Array.find<FootballTypes.PlayerEventData>(fixture.events, func(playerEvent: FootballTypes.PlayerEventData) : Bool {
+                      playerEvent.eventType == #PenaltyMissed and playerEvent.clubId == detail.clubId;
+                    });
 
-                  };
-                  case(#PenaltyScored detail){
-
+                    if(Option.isSome(foundMissedPenalty)){
+                      updatedSelectionBuffer.add(createWinningSelection(selection));
+                    } else {
+                      updatedSelectionBuffer.add(createLosingSelection(selection));
+                    };
                   };
                   case(#RedCard detail){
+                    let foundRedCard = Array.find<FootballTypes.PlayerEventData>(fixture.events, func(playerEvent: FootballTypes.PlayerEventData) : Bool {
+                      playerEvent.eventType == #RedCard and playerEvent.playerId == detail.playerId;
+                    });
 
+                    if(Option.isSome(foundRedCard)){
+                      updatedSelectionBuffer.add(createWinningSelection(selection));
+                    } else {
+                      updatedSelectionBuffer.add(createLosingSelection(selection));
+                    };
                   };
                   case(#ScoreBrace detail){
-
+                    let playerGoals = Array.filter<FootballTypes.PlayerEventData>(fixture.events, func(playerEvent: FootballTypes.PlayerEventData){
+                      playerEvent.eventType == #Goal and playerEvent.playerId == detail.playerId;
+                    });
+                    if(Array.size(playerGoals) >= 2){
+                      updatedSelectionBuffer.add(createWinningSelection(selection));
+                    } else {
+                      updatedSelectionBuffer.add(createLosingSelection(selection));
+                    }
                   };
                   case(#ScoreHatrick detail){
-
-                  };
-                  case(#ScoreHeader detail){
-
-                  };
-                  case(#ScoreOutsideBox detail){
-
-                  };
-                  case(#ScorePenalty detail){
-
+                    let playerGoals = Array.filter<FootballTypes.PlayerEventData>(fixture.events, func(playerEvent: FootballTypes.PlayerEventData){
+                      playerEvent.eventType == #Goal and playerEvent.playerId == detail.playerId;
+                    });
+                    if(Array.size(playerGoals) >= 3){
+                      updatedSelectionBuffer.add(createWinningSelection(selection));
+                    } else {
+                      updatedSelectionBuffer.add(createLosingSelection(selection));
+                    }
                   };
                   case(#YellowCard detail){
+                    let foundYellowCard = Array.find<FootballTypes.PlayerEventData>(fixture.events, func(playerEvent: FootballTypes.PlayerEventData) : Bool {
+                      playerEvent.eventType == #YellowCard and playerEvent.playerId == detail.playerId;
+                    });
 
+                    if(Option.isSome(foundYellowCard)){
+                      updatedSelectionBuffer.add(createWinningSelection(selection));
+                    } else {
+                      updatedSelectionBuffer.add(createLosingSelection(selection));
+                    };
                   };
                 };
 

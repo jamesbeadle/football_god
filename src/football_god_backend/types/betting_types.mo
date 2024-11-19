@@ -16,12 +16,7 @@ module BettingTypes {
         anytimeScorers: [PlayerSelectionOdds];
         yellowCards: [PlayerSelectionOdds];
         redCards: [PlayerSelectionOdds];
-        penaltyAwarded: TeamSelectionOdds;
-        penaltyScored: TeamSelectionOdds;
         penaltyMissed: TeamSelectionOdds;
-        outsideBoxScorers: [PlayerSelectionOdds];
-        headerScorers: [PlayerSelectionOdds];
-        penaltyScorers: [PlayerSelectionOdds];
         penaltyMissers: [PlayerSelectionOdds];
         firstAssisters: [PlayerSelectionOdds];
         lastAssist: [PlayerSelectionOdds];
@@ -128,12 +123,7 @@ module BettingTypes {
         anytimeGoalscorer: [PlayerEventDetail];
         yellowCard: [PlayerEventDetail];
         redCard: [PlayerEventDetail];
-        penaltyGiven: [ClubEventDetail];
-        penaltyScored: [PlayerEventDetail];
-        penaltyMissed: [PlayerEventDetail];
-        scoreOutsideBox: [PlayerEventDetail];
-        scoreHeader : [PlayerEventDetail];
-        scorePenalty : [PlayerEventDetail];
+        penaltyMissed: [ClubEventDetail];
         missPenalty : [PlayerEventDetail];
         firstAssist : PlayerEventDetail;
         lastAssist : PlayerEventDetail;
@@ -151,7 +141,7 @@ module BettingTypes {
     };
 
     public type ClubEventDetail = {
-        teamId: FootballTypes.ClubId;
+        clubId: FootballTypes.ClubId;
     };
 
     public type ScoreDetail = {
@@ -197,12 +187,7 @@ module BettingTypes {
         #AnytimeGoalscorer;
         #YellowCard;
         #RedCard;
-        #PenaltyGiven;
-        #PenaltyScored;
         #PenaltyMissed;
-        #ScoreOutsideBox;
-        #ScoreHeader;
-        #ScorePenalty;
         #MissPenalty;
         #FirstAssist;
         #LastAssist;
@@ -259,18 +244,13 @@ module BettingTypes {
         #AnytimeGoalscorer: PlayerEventDetail;
         #YellowCard: PlayerEventDetail;
         #RedCard: PlayerEventDetail;
-        #PenaltyGiven: [PlayerEventDetail];
-        #PenaltyScored: [PlayerEventDetail];
-        #PenaltyMissed: [PlayerEventDetail];
-        #ScoreOutsideBox: [PlayerEventDetail];
-        #ScoreHeader : [PlayerEventDetail];
-        #ScorePenalty : [PlayerEventDetail];
-        #MissPenalty : [PlayerEventDetail];
+        #PenaltyMissed: ClubEventDetail;
+        #MissPenalty : PlayerEventDetail;
         #FirstAssist : PlayerEventDetail;
         #LastAssist : PlayerEventDetail;
         #AnytimeAssist : PlayerEventDetail;
-        #ScoreBrace : [PlayerGroupEventDetail];
-        #ScoreHatrick : [PlayerGroupEventDetail];
+        #ScoreBrace : PlayerGroupEventDetail;
+        #ScoreHatrick : PlayerGroupEventDetail;
         #HalfTimeScore : ScoreDetail;
         #BothTeamsToScore : BothTeamsToScoreDetail;
         #HalfTimeFullTimeResult : HalfTimeFullTimeResultDetail;

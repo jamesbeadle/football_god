@@ -129,14 +129,6 @@ module FootballTypes {
       #Striped;
   };
 
-  public type GoalType = {
-      #LeftFoot;
-      #RightFoot;
-      #Header;
-      #OutsideBox;
-      #DirectSetPiece;
-  };
-
   public type PlayerEventType = {
       #Appearance;
       #Goal;
