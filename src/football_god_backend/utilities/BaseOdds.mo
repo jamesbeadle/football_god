@@ -1,0 +1,154 @@
+module BaseOdds {
+    public let HOME_WIN = 2;
+    public let DRAW = 1;
+    public let AWAY_WIN = 3;
+
+    public let HOME_FORWARD_FIRST_GOALSCORER = 5;
+    public let HOME_MIDFIELDER_FIRST_GOALSCORER = 10;
+    public let HOME_DEFENDER_FIRST_GOALSCORER = 15;
+    public let HOME_GOALKEEPER_FIRST_GOALSCORER = 100;
+
+    public let HOME_FORWARD_LAST_GOALSCORER = 6;
+    public let HOME_MIDFIELDER_LAST_GOALSCORER = 12;
+    public let HOME_DEFENDER_LAST_GOALSCORER = 18;
+    public let HOME_GOALKEEPER_LAST_GOALSCORER = 100;
+
+    public let HOME_FORWARD_ANYTIME_GOALSCORER = 3;
+    public let HOME_MIDFIELDER_ANYTIME_GOALSCORER = 5;
+    public let HOME_DEFENDER_ANYTIME_GOALSCORER = 8;
+    public let HOME_GOALKEEPER_ANYTIME_GOALSCORER = 100;
+
+    public let AWAY_FORWARD_FIRST_GOALSCORER = 7;
+    public let AWAY_MIDFIELDER_FIRST_GOALSCORER = 12;
+    public let AWAY_DEFENDER_FIRST_GOALSCORER = 17;
+    public let AWAY_GOALKEEPER_FIRST_GOALSCORER = 100;
+
+    public let AWAY_FORWARD_LAST_GOALSCORER = 8;
+    public let AWAY_MIDFIELDER_LAST_GOALSCORER = 14;
+    public let AWAY_DEFENDER_LAST_GOALSCORER = 20;
+    public let AWAY_GOALKEEPER_LAST_GOALSCORER = 100;
+
+    public let AWAY_FORWARD_ANYTIME_GOALSCORER = 5;
+    public let AWAY_MIDFIELDER_ANYTIME_GOALSCORER = 7;
+    public let AWAY_DEFENDER_ANYTIME_GOALSCORER = 10;
+    public let AWAY_GOALKEEPER_ANYTIME_GOALSCORER = 100;
+
+    public let HOME_FORWARD_YELLOW_CARD = 11;
+    public let HOME_MIDFIELDER_YELLOW_CARD = 9;
+    public let HOME_DEFENDER_YELLOW_CARD = 6;
+    public let HOME_GOALKEEPER_YELLOW_CARD = 6;
+
+    public let AWAY_FORWARD_YELLOW_CARD = 10;
+    public let AWAY_MIDFIELDER_YELLOW_CARD = 8;
+    public let AWAY_DEFENDER_YELLOW_CARD = 5;
+    public let AWAY_GOALKEEPER_YELLOW_CARD = 5;
+
+    public let HOME_FORWARD_RED_CARD = 100;
+    public let HOME_MIDFIELDER_RED_CARD = 75;
+    public let HOME_DEFENDER_RED_CARD = 50;
+    public let HOME_GOALKEEPER_RED_CARD = 100;
+
+    public let AWAY_FORWARD_RED_CARD = 80;
+    public let AWAY_MIDFIELDER_RED_CARD = 60;
+    public let AWAY_DEFENDER_RED_CARD = 40;
+    public let AWAY_GOALKEEPER_RED_CARD = 80;
+
+    public let HOME_TEAM_PENALTY_MISS = 10;
+    public let AWAY_TEAM_PENALTY_MISS = 8;
+
+    public let HOME_FORWARD_PENALTY_MISS = 15;
+    public let HOME_MIDFIELDER_PENALTY_MISS = 20;
+    public let HOME_DEFENDER_PENALTY_MISS = 25;
+    public let HOME_GOALKEEPER_PENALTY_MISS = 100;
+
+    public let AWAY_FORWARD_PENALTY_MISS = 12;
+    public let AWAY_MIDFIELDER_PENALTY_MISS = 18;
+    public let AWAY_DEFENDER_PENALTY_MISS = 24;
+    public let AWAY_GOALKEEPER_PENALTY_MISS = 100;
+
+    public let HOME_FORWARD_ANYTIME_ASSIST = 3;
+    public let HOME_MIDFIELD_ANYTIME_ASSIST = 4;
+    public let HOME_DEFENDER_ANYTIME_ASSIST = 5;
+    public let HOME_GOALKEEPER_ANYTIME_ASSIST = 10;
+    
+    public let AWAY_FORWARD_ANYTIME_ASSIST = 4;
+    public let AWAY_MIDFIELD_ANYTIME_ASSIST = 5;
+    public let AWAY_DEFENDER_ANYTIME_ASSIST = 6;
+    public let AWAY_GOALKEEPER_ANYTIME_ASSIST = 12;
+
+    public let HOME_FORWARD_FIRST_ASSIST = 5;
+    public let HOME_MIDFIELD_FIRST_ASSIST = 7;
+    public let HOME_DEFENDER_FIRST_ASSIST = 9;
+    public let HOME_GOALKEEPER_FIRST_ASSIST = 18;
+
+    public let AWAY_FORWARD_FIRST_ASSIST = 7;
+    public let AWAY_MIDFIELD_FIRST_ASSIST = 9;
+    public let AWAY_DEFENDER_FIRST_ASSIST = 12;
+    public let AWAY_GOALKEEPER_FIRST_ASSIST = 25;
+
+    public let HOME_FORWARD_LAST_ASSIST = 5;
+    public let HOME_MIDFIELD_LAST_ASSIST = 7;
+    public let HOME_DEFENDER_LAST_ASSIST = 9;
+    public let HOME_GOALKEEPER_LAST_ASSIST = 18;
+
+    public let AWAY_FORWARD_LAST_ASSIST = 8;
+    public let AWAY_MIDFIELD_LAST_ASSIST = 10;
+    public let AWAY_DEFENDER_LAST_ASSIST = 14;
+    public let AWAY_GOALKEEPER_LAST_ASSIST = 30;
+
+    public let HOME_FORWARD_SCORE_BRACE = 12;
+    public let HOME_MIDFIELD_SCORE_BRACE = 15;
+    public let HOME_DEFENDER_SCORE_BRACE = 20;
+    public let HOME_GOALKEEPER_SCORE_BRACE = 100;
+
+    public let AWAY_FORWARD_SCORE_BRACE = 15;
+    public let AWAY_MIDFIELD_SCORE_BRACE = 20;
+    public let AWAY_DEFENDER_SCORE_BRACE = 25;
+    public let AWAY_GOALKEEPER_SCORE_BRACE = 100;
+
+    public let HOME_FORWARD_SCORE_HAT_TRICK = 75;
+    public let HOME_MIDFIELD_SCORE_HAT_TRICK = 100;
+    public let HOME_DEFENDER_SCORE_HAT_TRICK = 125;
+    public let HOME_GOALKEEPER_SCORE_HAT_TRICK = 250;
+
+    public let AWAY_FORWARD_SCORE_HAT_TRICK = 100;
+    public let AWAY_MIDFIELD_SCORE_HAT_TRICK = 125;
+    public let AWAY_DEFENDER_SCORE_HAT_TRICK = 150;
+    public let AWAY_GOALKEEPER_SCORE_HAT_TRICK = 500;
+
+    public let HALF_TIME_SCORE_NIL_NIL = 2;
+    public let HALF_TIME_SCORE_ONE_ONE = 7;
+    public let HALF_TIME_SCORE_TWO_TWO = 15;
+    public let HALF_TIME_SCORE_THREE_THREE = 50;
+
+    public let FULL_TIME_SCORE_NIL_NIL = 15;
+    public let FULL_TIME_SCORE_ONE_ONE = 5;
+    public let FULL_TIME_SCORE_TWO_TWO = 15;
+    public let FULL_TIME_SCORE_THREE_THREE = 25;
+    public let FULL_TIME_SCORE_FOUR_FOUR = 100;
+    public let FULL_TIME_SCORE_FIVE_FIVE = 500;
+
+    public let FULL_TIME_SCORE_ONE_NIL = 5;
+    public let FULL_TIME_SCORE_TWO_NIL = 10;
+    public let FULL_TIME_SCORE_THREE_NIL = 25;
+    public let FULL_TIME_SCORE_FOUR_NIL = 50;
+    public let FULL_TIME_SCORE_FIVE_NIL = 75;
+    public let FULL_TIME_SCORE_OVER_SIX_NIL = 125;
+
+    public let FULL_TIME_SCORE_TWO_ONE = 8;
+    public let FULL_TIME_SCORE_THREE_ONE = 24;
+    
+    
+    
+    
+
+
+
+    /*
+        #HalfTimeScore;
+        #BothTeamsToScore;
+        #HalfTimeFullTimeResult;
+        #BothTeamsToScoreAndWinner;
+
+        */
+};

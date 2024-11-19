@@ -20,6 +20,11 @@ import ProfileCanister "../canister_definitions/profile-canister";
 import Cycles "mo:base/ExperimentalCycles";
 import Order "mo:base/Order";
 import Nat8 "mo:base/Nat8";
+import Time "mo:base/Time";
+import Nat64 "mo:base/Nat64";
+import Int "mo:base/Int";
+import SNSToken "../utilities/ledger";
+import Constants "../utilities/Constants";
 
 module {
 
@@ -588,21 +593,77 @@ module {
               case (null){}
             };          
           };  
+          
+          var betResult: BettingTypes.BetResult = #Lost;
+          var totalWinnings: Nat64 = 0;
+
+          switch(betslip.betType){
+            case (#Single){
+              //check only one bet or void
+
+              //check if that one selection was a winner as the whole bet was a winner
+              
+
+              //Evaluate each selection on each betslip in accordance with the bet type to determine winnings
+
+              
+            };
+            case (#Double){
+              //(stake x odds) + stake
+                // x second selection odds + stake 
+            };
+            case (#Treble){};
+            case (#FourFold){};
+            case (#FiveFold){};
+            case (#SixFold){};
+            case (#SevenFold){};
+            case (#EightFold){};
+            case (#NineFold){};
+            case (#TenFold){};
+            case (#Canadian){};
+            case (#Heinz){};
+            case (#Goliath){};
+            case (#Lucky15){};
+            case (#Lucky31){};
+            case (#Lucky63){};
+            case (#Patent){};
+            case (#SuperHeinz){};
+            case (#Trixie){};
+            case (#Yankee){};
+
+          };
+          
+          await payWinnings(betslip.placedBy, totalWinnings);
+
+          let updatedBetSlip: BettingTypes.BetSlip = {
+            id = betslip.id;
+            placedBy = betslip.placedBy;
+            placedOn = betslip.placedOn;
+            status = #Settled;
+            result = betResult;
+            selections = Buffer.toArray(updatedSelectionBuffer);
+            betType = betslip.betType;
+            totalStake = betslip.totalStake;
+            totalWinnings = totalWinnings;
+            settledOn = Time.now();
+          };
+
+          let profileCanisterId = Array.find(profileCanisterIds, func(profileCanisterEntry: (Base.PrincipalId, Base.CanisterId)) : Bool {
+            profileCanisterEntry.0 == betslip.placedBy;
+          });
+
+          switch(profileCanisterId){
+            case (?foundCanisterId){
+              let profile_canister = actor (foundCanisterId.1) : actor {
+                updateSettledBet : (principalId : Base.PrincipalId, betslip: BettingTypes.BetSlip) -> async ();
+              };
+              return await profile_canister.updateSettledBet(foundCanisterId.0, updatedBetSlip);
+            };
+            case (null){}
+          };
         };
         case (#err _){}
       };
-
-      //Get the fixture from the data canister
-
-      //Evaluate each selection on each betslip in accordance with the bet type to determine winnings
-
-      //Pay winnings to user
-
-      //Record the winnings
-
-      //Settle the bet win lose with winnings if applicable in users canister
-
-      //Update the users totals for months etc
     };
 
     private func createWinningSelection(selection: BettingTypes.Selection) : BettingTypes.Selection {
@@ -739,6 +800,19 @@ module {
     private func validProfilePicture(profilePicture : Blob) : Bool {
       let sizeInKB = Array.size(Blob.toArray(profilePicture)) / 1024;
       return (sizeInKB > 0 and sizeInKB <= 500);
+    };
+
+    private func payWinnings(winnerPrincipalId: Base.PrincipalId, totalWinnings: Nat64) : async () {
+      let ledger : SNSToken.Interface = actor (Environment.OPENFPL_LEDGER_CANISTER_ID);
+          
+      let _ = await ledger.icrc1_transfer ({
+        memo = ?Text.encodeUtf8("0");
+        from_subaccount = ?Account.defaultSubaccount();
+        to = {owner = Principal.fromText(winnerPrincipalId); subaccount = null};
+        amount = Nat64.toNat(totalWinnings);
+        fee = ?Nat64.toNat(Constants.FPL_TRANSACTION_FEE);
+        created_at_time = ?Nat64.fromNat(Int.abs(Time.now()))
+      });
     };
 
     //Stable storage functions

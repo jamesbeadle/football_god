@@ -85,6 +85,7 @@ module BettingTypes {
         betType: BetType;
         totalStake: Nat64;
         totalWinnings: Nat64;
+        settledOn: Int;
     };
 
     public type Selection = {
@@ -160,11 +161,6 @@ module BettingTypes {
         playerId: FootballTypes.PlayerId;
     };
 
-    public type PickTwoScorersDetail = {
-        clubId: FootballTypes.ClubId;
-        playerId: FootballTypes.PlayerId;
-    };
-
     public type BothTeamsToScoreDetail = {
         bothTeamsToScore: Bool;
     };
@@ -194,11 +190,6 @@ module BettingTypes {
         #AnytimeAssist;
         #ScoreBrace;
         #ScoreHatrick;
-        #PickTwoScorers;
-        #PickThreeScorers;
-        #PickFourScorers;
-        #GoalAssistCombo;
-        #TeamScoreOverUnder;
         #HalfTimeScore;
         #BothTeamsToScore;
         #HalfTimeFullTimeResult;

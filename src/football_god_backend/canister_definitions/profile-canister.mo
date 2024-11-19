@@ -6,10 +6,11 @@ import Int "mo:base/Int";
     //When set, it cannot be increased for 30 days.
 //placeBet
      //private function to update monthly bet totals should be added when a bet is placed
-
+//updateSettledBet
+    //Update the users totals for months etc
 actor class _ProfileCanister() {
 
-    
+
 
   system func preupgrade() {
   };
