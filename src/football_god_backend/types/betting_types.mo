@@ -176,7 +176,7 @@ module BettingTypes {
     };
 
     public type BothTeamsToScoreDetail = {
-        prediction: Bool;
+        bothTeamsToScore: Bool;
     };
 
     public type HalfTimeFullTimeResultDetail = {
@@ -185,7 +185,7 @@ module BettingTypes {
     };
 
     public type BothTeamsToScoreAndWinnerDetail = {
-        bothTeamsScored: Bool;
+        bothTeamsToScore: Bool;
         matchResult: MatchResult;
     };
 
@@ -256,9 +256,9 @@ module BettingTypes {
         #CorrectScore: ScoreDetail;
         #FirstGoalscorer: PlayerEventDetail;
         #LastGoalscorer: PlayerEventDetail;
-        #AnytimeGoalscorer: [PlayerEventDetail];
-        #YellowCard: [PlayerEventDetail];
-        #RedCard: [PlayerEventDetail];
+        #AnytimeGoalscorer: PlayerEventDetail;
+        #YellowCard: PlayerEventDetail;
+        #RedCard: PlayerEventDetail;
         #PenaltyGiven: [PlayerEventDetail];
         #PenaltyScored: [PlayerEventDetail];
         #PenaltyMissed: [PlayerEventDetail];

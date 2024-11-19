@@ -20,6 +20,7 @@ import Utilities "../utilities/utilities";
 import Management "../utilities/Management";
 import ProfileCanister "../canister_definitions/profile-canister";
 import Cycles "mo:base/ExperimentalCycles";
+import Order "mo:base/Order";
 
 module {
 
@@ -223,82 +224,207 @@ module {
         case (#ok betFixtures){ 
 
           let updatedSelectionBuffer = Buffer.fromArray<BettingTypes.Selection>([]);
-          for(selection in Iter.fromArray(betslip.selections)){
+          label selectionLoop for(selection in Iter.fromArray(betslip.selections)){
             let fixtureResult = Array.find<ResponseDTOs.FixtureDTO>(betFixtures, func (fixture: ResponseDTOs.FixtureDTO) : Bool {
               fixture.id == selection.fixtureId;
             });
 
             switch(fixtureResult){
               case (?fixture){
-                
                 switch(selection.selectionDetail){
                   case(#AnytimeAssist detail){
-                    //look for the selection player getting an assist
                     let foundAssist = Array.find<FootballTypes.PlayerEventData>(fixture.events, func(playerEvent: FootballTypes.PlayerEventData) : Bool {
                       playerEvent.eventType == #GoalAssisted and playerEvent.playerId == detail.playerId;
                     });
 
                     if(Option.isSome(foundAssist)){
-                      updatedSelectionBuffer.add({
-                        fixtureId = selection.fixtureId;
-                        odds = selection.odds;
-                        result = #Won;
-                        selectionDetail = selection.selectionDetail;
-                        selectionType = selection.selectionType;
-                        stake = selection.stake;
-                        status = #Settled;
-                        winnings = selection.odds * Utilities.convertNat64ToFloat(selection.stake);
-                      });
+                      updatedSelectionBuffer.add(createWinningSelection(selection));
                     } else {
-                      updatedSelectionBuffer.add({
-                        fixtureId = selection.fixtureId;
-                        odds = selection.odds;
-                        result = #Lost;
-                        selectionDetail = selection.selectionDetail;
-                        selectionType = selection.selectionType;
-                        stake = selection.stake;
-                        status = #Settled;
-                        winnings = 0;
-                      });
+                      updatedSelectionBuffer.add(createLosingSelection(selection));
                     };
                   };
-                  case(#AnytimeGoalscorer detail){};
-                  case(#BothTeamsToScore detail){};
-                  case(#BothTeamsToScoreAndWinner detail){};
-                  case(#CorrectResult detail){};
-                  case(#CorrectScore detail){};
-                  case(#FirstAssist detail){};
-                  case(#FirstGoalscorer detail){};
-                  case(#HalfTimeFullTimeResult detail){};
-                  case(#HalfTimeScore detail){};
-                  case(#LastAssist detail){};
-                  case(#LastGoalscorer detail){};
-                  case(#MissPenalty detail){};
-                  case(#PenaltyGiven detail){};
-                  case(#PenaltyMissed detail){};
-                  case(#PenaltyScored detail){};
-                  case(#RedCard detail){};
-                  case(#ScoreBrace detail){};
-                  case(#ScoreHatrick detail){};
-                  case(#ScoreHeader detail){};
-                  case(#ScoreOutsideBox detail){};
-                  case(#ScorePenalty detail){};
-                  case(#YellowCard detail){};
+                  case(#AnytimeGoalscorer detail){
+                    let foundGoal = Array.find<FootballTypes.PlayerEventData>(fixture.events, func(playerEvent: FootballTypes.PlayerEventData) : Bool {
+                      playerEvent.eventType == #Goal and playerEvent.playerId == detail.playerId;
+                    });
+
+                    if(Option.isSome(foundGoal)){
+                      updatedSelectionBuffer.add(createWinningSelection(selection));
+                    } else {
+                      updatedSelectionBuffer.add(createLosingSelection(selection));
+                    };
+                  };
+                  case(#BothTeamsToScore detail){
+
+                    var correctResult = false;
+
+                    if(
+                      detail.bothTeamsToScore and 
+                      fixture.homeGoals > 0 and 
+                      fixture.awayGoals > 0){
+                        correctResult := true;
+                    };
+
+                    if(
+                      not detail.bothTeamsToScore and 
+                      (fixture.homeGoals == 0 or 
+                      fixture.awayGoals == 0)){
+                        correctResult := true;
+                    };
+
+                    if(correctResult){
+                      updatedSelectionBuffer.add(createWinningSelection(selection));
+                    } else {
+                      updatedSelectionBuffer.add(createLosingSelection(selection));
+                    }
+                  };
+                  case(#BothTeamsToScoreAndWinner detail){
+
+                    var correctScoreResult = false;
+
+                    if(
+                      detail.bothTeamsToScore and 
+                      fixture.homeGoals > 0 and 
+                      fixture.awayGoals > 0){
+                        correctScoreResult := true;
+                    };
+
+                    if(
+                      not detail.bothTeamsToScore and 
+                      (fixture.homeGoals == 0 or 
+                      fixture.awayGoals == 0)){
+                        correctScoreResult := true;
+                    };
+
+                    var correctWinnerResult = false;
+
+                    if(detail.matchResult == #HomeWin and fixture.homeGoals > fixture.awayGoals){
+                      correctWinnerResult := true;
+                    };
+
+                    if(detail.matchResult == #Draw and fixture.homeGoals == fixture.awayGoals){
+                      correctWinnerResult := true;
+                    };
+
+                    if(detail.matchResult == #AwayWin and fixture.homeGoals < fixture.awayGoals){
+                      correctWinnerResult := true;
+                    };
+
+                    if(correctScoreResult and correctWinnerResult){
+                      updatedSelectionBuffer.add(createWinningSelection(selection));
+                    } else {
+                      updatedSelectionBuffer.add(createLosingSelection(selection));
+                    };
+                  };
+                  case(#CorrectResult detail){
+                    var correctResult = false;
+
+                    if(detail.matchResult == #HomeWin and fixture.homeGoals > fixture.awayGoals){
+                      correctResult := true;
+                    };
+
+                    if(detail.matchResult == #Draw and fixture.homeGoals == fixture.awayGoals){
+                      correctResult := true;
+                    };
+
+                    if(detail.matchResult == #AwayWin and fixture.homeGoals < fixture.awayGoals){
+                      correctResult := true;
+                    };
+
+                    if(correctResult){
+                      updatedSelectionBuffer.add(createWinningSelection(selection));
+                    } else {
+                      updatedSelectionBuffer.add(createLosingSelection(selection));
+                    };
+                  };
+                  case(#CorrectScore detail){
+                    let correctResult = detail.homeGoals == fixture.homeGoals and detail.awayGoals == fixture.awayGoals;
+                    if(correctResult){
+                      updatedSelectionBuffer.add(createWinningSelection(selection));
+                    } else {
+                      updatedSelectionBuffer.add(createLosingSelection(selection));
+                    };
+                  };
+                  case(#FirstAssist detail){
+                    let assists = Array.filter<FootballTypes.PlayerEventData>(fixture.events, func(playerEvent: FootballTypes.PlayerEventData){
+                      playerEvent.eventType == #GoalAssisted;
+                    });
+                    
+                    if(Array.size(assists) == 0){
+                      updatedSelectionBuffer.add(createLosingSelection(selection));
+                      continue selectionLoop;
+                    };
+
+                    let sortedAssists = Array.sort(
+                      assists,
+                      func(a : FootballTypes.PlayerEventData, b : FootballTypes.PlayerEventData) : Order.Order {
+                        if (a.eventEndMinute < b.eventEndMinute) { return #greater };
+                        if (a.eventEndMinute == b.eventEndMinute) { return #equal };
+                        return #less;
+                      },
+                    );
+
+                    let firstAssist = sortedAssists[0];
+                    if(firstAssist.playerId == detail.playerId){
+                      updatedSelectionBuffer.add(createWinningSelection(selection));
+                    } else {
+                      updatedSelectionBuffer.add(createLosingSelection(selection));
+                    };
+                  };
+                  case(#FirstGoalscorer detail){
+
+                  };
+                  case(#HalfTimeFullTimeResult detail){
+
+                  };
+                  case(#HalfTimeScore detail){
+
+                  };
+                  case(#LastAssist detail){
+
+                  };
+                  case(#LastGoalscorer detail){
+
+                  };
+                  case(#MissPenalty detail){
+
+                  };
+                  case(#PenaltyGiven detail){
+
+                  };
+                  case(#PenaltyMissed detail){
+
+                  };
+                  case(#PenaltyScored detail){
+
+                  };
+                  case(#RedCard detail){
+
+                  };
+                  case(#ScoreBrace detail){
+
+                  };
+                  case(#ScoreHatrick detail){
+
+                  };
+                  case(#ScoreHeader detail){
+
+                  };
+                  case(#ScoreOutsideBox detail){
+
+                  };
+                  case(#ScorePenalty detail){
+
+                  };
+                  case(#YellowCard detail){
+
+                  };
                 };
 
               };
-              case (null){
-
-              }
-            };
-
-            //Check each selection
-          
-          };
-          
-          
-
-
+              case (null){}
+            };          
+          };  
         };
         case (#err _){}
       };
@@ -314,6 +440,32 @@ module {
       //Settle the bet win lose with winnings if applicable in users canister
 
       //Update the users totals for months etc
+    };
+
+    private func createWinningSelection(selection: BettingTypes.Selection) : BettingTypes.Selection {
+      return {
+        fixtureId = selection.fixtureId;
+        odds = selection.odds;
+        result = #Won;
+        selectionDetail = selection.selectionDetail;
+        selectionType = selection.selectionType;
+        stake = selection.stake;
+        status = #Settled;
+        winnings = selection.odds * Utilities.convertNat64ToFloat(selection.stake);
+      };
+    };
+
+    private func createLosingSelection(selection: BettingTypes.Selection) : BettingTypes.Selection {
+      return {
+        fixtureId = selection.fixtureId;
+        odds = selection.odds;
+        result = #Lost;
+        selectionDetail = selection.selectionDetail;
+        selectionType = selection.selectionType;
+        stake = selection.stake;
+        status = #Settled;
+        winnings = 0;
+      };
     };
 
     private func checkOrCreateProfile(principalId: Base.PrincipalId) : async () {
@@ -352,10 +504,20 @@ module {
     };
 
     private func createProfile(principalId: Base.PrincipalId) : async () {
-      //create profile
-      //put record in dictionary
+      let profileCanisterIdsBuffer = Buffer.fromArray<(Base.PrincipalId, Base.CanisterId)>(profileCanisterIds);
+      
+      let profile_canister = actor (activeProfileCanisterId) : actor {
+        createProfile : (principalId : Text) -> async Result.Result<(), T.Error>;
+      };
+      let profileResult = await profile_canister.createProfile(principalId);
 
-      //store created canister principal in arrays
+      switch(profileResult){
+        case (#ok _){
+          profileCanisterIdsBuffer.add(principalId, activeProfileCanisterId);
+          profileCanisterIds := Buffer.toArray(profileCanisterIdsBuffer);
+        };
+        case (#err _){}
+      };    
     };
 
     private func activeCanisterFull() : async Bool {
