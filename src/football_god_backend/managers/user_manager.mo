@@ -25,6 +25,7 @@ import Nat64 "mo:base/Nat64";
 import Int "mo:base/Int";
 import SNSToken "../utilities/ledger";
 import Constants "../utilities/Constants";
+import BettingUtilities "../utilities/betting_utilities";
 
 module {
 
@@ -56,9 +57,13 @@ module {
       
     public func updateUsername(dto: RequestDTOs.UpdateUsernameDTO) : async Result.Result<(), T.Error> {
       await checkOrCreateProfile(dto.principalId);
-      if(not validUsername(dto.username, dto.principalId)){
+      if(not Utilities.validUsername(dto.username)){
         return #err(#NotAllowed);
       };
+      if(not usernameAvailable(dto.username, dto.principalId)){
+        return #err(#NotAllowed);
+      };
+
       let userProfileCanisterId = Array.find<(Base.PrincipalId, Base.CanisterId)>(profileCanisterIds, func(entry: (Base.PrincipalId, Base.CanisterId)) : Bool {
         entry.0 == dto.principalId;
       });
@@ -78,7 +83,7 @@ module {
 
     public func updateProfilePicture(dto: RequestDTOs.UpdateProfilePictureDTO) : async Result.Result<(), T.Error> {
       await checkOrCreateProfile(dto.principalId);
-      if(not validProfilePicture(dto.profilePicture)){
+      if(not Utilities.validProfilePicture(dto.profilePicture)){
         return #err(#NotAllowed);
       };
       let userProfileCanisterId = Array.find<(Base.PrincipalId, Base.CanisterId)>(profileCanisterIds, func(entry: (Base.PrincipalId, Base.CanisterId)) : Bool {
@@ -242,9 +247,9 @@ module {
                     });
 
                     if(Option.isSome(foundAssist)){
-                      updatedSelectionBuffer.add(createWinningSelection(selection));
+                      updatedSelectionBuffer.add(BettingUtilities.createWinningSelection(selection));
                     } else {
-                      updatedSelectionBuffer.add(createLosingSelection(selection));
+                      updatedSelectionBuffer.add(BettingUtilities.createLosingSelection(selection));
                     };
                   };
                   case(#AnytimeGoalscorer detail){
@@ -253,9 +258,9 @@ module {
                     });
 
                     if(Option.isSome(foundGoal)){
-                      updatedSelectionBuffer.add(createWinningSelection(selection));
+                      updatedSelectionBuffer.add(BettingUtilities.createWinningSelection(selection));
                     } else {
-                      updatedSelectionBuffer.add(createLosingSelection(selection));
+                      updatedSelectionBuffer.add(BettingUtilities.createLosingSelection(selection));
                     };
                   };
                   case(#BothTeamsToScore detail){
@@ -277,9 +282,9 @@ module {
                     };
 
                     if(correctResult){
-                      updatedSelectionBuffer.add(createWinningSelection(selection));
+                      updatedSelectionBuffer.add(BettingUtilities.createWinningSelection(selection));
                     } else {
-                      updatedSelectionBuffer.add(createLosingSelection(selection));
+                      updatedSelectionBuffer.add(BettingUtilities.createLosingSelection(selection));
                     }
                   };
                   case(#BothTeamsToScoreAndWinner detail){
@@ -315,9 +320,9 @@ module {
                     };
 
                     if(correctScoreResult and correctWinnerResult){
-                      updatedSelectionBuffer.add(createWinningSelection(selection));
+                      updatedSelectionBuffer.add(BettingUtilities.createWinningSelection(selection));
                     } else {
-                      updatedSelectionBuffer.add(createLosingSelection(selection));
+                      updatedSelectionBuffer.add(BettingUtilities.createLosingSelection(selection));
                     };
                   };
                   case(#CorrectResult detail){
@@ -336,17 +341,17 @@ module {
                     };
 
                     if(correctResult){
-                      updatedSelectionBuffer.add(createWinningSelection(selection));
+                      updatedSelectionBuffer.add(BettingUtilities.createWinningSelection(selection));
                     } else {
-                      updatedSelectionBuffer.add(createLosingSelection(selection));
+                      updatedSelectionBuffer.add(BettingUtilities.createLosingSelection(selection));
                     };
                   };
                   case(#CorrectScore detail){
                     let correctResult = detail.homeGoals == fixture.homeGoals and detail.awayGoals == fixture.awayGoals;
                     if(correctResult){
-                      updatedSelectionBuffer.add(createWinningSelection(selection));
+                      updatedSelectionBuffer.add(BettingUtilities.createWinningSelection(selection));
                     } else {
-                      updatedSelectionBuffer.add(createLosingSelection(selection));
+                      updatedSelectionBuffer.add(BettingUtilities.createLosingSelection(selection));
                     };
                   };
                   case(#FirstAssist detail){
@@ -355,7 +360,7 @@ module {
                     });
                     
                     if(Array.size(assists) == 0){
-                      updatedSelectionBuffer.add(createLosingSelection(selection));
+                      updatedSelectionBuffer.add(BettingUtilities.createLosingSelection(selection));
                       continue selectionLoop;
                     };
 
@@ -371,9 +376,9 @@ module {
 
                     let firstAssist = sortedAssists[0];
                     if(firstAssist.playerId == detail.playerId){
-                      updatedSelectionBuffer.add(createWinningSelection(selection));
+                      updatedSelectionBuffer.add(BettingUtilities.createWinningSelection(selection));
                     } else {
-                      updatedSelectionBuffer.add(createLosingSelection(selection));
+                      updatedSelectionBuffer.add(BettingUtilities.createLosingSelection(selection));
                     };
                   };
                   case(#FirstGoalscorer detail){
@@ -382,7 +387,7 @@ module {
                     });
                     
                     if(Array.size(goals) == 0){
-                      updatedSelectionBuffer.add(createLosingSelection(selection));
+                      updatedSelectionBuffer.add(BettingUtilities.createLosingSelection(selection));
                       continue selectionLoop;
                     };
 
@@ -397,9 +402,9 @@ module {
 
                     let firstGoal = sortedGoals[0];
                     if(firstGoal.playerId == detail.playerId){
-                      updatedSelectionBuffer.add(createWinningSelection(selection));
+                      updatedSelectionBuffer.add(BettingUtilities.createWinningSelection(selection));
                     } else {
-                      updatedSelectionBuffer.add(createLosingSelection(selection));
+                      updatedSelectionBuffer.add(BettingUtilities.createLosingSelection(selection));
                     };
                   };
                   case(#HalfTimeFullTimeResult detail){
@@ -446,9 +451,9 @@ module {
                     };
 
                     if(detail.halfTimeResult == firstHalfResult and detail.fullTimeResult == matchResult){
-                      updatedSelectionBuffer.add(createWinningSelection(selection));
+                      updatedSelectionBuffer.add(BettingUtilities.createWinningSelection(selection));
                     } else {
-                      updatedSelectionBuffer.add(createLosingSelection(selection));
+                      updatedSelectionBuffer.add(BettingUtilities.createLosingSelection(selection));
                     };                  
                   };
                   case(#HalfTimeScore detail){
@@ -465,9 +470,9 @@ module {
                     }));
 
                     if(detail.homeGoals == Nat8.fromNat(firstHalfHomeGoals) and detail.awayGoals == Nat8.fromNat(firstHalfAwayGoals)){
-                      updatedSelectionBuffer.add(createWinningSelection(selection));
+                      updatedSelectionBuffer.add(BettingUtilities.createWinningSelection(selection));
                     } else {
-                      updatedSelectionBuffer.add(createLosingSelection(selection));
+                      updatedSelectionBuffer.add(BettingUtilities.createLosingSelection(selection));
                     };
                   };
                   case(#LastAssist detail){
@@ -476,7 +481,7 @@ module {
                     });
                     
                     if(Array.size(assists) == 0){
-                      updatedSelectionBuffer.add(createLosingSelection(selection));
+                      updatedSelectionBuffer.add(BettingUtilities.createLosingSelection(selection));
                       continue selectionLoop;
                     };
 
@@ -492,9 +497,9 @@ module {
 
                     let lastAssist = sortedAssists[Array.size(sortedAssists) - 1];
                     if(lastAssist.playerId == detail.playerId){
-                      updatedSelectionBuffer.add(createWinningSelection(selection));
+                      updatedSelectionBuffer.add(BettingUtilities.createWinningSelection(selection));
                     } else {
-                      updatedSelectionBuffer.add(createLosingSelection(selection));
+                      updatedSelectionBuffer.add(BettingUtilities.createLosingSelection(selection));
                     };
                   };
                   case(#LastGoalscorer detail){
@@ -503,7 +508,7 @@ module {
                     });
                     
                     if(Array.size(goals) == 0){
-                      updatedSelectionBuffer.add(createLosingSelection(selection));
+                      updatedSelectionBuffer.add(BettingUtilities.createLosingSelection(selection));
                       continue selectionLoop;
                     };
 
@@ -518,9 +523,9 @@ module {
 
                     let lastGoal = sortedGoals[Array.size(sortedGoals) - 1];
                     if(lastGoal.playerId == detail.playerId){
-                      updatedSelectionBuffer.add(createWinningSelection(selection));
+                      updatedSelectionBuffer.add(BettingUtilities.createWinningSelection(selection));
                     } else {
-                      updatedSelectionBuffer.add(createLosingSelection(selection));
+                      updatedSelectionBuffer.add(BettingUtilities.createLosingSelection(selection));
                     };
                   };
                   case(#MissPenalty detail){
@@ -529,9 +534,9 @@ module {
                     });
 
                     if(Option.isSome(foundMissedPenalty)){
-                      updatedSelectionBuffer.add(createWinningSelection(selection));
+                      updatedSelectionBuffer.add(BettingUtilities.createWinningSelection(selection));
                     } else {
-                      updatedSelectionBuffer.add(createLosingSelection(selection));
+                      updatedSelectionBuffer.add(BettingUtilities.createLosingSelection(selection));
                     };
                   };
                   case(#PenaltyMissed detail){
@@ -540,9 +545,9 @@ module {
                     });
 
                     if(Option.isSome(foundMissedPenalty)){
-                      updatedSelectionBuffer.add(createWinningSelection(selection));
+                      updatedSelectionBuffer.add(BettingUtilities.createWinningSelection(selection));
                     } else {
-                      updatedSelectionBuffer.add(createLosingSelection(selection));
+                      updatedSelectionBuffer.add(BettingUtilities.createLosingSelection(selection));
                     };
                   };
                   case(#RedCard detail){
@@ -551,9 +556,9 @@ module {
                     });
 
                     if(Option.isSome(foundRedCard)){
-                      updatedSelectionBuffer.add(createWinningSelection(selection));
+                      updatedSelectionBuffer.add(BettingUtilities.createWinningSelection(selection));
                     } else {
-                      updatedSelectionBuffer.add(createLosingSelection(selection));
+                      updatedSelectionBuffer.add(BettingUtilities.createLosingSelection(selection));
                     };
                   };
                   case(#ScoreBrace detail){
@@ -561,9 +566,9 @@ module {
                       playerEvent.eventType == #Goal and playerEvent.playerId == detail.playerId;
                     });
                     if(Array.size(playerGoals) >= 2){
-                      updatedSelectionBuffer.add(createWinningSelection(selection));
+                      updatedSelectionBuffer.add(BettingUtilities.createWinningSelection(selection));
                     } else {
-                      updatedSelectionBuffer.add(createLosingSelection(selection));
+                      updatedSelectionBuffer.add(BettingUtilities.createLosingSelection(selection));
                     }
                   };
                   case(#ScoreHatrick detail){
@@ -571,9 +576,9 @@ module {
                       playerEvent.eventType == #Goal and playerEvent.playerId == detail.playerId;
                     });
                     if(Array.size(playerGoals) >= 3){
-                      updatedSelectionBuffer.add(createWinningSelection(selection));
+                      updatedSelectionBuffer.add(BettingUtilities.createWinningSelection(selection));
                     } else {
-                      updatedSelectionBuffer.add(createLosingSelection(selection));
+                      updatedSelectionBuffer.add(BettingUtilities.createLosingSelection(selection));
                     }
                   };
                   case(#YellowCard detail){
@@ -582,9 +587,9 @@ module {
                     });
 
                     if(Option.isSome(foundYellowCard)){
-                      updatedSelectionBuffer.add(createWinningSelection(selection));
+                      updatedSelectionBuffer.add(BettingUtilities.createWinningSelection(selection));
                     } else {
-                      updatedSelectionBuffer.add(createLosingSelection(selection));
+                      updatedSelectionBuffer.add(BettingUtilities.createLosingSelection(selection));
                     };
                   };
                 };
@@ -612,7 +617,7 @@ module {
                 return;
               };
               if(perfectBetResult == #Won){
-                totalWinnings := getCumulativeSelectionWinnings(betslip);
+                totalWinnings := BettingUtilities.getCumulativeSelectionWinnings(betslip);
                 betResult := #Won;
               };
             };
@@ -622,7 +627,7 @@ module {
                 return;
               };
               if(perfectBetResult == #Won){
-                totalWinnings := getCumulativeSelectionWinnings(betslip);
+                totalWinnings := BettingUtilities.getCumulativeSelectionWinnings(betslip);
                 betResult := #Won;
               };
             };
@@ -632,7 +637,7 @@ module {
                 return;
               };
               if(perfectBetResult == #Won){
-                totalWinnings := getCumulativeSelectionWinnings(betslip);
+                totalWinnings := BettingUtilities.getCumulativeSelectionWinnings(betslip);
                 betResult := #Won;
               };
             };
@@ -642,7 +647,7 @@ module {
                 return;
               };
               if(perfectBetResult == #Won){
-                totalWinnings := getCumulativeSelectionWinnings(betslip);
+                totalWinnings := BettingUtilities.getCumulativeSelectionWinnings(betslip);
                 betResult := #Won;
               };
             };
@@ -652,7 +657,7 @@ module {
                 return;
               };
               if(perfectBetResult == #Won){
-                totalWinnings := getCumulativeSelectionWinnings(betslip);
+                totalWinnings := BettingUtilities.getCumulativeSelectionWinnings(betslip);
                 betResult := #Won;
               };
             };
@@ -662,7 +667,7 @@ module {
                 return;
               };
               if(perfectBetResult == #Won){
-                totalWinnings := getCumulativeSelectionWinnings(betslip);
+                totalWinnings := BettingUtilities.getCumulativeSelectionWinnings(betslip);
                 betResult := #Won;
               };
             };
@@ -672,7 +677,7 @@ module {
                 return;
               };
               if(perfectBetResult == #Won){
-                totalWinnings := getCumulativeSelectionWinnings(betslip);
+                totalWinnings := BettingUtilities.getCumulativeSelectionWinnings(betslip);
                 betResult := #Won;
               };
             };
@@ -682,7 +687,7 @@ module {
                 return;
               };
               if(perfectBetResult == #Won){
-                totalWinnings := getCumulativeSelectionWinnings(betslip);
+                totalWinnings := BettingUtilities.getCumulativeSelectionWinnings(betslip);
                 betResult := #Won;
               };
             };
@@ -692,7 +697,7 @@ module {
                 return;
               };
               if(perfectBetResult == #Won){
-                totalWinnings := getCumulativeSelectionWinnings(betslip);
+                totalWinnings := BettingUtilities.getCumulativeSelectionWinnings(betslip);
                 betResult := #Won;
               };
             };
@@ -702,7 +707,7 @@ module {
                 return;
               };
               if(perfectBetResult == #Won){
-                totalWinnings := getCumulativeSelectionWinnings(betslip);
+                totalWinnings := BettingUtilities.getCumulativeSelectionWinnings(betslip);
                 betResult := #Won;
               };
             };
@@ -712,7 +717,7 @@ module {
                 return;
               };
 
-              totalWinnings := getPatentSelectionWinnings(betslip);
+              totalWinnings := BettingUtilities.getPatentSelectionWinnings(betslip);
 
               if(totalWinnings > 0){
                 betResult := #Won;
@@ -724,7 +729,7 @@ module {
                 return;
               };
 
-              totalWinnings := getTrixieSelectionWinnings(betslip);
+              totalWinnings := BettingUtilities.getTrixieSelectionWinnings(betslip);
 
               if(totalWinnings > 0){
                 betResult := #Won;
@@ -736,7 +741,7 @@ module {
                 return;
               };
 
-              totalWinnings := getYankeeSelectionWinnings(betslip);
+              totalWinnings := BettingUtilities.getYankeeSelectionWinnings(betslip);
 
               if(totalWinnings > 0){
                 betResult := #Won;
@@ -748,7 +753,7 @@ module {
                 return;
               };
 
-              totalWinnings := getLucky15SelectionWinnings(betslip);
+              totalWinnings := BettingUtilities.getLucky15SelectionWinnings(betslip);
 
               if(totalWinnings > 0){
                 betResult := #Won;
@@ -760,7 +765,7 @@ module {
                 return;
               };
 
-              totalWinnings := getLucky31SelectionWinnings(betslip);
+              totalWinnings := BettingUtilities.getLucky31SelectionWinnings(betslip);
 
               if(totalWinnings > 0){
                 betResult := #Won;
@@ -772,7 +777,7 @@ module {
                 return;
               };
 
-              totalWinnings := getLucky63SelectionWinnings(betslip);
+              totalWinnings := BettingUtilities.getLucky63SelectionWinnings(betslip);
 
               if(totalWinnings > 0){
                 betResult := #Won;
@@ -784,7 +789,7 @@ module {
                 return;
               };
 
-              totalWinnings := getCanadianSelectionWinnings(betslip);
+              totalWinnings := BettingUtilities.getCanadianSelectionWinnings(betslip);
 
               if(totalWinnings > 0){
                 betResult := #Won;
@@ -796,7 +801,7 @@ module {
                 return;
               };
 
-              totalWinnings := getHeinzSelectionWinnings(betslip);
+              totalWinnings := BettingUtilities.getHeinzSelectionWinnings(betslip);
 
               if(totalWinnings > 0){
                 betResult := #Won;
@@ -808,7 +813,7 @@ module {
                 return;
               };
 
-              totalWinnings := getSuperHeinzSelectionWinnings(betslip);
+              totalWinnings := BettingUtilities.getSuperHeinzSelectionWinnings(betslip);
 
               if(totalWinnings > 0){
                 betResult := #Won;
@@ -820,7 +825,7 @@ module {
                 return;
               };
 
-              totalWinnings := getGoliathSelectionWinnings(betslip);
+              totalWinnings := BettingUtilities.getGoliathSelectionWinnings(betslip);
 
               if(totalWinnings > 0){
                 betResult := #Won;
@@ -859,32 +864,6 @@ module {
           };
         };
         case (#err _){}
-      };
-    };
-
-    private func createWinningSelection(selection: BettingTypes.Selection) : BettingTypes.Selection {
-      return {
-        fixtureId = selection.fixtureId;
-        odds = selection.odds;
-        result = #Won;
-        selectionDetail = selection.selectionDetail;
-        selectionType = selection.selectionType;
-        stake = selection.stake;
-        status = #Settled;
-        winnings = selection.odds * Utilities.convertNat64ToFloat(selection.stake);
-      };
-    };
-
-    private func createLosingSelection(selection: BettingTypes.Selection) : BettingTypes.Selection {
-      return {
-        fixtureId = selection.fixtureId;
-        odds = selection.odds;
-        result = #Lost;
-        selectionDetail = selection.selectionDetail;
-        selectionType = selection.selectionType;
-        stake = selection.stake;
-        status = #Settled;
-        winnings = 0;
       };
     };
 
@@ -960,27 +939,8 @@ module {
       return false;
     };
 
-    private func validUsername(username : Text, potentialPrincipalId: Base.PrincipalId) : Bool {
+    private func usernameAvailable(username : Text, potentialPrincipalId: Base.PrincipalId) : Bool {
 
-      if (Text.size(username) < 3 or Text.size(username) > 20) {
-        return false;
-      };
-
-      let isAlphanumeric = func(s : Text) : Bool {
-        let chars = Text.toIter(s);
-        for (c in chars) {
-          if (not ((c >= 'a' and c <= 'z') or (c >= 'A' and c <= 'Z') or (c >= '0' and c <= '9'))) {
-            return false;
-          };
-        };
-        return true;
-      };
-
-      if (not isAlphanumeric(username)) {
-        return false;
-      };
-
-      //TODO: ALSO CHECK IF THE USERNAME IS ALREADY TAKEN
       let foundUsername = Array.find<(Base.PrincipalId, Text)>(usernames, func(entry: (Base.PrincipalId, Text)) : Bool {
         entry.1 == username and entry.0 != potentialPrincipalId;
       });
@@ -991,76 +951,6 @@ module {
 
 
       return true;
-    };
-
-    private func validProfilePicture(profilePicture : Blob) : Bool {
-      let sizeInKB = Array.size(Blob.toArray(profilePicture)) / 1024;
-      return (sizeInKB > 0 and sizeInKB <= 500);
-    };
-
-    private func getCumulativeSelectionWinnings(betslip: BettingTypes.BetSlip) : Nat64 {
-      let startingStake = betslip.totalStake;
-      var cumulativeWinnings = startingStake;
-      for(selection in Iter.fromArray(betslip.selections)){
-        cumulativeWinnings += (Utilities.convertFloatToNat64(selection.odds) * cumulativeWinnings);
-      };
-      return cumulativeWinnings;
-    };
-
-    private func getCanadianSelectionWinnings(betslip: BettingTypes.BetSlip) : Nat64 {
-      
-      //5 selections
-        //26 bets
-          //10 doubles
-          //10 trebles
-          //5 four folds
-          //1 five fold
-      return 0; //TODO
-    };
-
-    private func getHeinzSelectionWinnings(betslip: BettingTypes.BetSlip) : Nat64 {
-      //6 selections creating 57 bets
-      return 0; //TODO
-    };
-
-    private func getGoliathSelectionWinnings(betslip: BettingTypes.BetSlip) : Nat64 {
-      //8 selections creating 247 bets
-      return 0; //TODO
-    };
-
-    private func getLucky15SelectionWinnings(betslip: BettingTypes.BetSlip) : Nat64 {
-      //4 selections creating 15 bets
-      return 0; //TODO
-    };
-
-    private func getLucky31SelectionWinnings(betslip: BettingTypes.BetSlip) : Nat64 {
-      //5 selections creating 31 bets
-      return 0; //TODO
-    };
-
-    private func getLucky63SelectionWinnings(betslip: BettingTypes.BetSlip) : Nat64 {
-      //6 selections creating 63 bets
-      return 0; //TODO
-    };
-
-    private func getPatentSelectionWinnings(betslip: BettingTypes.BetSlip) : Nat64 {
-      //3 selections creating 7 bets
-      return 0; //TODO
-    };
-
-    private func getSuperHeinzSelectionWinnings(betslip: BettingTypes.BetSlip) : Nat64 {
-      //7 selecitons creating 120 bets
-      return 0; //TODO
-    };
-
-    private func getTrixieSelectionWinnings(betslip: BettingTypes.BetSlip) : Nat64 {
-      //3 selections creating 4 bets
-      return 0; //TODO
-    };
-
-    private func getYankeeSelectionWinnings(betslip: BettingTypes.BetSlip) : Nat64 {
-      //4 selections creating 11 bets
-      return 0; //TODO
     };
     
 
