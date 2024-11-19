@@ -9,6 +9,7 @@ module AppTypes {
         #NotAllowed;
         #DecodeError;
         #CanisterCreateError;
+        #CanisterFull;
     };
 
     public type Profile = {

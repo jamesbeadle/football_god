@@ -573,6 +573,7 @@ actor Self {
     };
     let _ = await data_canister.submitFixtureData(dto);
     await settleBets(dto.fixtureId);
+    await oddsManager.recalculate(dto.leagueId);
     return;
   };
 
@@ -762,18 +763,26 @@ actor Self {
   private stable var stable_usernames: [(Base.PrincipalId, Text)] = [];
 
   //Odds Manager
-  //TODO
+  private stable var stable_bettable_leagueFixture_ids: [(FootballTypes.LeagueId, [FootballTypes.FixtureId])] = [];
+  private stable var stable_match_odds_cache: [(FootballTypes.LeagueId, [(FootballTypes.FixtureId, BettingTypes.MatchOdds)])] = [];
 
   system func preupgrade() {
     stable_profile_canister_ids := userManager.getStableProfileCanisterIds();
     stable_unique_profile_canister_ids := userManager.getStableUniqueProfileCanisterIds();
     stable_active_profile_canister_id := userManager.getStableActiveProfileCanisterId();
     stable_usernames := userManager.getStableUsernames();
+    stable_bettable_leagueFixture_ids := oddsManager.getStableBettableLeagueFixtureIds();
+    stable_match_odds_cache := oddsManager.getStableMatchOddsCache();
   };
 
   system func postupgrade() {
-
-    //TODO SET EVERYTHING IN PREUPGRADE
+    
+    userManager.setStableProfileCanisterIds(stable_profile_canister_ids);
+    userManager.setStableUniqueProfileCanisterIds(stable_unique_profile_canister_ids);
+    userManager.setStableActiveProfileCanisterId(stable_active_profile_canister_id);
+    userManager.setStableUsernames(stable_usernames);
+    oddsManager.setStableBettableLeagueFixtureIds(stable_bettable_leagueFixture_ids);
+    oddsManager.setStableMatchOddsCache(stable_match_odds_cache);
 
     ignore Timer.setTimer<system>(#nanoseconds(Int.abs(1)), postUpgradeCallback); 
   };
@@ -940,5 +949,16 @@ actor Self {
     };
   };
 
+  //TODO: This will be admin for now then removed, based on the game beginning and also whether the data is up to date
+
+  public shared ({ caller }) func addBettableFixture(leagueId: FootballTypes.LeagueId, fixtureId: FootballTypes.FixtureId) : async Result.Result<(), T.Error> {
+    assert checkAdmin(Principal.toText(caller));
+    return await oddsManager.addBettableLeagueFixture(leagueId, fixtureId);
+  };
+
+  public shared ({ caller }) func removeBettableFixture(leagueId: FootballTypes.LeagueId, fixtureId: FootballTypes.FixtureId) : async Result.Result<(), T.Error> {
+    assert checkAdmin(Principal.toText(caller));
+    return await oddsManager.removeBettableLeagueFixture(leagueId, fixtureId);
+  };
    
 };
