@@ -9,6 +9,7 @@ import Nat64 "mo:base/Nat64";
 import Buffer "mo:base/Buffer";
 import Float "mo:base/Float";
 import Iter "mo:base/Iter";
+import Time "mo:base/Time";
 
 import T "types/app_types";
 import Base "types/base_types";
@@ -705,13 +706,13 @@ actor Self {
       
       let unsettledSelections = Array.filter<BettingTypes.Selection>(bet.selections, 
         func(selection: BettingTypes.Selection){
-          selection.result == #Unsettled;
+          selection.result == #Open;
         }
       );
 
       let unsettledFixture = Array.find<BettingTypes.Selection>(bet.selections, 
         func(selection: BettingTypes.Selection) : Bool {
-          selection.result == #Unsettled and selection.fixtureId == completedFixtureId;
+          selection.result == #Open and selection.fixtureId == completedFixtureId;
         }
       );
 
@@ -730,16 +731,20 @@ actor Self {
               return {
                 fixtureId = selection.fixtureId;
                 odds = selection.odds;
-                result = #Settled;
+                result = selection.result;
                 selectionDetail = selection.selectionDetail;
                 selectionType = selection.selectionType;
                 stake = selection.stake;
+                status = #Settled;
+                winnings = selection.winnings;
               }
             } else { return selection; };
           });
           status = bet.status;
+          result = bet.result;
           totalStake = bet.totalStake;
           totalWinnings = bet.totalWinnings;
+          settledOn = Time.now();
         });
       };
     }; 
@@ -755,6 +760,7 @@ actor Self {
   private stable var stable_unique_profile_canister_ids: [Base.CanisterId] = [];
   private stable var stable_active_profile_canister_id: Text = "";
   private stable var stable_usernames: [(Base.PrincipalId, Text)] = [];
+
   //Odds Manager
   //TODO
 

@@ -968,9 +968,22 @@ module {
       return true;
     };
     
-
     private func voidBet(betslip: BettingTypes.BetSlip) : async (){
-      //TODO
+      let profileCanisterId = Array.find(profileCanisterIds, func(profileCanisterEntry: (Base.PrincipalId, Base.CanisterId)) : Bool {
+        profileCanisterEntry.0 == betslip.placedBy;
+      });
+
+      switch(profileCanisterId){
+        case (?foundCanisterId){
+          
+          let profile_canister = actor (foundCanisterId.1) : actor {
+            voidBet : (betslip: BettingTypes.BetSlip) -> async ();
+          };
+          return await profile_canister.voidBet(betslip);
+        };
+        case (null){ }
+      };
+      
     };
 
     private func payWinnings(winnerPrincipalId: Base.PrincipalId, totalWinnings: Nat64) : async () {
