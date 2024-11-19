@@ -1,6 +1,7 @@
 
 import FootballTypes "../types/football_types";
 import Base "../types/base_types";
+import BettingTypes "../types/betting_types";
 
 module RequestDTOs {
 
@@ -83,5 +84,9 @@ module RequestDTOs {
   public type WithdrawDTO = {
     principalId: Base.PrincipalId;
     amount: Nat64;
-  }
+  };
+
+  public type GetBetslipFixturesDTO = {
+    selections: [BettingTypes.Selection];
+  };
 };

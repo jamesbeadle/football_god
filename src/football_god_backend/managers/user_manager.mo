@@ -6,12 +6,20 @@ import Blob "mo:base/Blob";
 import Buffer "mo:base/Buffer";
 import Array "mo:base/Array";
 import Option "mo:base/Option";
+import Iter "mo:base/Iter";
+import Principal "mo:base/Principal";
 import Account "../utilities/Account";
 import T "../types/app_types";
 import Base "../types/base_types";
 import RequestDTOs "../dtos/request_DTOs";
 import ResponseDTOs "../dtos/response_DTOs";
 import BettingTypes "../types/betting_types";
+import Environment "../environment";
+import FootballTypes "../types/football_types";
+import Utilities "../utilities/utilities";
+import Management "../utilities/Management";
+import ProfileCanister "../canister_definitions/profile-canister";
+import Cycles "mo:base/ExperimentalCycles";
 
 module {
 
@@ -204,11 +212,104 @@ module {
 
     public func settleBet(betslip: BettingTypes.BetSlip) : async () {
       
+      let data_canister = actor (Environment.DATA_CANISTER_ID) : actor {
+        getBetslipFixtures : shared query (dto: RequestDTOs.GetBetslipFixturesDTO) -> async Result.Result<[ResponseDTOs.FixtureDTO], T.Error>;
+      };
+      let fixturesResult = await data_canister.getBetslipFixtures({
+        selections = betslip.selections;
+      });
+
+      switch(fixturesResult){
+        case (#ok betFixtures){ 
+
+          let updatedSelectionBuffer = Buffer.fromArray<BettingTypes.Selection>([]);
+          for(selection in Iter.fromArray(betslip.selections)){
+            let fixtureResult = Array.find<ResponseDTOs.FixtureDTO>(betFixtures, func (fixture: ResponseDTOs.FixtureDTO) : Bool {
+              fixture.id == selection.fixtureId;
+            });
+
+            switch(fixtureResult){
+              case (?fixture){
+                
+                switch(selection.selectionDetail){
+                  case(#AnytimeAssist detail){
+                    //look for the selection player getting an assist
+                    let foundAssist = Array.find<FootballTypes.PlayerEventData>(fixture.events, func(playerEvent: FootballTypes.PlayerEventData) : Bool {
+                      playerEvent.eventType == #GoalAssisted and playerEvent.playerId == detail.playerId;
+                    });
+
+                    if(Option.isSome(foundAssist)){
+                      updatedSelectionBuffer.add({
+                        fixtureId = selection.fixtureId;
+                        odds = selection.odds;
+                        result = #Won;
+                        selectionDetail = selection.selectionDetail;
+                        selectionType = selection.selectionType;
+                        stake = selection.stake;
+                        status = #Settled;
+                        winnings = selection.odds * Utilities.convertNat64ToFloat(selection.stake);
+                      });
+                    } else {
+                      updatedSelectionBuffer.add({
+                        fixtureId = selection.fixtureId;
+                        odds = selection.odds;
+                        result = #Lost;
+                        selectionDetail = selection.selectionDetail;
+                        selectionType = selection.selectionType;
+                        stake = selection.stake;
+                        status = #Settled;
+                        winnings = 0;
+                      });
+                    };
+                  };
+                  case(#AnytimeGoalscorer detail){};
+                  case(#BothTeamsToScore detail){};
+                  case(#BothTeamsToScoreAndWinner detail){};
+                  case(#CorrectResult detail){};
+                  case(#CorrectScore detail){};
+                  case(#FirstAssist detail){};
+                  case(#FirstGoalscorer detail){};
+                  case(#HalfTimeFullTimeResult detail){};
+                  case(#HalfTimeScore detail){};
+                  case(#LastAssist detail){};
+                  case(#LastGoalscorer detail){};
+                  case(#MissPenalty detail){};
+                  case(#PenaltyGiven detail){};
+                  case(#PenaltyMissed detail){};
+                  case(#PenaltyScored detail){};
+                  case(#RedCard detail){};
+                  case(#ScoreBrace detail){};
+                  case(#ScoreHatrick detail){};
+                  case(#ScoreHeader detail){};
+                  case(#ScoreOutsideBox detail){};
+                  case(#ScorePenalty detail){};
+                  case(#YellowCard detail){};
+                };
+
+              };
+              case (null){
+
+              }
+            };
+
+            //Check each selection
+          
+          };
+          
+          
+
+
+        };
+        case (#err _){}
+      };
+
       //Get the fixture from the data canister
 
       //Evaluate each selection on each betslip in accordance with the bet type to determine winnings
 
       //Pay winnings to user
+
+      //Record the winnings
 
       //Settle the bet win lose with winnings if applicable in users canister
 
@@ -216,8 +317,52 @@ module {
     };
 
     private func checkOrCreateProfile(principalId: Base.PrincipalId) : async () {
-      //ensure create and set active first profile canister
-      //TODO
+      if(activeProfileCanisterId == ""){
+        await createProfileCanister();
+        await createProfile(principalId);
+      };
+
+      let foundProfileCanisterId = Array.find<(Base.PrincipalId, Base.CanisterId)>(profileCanisterIds, func(entry: (Base.PrincipalId, Base.CanisterId)) : Bool {
+        entry.0 == principalId;
+      });
+
+      if(Option.isNull(foundProfileCanisterId)){
+        if(await activeCanisterFull()){
+          await createProfileCanister();
+        };
+        await createProfile(principalId);
+      };
+    };
+
+    private func createProfileCanister() : async () {
+      
+      Cycles.add<system>(50_000_000_000_000);
+      
+      let canister = await ProfileCanister._ProfileCanister();
+      
+      let canister_principal = Principal.fromActor(canister);
+      let canisterId = Principal.toText(canister_principal);
+      activeProfileCanisterId := canisterId;
+      let uniqueProfileCanisterIdsBuffer = Buffer.fromArray<Base.CanisterId>(uniqueProfileCanisterIds);
+      uniqueProfileCanisterIdsBuffer.add(canisterId);
+      uniqueProfileCanisterIds := Buffer.toArray(uniqueProfileCanisterIdsBuffer);
+      
+      let IC : Management.Management = actor (Environment.Default);
+      let _ = await Utilities.updateCanister_(canister, ?Principal.fromText(Environment.BACKEND_CANISTER_ID), IC);
+    };
+
+    private func createProfile(principalId: Base.PrincipalId) : async () {
+      //create profile
+      //put record in dictionary
+
+      //store created canister principal in arrays
+    };
+
+    private func activeCanisterFull() : async Bool {
+      let profile_canister = actor (activeProfileCanisterId) : actor {
+        canisterFull : () -> async Bool;
+      };
+      return await profile_canister.canisterFull();
     };
 
     private func validWithdrawalAddress(withdrawalAddress : Text) : Bool {

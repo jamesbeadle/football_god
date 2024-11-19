@@ -84,7 +84,8 @@ module BettingTypes {
         id: Nat;
         placedBy: Base.PrincipalId;
         placedOn: Int;
-        status: BetStatus;
+        status: SelectionStatus;
+        result: BetResult;
         selections: [Selection];
         betType: BetType;
         totalStake: Nat64;
@@ -94,19 +95,21 @@ module BettingTypes {
     public type Selection = {
         selectionType: Category;
         selectionDetail: SelectionDetail;
-        result: SelectionResult;
+        status: SelectionStatus;
+        result: BetResult;
         odds: Float;
         stake: Nat64;
         fixtureId: FootballTypes.FixtureId;
+        winnings: Float;
     };
 
-    public type SelectionResult = {
+    public type SelectionStatus = {
         #Unsettled;
         #Settled;
         #Void;
     };
 
-    public type BetStatus = {
+    public type BetResult = {
         #Open;
         #Won;
         #Lost;
@@ -265,7 +268,7 @@ module BettingTypes {
         #MissPenalty : [PlayerEventDetail];
         #FirstAssist : PlayerEventDetail;
         #LastAssist : PlayerEventDetail;
-        #AnytimeAssist : [PlayerEventDetail];
+        #AnytimeAssist : PlayerEventDetail;
         #ScoreBrace : [PlayerGroupEventDetail];
         #ScoreHatrick : [PlayerGroupEventDetail];
         #HalfTimeScore : ScoreDetail;

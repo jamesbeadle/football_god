@@ -8,6 +8,7 @@ module AppTypes {
         #NotAuthorized;
         #NotAllowed;
         #DecodeError;
+        #CanisterCreateError;
     };
 
     public type Profile = {
