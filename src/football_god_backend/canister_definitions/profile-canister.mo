@@ -1,17 +1,23 @@
-import Timer "mo:base/Timer";
-import Int "mo:base/Int";
-import Result "mo:base/Result";
-import Principal "mo:base/Principal";
 import Array "mo:base/Array";
 import Buffer "mo:base/Buffer";
+import Int "mo:base/Int";
+import Principal "mo:base/Principal";
+import Result "mo:base/Result";
+import Timer "mo:base/Timer";
+import Nat64 "mo:base/Nat64";
+
+import T "../types/app_types";
+import Base "../types/base_types";
+import BettingTypes "../types/betting_types";
 import ResponseDTOs "../dtos/response_DTOs";
 import RequestDTOs "../dtos/request_DTOs";
-import T "../types/app_types";
-import BettingTypes "../types/betting_types";
-import Base "../types/base_types";
 import Environment "../environment";
+
+import FPLLedger "../utilities/ledger";
+
 actor class _ProfileCanister() {
   
+  private let ledger : FPLLedger.Interface = actor (FPLLedger.CANISTER_ID);
   private let MAX_PROFILES_PER_CANISTER: Nat = 500;
   private let MAX_PROFILES_PER_GROUP: Nat = 10;
   private let MAX_PROFILE_GROUPS: Nat = 50;
@@ -89,7 +95,7 @@ actor class _ProfileCanister() {
     return #ok();
   };
 
-  public shared ({caller }) func getProfile(principalId: Text) : async Result.Result<ResponseDTOs.ProfileDTO, T.Error>{
+  public shared ({caller }) func getProfile() : async Result.Result<ResponseDTOs.ProfileDTO, T.Error>{
     let callerPrincipalId = Principal.toText(caller);
     let profileGroupEntry = Array.find<(Base.PrincipalId, Nat)>(profileGroupDictionary, 
       func(groupEntry: (Base.PrincipalId, Nat)) : Bool {
@@ -100,7 +106,10 @@ actor class _ProfileCanister() {
         let profileResult = getProfileFromGroup(callerPrincipalId, profileGroup.1);
         switch(profileResult){
           case (?profile){
-            var accountBalance: Nat64 = 0; //TODO set from ledger
+
+            let tokens = await ledger.icrc1_balance_of({owner = Principal.fromText(profile.principalId); subaccount = null}); 
+
+            var accountBalance: Nat64 = Nat64.fromNat(tokens);
             var currentMonthBetTotal: Nat64 = 0; //TODO SET
             let response: ResponseDTOs.ProfileDTO = {
               accountBalance = accountBalance;
@@ -155,6 +164,8 @@ actor class _ProfileCanister() {
   
   public shared ({caller }) func placeBet(dto: RequestDTOs.SubmitBetslipDTO) : async Result.Result<BettingTypes.BetSlip, T.Error>{
     //private function to update monthly bet totals should be added when a bet is placed
+    //take the money
+    //ensure they have the money
     return #err(#NotFound);
   };
   
@@ -845,7 +856,6 @@ actor class _ProfileCanister() {
     ignore Timer.setTimer<system>(#nanoseconds(Int.abs(1)), postUpgradeCallback); 
   };
   
-  private func postUpgradeCallback() : async (){
-    
-  };
+  private func postUpgradeCallback() : async (){ };
+
 };

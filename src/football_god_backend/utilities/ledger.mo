@@ -1,7 +1,11 @@
+import Environment "../environment";
+
 module {
-    //! Candid for canister `sns_ledger` obtained by `scripts/update_ic_commit` from: <https://raw.githubusercontent.com/dfinity/ic/release-2024-04-03_23-01-base/rs/rosetta-api/icrc1/ledger/ledger.did>
+  public let CANISTER_ID : Text = Environment.OPENFPL_LEDGER_CANISTER_ID;
+
+  //! Candid for canister `sns_ledger` obtained by `scripts/update_ic_commit` from: <https://raw.githubusercontent.com/dfinity/ic/release-2024-04-03_23-01-base/rs/rosetta-api/icrc1/ledger/ledger.did>
     type BlockIndex = Nat;
-    type Subaccount = Blob;
+    public type Subaccount = Blob;
     // Number of nanoseconds since the UNIX epoch in UTC timezone.
     type Timestamp = Nat64;
     // Number of nanoseconds between two [Timestamp]s.
@@ -80,7 +84,7 @@ module {
         #GenericError : { error_code : Nat; message : Text };
     };
 
-    type TransferResult = {
+    public type TransferResult = {
         #Ok : BlockIndex;
         #Err : TransferError;
     };
