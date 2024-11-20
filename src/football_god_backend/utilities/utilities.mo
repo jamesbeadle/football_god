@@ -88,5 +88,11 @@ module {
       return convertNatToInt(pauseDays) * secondsPerDay * nanosecondsPerSecond;
     };
 
+    public func getDay(): Int {
+      let secondsPerDay: Int = 24 * 60 * 60;
+      let nanosecondsPerSecond: Int = 1_000_000_000;
+      return secondsPerDay * nanosecondsPerSecond;
+    };
+
 
 };

@@ -24,7 +24,7 @@ module AppTypes {
         maxBetLimit: Nat64;
         maxBetLimitSet: Int;
         monthlyBetLimit: Nat64;
-        monthlyBetLimitSet: Nat64;
+        monthlyBetLimitSet: Int;
         monthlyBetTotals: [(Nat16, [(Base.CalendarMonth, Nat64)])];
         monthlyProfitLoss: [(Nat16, [(Base.CalendarMonth, Nat64)])];
         bets: [BettingTypes.BetSlip];

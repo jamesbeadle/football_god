@@ -350,14 +350,100 @@ actor class _ProfileCanister() {
   
   public shared ({caller }) func setMaxBetLimit(dto: RequestDTOs.SetMaxBetLimit) : async Result.Result<(), T.Error>{
     assert Principal.toText(caller) == Environment.BACKEND_CANISTER_ID;
-    //When set, it cannot be increased for 30 days.
-    return #err(#NotFound);
+    let profileGroupEntry = Array.find<(Base.PrincipalId, Nat)>(profileGroupDictionary, 
+      func(groupEntry: (Base.PrincipalId, Nat)) : Bool {
+        groupEntry.0 == dto.principalId;
+    });
+    switch(profileGroupEntry){
+      case (?profileGroup){
+        let profileResult = getProfileFromGroup(dto.principalId, profileGroup.1);
+        switch(profileResult){
+          case (?profile){
+
+            if(Time.now() < (profile.maxBetLimitSet + (Utilities.getDay() * 30))){
+              return #err(#NotAllowed);
+            };
+
+            let updatedProfile: T.Profile = {
+              accountOnPause = true;
+              bets = profile.bets;
+              completedKYC = profile.completedKYC;
+              maxBetLimit = dto.maxBetLimit;
+              maxBetLimitSet = Time.now();
+              monthlyBetLimit = profile.monthlyBetLimit;
+              monthlyBetLimitSet = profile.monthlyBetLimitSet;
+              monthlyBetTotals = profile.monthlyBetTotals;
+              monthlyProfitLoss = profile.monthlyProfitLoss;
+              pauseEndDate = profile.pauseEndDate;
+              principalId = profile.principalId;
+              profilePicture = profile.profilePicture;
+              profilePictureExtension = profile.profilePictureExtension;
+              termsAccepted = profile.termsAccepted;
+              termsAcceptedOn = profile.termsAcceptedOn;
+              username = profile.username;
+              withdrawalAddress = profile.withdrawalAddress;
+            };
+            updateProfile(updatedProfile);
+            return #ok();
+          };
+          case (null){
+            return #err(#NotFound);
+          }
+        };
+      };
+      case (null){
+        return #err(#NotFound);
+      }
+    };
   };
   
   public shared ({caller }) func setMonthlyBetLimit(dto: RequestDTOs.SetMonthlyBetLimitDTO) : async Result.Result<(), T.Error>{
     assert Principal.toText(caller) == Environment.BACKEND_CANISTER_ID;
-    //When set, it cannot be increased for 30 days.
-    return #err(#NotFound);
+    let profileGroupEntry = Array.find<(Base.PrincipalId, Nat)>(profileGroupDictionary, 
+      func(groupEntry: (Base.PrincipalId, Nat)) : Bool {
+        groupEntry.0 == dto.principalId;
+    });
+    switch(profileGroupEntry){
+      case (?profileGroup){
+        let profileResult = getProfileFromGroup(dto.principalId, profileGroup.1);
+        switch(profileResult){
+          case (?profile){
+
+            if(Time.now() < (profile.maxBetLimitSet + (Utilities.getDay() * 30))){
+              return #err(#NotAllowed);
+            };
+
+            let updatedProfile: T.Profile = {
+              accountOnPause = true;
+              bets = profile.bets;
+              completedKYC = profile.completedKYC;
+              maxBetLimit = profile.maxBetLimit;
+              maxBetLimitSet = profile.maxBetLimitSet;
+              monthlyBetLimit = dto.monthlyBetLimit;
+              monthlyBetLimitSet = Time.now();
+              monthlyBetTotals = profile.monthlyBetTotals;
+              monthlyProfitLoss = profile.monthlyProfitLoss;
+              pauseEndDate = profile.pauseEndDate;
+              principalId = profile.principalId;
+              profilePicture = profile.profilePicture;
+              profilePictureExtension = profile.profilePictureExtension;
+              termsAccepted = profile.termsAccepted;
+              termsAcceptedOn = profile.termsAcceptedOn;
+              username = profile.username;
+              withdrawalAddress = profile.withdrawalAddress;
+            };
+            updateProfile(updatedProfile);
+            return #ok();
+          };
+          case (null){
+            return #err(#NotFound);
+          }
+        };
+      };
+      case (null){
+        return #err(#NotFound);
+      }
+    };
   };
   
   public shared ({caller }) func placeBet(dto: RequestDTOs.SubmitBetslipDTO) : async Result.Result<BettingTypes.BetSlip, T.Error>{
