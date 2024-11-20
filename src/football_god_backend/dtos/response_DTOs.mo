@@ -21,6 +21,7 @@ module ResponseDTOs {
     principalId : Base.PrincipalId;
     username : Text; 
     profilePicture: ?Blob;
+    profilePictureExtension: Text;
     withdrawalAddress: Text;
     completedKYC: Bool;
     accountOnPause: Bool;

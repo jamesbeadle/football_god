@@ -61,6 +61,7 @@ module RequestDTOs {
   public type UpdateProfilePictureDTO = {
     principalId: Base.PrincipalId;
     profilePicture: Blob;
+    profilePictureExtension: Text;
   };
 
   public type UpdateWithdrawalAddressDTO = {
@@ -70,6 +71,7 @@ module RequestDTOs {
 
   public type PauseAccountDTO = {
     principalId: Base.PrincipalId;
+    pauseDays: Nat;
   };
 
   public type SetMaxBetLimit = {

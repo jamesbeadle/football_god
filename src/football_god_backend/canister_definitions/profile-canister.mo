@@ -5,6 +5,7 @@ import Principal "mo:base/Principal";
 import Result "mo:base/Result";
 import Timer "mo:base/Timer";
 import Nat64 "mo:base/Nat64";
+import Time "mo:base/Time";
 
 import T "../types/app_types";
 import Base "../types/base_types";
@@ -14,6 +15,7 @@ import RequestDTOs "../dtos/request_DTOs";
 import Environment "../environment";
 
 import FPLLedger "../utilities/ledger";
+import Utilities "../utilities/utilities";
 
 actor class _ProfileCanister() {
   
@@ -95,22 +97,47 @@ actor class _ProfileCanister() {
     return #ok();
   };
 
-  public shared ({caller }) func getProfile() : async Result.Result<ResponseDTOs.ProfileDTO, T.Error>{
-    let callerPrincipalId = Principal.toText(caller);
+  public shared ({caller }) func getProfile(userPrincipalId: Base.PrincipalId) : async Result.Result<ResponseDTOs.ProfileDTO, T.Error>{
+    assert Principal.toText(caller) == Environment.BACKEND_CANISTER_ID;
     let profileGroupEntry = Array.find<(Base.PrincipalId, Nat)>(profileGroupDictionary, 
       func(groupEntry: (Base.PrincipalId, Nat)) : Bool {
-        groupEntry.0 == callerPrincipalId;
+        groupEntry.0 == userPrincipalId;
     });
     switch(profileGroupEntry){
       case (?profileGroup){
-        let profileResult = getProfileFromGroup(callerPrincipalId, profileGroup.1);
+        let profileResult = getProfileFromGroup(userPrincipalId, profileGroup.1);
         switch(profileResult){
           case (?profile){
 
             let tokens = await ledger.icrc1_balance_of({owner = Principal.fromText(profile.principalId); subaccount = null}); 
+            
+            let currentYear = Utilities.getCurrentYear();
+            let currentMonth = Utilities.getCurrentMonth();
 
+            let currentYearMonthlyTotals = Array.find<(Nat16, [(Base.CalendarMonth, Nat64)])>(
+              profile.monthlyBetTotals,
+              func(yearEntry: (Nat16, [(Base.CalendarMonth, Nat64)])) : Bool {
+                yearEntry.0 == currentYear;
+              }
+            ); 
+
+            var currentMonthBetTotal: Nat64 = 0;
+            switch(currentYearMonthlyTotals){
+              case (?foundYearTotals){
+                let currentMonthTotal = Array.find<(Base.CalendarMonth, Nat64)>(foundYearTotals.1, func(entry: (Base.CalendarMonth, Nat64)) : Bool {
+                  entry.0 == currentMonth;
+                });
+                switch(currentMonthTotal){
+                  case (?foundTotal){
+                    currentMonthBetTotal := foundTotal.1;  
+                  };
+                  case (null){ }
+                };
+              };
+              case (null){ };
+            };
+            
             var accountBalance: Nat64 = Nat64.fromNat(tokens);
-            var currentMonthBetTotal: Nat64 = 0; //TODO SET
             let response: ResponseDTOs.ProfileDTO = {
               accountBalance = accountBalance;
               accountOnPause = profile.accountOnPause;
@@ -120,6 +147,7 @@ actor class _ProfileCanister() {
               monthlyBetTotal = currentMonthBetTotal;
               principalId = profile.principalId;
               profilePicture = profile.profilePicture;
+              profilePictureExtension = profile.profilePictureExtension;
               username = profile.username;
               withdrawalAddress = profile.withdrawalAddress
             };
@@ -137,32 +165,203 @@ actor class _ProfileCanister() {
   };
 
   public shared ({caller }) func updateUsername(dto: RequestDTOs.UpdateUsernameDTO) : async Result.Result<(), T.Error>{
-    return #err(#NotFound);
+    assert Principal.toText(caller) == Environment.BACKEND_CANISTER_ID;
+    let profileGroupEntry = Array.find<(Base.PrincipalId, Nat)>(profileGroupDictionary, 
+      func(groupEntry: (Base.PrincipalId, Nat)) : Bool {
+        groupEntry.0 == dto.principalId;
+    });
+    switch(profileGroupEntry){
+      case (?profileGroup){
+        let profileResult = getProfileFromGroup(dto.principalId, profileGroup.1);
+        switch(profileResult){
+          case (?profile){
+
+            let updatedProfile: T.Profile = {
+              accountOnPause = profile.accountOnPause;
+              bets = profile.bets;
+              completedKYC = profile.completedKYC;
+              maxBetLimit = profile.maxBetLimit;
+              maxBetLimitSet = profile.maxBetLimitSet;
+              monthlyBetLimit = profile.monthlyBetLimit;
+              monthlyBetLimitSet = profile.monthlyBetLimitSet;
+              monthlyBetTotals = profile.monthlyBetTotals;
+              monthlyProfitLoss = profile.monthlyProfitLoss;
+              pauseEndDate = profile.pauseEndDate;
+              principalId = profile.principalId;
+              profilePicture = profile.profilePicture;
+              profilePictureExtension = profile.profilePictureExtension;
+              termsAccepted = profile.termsAccepted;
+              termsAcceptedOn = profile.termsAcceptedOn;
+              username = dto.username;
+              withdrawalAddress = profile.withdrawalAddress;
+            };
+            updateProfile(updatedProfile);
+            return #ok();
+          };
+          case (null){
+            return #err(#NotFound);
+          }
+        };
+      };
+      case (null){
+        return #err(#NotFound);
+      }
+    };
   };
 
   public shared ({caller }) func updateProfilePicture(dto: RequestDTOs.UpdateProfilePictureDTO) : async Result.Result<(), T.Error>{
-    return #err(#NotFound);
+    assert Principal.toText(caller) == Environment.BACKEND_CANISTER_ID;
+    let profileGroupEntry = Array.find<(Base.PrincipalId, Nat)>(profileGroupDictionary, 
+      func(groupEntry: (Base.PrincipalId, Nat)) : Bool {
+        groupEntry.0 == dto.principalId;
+    });
+    switch(profileGroupEntry){
+      case (?profileGroup){
+        let profileResult = getProfileFromGroup(dto.principalId, profileGroup.1);
+        switch(profileResult){
+          case (?profile){
+
+            let updatedProfile: T.Profile = {
+              accountOnPause = profile.accountOnPause;
+              bets = profile.bets;
+              completedKYC = profile.completedKYC;
+              maxBetLimit = profile.maxBetLimit;
+              maxBetLimitSet = profile.maxBetLimitSet;
+              monthlyBetLimit = profile.monthlyBetLimit;
+              monthlyBetLimitSet = profile.monthlyBetLimitSet;
+              monthlyBetTotals = profile.monthlyBetTotals;
+              monthlyProfitLoss = profile.monthlyProfitLoss;
+              pauseEndDate = profile.pauseEndDate;
+              principalId = profile.principalId;
+              profilePicture = ?dto.profilePicture;
+              profilePictureExtension = dto.profilePictureExtension;
+              termsAccepted = profile.termsAccepted;
+              termsAcceptedOn = profile.termsAcceptedOn;
+              username = profile.username;
+              withdrawalAddress = profile.withdrawalAddress;
+            };
+            updateProfile(updatedProfile);
+            return #ok();
+          };
+          case (null){
+            return #err(#NotFound);
+          }
+        };
+      };
+      case (null){
+        return #err(#NotFound);
+      }
+    };
   };
   
   public shared ({caller }) func updateWithdrawalAddress(dto: RequestDTOs.UpdateWithdrawalAddressDTO) : async Result.Result<(), T.Error>{
-    return #err(#NotFound);
+    assert Principal.toText(caller) == Environment.BACKEND_CANISTER_ID;
+    let profileGroupEntry = Array.find<(Base.PrincipalId, Nat)>(profileGroupDictionary, 
+      func(groupEntry: (Base.PrincipalId, Nat)) : Bool {
+        groupEntry.0 == dto.principalId;
+    });
+    switch(profileGroupEntry){
+      case (?profileGroup){
+        let profileResult = getProfileFromGroup(dto.principalId, profileGroup.1);
+        switch(profileResult){
+          case (?profile){
+
+            let updatedProfile: T.Profile = {
+              accountOnPause = profile.accountOnPause;
+              bets = profile.bets;
+              completedKYC = profile.completedKYC;
+              maxBetLimit = profile.maxBetLimit;
+              maxBetLimitSet = profile.maxBetLimitSet;
+              monthlyBetLimit = profile.monthlyBetLimit;
+              monthlyBetLimitSet = profile.monthlyBetLimitSet;
+              monthlyBetTotals = profile.monthlyBetTotals;
+              monthlyProfitLoss = profile.monthlyProfitLoss;
+              pauseEndDate = profile.pauseEndDate;
+              principalId = profile.principalId;
+              profilePicture = profile.profilePicture;
+              profilePictureExtension = profile.profilePictureExtension;
+              termsAccepted = profile.termsAccepted;
+              termsAcceptedOn = profile.termsAcceptedOn;
+              username = profile.username;
+              withdrawalAddress = dto.withdrawalAddress;
+            };
+            updateProfile(updatedProfile);
+            return #ok();
+          };
+          case (null){
+            return #err(#NotFound);
+          }
+        };
+      };
+      case (null){
+        return #err(#NotFound);
+      }
+    };
   };
   
   public shared ({caller }) func pauseAccount(dto: RequestDTOs.PauseAccountDTO) : async Result.Result<(), T.Error>{
-    return #err(#NotFound);
+    assert Principal.toText(caller) == Environment.BACKEND_CANISTER_ID;
+    let profileGroupEntry = Array.find<(Base.PrincipalId, Nat)>(profileGroupDictionary, 
+      func(groupEntry: (Base.PrincipalId, Nat)) : Bool {
+        groupEntry.0 == dto.principalId;
+    });
+    switch(profileGroupEntry){
+      case (?profileGroup){
+        let profileResult = getProfileFromGroup(dto.principalId, profileGroup.1);
+        switch(profileResult){
+          case (?profile){
+
+            if(profile.accountOnPause){
+              return #err(#NotAllowed);
+            };
+
+            let updatedProfile: T.Profile = {
+              accountOnPause = true;
+              bets = profile.bets;
+              completedKYC = profile.completedKYC;
+              maxBetLimit = profile.maxBetLimit;
+              maxBetLimitSet = profile.maxBetLimitSet;
+              monthlyBetLimit = profile.monthlyBetLimit;
+              monthlyBetLimitSet = profile.monthlyBetLimitSet;
+              monthlyBetTotals = profile.monthlyBetTotals;
+              monthlyProfitLoss = profile.monthlyProfitLoss;
+              pauseEndDate = Time.now() + Utilities.convertDaysToNanosecondsInt(dto.pauseDays);
+              principalId = profile.principalId;
+              profilePicture = profile.profilePicture;
+              profilePictureExtension = profile.profilePictureExtension;
+              termsAccepted = profile.termsAccepted;
+              termsAcceptedOn = profile.termsAcceptedOn;
+              username = profile.username;
+              withdrawalAddress = profile.withdrawalAddress;
+            };
+            updateProfile(updatedProfile);
+            return #ok();
+          };
+          case (null){
+            return #err(#NotFound);
+          }
+        };
+      };
+      case (null){
+        return #err(#NotFound);
+      }
+    };
   };
   
   public shared ({caller }) func setMaxBetLimit(dto: RequestDTOs.SetMaxBetLimit) : async Result.Result<(), T.Error>{
+    assert Principal.toText(caller) == Environment.BACKEND_CANISTER_ID;
     //When set, it cannot be increased for 30 days.
     return #err(#NotFound);
   };
   
   public shared ({caller }) func setMonthlyBetLimit(dto: RequestDTOs.SetMonthlyBetLimitDTO) : async Result.Result<(), T.Error>{
+    assert Principal.toText(caller) == Environment.BACKEND_CANISTER_ID;
     //When set, it cannot be increased for 30 days.
     return #err(#NotFound);
   };
   
   public shared ({caller }) func placeBet(dto: RequestDTOs.SubmitBetslipDTO) : async Result.Result<BettingTypes.BetSlip, T.Error>{
+    assert Principal.toText(caller) == Environment.BACKEND_CANISTER_ID;
     //private function to update monthly bet totals should be added when a bet is placed
     //take the money
     //ensure they have the money
@@ -170,20 +369,24 @@ actor class _ProfileCanister() {
   };
   
   public shared ({caller }) func getBets(dto: RequestDTOs.GetBetsDTO) : async Result.Result<[BettingTypes.BetSlip], T.Error>{
+    assert Principal.toText(caller) == Environment.BACKEND_CANISTER_ID;
     return #err(#NotFound);
   };
   
   public shared ({caller }) func updateSettledBet(principalId: Base.PrincipalId, betslip: BettingTypes.BetSlip) : async (){
+    assert Principal.toText(caller) == Environment.BACKEND_CANISTER_ID;
     
     //Update the users totals for months etc
   };
   
   public shared ({caller }) func canisterFull() : async Bool{
+    assert Principal.toText(caller) == Environment.BACKEND_CANISTER_ID;
     return false; //TODO
   };
   
   public shared ({caller }) func voidBet(betslip: BettingTypes.BetSlip) : async (){
-
+    assert Principal.toText(caller) == Environment.BACKEND_CANISTER_ID;
+    
   };
 
   private func getProfileFromGroup(principalId: Base.PrincipalId, groupNumber: Nat) : ?T.Profile {
@@ -519,9 +722,10 @@ actor class _ProfileCanister() {
       monthlyBetLimitSet = 0;
       monthlyBetTotals = [];
       monthlyProfitLoss = [];
-      pauseDays = 0;
+      pauseEndDate = 0;
       principalId = principalId;
       profilePicture = null;
+      profilePictureExtension = "";
       termsAccepted = false;
       termsAcceptedOn = 0;
       username = "";
@@ -847,6 +1051,11 @@ actor class _ProfileCanister() {
     profileGroupDictionaryBuffer.add(profile.principalId, activeProfileGroup);
     profileGroupDictionary := Buffer.toArray(profileGroupDictionaryBuffer);
     profileCount += 1;
+  };
+
+  private func updateProfile(updatedProfile: T.Profile) {
+    
+    //Save an updated profile
   };
 
   system func preupgrade() {

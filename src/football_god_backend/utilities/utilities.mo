@@ -5,6 +5,8 @@ import Principal "mo:base/Principal";
 import Text "mo:base/Text";
 import Array "mo:base/Array";
 import Blob "mo:base/Blob";
+import Int "mo:base/Int";
+import Nat "mo:base/Nat";
 import Management "./Management";
 import Base "../types/base_types";
 
@@ -16,6 +18,10 @@ module {
 
     public func convertFloatToNat64(input: Float) : Nat64 {
         return Nat64.fromIntWrap(Int64.toInt(Float.toInt64(input)));
+    };
+
+    public func convertNatToInt(input: Nat) : Int {
+        return Int64.toInt(Int64.fromNat64(Nat64.fromNat(input)));
     };
 
     public func updateCanister_(a : actor {}, backendCanisterController : ?Principal, IC : Management.Management) : async () {
@@ -67,5 +73,20 @@ module {
       let sizeInKB = Array.size(Blob.toArray(profilePicture)) / 1024;
       return (sizeInKB > 0 and sizeInKB <= 500);
     };
+
+    public func getCurrentYear() : Nat16 {
+      return 0;
+    };
+
+    public func getCurrentMonth() : Base.CalendarMonth {
+      return 0;
+    };
+
+    public func convertDaysToNanosecondsInt(pauseDays: Nat): Int {
+      let secondsPerDay: Int = 24 * 60 * 60;
+      let nanosecondsPerSecond: Int = 1_000_000_000;
+      return convertNatToInt(pauseDays) * secondsPerDay * nanosecondsPerSecond;
+    };
+
 
 };
