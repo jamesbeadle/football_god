@@ -4,7 +4,7 @@
   import { leagueStore } from "$lib/stores/league-store";
   import { clubStore } from "$lib/stores/club-store";
   import Layout from "../Layout.svelte";
-  import type { ClubDTO, CountryDTO, FootballLeagueDTO, PlayerDTO } from "../../../../declarations/backend/_backend.did";
+  import type { ClubDTO, CountryDTO, FootballLeagueDTO, PlayerDTO } from "../../../../declarations/backend/backend.did";
   import LoanPlayer from "$lib/components/governance/player/loan-player.svelte";
   import CreatePlayer from "$lib/components/governance/player/create-player.svelte";
   import UpdatePlayer from "$lib/components/governance/player/update-player.svelte";
@@ -262,19 +262,19 @@
 
         <div class="flex flex-col gap-4 md:flex-row mb-6">
           <div class="flex items-center w-full md:w-1/4">
-            <label for="minValue" class="text-sm text-gray-400 mr-2">Min Value (M):</label>
+            <label for="minValue" class="text-sm text-BrandGray mr-2">Min Value (M):</label>
             <input type="number" id="minValue" bind:value={minValue} step="0.25" class="form-input bg-gray-800 text-white border border-gray-700 rounded-lg focus:ring focus:ring-blue-500 w-full" on:input={filterPlayers} />
           </div>
 
           <div class="flex items-center w-full md:w-1/4">
-            <label for="maxValue" class="text-sm text-gray-400 mr-2">Max Value (M):</label>
+            <label for="maxValue" class="text-sm text-BrandGray mr-2">Max Value (M):</label>
             <input type="number" id="maxValue" bind:value={maxValue} step="0.25" class="form-input bg-gray-800 text-white border border-gray-700 rounded-lg focus:ring focus:ring-blue-500 w-full" on:input={filterPlayers} />
           </div>
         </div>
 
         <div class="flex flex-col md:flex-row gap-4 mb-6">
           <div class="flex items-center w-full md:w-1/2">
-            <label for="searchSurname" class="text-sm text-gray-400 mr-2">Search by Surname:</label>
+            <label for="searchSurname" class="text-sm text-BrandGray400 mr-2">Search by Surname:</label>
             <input type="text" id="searchSurname" bind:value={searchSurname} class="form-input bg-gray-800 text-white border border-gray-700 rounded-lg focus:ring focus:ring-blue-500 w-full" on:keypress={handleKeyPress} />
           </div>
           <button class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg" on:click={filterPlayers}>Search</button>
@@ -282,7 +282,7 @@
 
         <div>
           {#each filteredPlayers.sort((a, b) => b.valueQuarterMillions - a.valueQuarterMillions) as player}
-            <div class="flex flex-row items-center bg-gray-800 rounded-lg shadow p-4 w-full my-2 transition hover:bg-gray-700">
+            <div class="flex flex-row items-center bg-BrandDarkGray rounded-lg shadow p-4 w-full my-2 transition hover:bg-gray-700">
               <div class="flex items-center space-x-4 w-full">
                 <p class="flex-grow text-lg md:text-sm text-white">
                   {player.firstName} {player.lastName} <br />
@@ -293,16 +293,16 @@
                   <button class="text-white bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg" on:click={(event) => toggleDropdown(player.id, event)}>Actions</button>
                   {#if dropdownVisible === player.id}
                     <div class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg z-10 text-sm dropdown-menu">
-                      <button class="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100" on:click={() => loadUpdatePlayer(player.id)}>Update Player</button>
-                      <button class="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100" on:click={() => loadSetPlayerInjury(player.id)}>Set Player Injury</button>
-                      <button class="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100" on:click={() => loadTransferPlayer(player.id)}>Transfer Player</button>
-                      <button class="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100" on:click={() => loadLoanPlayer(player.id)}>Loan Player</button>
-                      <button class="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100" on:click={() => loadRecallPlayer(player.id)}>Recall Player</button>
-                      <button class="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100" on:click={() => loadRevaluePlayerUp(player.id)}>Revalue Player Up</button>
-                      <button class="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100" on:click={() => loadRevaluePlayerDown(player.id)}>Revalue Player Down</button>
-                      <button class="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100" on:click={() => loadRetirePlayer(player.id)}>Retire Player</button>
-                      <button class="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100" on:click={() => loadUnretirePlayer(player.id)}>Unretire Player</button>
-                      <button class="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100" on:click={() => loadSetFreeAgent(player.id)}>Set Player As Free Agent</button>
+                      <button class="block w-full text-left px-4 py-2 text-BrandDarkGray hover:bg-BrandLightGray" on:click={() => loadUpdatePlayer(player.id)}>Update Player</button>
+                      <button class="block w-full text-left px-4 py-2 text-BrandDarkGray hover:bg-BrandLightGray" on:click={() => loadSetPlayerInjury(player.id)}>Set Player Injury</button>
+                      <button class="block w-full text-left px-4 py-2 text-BrandDarkGray hover:bg-BrandLightGray" on:click={() => loadTransferPlayer(player.id)}>Transfer Player</button>
+                      <button class="block w-full text-left px-4 py-2 text-BrandDarkGray hover:bg-BrandLightGray" on:click={() => loadLoanPlayer(player.id)}>Loan Player</button>
+                      <button class="block w-full text-left px-4 py-2 text-BrandDarkGray hover:bg-BrandLightGray" on:click={() => loadRecallPlayer(player.id)}>Recall Player</button>
+                      <button class="block w-full text-left px-4 py-2 text-BrandDarkGray hover:bg-BrandLightGray" on:click={() => loadRevaluePlayerUp(player.id)}>Revalue Player Up</button>
+                      <button class="block w-full text-left px-4 py-2 text-BrandDarkGray hover:bg-BrandLightGray" on:click={() => loadRevaluePlayerDown(player.id)}>Revalue Player Down</button>
+                      <button class="block w-full text-left px-4 py-2 text-BrandDarkGray hover:bg-BrandLightGray" on:click={() => loadRetirePlayer(player.id)}>Retire Player</button>
+                      <button class="block w-full text-left px-4 py-2 text-BrandDarkGray hover:bg-BrandLightGray" on:click={() => loadUnretirePlayer(player.id)}>Unretire Player</button>
+                      <button class="block w-full text-left px-4 py-2 text-BrandDarkGray hover:bg-BrandLightGray" on:click={() => loadSetFreeAgent(player.id)}>Set Player As Free Agent</button>
                     </div>
                   {/if}
                 </div>

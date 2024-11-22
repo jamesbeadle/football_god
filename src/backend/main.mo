@@ -119,11 +119,13 @@ actor Self {
     return await data_canister.getSeasons(leagueId);
   };
 
-  public shared composite query func getFixtures(dto: RequestDTOs.GetFixturesDTO) : async Result.Result<[ResponseDTOs.FixtureDTO], T.Error>  {
+  public shared composite query func getFixtures(leagueId: FootballTypes.LeagueId) : async Result.Result<[ResponseDTOs.FixtureDTO], T.Error>  {
+    
     let data_canister = actor (Environment.DATA_CANISTER_ID) : actor {
-      getFixtures : shared query (dto: RequestDTOs.GetFixturesDTO) -> async Result.Result<[ResponseDTOs.FixtureDTO], T.Error>;
+      getFixtures : shared query (leagueId: FootballTypes.LeagueId) -> async Result.Result<[ResponseDTOs.FixtureDTO], T.Error>;
     };
-    return await data_canister.getFixtures(dto);
+
+    return await data_canister.getFixtures(leagueId);
   };
 
   /* Application functions */

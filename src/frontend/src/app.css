@@ -2,53 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-.modal-backdrop {
-  z-index: 1000;
-}
-
-.modal {
-  position: fixed !important;
-  z-index: 9999 !important;
-  background-color: rgba(36, 37, 41, 0.7) !important;
-}
-
-.modal .content {
-  left: 0 !important;
-  right: 0 !important;
-  background-color: #161819 !important;
-  border-radius: 8px;
-  border: 1px solid #2e323a !important;
-}
-
-.modal .container {
-  border-radius: 0px !important;
-}
-
-.toast {
-  background-color: #2ce3a6 !important;
-  padding-left: 16px !important;
-  padding-right: 16px !important;
-  padding-top: 8px !important;
-  padding-bottom: 8px !important;
-  border-radius: 4px !important;
-}
-.error > .toast {
-  background-color: #f27557 !important;
-}
-
-[data-tid="busy"] {
-  background-color: rgba(36, 37, 41, 0.7) !important;
-  z-index: 99999 !important;
-}
-
-.bigger-text {
-  @apply text-xs xs:text-base sm:text-lg;
-}
-
-.smaller-text {
-  @apply text-xxs xs:text-xs sm:text-sm;
-}
-
 /* global.css */
 :root {
   --dialog-width: 90% !important;
@@ -57,17 +10,6 @@
   --dialog-height: auto !important;
   --dialog-max-height: 80vh !important;
   --dialog-border-radius: 1px !important;
-}
-
-.horizontal-divider {
-  min-height: 2px;
-  @apply flex-shrink-0 h-px bg-gray-400 self-stretch;
-}
-
-.vertical-divider {
-  min-width: 2px;
-  min-height: 50px;
-  @apply flex-shrink-0 w-px bg-gray-400 self-stretch;
 }
 
 .default-header {
@@ -83,7 +25,7 @@
 }
 
 .selection-panel {
-  @apply flex-1 w-full rounded-md sm:text-sm shadow-sm hover:text-GRAY focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 flex items-center justify-center;
+  @apply flex-1 w-full rounded-md sm:text-sm shadow-sm hover:text-BrandGray focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 flex items-center justify-center;
 }
 
 .selected-panel {
@@ -100,41 +42,7 @@
 }
 
 .button-hover {
-  @apply bg-white text-black hover:bg-OPENFPL hover:text-GRAY;
-}
-
-.toast {
-  background-color: #2ce3a6 !important;
-  padding-left: 16px !important;
-  padding-right: 16px !important;
-  padding-top: 8px !important;
-  padding-bottom: 8px !important;
-  border-radius: 4px !important;
-}
-.error > .toast {
-  background-color: #f27557 !important;
-}
-
-.toast.error {
-}
-
-/* Override styles for .container when it is a child of .modal */
-.modal .container {
-  max-width: none !important;
-  width: 100% !important;
-}
-
-/* Ensure media queries for .modal .container */
-@media (min-width: 480px) {
-  .modal .container {
-    max-width: none !important; /* or set to desired value */
-  }
-}
-
-@media (min-width: 420px) {
-  .modal .container {
-    max-width: none !important; /* or set to desired value */
-  }
+  @apply bg-white text-black hover:bg-OPENFPL hover:text-BrandGray;
 }
 
 .bg-panel {
@@ -142,22 +50,23 @@
 }
 
 .bg-panel-color {
-  background-color: rgba(36, 37, 41, 0.9);
-  border-radius: 8px;
-  border: 1px solid #2e323a !important;
+  @apply bg-BrandDarkGray rounded border-BrandGray;
 }
 
 .active-tab {
-  border-bottom: 4px #2ce3a6 solid;
+  @apply border-b border-b-BrandPositive;
 }
 
 .brand-button {
-  background-color: #7f56f1;
-  color: white;
+  @apply bg-BrandPurple text-white;
 }
+
+.brand-cancel-button {
+  @apply bg-BrandNegative text-white;
+}
+
 .brand-button-disabled {
-  background-color: #b5a3e6;
-  color: rgb(95, 90, 90);
+  @apply bg-BrandDisabled text-white;
 }
 
 .brand-dropdown {

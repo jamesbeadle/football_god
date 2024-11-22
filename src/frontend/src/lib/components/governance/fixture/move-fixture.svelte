@@ -50,7 +50,7 @@
         }
 
 
-        var openfpl_fixtures = await adminStore.getFixtures({
+        var openfpl_fixtures = await fixtureStore.getFixtures({
             leagueId: selectedLeagueId,
             seasonId: systemState?.calculationSeasonId
         });
@@ -137,7 +137,7 @@
       updatedFixtureGameweek : newGameweek,
       updatedFixtureDate: convertDateTimeInputToUnixNano(dateTime)
     };
-    await adminStore.moveFixture(dto);
+    await fixtureStore.moveFixture(dto);
     /*
     let result = await governanceStore.moveFixture(
       selectedFixtureId,
@@ -252,15 +252,15 @@
 
           <div class="items-center flex space-x-4">
             <button
-              class="px-4 py-2 default-button fpl-cancel-btn min-w-[150px]"
+              class="px-4 py-2 brand-cancel-button min-w-[150px]"
               type="button"
               on:click={cancelModal}
             >
               Cancel
             </button>
             <button
-              class={`${isSubmitDisabled ? "bg-gray-500" : "fpl-purple-btn"} 
-                          px-4 py-2 default-button min-w-[150px]`}
+              class={`${isSubmitDisabled ? "brand-button-disabled" : "brand-button"} 
+                          px-4 py-2 min-w-[150px]`}
               on:click={raiseProposal}
               disabled={isSubmitDisabled}
             >
@@ -276,8 +276,8 @@
             </div>
             <div class="items-center flex">
               <button
-                class={`${isSubmitDisabled ? "bg-gray-500" : "fpl-purple-btn"} 
-                              px-4 py-2 default-button w-full`}
+                class={`${isSubmitDisabled ? "brand-button-disabled" : "brand-button"} 
+                              px-4 py-2 w-full`}
                 on:click={confirmProposal}
                 disabled={isSubmitDisabled}
               >

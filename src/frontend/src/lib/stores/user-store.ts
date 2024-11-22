@@ -31,7 +31,7 @@ function createUserStore() {
     try {
       const identityActor = await ActorFactory.createIdentityActor(
         authStore,
-        process.env.FOOTBALL_GOD_BACKEND_CANISTER_ID ?? "",
+        process.env.BACKEND_CANISTER_ID ?? "",
       );
       const result = await identityActor.updateDisplayName(username);
       if (isError(result)) {
@@ -116,7 +116,7 @@ function createUserStore() {
         try {
           const identityActor = await ActorFactory.createIdentityActor(
             authStore,
-            process.env.FOOTBALL_GOD_BACKEND_CANISTER_ID ?? "",
+            process.env.BACKEND_CANISTER_ID ?? "",
           );
           const result = await identityActor.updateProfilePicture(
             uint8Array,
@@ -153,7 +153,7 @@ function createUserStore() {
   async function isUsernameAvailable(username: string): Promise<boolean> {
     const identityActor: any = await ActorFactory.createIdentityActor(
       authStore,
-      process.env.FOOTBALL_GOD_BACKEND_CANISTER_ID ?? "",
+      process.env.BACKEND_CANISTER_ID ?? "",
     );
     return await identityActor.isUsernameValid(username);
   }
@@ -161,7 +161,7 @@ function createUserStore() {
   async function cacheProfile() {
     const identityActor: any = await ActorFactory.createIdentityActor(
       authStore,
-      process.env.FOOTBALL_GOD_BACKEND_CANISTER_ID ?? "",
+      process.env.BACKEND_CANISTER_ID ?? "",
     );
 
     let getProfileResponse = await identityActor.getProfile();

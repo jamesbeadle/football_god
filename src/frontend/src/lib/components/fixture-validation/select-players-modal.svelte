@@ -94,13 +94,13 @@
 
     <div class="items-center py-3 flex space-x-4 flex justify-end">
       <button
-        class="default-button fpl-cancel-btn"
+        class="brand-cancel-button"
         type="button"
         on:click={closeModal}
       >
         Cancel
       </button>
-      <button class={`default-button fpl-purple-btn`} on:click={closeModal}
+      <button class={`default-button brand-button`} on:click={closeModal}
         >Select</button
       >
     </div>

@@ -112,20 +112,20 @@
 
           <div class="items-center flex space-x-4">
             <button
-              class="px-4 py-2 default-button fpl-cancel-btn min-w-[150px]"
+              class="px-4 py-2 brand-cancel-button min-w-[150px]"
               type="button"
               on:click={cancelModal}
             >
               Cancel
             </button>
             <button
-              class="fpl-purple-btn px-4 py-2 default-button min-w-[150px]"
+              class="brand-button px-4 py-2 min-w-[150px]"
               on:click={voteYes}
             >
               Vote Yes
             </button>
             <button
-              class="fpl-purple-btn px-4 py-2 default-button min-w-[150px]"
+              class="brand-button px-4 py-2 min-w-[150px]"
               on:click={voteNo}
             >
               Vote No
@@ -140,7 +140,7 @@
             </div>
             <div class="items-center flex">
               <button
-                class="fpl-purple-btn px-4 py-2 default-button w-full"
+                class="brand-button px-4 py-2 w-full"
                 on:click={confirmVote}
               >
                 Confirm Submit Proposal

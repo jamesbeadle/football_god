@@ -485,7 +485,7 @@
         <div class="items-center flex space-x-4 justify-end">
           <button
             on:click={addPlayerEvents}
-            class="fpl-purple-btn px-4 py-2 default-button min-w-[150px]"
+            class="brand-button px-4 py-2 min-w-[150px]"
           >
             Done
           </button>

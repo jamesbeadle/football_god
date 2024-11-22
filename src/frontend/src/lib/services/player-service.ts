@@ -1,10 +1,16 @@
 import type {
   PlayerDTO,
   LeagueId,
+  TransferPlayerDTO,
+  SetFreeAgentDTO,
+  LoanPlayerDTO,
+  CreatePlayerDTO,
+  UpdatePlayerDTO,
 } from "../../../../declarations/backend/backend.did";
 import { idlFactory } from "../../../../declarations/backend";
 import { ActorFactory } from "../utils/ActorFactory";
 import { isError } from "../utils/helpers";
+import { authStore } from "$lib/stores/auth-store";
 
 export class PlayerService {
   private actor: any;
@@ -12,7 +18,7 @@ export class PlayerService {
   constructor() {
     this.actor = ActorFactory.createActor(
       idlFactory,
-      process.env.FOOTBALL_GOD_BACKEND_CANISTER_ID,
+      process.env.BACKEND_CANISTER_ID,
     );
   }
 
@@ -23,5 +29,58 @@ export class PlayerService {
     console.log(result);
     if (isError(result)) throw new Error("Failed to fetch players");
     return result.ok;
+  }
+
+  async transferPlayer(
+    leagueId: number,
+    dto: TransferPlayerDTO,
+  ): Promise<void> {
+    const identityActor: any = await ActorFactory.createIdentityActor(
+      authStore,
+      process.env.BACKEND_CANISTER_ID ?? "",
+    );
+
+    const result = await identityActor.executeTransferPlayer(leagueId, dto);
+    if (isError(result)) throw new Error("Failed to transfer player");
+  }
+
+  async setFreeAgent(leagueId: number, dto: SetFreeAgentDTO): Promise<void> {
+    const identityActor: any = await ActorFactory.createIdentityActor(
+      authStore,
+      process.env.BACKEND_CANISTER_ID ?? "",
+    );
+
+    const result = await identityActor.executeSetFreeAgent(leagueId, dto);
+    if (isError(result)) throw new Error("Failed to set player as free agent");
+  }
+
+  async loanPlayer(leagueId: number, dto: LoanPlayerDTO): Promise<void> {
+    const identityActor: any = await ActorFactory.createIdentityActor(
+      authStore,
+      process.env.BACKEND_CANISTER_ID ?? "",
+    );
+
+    const result = await identityActor.executeLoanPlayer(leagueId, dto);
+    if (isError(result)) throw new Error("Failed to loan player");
+  }
+
+  async createPlayer(leagueId: number, dto: CreatePlayerDTO): Promise<void> {
+    const identityActor: any = await ActorFactory.createIdentityActor(
+      authStore,
+      process.env.BACKEND_CANISTER_ID ?? "",
+    );
+
+    const result = await identityActor.executeCreatePlayer(leagueId, dto);
+    if (isError(result)) throw new Error("Failed to creaete player");
+  }
+
+  async updatePlayer(leagueId: number, dto: UpdatePlayerDTO): Promise<void> {
+    const identityActor: any = await ActorFactory.createIdentityActor(
+      authStore,
+      process.env.BACKEND_CANISTER_ID ?? "",
+    );
+
+    const result = await identityActor.executeUpdatePlayer(leagueId, dto);
+    if (isError(result)) throw new Error("Failed to update player");
   }
 }

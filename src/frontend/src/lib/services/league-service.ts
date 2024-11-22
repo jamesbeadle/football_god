@@ -3,8 +3,6 @@ import { idlFactory } from "../../../../declarations/backend";
 import type {
   CreateLeagueDTO,
   FootballLeagueDTO,
-  Gender,
-  LeagueId,
   UpdateLeagueDTO,
 } from "../../../../declarations/backend/backend.did";
 import { ActorFactory } from "../utils/ActorFactory";
@@ -16,7 +14,7 @@ export class LeagueService {
   constructor() {
     this.actor = ActorFactory.createActor(
       idlFactory,
-      process.env.FOOTBALL_GOD_BACKEND_CANISTER_ID,
+      process.env.BACKEND_CANISTER_ID,
     );
   }
 
@@ -29,20 +27,20 @@ export class LeagueService {
   async createLeague(dto: CreateLeagueDTO): Promise<void> {
     const identityActor: any = await ActorFactory.createIdentityActor(
       authStore,
-      process.env.FOOTBALL_GOD_BACKEND_CANISTER_ID ?? "",
+      process.env.BACKEND_CANISTER_ID ?? "",
     );
 
-    const result = await identityActor.createLeague(dto);
+    const result = await identityActor.executeCreateLeague(dto);
     if (isError(result)) throw new Error("Failed to create league");
   }
 
   async updateLeague(dto: UpdateLeagueDTO): Promise<void> {
     const identityActor: any = await ActorFactory.createIdentityActor(
       authStore,
-      process.env.FOOTBALL_GOD_BACKEND_CANISTER_ID ?? "",
+      process.env.BACKEND_CANISTER_ID ?? "",
     );
 
-    const result = await identityActor.updateLeague(dto);
+    const result = await identityActor.executeUpdateLeague(dto);
     if (isError(result)) throw new Error("Failed to update league");
   }
 }

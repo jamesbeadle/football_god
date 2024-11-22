@@ -79,8 +79,6 @@
       </select>
 
       {#if selectedApplicationId > 0}
-        
-        <div class="border-b border-gray-200" />
 
         <div class="flex-col space-y-2">
           <p>Select Gameweek:</p>
@@ -95,19 +93,17 @@
           </select>
         </div>
 
-        <div class="border-b border-gray-200" />
-
         <div class="items-center flex space-x-4">
           <button
-            class="px-4 py-2 default-button fpl-cancel-btn min-w-[150px]"
+            class="px-4 py-2 brand-cancel-button min-w-[150px]"
             type="button"
             on:click={closeModal}
           >
             Cancel
           </button>
           <button
-            class={`${isSubmitDisabled ? "bg-gray-500" : "fpl-purple-btn"} 
-                        px-4 py-2 default-button min-w-[150px]`}
+            class={`${isSubmitDisabled ? "brand-button-disabled" : "brand-button"} 
+                        px-4 py-2 min-w-[150px]`}
             on:click={calculateWeeklyRewards}
             disabled={isSubmitDisabled}
           >

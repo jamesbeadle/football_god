@@ -2,20 +2,22 @@
   import { onMount } from "svelte";
   import { page } from "$app/stores";
   import { writable } from "svelte/store";
-  import { clubStore } from "$lib/stores/club-store";
-  import { playerStore } from "$lib/stores/player-store";
 
+  import { clubStore } from "$lib/stores/club-store";
+  import { fixtureStore } from "$lib/stores/fixture-store";
+  import { playerStore } from "$lib/stores/player-store";
+  import type { ClubDTO, FixtureDTO, PlayerDTO, PlayerEventData, SubmitFixtureDataDTO } from "../../../../declarations/backend/backend.did";
+  
   import Layout from "../Layout.svelte";
   import PlayerEventsModal from "$lib/components/fixture-validation/player-events-modal.svelte";
   import SelectPlayersModal from "$lib/components/fixture-validation/select-players-modal.svelte";
   import ConfirmFixtureDataModal from "$lib/components/fixture-validation/confirm-fixture-data-modal.svelte";
   import ClearDraftModal from "$lib/components/fixture-validation/clear-draft-modal.svelte";
+  import FullScreenSpinner from "$lib/components/shared/full-screen-spinner.svelte";
   import BadgeIcon from "$lib/icons/BadgeIcon.svelte";
-  import type { ClubDTO, FixtureDTO, FootballLeagueDTO, PlayerDTO, PlayerEventData, SubmitFixtureDataDTO } from "../../../../declarations/backend/backend.did";
+  
   import { convertEvent, replacer } from "$lib/utils/helpers";
-  import { adminStore } from "$lib/stores/admin-store";
-    import FullScreenSpinner from "$lib/components/shared/full-screen-spinner.svelte";
-
+  
   let clubs: ClubDTO[] = [];
   let players: PlayerDTO[] = [];
   let fixture: FixtureDTO | undefined;
@@ -56,7 +58,7 @@
     try {
       clubs = await clubStore.getClubs(leagueId);      
       players = await playerStore.getPlayers(leagueId);
-      let fixtures = await adminStore.getFixtures({leagueId, seasonId});
+      let fixtures = await fixtureStore.getFixtures({leagueId, seasonId});
       
       if (clubs.length == 0 || players.length == 0 || !fixtures) {
         return;
@@ -124,7 +126,7 @@
       };
 
 
-      await adminStore.submitFixtureData(dto);
+      await fixtureStore.submitFixtureData(dto);
       
       localStorage.removeItem(`fixtureDraft_${fixtureId}`);
     } catch (error) {
@@ -284,9 +286,8 @@
         </div>
         <div class="flex flex-row space-x-2 p-4 items-center">
           <p>Selected Players</p>
-          <div class="flex-grow" />
           <button
-            class="brand-button default-button px-4 py-2 justify-end"
+            class="brand-button px-4 py-2 justify-end"
             on:click={showSelectPlayersModal}>Select Players</button
           >
         </div>
@@ -426,24 +427,21 @@
           {/if}
         </div>
         <div class="flex flex-row space-x-2 p-4 items-center justify-end">
-          <div class="flex-grow" />
           <button
-            class="fpl-purple-btn default-button px-4 py-2"
+            class="brand-button px-4 py-2"
             on:click={saveDraft}>Save Draft</button
           >
           <button
-            class="fpl-purple-btn default-button px-4 py-2"
+            class="brand-button px-4 py-2"
             on:click={showConfirmClearDraftModal}>Clear Draft</button
           >
           <button
-            class={`${isSubmitDisabled ? "bg-gray-500" : "fpl-purple-btn"} 
-            px-4 py-2 default-button`}
+            class={`${isSubmitDisabled ? "brand-button-disabled" : "brand-button"} 
+            px-4 py-2`}
             on:click={displayConfirmDataModal}
             disabled={isSubmitDisabled}>Submit Proposal</button
           >
         </div>
-
-        <div class="border-b border-gray-600 mx-4" />
 
         <div class="flex flex-row w-full m-4 text-sm">
           <div class="w-1/3 border-r border-gray-600 px-4">

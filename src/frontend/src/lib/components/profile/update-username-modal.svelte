@@ -50,7 +50,7 @@
       </div>
       <div class="items-center py-3 flex space-x-4 flex-row">
         <button
-          class="px-4 py-2 default-button fpl-cancel-btn"
+          class="px-4 py-2 brand-cancel-button"
           type="button"
           on:click={cancelModal}
         >
@@ -58,8 +58,8 @@
         </button>
         <button
           class={`px-4 py-2 ${
-            isSubmitDisabled ? "bg-gray-500" : "fpl-purple-btn"
-          } default-button fpl-purple-btn`}
+            isSubmitDisabled ? "brand-button-disabled" : "brand-button"
+          } `}
           type="submit"
           disabled={isSubmitDisabled}
         >

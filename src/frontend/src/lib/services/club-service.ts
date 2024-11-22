@@ -1,10 +1,13 @@
 import type {
   ClubDTO,
+  CreateClubDTO,
   LeagueId,
+  RemoveClubDTO,
 } from "../../../../declarations/backend/backend.did";
 import { idlFactory } from "../../../../declarations/backend";
 import { ActorFactory } from "../utils/ActorFactory";
 import { isError } from "../utils/helpers";
+import { authStore } from "$lib/stores/auth-store";
 
 export class ClubService {
   private actor: any;
@@ -12,7 +15,7 @@ export class ClubService {
   constructor() {
     this.actor = ActorFactory.createActor(
       idlFactory,
-      process.env.FOOTBALL_GOD_BACKEND_CANISTER_ID,
+      process.env.BACKEND_CANISTER_ID,
     );
   }
 
@@ -21,5 +24,25 @@ export class ClubService {
     console.log(result);
     if (isError(result)) throw new Error("Failed to fetch clubs");
     return result.ok;
+  }
+
+  async createClub(dto: CreateClubDTO): Promise<void> {
+    const identityActor: any = await ActorFactory.createIdentityActor(
+      authStore,
+      process.env.BACKEND_CANISTER_ID ?? "",
+    );
+
+    const result = await identityActor.executeCreateClub(dto);
+    if (isError(result)) throw new Error("Failed to create club");
+  }
+
+  async removeClub(dto: RemoveClubDTO): Promise<void> {
+    const identityActor: any = await ActorFactory.createIdentityActor(
+      authStore,
+      process.env.BACKEND_CANISTER_ID ?? "",
+    );
+
+    const result = await identityActor.executeRemoveClub(dto);
+    if (isError(result)) throw new Error("Failed to remove club");
   }
 }

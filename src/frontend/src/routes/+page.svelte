@@ -1,11 +1,9 @@
 <script lang="ts">
   import { onMount, onDestroy } from "svelte";
-  import { authStore, type AuthSignInParams } from "$lib/stores/auth-store";
   import Layout from "./Layout.svelte";
   import FootballIcon from "$lib/icons/FootballIcon.svelte";
-    import FullScreenSpinner from "$lib/components/shared/full-screen-spinner.svelte";
+  import FullScreenSpinner from "$lib/components/shared/full-screen-spinner.svelte";
   
-  let isLoggedIn = false;
   let isLoading = true;
 
   type TileData = {
@@ -21,11 +19,6 @@
 
   onMount(async () => {
     try {
-      await authStore.sync();
-
-      authStore.subscribe((store) => {
-        isLoggedIn = store.identity !== null && store.identity !== undefined;
-      });
       
     } catch (error) {
       console.error("Error fetching homepage data:", error);
@@ -64,13 +57,6 @@
       buttonText: "Rules",
     },
   ];
-
-  function handleLogin() {
-    let params: AuthSignInParams = {
-      domain: import.meta.env.VITE_AUTH_PROVIDER_URL,
-    };
-    authStore.signIn(params);
-  }
 </script>
 
 <Layout>

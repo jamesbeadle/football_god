@@ -4,11 +4,10 @@
   import LocalSpinner from "$lib/components/shared/local-spinner.svelte";
   import type { ClubDTO, CountryDTO, PlayerDTO, UpdatePlayerDTO, FootballLeagueDTO, PlayerPosition } from "../../../../../../declarations/backend/backend.did";
   import { convertDateInputToUnixNano, formatUnixToDateInputValue } from "$lib/utils/helpers";
-  import { adminStore } from "$lib/stores/admin-store";
   import { leagueStore } from "$lib/stores/league-store";
   import { countryStore } from "$lib/stores/country-store";
   import { playerStore } from "$lib/stores/player-store";
-    import Modal from "$lib/components/shared/modal.svelte";
+  import Modal from "$lib/components/shared/modal.svelte";
 
   export let visible: boolean;
   export let closeModal: () => void;
@@ -150,7 +149,7 @@
       nationality: nationalityId
     };
     
-    await adminStore.updatePlayer(selectedLeagueId, dto);
+    await playerStore.updatePlayer(selectedLeagueId, dto);
 
     closeModal();
   }
@@ -304,19 +303,17 @@
 
           {/if}
 
-          <div class="border-b border-gray-200" />
-
           <div class="items-center flex space-x-4">
             <button
-              class="px-4 py-2 default-button fpl-cancel-btn min-w-[150px]"
+              class="px-4 py-2 brand-cancel-button min-w-[150px]"
               type="button"
               on:click={cancelModal}
             >
               Cancel
             </button>
             <button
-              class={`${isSubmitDisabled ? "bg-gray-500" : "fpl-purple-btn"} 
-                          px-4 py-2 default-button min-w-[150px]`}
+              class={`${isSubmitDisabled ? "brand-button-disabled" : "brand-button"} 
+                          px-4 py-2 min-w-[150px]`}
               on:click={raiseProposal}
               disabled={isSubmitDisabled}
             >
@@ -332,8 +329,8 @@
             </div>
             <div class="items-center flex">
               <button
-                class={`${isSubmitDisabled ? "bg-gray-500" : "fpl-purple-btn"} 
-                              px-4 py-2 default-button w-full`}
+                class={`${isSubmitDisabled ? "brand-button-disabled" : "brand-button"} 
+                              px-4 py-2 w-full`}
                 on:click={confirmProposal}
                 disabled={isSubmitDisabled}
               >

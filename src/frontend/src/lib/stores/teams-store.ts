@@ -9,7 +9,7 @@ function createTeamStore() {
 
   let actor: any = ActorFactory.createActor(
     idlFactory,
-    process.env.FOOTBALL_GOD_BACKEND_CANISTER_ID ?? "",
+    process.env.BACKEND_CANISTER_ID ?? "",
   ); //TODO REPLACE WITH CLUB STORE
 
   async function sync() {}

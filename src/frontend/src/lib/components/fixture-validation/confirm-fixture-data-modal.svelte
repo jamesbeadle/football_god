@@ -1,6 +1,5 @@
 <script lang="ts">
-    import Modal from "../shared/modal.svelte";
-
+  import Modal from "../shared/modal.svelte";
 
   export let visible = false;
   export let onConfirm: () => void;
@@ -24,11 +23,11 @@
     </div>
     <div class="flex justify-end gap-3">
       <button
-        class="default-button fpl-cancel-btn"
+        class="brand-cancel-button"
         type="button"
         on:click={closeModal}>Cancel</button
       >
-      <button class="default-button brand-button" on:click={onConfirm}
+      <button class="brand-button" on:click={onConfirm}
         >Confirm</button
       >
     </div>

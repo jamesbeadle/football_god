@@ -6,10 +6,11 @@
   import { leagueStore } from "$lib/stores/league-store";
   import BadgeIcon from "$lib/icons/BadgeIcon.svelte";
   import type { ClubDTO, FixtureDTO, FootballLeagueDTO } from "../../../../../../declarations/backend/backend.did";
-  import { adminStore } from "$lib/stores/admin-store";
+  import { adminStore } from "$lib/stores/admin-store"; //TODO REMOVE
   import MoveFixture from "../fixture/move-fixture.svelte";
     import { formatUnixTimeToTime } from "$lib/utils/helpers";
     import { goto } from "$app/navigation";
+    import { fixtureStore } from "$lib/stores/fixture-store";
 
   export let leagueId: number;
   let league: FootballLeagueDTO | undefined;
@@ -28,26 +29,7 @@
       let leagues = await leagueStore.getLeagues();
       league = leagues.find(x => x.id == leagueId);
       clubs = await clubStore.getClubs(leagueId);
-
-      if (leagueId === 1) {
-        const openFPLState = await adminStore.getSystemState("OpenFPL");
-        if (!openFPLState) return;
-        const openfpl_fixtures = await adminStore.getFixtures({
-          seasonId: openFPLState?.pickTeamSeasonId,
-          leagueId
-        });
-        if (!openfpl_fixtures) return;
-        fixtures = openfpl_fixtures;
-      } else if (leagueId === 2) {
-        const openWSLState = await adminStore.getSystemState("OpenWSL");
-        if (!openWSLState) return;
-        const openwsl_fixtures = await adminStore.getFixtures({
-          seasonId: openWSLState?.pickTeamSeasonId,
-          leagueId
-        });
-        if (!openwsl_fixtures) return;
-        fixtures = openwsl_fixtures;
-      }
+      fixtures = await fixtureStore.getFixtures(leagueId);
     } catch (error) {
       console.error("Error fetching league fixtures:", error);
     }

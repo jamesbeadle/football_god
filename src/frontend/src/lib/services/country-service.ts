@@ -9,7 +9,7 @@ export class CountryService {
   constructor() {
     this.actor = ActorFactory.createActor(
       idlFactory,
-      process.env.FOOTBALL_GOD_BACKEND_CANISTER_ID,
+      process.env.BACKEND_CANISTER_ID,
     );
   }
 

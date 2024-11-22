@@ -1,13 +1,14 @@
 <script lang="ts">
   import { onMount } from "svelte";
-  import ProfileDetail from "$lib/components/profile/profile-detail.svelte";
+  import { goto } from "$app/navigation";
+  import { authStore } from "$lib/stores/auth-store";
   import Layout from "../Layout.svelte";
-    import { authStore } from "$lib/stores/auth-store";
-    import { goto } from "$app/navigation";
-    import FullScreenSpinner from "$lib/components/shared/full-screen-spinner.svelte";
-  let activeTab: string = "details";
-
+  import ProfileDetail from "$lib/components/profile/profile-detail.svelte";
+  import FullScreenSpinner from "$lib/components/shared/full-screen-spinner.svelte";
+  
   let isLoading = true;
+  let activeTab: string = "details";
+  
   onMount(async () => {
     await authStore.sync();
     authStore.subscribe((store) => {
@@ -17,9 +18,11 @@
     });
     isLoading = false;
   });
+
   function setActiveTab(tab: string): void {
     activeTab = tab;
   }
+  
 </script>
 
 <Layout>
@@ -34,7 +37,7 @@
           <li class={`mr-4 ${activeTab === "details" ? "active-tab" : ""}`}>
             <button
               class={`p-2 ${
-                activeTab === "details" ? "text-white" : "text-gray-400"
+                activeTab === "details" ? "text-white" : "BrandGray"
               }`}
               on:click={() => setActiveTab("details")}>Profile Detail</button
             >

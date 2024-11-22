@@ -1,28 +1,33 @@
 <script lang="ts">
-  import { onMount } from "svelte";
-  import { browser } from "$app/environment";
-  import { initAuthWorker } from "$lib/services/worker.auth.services";
+  import { onMount } from "svelte"; 
+  import { writable } from "svelte/store";
+  import { fade } from "svelte/transition";
 
+  import { browser } from "$app/environment";
+  import { page } from "$app/stores";
+
+  import { userStore } from "$lib/stores/user-store";
+  import { initAuthWorker } from "$lib/services/worker.auth.services";
   import { authStore, type AuthSignInParams, type AuthStoreData } from "$lib/stores/auth-store";
   import { authSignedInStore } from "$lib/derived/auth.derived";
-  import { writable } from "svelte/store";
+  import { signOut } from "$lib/services/auth.services";
+  
   import LogoIcon from "$lib/icons/LogoIcon.svelte";
   import HomeIcon from "$lib/icons/HomeIcon.svelte";
   import StarIcon from "$lib/icons/StarIcon.svelte";
-  import { fade } from "svelte/transition";
-  import "../app.css";
-  import { page } from "$app/stores";
-  import ProfileIcon from "$lib/icons/ProfileIcon.svelte";
+  
+  import FullScreenSpinner from "$lib/components/shared/full-screen-spinner.svelte";
+  import LeaguesIcon from "$lib/icons/LeaguesIcon.svelte";
   import LogoutIcon from "$lib/icons/LogoutIcon.svelte";
-  import { signOut } from "$lib/services/auth.services";
-  import Tooltip from "$lib/components/tooltip.svelte";
+  import ProfileIcon from "$lib/icons/ProfileIcon.svelte";
   import RulesIcon from "$lib/icons/RulesIcon.svelte";
-    import { userStore } from "$lib/stores/user-store";
-    import LeaguesIcon from "$lib/icons/LeaguesIcon.svelte";
-    import ShirtIcon from "$lib/icons/ShirtIcon.svelte";
-    import FullScreenSpinner from "$lib/components/shared/full-screen-spinner.svelte";
+  import ShirtIcon from "$lib/icons/ShirtIcon.svelte";
+  import Tooltip from "$lib/components/tooltip.svelte";
 
+  import "../app.css";
+  
   let isExpanded = writable(false);
+  
   $: links = $authSignedInStore ? [
     { name: "Home", icon: HomeIcon, href: "/", admin: false },
     { name: "Leagues", icon: LeaguesIcon, href: "/leagues", admin: false },
@@ -56,6 +61,7 @@
     worker = await initAuthWorker();
     isAdmin = await userStore.isAdmin();
   });
+
   $: activeRoute = $page.url.pathname;
 
   $: worker, $authStore, (() => worker?.syncAuthIdle($authStore))();
@@ -72,8 +78,6 @@
     const spinner = document.querySelector("body > #app-spinner");
     spinner?.remove();
   })();
-
-
 
   function handleLogin() {
     let params: AuthSignInParams = {

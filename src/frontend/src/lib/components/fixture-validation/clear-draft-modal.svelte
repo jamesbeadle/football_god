@@ -1,7 +1,5 @@
 <script lang="ts">
-    import Modal from "../shared/modal.svelte";
-
-  
+  import Modal from "../shared/modal.svelte"; 
   export let visible = false;
   export let onConfirm: () => void;
   export let closeModal: () => void;
@@ -18,13 +16,13 @@
 
     <div class="items-center py-3 flex space-x-4">
       <button
-        class="default-button fpl-cancel-btn"
+        class="brand-cancel-button"
         type="button"
         on:click={closeModal}
       >
         Cancel
       </button>
-      <button class="default-button brand-button" on:click={onConfirm}>
+      <button class="brand-button" on:click={onConfirm}>
         Clear
       </button>
     </div>

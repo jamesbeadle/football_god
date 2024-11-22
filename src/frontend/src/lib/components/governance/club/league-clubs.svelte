@@ -3,20 +3,22 @@
   import { clubStore } from "$lib/stores/club-store";
   import { userStore } from "$lib/stores/user-store";
   import { leagueStore } from "$lib/stores/league-store";
-  import BadgeIcon from "$lib/icons/BadgeIcon.svelte";
   import type { ClubDTO, FootballLeagueDTO } from "../../../../../../declarations/backend/backend.did";
+  import BadgeIcon from "$lib/icons/BadgeIcon.svelte";
   import CreateClub from "./create-club.svelte";
   import RemoveClub from "./remove-club.svelte";
 
   export let leagueId: number;
+
   let league: FootballLeagueDTO | undefined;
   let clubs: ClubDTO[] = [];
-  let showAddClub = false;
   let selectedClubId = 0;
-  let showRemoveClub = false;
   let isDataManager = false;
   let dropdownVisible: number | null = null;
-
+  
+  let showAddClub = false;
+  let showRemoveClub = false;
+  
   onMount(async () => {
     try {
       isDataManager = await userStore.isDataManager();
