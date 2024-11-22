@@ -2,10 +2,10 @@
 	"compilerOptions": {
 		"paths": {
 			"$lib": [
-				"../src/football_god_frontend/src/lib"
+				"../src/frontend/src/lib"
 			],
 			"$lib/*": [
-				"../src/football_god_frontend/src/lib/*"
+				"../src/frontend/src/lib/*"
 			]
 		},
 		"rootDirs": [
@@ -39,11 +39,11 @@
 	],
 	"exclude": [
 		"../node_modules/**",
-		"../src/football_god_frontend/src/service-worker.js",
-		"../src/football_god_frontend/src/service-worker/**/*.js",
-		"../src/football_god_frontend/src/service-worker.ts",
-		"../src/football_god_frontend/src/service-worker/**/*.ts",
-		"../src/football_god_frontend/src/service-worker.d.ts",
-		"../src/football_god_frontend/src/service-worker/**/*.d.ts"
+		"../src/frontend/src/service-worker.js",
+		"../src/frontend/src/service-worker/**/*.js",
+		"../src/frontend/src/service-worker.ts",
+		"../src/frontend/src/service-worker/**/*.ts",
+		"../src/frontend/src/service-worker.d.ts",
+		"../src/frontend/src/service-worker/**/*.d.ts"
 	]
 }

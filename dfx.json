@@ -1,12 +1,12 @@
 {
   "canisters": {
-    "football_god_backend": {
-      "main": "src/football_god_backend/main.mo",
+    "backend": {
+      "main": "src/backend/main.mo",
       "type": "motoko",
       "optimize": "cycles"
     },
-    "football_god_frontend": {
-      "dependencies": ["football_god_backend"],
+    "frontend": {
+      "dependencies": ["backend"],
       "frontend": {
         "entrypoint": "build/index.html"
       },
