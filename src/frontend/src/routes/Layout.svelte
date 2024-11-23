@@ -4,41 +4,16 @@
   import { fade } from "svelte/transition";
 
   import { browser } from "$app/environment";
-  import { page } from "$app/stores";
 
   import { userStore } from "$lib/stores/user-store";
   import { initAuthWorker } from "$lib/services/worker.auth.services";
   import { authStore, type AuthSignInParams, type AuthStoreData } from "$lib/stores/auth-store";
-  import { authSignedInStore } from "$lib/derived/auth.derived";
-  import { signOut } from "$lib/services/auth.services";
   
-  import LogoIcon from "$lib/icons/LogoIcon.svelte";
-  import HomeIcon from "$lib/icons/HomeIcon.svelte";
-  import StarIcon from "$lib/icons/StarIcon.svelte";
-  
+  import Dashboard from "$lib/components/shared/dashboard.svelte";
   import FullScreenSpinner from "$lib/components/shared/full-screen-spinner.svelte";
-  import LeaguesIcon from "$lib/icons/LeaguesIcon.svelte";
-  import LogoutIcon from "$lib/icons/LogoutIcon.svelte";
-  import ProfileIcon from "$lib/icons/ProfileIcon.svelte";
-  import RulesIcon from "$lib/icons/RulesIcon.svelte";
-  import ShirtIcon from "$lib/icons/ShirtIcon.svelte";
-  import Tooltip from "$lib/components/tooltip.svelte";
-
+  
   import "../app.css";
   
-  let isExpanded = writable(false);
-  
-  $: links = $authSignedInStore ? [
-    { name: "Home", icon: HomeIcon, href: "/", admin: false },
-    { name: "Leagues", icon: LeaguesIcon, href: "/leagues", admin: false },
-    { name: "Players", icon: ShirtIcon, href: "/players", admin: false },
-    { name: "Profile", icon: ProfileIcon, href: "/profile", admin: false },
-    { name: "Governance", icon: RulesIcon, href: "/governance", admin: false },
-    { name: "Admin", icon: StarIcon, href: "/admin", admin: true }
-  ] : 
-  [
-    { name: "Home", icon: HomeIcon, href: "/", admin: false }
-  ];
 
   let worker: { syncAuthIdle: (auth: AuthStoreData) => void } | undefined;
 
@@ -62,8 +37,6 @@
     isAdmin = await userStore.isAdmin();
   });
 
-  $: activeRoute = $page.url.pathname;
-
   $: worker, $authStore, (() => worker?.syncAuthIdle($authStore))();
 
   $: (() => {
@@ -86,11 +59,6 @@
     authStore.signIn(params);
   }
 
-  async function handleLogout() {
-    await authStore.signOut();
-  }
-
-
 </script>
 
 <svelte:window on:storage={syncAuthStore} />
@@ -99,112 +67,7 @@
     <FullScreenSpinner />
   </div>
 {:then _}
-  <div class="flex h-screen">
-    <div
-      class="bg-GRAY text-white flex flex-col justify-between transition-width duration-300 p-5 rounded-lg m-2"
-      style="width: {$isExpanded ? '16rem' : '4rem'}"
-    >
-    <div class="flex flex-col flex-grow">
-      <button on:click={() => ($isExpanded = !$isExpanded)} class="mb-4">
-          <span>{$isExpanded ? "<<" : ">>"}</span>
-        </button>
-
-        <div class="text-gray-400 flex flex-col">
-          <a href="/" class="block mt-4 text-lg my-4">
-            <div class="flex flex-row items-center">
-              <LogoIcon className="w-6 mr-2" />
-              {#if $isExpanded}
-                <span
-                  in:fade={{ duration: 200 }}
-                  out:fade={{ delay: 0, duration: 100 }}>FootballGod</span
-                >
-              {/if}
-            </div>
-          </a>
-          {#each links as link}
-            {#if link.admin}
-              {#if isAdmin}
-
-                  <a
-                  href={link.href}
-                  class:active={activeRoute === link.href}
-                  class="block mt-4 text-lg"
-                >
-                  <div class="flex flex-row items-center">
-
-                    <Tooltip text={link.name}>
-                      <svelte:component
-                        this={link.icon}
-                        className="w-6 mr-2"
-                        fill={activeRoute === link.href ? "white" : "gray"}
-                      />
-                    </Tooltip>
-                    {#if $isExpanded}
-                      <span
-                        in:fade={{ duration: 200 }}
-                        out:fade={{ delay: 0, duration: 100 }}>{link.name}</span
-                      >
-                    {/if}
-                  </div>
-                </a>
-              {/if}
-            {:else}
-              <a
-                href={link.href}
-                class:active={activeRoute === link.href}
-                rel="prefetch"
-                class="block mt-4 text-lg"
-              >
-                <div class="flex flex-row items-center">
-
-                  <Tooltip text={link.name}>
-                    <svelte:component
-                      this={link.icon}
-                      className="w-6 mr-2"
-                      fill={activeRoute === link.href ? "white" : "gray"}
-                    />
-                  </Tooltip>
-                  {#if $isExpanded}
-                    <span
-                      in:fade={{ duration: 200 }}
-                      out:fade={{ delay: 0, duration: 100 }}>{link.name}</span
-                    >
-                  {/if}
-                </div>
-              </a>
-
-            {/if}
-          {/each}
-        </div>
-      </div>
-      {#if $authSignedInStore && !$isExpanded}
-        <button on:click={signOut} in:fade>
-          <Tooltip text="Logout">
-            <LogoutIcon className="max-w-6" />
-          </Tooltip>
-        </button>
-      {/if}
-      
-
-      <div class="mb-4">
-        {#if $isExpanded}
-          {#if $authSignedInStore}
-            <button on:click={handleLogout} class="button-hover p-2 rounded-md text-sm w-full"
-                in:fade={{ duration: 200 }}
-                out:fade={{ delay: 0, duration: 100 }}>Disconnect</button
-              >
-          {:else}
-            <button on:click={handleLogin} class="bg-OPENFPL hover:bg-OPENFPL hover:text-GRAY p-2 rounded-md text-sm w-full"
-                in:fade={{ duration: 200 }}
-                out:fade={{ delay: 0, duration: 100 }}>Connect Internet Identity</button
-              >
-          {/if}
-        {/if}
-      </div>
-    </div>
-
-    <div class="flex-1">
-      <slot />
-    </div>
-  </div>
+  <Dashboard>
+    <slot></slot>
+  </Dashboard>
 {/await}

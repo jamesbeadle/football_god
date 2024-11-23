@@ -29,11 +29,11 @@
 }
 
 .selected-panel {
-  @apply bg-OPENFPL hover:bg-OPENFPL px-3 py-2;
+  @apply bg-BrandPositive hover:bg-BrandPositive px-3 py-2;
 }
 
 .select-panel {
-  @apply bg-OPENFPLPURPLE hover:bg-OPENFPLPURPLE p-3 text-white;
+  @apply bg-BrandPurple hover:bg-BrandPurple p-3 text-white;
 }
 
 .fg-button {
@@ -42,7 +42,7 @@
 }
 
 .button-hover {
-  @apply bg-white text-black hover:bg-OPENFPL hover:text-BrandGray;
+  @apply bg-white text-black hover:bg-BrandPositive hover:text-BrandGray;
 }
 
 .bg-panel {
@@ -58,33 +58,25 @@
 }
 
 .brand-button {
-  @apply bg-BrandPurple text-white;
+  @apply bg-BrandPurple text-white p-2 rounded;
 }
 
 .brand-cancel-button {
-  @apply bg-BrandNegative text-white;
+  @apply bg-BrandNegative text-white p-2 rounded;
 }
 
 .brand-button-disabled {
-  @apply bg-BrandDisabled text-white;
+  @apply bg-BrandDisabled text-white p-2 rounded;
 }
 
-.brand-dropdown {
-  color: black !important;
-  background-color: white !important;
-  border: gray 1px thin;
-  @apply rounded-sm;
-}
-
-.brand-dropdown option {
-  color: black !important;
-  background-color: white;
-  border: gray 1px thin;
+.brand-select {
+  @apply bg-BrandDarkGray text-white border border-BrandDarkGray rounded-lg focus:ring focus:ring-BrandLightGray text-sm p-2;
 }
 
 .brand-input {
-  color: black !important;
-  background-color: white !important;
-  border: gray 1px thin;
-  @apply rounded-sm;
+  @apply bg-BrandDarkGray text-white border border-BrandDarkGray rounded-lg focus:ring focus:ring-BrandLightGray text-sm p-2;
+}
+
+.brand-dropdown{
+  @apply text-black rounded;
 }

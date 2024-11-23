@@ -174,7 +174,7 @@
 </script>
 
 <Modal showModal={visible} onClose={closeModal}>
-  <div class="mx-4 p-4">
+  <div class="">
     <div class="flex justify-between items-center my-2">
       <h3 class="default-header">Update Player</h3>
       <button class="times-button" on:click={cancelModal}>&times;</button>

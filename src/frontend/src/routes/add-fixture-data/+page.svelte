@@ -58,7 +58,7 @@
     try {
       clubs = await clubStore.getClubs(leagueId);      
       players = await playerStore.getPlayers(leagueId);
-      let fixtures = await fixtureStore.getFixtures({leagueId, seasonId});
+      let fixtures = await fixtureStore.getFixtures(leagueId);
       
       if (clubs.length == 0 || players.length == 0 || !fixtures) {
         return;

@@ -27,26 +27,20 @@
     };
   </script>
   
-  {#if showModal}
-    <div
-      class="fixed inset-0 z-40 bg-black bg-opacity-50 flex items-center justify-center"
-      aria-hidden="true"
-      on:click={handleBackdropClick}
-    >
-      <div
-        class="bg-white rounded-lg shadow-lg p-6 max-w-lg w-full mx-auto relative text-black"
-        role="dialog"
-        aria-modal="true"
-      >
-        <button
-          on:click={onClose}
-          class="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
-          aria-label="Close modal"
-        >
-          ×
-        </button>
-        <slot />
-      </div>
-    </div>
-  {/if}
+{#if showModal}
+<div
+  class="fixed inset-0 z-40 bg-black bg-opacity-50 flex items-center justify-center overflow-y-auto"
+  aria-hidden="true"
+  on:click={handleBackdropClick}
+>
+  <div
+    class="bg-BrandLightGray rounded-lg shadow-lg max-w-lg w-full mx-auto relative overflow-y-auto max-h-[90vh] px-6 py-4"
+    role="dialog"
+    aria-modal="true"
+  >
+    <slot />
+  </div>
+</div>
+{/if}
+
   
