@@ -4652,7 +4652,7 @@ const options = {
 		<div class="error">
 			<span class="status">` + status + '</span>\n			<div class="message">\n				<h1>' + message + "</h1>\n			</div>\n		</div>\n	</body>\n</html>\n"
   },
-  version_hash: "x37x03"
+  version_hash: "6n0oan"
 };
 async function get_hooks() {
   return {};
@@ -5643,19 +5643,6 @@ class ActorFactory {
     });
   }
 }
-function uint8ArrayToBase64(bytes) {
-  const binary = Array.from(bytes).map((byte) => String.fromCharCode(byte)).join("");
-  return btoa(binary);
-}
-function formatUnixDateToSmallReadable(unixNano) {
-  const date = new Date(unixNano / 1e6);
-  const options2 = {
-    year: "numeric",
-    month: "short",
-    day: "numeric"
-  };
-  return new Intl.DateTimeFormat("en-UK", options2).format(date);
-}
 function isError(response) {
   return response && response.err !== void 0;
 }
@@ -5674,30 +5661,6 @@ function convertEvent(playerEvent) {
   if ("HighestScoringPlayer" in playerEvent)
     return 11;
   return 0;
-}
-function getImageURL(blob) {
-  let byteArray;
-  if (blob && typeof blob === "object" && !Array.isArray(blob)) {
-    const values = Object.values(blob);
-    if (values.length === 0) {
-      return "/profile_placeholder.png";
-    }
-    byteArray = Uint8Array.from(Object.values(blob));
-  } else if (Array.isArray(blob) && blob[0] instanceof Uint8Array) {
-    byteArray = blob[0];
-  } else if (blob instanceof Uint8Array) {
-    byteArray = blob;
-  } else if (typeof blob === "string") {
-    if (blob.startsWith("data:image")) {
-      return blob;
-    } else if (!blob.startsWith("/profile_placeholder.png")) {
-      return `data:png;base64,${blob}`;
-    }
-  }
-  if (byteArray) {
-    return `data:image/png;base64,${uint8ArrayToBase64(byteArray)}`;
-  }
-  return "/profile_placeholder.png";
 }
 function Governance_icon($$payload, $$props) {
   let className = fallback($$props["className"], "w-6");
@@ -6073,7 +6036,7 @@ function Modal($$payload, $$props) {
   });
   if (showModal) {
     $$payload.out += "<!--[-->";
-    $$payload.out += `<div class="fixed inset-0 z-40 bg-black bg-opacity-50 flex items-center justify-center overflow-y-auto" aria-hidden="true"><div class="bg-BrandLightGray rounded-lg shadow-lg max-w-lg w-full mx-auto relative overflow-y-auto max-h-[90vh] px-6 py-4" role="dialog" aria-modal="true"><!---->`;
+    $$payload.out += `<div class="fixed inset-0 z-40 bg-black bg-opacity-50 flex items-center justify-center overflow-y-auto"${attr("aria-hidden", showModal ? "false" : "true")}><div class="bg-BrandLightGray rounded-lg shadow-lg max-w-lg w-full mx-auto relative overflow-y-auto max-h-[90vh] px-6 py-4" role="dialog" aria-modal="true" tabindex="-1"><!---->`;
     slot($$payload, $$props, "default", {});
     $$payload.out += `<!----></div></div>`;
   } else {
@@ -6251,21 +6214,13 @@ function _page$3($$payload, $$props) {
 }
 function _page$2($$payload, $$props) {
   push();
-  let leagues = [];
-  let countries = [];
   Layout($$payload, {
     children: ($$payload2) => {
-      const each_array = ensure_array_like(leagues.sort((a, b) => Number(a.id) - Number(b.id)));
-      $$payload2.out += `<div class="page-header-wrapper flex w-full py-10 bg-gradient-to-r from-blue-800 to-blue-600"><div class="container mx-auto px-6"><div class="content-panel w-full flex flex-col bg-gray-900 p-6 rounded-lg shadow-lg"><div class="flex justify-between items-center w-full mb-4"><p class="text-3xl font-bold text-white">League Explorer</p> `;
       {
-        $$payload2.out += "<!--[!-->";
+        $$payload2.out += "<!--[-->";
+        Local_spinner($$payload2);
       }
-      $$payload2.out += `<!--]--></div> <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6"><!--[-->`;
-      for (let $$index = 0, $$length = each_array.length; $$index < $$length; $$index++) {
-        let league = each_array[$$index];
-        $$payload2.out += `<div class="bg-gray-800 rounded-lg shadow-lg p-6 space-y-4 hover:bg-gray-700 transition duration-300"><div class="flex items-center"><img${attr("src", getImageURL(league.logo))} class="w-12 h-12 object-cover rounded-full border-2 border-gray-600" alt="logo"> <div class="ml-4"><p class="text-md font-bold text-white">${escape_html(league.name)}</p> <p class="text-sm text-gray-400">${escape_html(league.abbreviation)} - ${escape_html(league.governingBody)}</p></div></div> <div class="text-sm text-gray-300 space-y-2"><p><span class="font-semibold text-gray-400">Country:</span> ${escape_html(countries.find((x) => x.id == league.countryId)?.name)}</p> <p><span class="font-semibold text-gray-400">Gender:</span> ${escape_html(Object.keys(league.relatedGender)[0])}</p> <p><span class="font-semibold text-gray-400">Teams:</span> ${escape_html(league.teamCount)}</p> <p><span class="font-semibold text-gray-400">Founded:</span> ${escape_html(formatUnixDateToSmallReadable(Number(league.formed)))}</p></div> <a${attr("href", `/league?id=${league.id}`)} class="block text-right"><button class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg transition duration-300">View League</button></a></div>`;
-      }
-      $$payload2.out += `<!--]--></div></div></div></div>`;
+      $$payload2.out += `<!--]-->`;
     },
     $$slots: { default: true }
   });

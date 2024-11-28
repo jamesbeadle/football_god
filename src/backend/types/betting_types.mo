@@ -7,6 +7,7 @@ module BettingTypes {
     /* Match odds related types */
 
     public type MatchOdds = {
+        leagueId: FootballTypes.LeagueId;
         fixtureId: FootballTypes.FixtureId;
         correctResults: TeamSelectionOdds;
         correctScores: [ScoreSelectionOdds];

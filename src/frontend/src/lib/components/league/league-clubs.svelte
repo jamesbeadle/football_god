@@ -1,0 +1,132 @@
+<script lang="ts">
+  import { onMount, onDestroy } from "svelte";
+  import { goto } from "$app/navigation";
+  import { clubStore } from "$lib/stores/club-store";
+  import { leagueStore } from "$lib/stores/league-store";
+  import { userStore } from "$lib/stores/user-store";
+  import type { ClubDTO, FootballLeagueDTO } from "../../../../../declarations/backend/backend.did";
+  import BadgeIcon from "$lib/icons/BadgeIcon.svelte";
+  import CreateClub from "../governance/club/create-club.svelte";
+  import RemoveClub from "../governance/club/remove-club.svelte";
+  import LocalSpinner from "../shared/local-spinner.svelte";
+  import PipsIcon from "$lib/icons/pips-icon.svelte";
+
+  export let leagueId: number;
+
+  let isLoading = true;
+
+  let league: FootballLeagueDTO | undefined;
+  let clubs: ClubDTO[] = [];
+  let selectedClubId = 0;
+  let dropdownVisible: number | null = null;
+  
+  let showAddClub = false;
+  let showRemoveClub = false;
+  
+  onMount(async () => {
+    try {
+      let leagues = await leagueStore.getLeagues();
+      league = leagues.find(x => x.id == leagueId);
+      clubs = await clubStore.getClubs(leagueId);
+    } catch (error) {
+      console.error("Error fetching league clubs:", error);
+    } finally {
+      isLoading = false;
+    }
+  });
+
+  onMount(() => {
+      document.addEventListener('click', handleClickOutside);
+
+      return () => {
+          document.removeEventListener('click', handleClickOutside);
+      };
+  });
+
+  onDestroy(() => {
+    document.removeEventListener('click', handleClickOutside);
+  });
+
+  function toggleDropdown(playerId: number, event: MouseEvent) {
+      event.stopPropagation();
+      dropdownVisible = dropdownVisible === playerId ? null : playerId;
+  }
+
+  function handleClickOutside(event: MouseEvent) {
+      const dropdownElements = document.querySelectorAll('.dropdown-menu');
+      const targetElement = event.target as HTMLElement;
+
+      if (![...dropdownElements].some(dropdown => dropdown.contains(targetElement))) {
+          dropdownVisible = null;
+      }
+  }
+
+  function loadRemoveClub(clubId: number){
+      selectedClubId = clubId;
+      showRemoveClub = true;
+  }
+
+  async function closeModal(){
+    showAddClub = false;
+    showRemoveClub = false;
+  }
+
+  function viewClub(clubId: number) {
+    goto(`/club?id=${clubId}`);
+  } 
+</script>
+
+{#if isLoading}
+  <LocalSpinner />
+{:else}
+  <div class="flex w-full">
+    <div class="w-full flex flex-col shadow-lg">
+      {#if league}
+        <div class="flex justify-between items-center w-full mb-2">
+            <p class="px-2">{league.name} Clubs</p>
+          <button 
+            class="brand-button"
+            on:click={() => { showAddClub = true; }}>
+            + New Club
+          </button>
+        </div>
+      {/if}
+
+      <div class="mt-2 flex flex-col w-full space-y-2">
+        {#each clubs.sort( (a, b) => a.friendlyName.localeCompare(b.friendlyName)) as club}
+          <div class="flex items-center justify-between bg-BrandLightGray px-4 py-2 rounded shadow">
+            <div class="flex items-center space-x-4 w-full">
+              <BadgeIcon
+                primaryColour={club.primaryColourHex}
+                secondaryColour={club.secondaryColourHex}
+                thirdColour={club.thirdColourHex}
+                className="w-8"
+              />
+              <p class="flex-grow text-lg md:text-sm">{club.friendlyName}</p>
+              
+              <div class="relative">
+                <button on:click={(event) => toggleDropdown(club.id, event)}>
+                  <PipsIcon className="w-6" />
+                </button>
+                {#if dropdownVisible === club.id}
+                  <div class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg z-10 text-sm dropdown-menu">
+                    <button class="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100" on:click={() => viewClub(club.id)}>View Details</button>
+                    <button class="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100" on:click={() => loadRemoveClub(club.id)}>Remove Club</button>
+                  </div>
+                {/if}
+              </div>
+            </div>
+          </div>  
+        {/each}
+      </div>
+    </div>
+  </div>
+{/if}
+
+{#if showAddClub}
+  <CreateClub visible={showAddClub} {closeModal} selectedLeagueId={leagueId} />
+{/if}
+
+{#if showRemoveClub}
+  <RemoveClub visible={showRemoveClub} {closeModal} selectedLeagueId={leagueId} {selectedClubId} />
+{/if}

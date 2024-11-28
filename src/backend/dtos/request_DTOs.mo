@@ -92,4 +92,27 @@ module RequestDTOs {
   public type GetBetslipFixturesDTO = {
     selections: [BettingTypes.Selection];
   };
+
+  public type RequestFixturesDTO = {
+    leagueId: FootballTypes.LeagueId;
+    seasonId: FootballTypes.SeasonId;
+  };
+
+  public type GetSnapshotPlayers = {
+    seasonId: FootballTypes.SeasonId;
+    leagueId: FootballTypes.LeagueId;
+    gameweek: FootballTypes.GameweekNumber;
+  };
+
+  public type UpdateRewardPoolsDTO = {
+    seasonId : FootballTypes.SeasonId;
+    seasonLeaderboardPool : Nat64;
+    monthlyLeaderboardPool : Nat64;
+    weeklyLeaderboardPool : Nat64;
+    mostValuableTeamPool : Nat64;
+    highestScoringMatchPlayerPool : Nat64;
+    allTimeWeeklyHighScorePool : Nat64;
+    allTimeMonthlyHighScorePool : Nat64;
+    allTimeSeasonHighScorePool : Nat64;
+  };
 };
