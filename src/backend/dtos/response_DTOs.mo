@@ -200,4 +200,16 @@ module ResponseDTOs {
     halfTimeFullTimeResult: [BettingTypes.HalfTimeFullTimeOdds];
     bothTeamsToScoreAndWinner: [BettingTypes.ResultAndYesNoSelectionOdds];
   };
+
+  public type HomePageFixtureDTO = {
+    leagueId: FootballTypes.LeagueId;
+    fixtureId: FootballTypes.FixtureId;
+    homeOdds: Float;
+    drawOdds: Float;
+    awayOdds: Float;
+  };
+
+
+
+
 };

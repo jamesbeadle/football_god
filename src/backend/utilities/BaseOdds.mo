@@ -222,49 +222,49 @@ module BaseOdds {
     public let FULL_TIME_SCORE_SIX_ONE : Float = 40;
     public let FULL_TIME_SCORE_ONE_SIX : Float = 50;
 
-    public let BOTH_TEAMS_NOT_TO_SCORE : Float = 1;
-    public let BOTH_TEAMS_TO_SCORE : Float = 1;
+    public let BOTH_TEAMS_NOT_TO_SCORE : Float = 3;
+    public let BOTH_TEAMS_TO_SCORE : Float = 3;
 
-    public let BOTH_TEAMS_TO_SCORE_AND_HOME_WIN : Float = 1;
-    public let BOTH_TEAMS_TO_SCORE_AND_AWAY_WIN : Float = 1;
-    public let BOTH_TEAMS_TO_SCORE_AND_DRAW : Float = 1;
+    public let BOTH_TEAMS_TO_SCORE_AND_HOME_WIN : Float = 5;
+    public let BOTH_TEAMS_TO_SCORE_AND_AWAY_WIN : Float = 7;
+    public let BOTH_TEAMS_TO_SCORE_AND_DRAW : Float = 6;
 
-    public let BOTH_TEAMS_NOT_TO_SCORE_AND_HOME_WIN : Float = 1;
-    public let BOTH_TEAMS_NOT_TO_SCORE_AND_AWAY_WIN : Float = 1;
-    public let BOTH_TEAMS_NOT_TO_SCORE_AND_DRAW : Float = 1;
+    public let BOTH_TEAMS_NOT_TO_SCORE_AND_HOME_WIN : Float = 5;
+    public let BOTH_TEAMS_NOT_TO_SCORE_AND_AWAY_WIN : Float = 7;
+    public let BOTH_TEAMS_NOT_TO_SCORE_AND_DRAW : Float = 6;
     
-    public let HOME_WIN_ODDS : Float = 1;
-    public let DRAW_ODDS : Float = 1;
-    public let AWAY_WIN_ODDS : Float = 1;
+    public let HOME_WIN_ODDS : Float = 1.5;
+    public let DRAW_ODDS : Float = 2;
+    public let AWAY_WIN_ODDS : Float = 2.5;
     
-    public let OVER_ODDS_ZERO_POINT_FIVE : Float = 1;
-    public let OVER_ODDS_ONE_POINT_FIVE : Float = 1;
-    public let OVER_ODDS_TWO_POINT_FIVE : Float = 1;
-    public let OVER_ODDS_THREE_POINT_FIVE : Float = 1;
-    public let OVER_ODDS_FOUR_POINT_FIVE : Float = 1;
-    public let OVER_ODDS_FIVE_POINT_FIVE : Float = 1;
-    public let OVER_ODDS_SIX_POINT_FIVE : Float = 1;
-    public let OVER_ODDS_SEVEN_POINT_FIVE : Float = 1;
+    public let OVER_ODDS_ZERO_POINT_FIVE : Float = 2;
+    public let OVER_ODDS_ONE_POINT_FIVE : Float = 3;
+    public let OVER_ODDS_TWO_POINT_FIVE : Float = 4;
+    public let OVER_ODDS_THREE_POINT_FIVE : Float = 5;
+    public let OVER_ODDS_FOUR_POINT_FIVE : Float = 6;
+    public let OVER_ODDS_FIVE_POINT_FIVE : Float = 7;
+    public let OVER_ODDS_SIX_POINT_FIVE : Float = 8;
+    public let OVER_ODDS_SEVEN_POINT_FIVE : Float = 9;
 
-    public let UNDER_ODDS_ZERO_POINT_FIVE : Float = 1;
-    public let UNDER_ODDS_ONE_POINT_FIVE : Float = 1;
-    public let UNDER_ODDS_TWO_POINT_FIVE : Float = 1;
-    public let UNDER_ODDS_THREE_POINT_FIVE : Float = 1;
-    public let UNDER_ODDS_FOUR_POINT_FIVE : Float = 1;
-    public let UNDER_ODDS_FIVE_POINT_FIVE : Float = 1;
-    public let UNDER_ODDS_SIX_POINT_FIVE : Float = 1;
-    public let UNDER_ODDS_SEVEN_POINT_FIVE : Float = 1;
+    public let UNDER_ODDS_ZERO_POINT_FIVE : Float = 2;
+    public let UNDER_ODDS_ONE_POINT_FIVE : Float = 3;
+    public let UNDER_ODDS_TWO_POINT_FIVE : Float = 4;
+    public let UNDER_ODDS_THREE_POINT_FIVE : Float = 5;
+    public let UNDER_ODDS_FOUR_POINT_FIVE : Float = 6;
+    public let UNDER_ODDS_FIVE_POINT_FIVE : Float = 7;
+    public let UNDER_ODDS_SIX_POINT_FIVE : Float = 8;
+    public let UNDER_ODDS_SEVEN_POINT_FIVE : Float = 9;
 
-    public let HALF_TIME_FULL_TIME_DRAW_DRAW : Float = 1;
-    public let HALF_TIME_FULL_TIME_DRAW_HOME : Float = 1;
-    public let HALF_TIME_FULL_TIME_HOME_DRAW : Float = 1;
-    public let HALF_TIME_FULL_TIME_DRAW_AWAY : Float = 1;
-    public let HALF_TIME_FULL_TIME_AWAY_DRAW : Float = 1;
-    public let HALF_TIME_FULL_TIME_HOME_HOME : Float = 1;
-    public let HALF_TIME_FULL_TIME_AWAY_AWAY : Float = 1;
-    public let HALF_TIME_FULL_TIME_HOME_AWAY : Float = 1;
-    public let HALF_TIME_FULL_TIME_AWAY_HOME : Float = 1;
+    public let HALF_TIME_FULL_TIME_DRAW_DRAW : Float = 2;
+    public let HALF_TIME_FULL_TIME_DRAW_HOME : Float = 4;
+    public let HALF_TIME_FULL_TIME_HOME_DRAW : Float = 6;
+    public let HALF_TIME_FULL_TIME_DRAW_AWAY : Float = 8;
+    public let HALF_TIME_FULL_TIME_AWAY_DRAW : Float = 8;
+    public let HALF_TIME_FULL_TIME_HOME_HOME : Float = 7;
+    public let HALF_TIME_FULL_TIME_AWAY_AWAY : Float = 8;
+    public let HALF_TIME_FULL_TIME_HOME_AWAY : Float = 10;
+    public let HALF_TIME_FULL_TIME_AWAY_HOME : Float = 10;
 
-    public let HOME_TEAM_MISSES_PENALTY: Float = 1;
-    public let AWAY_TEAM_MISSES_PENALTY: Float = 1;
+    public let HOME_TEAM_MISSES_PENALTY: Float = 5;
+    public let AWAY_TEAM_MISSES_PENALTY: Float = 8;
 };

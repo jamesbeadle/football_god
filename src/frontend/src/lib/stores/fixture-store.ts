@@ -1,7 +1,6 @@
 import { FixtureService } from "../services/fixture-service";
 import type {
   FixtureDTO,
-  GetFixturesDTO,
   MoveFixtureDTO,
   PostponeFixtureDTO,
   SubmitFixtureDataDTO,

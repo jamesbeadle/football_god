@@ -6,6 +6,7 @@ import Array "mo:base/Array";
 import Option "mo:base/Option";
 import Buffer "mo:base/Buffer";
 import Iter "mo:base/Iter";
+import Debug "mo:base/Debug";
 import ResponseDTOs "../dtos/response_DTOs";
 import Environment "../environment";
 import RequestDTOs "../dtos/request_DTOs";
@@ -15,7 +16,7 @@ module {
 
   public class OddsManager() {
 
-    private var bettableLeagueFixtureIds: [(FootballTypes.LeagueId, [FootballTypes.FixtureId])] = [];
+    private var bettableLeagueFixtureIds: [(FootballTypes.LeagueId, [FootballTypes.FixtureId])] = [(1, [125])];
     private var matchOddsCache: [(FootballTypes.LeagueId, [(FootballTypes.FixtureId, BettingTypes.MatchOdds)])] = [];
     private let oddsGenerator = OddsGenerator.OddsGenerator();
 
@@ -51,6 +52,31 @@ module {
           return #ok();
         }
       };
+    };
+  
+    public func getLeagueFixtures(leagueId: FootballTypes.LeagueId) : [ResponseDTOs.HomePageFixtureDTO] {
+      let leagueFixturesResult = Array.find<(FootballTypes.LeagueId, [(FootballTypes.FixtureId, BettingTypes.MatchOdds)])>(matchOddsCache, func(entry: (FootballTypes.LeagueId, [(FootballTypes.FixtureId, BettingTypes.MatchOdds)])) : Bool {
+        entry.0 == leagueId
+      });
+
+      switch(leagueFixturesResult){
+        case (?leagueFixtures){
+          return Array.map<(FootballTypes.FixtureId, BettingTypes.MatchOdds), ResponseDTOs.HomePageFixtureDTO>(leagueFixtures.1, func(entry: (FootballTypes.FixtureId, BettingTypes.MatchOdds)){
+            
+            let matchOdds = entry.1;
+            
+            return {
+              awayOdds = matchOdds.correctResults.awayOdds;
+              drawOdds = matchOdds.correctResults.drawOdds;
+              fixtureId = matchOdds.fixtureId;
+              homeOdds = matchOdds.correctResults.homeOdds;
+              leagueId = matchOdds.leagueId;
+            };
+          });
+        };
+        case (null){}
+      };
+      return [];
     };
 
 
@@ -98,7 +124,7 @@ module {
     };
 
     public func recalculate(leagueId: FootballTypes.LeagueId) : async () {
-      
+      Debug.print("Recalculating");
       let data_canister = actor (Environment.DATA_CANISTER_ID) : actor {
         getFixtures : shared query (leagueId: FootballTypes.LeagueId) -> async Result.Result<[ResponseDTOs.FixtureDTO], T.Error>;
         getClubs : shared query (leagueId: FootballTypes.LeagueId) -> async Result.Result<[FootballTypes.Club], T.Error>;
@@ -111,11 +137,13 @@ module {
       
       switch(fixturesResult){
         case (#ok fixtures){
+          Debug.print("found fixtures");
           switch(clubsResult){
             case (#ok clubs){
+              Debug.print("found clubs");
               switch(playersResult){
                 case (#ok players){
-
+                  Debug.print("found players"); 
                   let currentLeagueFixtureIdsResult = Array.find<(FootballTypes.LeagueId, [FootballTypes.FixtureId])>(bettableLeagueFixtureIds, 
                     func(entry: (FootballTypes.LeagueId, [FootballTypes.FixtureId])) : Bool {
                       entry.0 == leagueId
@@ -123,6 +151,7 @@ module {
 
                   switch(currentLeagueFixtureIdsResult){
                     case (?fixtureIdsEntry){
+                      Debug.print("found fixture ids entry");
                       for(fixtureId in Iter.fromArray(fixtureIdsEntry.1)){
 
                         let foundFixture = Array.find<ResponseDTOs.FixtureDTO>(fixtures, func(entry: ResponseDTOs.FixtureDTO) : Bool {
@@ -131,7 +160,7 @@ module {
 
                         switch(foundFixture){
                           case (?fixture){
-
+                            Debug.print("found fixture");
                             let fixturePlayers = Array.filter<ResponseDTOs.PlayerDTO>(players, func(player: ResponseDTOs.PlayerDTO){
                               player.clubId == fixture.homeClubId or player.clubId == fixture.awayClubId
                             });
@@ -241,8 +270,9 @@ module {
                               scoresHatTrick = Buffer.toArray(scoresHatTrickOddsBuffer);
                               yellowCards = Buffer.toArray(yellowCardsOddsBuffer);
                             };
-
+                            Debug.print("storing");
                             storeMatchOdds(matchOdds);
+                            Debug.print("done");
                           };
                           case (null){}
                         };

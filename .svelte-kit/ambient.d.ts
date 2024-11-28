@@ -28,8 +28,8 @@
 declare module '$env/static/private' {
 	export const DFX_VERSION: string;
 	export const DFX_NETWORK: string;
-	export const CANISTER_ID_FRONTEND: string;
 	export const CANISTER_ID_BACKEND: string;
+	export const CANISTER_ID_FRONTEND: string;
 	export const CANISTER_ID: string;
 	export const CANISTER_CANDID_PATH: string;
 	export const VITE_AUTH_PROVIDER_URL: string;
@@ -128,8 +128,8 @@ declare module '$env/dynamic/private' {
 	export const env: {
 		DFX_VERSION: string;
 		DFX_NETWORK: string;
-		CANISTER_ID_FRONTEND: string;
 		CANISTER_ID_BACKEND: string;
+		CANISTER_ID_FRONTEND: string;
 		CANISTER_ID: string;
 		CANISTER_CANDID_PATH: string;
 		VITE_AUTH_PROVIDER_URL: string;

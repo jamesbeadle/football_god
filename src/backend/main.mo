@@ -601,6 +601,10 @@ actor Self {
 
   /* Betting functions */
 
+  public shared func getLeagueFixtures(leagueId: FootballTypes.LeagueId) : async [ResponseDTOs.HomePageFixtureDTO] {
+    return oddsManager.getLeagueFixtures(leagueId);
+  };
+
   public shared query func getBettableLeagueFixtures(leagueId: FootballTypes.LeagueId) : async Result.Result<[ResponseDTOs.BettableFixtureDTO], T.Error> {
     return oddsManager.getBettableLeagueFixtures(leagueId);
   };
@@ -789,7 +793,9 @@ actor Self {
     ignore Timer.setTimer<system>(#nanoseconds(Int.abs(1)), postUpgradeCallback); 
   };
 
-  private func postUpgradeCallback() : async (){};
+  private func postUpgradeCallback() : async (){
+    await oddsManager.recalculate(1);
+  };
 
   /* Admin functions */
   //TODO: Remove when handed back to the SNS

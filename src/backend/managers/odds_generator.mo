@@ -7,6 +7,30 @@ module {
   public class OddsGenerator() {
     
     public func getFirstAssistOdds(player: ResponseDTOs.PlayerDTO, onHomeTeam: Bool) : Float{
+
+      /* //TODO 
+
+
+        //Phase 1
+        In each function identify the weighted values to adjust the base odds
+          
+        For first assists, look at
+          - Teams league position
+          - Opponents league position
+          - Number of recent assists this player has got
+          - Total assists by seasons
+          - The number of season they've played
+          - Whether they have peaked
+          - The opponent they are facing
+            - The opponents goal conceded record
+        
+        //Phase 2
+        Next level would be using an AI to spot advanced patterns as in when this player 
+          -  plays with another player of a certain position, in a certain predicted line up, typically certain things happen
+
+      */
+
+
       switch(player.position){
         case (#Goalkeeper){
           if(onHomeTeam){

@@ -4652,7 +4652,7 @@ const options = {
 		<div class="error">
 			<span class="status">` + status + '</span>\n			<div class="message">\n				<h1>' + message + "</h1>\n			</div>\n		</div>\n	</body>\n</html>\n"
   },
-  version_hash: "6n0oan"
+  version_hash: "6i2rue"
 };
 async function get_hooks() {
   return {};
@@ -5219,17 +5219,17 @@ const idlFactory = ({ IDL }) => {
     "margin": IDL.Float64
   });
   const OverUnderSelectionOdds = IDL.Record({
-    "homeOdds": IDL.Vec(OverUnderSelection),
-    "awayOdds": IDL.Vec(OverUnderSelection)
+    "overOdds": IDL.Vec(OverUnderSelection),
+    "underOdds": IDL.Vec(OverUnderSelection)
   });
-  const SplitHalfTeamSelectionOdds = IDL.Record({
-    "firstHalfClubId": ClubId,
+  const HalfTimeFullTimeOdds = IDL.Record({
+    "firstHalfResult": MatchResult,
     "odds": IDL.Float64,
-    "secondHalfClubId": ClubId
+    "secondHalfResult": MatchResult
   });
-  const ClubAndYesNoSelectionOdds = IDL.Record({
-    "clubId": ClubId,
-    "isNo": IDL.Bool,
+  const ResultAndYesNoSelectionOdds = IDL.Record({
+    "result": MatchResult,
+    "odds": IDL.Float64,
     "isYes": IDL.Bool
   });
   const MatchOddsDTO = IDL.Record({
@@ -5251,8 +5251,8 @@ const idlFactory = ({ IDL }) => {
     "goalsOverUnder": OverUnderSelectionOdds,
     "firstAssisters": IDL.Vec(PlayerSelectionOdds),
     "firstGoalscorers": IDL.Vec(PlayerSelectionOdds),
-    "halfTimeFullTimeResult": IDL.Vec(SplitHalfTeamSelectionOdds),
-    "bothTeamsToScoreAndWinner": IDL.Vec(ClubAndYesNoSelectionOdds)
+    "halfTimeFullTimeResult": IDL.Vec(HalfTimeFullTimeOdds),
+    "bothTeamsToScoreAndWinner": IDL.Vec(ResultAndYesNoSelectionOdds)
   });
   const Result_12 = IDL.Variant({
     "ok": IDL.Vec(MatchOddsDTO),
@@ -5284,6 +5284,13 @@ const idlFactory = ({ IDL }) => {
     "primaryColourHex": IDL.Text
   });
   const Result_8 = IDL.Variant({ "ok": IDL.Vec(ClubDTO), "err": Error2 });
+  const HomePageFixtureDTO = IDL.Record({
+    "fixtureId": FixtureId,
+    "homeOdds": IDL.Float64,
+    "drawOdds": IDL.Float64,
+    "awayOdds": IDL.Float64,
+    "leagueId": LeagueId
+  });
   const PlayerStatus = IDL.Variant({
     "OnLoan": IDL.Null,
     "Active": IDL.Null,
@@ -5451,6 +5458,11 @@ const idlFactory = ({ IDL }) => {
     "getCountries": IDL.Func([], [Result_10], ["query"]),
     "getFixtures": IDL.Func([LeagueId], [Result_9], ["composite_query"]),
     "getLeagueClubs": IDL.Func([LeagueId], [Result_8], ["composite_query"]),
+    "getLeagueFixtures": IDL.Func(
+      [LeagueId],
+      [IDL.Vec(HomePageFixtureDTO)],
+      []
+    ),
     "getLeaguePlayers": IDL.Func([LeagueId], [Result_7], ["composite_query"]),
     "getLeagues": IDL.Func([], [Result_6], ["composite_query"]),
     "getProfile": IDL.Func([], [Result_5], []),
@@ -5798,76 +5810,16 @@ function Layout($$payload, $$props) {
   if ($$store_subs) unsubscribe_stores($$store_subs);
   pop();
 }
-function _page$7($$payload, $$props) {
-  push();
-  Layout($$payload, {
-    children: ($$payload2) => {
-      {
-        $$payload2.out += "<!--[-->";
-        Full_screen_spinner($$payload2);
-      }
-      $$payload2.out += `<!--]-->`;
-    },
-    $$slots: { default: true }
-  });
-  pop();
+function Local_spinner($$payload) {
+  $$payload.out += `<div class="widget svelte-1eu5871"><div class="widget-spinner svelte-1eu5871"></div></div>`;
 }
 var define_process_env_default$2 = { BACKEND_CANISTER_ID: "44kin-waaaa-aaaal-qbxra-cai", FRONTEND_CANISTER_ID: "43loz-3yaaa-aaaal-qbxrq-cai", DFX_NETWORK: "ic" };
-class ClubService {
-  actor;
-  constructor() {
-    this.actor = ActorFactory.createActor(
-      idlFactory,
-      define_process_env_default$2.BACKEND_CANISTER_ID
-    );
-  }
-  async getClubs(leagueId) {
-    const result = await this.actor.getLeagueClubs(leagueId);
-    console.log(result);
-    if (isError(result)) throw new Error("Failed to fetch clubs");
-    return result.ok;
-  }
-  async createClub(dto) {
-    const identityActor = await ActorFactory.createIdentityActor(
-      authStore,
-      define_process_env_default$2.BACKEND_CANISTER_ID
-    );
-    const result = await identityActor.executeCreateClub(dto);
-    if (isError(result)) throw new Error("Failed to create club");
-  }
-  async removeClub(dto) {
-    const identityActor = await ActorFactory.createIdentityActor(
-      authStore,
-      define_process_env_default$2.BACKEND_CANISTER_ID
-    );
-    const result = await identityActor.executeRemoveClub(dto);
-    if (isError(result)) throw new Error("Failed to remove club");
-  }
-}
-function createClubStore() {
-  async function getClubs(leagueId) {
-    return new ClubService().getClubs(leagueId);
-  }
-  async function createClub(dto) {
-    return new ClubService().createClub(dto);
-  }
-  async function removeClub(dto) {
-    return new ClubService().removeClub(dto);
-  }
-  return {
-    getClubs,
-    createClub,
-    removeClub
-  };
-}
-const clubStore = createClubStore();
-var define_process_env_default$1 = { BACKEND_CANISTER_ID: "44kin-waaaa-aaaal-qbxra-cai", FRONTEND_CANISTER_ID: "43loz-3yaaa-aaaal-qbxrq-cai", DFX_NETWORK: "ic" };
 class FixtureService {
   actor;
   constructor() {
     this.actor = ActorFactory.createActor(
       idlFactory,
-      define_process_env_default$1.BACKEND_CANISTER_ID
+      define_process_env_default$2.BACKEND_CANISTER_ID
     );
   }
   async getPostponedFixtures() {
@@ -5883,7 +5835,7 @@ class FixtureService {
   async moveFixture(dto) {
     const identityActor = await ActorFactory.createIdentityActor(
       authStore,
-      define_process_env_default$1.BACKEND_CANISTER_ID
+      define_process_env_default$2.BACKEND_CANISTER_ID
     );
     const result = await identityActor.executeMoveFixture(dto);
     if (isError(result)) throw new Error("Failed to move fixture");
@@ -5891,7 +5843,7 @@ class FixtureService {
   async postponeFixture(dto) {
     const identityActor = await ActorFactory.createIdentityActor(
       authStore,
-      define_process_env_default$1.BACKEND_CANISTER_ID
+      define_process_env_default$2.BACKEND_CANISTER_ID
     );
     const result = await identityActor.executePostponeFixture(dto);
     if (isError(result)) throw new Error("Failed to postpone fixture");
@@ -5899,7 +5851,7 @@ class FixtureService {
   async submitFixtureData(dto) {
     const identityActor = await ActorFactory.createIdentityActor(
       authStore,
-      define_process_env_default$1.BACKEND_CANISTER_ID
+      define_process_env_default$2.BACKEND_CANISTER_ID
     );
     const result = await identityActor.executeSubmitFixtureData(dto);
     if (isError(result)) throw new Error("Failed to submit fixture data");
@@ -5930,6 +5882,69 @@ function createFixtureStore() {
   };
 }
 const fixtureStore = createFixtureStore();
+var define_process_env_default$1 = { BACKEND_CANISTER_ID: "44kin-waaaa-aaaal-qbxra-cai", FRONTEND_CANISTER_ID: "43loz-3yaaa-aaaal-qbxrq-cai", DFX_NETWORK: "ic" };
+class ClubService {
+  actor;
+  constructor() {
+    this.actor = ActorFactory.createActor(
+      idlFactory,
+      define_process_env_default$1.BACKEND_CANISTER_ID
+    );
+  }
+  async getClubs(leagueId) {
+    const result = await this.actor.getLeagueClubs(leagueId);
+    console.log(result);
+    if (isError(result)) throw new Error("Failed to fetch clubs");
+    return result.ok;
+  }
+  async createClub(dto) {
+    const identityActor = await ActorFactory.createIdentityActor(
+      authStore,
+      define_process_env_default$1.BACKEND_CANISTER_ID
+    );
+    const result = await identityActor.executeCreateClub(dto);
+    if (isError(result)) throw new Error("Failed to create club");
+  }
+  async removeClub(dto) {
+    const identityActor = await ActorFactory.createIdentityActor(
+      authStore,
+      define_process_env_default$1.BACKEND_CANISTER_ID
+    );
+    const result = await identityActor.executeRemoveClub(dto);
+    if (isError(result)) throw new Error("Failed to remove club");
+  }
+}
+function createClubStore() {
+  async function getClubs(leagueId) {
+    return new ClubService().getClubs(leagueId);
+  }
+  async function createClub(dto) {
+    return new ClubService().createClub(dto);
+  }
+  async function removeClub(dto) {
+    return new ClubService().removeClub(dto);
+  }
+  return {
+    getClubs,
+    createClub,
+    removeClub
+  };
+}
+const clubStore = createClubStore();
+function _page$7($$payload, $$props) {
+  push();
+  Layout($$payload, {
+    children: ($$payload2) => {
+      {
+        $$payload2.out += "<!--[-->";
+        Full_screen_spinner($$payload2);
+      }
+      $$payload2.out += `<!--]-->`;
+    },
+    $$slots: { default: true }
+  });
+  pop();
+}
 var define_process_env_default = { BACKEND_CANISTER_ID: "44kin-waaaa-aaaal-qbxra-cai", FRONTEND_CANISTER_ID: "43loz-3yaaa-aaaal-qbxrq-cai", DFX_NETWORK: "ic" };
 class PlayerService {
   actor;
@@ -6191,9 +6206,6 @@ function _page$4($$payload) {
     },
     $$slots: { default: true }
   });
-}
-function Local_spinner($$payload) {
-  $$payload.out += `<div class="widget svelte-1tvdi4g"><div class="widget-spinner svelte-1tvdi4g"></div></div>`;
 }
 function _page$3($$payload, $$props) {
   push();

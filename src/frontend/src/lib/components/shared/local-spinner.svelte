@@ -6,15 +6,15 @@
   .widget {
     position: relative;
     width: 100%;
-    height: 200px;
+    height: 50px;
   }
 
   .widget-spinner {
     border: 5px solid rgba(255, 255, 255, 0.3);
     border-top: 5px solid white;
     border-radius: 50%;
-    width: 50px;
-    height: 50px;
+    width: 25px;
+    height: 25px;
     position: absolute;
     top: 50%;
     left: 50%;
