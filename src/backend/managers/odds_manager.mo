@@ -132,12 +132,8 @@ module {
                         switch(foundFixture){
                           case (?fixture){
 
-                            let homeClubPlayers = Array.filter<ResponseDTOs.PlayerDTO>(players, func(player: ResponseDTOs.PlayerDTO){
-                              player.clubId == fixture.homeClubId
-                            });
-
-                            let awayClubPlayers = Array.filter<ResponseDTOs.PlayerDTO>(players, func(player: ResponseDTOs.PlayerDTO){
-                              player.clubId == fixture.homeClubId
+                            let fixturePlayers = Array.filter<ResponseDTOs.PlayerDTO>(players, func(player: ResponseDTOs.PlayerDTO){
+                              player.clubId == fixture.homeClubId or player.clubId == fixture.awayClubId
                             });
                             
                             
@@ -153,120 +149,61 @@ module {
                             let yellowCardsOddsBuffer = Buffer.fromArray<BettingTypes.PlayerSelectionOdds>([]);
                             let redCardsOddsBuffer = Buffer.fromArray<BettingTypes.PlayerSelectionOdds>([]);
                             
-                            for(homePlayer in Iter.fromArray(homeClubPlayers)){
+                            for(player in Iter.fromArray(fixturePlayers)){
 
                               firstAssistersOddsBuffer.add({
-                                playerId = homePlayer.id;
-                                odds = oddsGenerator.getFirstAssistOdds(homePlayer);
+                                playerId = player.id;
+                                odds = oddsGenerator.getFirstAssistOdds(player, player.clubId == fixture.homeClubId);
                               });
 
                               firstGoalscorersOddsBuffer.add({
-                                playerId = homePlayer.id;
-                                odds = oddsGenerator.getFirstGoalscorerOdds(homePlayer);
+                                playerId = player.id;
+                                odds = oddsGenerator.getFirstGoalscorerOdds(player, player.clubId == fixture.homeClubId);
                               });
 
                               anytimeAssistOddsBuffer.add({
-                                playerId = homePlayer.id;
-                                odds = oddsGenerator.getAnytimeAssistOdds(homePlayer);
+                                playerId = player.id;
+                                odds = oddsGenerator.getAnytimeAssistOdds(player, player.clubId == fixture.homeClubId);
                               });
 
                               anytimeScorerOddsBuffer.add({
-                                playerId = homePlayer.id;
-                                odds = oddsGenerator.getAnytimeScorerOdds(homePlayer);
+                                playerId = player.id;
+                                odds = oddsGenerator.getAnytimeScorerOdds(player, player.clubId == fixture.homeClubId);
                               });
 
                               lastAssistOddsBuffer.add({
-                                playerId = homePlayer.id;
-                                odds = oddsGenerator.getAnytimeAssistOdds(homePlayer);
+                                playerId = player.id;
+                                odds = oddsGenerator.getAnytimeAssistOdds(player, player.clubId == fixture.homeClubId);
                               });
 
                               lastGoalscorerOddsBuffer.add({
-                                playerId = homePlayer.id;
-                                odds = oddsGenerator.getAnytimeScorerOdds(homePlayer);
+                                playerId = player.id;
+                                odds = oddsGenerator.getAnytimeScorerOdds(player, player.clubId == fixture.homeClubId);
                               });
 
                               scoresBraceOddsBuffer.add({
-                                playerId = homePlayer.id;
-                                odds = oddsGenerator.getScoresBraceOdds(homePlayer);
+                                playerId = player.id;
+                                odds = oddsGenerator.getScoresBraceOdds(player, player.clubId == fixture.homeClubId);
                               });
 
                               scoresHatTrickOddsBuffer.add({
-                                playerId = homePlayer.id;
-                                odds = oddsGenerator.getScoreHatrickOdds(homePlayer);
+                                playerId = player.id;
+                                odds = oddsGenerator.getScoreHatrickOdds(player, player.clubId == fixture.homeClubId);
                               });
 
                               penaltyMissersOddsBuffer.add({
-                                playerId = homePlayer.id;
-                                odds = oddsGenerator.getMissesPenaltyOdds(homePlayer);
+                                playerId = player.id;
+                                odds = oddsGenerator.getMissesPenaltyOdds(player, player.clubId == fixture.homeClubId);
                               });
 
                               yellowCardsOddsBuffer.add({
-                                playerId = homePlayer.id;
-                                odds = oddsGenerator.getYellowCardsOdds(homePlayer);
+                                playerId = player.id;
+                                odds = oddsGenerator.getYellowCardsOdds(player, player.clubId == fixture.homeClubId);
                               });
 
                               redCardsOddsBuffer.add({
-                                playerId = homePlayer.id;
-                                odds = oddsGenerator.getRedCardsOdds(homePlayer);
-                              });
-
-                            };
-                            
-                            for(awayPlayer in Iter.fromArray(awayClubPlayers)){
-
-                              firstAssistersOddsBuffer.add({
-                                playerId = awayPlayer.id;
-                                odds = oddsGenerator.getFirstAssistOdds(awayPlayer);
-                              });
-
-                              firstGoalscorersOddsBuffer.add({
-                                playerId = awayPlayer.id;
-                                odds = oddsGenerator.getFirstGoalscorerOdds(awayPlayer);
-                              });
-
-                              anytimeAssistOddsBuffer.add({
-                                playerId = awayPlayer.id;
-                                odds = oddsGenerator.getAnytimeAssistOdds(awayPlayer);
-                              });
-
-                              anytimeScorerOddsBuffer.add({
-                                playerId = awayPlayer.id;
-                                odds = oddsGenerator.getAnytimeScorerOdds(awayPlayer);
-                              });
-
-                              lastAssistOddsBuffer.add({
-                                playerId = awayPlayer.id;
-                                odds = oddsGenerator.getAnytimeAssistOdds(awayPlayer);
-                              });
-
-                              lastGoalscorerOddsBuffer.add({
-                                playerId = awayPlayer.id;
-                                odds = oddsGenerator.getAnytimeScorerOdds(awayPlayer);
-                              });
-
-                              scoresBraceOddsBuffer.add({
-                                playerId = awayPlayer.id;
-                                odds = oddsGenerator.getScoresBraceOdds(awayPlayer);
-                              });
-
-                              scoresHatTrickOddsBuffer.add({
-                                playerId = awayPlayer.id;
-                                odds = oddsGenerator.getScoreHatrickOdds(awayPlayer);
-                              });
-
-                              penaltyMissersOddsBuffer.add({
-                                playerId = awayPlayer.id;
-                                odds = oddsGenerator.getMissesPenaltyOdds(awayPlayer);
-                              });
-
-                              yellowCardsOddsBuffer.add({
-                                playerId = awayPlayer.id;
-                                odds = oddsGenerator.getYellowCardsOdds(awayPlayer);
-                              });
-
-                              redCardsOddsBuffer.add({
-                                playerId = awayPlayer.id;
-                                odds = oddsGenerator.getRedCardsOdds(awayPlayer);
+                                playerId = player.id;
+                                odds = oddsGenerator.getRedCardsOdds(player, player.clubId == fixture.homeClubId);
                               });
 
                             };

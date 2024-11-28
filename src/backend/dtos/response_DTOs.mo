@@ -197,7 +197,7 @@ module ResponseDTOs {
     scoresHatTrick: [BettingTypes.PlayerSelectionOdds];
     goalsOverUnder: BettingTypes.OverUnderSelectionOdds;
     bothTeamsToScore: BettingTypes.YesNoSelectionOdds;
-    halfTimeFullTimeResult: [BettingTypes.SplitHalfTeamSelectionOdds];
-    bothTeamsToScoreAndWinner: [BettingTypes.ClubAndYesNoSelectionOdds];
+    halfTimeFullTimeResult: [BettingTypes.HalfTimeFullTimeOdds];
+    bothTeamsToScoreAndWinner: [BettingTypes.ResultAndYesNoSelectionOdds];
   };
 };

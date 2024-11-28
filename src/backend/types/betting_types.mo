@@ -17,7 +17,7 @@ module BettingTypes {
         anytimeScorers: [PlayerSelectionOdds];
         yellowCards: [PlayerSelectionOdds];
         redCards: [PlayerSelectionOdds];
-        penaltyMissed: TeamSelectionOdds;
+        penaltyMissed: MissPenaltyOdds;
         penaltyMissers: [PlayerSelectionOdds];
         firstAssisters: [PlayerSelectionOdds];
         lastAssist: [PlayerSelectionOdds];
@@ -26,8 +26,8 @@ module BettingTypes {
         scoresHatTrick: [PlayerSelectionOdds];
         goalsOverUnder: OverUnderSelectionOdds;
         bothTeamsToScore: YesNoSelectionOdds;
-        halfTimeFullTimeResult: [SplitHalfTeamSelectionOdds];
-        bothTeamsToScoreAndWinner: [ClubAndYesNoSelectionOdds];
+        halfTimeFullTimeResult: [HalfTimeFullTimeOdds];
+        bothTeamsToScoreAndWinner: [ResultAndYesNoSelectionOdds];
     };
 
     public type TeamSelectionOdds = {
@@ -48,8 +48,8 @@ module BettingTypes {
     };
 
     public type OverUnderSelectionOdds = {
-        homeOdds: [OverUnderSelection];
-        awayOdds: [OverUnderSelection];
+        overOdds: [OverUnderSelection];
+        underOdds: [OverUnderSelection];
     };
 
     public type OverUnderSelection = {
@@ -62,16 +62,21 @@ module BettingTypes {
         noOdds: Float;
     };
 
-    public type SplitHalfTeamSelectionOdds = {
-        firstHalfClubId: FootballTypes.ClubId;
-        secondHalfClubId: FootballTypes.ClubId;
+    public type HalfTimeFullTimeOdds = {
+        firstHalfResult: MatchResult;
+        secondHalfResult: MatchResult;
         odds: Float;
     };
 
-    public type ClubAndYesNoSelectionOdds = {
-        clubId: FootballTypes.ClubId;
+    public type ResultAndYesNoSelectionOdds = {
+        result: MatchResult;
         isYes: Bool;
-        isNo: Bool;
+        odds: Float;
+    };
+
+    public type MissPenaltyOdds = {
+        homeTeam: Float;
+        awayTeam: Float;
     };
 
     /* Betting slip related types */
