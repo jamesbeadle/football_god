@@ -4652,7 +4652,7 @@ const options = {
 		<div class="error">
 			<span class="status">` + status + '</span>\n			<div class="message">\n				<h1>' + message + "</h1>\n			</div>\n		</div>\n	</body>\n</html>\n"
   },
-  version_hash: "6i2rue"
+  version_hash: "hcg32r"
 };
 async function get_hooks() {
   return {};
@@ -5196,6 +5196,78 @@ const idlFactory = ({ IDL }) => {
     "settledOn": IDL.Int
   });
   const Result_13 = IDL.Variant({ "ok": IDL.Vec(BetSlip), "err": Error2 });
+  const TeamSelectionOdds = IDL.Record({
+    "homeOdds": IDL.Float64,
+    "drawOdds": IDL.Float64,
+    "awayOdds": IDL.Float64
+  });
+  const BettableFixtureDTO = IDL.Record({
+    "fixtureId": FixtureId,
+    "correctResults": TeamSelectionOdds
+  });
+  const Result_12 = IDL.Variant({
+    "ok": IDL.Vec(BettableFixtureDTO),
+    "err": Error2
+  });
+  const CountryDTO = IDL.Record({
+    "id": CountryId,
+    "code": IDL.Text,
+    "name": IDL.Text
+  });
+  const Result_11 = IDL.Variant({ "ok": IDL.Vec(CountryDTO), "err": Error2 });
+  const Result_10 = IDL.Variant({ "ok": IDL.Vec(FixtureDTO), "err": Error2 });
+  const ClubDTO = IDL.Record({
+    "id": ClubId,
+    "secondaryColourHex": IDL.Text,
+    "name": IDL.Text,
+    "friendlyName": IDL.Text,
+    "thirdColourHex": IDL.Text,
+    "abbreviatedName": IDL.Text,
+    "shirtType": ShirtType,
+    "primaryColourHex": IDL.Text
+  });
+  const Result_9 = IDL.Variant({ "ok": IDL.Vec(ClubDTO), "err": Error2 });
+  const HomePageFixtureDTO = IDL.Record({
+    "fixtureId": FixtureId,
+    "homeOdds": IDL.Float64,
+    "drawOdds": IDL.Float64,
+    "awayOdds": IDL.Float64,
+    "leagueId": LeagueId
+  });
+  const PlayerStatus = IDL.Variant({
+    "OnLoan": IDL.Null,
+    "Active": IDL.Null,
+    "FreeAgent": IDL.Null,
+    "Retired": IDL.Null
+  });
+  const PlayerDTO = IDL.Record({
+    "id": IDL.Nat16,
+    "status": PlayerStatus,
+    "clubId": ClubId,
+    "valueQuarterMillions": IDL.Nat16,
+    "dateOfBirth": IDL.Int,
+    "nationality": CountryId,
+    "shirtNumber": IDL.Nat8,
+    "position": PlayerPosition,
+    "lastName": IDL.Text,
+    "firstName": IDL.Text
+  });
+  const Result_8 = IDL.Variant({ "ok": IDL.Vec(PlayerDTO), "err": Error2 });
+  const FootballLeagueDTO = IDL.Record({
+    "id": LeagueId,
+    "logo": IDL.Vec(IDL.Nat8),
+    "name": IDL.Text,
+    "teamCount": IDL.Nat8,
+    "relatedGender": Gender,
+    "countryId": CountryId,
+    "abbreviation": IDL.Text,
+    "governingBody": IDL.Text,
+    "formed": IDL.Int
+  });
+  const Result_7 = IDL.Variant({
+    "ok": IDL.Vec(FootballLeagueDTO),
+    "err": Error2
+  });
   const PlayerSelectionOdds = IDL.Record({
     "playerId": PlayerId,
     "odds": IDL.Float64
@@ -5209,10 +5281,9 @@ const idlFactory = ({ IDL }) => {
     "noOdds": IDL.Float64,
     "yesOdds": IDL.Float64
   });
-  const TeamSelectionOdds = IDL.Record({
-    "homeOdds": IDL.Float64,
-    "drawOdds": IDL.Float64,
-    "awayOdds": IDL.Float64
+  const MissPenaltyOdds = IDL.Record({
+    "homeTeam": IDL.Float64,
+    "awayTeam": IDL.Float64
   });
   const OverUnderSelection = IDL.Record({
     "odds": IDL.Float64,
@@ -5245,86 +5316,17 @@ const idlFactory = ({ IDL }) => {
     "redCards": IDL.Vec(PlayerSelectionOdds),
     "anytimeScorers": IDL.Vec(PlayerSelectionOdds),
     "correctResults": TeamSelectionOdds,
-    "penaltyMissed": TeamSelectionOdds,
+    "penaltyMissed": MissPenaltyOdds,
     "scoresHatTrick": IDL.Vec(PlayerSelectionOdds),
     "scoresBrace": IDL.Vec(PlayerSelectionOdds),
     "goalsOverUnder": OverUnderSelectionOdds,
     "firstAssisters": IDL.Vec(PlayerSelectionOdds),
+    "leagueId": LeagueId,
     "firstGoalscorers": IDL.Vec(PlayerSelectionOdds),
     "halfTimeFullTimeResult": IDL.Vec(HalfTimeFullTimeOdds),
     "bothTeamsToScoreAndWinner": IDL.Vec(ResultAndYesNoSelectionOdds)
   });
-  const Result_12 = IDL.Variant({
-    "ok": IDL.Vec(MatchOddsDTO),
-    "err": Error2
-  });
-  const BettableFixtureDTO = IDL.Record({
-    "fixtureId": FixtureId,
-    "correctResults": TeamSelectionOdds
-  });
-  const Result_11 = IDL.Variant({
-    "ok": IDL.Vec(BettableFixtureDTO),
-    "err": Error2
-  });
-  const CountryDTO = IDL.Record({
-    "id": CountryId,
-    "code": IDL.Text,
-    "name": IDL.Text
-  });
-  const Result_10 = IDL.Variant({ "ok": IDL.Vec(CountryDTO), "err": Error2 });
-  const Result_9 = IDL.Variant({ "ok": IDL.Vec(FixtureDTO), "err": Error2 });
-  const ClubDTO = IDL.Record({
-    "id": ClubId,
-    "secondaryColourHex": IDL.Text,
-    "name": IDL.Text,
-    "friendlyName": IDL.Text,
-    "thirdColourHex": IDL.Text,
-    "abbreviatedName": IDL.Text,
-    "shirtType": ShirtType,
-    "primaryColourHex": IDL.Text
-  });
-  const Result_8 = IDL.Variant({ "ok": IDL.Vec(ClubDTO), "err": Error2 });
-  const HomePageFixtureDTO = IDL.Record({
-    "fixtureId": FixtureId,
-    "homeOdds": IDL.Float64,
-    "drawOdds": IDL.Float64,
-    "awayOdds": IDL.Float64,
-    "leagueId": LeagueId
-  });
-  const PlayerStatus = IDL.Variant({
-    "OnLoan": IDL.Null,
-    "Active": IDL.Null,
-    "FreeAgent": IDL.Null,
-    "Retired": IDL.Null
-  });
-  const PlayerDTO = IDL.Record({
-    "id": IDL.Nat16,
-    "status": PlayerStatus,
-    "clubId": ClubId,
-    "valueQuarterMillions": IDL.Nat16,
-    "dateOfBirth": IDL.Int,
-    "nationality": CountryId,
-    "shirtNumber": IDL.Nat8,
-    "position": PlayerPosition,
-    "lastName": IDL.Text,
-    "firstName": IDL.Text
-  });
-  const Result_7 = IDL.Variant({ "ok": IDL.Vec(PlayerDTO), "err": Error2 });
-  const FootballLeagueDTO = IDL.Record({
-    "id": LeagueId,
-    "logo": IDL.Vec(IDL.Nat8),
-    "name": IDL.Text,
-    "teamCount": IDL.Nat8,
-    "relatedGender": Gender,
-    "countryId": CountryId,
-    "abbreviation": IDL.Text,
-    "governingBody": IDL.Text,
-    "formed": IDL.Int
-  });
-  const Result_6 = IDL.Variant({
-    "ok": IDL.Vec(FootballLeagueDTO),
-    "err": Error2
-  });
+  const Result_6 = IDL.Variant({ "ok": MatchOddsDTO, "err": Error2 });
   const ProfileDTO = IDL.Record({
     "username": IDL.Text,
     "maxBetLimit": IDL.Nat64,
@@ -5449,22 +5451,18 @@ const idlFactory = ({ IDL }) => {
     "executeUpdateLeague": IDL.Func([UpdateLeagueDTO], [], []),
     "executeUpdatePlayer": IDL.Func([LeagueId, UpdatePlayerDTO], [], []),
     "getBets": IDL.Func([GetBetsDTO], [Result_13], []),
-    "getBettableFixture": IDL.Func(
-      [LeagueId, FixtureId],
-      [Result_12],
-      ["query"]
-    ),
-    "getBettableLeagueFixtures": IDL.Func([LeagueId], [Result_11], ["query"]),
-    "getCountries": IDL.Func([], [Result_10], ["query"]),
-    "getFixtures": IDL.Func([LeagueId], [Result_9], ["composite_query"]),
-    "getLeagueClubs": IDL.Func([LeagueId], [Result_8], ["composite_query"]),
+    "getBettableLeagueFixtures": IDL.Func([LeagueId], [Result_12], ["query"]),
+    "getCountries": IDL.Func([], [Result_11], ["query"]),
+    "getFixtures": IDL.Func([LeagueId], [Result_10], ["composite_query"]),
+    "getLeagueClubs": IDL.Func([LeagueId], [Result_9], ["composite_query"]),
     "getLeagueFixtures": IDL.Func(
       [LeagueId],
       [IDL.Vec(HomePageFixtureDTO)],
       []
     ),
-    "getLeaguePlayers": IDL.Func([LeagueId], [Result_7], ["composite_query"]),
-    "getLeagues": IDL.Func([], [Result_6], ["composite_query"]),
+    "getLeaguePlayers": IDL.Func([LeagueId], [Result_8], ["composite_query"]),
+    "getLeagues": IDL.Func([], [Result_7], ["composite_query"]),
+    "getMatchOdds": IDL.Func([LeagueId, FixtureId], [Result_6], ["query"]),
     "getProfile": IDL.Func([], [Result_5], []),
     "getSeasons": IDL.Func([LeagueId], [Result_4], ["composite_query"]),
     "getSystemState": IDL.Func([IDL.Text], [Result_3], ["composite_query"]),
@@ -5931,7 +5929,7 @@ function createClubStore() {
   };
 }
 const clubStore = createClubStore();
-function _page$7($$payload, $$props) {
+function _page$8($$payload, $$props) {
   push();
   Layout($$payload, {
     children: ($$payload2) => {
@@ -6092,7 +6090,7 @@ function Clear_draft_modal($$payload, $$props) {
   });
   bind_props($$props, { visible, onConfirm, closeModal });
 }
-function _page$6($$payload, $$props) {
+function _page$7($$payload, $$props) {
   push();
   var $$store_subs;
   let fixtureId, leagueId, seasonId;
@@ -6168,7 +6166,7 @@ function _page$6($$payload, $$props) {
   if ($$store_subs) unsubscribe_stores($$store_subs);
   pop();
 }
-function _page$5($$payload) {
+function _page$6($$payload) {
   Layout($$payload, {
     children: ($$payload2) => {
       {
@@ -6198,6 +6196,24 @@ function _page$5($$payload) {
     },
     $$slots: { default: true }
   });
+}
+function _page$5($$payload, $$props) {
+  push();
+  var $$store_subs;
+  Number(store_get($$store_subs ??= {}, "$page", page).url.searchParams.get("leagueId"));
+  Number(store_get($$store_subs ??= {}, "$page", page).url.searchParams.get("fixtureId"));
+  Layout($$payload, {
+    children: ($$payload2) => {
+      {
+        $$payload2.out += "<!--[-->";
+        Full_screen_spinner($$payload2);
+      }
+      $$payload2.out += `<!--]-->`;
+    },
+    $$slots: { default: true }
+  });
+  if ($$store_subs) unsubscribe_stores($$store_subs);
+  pop();
 }
 function _page$4($$payload) {
   Layout($$payload, {
@@ -6313,7 +6329,7 @@ export {
   Error$1 as E,
   Layout$1 as L,
   Server as S,
-  _page$7 as _,
+  _page$8 as _,
   set_building as a,
   set_manifest as b,
   set_prerendering as c,
@@ -6322,13 +6338,14 @@ export {
   set_read_implementation as f,
   get_hooks as g,
   set_safe_public_env as h,
-  _page$6 as i,
-  _page$5 as j,
-  _page$4 as k,
-  _page$3 as l,
-  _page$2 as m,
-  _page$1 as n,
+  _page$7 as i,
+  _page$6 as j,
+  _page$5 as k,
+  _page$4 as l,
+  _page$3 as m,
+  _page$2 as n,
   options as o,
-  _page as p,
+  _page$1 as p,
+  _page as q,
   set_assets as s
 };

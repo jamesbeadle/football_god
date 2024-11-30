@@ -116,10 +116,27 @@ module {
       return #err(#NotFound);
     };
 
-    public func getBettableFixture(leagueId: FootballTypes.LeagueId, fixtureId: FootballTypes.FixtureId) : Result.Result<[ResponseDTOs.MatchOddsDTO], T.Error> {
+    public func getMatchOdds(leagueId: FootballTypes.LeagueId, fixtureId: FootballTypes.FixtureId) : Result.Result<ResponseDTOs.MatchOddsDTO, T.Error> {
       
-      //include complete range of odds
-      //get from cached odd for fixture
+      let leagueOddsCache = Array.find<(FootballTypes.LeagueId, [(FootballTypes.FixtureId, BettingTypes.MatchOdds)])>(matchOddsCache, 
+          func(entry: (FootballTypes.LeagueId, [(FootballTypes.FixtureId, BettingTypes.MatchOdds)])) : Bool {
+            entry.0 == leagueId;
+      });
+
+      switch(leagueOddsCache){
+        case (?foundLeagueOdds){
+          let fixtureOddsResult = Array.find<(FootballTypes.FixtureId, BettingTypes.MatchOdds)>(foundLeagueOdds.1, func(entry: (FootballTypes.FixtureId, BettingTypes.MatchOdds)) : Bool {
+            entry.0 == fixtureId;
+          });
+          switch(fixtureOddsResult){
+            case (?foundFixtureOdds){
+              return #ok(foundFixtureOdds.1);
+            };
+            case (null){};
+          };
+        };
+        case (null){};
+      };
       return #err(#NotFound);
     };
 
@@ -202,12 +219,12 @@ module {
 
                               lastAssistOddsBuffer.add({
                                 playerId = player.id;
-                                odds = oddsGenerator.getAnytimeAssistOdds(player, player.clubId == fixture.homeClubId);
+                                odds = oddsGenerator.getLastAssistOdds(player, player.clubId == fixture.homeClubId);
                               });
 
                               lastGoalscorerOddsBuffer.add({
                                 playerId = player.id;
-                                odds = oddsGenerator.getAnytimeScorerOdds(player, player.clubId == fixture.homeClubId);
+                                odds = oddsGenerator.getLastScorerOdds(player, player.clubId == fixture.homeClubId);
                               });
 
                               scoresBraceOddsBuffer.add({

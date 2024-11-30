@@ -1,4 +1,7 @@
-import type { LeagueId } from "../../../../declarations/backend/backend.did";
+import type {
+  FixtureId,
+  LeagueId,
+} from "../../../../declarations/backend/backend.did";
 import { BettingService } from "../services/betting-service";
 
 function createBettingStore() {
@@ -6,8 +9,13 @@ function createBettingStore() {
     return new BettingService().getLeagueFixtures(leagueId);
   }
 
+  async function getMatchOdds(leagueId: LeagueId, fixtureId: FixtureId) {
+    return new BettingService().getMatchOdds(leagueId, fixtureId);
+  }
+
   return {
     getLeagueFixtures,
+    getMatchOdds,
   };
 }
 

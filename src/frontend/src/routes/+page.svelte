@@ -13,7 +13,8 @@
   import { clubStore } from "$lib/stores/club-store";
   
   import { convertDateToReadable } from "$lib/utils/helpers";
-  import type { FootballLeagueDTO, FixtureDTO, HomePageFixtureDTO, LeagueId, ClubDTO } from "../../../declarations/backend/backend.did";
+  import type { FootballLeagueDTO, FixtureDTO, HomePageFixtureDTO, LeagueId, ClubDTO, FixtureId } from "../../../declarations/backend/backend.did";
+    import { goto } from "$app/navigation";
 
   let isLoading = true;
   let leagues: FootballLeagueDTO[] = [];
@@ -76,6 +77,10 @@
     console.log(expandedLeagues)
   };
 
+  function loadFixtureEvent(leagueId: LeagueId, fixtureId: FixtureId){
+    goto(`/fixture-event?leagueId=${leagueId}&fixtureId=${fixtureId}`)
+  };
+
 </script>
 
 <Layout>
@@ -85,7 +90,7 @@
     <p class="text-lg mb-4">Home</p>
     <div class="flex flex-col w-full space-y-2">
       {#each leagues as league}
-        <div class="bg-BrandLightGray rounded shadow">
+        <div class={`${expandedLeagues[league.id] ? `bg-BrandPurple` : `bg-BrandLightGray` }  rounded shadow`}>
           <button
             type="button"
             class="flex items-center justify-between w-full px-4 py-2 cursor-pointer bg-transparent border-0 text-left"
@@ -104,7 +109,7 @@
               {#each leagueFixtures[league.id] as fixture}
                 {@const odds = bettingFixtureDTOs[league.id].find((odds) => odds.fixtureId === fixture.id)}
                 {#if odds}
-                  <div class="flex justify-between">
+                  <div class="flex justify-between items-center">
                     <div>
                       <p>
                         {leagueClubs[league.id]?.[fixture.homeClubId] || "Unknown"} vs 
@@ -117,6 +122,7 @@
                         <p>{odds?.homeOdds?.toFixed(2) || "N/A"}</p>
                         <p>{odds?.drawOdds?.toFixed(2) || "N/A"}</p>
                         <p>{odds?.awayOdds?.toFixed(2) || "N/A"}</p>
+                        <button class="brand-button" on:click={() => loadFixtureEvent(league.id, fixture.id)}>Detailed Odds</button>
                       {/if}
                     </div>
                   </div>

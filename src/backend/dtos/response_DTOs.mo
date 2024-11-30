@@ -179,6 +179,7 @@ module ResponseDTOs {
   };
 
   public type MatchOddsDTO = {
+    leagueId: FootballTypes.LeagueId;
     fixtureId: FootballTypes.FixtureId;
     correctResults: BettingTypes.TeamSelectionOdds;
     correctScores: [BettingTypes.ScoreSelectionOdds];
@@ -188,7 +189,7 @@ module ResponseDTOs {
     anytimeScorers: [BettingTypes.PlayerSelectionOdds];
     yellowCards: [BettingTypes.PlayerSelectionOdds];
     redCards: [BettingTypes.PlayerSelectionOdds];
-    penaltyMissed: BettingTypes.TeamSelectionOdds;
+    penaltyMissed: BettingTypes.MissPenaltyOdds;
     penaltyMissers: [BettingTypes.PlayerSelectionOdds];
     firstAssisters: [BettingTypes.PlayerSelectionOdds];
     lastAssist: [BettingTypes.PlayerSelectionOdds];

@@ -1,9 +1,12 @@
 import type {
+  FixtureId,
   HomePageFixtureDTO,
   LeagueId,
+  MatchOddsDTO,
 } from "../../../../declarations/backend/backend.did";
 import { idlFactory } from "../../../../declarations/backend";
 import { ActorFactory } from "../utils/ActorFactory";
+import { isError } from "$lib/utils/helpers";
 
 export class BettingService {
   private actor: any;
@@ -17,5 +20,14 @@ export class BettingService {
 
   async getLeagueFixtures(leagueId: LeagueId): Promise<HomePageFixtureDTO[]> {
     return await this.actor.getLeagueFixtures(leagueId);
+  }
+
+  async getMatchOdds(
+    leagueId: LeagueId,
+    fixtureId: FixtureId,
+  ): Promise<MatchOddsDTO> {
+    let result = await this.actor.getMatchOdds(leagueId, fixtureId);
+    if (isError(result)) throw new Error("Failed to fetch match odds");
+    return result.ok;
   }
 }

@@ -15,7 +15,7 @@
       "_vendor.js"
     ],
     "css": [
-      "_app/immutable/assets/index.C2Y87wS7.css"
+      "_app/immutable/assets/index.B7PcOzx5.css"
     ]
   },
   "_vendor.js": {
@@ -71,6 +71,15 @@
     "file": "entries/pages/admin/_page.svelte.js",
     "name": "entries/pages/admin/_page.svelte",
     "src": "src/frontend/src/routes/admin/+page.svelte",
+    "isEntry": true,
+    "imports": [
+      "_index.js"
+    ]
+  },
+  "src/frontend/src/routes/fixture-event/+page.svelte": {
+    "file": "entries/pages/fixture-event/_page.svelte.js",
+    "name": "entries/pages/fixture-event/_page.svelte",
+    "src": "src/frontend/src/routes/fixture-event/+page.svelte",
     "isEntry": true,
     "imports": [
       "_index.js"

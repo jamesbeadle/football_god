@@ -609,8 +609,8 @@ actor Self {
     return oddsManager.getBettableLeagueFixtures(leagueId);
   };
 
-  public shared query func getBettableFixture(leagueId: FootballTypes.LeagueId, fixtureId: FootballTypes.FixtureId) : async Result.Result<[ResponseDTOs.MatchOddsDTO], T.Error> {
-    return oddsManager.getBettableFixture(leagueId, fixtureId);
+  public shared query func getMatchOdds(leagueId: FootballTypes.LeagueId, fixtureId: FootballTypes.FixtureId) : async Result.Result<ResponseDTOs.MatchOddsDTO, T.Error> {
+    return oddsManager.getMatchOdds(leagueId, fixtureId);
   };
 
   public shared ({ caller }) func placeBet(dto: RequestDTOs.SubmitBetslipDTO) : async Result.Result<BettingTypes.BetSlip, T.Error>{
