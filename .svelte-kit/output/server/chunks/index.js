@@ -4652,7 +4652,7 @@ const options = {
 		<div class="error">
 			<span class="status">` + status + '</span>\n			<div class="message">\n				<h1>' + message + "</h1>\n			</div>\n		</div>\n	</body>\n</html>\n"
   },
-  version_hash: "n7zkup"
+  version_hash: "1qjqoj9"
 };
 async function get_hooks() {
   return {};
@@ -5891,7 +5891,6 @@ class ClubService {
   }
   async getClubs(leagueId) {
     const result = await this.actor.getLeagueClubs(leagueId);
-    console.log(result);
     if (isError(result)) throw new Error("Failed to fetch clubs");
     return result.ok;
   }
@@ -5953,10 +5952,7 @@ class PlayerService {
     );
   }
   async getPlayers(leagueId) {
-    console.log("using actor to get players");
-    console.log(`league id is ${leagueId}`);
     const result = await this.actor.getLeaguePlayers(leagueId);
-    console.log(result);
     if (isError(result)) throw new Error("Failed to fetch players");
     return result.ok;
   }

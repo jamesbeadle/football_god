@@ -126,7 +126,7 @@ export class AdminService {
       applicationName,
       gameweek,
     );
-    
+
     if (isError(result)) throw new Error("Failed to pay weekly rewards");
   }
 }

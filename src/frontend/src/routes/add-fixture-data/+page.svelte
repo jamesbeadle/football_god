@@ -17,6 +17,7 @@
   import BadgeIcon from "$lib/icons/BadgeIcon.svelte";
   
   import { convertEvent, replacer } from "$lib/utils/helpers";
+    import SelectedPlayerList from "$lib/components/fixture-validation/selected-player-list.svelte";
   
   let clubs: ClubDTO[] = [];
   let players: PlayerDTO[] = [];
@@ -291,130 +292,7 @@
             <div class="w-1/6 px-4">Action</div>
           </div>
 
-          {#if activeTab === "home"}
-            {#each $selectedPlayers.filter((x) => x.clubId === fixture?.homeClubId) as player (player.id)}
-              <div
-                class="flex items-center p-2 justify-between py-4 border-b border-gray-700 cursor-pointer w-full"
-              >
-                <div class="w-1/6 px-4">
-                  {player.shirtNumber}
-                </div>
-                <div class="w-3/6 px-4">
-                  {`${
-                    player.firstName.length > 0
-                      ? player.firstName.charAt(0) + "."
-                      : ""
-                  } ${player.lastName}`}
-                </div>
-                <div class="w-1/6 px-4">
-                  Events:
-                  {$playerEventData?.length > 0 &&
-                  $playerEventData?.filter((e) => e.playerId === player.id)
-                    .length
-                    ? $playerEventData?.filter((e) => e.playerId === player.id)
-                        .length
-                    : 0}
-                </div>
-                <div class="w-1/6 px-4">
-                  <button
-                    on:click={() => handleRemovePlayer(player)}
-                    class="rounded brand-button px-3 sm:px-2 px-3 py-1 ml-1"
-                  >
-                    Remove Player
-                  </button>
-                </div>
-                <div class="w-1/6 px-4">
-                  <button
-                    on:click={() => handleEditPlayerEvents(player)}
-                    class="rounded brand-button px-3 sm:px-2 px-3 py-1 ml-1"
-                  >
-                    Update Events
-                  </button>
-                </div>
-              </div>
-            {/each}
-            {#if $selectedPlayers.filter((x) => x.clubId === fixture?.homeClubId).length == 0}
-              <p class="p-4">No players selected.</p>
-            {/if}
-          {/if}
-          {#if activeTab === "away"}
-            {#each $selectedPlayers.filter((x) => x.clubId === fixture?.awayClubId) as player (player.id)}
-              <div
-                class="flex items-center p-2 justify-between py-4 border-b border-gray-700 cursor-pointer w-full"
-              >
-                <div class="w-1/6 px-4">
-                  {`${
-                    player.firstName.length > 0
-                      ? player.firstName.charAt(0) + "."
-                      : ""
-                  } ${player.lastName}`}
-                </div>
-
-                {#if Object.keys(player.position)[0] == "Goalkeeper"}<div
-                    class="w-1/6 px-4"
-                  >
-                    GK
-                  </div>{/if}
-                {#if Object.keys(player.position)[0] == "Defender"}<div
-                    class="w-1/6 px-4"
-                  >
-                    DF
-                  </div>{/if}
-                {#if Object.keys(player.position)[0] == "Midfielder"}<div
-                    class="w-1/6 px-4"
-                  >
-                    MF
-                  </div>{/if}
-                {#if Object.keys(player.position)[0] == "Forward"}<div
-                    class="w-1/6 px-4"
-                  >
-                    FW
-                  </div>{/if}
-                <div class="w-1/6 px-4">
-                  Events:
-                  {$playerEventData?.length > 0 &&
-                  $playerEventData?.filter((e) => e.playerId === player.id)
-                    .length
-                    ? $playerEventData?.filter((e) => e.playerId === player.id)
-                        .length
-                    : 0}
-                </div>
-                <div class="w-1/6 px-4">
-                  {$playerEventData &&
-                  $playerEventData?.length > 0 &&
-                  $playerEventData?.find(
-                    (e) =>
-                      e.playerId === player.id && convertEvent(e.eventType) == 0
-                  )
-                    ? $playerEventData?.find((e) => e.playerId === player.id)
-                        ?.eventStartMinute
-                    : "-"}
-                </div>
-                <div class="w-1/6 px-4">
-                  {$playerEventData &&
-                  $playerEventData?.length > 0 &&
-                  $playerEventData?.find(
-                    (e) =>
-                      e.playerId === player.id && convertEvent(e.eventType) == 0
-                  )
-                    ? $playerEventData?.find((e) => e.playerId === player.id)
-                        ?.eventEndMinute
-                    : "-"}
-                </div>
-                <div class="w-1/6 px-4">
-                  <button
-                    on:click={() => handleEditPlayerEvents(player)}
-                    class="rounded brand-button px-3 sm:px-2 px-3 py-1 ml-1"
-                  >
-                    Update Events
-                  </button>
-                </div>
-              </div>
-            {/each}
-            {#if $selectedPlayers.filter((x) => x.clubId === fixture?.awayClubId).length == 0}
-              <p class="p-4">No players selected.</p>
-            {/if}
-          {/if}
+          <SelectedPlayerList view={activeTab} {selectedPlayers} fixture={fixture!} {playerEventData} {handleEditPlayerEvents} />
         </div>
         <div class="flex flex-row space-x-2 p-4 items-center justify-end">
           <button
