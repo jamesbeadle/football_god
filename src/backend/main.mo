@@ -574,8 +574,11 @@ actor Self {
       submitFixtureData : (dto : GovernanceDTOs.SubmitFixtureDataDTO) -> async Result.Result<(), T.Error>;
     };
     let _ = await data_canister.submitFixtureData(dto);
-    await settleBets(dto.fixtureId);
-    await oddsManager.recalculate(dto.leagueId);
+    
+    /* //TODO ADD IN
+    ignore settleBets(dto.fixtureId);
+    ignore oddsManager.recalculate(dto.leagueId);
+    */
     return;
   };
 
@@ -794,7 +797,7 @@ actor Self {
   };
 
   private func postUpgradeCallback() : async (){
-    await oddsManager.recalculate(1);
+    ignore oddsManager.recalculate(1);
   };
 
   /* Admin functions */
@@ -850,15 +853,16 @@ actor Self {
         let backend_canister = actor (Environment.OPENFPL_BACKEND_CANISTER_ID) : actor {
           snapshotManagers : () -> async Result.Result<(), T.Error>;
         };
-        return await backend_canister.snapshotManagers();
+        ignore backend_canister.snapshotManagers();
+        return #ok();
       };
       case "OpenWSL" {
         
         let backend_canister = actor (Environment.OPENWSL_BACKEND_CANISTER_ID) : actor {
           snapshotManagers : () -> async Result.Result<(), T.Error>;
         };
-        return await backend_canister.snapshotManagers();
-
+        ignore backend_canister.snapshotManagers();
+        return #ok();
       };
       case _ {
         return #err(#NotFound);
@@ -873,15 +877,16 @@ actor Self {
         let backend_canister = actor (Environment.OPENFPL_BACKEND_CANISTER_ID) : actor {
           calculateGameweekScores : () -> async Result.Result<(), T.Error>;
         };
-        return await backend_canister.calculateGameweekScores();
+        ignore backend_canister.calculateGameweekScores();
+        return #ok();
       };
       case "OpenWSL" {
         
         let backend_canister = actor (Environment.OPENWSL_BACKEND_CANISTER_ID) : actor {
           calculateGameweekScores : () -> async Result.Result<(), T.Error>;
         };
-        return await backend_canister.calculateGameweekScores();
-
+        ignore backend_canister.calculateGameweekScores();
+        return #ok();
       };
       case _ {
         return #err(#NotFound);
@@ -896,15 +901,16 @@ actor Self {
         let backend_canister = actor (Environment.OPENFPL_BACKEND_CANISTER_ID) : actor {
           calculateLeaderboards : () -> async Result.Result<(), T.Error>;
         };
-        return await backend_canister.calculateLeaderboards();
+        ignore backend_canister.calculateLeaderboards();
+        return #ok();
       };
       case "OpenWSL" {
         
         let backend_canister = actor (Environment.OPENWSL_BACKEND_CANISTER_ID) : actor {
           calculateLeaderboards : () -> async Result.Result<(), T.Error>;
         };
-        return await backend_canister.calculateLeaderboards();
-
+        ignore backend_canister.calculateLeaderboards();
+        return #ok();
       };
       case _ {
         return #err(#NotFound);
@@ -919,15 +925,16 @@ actor Self {
         let backend_canister = actor (Environment.OPENFPL_BACKEND_CANISTER_ID) : actor {
           calculateWeeklyRewards : (gameweek: FootballTypes.GameweekNumber) -> async Result.Result<(), T.Error>;
         };
-        return await backend_canister.calculateWeeklyRewards(gameweek);
+        ignore backend_canister.calculateWeeklyRewards(gameweek);
+        return #ok();
       };
       case "OpenWSL" {
         
         let backend_canister = actor (Environment.OPENWSL_BACKEND_CANISTER_ID) : actor {
           calculateWeeklyRewards : (gameweek: FootballTypes.GameweekNumber) -> async Result.Result<(), T.Error>;
         };
-        return await backend_canister.calculateWeeklyRewards(gameweek);
-
+        ignore backend_canister.calculateWeeklyRewards(gameweek);
+        return #ok();
       };
       case _ {
         return #err(#NotFound);
@@ -942,14 +949,16 @@ actor Self {
         let backend_canister = actor (Environment.OPENFPL_BACKEND_CANISTER_ID) : actor {
           payWeeklyRewards : (gameweek: FootballTypes.GameweekNumber) -> async Result.Result<(), T.Error>;
         };
-        return await backend_canister.payWeeklyRewards(gameweek);
+        ignore backend_canister.payWeeklyRewards(gameweek);
+        return #ok();
       };
       case "OpenWSL" {
         
         let backend_canister = actor (Environment.OPENWSL_BACKEND_CANISTER_ID) : actor {
           payWeeklyRewards : (gameweek: FootballTypes.GameweekNumber) -> async Result.Result<(), T.Error>;
         };
-        return await backend_canister.payWeeklyRewards(gameweek);
+        ignore backend_canister.payWeeklyRewards(gameweek);
+        return #ok();
       };
       case _ {
         return #err(#NotFound);
