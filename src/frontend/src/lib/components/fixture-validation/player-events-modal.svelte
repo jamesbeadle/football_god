@@ -45,13 +45,21 @@
     );
     selectedCard = cardEvent ? ("YellowCard" in cardEvent.eventType ? 1 : 2) : 0;
     cardMinute = cardEvent ? cardEvent.eventStartMinute : 0;
-
+    
     keeperSaves = $playerEventData
       .filter(event => "KeeperSave" in event.eventType && event.playerId == player.id)
       .length;
   });
   
   $: if ($playerEventData.length > 0) {
+        
+        appearanceStart = $playerEventData
+          .filter(event => "Appearance" in event.eventType && event.playerId == player.id)[0].eventStartMinute;
+
+        appearanceEnd = $playerEventData
+          .filter(event => "Appearance" in event.eventType && event.playerId == player.id)[0].eventEndMinute;
+
+        
         goalMinutes = $playerEventData
           .filter(event => "Goal" in event.eventType && event.playerId == player.id)
           .map(event => event.eventStartMinute);
@@ -77,7 +85,6 @@
 
   function addPlayerEvents() {
     let newEvents: PlayerEventData[] = [];
-
     newEvents.push({
       playerId: player.id,
       eventType: { Appearance: null },

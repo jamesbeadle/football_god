@@ -27,7 +27,6 @@
       await userStore.sync();
       await authStore.sync();
       principalId = $authStore.identity?.getPrincipal().toText() ?? "";
-      console.log($authStore.identity?.getPrincipal().toText());
       unsubscribeUserProfile = userStore.subscribe((value) => {
         if (!value) {
           return;

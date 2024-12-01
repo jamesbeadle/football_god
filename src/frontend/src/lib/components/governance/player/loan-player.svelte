@@ -36,10 +36,6 @@
 
   onMount(async () => {
     try {
-      console.log("mounting")
-      console.log(`selected player id ${selectedPlayerId}`)
-      console.log(`selected club id ${selectedClubId}`)
-      console.log(`selected league id ${selectedLeagueId}`)
       isLoading = true;
       leagues = await leagueStore.getLeagues();
       leaguesLoaded = true; 

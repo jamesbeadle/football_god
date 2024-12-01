@@ -23,10 +23,7 @@ export class PlayerService {
   }
 
   async getPlayers(leagueId: LeagueId): Promise<PlayerDTO[]> {
-    console.log("using actor to get players");
-    console.log(`league id is ${leagueId}`);
     const result = await this.actor.getLeaguePlayers(leagueId);
-    console.log(result);
     if (isError(result)) throw new Error("Failed to fetch players");
     return result.ok;
   }

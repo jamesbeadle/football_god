@@ -82,30 +82,20 @@
 
   function loadDraft(fixtureId: number) {
     try{
-      console.log("loading draft")
       const draftKey = `fixtureDraft_${fixtureId}`;
       const savedDraft = localStorage.getItem(draftKey);
-      console.log(savedDraft)
       if (savedDraft) {
       const draftData = JSON.parse(savedDraft);
 
       let selectedPlayersData: PlayerDTO[] = draftData.selectedPlayers;
-      console.log("selected players")
-      console.log(selectedPlayersData)
       if(selectedPlayersData && selectedPlayersData.length > 0){
         selectedPlayers.set(selectedPlayersData);
       }
 
       let draftEventData = draftData.playerEventData;
-      console.log("draft Event Data")
-      console.log(draftEventData)
       if (draftEventData) {
         playerEventData.set(draftEventData);
       }
-
-      console.log("set to");
-      console.log($selectedPlayers);
-      console.log($playerEventData);
 
       }
     } catch (error)  {
@@ -504,7 +494,7 @@
 {#if selectedTeam}
   <SelectPlayersModal
     visible={showPlayerSelectionModal}
-    {teamPlayers}
+    teamPlayers={$teamPlayers}
     {selectedTeam}
     closeModal={closeSelectPlayersModal}
     {selectedPlayers}

@@ -66,8 +66,6 @@
   }
 
   async function getCurrentPlayers() {
-    console.log("getting current players")
-    console.log(`for league id ${selectedLeagueId}`)
     currentPlayers = (await playerStore.getPlayers(selectedLeagueId)).filter(x => x.clubId == selectedClubId);
   }
 

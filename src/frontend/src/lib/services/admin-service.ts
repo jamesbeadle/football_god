@@ -50,7 +50,6 @@ export class AdminService {
     );
 
     const result = await identityActor.getSystemState(applicationName);
-    console.log(result);
     if (isError(result)) throw new Error("Failed to get system state");
     return result.ok;
   }
@@ -127,7 +126,7 @@ export class AdminService {
       applicationName,
       gameweek,
     );
-    console.log(result);
+    
     if (isError(result)) throw new Error("Failed to pay weekly rewards");
   }
 }

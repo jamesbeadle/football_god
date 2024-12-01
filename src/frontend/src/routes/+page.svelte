@@ -64,7 +64,6 @@
   }
 
   const toggleLeague = async (leagueId: LeagueId) => {
-    console.log(`toggling league ${leagueId}`)
     if (expandedLeagues[leagueId]) {
       expandedLeagues = { ...expandedLeagues, [leagueId]: false };
     } else {
@@ -73,8 +72,6 @@
         await fetchLeagueData(leagueId);
       }
     }
-    console.log("expandedLeagues")
-    console.log(expandedLeagues)
   };
 
   function loadFixtureEvent(leagueId: LeagueId, fixtureId: FixtureId){

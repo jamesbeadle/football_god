@@ -60,7 +60,6 @@
       leagueId: selectedLeagueId,
       clubId: selectedClubId
     };
-    console.log(dto)
     await clubStore.removeClub(dto);
 
     closeModal();

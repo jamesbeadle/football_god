@@ -39,7 +39,6 @@
       const highestGameweek = fixtures.reduce((max, fixture) => Math.max(max, fixture.gameweek), 0);
       gameweeks = Array.from({ length: Number(highestGameweek) }, (_, i) => i + 1);
 
-      console.log(fixtures)
       selectedGameweek = fixtures.find(fixture => Object.keys(fixture.status)[0] === 'Unplayed')?.gameweek ?? 1;
       filterFixtures();
     } catch (error) {

@@ -6,7 +6,7 @@
     import Modal from "../shared/modal.svelte";
   
   export let selectedTeam: ClubDTO;
-  export let teamPlayers: Writable<PlayerDTO[]>;
+  export let teamPlayers: PlayerDTO[];
   export let selectedPlayers: Writable<PlayerDTO[]>;
   export let playerEventData: Writable<PlayerEventData[]>;
   export let visible = false;
@@ -15,7 +15,7 @@
     const input = event.target as HTMLInputElement;
 
     let allSelectedPlayers = $selectedPlayers;
-    let allTeamPlayers = $teamPlayers;
+    let allTeamPlayers = teamPlayers;
     if (input.checked) {
       const playerToAdd = allTeamPlayers.find((x) => x.id === player.id);
       if (playerToAdd && !allSelectedPlayers.some((x) => x.id === player.id)) {
@@ -48,10 +48,10 @@
       <p class="text-center">{selectedTeam?.friendlyName}</p>
     </div>
     <div class="my-2 grid grid-cols-1 sm:grid-cols-2 gap-x-2">
-      {#each $teamPlayers.sort((a, b) => convertPlayerPosition(a.position) - convertPlayerPosition(b.position)) as player}
+      {#each teamPlayers.sort((a, b) => convertPlayerPosition(a.position) - convertPlayerPosition(b.position)) as player}
         {@const selected = $selectedPlayers.some((p) => p.id === player.id)}
         <div
-          class="flex flex-row justify-between items-center p-2 border border-gray-600"
+          class="flex flex-row justify-between items-center p-2 border border-gray-600 text-xs"
         >
           <div class="form-checkbox w-1/12">
             <label class="inline-flex items-center">
@@ -72,12 +72,6 @@
               {#if Object.keys(player.position)[0] == "Midfielder"}MF{/if}
               {#if Object.keys(player.position)[0] == "Forward"}FW{/if}
             </span>
-          </div>
-          <div class="flex w-2/12 justify-center">
-            <svelte:component
-              this={getFlagComponent(player.nationality)}
-              class="w-6 mr-1"
-            />
           </div>
           <div class="flex flex-grow">
             <span>

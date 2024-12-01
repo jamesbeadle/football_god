@@ -21,7 +21,6 @@ export class ClubService {
 
   async getClubs(leagueId: LeagueId): Promise<ClubDTO[]> {
     const result = await this.actor.getLeagueClubs(leagueId);
-    console.log(result);
     if (isError(result)) throw new Error("Failed to fetch clubs");
     return result.ok;
   }

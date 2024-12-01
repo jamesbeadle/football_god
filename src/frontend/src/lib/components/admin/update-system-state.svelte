@@ -60,8 +60,6 @@
             default: 
               return;
         }
-        console.log("applicationName")
-        console.log(applicationName)
         await adminStore.updateSystemState(applicationName, dto);
 
         await closeModal();
@@ -81,18 +79,16 @@
     async function loadSystemState() {
       let applicationName = "";
 
-        switch(selectedApplicationId){
-            case 1:
-              applicationName = "OpenFPL";
-              break;
-            case 2:
-              applicationName = "OpenWSL";
-              break;
-            default: 
-              return;
-        }
-        console.log("applicationName")
-        console.log(applicationName)
+      switch(selectedApplicationId){
+          case 1:
+            applicationName = "OpenFPL";
+            break;
+          case 2:
+            applicationName = "OpenWSL";
+            break;
+          default: 
+            return;
+      }
 
       let currentSystemState = await adminStore.getSystemState(applicationName);
       if(!currentSystemState){
