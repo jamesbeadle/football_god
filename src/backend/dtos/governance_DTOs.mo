@@ -68,7 +68,6 @@ module GovernanceDTOs {
 
   public type SetFreeAgentDTO = {
     leagueId: FootballTypes.LeagueId;
-    clubId: FootballTypes.ClubId;
     playerId : FootballTypes.ClubId;
   };
 
@@ -109,6 +108,7 @@ module GovernanceDTOs {
   };
 
   public type UnretirePlayerDTO = {
+    leagueId: FootballTypes.LeagueId;
     playerId : FootballTypes.ClubId;
   };
 

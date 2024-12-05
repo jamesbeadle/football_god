@@ -63,7 +63,6 @@
     isLoading = true;
     let dto: SetFreeAgentDTO = {
       leagueId: selectedLeagueId,
-      clubId: selectedClubId,
       playerId: selectedPlayerId
     };
     await playerStore.setFreeAgent(selectedLeagueId, dto);

@@ -805,7 +805,9 @@
             case (null) {
               return #err(#NotFound);
             };
-            case (?foundPlayer) {};
+            case (?foundPlayer) {
+              //TODO
+            };
           };
 
           if (dto.newClubId > 0) {
@@ -1485,7 +1487,7 @@
       assert callerAllowed(caller);
 
       if(dto.newClubId == 0 and dto.newLeagueId == 0){
-        movePlayerToFreeAgents(leagueId, dto.clubId, dto.playerId);
+        movePlayerToFreeAgents(leagueId, dto.playerId);
         let _ = updateDataHashes(leagueId, "players");
         return #ok();
       };
@@ -1496,7 +1498,7 @@
         return #ok();
       };
 
-      movePlayerToLeague(leagueId, dto.clubId, dto.newLeagueId, dto.newClubId, dto.playerId, dto.newShirtNumber);
+      movePlayerToLeague(leagueId, dto.newLeagueId, dto.newClubId, dto.playerId, dto.newShirtNumber);
       let _ = updateDataHashes(leagueId, "players");
       ignore notifyAppsOfTransfer(leagueId, dto.playerId);
 
@@ -1506,7 +1508,7 @@
     public shared ( {caller} ) func setFreeAgent(leagueId: FootballTypes.LeagueId, dto : GovernanceDTOs.SetFreeAgentDTO) : async Result.Result<(), T.Error>{
       assert callerAllowed(caller);
 
-      movePlayerToFreeAgents(leagueId, dto.clubId, dto.playerId);
+      movePlayerToFreeAgents(leagueId, dto.playerId);
       let _ = updateDataHashes(leagueId, "players");
       ignore notifyAppsOfTransfer(leagueId, dto.playerId);
       
@@ -1516,11 +1518,60 @@
     public shared ( {caller} ) func recallPlayer(leagueId: FootballTypes.LeagueId, dto : GovernanceDTOs.RecallPlayerDTO) : async Result.Result<(), T.Error>{
       assert callerAllowed(caller);
       assert leagueExists(leagueId);
-      
-      //TODO: recall from loan
-        //call loan expired callback
+
+      leaguePlayers := Array.map<(FootballTypes.LeagueId, [FootballTypes.Player]), (FootballTypes.LeagueId, [FootballTypes.Player])>(leaguePlayers, 
+        func(leaguePlayersEntry: (FootballTypes.LeagueId, [FootballTypes.Player])){
+          if(leaguePlayersEntry.0 == leagueId){
+
+            let existingPlayer = Array.find<FootballTypes.Player>(leaguePlayersEntry.1, func(player: FootballTypes.Player) : Bool{
+              player.id == dto.playerId
+            });
+
+            let updatedPlayersBuffer = Buffer.fromArray<FootballTypes.Player>(Array.filter<FootballTypes.Player>(leaguePlayersEntry.1, func(player: FootballTypes.Player) : Bool{
+              player.id != dto.playerId
+            }));
+
+            switch(existingPlayer){
+              case (?currentPlayer){
+                let updatedPlayer: FootballTypes.Player = {
+                  id = currentPlayer.id;
+                  leagueId = currentPlayer.leagueId;
+                  clubId = currentPlayer.clubId;
+                  position = currentPlayer.position;
+                  firstName = currentPlayer.firstName;
+                  lastName = currentPlayer.lastName;
+                  shirtNumber = currentPlayer.shirtNumber;
+                  valueQuarterMillions = currentPlayer.valueQuarterMillions;
+                  dateOfBirth = currentPlayer.dateOfBirth;
+                  nationality = currentPlayer.nationality;
+                  seasons = currentPlayer.seasons;
+                  valueHistory = currentPlayer.valueHistory;
+                  status = currentPlayer.status;
+                  parentLeagueId = currentPlayer.parentLeagueId;
+                  parentClubId = currentPlayer.parentClubId;
+                  currentLoanEndDate = Time.now();
+                  latestInjuryEndDate = currentPlayer.latestInjuryEndDate;
+                  injuryHistory = currentPlayer.injuryHistory;
+                  retirementDate = currentPlayer.retirementDate;
+                  transferHistory = currentPlayer.transferHistory;
+                  gender = currentPlayer.gender;
+                };
+                updatedPlayersBuffer.add(updatedPlayer);
+
+              };
+              case (null){
+
+              }
+            };
+
+            return (leaguePlayersEntry.0, Buffer.toArray(updatedPlayersBuffer));
+          } else {
+            return leaguePlayersEntry;
+          }
+      });
+      await loanExpiredCallback();
       ignore notifyAppsOfTransfer(leagueId, dto.playerId);
-      return #err(#NotFound);
+      return #ok();
     };
 
     public shared ( {caller} ) func createPlayer(leagueId: FootballTypes.LeagueId, dto : GovernanceDTOs.CreatePlayerDTO) : async Result.Result<(), T.Error>{
@@ -1720,92 +1771,107 @@
 
     public shared ( {caller} ) func retirePlayer(leagueId: FootballTypes.LeagueId, dto : GovernanceDTOs.RetirePlayerDTO) : async Result.Result<(), T.Error>{
       assert callerAllowed(caller);
+      
+      leaguePlayers := Array.map<(FootballTypes.LeagueId, [FootballTypes.Player]), (FootballTypes.LeagueId, [FootballTypes.Player])>(leaguePlayers, func(leaguePlayersEntry: (FootballTypes.LeagueId, [FootballTypes.Player])){
+        if(leaguePlayersEntry.0 == leagueId){
 
-      //TODO (KELLY)
-      /*
-      assert callerAllowed(caller);
-      let playerToRetire = List.find<FootballTypes.Player>(players, func(p : FootballTypes.Player) : Bool { p.id == retirePlayerDTO.playerId });
-      switch (playerToRetire) {
-        case (null) {};
-        case (?p) {
-          players := List.map<T.Player, FootballTypes.Player>(
-            players,
-            func(currentPlayer : FootballTypes.Player) : FootballTypes.Player {
-              if (currentPlayer.id == retirePlayerDTO.playerId) {
-                return {
-                  id = p.id;
-                  clubId = p.clubId;
-                  position = p.position;
-                  firstName = p.firstName;
-                  lastName = p.lastName;
-                  shirtNumber = p.shirtNumber;
-                  valueQuarterMillions = p.valueQuarterMillions;
-                  dateOfBirth = p.dateOfBirth;
-                  nationality = p.nationality;
-                  seasons = p.seasons;
-                  valueHistory = p.valueHistory;
-                  status = #Retired;
-                  parentClubId = p.parentClubId;
-                  currentLoanEndDate = p.currentLoanEndDate;
-                  latestInjuryEndDate = p.latestInjuryEndDate;
-                  injuryHistory = p.injuryHistory;
-                  retirementDate = retirePlayerDTO.retirementDate;
-                  transferHistory = p.transferHistory;
-                };
-              } else {
-                return currentPlayer;
-              };
-            },
-          );
-        };
-      };
+          let retiredLeague = Array.find<(FootballTypes.LeagueId, [FootballTypes.Player])>(retiredLeaguePlayers, func(entry: (FootballTypes.LeagueId, [FootballTypes.Player])) : Bool {
+            entry.0 == leagueId;
+          });
+
+          if(Option.isNull(retiredLeague)){
+            let retiredLeaguesBuffer = Buffer.fromArray<(FootballTypes.LeagueId, [FootballTypes.Player])>(retiredLeaguePlayers);
+            retiredLeaguesBuffer.add(leagueId, []);
+            retiredLeaguePlayers := Buffer.toArray(retiredLeaguesBuffer);
+          };
+
+          retiredLeaguePlayers := Array.map<(FootballTypes.LeagueId, [FootballTypes.Player]), (FootballTypes.LeagueId, [FootballTypes.Player])>(retiredLeaguePlayers, func(retiredPlayersEntry: (FootballTypes.LeagueId, [FootballTypes.Player])){
+            return retiredPlayersEntry;
+          });
+
+          return (leaguePlayersEntry.0, Array.filter<FootballTypes.Player>(leaguePlayersEntry.1, func(player: FootballTypes.Player){
+            player.id != dto.playerId;
+          }));
+        } else {
+          return leaguePlayersEntry;
+        };        
+      });
       let _ = updateDataHashes(leagueId, "players");
-      */
-      //TODO notify apps of retirement
-      return #err(#NotFound);
+      ignore notifyAppsOfTransfer(leagueId, dto.playerId);
+      return #ok();
     };
 
     public shared ( {caller} ) func unretirePlayer(dto : GovernanceDTOs.UnretirePlayerDTO) : async Result.Result<(), T.Error>{
-      //TODO (KELLY)
-      /* 
       assert callerAllowed(caller);
-      let playerToUnretire = List.find<FootballTypes.Player>(players, func(p : FootballTypes.Player) : Bool { p.id == unretirePlayerDTO.playerId });
-      switch (playerToUnretire) {
-        case (null) {};
-        case (?p) {
-          players := List.map<T.Player, FootballTypes.Player>(
-            players,
-            func(currentPlayer : FootballTypes.Player) : FootballTypes.Player {
-              if (currentPlayer.id == unretirePlayerDTO.playerId) {
-                return {
-                  id = p.id;
-                  clubId = p.clubId;
-                  position = p.position;
-                  firstName = p.firstName;
-                  lastName = p.lastName;
-                  shirtNumber = p.shirtNumber;
-                  valueQuarterMillions = p.valueQuarterMillions;
-                  dateOfBirth = p.dateOfBirth;
-                  nationality = p.nationality;
-                  seasons = p.seasons;
-                  valueHistory = p.valueHistory;
-                  status = #Active;
-                  parentClubId = p.parentClubId;
-                  currentLoanEndDate = p.currentLoanEndDate;
-                  latestInjuryEndDate = p.latestInjuryEndDate;
-                  injuryHistory = p.injuryHistory;
-                  retirementDate = 0;
-                  transferHistory = p.transferHistory;
+
+      let leagueRetiredPlayers = Array.find<(FootballTypes.LeagueId, [FootballTypes.Player])>(retiredLeaguePlayers, func(entry: (FootballTypes.LeagueId, [FootballTypes.Player])) : Bool {
+        entry.0 == dto.leagueId;
+      });
+
+      switch(leagueRetiredPlayers){
+        case (?foundPlayers){
+          
+          let playerResult = Array.find<FootballTypes.Player>(foundPlayers.1, func(player: FootballTypes.Player) : Bool {
+            player.id == dto.playerId;
+          });
+
+          switch(playerResult){
+            case (?foundPlayer){
+
+              retiredLeaguePlayers := Array.map<(FootballTypes.LeagueId, [FootballTypes.Player]), (FootballTypes.LeagueId, [FootballTypes.Player])>(retiredLeaguePlayers, func(leaguePlayersEntry: (FootballTypes.LeagueId, [FootballTypes.Player])){
+                if(leaguePlayersEntry.0 == foundPlayer.leagueId){
+              
+                  return (leaguePlayersEntry.0, Array.filter<FootballTypes.Player>(leaguePlayersEntry.1, func(player: FootballTypes.Player){
+                    player.id == dto.playerId;
+                  }));
+                } else {
+                  return leaguePlayersEntry;
                 };
-              } else {
-                return currentPlayer;
-              };
-            },
-          );
+              });
+              
+              leaguePlayers := Array.map<(FootballTypes.LeagueId, [FootballTypes.Player]), (FootballTypes.LeagueId, [FootballTypes.Player])>(leaguePlayers, func(leaguePlayersEntry: (FootballTypes.LeagueId, [FootballTypes.Player])){
+                if(leaguePlayersEntry.0 == foundPlayer.leagueId){
+                  let leaguePlayersBuffer = Buffer.fromArray<FootballTypes.Player>(leaguePlayersEntry.1);
+                  leaguePlayersBuffer.add({
+                    clubId = foundPlayer.clubId;
+                    currentLoanEndDate = 0;
+                    dateOfBirth = foundPlayer.dateOfBirth;
+                    firstName = foundPlayer.firstName;
+                    gender = foundPlayer.gender;
+                    id = foundPlayer.id;
+                    injuryHistory = foundPlayer.injuryHistory;
+                    lastName = foundPlayer.lastName;
+                    latestInjuryEndDate = foundPlayer.latestInjuryEndDate;
+                    leagueId = foundPlayer.leagueId;
+                    nationality = foundPlayer.nationality;
+                    parentClubId = 0;
+                    parentLeagueId = 0;
+                    position = foundPlayer.position;
+                    retirementDate = 0;
+                    seasons = foundPlayer.seasons;
+                    shirtNumber = foundPlayer.shirtNumber;
+                    status = foundPlayer.status;
+                    transferHistory = foundPlayer.transferHistory;
+                    valueHistory = foundPlayer.valueHistory;
+                    valueQuarterMillions = foundPlayer.valueQuarterMillions;
+                  });
+                  return (leaguePlayersEntry.0, Buffer.toArray(leaguePlayersBuffer));
+                } else {
+                  return leaguePlayersEntry;
+                };                
+              });
+
+              let _ = updateDataHashes(dto.leagueId, "players");
+              return #ok();
+            };
+            case (null){
+
+            };
+          };
         };
+        case (null){};
       };
-      let _ = updateDataHashes(leagueId, "players");
-      */
+
       return #err(#NotFound);
     };
 
@@ -1846,6 +1912,8 @@
     };
 
     public shared ({ caller }) func updateLeague(dto : GovernanceDTOs.UpdateLeagueDTO) : async Result.Result<(), T.Error> {
+      assert callerAllowed(caller);
+      
       let league = Array.find<FootballTypes.League>(leagues, func(currentLeague: FootballTypes.League) : Bool {
         currentLeague.id == dto.leagueId;
       });
@@ -1987,6 +2055,8 @@
         //When a fixture time is changed check gameweek times
 
     public shared ({ caller }) func addInitialFixtures() : async () {
+      assert callerAllowed(caller);
+
       //TODO
       return;
       //TODO: Make sure timer to roll gameweek over called:
@@ -2119,6 +2189,8 @@
     };
 
     public shared ({ caller }) func promoteClub(leagueId: FootballTypes.LeagueId, dto : GovernanceDTOs.PromoteClubDTO) : async Result.Result<(), T.Error> {
+      assert callerAllowed(caller);
+
       //TODO (KELLY)
       /*
       assert callerAllowed(caller);
@@ -2174,11 +2246,15 @@
     };
 
     public shared ({ caller }) func relegateClub(leagueId: FootballTypes.LeagueId, dto : GovernanceDTOs.RelegateClubDTO) : async Result.Result<(), T.Error> {
+      assert callerAllowed(caller);
+
       //TODO (KELLY)
       return #err(#NotFound);
     };
 
     public shared ({ caller }) func updateClub(updateClubDTO : GovernanceDTOs.UpdateClubDTO) : async Result.Result<(), T.Error> {
+      assert callerAllowed(caller);
+
       //TODO (KELLY)
       /*
       assert callerAllowed(caller);
@@ -2246,44 +2322,6 @@
       return #err(#NotFound);
     };
 
-    //TODO: The below functions would normally be called by timers or other functions from the OpenFPL and OpenWSL games
-
-    public shared ( {caller} ) func createNewSeason(leagueStatus : FootballTypes.LeagueStatus) {
-      //TODO (KELLY)
-      /*
-      assert callerAllowed(caller);
-      let existingSeason = List.find(
-        seasons,
-        func(season : FootballTypes.Season) : Bool {
-          return season.year == systemState.calculationSeasonId + 1;
-        },
-      );
-
-      let currentSeason = List.find(
-        seasons,
-        func(season : FootballTypes.Season) : Bool {
-          return season.year == systemState.calculationSeasonId;
-        },
-      );
-      switch (existingSeason) {
-        case (null) {};
-        case (?foundSeason) {
-          let seasonName = Nat16.toText(foundSeason.year) # subText(Nat16.toText(foundSeason.year + 1), 2, 3);
-          let newSeason : FootballTypes.Season = {
-            id = nextSeasonId;
-            name = seasonName;
-            year = foundSeason.year + 1;
-            fixtures = List.fromArray([]);
-            postponedFixtures = List.nil<FootballTypes.Fixture>();
-          };
-          seasons := List.append<T.Season>(seasons, List.make(newSeason));
-          nextSeasonId := nextSeasonId;
-        };
-      };
-      let _ = updateDataHashes(leagueId, "seasons");
-      */
-    };
-
     //TODO SHOULD BE PRIVATE IN HERE
       //WHERE IS THIS BEING SET
 
@@ -2292,6 +2330,7 @@
     };
 
     public shared ({ caller }) func getTimers() {
+      assert callerAllowed(caller);
       //how can i view the timers that are set?
     
     };
@@ -2986,7 +3025,7 @@
       }
     };
 
-    private func movePlayerToFreeAgents(leagueId: FootballTypes.LeagueId, clubId: FootballTypes.ClubId, playerId: FootballTypes.PlayerId){
+    private func movePlayerToFreeAgents(leagueId: FootballTypes.LeagueId, playerId: FootballTypes.PlayerId){
 
       let playerToMove = getPlayer(leagueId, playerId);
 
@@ -3095,7 +3134,7 @@
       });
     };
 
-    private func movePlayerToLeague(currentLeagueId: FootballTypes.LeagueId, currentClubId: FootballTypes.ClubId, newLeagueId: FootballTypes.LeagueId, newClubId: FootballTypes.ClubId, playerId: FootballTypes.PlayerId, shirtNumber: Nat8){
+    private func movePlayerToLeague(currentLeagueId: FootballTypes.LeagueId, newLeagueId: FootballTypes.LeagueId, newClubId: FootballTypes.ClubId, playerId: FootballTypes.PlayerId, shirtNumber: Nat8){
       
       let playerToMove = getPlayer(currentLeagueId, playerId);
 
@@ -3115,9 +3154,6 @@
               }
             }
           );
-
-          
-
 
           leaguePlayers := Array.map<(FootballTypes.LeagueId, [FootballTypes.Player]), (FootballTypes.LeagueId, [FootballTypes.Player])>(leaguePlayers, 
             func(leagueWithPlayers: (FootballTypes.LeagueId, [FootballTypes.Player]))
@@ -3168,11 +3204,6 @@
               }
             }
           );
-
-          //TODO: Notify app of player transfers, this has not been happening
-          
-
-
         };
         case (null){ }
       };
@@ -3786,7 +3817,7 @@
     };
 
     private func loanExpiredCallback() : async (){
-      
+
       //when the load timer ends
         //find any player who has a current loan end date greater than now and a parent club id > 0
 

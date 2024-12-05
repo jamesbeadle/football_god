@@ -4652,7 +4652,7 @@ const options = {
 		<div class="error">
 			<span class="status">` + status + '</span>\n			<div class="message">\n				<h1>' + message + "</h1>\n			</div>\n		</div>\n	</body>\n</html>\n"
   },
-  version_hash: "pvrkph"
+  version_hash: "5seexn"
 };
 async function get_hooks() {
   return {};
@@ -5015,7 +5015,6 @@ const idlFactory = ({ IDL }) => {
     "gameweek": GameweekNumber
   });
   const SetFreeAgentDTO = IDL.Record({
-    "clubId": ClubId,
     "playerId": ClubId,
     "leagueId": LeagueId
   });
@@ -5039,7 +5038,10 @@ const idlFactory = ({ IDL }) => {
     "newClubId": ClubId,
     "leagueId": LeagueId
   });
-  const UnretirePlayerDTO = IDL.Record({ "playerId": ClubId });
+  const UnretirePlayerDTO = IDL.Record({
+    "playerId": ClubId,
+    "leagueId": LeagueId
+  });
   const UpdateClubDTO = IDL.Record({
     "clubId": ClubId,
     "secondaryColourHex": IDL.Text,
