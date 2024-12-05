@@ -6,5 +6,8 @@
   "frontend": {
     "ic": "43loz-3yaaa-aaaal-qbxrq-cai",
     "local": "43loz-3yaaa-aaaal-qbxrq-cai"
+  },
+  "data_canister": {
+    "ic": "52fzd-2aaaa-aaaal-qmzsa-cai"
   }
 }

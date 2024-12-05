@@ -12,6 +12,12 @@
       },
       "source": ["build/"],
       "type": "assets"
+    },
+    "data_canister": {
+      "dependencies": [],
+      "main": "src/data_canister/main.mo",
+      "type": "motoko",
+      "optimize": "cycles"
     }
   },
   "defaults": {

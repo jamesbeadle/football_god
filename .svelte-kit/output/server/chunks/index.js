@@ -4652,7 +4652,7 @@ const options = {
 		<div class="error">
 			<span class="status">` + status + '</span>\n			<div class="message">\n				<h1>' + message + "</h1>\n			</div>\n		</div>\n	</body>\n</html>\n"
   },
-  version_hash: "1qjqoj9"
+  version_hash: "pvrkph"
 };
 async function get_hooks() {
   return {};
@@ -4871,6 +4871,7 @@ const idlFactory = ({ IDL }) => {
     "NotAllowed": IDL.Null,
     "NotFound": IDL.Null,
     "NotAuthorized": IDL.Null,
+    "InvalidData": IDL.Null,
     "AlreadyExists": IDL.Null,
     "CanisterCreateError": IDL.Null,
     "CanisterFull": IDL.Null
@@ -5347,18 +5348,9 @@ const idlFactory = ({ IDL }) => {
     "year": IDL.Nat16
   });
   const Result_4 = IDL.Variant({ "ok": IDL.Vec(SeasonDTO), "err": Error2 });
-  const CalendarMonth = IDL.Nat8;
   const SystemStateDTO = IDL.Record({
-    "pickTeamSeasonId": SeasonId,
-    "calculationGameweek": GameweekNumber,
-    "transferWindowActive": IDL.Bool,
-    "pickTeamMonth": CalendarMonth,
-    "pickTeamGameweek": GameweekNumber,
     "version": IDL.Text,
-    "calculationMonth": CalendarMonth,
-    "calculationSeasonId": SeasonId,
-    "onHold": IDL.Bool,
-    "seasonActive": IDL.Bool
+    "onHold": IDL.Bool
   });
   const Result_3 = IDL.Variant({ "ok": SystemStateDTO, "err": Error2 });
   const Result_2 = IDL.Variant({ "ok": IDL.Bool, "err": Error2 });
@@ -5386,6 +5378,7 @@ const idlFactory = ({ IDL }) => {
     "profilePicture": IDL.Vec(IDL.Nat8),
     "principalId": PrincipalId
   });
+  const CalendarMonth = IDL.Nat8;
   const UpdateSystemStateDTO = IDL.Record({
     "pickTeamSeasonId": SeasonId,
     "calculationGameweek": GameweekNumber,
@@ -5811,7 +5804,7 @@ function Layout($$payload, $$props) {
 function Local_spinner($$payload) {
   $$payload.out += `<div class="widget svelte-1eu5871"><div class="widget-spinner svelte-1eu5871"></div></div>`;
 }
-var define_process_env_default$2 = { BACKEND_CANISTER_ID: "44kin-waaaa-aaaal-qbxra-cai", FRONTEND_CANISTER_ID: "43loz-3yaaa-aaaal-qbxrq-cai", DFX_NETWORK: "ic" };
+var define_process_env_default$2 = { BACKEND_CANISTER_ID: "44kin-waaaa-aaaal-qbxra-cai", FRONTEND_CANISTER_ID: "43loz-3yaaa-aaaal-qbxrq-cai", DATA_CANISTER_CANISTER_ID: "52fzd-2aaaa-aaaal-qmzsa-cai", DFX_NETWORK: "ic" };
 class FixtureService {
   actor;
   constructor() {
@@ -5880,7 +5873,7 @@ function createFixtureStore() {
   };
 }
 const fixtureStore = createFixtureStore();
-var define_process_env_default$1 = { BACKEND_CANISTER_ID: "44kin-waaaa-aaaal-qbxra-cai", FRONTEND_CANISTER_ID: "43loz-3yaaa-aaaal-qbxrq-cai", DFX_NETWORK: "ic" };
+var define_process_env_default$1 = { BACKEND_CANISTER_ID: "44kin-waaaa-aaaal-qbxra-cai", FRONTEND_CANISTER_ID: "43loz-3yaaa-aaaal-qbxrq-cai", DATA_CANISTER_CANISTER_ID: "52fzd-2aaaa-aaaal-qmzsa-cai", DFX_NETWORK: "ic" };
 class ClubService {
   actor;
   constructor() {
@@ -5942,7 +5935,7 @@ function _page$8($$payload, $$props) {
   });
   pop();
 }
-var define_process_env_default = { BACKEND_CANISTER_ID: "44kin-waaaa-aaaal-qbxra-cai", FRONTEND_CANISTER_ID: "43loz-3yaaa-aaaal-qbxrq-cai", DFX_NETWORK: "ic" };
+var define_process_env_default = { BACKEND_CANISTER_ID: "44kin-waaaa-aaaal-qbxra-cai", FRONTEND_CANISTER_ID: "43loz-3yaaa-aaaal-qbxrq-cai", DATA_CANISTER_CANISTER_ID: "52fzd-2aaaa-aaaal-qmzsa-cai", DFX_NETWORK: "ic" };
 class PlayerService {
   actor;
   constructor() {

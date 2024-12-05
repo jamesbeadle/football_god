@@ -53,12 +53,12 @@
   
   $: if ($playerEventData.length > 0) {
         
-        appearanceStart = $playerEventData
-          .filter(event => "Appearance" in event.eventType && event.playerId == player.id)[0].eventStartMinute;
-
-        appearanceEnd = $playerEventData
-          .filter(event => "Appearance" in event.eventType && event.playerId == player.id)[0].eventEndMinute;
-
+        let appearanceEvent = $playerEventData.filter(event => "Appearance" in event.eventType && event.playerId == player.id)[0];
+        
+        if(appearanceEvent){
+          appearanceStart = appearanceEvent.eventStartMinute;
+          appearanceEnd = appearanceEvent.eventEndMinute;
+        }
         
         goalMinutes = $playerEventData
           .filter(event => "Goal" in event.eventType && event.playerId == player.id)

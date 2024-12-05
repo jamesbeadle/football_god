@@ -115,4 +115,14 @@ module RequestDTOs {
     allTimeMonthlyHighScorePool : Nat64;
     allTimeSeasonHighScorePool : Nat64;
   };
+
+  public type GetPlayerDetailsDTO = {
+    playerId : FootballTypes.ClubId;
+    seasonId : FootballTypes.SeasonId;
+  };
+
+  public type GameweekFiltersDTO = {
+    seasonId : FootballTypes.SeasonId;
+    gameweek : FootballTypes.GameweekNumber;
+  };
 };

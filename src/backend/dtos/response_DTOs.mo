@@ -5,16 +5,17 @@ import BettingTypes "../types/betting_types";
 module ResponseDTOs {
 
   public type SystemStateDTO = {
-    calculationGameweek : FootballTypes.GameweekNumber;
-    calculationMonth : Base.CalendarMonth;
-    calculationSeasonId : FootballTypes.SeasonId;
-    pickTeamGameweek : FootballTypes.GameweekNumber;
-    pickTeamSeasonId : FootballTypes.SeasonId;
-    pickTeamMonth : Base.CalendarMonth;
-    transferWindowActive : Bool;
     onHold : Bool;
-    seasonActive: Bool;
     version: Text;
+  };
+
+  public type LeagueStatusDTO = {
+    leagueId: FootballTypes.LeagueId;
+    activeSeasonId: FootballTypes.SeasonId;
+    activeGameweek: FootballTypes.GameweekNumber;
+    lastConfirmedGameweek: FootballTypes.GameweekNumber;
+    transferWindowActive: Bool;
+    seasonActive : Bool;
   };
 
   public type ProfileDTO = {
