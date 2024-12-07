@@ -14,6 +14,7 @@
   import Time "mo:base/Time";
   import Timer "mo:base/Timer";
   import TrieMap "mo:base/TrieMap";
+import Debug "mo:base/Debug";
   
   import Base "../backend/types/base_types";
   import FootballTypes "../backend/types/football_types";
@@ -62,7 +63,9 @@
         activeSeasonId = 1;
         lastConfirmedGameweek = 13;
         leagueId = 1;
-        activeGameweek = 14;
+        unplayedGameweek = 15;
+        activeGameweek = 0;
+        completedGameweek = 14;
         activeMonth = 12;
         seasonActive = true;
         transferWindowActive = false;
@@ -74,10 +77,11 @@
       },
       {
         activeSeasonId = 1;
-        lastConfirmedGameweek = 1;
+        activeMonth = 1;
         leagueId = 1;
-        activeGameweek = 1;
-        activeMonth = 12;
+        unplayedGameweek = 1;
+        activeGameweek = 0;
+        completedGameweek = 0;
         seasonActive = false;
         transferWindowActive = false;
         totalGameweeks = 22;
@@ -92,7 +96,6 @@
     private stable var leagueClubs: [(FootballTypes.LeagueId, [FootballTypes.Club])] = [];
     private stable var leaguePlayers: [(FootballTypes.LeagueId, [FootballTypes.Player])] = [];
     private stable var freeAgents: [FootballTypes.Player] = [];
-
     
     private stable var retiredLeaguePlayers: [(FootballTypes.LeagueId, [FootballTypes.Player])] = [];
     private stable var retiredFreeAgents: [FootballTypes.Player] = []; //TODO
@@ -1471,7 +1474,7 @@
 
                 let _ = updateDataHashes(leagueId, "players");
                 let _ = updateDataHashes(dto.loanLeagueId, "players");
-                ignore notifyAppsOfLoan(dto.loanLeagueId, dto.playerId);
+                let _ = await notifyAppsOfLoan(dto.loanLeagueId, dto.playerId);
                 return #ok();
               };
               case (null){ }
@@ -1500,7 +1503,7 @@
 
       movePlayerToLeague(leagueId, dto.newLeagueId, dto.newClubId, dto.playerId, dto.newShirtNumber);
       let _ = updateDataHashes(leagueId, "players");
-      ignore notifyAppsOfTransfer(leagueId, dto.playerId);
+      let _ = await notifyAppsOfTransfer(leagueId, dto.playerId);
 
       return #ok();
     };
@@ -1510,7 +1513,7 @@
 
       movePlayerToFreeAgents(leagueId, dto.playerId);
       let _ = updateDataHashes(leagueId, "players");
-      ignore notifyAppsOfTransfer(leagueId, dto.playerId);
+      let _ = await notifyAppsOfTransfer(leagueId, dto.playerId);
       
       return #ok();
     };
@@ -1570,7 +1573,7 @@
           }
       });
       await loanExpiredCallback();
-      ignore notifyAppsOfTransfer(leagueId, dto.playerId);
+      let _ = await notifyAppsOfTransfer(leagueId, dto.playerId);
       return #ok();
     };
 
@@ -1690,7 +1693,7 @@
       });
 
       if(positionUpdated){
-        ignore notifyAppsOfPositionChange(leagueId, dto.playerId);
+        let _ = await notifyAppsOfPositionChange(leagueId, dto.playerId);
       };
 
       let _ = updateDataHashes(leagueId, "players");
@@ -1764,7 +1767,7 @@
       );
 
       let playerInjuryDuration = #nanoseconds(Int.abs((dto.expectedEndDate - Time.now())));
-      ignore setAndBackupTimer(playerInjuryDuration, "injuryExpired");
+      let _ = await setAndBackupTimer(playerInjuryDuration, "injuryExpired");
       let _ = updateDataHashes(leagueId, "players");
       return #ok();
     };
@@ -1797,7 +1800,7 @@
         };        
       });
       let _ = updateDataHashes(leagueId, "players");
-      ignore notifyAppsOfTransfer(leagueId, dto.playerId);
+      let _ = await notifyAppsOfTransfer(leagueId, dto.playerId);
       return #ok();
     };
 
@@ -3406,7 +3409,7 @@
         case "transferWindowEnd" {
           Timer.setTimer<system>(duration, transferWindowEnd);
         };
-        case " tive" {
+        case "setFixtureToActive" {
           Timer.setTimer<system>(duration, setFixtureToActive);
         };
         case "setFixtureToComplete" {
@@ -3467,7 +3470,8 @@
     private func defaultCallback() : async () {};
 
     private func checkCurrentGameweekExpired() : async () {
-       for(league in Iter.fromArray(leagueSeasons)){
+      Debug.print("checking current gameweek expired");
+      for(league in Iter.fromArray(leagueSeasons)){
         let leagueStatusResult = Array.find<FootballTypes.LeagueStatus>(leagueStatuses, func(statusEntry: FootballTypes.LeagueStatus) : Bool {
           statusEntry.leagueId == league.0;
         });
@@ -3490,50 +3494,40 @@
                   }
                 });
 
-                if(Array.size(sortedFixtures) == 0){
+                if(Array.size(sortedFixtures) <= 1){
                   return;
                 };
-
-                var nextFixtureResult: ?FootballTypes.Fixture = null;
-
-                var seasonComplete = true;
+                
+                var nextFixtureIndex = 0;
                 label fixtureLoop for(fixture in Iter.fromArray(sortedFixtures)){
                   if(fixture.kickOff > Time.now()){
-                    seasonComplete := false;
-                    nextFixtureResult := ?fixture;
                     break fixtureLoop;
                   };
+                  nextFixtureIndex += 1;
                 };
 
-                if(seasonComplete){
-                  await endOfSeasonExpired();
-                  return;
+                let nextFixture = sortedFixtures[nextFixtureIndex];
+
+                var activeGameweek: FootballTypes.GameweekNumber = 0;
+                var completedGameweek: FootballTypes.GameweekNumber = nextFixture.gameweek - 1;
+                var unplayedGameweek: FootballTypes.GameweekNumber = nextFixture.gameweek;
+                
+                let nextFixtureGameweekFixtures = Array.filter<FootballTypes.Fixture>(sortedFixtures, func(fixtureEntry: FootballTypes.Fixture) {
+                  fixtureEntry.gameweek == nextFixture.gameweek
+                });
+                
+                let nextFixtureGameweekFixturesBeforeNow = Array.filter<FootballTypes.Fixture>(nextFixtureGameweekFixtures, func(fixtureEntry: FootballTypes.Fixture) {
+                  fixtureEntry.kickOff < Time.now() + Utilities.getHour();
+                });
+
+                if(Array.size(nextFixtureGameweekFixturesBeforeNow) > 0){
+                  activeGameweek := nextFixture.gameweek;
+                  unplayedGameweek := activeGameweek + 1;
+                  completedGameweek := activeGameweek - 1;
                 };
+                
+                setLeagueGameweek(leagueStatus.leagueId, unplayedGameweek, activeGameweek, completedGameweek, nextFixtureGameweekFixtures[0].kickOff);
 
-                switch(nextFixtureResult){
-                  case (?nextFixture){
-                    var nextFixtureGameweek = nextFixture.gameweek;
-
-                    label innerFixtureLoop for(fixture in Iter.fromArray(sortedFixtures)){
-                      if(fixture.gameweek == nextFixtureGameweek){                        
-                        if(Time.now() > fixture.kickOff - Utilities.getHour()){
-
-                          if(nextFixtureGameweek + 1 > leagueStatus.totalGameweeks){
-                            await setFinishSeasonTimer();
-                          } else {
-                            nextFixtureGameweek += 1;
-                            setLeagueGameweek(league.0, nextFixtureGameweek, fixture.kickOff);
-                            await checkCurrentGameweekExpired();
-                          };
-                        } else {
-                          setLeagueGameweek(league.0, nextFixtureGameweek, fixture.kickOff);
-                        };
-                        break innerFixtureLoop;
-                      };
-                    };
-                  };
-                  case (null){}
-                };
               };
               case (null){}
             };
@@ -3613,7 +3607,9 @@
                   leagueStatuses := Array.map<FootballTypes.LeagueStatus, FootballTypes.LeagueStatus>(leagueStatuses, func(updateEntry: FootballTypes.LeagueStatus){
                     if(updateEntry.leagueId == leagueStatus.leagueId){
                       return {
-                        activeGameweek = 1;
+                        activeGameweek = 0;
+                        completedGameweek = 0;
+                        unplayedGameweek = 1;
                         activeMonth = 1;
                         activeSeasonId = newSeasonId;
                         lastConfirmedGameweek = 0;
@@ -3652,10 +3648,11 @@
           leagueStatuses := Array.map<FootballTypes.LeagueStatus, FootballTypes.LeagueStatus>(leagueStatuses, func(statusEntry: FootballTypes.LeagueStatus){
             if(statusEntry.leagueId == league.leagueId){
               return {
-                activeGameweek = statusEntry.activeGameweek;
                 activeMonth = statusEntry.activeMonth;
                 activeSeasonId = statusEntry.activeSeasonId;
-                lastConfirmedGameweek = statusEntry.lastConfirmedGameweek;
+                activeGameweek = statusEntry.activeGameweek;
+                completedGameweek = statusEntry.completedGameweek;
+                unplayedGameweek = statusEntry.unplayedGameweek;
                 leagueId = statusEntry.leagueId;
                 seasonActive = statusEntry.seasonActive;
                 totalGameweeks = statusEntry.totalGameweeks;
@@ -3683,10 +3680,11 @@
           leagueStatuses := Array.map<FootballTypes.LeagueStatus, FootballTypes.LeagueStatus>(leagueStatuses, func(statusEntry: FootballTypes.LeagueStatus){
             if(not statusEntry.transferWindowActive and statusEntry.leagueId == league.leagueId){
               return {
-                activeGameweek = statusEntry.activeGameweek;
                 activeMonth = statusEntry.activeMonth;
                 activeSeasonId = statusEntry.activeSeasonId;
-                lastConfirmedGameweek = statusEntry.lastConfirmedGameweek;
+                activeGameweek = statusEntry.activeGameweek;
+                completedGameweek = statusEntry.completedGameweek;
+                unplayedGameweek = statusEntry.unplayedGameweek;
                 leagueId = statusEntry.leagueId;
                 seasonActive = statusEntry.seasonActive;
                 totalGameweeks = statusEntry.totalGameweeks;
@@ -3836,7 +3834,7 @@
           playerId = player.id;
         };
 
-        ignore executeRecallPlayer(recallPlayerDTO);
+        let _ = await executeRecallPlayer(recallPlayerDTO);
       };
       */
     };
@@ -3854,7 +3852,7 @@
       );
 
       for (player in Iter.fromArray(playersNoLongerInjured)) {
-        ignore executeResetPlayerInjury(player.id);
+        let _ = await executeResetPlayerInjury(player.id);
       };
       return #ok();
       */
@@ -3979,7 +3977,7 @@
           let application_canister = actor (leagueApplication.1) : actor {
             notifyAppsOfPositionChange : (leagueId: FootballTypes.LeagueId, playerId: FootballTypes.PlayerId) -> async Result.Result<(), T.Error>;
           };
-          ignore application_canister.notifyAppsOfPositionChange(leagueId, playerId);
+          let _ = await application_canister.notifyAppsOfPositionChange(leagueId, playerId);
         };
       };
       return #ok();
@@ -3991,7 +3989,7 @@
           let application_canister = actor (leagueApplication.1) : actor {
             notifyAppsOfLoan : (leagueId: FootballTypes.LeagueId, playerId: FootballTypes.PlayerId) -> async Result.Result<(), T.Error>;
           };
-          ignore application_canister.notifyAppsOfLoan(leagueId, playerId);
+          let _ = await application_canister.notifyAppsOfLoan(leagueId, playerId);
         };
       };
       return #ok();
@@ -4003,24 +4001,25 @@
           let application_canister = actor (leagueApplication.1) : actor {
             notifyAppsOfTransfer : (leagueId: FootballTypes.LeagueId, playerId: FootballTypes.PlayerId) -> async Result.Result<(), T.Error>;
           };
-          ignore application_canister.notifyAppsOfTransfer(leagueId, playerId);
+          let _ = await application_canister.notifyAppsOfTransfer(leagueId, playerId);
         };
       };
       return #ok();
     };
 
-    private func setLeagueGameweek(leagueId: FootballTypes.LeagueId, gameweek: FootballTypes.GameweekNumber, earliestGameweekKickOffTime: Int) {
+    private func setLeagueGameweek(leagueId: FootballTypes.LeagueId, unplayedGameweek: FootballTypes.GameweekNumber, activeGameweek: FootballTypes.GameweekNumber, completedGameweek: FootballTypes.GameweekNumber, earliestGameweekKickOffTime: Int) {
       
       leagueStatuses := Array.map<FootballTypes.LeagueStatus, FootballTypes.LeagueStatus>(leagueStatuses, func(status: FootballTypes.LeagueStatus) {
-        
+         
         let activeMonth: Base.CalendarMonth = Utilities.unixTimeToMonth(earliestGameweekKickOffTime);
 
         if(status.leagueId == leagueId){
           return {
-            activeGameweek = gameweek;
             activeMonth = activeMonth;
             activeSeasonId = status.activeSeasonId;
-            lastConfirmedGameweek = status.lastConfirmedGameweek;
+            activeGameweek = activeGameweek;
+            completedGameweek = completedGameweek;
+            unplayedGameweek = unplayedGameweek;
             leagueId = status.leagueId;
             seasonActive = status.seasonActive;
             transferWindowActive = status.transferWindowActive;

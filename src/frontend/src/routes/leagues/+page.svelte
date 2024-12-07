@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { onMount } from "svelte";
+  import { onDestroy, onMount } from "svelte";
   import { countryStore } from "$lib/stores/country-store";
   import { userStore } from "$lib/stores/user-store";
   import { leagueStore } from "$lib/stores/league-store";
@@ -20,29 +20,33 @@
   let dropdownVisible: number | null = null;
 
   onMount(async () => {
+    document.addEventListener("click", handleClickOutside);
+    console.log("async on mount called")
     try {
+      console.log("is data manager")
       isDataManager = await userStore.isDataManager();
+      console.log("get leagues")
       leagues = await leagueStore.getLeagues();
+      console.log("get countries")
       countries = await countryStore.getCountries();
+      console.log("done")
     } catch (error) {
       console.error("Error fetching leagues:", error);
     } finally {
       isLoading = false;
+      console.log("async on mount finished")
     }
   });
 
-  onMount(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (!(event.target as HTMLElement)?.closest(".dropdown-container")) {
-        closeDropdown();
-      }
-    };
-    document.addEventListener("click", handleClickOutside);
-
-    return () => {
-      document.removeEventListener("click", handleClickOutside);
-    };
+  onDestroy(() => {
+    document.removeEventListener("click", handleClickOutside);
   });
+
+  const handleClickOutside = (event: MouseEvent) => {
+    if (!(event.target as HTMLElement)?.closest(".dropdown-container")) {
+      closeDropdown();
+    }
+  };
 
   function closeDropdown() {
     dropdownVisible = null;

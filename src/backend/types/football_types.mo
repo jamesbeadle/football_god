@@ -32,20 +32,21 @@ module FootballTypes {
 
     
 
-    public type LeagueStatus = {
-      leagueId: LeagueId;
-      activeSeasonId: SeasonId;
-      activeGameweek: GameweekNumber;
-      activeMonth: Base.CalendarMonth;
-      lastConfirmedGameweek: GameweekNumber;
-      transferWindowActive: Bool;
-      seasonActive : Bool;
-      totalGameweeks: Nat8;
-      transferWindowStartDay: Nat8;
-      transferWindowStartMonth: Nat8;
-      transferWindowEndDay: Nat8;
-      transferWindowEndMonth: Nat8;
-    };
+  public type LeagueStatus = {
+    leagueId: LeagueId;
+    activeSeasonId: SeasonId;
+    activeMonth: Base.CalendarMonth;
+    unplayedGameweek: GameweekNumber;
+    activeGameweek: GameweekNumber;
+    completedGameweek: GameweekNumber;
+    transferWindowActive: Bool;
+    seasonActive : Bool;
+    totalGameweeks: Nat8;
+    transferWindowStartDay: Nat8;
+    transferWindowStartMonth: Nat8;
+    transferWindowEndDay: Nat8;
+    transferWindowEndMonth: Nat8;
+  };
 
   public type Club = {
     id : ClubId;

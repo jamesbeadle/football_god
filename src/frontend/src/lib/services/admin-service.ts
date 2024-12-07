@@ -18,11 +18,16 @@ export class AdminService {
   }
 
   async isDataManager(): Promise<boolean> {
+    console.log("in admin service");
+    await authStore.sync();
+    console.log("creating actor");
     const identityActor = await ActorFactory.createIdentityActor(
       authStore,
       process.env.BACKEND_CANISTER_ID ?? "",
     );
+    console.log("calling backend");
     const result: any = await identityActor.isDataManager();
+    console.log(result);
     if (isError(result)) {
       throw new Error("Failed to check is data manager");
     }

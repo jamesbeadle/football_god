@@ -4652,7 +4652,7 @@ const options = {
 		<div class="error">
 			<span class="status">` + status + '</span>\n			<div class="message">\n				<h1>' + message + "</h1>\n			</div>\n		</div>\n	</body>\n</html>\n"
   },
-  version_hash: "5seexn"
+  version_hash: "ndxh2o"
 };
 async function get_hooks() {
   return {};
@@ -5198,7 +5198,7 @@ const idlFactory = ({ IDL }) => {
     "selections": IDL.Vec(Selection),
     "settledOn": IDL.Int
   });
-  const Result_13 = IDL.Variant({ "ok": IDL.Vec(BetSlip), "err": Error2 });
+  const Result_14 = IDL.Variant({ "ok": IDL.Vec(BetSlip), "err": Error2 });
   const TeamSelectionOdds = IDL.Record({
     "homeOdds": IDL.Float64,
     "drawOdds": IDL.Float64,
@@ -5208,7 +5208,7 @@ const idlFactory = ({ IDL }) => {
     "fixtureId": FixtureId,
     "correctResults": TeamSelectionOdds
   });
-  const Result_12 = IDL.Variant({
+  const Result_13 = IDL.Variant({
     "ok": IDL.Vec(BettableFixtureDTO),
     "err": Error2
   });
@@ -5217,8 +5217,8 @@ const idlFactory = ({ IDL }) => {
     "code": IDL.Text,
     "name": IDL.Text
   });
-  const Result_11 = IDL.Variant({ "ok": IDL.Vec(CountryDTO), "err": Error2 });
-  const Result_10 = IDL.Variant({ "ok": IDL.Vec(FixtureDTO), "err": Error2 });
+  const Result_12 = IDL.Variant({ "ok": IDL.Vec(CountryDTO), "err": Error2 });
+  const Result_11 = IDL.Variant({ "ok": IDL.Vec(FixtureDTO), "err": Error2 });
   const ClubDTO = IDL.Record({
     "id": ClubId,
     "secondaryColourHex": IDL.Text,
@@ -5229,7 +5229,7 @@ const idlFactory = ({ IDL }) => {
     "shirtType": ShirtType,
     "primaryColourHex": IDL.Text
   });
-  const Result_9 = IDL.Variant({ "ok": IDL.Vec(ClubDTO), "err": Error2 });
+  const Result_10 = IDL.Variant({ "ok": IDL.Vec(ClubDTO), "err": Error2 });
   const HomePageFixtureDTO = IDL.Record({
     "fixtureId": FixtureId,
     "homeOdds": IDL.Float64,
@@ -5255,7 +5255,24 @@ const idlFactory = ({ IDL }) => {
     "lastName": IDL.Text,
     "firstName": IDL.Text
   });
-  const Result_8 = IDL.Variant({ "ok": IDL.Vec(PlayerDTO), "err": Error2 });
+  const Result_9 = IDL.Variant({ "ok": IDL.Vec(PlayerDTO), "err": Error2 });
+  const CalendarMonth = IDL.Nat8;
+  const LeagueStatus = IDL.Record({
+    "transferWindowEndMonth": IDL.Nat8,
+    "transferWindowEndDay": IDL.Nat8,
+    "transferWindowStartMonth": IDL.Nat8,
+    "transferWindowActive": IDL.Bool,
+    "totalGameweeks": IDL.Nat8,
+    "completedGameweek": GameweekNumber,
+    "transferWindowStartDay": IDL.Nat8,
+    "unplayedGameweek": GameweekNumber,
+    "activeMonth": CalendarMonth,
+    "activeSeasonId": SeasonId,
+    "activeGameweek": GameweekNumber,
+    "leagueId": LeagueId,
+    "seasonActive": IDL.Bool
+  });
+  const Result_8 = IDL.Variant({ "ok": LeagueStatus, "err": Error2 });
   const FootballLeagueDTO = IDL.Record({
     "id": LeagueId,
     "logo": IDL.Vec(IDL.Nat8),
@@ -5380,7 +5397,6 @@ const idlFactory = ({ IDL }) => {
     "profilePicture": IDL.Vec(IDL.Nat8),
     "principalId": PrincipalId
   });
-  const CalendarMonth = IDL.Nat8;
   const UpdateSystemStateDTO = IDL.Record({
     "pickTeamSeasonId": SeasonId,
     "calculationGameweek": GameweekNumber,
@@ -5445,17 +5461,18 @@ const idlFactory = ({ IDL }) => {
     "executeUpdateClub": IDL.Func([LeagueId, UpdateClubDTO], [], []),
     "executeUpdateLeague": IDL.Func([UpdateLeagueDTO], [], []),
     "executeUpdatePlayer": IDL.Func([LeagueId, UpdatePlayerDTO], [], []),
-    "getBets": IDL.Func([GetBetsDTO], [Result_13], []),
-    "getBettableLeagueFixtures": IDL.Func([LeagueId], [Result_12], ["query"]),
-    "getCountries": IDL.Func([], [Result_11], ["query"]),
-    "getFixtures": IDL.Func([LeagueId], [Result_10], ["composite_query"]),
-    "getLeagueClubs": IDL.Func([LeagueId], [Result_9], ["composite_query"]),
+    "getBets": IDL.Func([GetBetsDTO], [Result_14], []),
+    "getBettableLeagueFixtures": IDL.Func([LeagueId], [Result_13], ["query"]),
+    "getCountries": IDL.Func([], [Result_12], ["query"]),
+    "getFixtures": IDL.Func([LeagueId], [Result_11], ["composite_query"]),
+    "getLeagueClubs": IDL.Func([LeagueId], [Result_10], ["composite_query"]),
     "getLeagueFixtures": IDL.Func(
       [LeagueId],
       [IDL.Vec(HomePageFixtureDTO)],
       []
     ),
-    "getLeaguePlayers": IDL.Func([LeagueId], [Result_8], ["composite_query"]),
+    "getLeaguePlayers": IDL.Func([LeagueId], [Result_9], ["composite_query"]),
+    "getLeagueStatus": IDL.Func([LeagueId], [Result_8], ["composite_query"]),
     "getLeagues": IDL.Func([], [Result_7], ["composite_query"]),
     "getMatchOdds": IDL.Func([LeagueId, FixtureId], [Result_6], ["query"]),
     "getProfile": IDL.Func([], [Result_5], []),
@@ -5622,6 +5639,8 @@ class ActorFactory {
     return new HttpAgent({ ...options2.agentOptions });
   }
   static createIdentityActor(authStore2, canisterId2) {
+    console.log("creating actor");
+    console.log(canisterId2);
     let unsubscribe;
     return new Promise((resolve2, reject) => {
       unsubscribe = authStore2.subscribe((store) => {
@@ -5703,6 +5722,12 @@ function Expand_icon($$payload, $$props) {
   $$payload.out += `<svg xmlns="http://www.w3.org/2000/svg"${attr("class", className)} viewBox="0 0 24 24" fill="none"><path d="M8.4599 8.29002C8.2716 8.09641 8.01409 7.98554 7.74404 7.98179C7.47399 7.97804 7.21351 8.08172 7.0199 8.27002C6.82629 8.45833 6.71542 8.71583 6.71167 8.98588C6.70792 9.25593 6.8116 9.51641 6.9999 9.71002L9.3399 12L6.9999 14.29C6.90617 14.383 6.83178 14.4936 6.78101 14.6154C6.73024 14.7373 6.7041 14.868 6.7041 15C6.7041 15.132 6.73024 15.2627 6.78101 15.3846C6.83178 15.5065 6.90617 15.6171 6.9999 15.71C7.09286 15.8038 7.20346 15.8781 7.32532 15.9289C7.44718 15.9797 7.57789 16.0058 7.7099 16.0058C7.84191 16.0058 7.97262 15.9797 8.09448 15.9289C8.21634 15.8781 8.32694 15.8038 8.4199 15.71L11.4199 12.71C11.5136 12.6171 11.588 12.5065 11.6388 12.3846C11.6896 12.2627 11.7157 12.132 11.7157 12C11.7157 11.868 11.6896 11.7373 11.6388 11.6154C11.588 11.4936 11.5136 11.383 11.4199 11.29L8.4599 8.29002ZM16.9599 11.29L13.9599 8.29002C13.7716 8.10172 13.5162 7.99593 13.2499 7.99593C12.9836 7.99593 12.7282 8.10172 12.5399 8.29002C12.3516 8.47833 12.2458 8.73372 12.2458 9.00002C12.2458 9.26632 12.3516 9.52172 12.5399 9.71002L14.8399 12L12.5399 14.29C12.4462 14.383 12.3718 14.4936 12.321 14.6154C12.2702 14.7373 12.2441 14.868 12.2441 15C12.2441 15.132 12.2702 15.2627 12.321 15.3846C12.3718 15.5065 12.4462 15.6171 12.5399 15.71C12.6329 15.8038 12.7435 15.8781 12.8653 15.9289C12.9872 15.9797 13.1179 16.0058 13.2499 16.0058C13.3819 16.0058 13.5126 15.9797 13.6345 15.9289C13.7563 15.8781 13.8669 15.8038 13.9599 15.71L16.9599 12.71C17.0563 12.6197 17.1338 12.5112 17.1881 12.3908C17.2423 12.2704 17.2721 12.1404 17.2759 12.0084C17.2796 11.8763 17.2571 11.7449 17.2097 11.6216C17.1624 11.4983 17.0911 11.3856 16.9999 11.29H16.9599Z"${attr("fill", fill)}></path></svg>`;
   bind_props($$props, { className, fill });
 }
+function Connect($$payload, $$props) {
+  let className = fallback($$props["className"], "");
+  let fill = fallback($$props["fill"], "white");
+  $$payload.out += `<svg${attr("class", className)} viewBox="0 0 21 20"${attr("fill", fill)} xmlns="http://www.w3.org/2000/svg"><path d="M19.0002 13.1C18.7628 12.9821 18.4883 12.9633 18.2371 13.0477C17.9858 13.1321 17.7783 13.3127 17.6602 13.55C17.0273 14.8282 16.0641 15.914 14.8705 16.6948C13.6768 17.4756 12.2962 17.9231 10.8715 17.991C9.44674 18.0588 8.02979 17.7445 6.76738 17.0806C5.50498 16.4167 4.44302 15.4274 3.6915 14.2151C2.93999 13.0028 2.52625 11.6116 2.49314 10.1857C2.46003 8.75975 2.80876 7.35088 3.50321 6.10502C4.19765 4.85915 5.21255 3.82161 6.44279 3.09985C7.67303 2.37809 9.07386 1.99837 10.5002 2.00001C11.9913 1.99355 13.454 2.40764 14.7205 3.19476C15.987 3.98188 17.0058 5.11012 17.6602 6.45001C17.7795 6.6887 17.9888 6.87021 18.242 6.9546C18.4952 7.03899 18.7715 7.01936 19.0102 6.90001C19.2489 6.78066 19.4304 6.57138 19.5148 6.31821C19.5992 6.06503 19.5795 5.7887 19.4602 5.55001C18.4568 3.53075 16.8004 1.90987 14.7599 0.950438C12.7194 -0.00899237 10.4145 -0.250651 8.21939 0.264685C6.02426 0.780021 4.06771 2.0221 2.66732 3.78933C1.26692 5.55656 0.504883 7.74519 0.504883 10C0.504883 12.2548 1.26692 14.4435 2.66732 16.2107C4.06771 17.9779 6.02426 19.22 8.21939 19.7353C10.4145 20.2507 12.7194 20.009 14.7599 19.0496C16.8004 18.0901 18.4568 16.4693 19.4602 14.45C19.5198 14.3314 19.5552 14.2021 19.5643 14.0696C19.5733 13.9372 19.556 13.8043 19.5132 13.6786C19.4703 13.5529 19.4029 13.437 19.3149 13.3377C19.2268 13.2384 19.1198 13.1576 19.0002 13.1ZM19.5002 9.00001H9.91019L12.2102 6.71001C12.3034 6.61677 12.3774 6.50608 12.4278 6.38426C12.4783 6.26244 12.5043 6.13187 12.5043 6.00001C12.5043 5.86815 12.4783 5.73758 12.4278 5.61576C12.3774 5.49394 12.3034 5.38325 12.2102 5.29001C12.117 5.19677 12.0063 5.12281 11.8844 5.07235C11.7626 5.02189 11.632 4.99592 11.5002 4.99592C11.3683 4.99592 11.2378 5.02189 11.1159 5.07235C10.9941 5.12281 10.8834 5.19677 10.7902 5.29001L6.79019 9.29001C6.69915 9.38511 6.62778 9.49726 6.58019 9.62001C6.48017 9.86347 6.48017 10.1365 6.58019 10.38C6.62778 10.5028 6.69915 10.6149 6.79019 10.71L10.7902 14.71C10.8832 14.8037 10.9938 14.8781 11.1156 14.9289C11.2375 14.9797 11.3682 15.0058 11.5002 15.0058C11.6322 15.0058 11.7629 14.9797 11.8848 14.9289C12.0066 14.8781 12.1172 14.8037 12.2102 14.71C12.3039 14.617 12.3783 14.5064 12.4291 14.3846C12.4798 14.2627 12.506 14.132 12.506 14C12.506 13.868 12.4798 13.7373 12.4291 13.6154C12.3783 13.4936 12.3039 13.383 12.2102 13.29L9.91019 11H19.5002C19.7654 11 20.0198 10.8947 20.2073 10.7071C20.3948 10.5196 20.5002 10.2652 20.5002 10C20.5002 9.73479 20.3948 9.48044 20.2073 9.2929C20.0198 9.10537 19.7654 9.00001 19.5002 9.00001Z" fill="white"></path></svg>`;
+  bind_props($$props, { className, fill });
+}
 function Dashboard($$payload, $$props) {
   push();
   var $$store_subs;
@@ -5761,7 +5786,18 @@ function Dashboard($$payload, $$props) {
     }
     $$payload.out += `<!--]--></a></li>`;
   }
-  $$payload.out += `<!--]--></ul></div> <div class="mx-2 rounded-lg px-6 py-4 w-full bg-BrandGray"><!---->`;
+  $$payload.out += `<!--]--></ul> `;
+  {
+    $$payload.out += "<!--[!-->";
+    $$payload.out += `<button${attr("class", `absolute bottom-4 left-4 right-4 flex items-center justify-center ${"p-2"} bg-BrandPurple hover:bg-BrandDarkGray text-white rounded transition-all`)}>`;
+    Connect($$payload, { className: "w-6" });
+    $$payload.out += `<!----> `;
+    {
+      $$payload.out += "<!--[!-->";
+    }
+    $$payload.out += `<!--]--></button>`;
+  }
+  $$payload.out += `<!--]--></div> <div class="mx-2 rounded-lg px-6 py-4 w-full bg-BrandGray"><!---->`;
   slot($$payload, $$props, "default", {});
   $$payload.out += `<!----></div></div>`;
   if ($$store_subs) unsubscribe_stores($$store_subs);
@@ -6233,6 +6269,12 @@ function _page$3($$payload, $$props) {
 }
 function _page$2($$payload, $$props) {
   push();
+  onDestroy(() => {
+    document.removeEventListener("click", handleClickOutside);
+  });
+  const handleClickOutside = (event) => {
+    if (!event.target?.closest(".dropdown-container")) ;
+  };
   Layout($$payload, {
     children: ($$payload2) => {
       {

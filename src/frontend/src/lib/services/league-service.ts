@@ -7,6 +7,7 @@ import type {
 } from "../../../../declarations/backend/backend.did";
 import { ActorFactory } from "../utils/ActorFactory";
 import { isError } from "../utils/helpers";
+import type { LeagueStatus } from "../../../../declarations/data_canister/data_canister.did";
 
 export class LeagueService {
   private actor: any;
@@ -42,5 +43,11 @@ export class LeagueService {
 
     const result = await identityActor.executeUpdateLeague(dto);
     if (isError(result)) throw new Error("Failed to update league");
+  }
+
+  async getLeagueStatus(leagueId: number): Promise<LeagueStatus> {
+    const result = await this.actor.getLeagueStatus(leagueId);
+    if (isError(result)) throw new Error("Failed to fetch league status");
+    return result.ok;
   }
 }

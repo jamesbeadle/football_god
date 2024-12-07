@@ -3,6 +3,7 @@ import type {
   CreateLeagueDTO,
   UpdateLeagueDTO,
 } from "../../../../declarations/backend/backend.did";
+import type { LeagueStatus } from "../../../../declarations/data_canister/data_canister.did";
 
 function createLeagueStore() {
   async function getLeagues() {
@@ -17,10 +18,15 @@ function createLeagueStore() {
     return new LeagueService().updateLeague(dto);
   }
 
+  async function getLeagueStatus(leagueId: number): Promise<LeagueStatus> {
+    return await new LeagueService().getLeagueStatus(leagueId);
+  }
+
   return {
     getLeagues,
     createLeague,
     updateLeague,
+    getLeagueStatus,
   };
 }
 

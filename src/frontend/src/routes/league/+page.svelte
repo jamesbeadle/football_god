@@ -12,10 +12,12 @@
     import LeagueClubs from "$lib/components/league/league-clubs.svelte";
     import LeagueFixtures from "$lib/components/league/league-fixtures.svelte";
     import FullScreenSpinner from "$lib/components/shared/full-screen-spinner.svelte";
+    import type { LeagueStatus } from "../../../../declarations/data_canister/data_canister.did";
     
     let isLoading = true;
     let countries: CountryDTO[] = [];
     let league: FootballLeagueDTO | null = null;
+    let leagueStatus: LeagueStatus | null = null;
     
     let activeTab: string = "clubs";
     
@@ -24,6 +26,7 @@
     onMount(async () => {
       try {
         await loadData();
+        leagueStatus = await leagueStore.getLeagueStatus(id);
       } catch (error) {
         console.error("Error fetching league details:", error);
       } finally {
@@ -74,6 +77,36 @@
             <label for="country" class="block text-xs">Country</label>
             <p>{ countries.find(x => x.id == league?.countryId)?.name }</p>
           </div>
+          {#if leagueStatus}
+            <div>
+              <label for="active-season" class="block text-xs">Active Season</label>
+              <p>{leagueStatus.activeSeasonId}</p>
+            </div>
+            <div>
+              <label for="active-month" class="block text-xs">Active Month</label>
+              <p>{leagueStatus.activeMonth}</p>
+            </div>
+            <div>
+              <label for="unplayed-gameweek" class="block text-xs">Unplayed Gameweek</label>
+              <p>{leagueStatus.unplayedGameweek}</p>
+            </div>
+            <div>
+              <label for="active-gameweek" class="block text-xs">Active Gameweek</label>
+              <p>{leagueStatus.activeGameweek}</p>
+            </div>
+            <div>
+              <label for="completed-gameweek" class="block text-xs">Completed Gameweek</label>
+              <p>{leagueStatus.completedGameweek}</p>
+            </div>
+            <div>
+              <label for="transfer-window-active" class="block text-xs">Transfer Window Active</label>
+              <p>{leagueStatus.transferWindowActive ? "Yes" : "No"}</p>
+            </div>
+            <div>
+              <label for="season-active" class="block text-xs">Season Active</label>
+              <p>{leagueStatus.seasonActive ? "Yes" : "No"}</p>
+            </div>
+          {/if}
         </div>
       </div>
 

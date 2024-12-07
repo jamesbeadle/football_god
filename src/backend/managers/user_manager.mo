@@ -849,7 +849,7 @@ module {
 
           };
           
-          ignore payWinnings(betslip.placedBy, totalWinnings);
+          let _ = await payWinnings(betslip.placedBy, totalWinnings);
 
           let updatedBetSlip: BettingTypes.BetSlip = {
             id = betslip.id;

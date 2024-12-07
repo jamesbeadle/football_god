@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
     import { onMount } from "svelte";
     import GovernanceIcon from "$lib/icons/side-nav/governance-icon.svelte";
     import HomeIcon from "$lib/icons/side-nav/home-icon.svelte";
@@ -8,8 +8,13 @@
     import CollapseIcon from "$lib/icons/side-nav/collapse-icon.svelte";
     import ExpandIcon from "$lib/icons/side-nav/expand-icon.svelte";
     import { page } from "$app/stores";
+    import { authStore, type AuthSignInParams } from "$lib/stores/auth-store";
+    import Connect from "$lib/icons/Connect.svelte";
+    import Disconnect from "$lib/icons/Disconnect.svelte";
+    import { goto } from "$app/navigation";
 
     let isMenuOpen = false;
+    let isLoggedIn: Boolean;
 
     const menuItems = [
         { icon: HomeIcon, title: "Home", route: "/" },
@@ -18,7 +23,25 @@
         { icon: LeaguesIcon, title: "Leagues", route: "/leagues" },
     ];
 
-    onMount(() => {});
+    onMount( async () => {
+
+      authStore.subscribe((store) => {
+        isLoggedIn = store.identity !== null && store.identity !== undefined;
+      });
+
+    });
+
+    function handleLogin() {
+        let params: AuthSignInParams = {
+            domain: import.meta.env.VITE_AUTH_PROVIDER_URL,
+        };
+        authStore.signIn(params);
+    }
+
+    function handleLogout() {
+        authStore.signOut();
+        goto("/");
+    }
 </script>
 
 <div class="flex h-screen p-2">
@@ -68,6 +91,33 @@
                 </li>
             {/each}
         </ul>
+        
+        {#if isLoggedIn}
+        <button
+            class={`absolute bottom-4 left-4 right-4 flex items-center justify-center ${
+                isMenuOpen ? "px-4 py-2 space-x-2" : "p-2"
+            } bg-BrandAltGray hover:bg-BrandDarkGray text-white rounded transition-all`}
+            on:click={handleLogout}
+        >
+            <Disconnect className="w-6" />
+            {#if isMenuOpen}
+                <span>Disconnect</span>
+            {/if}
+        </button>
+    {:else}
+        <button
+            class={`absolute bottom-4 left-4 right-4 flex items-center justify-center ${
+                isMenuOpen ? "px-4 py-2 space-x-2" : "p-2"
+            } bg-BrandPurple hover:bg-BrandDarkGray text-white rounded transition-all`}
+            on:click={handleLogin}
+        >
+            <Connect className="w-6" />
+            {#if isMenuOpen}
+                <span>Connect</span>
+            {/if}
+        </button>
+    {/if}
+
     </div>
     <div class="mx-2 rounded-lg px-6 py-4 w-full bg-BrandGray">
         <slot></slot>
