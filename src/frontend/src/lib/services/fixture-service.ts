@@ -3,7 +3,6 @@ import { isError } from "../utils/helpers";
 import { idlFactory } from "../../../../declarations/backend";
 import type {
   FixtureDTO,
-  GetFixturesDTO,
   MoveFixtureDTO,
   PostponeFixtureDTO,
   SubmitFixtureDataDTO,

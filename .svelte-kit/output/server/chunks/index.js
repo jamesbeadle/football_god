@@ -4652,7 +4652,7 @@ const options = {
 		<div class="error">
 			<span class="status">` + status + '</span>\n			<div class="message">\n				<h1>' + message + "</h1>\n			</div>\n		</div>\n	</body>\n</html>\n"
   },
-  version_hash: "ndxh2o"
+  version_hash: "1rqz2q"
 };
 async function get_hooks() {
   return {};
@@ -5198,7 +5198,7 @@ const idlFactory = ({ IDL }) => {
     "selections": IDL.Vec(Selection),
     "settledOn": IDL.Int
   });
-  const Result_14 = IDL.Variant({ "ok": IDL.Vec(BetSlip), "err": Error2 });
+  const Result_15 = IDL.Variant({ "ok": IDL.Vec(BetSlip), "err": Error2 });
   const TeamSelectionOdds = IDL.Record({
     "homeOdds": IDL.Float64,
     "drawOdds": IDL.Float64,
@@ -5208,7 +5208,7 @@ const idlFactory = ({ IDL }) => {
     "fixtureId": FixtureId,
     "correctResults": TeamSelectionOdds
   });
-  const Result_13 = IDL.Variant({
+  const Result_14 = IDL.Variant({
     "ok": IDL.Vec(BettableFixtureDTO),
     "err": Error2
   });
@@ -5217,8 +5217,8 @@ const idlFactory = ({ IDL }) => {
     "code": IDL.Text,
     "name": IDL.Text
   });
-  const Result_12 = IDL.Variant({ "ok": IDL.Vec(CountryDTO), "err": Error2 });
-  const Result_11 = IDL.Variant({ "ok": IDL.Vec(FixtureDTO), "err": Error2 });
+  const Result_13 = IDL.Variant({ "ok": IDL.Vec(CountryDTO), "err": Error2 });
+  const Result_12 = IDL.Variant({ "ok": IDL.Vec(FixtureDTO), "err": Error2 });
   const ClubDTO = IDL.Record({
     "id": ClubId,
     "secondaryColourHex": IDL.Text,
@@ -5229,7 +5229,7 @@ const idlFactory = ({ IDL }) => {
     "shirtType": ShirtType,
     "primaryColourHex": IDL.Text
   });
-  const Result_10 = IDL.Variant({ "ok": IDL.Vec(ClubDTO), "err": Error2 });
+  const Result_11 = IDL.Variant({ "ok": IDL.Vec(ClubDTO), "err": Error2 });
   const HomePageFixtureDTO = IDL.Record({
     "fixtureId": FixtureId,
     "homeOdds": IDL.Float64,
@@ -5255,7 +5255,7 @@ const idlFactory = ({ IDL }) => {
     "lastName": IDL.Text,
     "firstName": IDL.Text
   });
-  const Result_9 = IDL.Variant({ "ok": IDL.Vec(PlayerDTO), "err": Error2 });
+  const Result_10 = IDL.Variant({ "ok": IDL.Vec(PlayerDTO), "err": Error2 });
   const CalendarMonth = IDL.Nat8;
   const LeagueStatus = IDL.Record({
     "transferWindowEndMonth": IDL.Nat8,
@@ -5272,7 +5272,7 @@ const idlFactory = ({ IDL }) => {
     "leagueId": LeagueId,
     "seasonActive": IDL.Bool
   });
-  const Result_8 = IDL.Variant({ "ok": LeagueStatus, "err": Error2 });
+  const Result_9 = IDL.Variant({ "ok": LeagueStatus, "err": Error2 });
   const FootballLeagueDTO = IDL.Record({
     "id": LeagueId,
     "logo": IDL.Vec(IDL.Nat8),
@@ -5284,7 +5284,7 @@ const idlFactory = ({ IDL }) => {
     "governingBody": IDL.Text,
     "formed": IDL.Int
   });
-  const Result_7 = IDL.Variant({
+  const Result_8 = IDL.Variant({
     "ok": IDL.Vec(FootballLeagueDTO),
     "err": Error2
   });
@@ -5346,7 +5346,7 @@ const idlFactory = ({ IDL }) => {
     "halfTimeFullTimeResult": IDL.Vec(HalfTimeFullTimeOdds),
     "bothTeamsToScoreAndWinner": IDL.Vec(ResultAndYesNoSelectionOdds)
   });
-  const Result_6 = IDL.Variant({ "ok": MatchOddsDTO, "err": Error2 });
+  const Result_7 = IDL.Variant({ "ok": MatchOddsDTO, "err": Error2 });
   const ProfileDTO = IDL.Record({
     "username": IDL.Text,
     "maxBetLimit": IDL.Nat64,
@@ -5360,18 +5360,24 @@ const idlFactory = ({ IDL }) => {
     "principalId": PrincipalId,
     "monthlyBetTotal": IDL.Nat64
   });
-  const Result_5 = IDL.Variant({ "ok": ProfileDTO, "err": Error2 });
+  const Result_6 = IDL.Variant({ "ok": ProfileDTO, "err": Error2 });
   const SeasonDTO = IDL.Record({
     "id": SeasonId,
     "name": IDL.Text,
     "year": IDL.Nat16
   });
-  const Result_4 = IDL.Variant({ "ok": IDL.Vec(SeasonDTO), "err": Error2 });
+  const Result_5 = IDL.Variant({ "ok": IDL.Vec(SeasonDTO), "err": Error2 });
   const SystemStateDTO = IDL.Record({
     "version": IDL.Text,
     "onHold": IDL.Bool
   });
-  const Result_3 = IDL.Variant({ "ok": SystemStateDTO, "err": Error2 });
+  const Result_4 = IDL.Variant({ "ok": SystemStateDTO, "err": Error2 });
+  const TimerInfo = IDL.Record({
+    "id": IDL.Int,
+    "callbackName": IDL.Text,
+    "triggerTime": IDL.Int
+  });
+  const Result_3 = IDL.Variant({ "ok": IDL.Vec(TimerInfo), "err": Error2 });
   const Result_2 = IDL.Variant({ "ok": IDL.Bool, "err": Error2 });
   const PauseAccountDTO = IDL.Record({
     "pauseDays": IDL.Nat,
@@ -5398,16 +5404,8 @@ const idlFactory = ({ IDL }) => {
     "principalId": PrincipalId
   });
   const UpdateSystemStateDTO = IDL.Record({
-    "pickTeamSeasonId": SeasonId,
-    "calculationGameweek": GameweekNumber,
-    "transferWindowActive": IDL.Bool,
-    "pickTeamMonth": CalendarMonth,
-    "pickTeamGameweek": GameweekNumber,
     "version": IDL.Text,
-    "calculationMonth": CalendarMonth,
-    "calculationSeasonId": SeasonId,
-    "onHold": IDL.Bool,
-    "seasonActive": IDL.Bool
+    "onHold": IDL.Bool
   });
   const UpdateUsernameDTO = IDL.Record({
     "username": IDL.Text,
@@ -5461,23 +5459,24 @@ const idlFactory = ({ IDL }) => {
     "executeUpdateClub": IDL.Func([LeagueId, UpdateClubDTO], [], []),
     "executeUpdateLeague": IDL.Func([UpdateLeagueDTO], [], []),
     "executeUpdatePlayer": IDL.Func([LeagueId, UpdatePlayerDTO], [], []),
-    "getBets": IDL.Func([GetBetsDTO], [Result_14], []),
-    "getBettableLeagueFixtures": IDL.Func([LeagueId], [Result_13], ["query"]),
-    "getCountries": IDL.Func([], [Result_12], ["query"]),
-    "getFixtures": IDL.Func([LeagueId], [Result_11], ["composite_query"]),
-    "getLeagueClubs": IDL.Func([LeagueId], [Result_10], ["composite_query"]),
+    "getBets": IDL.Func([GetBetsDTO], [Result_15], []),
+    "getBettableLeagueFixtures": IDL.Func([LeagueId], [Result_14], ["query"]),
+    "getCountries": IDL.Func([], [Result_13], ["query"]),
+    "getFixtures": IDL.Func([LeagueId], [Result_12], ["composite_query"]),
+    "getLeagueClubs": IDL.Func([LeagueId], [Result_11], ["composite_query"]),
     "getLeagueFixtures": IDL.Func(
       [LeagueId],
       [IDL.Vec(HomePageFixtureDTO)],
       []
     ),
-    "getLeaguePlayers": IDL.Func([LeagueId], [Result_9], ["composite_query"]),
-    "getLeagueStatus": IDL.Func([LeagueId], [Result_8], ["composite_query"]),
-    "getLeagues": IDL.Func([], [Result_7], ["composite_query"]),
-    "getMatchOdds": IDL.Func([LeagueId, FixtureId], [Result_6], ["query"]),
-    "getProfile": IDL.Func([], [Result_5], []),
-    "getSeasons": IDL.Func([LeagueId], [Result_4], ["composite_query"]),
-    "getSystemState": IDL.Func([IDL.Text], [Result_3], ["composite_query"]),
+    "getLeaguePlayers": IDL.Func([LeagueId], [Result_10], ["composite_query"]),
+    "getLeagueStatus": IDL.Func([LeagueId], [Result_9], ["composite_query"]),
+    "getLeagues": IDL.Func([], [Result_8], ["composite_query"]),
+    "getMatchOdds": IDL.Func([LeagueId, FixtureId], [Result_7], ["query"]),
+    "getProfile": IDL.Func([], [Result_6], []),
+    "getSeasons": IDL.Func([LeagueId], [Result_5], ["composite_query"]),
+    "getSystemState": IDL.Func([IDL.Text], [Result_4], ["composite_query"]),
+    "getTimers": IDL.Func([], [Result_3], ["composite_query"]),
     "isAdmin": IDL.Func([], [Result_2], []),
     "isDataManager": IDL.Func([], [Result_2], []),
     "pauseAccount": IDL.Func([PauseAccountDTO], [Result], []),
@@ -5639,8 +5638,6 @@ class ActorFactory {
     return new HttpAgent({ ...options2.agentOptions });
   }
   static createIdentityActor(authStore2, canisterId2) {
-    console.log("creating actor");
-    console.log(canisterId2);
     let unsubscribe;
     return new Promise((resolve2, reject) => {
       unsubscribe = authStore2.subscribe((store) => {
@@ -5959,7 +5956,7 @@ function createClubStore() {
   };
 }
 const clubStore = createClubStore();
-function _page$8($$payload, $$props) {
+function _page$9($$payload, $$props) {
   push();
   Layout($$payload, {
     children: ($$payload2) => {
@@ -6117,7 +6114,7 @@ function Clear_draft_modal($$payload, $$props) {
   });
   bind_props($$props, { visible, onConfirm, closeModal });
 }
-function _page$7($$payload, $$props) {
+function _page$8($$payload, $$props) {
   push();
   var $$store_subs;
   let fixtureId, leagueId, seasonId;
@@ -6193,7 +6190,7 @@ function _page$7($$payload, $$props) {
   if ($$store_subs) unsubscribe_stores($$store_subs);
   pop();
 }
-function _page$6($$payload) {
+function _page$7($$payload) {
   Layout($$payload, {
     children: ($$payload2) => {
       {
@@ -6219,12 +6216,12 @@ function _page$6($$payload) {
       {
         $$payload2.out += "<!--[!-->";
       }
-      $$payload2.out += `<!--]--> <div class="m-4"><div class="bg-panel rounded-md"><p class="m-4">Application Triggers</p> <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mt-4 mx-4 mb-4"><div class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"><div class="flex items-center space-x-4 w-full"><button class="rounded brand-button px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full">Update System State</button></div></div> <div class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"><div class="flex items-center space-x-4 w-full"><button class="rounded brand-button px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full">Snapshot Manager Teams</button></div></div> <div class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"><div class="flex items-center space-x-4 w-full"><button class="rounded brand-button px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full">Calculate Gameweek Scores</button></div></div> <div class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"><div class="flex items-center space-x-4 w-full"><button class="rounded brand-button px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full">Calculate Leaderboards</button></div></div> <div class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"><div class="flex items-center space-x-4 w-full"><button class="rounded brand-button px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full">Calculate Weekly Rewards</button></div></div> <div class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"><div class="flex items-center space-x-4 w-full"><button class="rounded brand-button px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full">Pay weekly rewards</button></div></div></div></div></div>`;
+      $$payload2.out += `<!--]--> <div class="m-4"><div class="bg-panel rounded-md"><p class="p-4">Application Triggers</p> <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mt-4 mx-4 mb-4"><div class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"><div class="flex items-center space-x-4 w-full"><button class="rounded brand-button px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full">Update System State</button></div></div> <div class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"><div class="flex items-center space-x-4 w-full"><button class="rounded brand-button px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full">Snapshot Manager Teams</button></div></div> <div class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"><div class="flex items-center space-x-4 w-full"><button class="rounded brand-button px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full">Calculate Gameweek Scores</button></div></div> <div class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"><div class="flex items-center space-x-4 w-full"><button class="rounded brand-button px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full">Calculate Leaderboards</button></div></div> <div class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"><div class="flex items-center space-x-4 w-full"><button class="rounded brand-button px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full">Calculate Weekly Rewards</button></div></div> <div class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"><div class="flex items-center space-x-4 w-full"><button class="rounded brand-button px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full">Pay weekly rewards</button></div></div></div></div></div>`;
     },
     $$slots: { default: true }
   });
 }
-function _page$5($$payload, $$props) {
+function _page$6($$payload, $$props) {
   push();
   var $$store_subs;
   Number(store_get($$store_subs ??= {}, "$page", page).url.searchParams.get("leagueId"));
@@ -6242,7 +6239,7 @@ function _page$5($$payload, $$props) {
   if ($$store_subs) unsubscribe_stores($$store_subs);
   pop();
 }
-function _page$4($$payload) {
+function _page$5($$payload) {
   Layout($$payload, {
     children: ($$payload2) => {
       $$payload2.out += `<p class="text-xl">Governance</p> <p class="mt-4 text-sm">A full range of governance features will be released here.</p>`;
@@ -6250,7 +6247,7 @@ function _page$4($$payload) {
     $$slots: { default: true }
   });
 }
-function _page$3($$payload, $$props) {
+function _page$4($$payload, $$props) {
   push();
   var $$store_subs;
   Number(store_get($$store_subs ??= {}, "$page", page).url.searchParams.get("id"));
@@ -6267,7 +6264,7 @@ function _page$3($$payload, $$props) {
   if ($$store_subs) unsubscribe_stores($$store_subs);
   pop();
 }
-function _page$2($$payload, $$props) {
+function _page$3($$payload, $$props) {
   push();
   onDestroy(() => {
     document.removeEventListener("click", handleClickOutside);
@@ -6292,7 +6289,7 @@ function _page$2($$payload, $$props) {
   $$payload.out += `<!--]-->`;
   pop();
 }
-function _page$1($$payload, $$props) {
+function _page$2($$payload, $$props) {
   push();
   let selectedLeagueId = 1;
   let minValue = 0;
@@ -6344,7 +6341,7 @@ function _page$1($$payload, $$props) {
   });
   pop();
 }
-function _page($$payload, $$props) {
+function _page$1($$payload, $$props) {
   push();
   Layout($$payload, {
     children: ($$payload2) => {
@@ -6358,11 +6355,25 @@ function _page($$payload, $$props) {
   });
   pop();
 }
+function _page($$payload, $$props) {
+  push();
+  Layout($$payload, {
+    children: ($$payload2) => {
+      {
+        $$payload2.out += "<!--[-->";
+        Local_spinner($$payload2);
+      }
+      $$payload2.out += `<!--]-->`;
+    },
+    $$slots: { default: true }
+  });
+  pop();
+}
 export {
   Error$1 as E,
   Layout$1 as L,
   Server as S,
-  _page$8 as _,
+  _page$9 as _,
   set_building as a,
   set_manifest as b,
   set_prerendering as c,
@@ -6371,14 +6382,15 @@ export {
   set_read_implementation as f,
   get_hooks as g,
   set_safe_public_env as h,
-  _page$7 as i,
-  _page$6 as j,
-  _page$5 as k,
-  _page$4 as l,
-  _page$3 as m,
-  _page$2 as n,
+  _page$8 as i,
+  _page$7 as j,
+  _page$6 as k,
+  _page$5 as l,
+  _page$4 as m,
+  _page$3 as n,
   options as o,
-  _page$1 as p,
-  _page as q,
+  _page$2 as p,
+  _page$1 as q,
+  _page as r,
   set_assets as s
 };

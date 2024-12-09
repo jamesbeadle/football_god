@@ -136,6 +136,15 @@ actor Self {
     return await data_canister.getFixtures(leagueId);
   };
 
+  public shared composite query func getTimers() : async Result.Result<[Base.TimerInfo], T.Error>  {
+    
+    let data_canister = actor (Environment.DATA_CANISTER_ID) : actor {
+      getTimers : shared query () -> async Result.Result<[Base.TimerInfo], T.Error>;
+    };
+
+    return await data_canister.getTimers();
+  };
+
   /* Application functions */
 
   public shared composite query ({ caller }) func getSystemState(applicationName: Text) : async Result.Result<ResponseDTOs.SystemStateDTO, T.Error>  {

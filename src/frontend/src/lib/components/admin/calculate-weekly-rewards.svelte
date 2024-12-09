@@ -2,6 +2,7 @@
     import { adminStore } from "$lib/stores/admin-store";
     import { onMount } from "svelte";
     import Modal from "../shared/modal.svelte";
+    import { leagueStore } from "$lib/stores/league-store";
   
     export let visible: boolean;
     export let closeModal: () => void;
@@ -22,9 +23,8 @@
 
     onMount(async () => {
       isLoading = false;
-      let applicationName = applications.find(x => x.id == selectedApplicationId)!.name;
-      let systemState = await adminStore.getSystemState(applicationName);
-      selectedGameweek = systemState?.calculationGameweek ?? 1;
+      let leagueStatus = await leagueStore.getLeagueStatus(applications.find(x => x.id == selectedApplicationId)!.id);
+      selectedGameweek = leagueStatus?.activeGameweek ?? 1;
       setGameweeks();
     });
 

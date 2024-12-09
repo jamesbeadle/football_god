@@ -46,6 +46,10 @@ function createAdminStore() {
     return new AdminService().payWeeklyRewards(applicationName, gameweek);
   }
 
+  async function getTimers(): Promise<any> {
+    return new AdminService().getTimers();
+  }
+
   return {
     getSystemState,
     updateSystemState,
@@ -54,6 +58,7 @@ function createAdminStore() {
     calculateWeeklyRewards,
     snapshotManagers,
     payWeeklyRewards,
+    getTimers,
   };
 }
 

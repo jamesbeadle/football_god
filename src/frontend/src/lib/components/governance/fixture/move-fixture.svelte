@@ -40,49 +40,15 @@
   }
 
   async function loadGameweekFixtures() {
-    var systemState;
-    switch(selectedLeagueId){
-      case 1:
-        gameweeks = Array.from({ length: 38 }, (_, i) => i + 1);
-        systemState = await adminStore.getSystemState("OpenFPL");
-        if(!systemState){
-          return;
-        }
+   
+    var fixtures = await fixtureStore.getFixtures(selectedLeagueId);
 
-
-        var openfpl_fixtures = await fixtureStore.getFixtures({
-            leagueId: selectedLeagueId,
-            seasonId: systemState?.calculationSeasonId
-        });
-
-        if(!openfpl_fixtures){
-          return;
-        }
-
-        gameweekFixtures = openfpl_fixtures.filter(x => x.gameweek == selectedGameweek);
-
-        break;
-      case 2:
-        gameweeks = Array.from({ length: 22 }, (_, i) => i + 1);
-        systemState = await adminStore.getSystemState("OpenWSL");
-        if(!systemState){
-          return;
-        }
-
-        var openwsl_fixtures = await fixtureStore.getFixtures({
-            leagueId: selectedLeagueId,
-            seasonId: systemState?.calculationSeasonId
-        });
-
-        if(!openwsl_fixtures){
-          return;
-        }
-
-        gameweekFixtures = openwsl_fixtures.filter(x => x.gameweek == selectedGameweek);
-        break;
-      default:
-        break;
+    if(!fixtures){
+      return;
     }
+
+    gameweekFixtures = fixtures.filter(x => x.gameweek == selectedGameweek);
+
   }
 
   let isLoading = true;
@@ -95,7 +61,9 @@
   onMount(async () => {
     try {
       leagues = await leagueStore.getLeagues();
-      if(selectedLeagueId > 0){
+      let leagueStatus = await leagueStore.getLeagueStatus(selectedLeagueId);
+      gameweeks = Array.from({ length: leagueStatus.totalGameweeks }, (_, i) => i + 1);
+     if(selectedLeagueId > 0){
         clubs = await clubStore.getClubs(selectedLeagueId);
       }
     } catch (error) {
@@ -125,14 +93,14 @@
         return;
     }
     
-    let systemState = await adminStore.getSystemState(applicationName);
-    if(!systemState){
+    let leagueStatus = await leagueStore.getLeagueStatus(selectedLeagueId);
+    if(!leagueStatus){
       return
     }
 
     let dto: MoveFixtureDTO = {
       leagueId: selectedLeagueId,
-      seasonId: systemState.pickTeamSeasonId,
+      seasonId: leagueStatus.activeSeasonId,
       fixtureId : selectedFixtureId,
       updatedFixtureGameweek : newGameweek,
       updatedFixtureDate: convertDateTimeInputToUnixNano(dateTime)

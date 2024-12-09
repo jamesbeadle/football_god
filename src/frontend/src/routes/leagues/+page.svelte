@@ -21,20 +21,14 @@
 
   onMount(async () => {
     document.addEventListener("click", handleClickOutside);
-    console.log("async on mount called")
     try {
-      console.log("is data manager")
       isDataManager = await userStore.isDataManager();
-      console.log("get leagues")
       leagues = await leagueStore.getLeagues();
-      console.log("get countries")
       countries = await countryStore.getCountries();
-      console.log("done")
     } catch (error) {
       console.error("Error fetching leagues:", error);
     } finally {
       isLoading = false;
-      console.log("async on mount finished")
     }
   });
 

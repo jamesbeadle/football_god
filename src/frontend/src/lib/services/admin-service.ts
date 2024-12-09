@@ -4,6 +4,7 @@ import { ActorFactory } from "../utils/ActorFactory";
 import { isError } from "../utils/helpers";
 import type {
   SystemStateDTO,
+  TimerInfo,
   UpdateSystemStateDTO,
 } from "../../../../declarations/backend/backend.did";
 
@@ -18,14 +19,18 @@ export class AdminService {
   }
 
   async isDataManager(): Promise<boolean> {
-    console.log("in admin service");
     await authStore.sync();
-    console.log("creating actor");
+    let isLoggedIn = false;
+    authStore.subscribe((store) => {
+      isLoggedIn = store.identity !== null && store.identity !== undefined;
+    });
+    if (!isLoggedIn) {
+      return false;
+    }
     const identityActor = await ActorFactory.createIdentityActor(
       authStore,
       process.env.BACKEND_CANISTER_ID ?? "",
     );
-    console.log("calling backend");
     const result: any = await identityActor.isDataManager();
     console.log(result);
     if (isError(result)) {
@@ -133,5 +138,11 @@ export class AdminService {
     );
 
     if (isError(result)) throw new Error("Failed to pay weekly rewards");
+  }
+
+  async getTimers(): Promise<TimerInfo[]> {
+    const result = await this.actor.getTimers();
+    if (isError(result)) throw new Error("Failed to fetch timers");
+    return result.ok;
   }
 }

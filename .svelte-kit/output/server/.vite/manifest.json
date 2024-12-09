@@ -129,5 +129,14 @@
     "imports": [
       "_index.js"
     ]
+  },
+  "src/frontend/src/routes/timers/+page.svelte": {
+    "file": "entries/pages/timers/_page.svelte.js",
+    "name": "entries/pages/timers/_page.svelte",
+    "src": "src/frontend/src/routes/timers/+page.svelte",
+    "isEntry": true,
+    "imports": [
+      "_index.js"
+    ]
   }
 }

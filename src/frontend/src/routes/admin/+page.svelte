@@ -6,7 +6,7 @@
     import CalculateLeadearboards from "$lib/components/admin/calculate-leadearboards.svelte";
     import CalculateWeeklyRewards from "$lib/components/admin/calculate-weekly-rewards.svelte";
     import PayWeeklyRewards from "$lib/components/admin/pay-weekly-rewards.svelte";
-  
+    
     let showUpdateSystemStateModal: boolean = false;
     let showSnapshotManagerTeamsModal: boolean = false;
     let showCalculateGameweekScoresModal: boolean = false;
@@ -93,11 +93,9 @@
     <div class="m-4">
       <div class="bg-panel rounded-md">
           
-        <p class="m-4">Application Triggers</p>
+        <p class="p-4">Application Triggers</p>
         <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mt-4 mx-4 mb-4">
-          <div
-            class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full"
-          >
+          <div class="flex flex-col items-center bg-gray-700 rounded shadow p-4 w-full">
             <div class="flex items-center space-x-4 w-full">
               <button
                 class="rounded brand-button px-3 sm:px-2 px-3 py-1 mr-1 my-1 w-full"

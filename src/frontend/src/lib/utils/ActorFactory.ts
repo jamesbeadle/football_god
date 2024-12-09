@@ -75,8 +75,6 @@ export class ActorFactory {
   }
 
   static createIdentityActor(authStore: AuthStore, canisterId: string) {
-    console.log("creating actor");
-    console.log(canisterId);
     let unsubscribe: Unsubscriber;
     return new Promise<OptionIdentity>((resolve, reject) => {
       unsubscribe = authStore.subscribe((store) => {

@@ -14,15 +14,7 @@
 
     let selectedApplicationId = 0;
 
-    let calculationSeasonId: number;
-    let calculationMonth: number;
-    let calculationGameweek: number;
-    let pickTeamSeasonId: number;
-    let pickTeamMonth: number;
-    let pickTeamGameweek: number;
-    let transferWindowActive: boolean;
     let onHold: boolean;
-    let seasonActive: boolean;
     let version: string;
 
     let isLoading = true;
@@ -36,15 +28,7 @@
     async function updateSystemState() {
       try {
         let dto: UpdateSystemStateDTO = {
-          calculationGameweek,
-          calculationMonth,
-          calculationSeasonId,
-          pickTeamGameweek,
-          pickTeamSeasonId,
-          pickTeamMonth,
-          transferWindowActive,
           onHold,
-          seasonActive,
           version
         };
 
@@ -90,19 +74,14 @@
             return;
       }
 
+      console.log("loading system state")
+
       let currentSystemState = await adminStore.getSystemState(applicationName);
+      console.log(currentSystemState)
       if(!currentSystemState){
         return;
       }
-      calculationSeasonId = currentSystemState.calculationSeasonId;
-      calculationMonth = currentSystemState.calculationMonth;
-      calculationGameweek = currentSystemState.calculationGameweek;
-      pickTeamSeasonId = currentSystemState.pickTeamSeasonId;
-      pickTeamMonth = currentSystemState.pickTeamMonth;
-      pickTeamGameweek = currentSystemState.pickTeamGameweek;
-      transferWindowActive = currentSystemState.transferWindowActive;
       onHold = currentSystemState.onHold;
-      seasonActive = currentSystemState.seasonActive;
       version = currentSystemState.version;
     }
 
@@ -129,83 +108,6 @@
         <div class="w-full flex-col space-y-4 mb-2">
           
           <div class="flex-col space-y-2">
-            <p class="py-2">Calculation Gameweek:</p>
-
-            <input
-              type="number"
-              class="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
-              placeholder="Calculation Gameweek"
-              bind:value={calculationGameweek}
-            />
-          </div>
-
-          <div class="flex-col space-y-2">
-            <p class="py-2">Calculation Month:</p>
-
-            <input
-              type="number"
-              class="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
-              placeholder="Calculation Month"
-              bind:value={calculationMonth}
-            />
-          </div>
-
-          <div class="flex-col space-y-2">
-            <p class="py-2">Calculation Season:</p>
-
-            <input
-              type="number"
-              class="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
-              placeholder="Calculation Season"
-              bind:value={calculationSeasonId}
-            />
-          </div>
-
-          <div class="flex-col space-y-2">
-            <p class="py-2">Pick Team Gameweek:</p>
-
-            <input
-              type="number"
-              class="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
-              placeholder="Pick Team Gameweek"
-              bind:value={pickTeamGameweek}
-            />
-          </div>
-
-          <div class="flex-col space-y-2">
-            <p class="py-2">Pick Team Month:</p>
-
-            <input
-              type="number"
-              class="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
-              placeholder="Pick Team Month"
-              bind:value={pickTeamMonth}
-            />
-          </div>
-
-          <div class="flex-col space-y-2">
-            <p class="py-2">Pick Team Season:</p>
-
-            <input
-              type="number"
-              class="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
-              placeholder="Pick Team Season"
-              bind:value={pickTeamSeasonId}
-            />
-          </div>
-
-          <div class="flex-col space-y-2">
-            <p class="py-2">Transfer Window Active:</p>
-
-              <input
-              type="checkbox"
-              class="form-checkbox h-5 w-5"
-              checked={transferWindowActive}
-              bind:value={transferWindowActive}
-            />
-          </div>
-
-          <div class="flex-col space-y-2">
             <p class="py-2">On Hold:</p>
 
               <input
@@ -213,17 +115,6 @@
               class="form-checkbox h-5 w-5"
               checked={onHold}
               bind:value={onHold}
-            />
-          </div>
-
-          <div class="flex-col space-y-2">
-            <p class="py-2">Season Active:</p>
-
-              <input
-              type="checkbox"
-              class="form-checkbox h-5 w-5"
-              checked={seasonActive}
-              bind:value={seasonActive}
             />
           </div>
 

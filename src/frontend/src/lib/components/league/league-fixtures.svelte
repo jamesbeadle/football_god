@@ -85,11 +85,11 @@
   }
 
   async function loadAddFixtureData(fixtureId: number) {
-    var systemState = await adminStore.getSystemState("OpenFPL");
-    if(!systemState){
+    var leagueStatus = await leagueStore.getLeagueStatus(leagueId);
+    if(!leagueStatus){
       return;
     }
-    goto(`/add-fixture-data?id=${fixtureId}&league-id=${leagueId}&season-id=${systemState.calculationSeasonId}`);
+    goto(`/add-fixture-data?id=${fixtureId}&league-id=${leagueId}&season-id=${leagueStatus.activeSeasonId}`);
   }
 
   function closeModal() {

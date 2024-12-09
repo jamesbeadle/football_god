@@ -28,9 +28,7 @@ module FootballTypes {
     formed: Int;
     countryId: Base.CountryId;
     logo: Blob;
-  };
-
-    
+  };    
 
   public type LeagueStatus = {
     leagueId: LeagueId;

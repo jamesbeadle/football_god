@@ -6,15 +6,7 @@ import BettingTypes "../types/betting_types";
 module RequestDTOs {
 
   public type UpdateSystemStateDTO = {
-    calculationGameweek : FootballTypes.GameweekNumber;
-    calculationMonth : Base.CalendarMonth;
-    calculationSeasonId : FootballTypes.SeasonId;
-    pickTeamGameweek : FootballTypes.GameweekNumber;
-    pickTeamSeasonId : FootballTypes.SeasonId;
-    pickTeamMonth : Base.CalendarMonth;
-    transferWindowActive : Bool;
     onHold : Bool;
-    seasonActive: Bool;
     version: Text;
   };
 
@@ -26,14 +18,6 @@ module RequestDTOs {
   public type GetFixturesDTO = {
     leagueId: FootballTypes.LeagueId;
     seasonId: FootballTypes.SeasonId;
-  };
-
-  public type UpdateFixtureDTO = {
-    seasonId : FootballTypes.SeasonId;
-    fixtureId : FootballTypes.FixtureId;
-    gameweek : FootballTypes.GameweekNumber;
-    kickOff : Int;
-    status : FootballTypes.FixtureStatusType;
   };
 
   public type PaginationFiltersDTO = {

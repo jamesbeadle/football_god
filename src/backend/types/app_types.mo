@@ -1,6 +1,5 @@
 import Base "base_types";
 import BettingTypes "betting_types";
-import FootballTypes "football_types";
 module AppTypes {
 
     public type Error = {

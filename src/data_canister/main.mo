@@ -78,7 +78,7 @@ import Debug "mo:base/Debug";
       {
         activeSeasonId = 1;
         activeMonth = 1;
-        leagueId = 1;
+        leagueId = 2;
         unplayedGameweek = 1;
         activeGameweek = 0;
         completedGameweek = 0;
@@ -129,8 +129,7 @@ import Debug "mo:base/Debug";
       return getPrivatePlayers(leagueId);
     };
 
-    public shared query ( {caller} ) func getLeagueStatus(leagueId: FootballTypes.LeagueId) : async Result.Result<FootballTypes.LeagueStatus, T.Error>{
-      assert callerAllowed(caller);
+    public shared query func getLeagueStatus(leagueId: FootballTypes.LeagueId) : async Result.Result<FootballTypes.LeagueStatus, T.Error>{
       let status = Array.find<FootballTypes.LeagueStatus>(leagueStatuses, func(entry: FootballTypes.LeagueStatus) : Bool {
         entry.leagueId == leagueId
       });
@@ -313,8 +312,7 @@ import Debug "mo:base/Debug";
 
     /* Query functions */
 
-    public shared query ( {caller} ) func getLeagues() : async Result.Result<[ResponseDTOs.FootballLeagueDTO], T.Error>{
-      assert callerAllowed(caller);
+    public shared query func getLeagues() : async Result.Result<[ResponseDTOs.FootballLeagueDTO], T.Error>{
       return #ok(leagues);
     };  
 
@@ -690,6 +688,10 @@ import Debug "mo:base/Debug";
           return #err(#NotFound);
         }
       };
+    };
+
+    public shared query ( {caller} ) func getTimers() : async Result.Result<[Base.TimerInfo], T.Error>{
+      return #ok(timers);
     };
 
     /* Governance Validation Functions */
@@ -2332,12 +2334,6 @@ import Debug "mo:base/Debug";
       return #err(#NotFound); //TODO: Implement
     };
 
-    public shared ({ caller }) func getTimers() {
-      assert callerAllowed(caller);
-      //how can i view the timers that are set?
-    
-    };
-
     /* Private Functions */
 
     private func finaliseFixture(leagueId: FootballTypes.LeagueId, seasonId: FootballTypes.SeasonId, fixtureId: FootballTypes.FixtureId, highestScoringPlayerId: FootballTypes.PlayerId){
@@ -3388,7 +3384,6 @@ import Debug "mo:base/Debug";
     };
 
     private func postUpgradeCallback() : async (){
-      await checkCurrentGameweekExpired();//TODO REMOVE
       await setSystemTimers();
       //TODO: Check cycles for betting canisters when created
     };
@@ -3396,7 +3391,7 @@ import Debug "mo:base/Debug";
     //Timer Callback Functions
 
     private func setAndBackupTimer(duration : Timer.Duration, callbackName : Text) : async () {
-      let _ : Timer.TimerId = switch (callbackName) {
+      let jobId : Timer.TimerId = switch (callbackName) {
         case "checkCurrentGameweek" {
           Timer.setTimer<system>(duration, checkCurrentGameweekExpired);
         };
@@ -3425,6 +3420,25 @@ import Debug "mo:base/Debug";
           Timer.setTimer<system>(duration, defaultCallback);
         }
       };
+
+      let triggerTime = switch (duration) {
+        case (#seconds s) {
+          Time.now() + s * 1_000_000_000;
+        };
+        case (#nanoseconds ns) {
+          Time.now() + ns;
+        };
+      };
+
+      let newTimerInfo : Base.TimerInfo = {
+        id = jobId;
+        triggerTime = triggerTime;
+        callbackName = callbackName;
+      };
+
+      var timerBuffer = Buffer.fromArray<Base.TimerInfo>(timers);
+      timerBuffer.add(newTimerInfo);
+      timers := Buffer.toArray(timerBuffer);
     };
     
     private func setSystemTimers() : async (){
@@ -3465,6 +3479,16 @@ import Debug "mo:base/Debug";
           };
         };
       };
+    };
+
+    private func removeExpiredTimers() : () {
+      let currentTime = Time.now();
+      timers := Array.filter<Base.TimerInfo>(
+        timers,
+        func(timer : Base.TimerInfo) : Bool {
+          return timer.triggerTime > currentTime;
+        },
+      );
     };
 
     private func defaultCallback() : async () {};
@@ -3524,10 +3548,11 @@ import Debug "mo:base/Debug";
                   activeGameweek := nextFixture.gameweek;
                   unplayedGameweek := activeGameweek + 1;
                   completedGameweek := activeGameweek - 1;
+                } else {
+                  await setFixtureTimers(nextFixtureGameweekFixtures);
                 };
                 
                 setLeagueGameweek(leagueStatus.leagueId, unplayedGameweek, activeGameweek, completedGameweek, nextFixtureGameweekFixtures[0].kickOff);
-
               };
               case (null){}
             };
@@ -3536,6 +3561,7 @@ import Debug "mo:base/Debug";
         };
       };
       await setCheckCurrentGameweekTimer();
+      removeExpiredTimers();
     };
 
     private func endOfSeasonExpired() : async (){
@@ -3635,6 +3661,7 @@ import Debug "mo:base/Debug";
           case (null){}
         };
       };
+      removeExpiredTimers();
     };
 
     private func transferWindowStart () : async (){
@@ -3668,6 +3695,7 @@ import Debug "mo:base/Debug";
           });
         };
       };
+      removeExpiredTimers();
     };
 
     private func transferWindowEnd() : async () {
@@ -3700,6 +3728,7 @@ import Debug "mo:base/Debug";
           });
         };
       };
+      removeExpiredTimers();
     };
 
     private func setFixtureToActive() : async (){
@@ -3756,6 +3785,7 @@ import Debug "mo:base/Debug";
             };
           };
       });
+      removeExpiredTimers();
     };
 
     private func setFixtureToComplete() : async (){
@@ -3812,6 +3842,7 @@ import Debug "mo:base/Debug";
             };
           };
       });
+      removeExpiredTimers();
     };
 
     private func loanExpiredCallback() : async (){
@@ -3854,6 +3885,7 @@ import Debug "mo:base/Debug";
       for (player in Iter.fromArray(playersNoLongerInjured)) {
         let _ = await executeResetPlayerInjury(player.id);
       };
+      removeExpiredTimers();
       return #ok();
       */
     };
@@ -3888,24 +3920,39 @@ import Debug "mo:base/Debug";
                   return;
                 };
 
-                var firstNextGameweekFixture: ?FootballTypes.Fixture = null;
+                if(leagueStatus.activeGameweek == 0){
+                  
+                  var firstNextGameweekFixture: ?FootballTypes.Fixture = null;
 
-                label fixtureLoop for(fixture in Iter.fromArray(sortedFixtures)){
-                  if(fixture.gameweek == (leagueStatus.activeGameweek + 1)){
-                    firstNextGameweekFixture := ?fixture;
-                    break fixtureLoop;
+                  label fixtureLoop for(fixture in Iter.fromArray(sortedFixtures)){
+                    if(fixture.gameweek == (leagueStatus.unplayedGameweek)){
+                      firstNextGameweekFixture := ?fixture;
+                      break fixtureLoop;
+                    };
                   };
-                };
-
-                switch(firstNextGameweekFixture){
-                  case (?nextFixture){
-
-                    let hourBeforeKickOff = nextFixture.kickOff - Utilities.getHour();
-                    let triggerDuration = #nanoseconds(Int.abs((hourBeforeKickOff - Time.now())));
-
-                    await setAndBackupTimer(triggerDuration, "checkCurrentGameweek");
+                  switch(firstNextGameweekFixture){
+                    case (?nextFixture){
+                      let hourBeforeKickOff = nextFixture.kickOff - Utilities.getHour();
+                      let triggerDuration = #nanoseconds(Int.abs((hourBeforeKickOff - Time.now())));
+                       await setAndBackupTimer(triggerDuration, "checkCurrentGameweek"); 
+                    };
+                    case (null){}
                   };
-                  case (null){}
+                              
+                } else {
+                  
+                  let currentGameweekFixtures = Array.filter<FootballTypes.Fixture>(sortedFixtures, func(fixtureEntry: FootballTypes.Fixture){
+                    fixtureEntry.gameweek == leagueStatus.activeGameweek;
+                  });
+
+                  if(Array.size(currentGameweekFixtures) == 0){
+                    await setAndBackupTimer(#nanoseconds(0), "checkCurrentGameweek");
+                    return;
+                  };
+
+                  let lastGame = currentGameweekFixtures[Array.size(currentGameweekFixtures) - 1];
+                  let triggerDuration = #nanoseconds(Int.abs((lastGame.kickOff + (Utilities.getHour() * 2) - Time.now())));
+                  await setAndBackupTimer(triggerDuration, "checkCurrentGameweek"); 
                 };
               };
               case (null){}
@@ -3913,6 +3960,19 @@ import Debug "mo:base/Debug";
           };
           case (null){}
         };
+      };
+    };
+
+    private func setFixtureTimers(fixtures: [FootballTypes.Fixture]) : async (){
+      for(fixture in Iter.fromArray(fixtures)){
+        let hourBeforeKickOff = fixture.kickOff - Utilities.getHour();
+        let activeTriggerTime = #nanoseconds(Int.abs((hourBeforeKickOff - Time.now())));
+
+        let twoHoursAfterKickOff = fixture.kickOff + (Utilities.getHour() * 2);
+        let completeTriggerTime = #nanoseconds(Int.abs((twoHoursAfterKickOff - Time.now())));
+
+        await setAndBackupTimer(activeTriggerTime, "setFixtureToActive"); 
+        await setAndBackupTimer(completeTriggerTime, "setFixtureToComplete"); 
       };
     };
 
