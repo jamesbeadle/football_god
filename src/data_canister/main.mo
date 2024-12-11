@@ -2107,6 +2107,7 @@ import Debug "mo:base/Debug";
                     }
                   };
                   finaliseFixture(dto.leagueId, dto.seasonId, dto.fixtureId, highestScoringPlayerId);
+                  let _ = await notifyAppsOfFixtureFinalised(dto.leagueId, dto.seasonId, dto.gameweek);
                   let _ =  await updateDataHashes(dto.leagueId, "players");
                   let _ =  await updateDataHashes(dto.leagueId, "fixtures");
                   let _ =  await updateDataHashes(dto.leagueId, "player_events");
@@ -3548,7 +3549,7 @@ import Debug "mo:base/Debug";
                   activeGameweek := nextFixture.gameweek;
                   unplayedGameweek := activeGameweek + 1;
                   completedGameweek := activeGameweek - 1;
-                  let _ = await notifyAppsOfGameweekStarting(leagueStatus.leagueId);
+                  let _ = await notifyAppsOfGameweekStarting(leagueStatus.leagueId, season.id, activeGameweek);
                 } else {
                   await setFixtureTimers(nextFixtureGameweekFixtures);
                 };
@@ -4068,13 +4069,25 @@ import Debug "mo:base/Debug";
       return #ok();
     };
 
-    private func notifyAppsOfGameweekStarting(leagueId: FootballTypes.LeagueId) : async Result.Result<(), T.Error> {
+    private func notifyAppsOfFixtureFinalised(leagueId: FootballTypes.LeagueId, seasonId: FootballTypes.SeasonId, gameweek: FootballTypes.GameweekNumber) : async Result.Result<(), T.Error> {
       for(leagueApplication in Iter.fromArray(leagueApplications)){
         if(leagueApplication.0 == leagueId){
           let application_canister = actor (leagueApplication.1) : actor {
-            notifyAppsOfGameweekStarting : (leagueId: FootballTypes.LeagueId) -> async Result.Result<(), T.Error>;
+            notifyAppsOfFixtureFinalised : (seasonId: FootballTypes.SeasonId, gameweek: FootballTypes.GameweekNumber) -> async Result.Result<(), T.Error>;
           };
-          let _ = await application_canister.notifyAppsOfGameweekStarting(leagueId);
+          let _ = await application_canister.notifyAppsOfFixtureFinalised(seasonId, gameweek);
+        };
+      };
+      return #ok();
+    };
+
+    private func notifyAppsOfGameweekStarting(leagueId: FootballTypes.LeagueId, seasonId: FootballTypes.SeasonId, gameweek: FootballTypes.GameweekNumber) : async Result.Result<(), T.Error> {
+      for(leagueApplication in Iter.fromArray(leagueApplications)){
+        if(leagueApplication.0 == leagueId){
+          let application_canister = actor (leagueApplication.1) : actor {
+            notifyAppsOfGameweekStarting : (leagueId: FootballTypes.LeagueId, seasonId: FootballTypes.SeasonId, gameweek: FootballTypes.GameweekNumber) -> async Result.Result<(), T.Error>;
+          };
+          let _ = await application_canister.notifyAppsOfGameweekStarting(leagueId, seasonId, gameweek);
         };
       };
       return #ok();
