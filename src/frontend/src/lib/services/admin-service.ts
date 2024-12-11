@@ -5,7 +5,7 @@ import { isError } from "../utils/helpers";
 import type {
   SystemStateDTO,
   TimerInfo,
-  UpdateSystemStateDTO,
+  UpdateAppStatusDTO,
 } from "../../../../declarations/backend/backend.did";
 
 export class AdminService {
@@ -66,7 +66,7 @@ export class AdminService {
 
   async updateSystemState(
     applicationName: string,
-    dto: UpdateSystemStateDTO,
+    dto: UpdateAppStatusDTO,
   ): Promise<void> {
     const identityActor: any = await ActorFactory.createIdentityActor(
       authStore,

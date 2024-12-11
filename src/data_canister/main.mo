@@ -3548,6 +3548,7 @@ import Debug "mo:base/Debug";
                   activeGameweek := nextFixture.gameweek;
                   unplayedGameweek := activeGameweek + 1;
                   completedGameweek := activeGameweek - 1;
+                  let _ = await notifyAppsOfGameweekStarting(leagueStatus.leagueId);
                 } else {
                   await setFixtureTimers(nextFixtureGameweekFixtures);
                 };
@@ -4062,6 +4063,18 @@ import Debug "mo:base/Debug";
             notifyAppsOfTransfer : (leagueId: FootballTypes.LeagueId, playerId: FootballTypes.PlayerId) -> async Result.Result<(), T.Error>;
           };
           let _ = await application_canister.notifyAppsOfTransfer(leagueId, playerId);
+        };
+      };
+      return #ok();
+    };
+
+    private func notifyAppsOfGameweekStarting(leagueId: FootballTypes.LeagueId) : async Result.Result<(), T.Error> {
+      for(leagueApplication in Iter.fromArray(leagueApplications)){
+        if(leagueApplication.0 == leagueId){
+          let application_canister = actor (leagueApplication.1) : actor {
+            notifyAppsOfGameweekStarting : (leagueId: FootballTypes.LeagueId) -> async Result.Result<(), T.Error>;
+          };
+          let _ = await application_canister.notifyAppsOfGameweekStarting(leagueId);
         };
       };
       return #ok();

@@ -1,5 +1,5 @@
 <script lang="ts">
-    import type { UpdateSystemStateDTO } from "../../../../../declarations/backend/backend.did";
+    import type { UpdateAppStatusDTO } from "../../../../../declarations/backend/backend.did";
     import { adminStore } from "$lib/stores/admin-store";
     import { onMount } from "svelte";
     import Modal from "../shared/modal.svelte";
@@ -27,7 +27,7 @@
     
     async function updateSystemState() {
       try {
-        let dto: UpdateSystemStateDTO = {
+        let dto: UpdateAppStatusDTO = {
           onHold,
           version
         };
@@ -113,8 +113,7 @@
               <input
               type="checkbox"
               class="form-checkbox h-5 w-5"
-              checked={onHold}
-              bind:value={onHold}
+              bind:checked={onHold}
             />
           </div>
 

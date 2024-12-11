@@ -4652,7 +4652,7 @@ const options = {
 		<div class="error">
 			<span class="status">` + status + '</span>\n			<div class="message">\n				<h1>' + message + "</h1>\n			</div>\n		</div>\n	</body>\n</html>\n"
   },
-  version_hash: "1rqz2q"
+  version_hash: "19hwk7p"
 };
 async function get_hooks() {
   return {};
@@ -5403,7 +5403,7 @@ const idlFactory = ({ IDL }) => {
     "profilePicture": IDL.Vec(IDL.Nat8),
     "principalId": PrincipalId
   });
-  const UpdateSystemStateDTO = IDL.Record({
+  const UpdateAppStatusDTO = IDL.Record({
     "version": IDL.Text,
     "onHold": IDL.Bool
   });
@@ -5488,7 +5488,7 @@ const idlFactory = ({ IDL }) => {
     "snapshotManagers": IDL.Func([IDL.Text], [Result], []),
     "updateProfilePicture": IDL.Func([UpdateProfilePictureDTO], [Result], []),
     "updateSystemState": IDL.Func(
-      [IDL.Text, UpdateSystemStateDTO],
+      [IDL.Text, UpdateAppStatusDTO],
       [Result],
       []
     ),

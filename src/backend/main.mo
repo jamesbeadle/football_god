@@ -841,19 +841,19 @@ actor Self {
     }));
   };
 
-  public shared ({ caller }) func updateSystemState(applicationName: Text, dto : RequestDTOs.UpdateSystemStateDTO) : async Result.Result<(), T.Error> {
+  public shared ({ caller }) func updateSystemState(applicationName: Text, dto : RequestDTOs.UpdateAppStatusDTO) : async Result.Result<(), T.Error> {
     assert checkAdmin(Principal.toText(caller));
     switch(applicationName){
       case "OpenFPL" {
         let backend_canister = actor (Environment.OPENFPL_BACKEND_CANISTER_ID) : actor {
-          updateSystemState : (dto : RequestDTOs.UpdateSystemStateDTO) -> async Result.Result<(), T.Error>;
+          updateSystemState : (dto : RequestDTOs.UpdateAppStatusDTO) -> async Result.Result<(), T.Error>;
         };
         return await backend_canister.updateSystemState(dto);
       };
       case "OpenWSL" {
         
         let backend_canister = actor (Environment.OPENWSL_BACKEND_CANISTER_ID) : actor {
-          updateSystemState : (dto : RequestDTOs.UpdateSystemStateDTO) -> async Result.Result<(), T.Error>;
+          updateSystemState : (dto : RequestDTOs.UpdateAppStatusDTO) -> async Result.Result<(), T.Error>;
         };
         return await backend_canister.updateSystemState(dto);
 

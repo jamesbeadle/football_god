@@ -1,6 +1,6 @@
 import { AdminService } from "../services/admin-service";
 import type {
-  UpdateSystemStateDTO,
+  UpdateAppStatusDTO,
   SystemStateDTO,
 } from "../../../../declarations/backend/backend.did";
 
@@ -13,7 +13,7 @@ function createAdminStore() {
 
   async function updateSystemState(
     applicationName: string,
-    dto: UpdateSystemStateDTO,
+    dto: UpdateAppStatusDTO,
   ): Promise<any> {
     return new AdminService().updateSystemState(applicationName, dto);
   }

@@ -5,7 +5,7 @@ import BettingTypes "../types/betting_types";
 
 module RequestDTOs {
 
-  public type UpdateSystemStateDTO = {
+  public type UpdateAppStatusDTO = {
     onHold : Bool;
     version: Text;
   };
