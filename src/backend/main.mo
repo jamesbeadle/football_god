@@ -632,7 +632,7 @@ actor Self {
   public shared query func getMatchOdds(leagueId: FootballTypes.LeagueId, fixtureId: FootballTypes.FixtureId) : async Result.Result<ResponseDTOs.MatchOddsDTO, T.Error> {
     return oddsManager.getMatchOdds(leagueId, fixtureId);
   };
-
+  
   public shared ({ caller }) func placeBet(dto: RequestDTOs.SubmitBetslipDTO) : async Result.Result<BettingTypes.BetSlip, T.Error>{
     assert not Principal.isAnonymous(caller);
     let principalId = Principal.toText(caller);
@@ -814,6 +814,30 @@ actor Self {
   };
 
   private func postUpgradeCallback() : async (){
+    
+    //TODO - Remove when live
+    let _ = await oddsManager.addBettableLeagueFixture(1, 1);
+    let _ = await oddsManager.addBettableLeagueFixture(1, 2);
+    let _ = await oddsManager.addBettableLeagueFixture(1, 3);
+    let _ = await oddsManager.addBettableLeagueFixture(1, 4);
+    let _ = await oddsManager.addBettableLeagueFixture(1, 5);
+    let _ = await oddsManager.addBettableLeagueFixture(1, 6);
+    let _ = await oddsManager.addBettableLeagueFixture(1, 7);
+    let _ = await oddsManager.addBettableLeagueFixture(1, 8);
+    let _ = await oddsManager.addBettableLeagueFixture(1, 9);
+    let _ = await oddsManager.addBettableLeagueFixture(1, 10);
+
+    let _ = await oddsManager.addBettableLeagueFixture(1, 11);
+    let _ = await oddsManager.addBettableLeagueFixture(1, 12);
+    let _ = await oddsManager.addBettableLeagueFixture(1, 13);
+    let _ = await oddsManager.addBettableLeagueFixture(1, 14);
+    let _ = await oddsManager.addBettableLeagueFixture(1, 15);
+    let _ = await oddsManager.addBettableLeagueFixture(1, 16);
+    let _ = await oddsManager.addBettableLeagueFixture(1, 17);
+    let _ = await oddsManager.addBettableLeagueFixture(1, 18);
+    let _ = await oddsManager.addBettableLeagueFixture(1, 19);
+    let _ = await oddsManager.addBettableLeagueFixture(1, 20);
+
     await oddsManager.recalculate(1);
   };
 

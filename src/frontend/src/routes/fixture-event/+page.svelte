@@ -9,7 +9,6 @@
     import { clubStore } from "$lib/stores/club-store";
     import { fixtureStore } from "$lib/stores/fixture-store";
     import { formatUnixDateToReadable, formatUnixTimeToTime } from "$lib/utils/helpers";
-    import { match } from "assert";
 
     let isLoading = true;
 
