@@ -3386,6 +3386,7 @@ import Debug "mo:base/Debug";
 
     private func postUpgradeCallback() : async (){
       await setSystemTimers();
+      await checkCurrentGameweekExpired();
       //TODO: Check cycles for betting canisters when created
     };
 
@@ -3524,6 +3525,7 @@ import Debug "mo:base/Debug";
                 };
                 
                 var nextFixtureIndex = 0;
+                //Loops through all 380 fixtures
                 label fixtureLoop for(fixture in Iter.fromArray(sortedFixtures)){
                   if(fixture.kickOff > Time.now()){
                     break fixtureLoop;
@@ -3531,24 +3533,36 @@ import Debug "mo:base/Debug";
                   nextFixtureIndex += 1;
                 };
 
+                //at 2pm the next fixture was the 3pm fixture
+
                 let nextFixture = sortedFixtures[nextFixtureIndex];
 
+                //this gets you the next fixture object
+
+                //this is the default
                 var activeGameweek: FootballTypes.GameweekNumber = 0;
-                var completedGameweek: FootballTypes.GameweekNumber = nextFixture.gameweek - 1;
-                var unplayedGameweek: FootballTypes.GameweekNumber = nextFixture.gameweek;
+                var completedGameweek: FootballTypes.GameweekNumber = nextFixture.gameweek - 1; //gw16
+                var unplayedGameweek: FootballTypes.GameweekNumber = nextFixture.gameweek; //gw17
                 
+                //these are all the gw 17 fixtures
                 let nextFixtureGameweekFixtures = Array.filter<FootballTypes.Fixture>(sortedFixtures, func(fixtureEntry: FootballTypes.Fixture) {
                   fixtureEntry.gameweek == nextFixture.gameweek
                 });
+
+                //there should have been no fixtures before this point at 2pm
                 
+                //need to decide if the gameweek needs to change, the active gameweek was zero at 2pm
+                  //
+
                 let nextFixtureGameweekFixturesBeforeNow = Array.filter<FootballTypes.Fixture>(nextFixtureGameweekFixtures, func(fixtureEntry: FootballTypes.Fixture) {
-                  fixtureEntry.kickOff < Time.now() + Utilities.getHour();
+                  fixtureEntry.kickOff < Time.now();
                 });
 
                 if(Array.size(nextFixtureGameweekFixturesBeforeNow) > 0){
                   activeGameweek := nextFixture.gameweek;
                   unplayedGameweek := activeGameweek + 1;
-                  completedGameweek := activeGameweek - 1;
+                  completedGameweek := activeGameweek - 1; 
+
                   let _ = await notifyAppsOfGameweekStarting(leagueStatus.leagueId, season.id, activeGameweek);
                 } else {
                   await setFixtureTimers(nextFixtureGameweekFixtures);
@@ -4085,9 +4099,9 @@ import Debug "mo:base/Debug";
       for(leagueApplication in Iter.fromArray(leagueApplications)){
         if(leagueApplication.0 == leagueId){
           let application_canister = actor (leagueApplication.1) : actor {
-            notifyAppsOfGameweekStarting : (leagueId: FootballTypes.LeagueId, seasonId: FootballTypes.SeasonId, gameweek: FootballTypes.GameweekNumber) -> async Result.Result<(), T.Error>;
+            notifyAppsOfGameweekStarting : (seasonId: FootballTypes.SeasonId, gameweek: FootballTypes.GameweekNumber) -> async Result.Result<(), T.Error>;
           };
-          let _ = await application_canister.notifyAppsOfGameweekStarting(leagueId, seasonId, gameweek);
+          let _ = await application_canister.notifyAppsOfGameweekStarting(seasonId, gameweek);
         };
       };
       return #ok();

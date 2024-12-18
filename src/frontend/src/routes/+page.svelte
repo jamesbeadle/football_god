@@ -102,7 +102,25 @@
           </button>
 
           {#if expandedLeagues[league.id] && !loadingFixtures[league.id]}
-            <div class="px-4 py-2 bg-BrandDarkGray text-sm space-y-2">
+            <div class="bg-BrandDarkGray text-sm space-y-2">
+              <div class="flex flex-row w-full bg-white">
+                
+                <div class="flex items-center justify-center w-5/12">
+                  <button class="text-gray-500 hover:text-gray-700">
+                    &larr;
+                  </button>
+                  <span class="uppercase tracking-widest mx-4">Gameweek 12</span>
+                  <button class="text-gray-500 hover:text-gray-700">
+                    &rarr;
+                  </button>
+                </div>
+              
+                <div class="text-center w-2/5">Home</div>
+                <div class="text-center w-2/5">Draw</div>
+                <div class="text-center w-2/12">Away</div>
+                <div class="text-center w-1/12"></div>
+              </div>
+              
               {#each leagueFixtures[league.id] as fixture}
                 {@const odds = bettingFixtureDTOs[league.id].find((odds) => odds.fixtureId === fixture.id)}
                 {#if odds}
