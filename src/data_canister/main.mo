@@ -3387,7 +3387,7 @@ import Debug "mo:base/Debug";
     private func postUpgradeCallback() : async (){
       await setSystemTimers();
       await checkCurrentGameweekExpired();
-      setupTesting();
+      //setupTesting();
       //TODO: Check cycles for betting canisters when created
     };
 

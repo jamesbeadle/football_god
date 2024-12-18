@@ -8,9 +8,8 @@ module Environment {
   public let BACKEND_CANISTER_ID = "44kin-waaaa-aaaal-qbxra-cai";
   public let FRONTEND_CANISTER_ID = "43loz-3yaaa-aaaal-qbxrq-cai";
   
-  //LOCAL:
-  public let DATA_CANISTER_ID = "be2us-64aaa-aaaaa-qaabq-cai"; 
-  //public let DATA_CANISTER_ID = "52fzd-2aaaa-aaaal-qmzsa-cai"; //LIVE
+  //LOCAL:public let DATA_CANISTER_ID = "be2us-64aaa-aaaaa-qaabq-cai"; 
+  public let DATA_CANISTER_ID = "52fzd-2aaaa-aaaal-qmzsa-cai"; //LIVE
   public let OPENFPL_BACKEND_CANISTER_ID = "y22zx-giaaa-aaaal-qmzpq-cai";
   public let OPENWSL_BACKEND_CANISTER_ID = "5bafg-ayaaa-aaaal-qmzqq-cai";
   public let OPENFPL_GOVERNANCE_CANISTER_ID = "detjl-sqaaa-aaaaq-aacqa-cai";
