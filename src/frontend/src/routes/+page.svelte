@@ -192,13 +192,13 @@
                                       
                                       if (isBetSelected(currentOdds, description)) {
                                           delete selectedOdds[description];
-                                          selectedOdds = { ...selectedOdds }; // Force reactivity update
+                                          selectedOdds = { ...selectedOdds };
                                           selectedBets = selectedBets.filter(bet => 
                                               !(bet.odds === currentOdds && bet.description === description)
                                           );
                                       } else {
                                           selectedOdds[description] = currentOdds;
-                                          selectedOdds = { ...selectedOdds }; // Force reactivity update
+                                          selectedOdds = { ...selectedOdds };
                                           selectedBets = [...selectedBets, {
                                               type: 'home',
                                               odds: odds?.homeOdds || 0,
@@ -225,13 +225,13 @@
                                       
                                       if (isBetSelected(currentOdds, description)) {
                                           delete selectedOdds[description];
-                                          selectedOdds = { ...selectedOdds }; // Force reactivity update
+                                          selectedOdds = { ...selectedOdds }; 
                                           selectedBets = selectedBets.filter(bet => 
                                               !(bet.odds === currentOdds && bet.description === description)
                                           );
                                       } else {
                                           selectedOdds[description] = currentOdds;
-                                          selectedOdds = { ...selectedOdds }; // Force reactivity update
+                                          selectedOdds = { ...selectedOdds }; 
                                           selectedBets = [...selectedBets, {
                                               type: 'draw',
                                               odds: odds?.drawOdds || 0,
@@ -258,13 +258,13 @@
                                       
                                       if (isBetSelected(currentOdds, description)) {
                                           delete selectedOdds[description];
-                                          selectedOdds = { ...selectedOdds }; // Force reactivity update
+                                          selectedOdds = { ...selectedOdds };
                                           selectedBets = selectedBets.filter(bet => 
                                               !(bet.odds === currentOdds && bet.description === description)
                                           );
                                       } else {
                                           selectedOdds[description] = currentOdds;
-                                          selectedOdds = { ...selectedOdds }; // Force reactivity update
+                                          selectedOdds = { ...selectedOdds }; 
                                           selectedBets = [...selectedBets, {
                                               type: 'away',
                                               odds: odds?.awayOdds || 0,
@@ -324,7 +324,7 @@
                         delete selectedOdds[description];
                     }
                 });
-                selectedOdds = { ...selectedOdds }; // Force reactivity update
+                selectedOdds = { ...selectedOdds };
             }}
         />
       </div>
