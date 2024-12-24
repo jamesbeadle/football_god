@@ -691,3 +691,11 @@ export function getImageURL(blob: any): string {
 
   return "/profile_placeholder.png";
 }
+
+export function serializeData(data: any): any {
+  return JSON.parse(
+    JSON.stringify(data, (key, value) =>
+      typeof value === "bigint" ? value.toString() : value,
+    ),
+  );
+}

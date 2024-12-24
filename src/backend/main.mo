@@ -10,7 +10,6 @@ import Buffer "mo:base/Buffer";
 import Float "mo:base/Float";
 import Iter "mo:base/Iter";
 import Time "mo:base/Time";
-import Debug "mo:base/Debug";
 
 import T "types/app_types";
 import Base "types/base_types";
@@ -128,11 +127,9 @@ actor Self {
   };
 
   public shared composite query func getFixtures(leagueId: FootballTypes.LeagueId) : async Result.Result<[ResponseDTOs.FixtureDTO], T.Error>  {
-    
     let data_canister = actor (Environment.DATA_CANISTER_ID) : actor {
       getFixtures : shared query (leagueId: FootballTypes.LeagueId) -> async Result.Result<[ResponseDTOs.FixtureDTO], T.Error>;
     };
-
     return await data_canister.getFixtures(leagueId);
   };
 
@@ -849,7 +846,6 @@ actor Self {
   };
 
   public shared ({ caller }) func isDataManager() : async Result.Result<Bool, T.Error> {
-    Debug.print("checking is data manager");
     return #ok(checkDataManager(Principal.toText(caller)));
   };
   

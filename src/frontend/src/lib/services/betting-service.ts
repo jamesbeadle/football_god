@@ -19,7 +19,9 @@ export class BettingService {
   }
 
   async getLeagueFixtures(leagueId: LeagueId): Promise<HomePageFixtureDTO[]> {
-    return await this.actor.getLeagueFixtures(leagueId);
+    const result = await this.actor.getLeagueFixtures(leagueId);
+    if (isError(result)) throw new Error("Failed to fetch league fixtures");
+    return result;
   }
 
   async getMatchOdds(

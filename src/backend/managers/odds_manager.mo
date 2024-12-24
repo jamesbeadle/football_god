@@ -6,7 +6,6 @@ import Array "mo:base/Array";
 import Option "mo:base/Option";
 import Buffer "mo:base/Buffer";
 import Iter "mo:base/Iter";
-import Debug "mo:base/Debug";
 import ResponseDTOs "../dtos/response_DTOs";
 import Environment "../environment";
 import RequestDTOs "../dtos/request_DTOs";

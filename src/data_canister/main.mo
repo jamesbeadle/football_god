@@ -14,7 +14,6 @@
   import Time "mo:base/Time";
   import Timer "mo:base/Timer";
   import TrieMap "mo:base/TrieMap";
-import Debug "mo:base/Debug";
   
   import Base "../backend/types/base_types";
   import FootballTypes "../backend/types/football_types";
@@ -220,7 +219,6 @@ import Debug "mo:base/Debug";
       let seasonResult = Array.find<FootballTypes.LeagueStatus>(leagueStatuses, func(entry: FootballTypes.LeagueStatus) : Bool {
         entry.leagueId == leagueId;
       });
-      
       switch(seasonResult){
         case (?foundSeason){
           return getPrivateFixtures({leagueId; seasonId = foundSeason.activeSeasonId});
@@ -236,10 +234,8 @@ import Debug "mo:base/Debug";
         func(leagueSeason: (FootballTypes.LeagueId, [FootballTypes.Season])) : Bool{
             leagueSeason.0 == dto.leagueId;
       });
-
       switch(filteredLeagueSeasons){
-        case (?foundLeagueSeasons){          
-          
+        case (?foundLeagueSeasons){   
           let filteredSeason = Array.find<FootballTypes.Season>(foundLeagueSeasons.1, 
             func(leagueSeason: FootballTypes.Season) : Bool{
               leagueSeason.id == dto.seasonId;
@@ -3497,7 +3493,6 @@ import Debug "mo:base/Debug";
     private func defaultCallback() : async () {};
 
     private func checkCurrentGameweekExpired() : async () {
-      Debug.print("checking current gameweek expired");
       for(league in Iter.fromArray(leagueSeasons)){
         let leagueStatusResult = Array.find<FootballTypes.LeagueStatus>(leagueStatuses, func(statusEntry: FootballTypes.LeagueStatus) : Bool {
           statusEntry.leagueId == league.0;

@@ -5,7 +5,7 @@ module Environment {
     public let OPENWSL_BACKEND_CANISTER_ID = "5bafg-ayaaa-aaaal-qmzqq-cai";
     //public let FOOTBALL_GOD_BACKEND_CANISTER_ID = "44kin-waaaa-aaaal-qbxra-cai"; LIVE
     //LOCAL: 
-    public let FOOTBALL_GOD_BACKEND_CANISTER_ID = "bd3sg-teaaa-aaaaa-qaaba-cai";
+    public let FOOTBALL_GOD_BACKEND_CANISTER_ID = "bkyz2-fmaaa-aaaaa-qaaaq-cai";
     
     public let WATERWAY_LABS_BACKEND_CANISTER_ID = "rbqtt-7yaaa-aaaal-qcndq-cai";
 

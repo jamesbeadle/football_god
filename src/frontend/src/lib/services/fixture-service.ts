@@ -8,6 +8,7 @@ import type {
   SubmitFixtureDataDTO,
 } from "../../../../declarations/backend/backend.did";
 import { authStore } from "$lib/stores/auth-store";
+import { HttpAgent } from "@dfinity/agent";
 
 export class FixtureService {
   private actor: any;
