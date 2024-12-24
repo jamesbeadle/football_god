@@ -90,6 +90,7 @@ module BettingTypes {
         selections: [Selection];
         betType: BetType;
         totalStake: Nat64;
+        expectedReturns: Nat64;
         totalWinnings: Nat64;
         settledOn: Int;
     };
@@ -103,6 +104,7 @@ module BettingTypes {
         stake: Nat64;
         fixtureId: FootballTypes.FixtureId;
         winnings: Float;
+        expectedReturns: Nat64;
     };
 
     public type SelectionStatus = {

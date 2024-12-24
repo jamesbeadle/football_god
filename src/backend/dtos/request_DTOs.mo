@@ -31,6 +31,7 @@ module RequestDTOs {
     leagueId: FootballTypes.LeagueId;
     seasonId: FootballTypes.SeasonId;
     totalStake: Nat64;
+    expectedReturn: Nat64;
   };
 
   public type GetBetsDTO = {

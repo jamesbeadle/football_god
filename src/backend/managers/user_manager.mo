@@ -611,6 +611,7 @@ module {
             settledOn = unsettledBetslip.settledOn;
             status = unsettledBetslip.status;
             totalStake = unsettledBetslip.totalStake;
+            expectedReturns = unsettledBetslip.expectedReturns;
             totalWinnings = unsettledBetslip.totalWinnings;
           };
           
@@ -860,6 +861,7 @@ module {
             selections = Buffer.toArray(updatedSelectionBuffer);
             betType = betslip.betType;
             totalStake = betslip.totalStake;
+            expectedReturns = unsettledBetslip.expectedReturns;
             totalWinnings = totalWinnings;
             settledOn = Time.now();
           };

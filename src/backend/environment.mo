@@ -22,4 +22,8 @@ module Environment {
     "eqlhf-ppkq7-roa5i-4wu6r-jumy3-g2xrc-vfdd5-wtoeu-n7xre-vsktn-lqe", //JB
     "dbw6e-byxso-gds6p-weomp-qsktb-dsdfm-2ap2r-f3y5p-pqeyd-37gpi-vqe", //KH
   ];
+
+  public let AUDITOR_PRINCIPALS = [
+    "eqlhf-ppkq7-roa5i-4wu6r-jumy3-g2xrc-vfdd5-wtoeu-n7xre-vsktn-lqe", //JB
+  ];
 };

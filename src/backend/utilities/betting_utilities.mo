@@ -15,6 +15,7 @@ module {
         stake = selection.stake;
         status = #Settled;
         winnings = selection.odds * Utilities.convertNat64ToFloat(selection.stake);
+        expectedReturns = selection.expectedReturns;
       };
     };
 
@@ -28,6 +29,7 @@ module {
         stake = selection.stake;
         status = #Settled;
         winnings = 0;
+        expectedReturns = selection.expectedReturns;
       };
     };
 

@@ -638,13 +638,14 @@ actor Self {
     let principalId = Principal.toText(caller);
     assert dto.principalId == principalId;
 
+    assert validateBetslip(dto);
     assert await betWithinPlatformLimits(dto.totalStake);
 
     let profileResult = await userManager.getProfile(principalId);
     switch(profileResult){
       case (#ok profile){
-        assert not profile.completedKYC;
         assert not profile.accountOnPause;
+        assert profile.completedKYC;
         assert profile.accountBalance >= dto.totalStake;
         assert profile.maxBetLimit >= dto.totalStake;
         assert profile.monthlyBetTotal + dto.totalStake <= profile.monthlyBetLimit;
@@ -677,6 +678,16 @@ actor Self {
     let principalId = Principal.toText(caller);
     assert dto.principalId == principalId;
     return await userManager.getBets(dto);
+  };
+
+  private func validateBetslip(dto: RequestDTOs.SubmitBetslipDTO) : Bool {
+
+    //for the accumulator type
+      //calculate the expected returns of each row and ensure what they expect from each users submission
+
+      //get the object the frontend has to do the comparison
+
+    return false;
   };
 
   private func calculateTotalPotentialPayout() : Nat64 {
@@ -764,12 +775,14 @@ actor Self {
                 stake = selection.stake;
                 status = #Settled;
                 winnings = selection.winnings;
+                expectedReturns = selection.expectedReturns;
               }
             } else { return selection; };
           });
           status = bet.status;
           result = bet.result;
           totalStake = bet.totalStake;
+          expectedReturns = bet.expectedReturns;
           totalWinnings = bet.totalWinnings;
           settledOn = Time.now();
         });
@@ -1018,6 +1031,20 @@ actor Self {
   public shared ({ caller }) func removeBettableFixture(leagueId: FootballTypes.LeagueId, fixtureId: FootballTypes.FixtureId) : async Result.Result<(), T.Error> {
     assert checkAdmin(Principal.toText(caller));
     return await oddsManager.removeBettableLeagueFixture(leagueId, fixtureId);
+  };
+
+  public shared ({ caller }) func getUserAudit() : async Result.Result<ResponseDTOs.UserAuditDTO, T.Error> {
+    assert checkAuditor(Principal.toText(caller));
+    return #ok({
+      date = Time.now();
+      users = [];
+    });
+  };
+  
+  private func checkAuditor(principalId: Text) : Bool {
+    return Option.isSome(Array.find<Base.PrincipalId>(Environment.AUDITOR_PRINCIPALS, func(dataAdmin: Base.PrincipalId) : Bool{
+      dataAdmin == principalId;
+    }));
   };
    
 };

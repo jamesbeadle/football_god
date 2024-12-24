@@ -296,8 +296,8 @@ import Debug "mo:base/Debug";
           let sortedArray = Array.sort<FootballTypes.Club>(
           foundLeagueClubs.1,
           func(a : FootballTypes.Club, b : FootballTypes.Club) : Order.Order {
-          if (a.name < b.name) { return #less };
-          if (a.name == b.name) { return #equal };
+          if (a.friendlyName < b.friendlyName) { return #less };
+          if (a.friendlyName == b.friendlyName) { return #equal };
           return #greater;
           },
         );

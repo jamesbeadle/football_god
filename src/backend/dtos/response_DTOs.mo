@@ -211,7 +211,18 @@ module ResponseDTOs {
     awayOdds: Float;
   };
 
+  public type UserAuditDTO = {
+    date: Int;
+    users: [UserDTO];
+  };
 
+  public type UserDTO = {
+    principalId: Base.PrincipalId;
+    joined: Int;
+    kyc_ref: Text;
+    terms_accepted: Bool;
+  }
+  
 
 
 };
