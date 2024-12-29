@@ -43,6 +43,8 @@
       FixtureId,
       LeagueId
     } from "../../../../declarations/data_canister/data_canister.did";
+    import { betSlipDataStore } from "$lib/stores/bet-slip-data-store";
+    import { buildBetUiDescription } from "$lib/utils/buildBetUiDescription";
   
     $: leagueId = Number($page.url.searchParams.get("leagueId"));
     $: fixtureId = Number($page.url.searchParams.get("fixtureId"));
@@ -235,6 +237,7 @@
       }
     }
   
+        
     function toggleBet(
       fixtureId: number,
       categoryKey: string,
@@ -243,17 +246,22 @@
     ) {
       const catObject = mapCategoryKeyToCategory(categoryKey);
       const detail = buildSelectionDetail(categoryKey, dataForDetail);
-  
+
       const isAlreadySelected = betSlipStore.isSelected(
         leagueId,
         fixtureId,
         catObject,
         detail
       );
-  
+      
       if (isAlreadySelected) {
         betSlipStore.removeBet(leagueId, fixtureId, catObject, detail);
-      } else {
+        return;
+      }
+      
+      betSlipDataStore.ensureLeagueData(leagueId).then(({ clubs, players }) => {
+      const description = buildBetUiDescription(detail, clubs, players);
+
         betSlipStore.addBet({
           leagueId,
           fixtureId,
@@ -264,9 +272,10 @@
           odds: displayedOdds || 0,
           stake: 0n,
           winnings: 0,
-          expectedReturns: 0n
+          expectedReturns: 0n,
+          uiDescription: description,
         });
-      }
+      });
     }
   
     function isBetSelectedByData(fixtureId: number, categoryKey: string, dataForDetail: any) {

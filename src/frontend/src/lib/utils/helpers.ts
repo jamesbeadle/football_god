@@ -141,22 +141,6 @@ export function convertDateToReadable(nanoseconds: number): string {
   return date.toLocaleDateString("en-GB");
 }
 
-function lookupPlayerAndClub(
-  playerDetail: PlayerEventDetail | PlayerGroupEventDetail,
-  players: Record<number, PlayerDTO>,
-  clubs: Record<number, ClubDTO>,
-) {
-  const player = players[playerDetail.playerId];
-  const club = clubs[playerDetail.clubId];
-
-  const playerName = player
-    ? `${player.firstName} ${player.lastName}`
-    : `Player ${playerDetail.playerId}`;
-  const clubName = club ? club.name : `Club ${playerDetail.clubId}`;
-
-  return { playerName, clubName };
-}
-
 export function calculateAgeFromNanoseconds(nanoseconds: number) {
   const milliseconds = nanoseconds / 1e6;
   const birthDate = new Date(milliseconds);

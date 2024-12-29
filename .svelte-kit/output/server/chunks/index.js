@@ -1659,7 +1659,7 @@ function flush_sync(fn) {
     queued_root_effects = previous_queued_root_effects;
   }
 }
-function get$1(signal) {
+function get$2(signal) {
   var flags = signal.f;
   var is_derived = (flags & DERIVED) !== 0;
   if (is_derived && (flags & DESTROYED) !== 0) {
@@ -2033,11 +2033,11 @@ class Svelte4Component {
       { ...options2.props || {}, $$events: {} },
       {
         get(target, prop) {
-          return get$1(sources.get(prop) ?? add_source(prop, Reflect.get(target, prop)));
+          return get$2(sources.get(prop) ?? add_source(prop, Reflect.get(target, prop)));
         },
         has(target, prop) {
           if (prop === LEGACY_PROPS) return true;
-          get$1(sources.get(prop) ?? add_source(prop, Reflect.get(target, prop)));
+          get$2(sources.get(prop) ?? add_source(prop, Reflect.get(target, prop)));
           return Reflect.has(target, prop);
         },
         set(target, prop, value) {
@@ -2197,6 +2197,11 @@ function writable(value, start = noop) {
     };
   }
   return { set: set2, update, subscribe };
+}
+function get$1(store) {
+  let value;
+  subscribe_to_store(store, (_) => value = _)();
+  return value;
 }
 function hash(...values) {
   let hash2 = 5381;
@@ -4669,7 +4674,7 @@ const options = {
 		<div class="error">
 			<span class="status">` + status + '</span>\n			<div class="message">\n				<h1>' + message + "</h1>\n			</div>\n		</div>\n	</body>\n</html>\n"
   },
-  version_hash: "l7oeny"
+  version_hash: "1tmkyb5"
 };
 async function get_hooks() {
   return {};
@@ -6222,17 +6227,20 @@ function createPlayerStore() {
 const playerStore = createPlayerStore();
 const dataStore = writable({});
 async function ensureLeagueData(leagueId) {
-  let currentData;
-  dataStore.subscribe((val) => currentData = val)();
-  if (currentData[leagueId]) {
-    return currentData[leagueId];
+  const current = get$1(dataStore);
+  if (current[leagueId]) {
+    return current[leagueId];
   }
   const clubsArr = await clubStore.getClubs(leagueId);
   const playersArr = await playerStore.getPlayers(leagueId);
   const clubsObj = {};
-  for (const c of clubsArr) clubsObj[c.id] = c;
+  for (const c of clubsArr) {
+    clubsObj[c.id] = c;
+  }
   const playersObj = {};
-  for (const p of playersArr) playersObj[p.id] = p;
+  for (const p of playersArr) {
+    playersObj[p.id] = p;
+  }
   dataStore.update((old) => ({
     ...old,
     [leagueId]: { clubs: clubsObj, players: playersObj }

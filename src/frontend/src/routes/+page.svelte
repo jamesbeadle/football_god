@@ -36,6 +36,7 @@
 
   import type { HomePageFixtureDTO } from "../../../declarations/backend/backend.did";
     import { betSlipDataStore } from "$lib/stores/bet-slip-data-store";
+    import { buildBetUiDescription } from "$lib/utils/buildBetUiDescription";
 
   let isLoading = true;
   let isBetSlipExpanded = false;
@@ -133,13 +134,7 @@
   detail: SelectionDetail,
   odds: number
 ) {
-  const isCurrentlySelected = betSlipStore.isSelected(
-    leagueId,
-    fixtureId,
-    category,
-    detail
-  );
-
+  const isCurrentlySelected = betSlipStore.isSelected(leagueId, fixtureId, category, detail);
   if (isCurrentlySelected) {
     betSlipStore.removeBet(leagueId, fixtureId, category, detail);
     return;
@@ -147,18 +142,8 @@
 
   const { clubs, players } = await betSlipDataStore.ensureLeagueData(leagueId);
 
-  let userFriendlyName = "";
-  if ("AnytimeGoalscorer" in detail) {
-    const d = detail.AnytimeGoalscorer;
-    const p = players[d.playerId];
-    const c = clubs[d.clubId];
-    if (p && c) {
-      userFriendlyName = `Anytime Goalscorer: ${p.firstName} ${p.lastName} (${c.name})`;
-    } else {
-      userFriendlyName = "Anytime Goalscorer (unknown data)";
-    }
-  }
-  
+  const description = buildBetUiDescription(detail, clubs, players);
+
   betSlipStore.addBet({
     leagueId,
     fixtureId,
@@ -166,11 +151,11 @@
     result: { Open: null },
     selectionType: category,
     selectionDetail: detail,
-    odds: odds || 0,
+    odds,
     stake: 0n,
     winnings: 0,
     expectedReturns: 0n,
-    uiDescription: userFriendlyName,
+    uiDescription: description,
   });
 }
 
