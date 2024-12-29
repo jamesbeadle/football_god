@@ -2,9 +2,15 @@ import * as FlagIcons from "svelte-flag-icons";
 import type {
   BetSlip,
   PlayerEventType,
+  PlayerGroupEventDetail,
   PlayerPosition,
 } from "../../../../declarations/backend/backend.did";
-import type { Selection } from "../../../../declarations/data_canister/data_canister.did";
+import type {
+  ClubDTO,
+  PlayerDTO,
+  PlayerEventDetail,
+  Selection,
+} from "../../../../declarations/data_canister/data_canister.did";
 
 export function uint8ArrayToBase64(bytes: Uint8Array): string {
   const binary = Array.from(bytes)
@@ -109,7 +115,7 @@ export function convertDateTimeInputToUnixNano(dateTimeString: string): bigint {
     throw new Error("Invalid date format. Expected YYYY-MM-DD");
   }
   const year = parseInt(dateParts[0], 10);
-  const month = parseInt(dateParts[1], 10) - 1; // Months are 0-indexed in JavaScript
+  const month = parseInt(dateParts[1], 10) - 1;
   const day = parseInt(dateParts[2], 10);
 
   let hours = 0,
@@ -135,12 +141,20 @@ export function convertDateToReadable(nanoseconds: number): string {
   return date.toLocaleDateString("en-GB");
 }
 
-export function getBetDescription(bet: BetSlip): string {
-  return "";
-}
+function lookupPlayerAndClub(
+  playerDetail: PlayerEventDetail | PlayerGroupEventDetail,
+  players: Record<number, PlayerDTO>,
+  clubs: Record<number, ClubDTO>,
+) {
+  const player = players[playerDetail.playerId];
+  const club = clubs[playerDetail.clubId];
 
-export function getBetSelectionDescription(bet: Selection): string {
-  return "";
+  const playerName = player
+    ? `${player.firstName} ${player.lastName}`
+    : `Player ${playerDetail.playerId}`;
+  const clubName = club ? club.name : `Club ${playerDetail.clubId}`;
+
+  return { playerName, clubName };
 }
 
 export function calculateAgeFromNanoseconds(nanoseconds: number) {

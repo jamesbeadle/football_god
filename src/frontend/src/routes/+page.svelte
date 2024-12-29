@@ -29,10 +29,13 @@
     ClubDTO,
     FixtureId,
     LeagueId,
-    GameweekNumber
+    GameweekNumber,
+    Category,
+    SelectionDetail
   } from "../../../declarations/data_canister/data_canister.did";
 
   import type { HomePageFixtureDTO } from "../../../declarations/backend/backend.did";
+    import { betSlipDataStore } from "$lib/stores/bet-slip-data-store";
 
   let isLoading = true;
   let isBetSlipExpanded = false;
@@ -123,24 +126,96 @@
     isBetSlipExpanded = !isBetSlipExpanded;
   }
 
-  function isBetSelected(
-    fixtureId: number,
-    description: string,
-    odds: number
-  ): boolean {
-    return betSlipStore.isSelected(fixtureId, description, odds);
+  async function toggleBetSelection(
+  leagueId: number,
+  fixtureId: number,
+  category: Category,
+  detail: SelectionDetail,
+  odds: number
+) {
+  const isCurrentlySelected = betSlipStore.isSelected(
+    leagueId,
+    fixtureId,
+    category,
+    detail
+  );
+
+  if (isCurrentlySelected) {
+    betSlipStore.removeBet(leagueId, fixtureId, category, detail);
+    return;
   }
 
-  function toggleBetSelection(fixtureId: number, description: string, odds: number) {
-    if (isBetSelected(fixtureId, description, odds)) {
-      betSlipStore.removeBet({ fixtureId, description, odds });
+  const { clubs, players } = await betSlipDataStore.ensureLeagueData(leagueId);
+
+  let userFriendlyName = "";
+  if ("AnytimeGoalscorer" in detail) {
+    const d = detail.AnytimeGoalscorer;
+    const p = players[d.playerId];
+    const c = clubs[d.clubId];
+    if (p && c) {
+      userFriendlyName = `Anytime Goalscorer: ${p.firstName} ${p.lastName} (${c.name})`;
     } else {
-      betSlipStore.addBet({ fixtureId, description, odds });
+      userFriendlyName = "Anytime Goalscorer (unknown data)";
     }
+  }
+  
+  betSlipStore.addBet({
+    leagueId,
+    fixtureId,
+    status: { Unsettled: null },
+    result: { Open: null },
+    selectionType: category,
+    selectionDetail: detail,
+    odds: odds || 0,
+    stake: 0n,
+    winnings: 0,
+    expectedReturns: 0n,
+    uiDescription: userFriendlyName,
+  });
+}
+
+
+  function isBetSelected(
+    leagueId: number,
+    fixtureId: number,
+    category: Category,
+    detail: SelectionDetail
+  ) {
+    return betSlipStore.isSelected(leagueId, fixtureId, category, detail);
   }
 
   function getOddsForFixture(leagueId: LeagueId, fixtureId: number) {
     return filteredBettingFixtures(leagueId).find((x) => x.fixtureId === fixtureId);
+  }
+
+  function selectCorrectResultHome(leagueId: number, fixtureId: number, odds: number) {
+    const category: Category = { 'CorrectResult': null };
+    const detail: SelectionDetail = {
+      'CorrectResult': {
+        matchResult: { 'HomeWin': null }
+      }
+    };
+    toggleBetSelection(leagueId, fixtureId, category, detail, odds);
+  }
+
+  function selectCorrectResultDraw(leagueId: number, fixtureId: number, odds: number) {
+    const category: Category = { 'CorrectResult': null };
+    const detail: SelectionDetail = {
+      'CorrectResult': {
+        matchResult: { 'Draw': null }
+      }
+    };
+    toggleBetSelection(leagueId, fixtureId, category, detail, odds);
+  }
+
+  function selectCorrectResultAway(leagueId: number, fixtureId: number, odds: number) {
+    const category: Category = { 'CorrectResult': null };
+    const detail: SelectionDetail = {
+      'CorrectResult': {
+        matchResult: { 'AwayWin': null }
+      }
+    };
+    toggleBetSelection(leagueId, fixtureId, category, detail, odds);
   }
 </script>
 
@@ -183,8 +258,7 @@
                     {:else}
                       <div class="overflow-hidden text-sm border rounded-b bg-BrandDarkGray border-BrandPurple">
                         <div class="flex flex-row w-full font-bold text-black bg-white">
-                          <!-- Gameweek navigation -->
-                          <div class="flex items-center justify-center w-5/12 py-2 md:py-3 md:w-5/12">
+                          <div class="flex items-center justify-center w-5/12 py-2 md:py-3">
                             <button
                               class="text-gray-500 hover:text-gray-700"
                               on:click={() => priorGameweek(league.id)}
@@ -206,6 +280,7 @@
                               <ArrowRight className="w-4" />
                             </button>
                           </div>
+
                           <div class="flex items-center justify-center w-2/12 text-[10px] sm:text-xs md:text-xs lg:text-sm">
                             Home
                           </div>
@@ -256,6 +331,7 @@
                                           {leagueClubs[league.id]?.[fixture.awayClubId]?.name || "Unknown"}
                                         </span>
                                       </div>
+
                                       <span class="mt-1 text-[10px] md:text-xs text-gray-400">
                                         {convertDateToReadable(Number(fixture.kickOff))}
                                       </span>
@@ -267,22 +343,22 @@
                                       class="
                                         flex items-center justify-center gap-2 p-2 text-xs rounded md:text-base
                                         hover:bg-BrandGray/80 transition-colors duration-200
-                                        {isBetSelected(fixture.id, `${leagueClubs[league.id]?.[fixture.homeClubId]?.name} to Win`, oddsObj.homeOdds)
-                                          ? 'bg-BrandGray/60'
-                                          : ''}"
-                                      on:click={() =>
-                                        toggleBetSelection(
+                                        {isBetSelected(
+                                          league.id,
                                           fixture.id,
-                                          `${leagueClubs[league.id]?.[fixture.homeClubId]?.name} to Win`,
-                                          oddsObj.homeOdds
-                                        )
+                                          { 'CorrectResult': null },
+                                          { 'CorrectResult': { matchResult: { 'HomeWin': null } } }
+                                        ) ? 'bg-BrandGray/60' : ''}"
+                                      on:click={() => 
+                                        selectCorrectResultHome(league.id, fixture.id, oddsObj.homeOdds || 0)
                                       }
                                     >
                                       <span>{oddsObj.homeOdds?.toFixed(2) || "N/A"}</span>
                                       {#if isBetSelected(
+                                        league.id,
                                         fixture.id,
-                                        `${leagueClubs[league.id]?.[fixture.homeClubId]?.name} to Win`,
-                                        oddsObj.homeOdds
+                                        { 'CorrectResult': null },
+                                        { 'CorrectResult': { matchResult: { 'HomeWin': null } } }
                                       )}
                                         <BetSelectedIcon className="w-4 h-4 fill-BrandPurple" />
                                       {/if}
@@ -295,57 +371,48 @@
                                         flex items-center justify-center gap-2 p-2 text-xs rounded md:text-base
                                         hover:bg-BrandGray/80 transition-colors duration-200
                                         {isBetSelected(
+                                          league.id,
                                           fixture.id,
-                                          `${leagueClubs[league.id]?.[fixture.homeClubId]?.name} vs ${leagueClubs[league.id]?.[fixture.awayClubId]?.name} - Draw`,
-                                          oddsObj.drawOdds
-                                        )
-                                          ? 'bg-BrandGray/60'
-                                          : ''}"
-                                      on:click={() =>
-                                        toggleBetSelection(
-                                          fixture.id,
-                                          `${leagueClubs[league.id]?.[fixture.homeClubId]?.name} vs ${leagueClubs[league.id]?.[fixture.awayClubId]?.name} - Draw`,
-                                          oddsObj.drawOdds
-                                        )
+                                          { 'CorrectResult': null },
+                                          { 'CorrectResult': { matchResult: { 'Draw': null } } }
+                                        ) ? 'bg-BrandGray/60' : ''}"
+                                      on:click={() => 
+                                        selectCorrectResultDraw(league.id, fixture.id, oddsObj.drawOdds || 0)
                                       }
                                     >
                                       <span>{oddsObj.drawOdds?.toFixed(2) || "N/A"}</span>
                                       {#if isBetSelected(
+                                        league.id,
                                         fixture.id,
-                                        `${leagueClubs[league.id]?.[fixture.homeClubId]?.name} vs ${leagueClubs[league.id]?.[fixture.awayClubId]?.name} - Draw`,
-                                        oddsObj.drawOdds
+                                        { 'CorrectResult': null },
+                                        { 'CorrectResult': { matchResult: { 'Draw': null } } }
                                       )}
                                         <BetSelectedIcon className="w-4 h-4 fill-BrandPurple" />
                                       {/if}
                                     </button>
                                   </div>
 
-                                  <!-- AWAY odds -->
                                   <div class="flex items-center justify-center h-full col-span-2">
                                     <button
                                       class="
                                         flex items-center justify-center gap-2 p-2 text-xs rounded md:text-base
                                         hover:bg-BrandGray/80 transition-colors duration-200
                                         {isBetSelected(
+                                          league.id,
                                           fixture.id,
-                                          `${leagueClubs[league.id]?.[fixture.awayClubId]?.name} to Win`,
-                                          oddsObj.awayOdds
-                                        )
-                                          ? 'bg-BrandGray/60'
-                                          : ''}"
-                                      on:click={() =>
-                                        toggleBetSelection(
-                                          fixture.id,
-                                          `${leagueClubs[league.id]?.[fixture.awayClubId]?.name} to Win`,
-                                          oddsObj.awayOdds
-                                        )
+                                          { 'CorrectResult': null },
+                                          { 'CorrectResult': { matchResult: { 'AwayWin': null } } }
+                                        ) ? 'bg-BrandGray/60' : ''}"
+                                      on:click={() => 
+                                        selectCorrectResultAway(league.id, fixture.id, oddsObj.awayOdds || 0)
                                       }
                                     >
                                       <span>{oddsObj.awayOdds?.toFixed(2) || "N/A"}</span>
                                       {#if isBetSelected(
+                                        league.id,
                                         fixture.id,
-                                        `${leagueClubs[league.id]?.[fixture.awayClubId]?.name} to Win`,
-                                        oddsObj.awayOdds
+                                        { 'CorrectResult': null },
+                                        { 'CorrectResult': { matchResult: { 'AwayWin': null } } }
                                       )}
                                         <BetSelectedIcon className="w-4 h-4 fill-BrandPurple" />
                                       {/if}

@@ -73,7 +73,7 @@
       <button class="times-button" on:click={cancelModal}>&times;</button>
     </div>
     <form on:submit|preventDefault={withdrawFPL}>
-      <p>FPL Balance: {fplBalanceFormatted}</p> <!-- Display formatted balance -->
+      <p>FPL Balance: {fplBalanceFormatted}</p>
       <div class="mt-4">
         <input
           type="text"

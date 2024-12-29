@@ -1,16 +1,16 @@
-// src/lib/stores/bet-slip-store.ts
 import { writable } from "svelte/store";
 import { browser } from "$app/environment";
-
-export interface SimpleSelectedBet {
-  fixtureId: number;
-  description: string;
-  odds: number;
-}
+import type {
+  Category,
+  Selection,
+  SelectionDetail,
+} from "../../../../declarations/data_canister/data_canister.did";
+import { replacer } from "$lib/utils/helpers";
+import type { ExtendedSelection } from "$lib/types/extended-selection";
 
 const STORAGE_KEY = "global-selected-bets";
 
-function loadInitial(): SimpleSelectedBet[] {
+function loadInitial(): ExtendedSelection[] {
   if (!browser) return [];
   try {
     const stored = localStorage.getItem(STORAGE_KEY);
@@ -20,61 +20,76 @@ function loadInitial(): SimpleSelectedBet[] {
   }
 }
 
-const initial = loadInitial();
-const selectedBets = writable<SimpleSelectedBet[]>(initial);
+function detailEquals(d1: SelectionDetail, d2: SelectionDetail): boolean {
+  return JSON.stringify(d1, replacer) === JSON.stringify(d2, replacer);
+}
 
-// persist in localStorage whenever changed
-selectedBets.subscribe((value) => {
+function categoryEquals(c1: Category, c2: Category): boolean {
+  return JSON.stringify(c1, replacer) === JSON.stringify(c2, replacer);
+}
+
+const initial = loadInitial();
+const selectedBetsStore = writable<ExtendedSelection[]>(initial);
+
+selectedBetsStore.subscribe((value) => {
   if (browser) {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(value));
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(value, replacer));
   }
 });
 
-function addBet(bet: SimpleSelectedBet) {
-  selectedBets.update((current) => {
+function addBet(bet: ExtendedSelection) {
+  selectedBetsStore.update((current) => {
     const exists = current.some(
       (b) =>
+        b.leagueId === bet.leagueId &&
         b.fixtureId === bet.fixtureId &&
-        b.description === bet.description &&
-        b.odds === bet.odds,
+        categoryEquals(b.selectionType, bet.selectionType) &&
+        detailEquals(b.selectionDetail, bet.selectionDetail),
     );
     return exists ? current : [...current, bet];
   });
 }
 
-function removeBet(bet: SimpleSelectedBet) {
-  selectedBets.update((current) =>
+function removeBet(
+  leagueId: number,
+  fixtureId: number,
+  category: Category,
+  detail: SelectionDetail,
+) {
+  selectedBetsStore.update((current) =>
     current.filter(
       (b) =>
         !(
-          b.fixtureId === bet.fixtureId &&
-          b.description === bet.description &&
-          b.odds === bet.odds
+          b.leagueId === leagueId &&
+          b.fixtureId === fixtureId &&
+          categoryEquals(b.selectionType, category) &&
+          detailEquals(b.selectionDetail, detail)
         ),
     ),
   );
 }
 
-/**
- * Synchronous check if a bet is in the store.
- * Called from the UI to highlight if the user has selected it.
- */
-function isSelected(fixtureId: number, description: string, odds: number) {
+function isSelected(
+  leagueId: number,
+  fixtureId: number,
+  category: Category,
+  detail: SelectionDetail,
+) {
   let found = false;
-  // We "subscribe" and immediately unsubscribe to get the current value
-  selectedBets.subscribe((current) => {
+  selectedBetsStore.subscribe((current) => {
     found = current.some(
       (b) =>
+        b.leagueId === leagueId &&
         b.fixtureId === fixtureId &&
-        b.description === description &&
-        b.odds === odds,
+        categoryEquals(b.selectionType, category) &&
+        detailEquals(b.selectionDetail, detail),
     );
   })();
   return found;
 }
 
 export const betSlipStore = {
-  subscribe: selectedBets.subscribe,
+  subscribe: selectedBetsStore.subscribe,
   addBet,
   removeBet,
   isSelected,

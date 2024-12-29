@@ -3014,7 +3014,7 @@ function get_data(event, options2, nodes, csp, global) {
   let promise_id = 1;
   let count = 0;
   const { iterator, push: push2, done } = create_async_iterator();
-  function replacer(thing) {
+  function replacer2(thing) {
     if (typeof thing?.then === "function") {
       const id = promise_id++;
       count += 1;
@@ -3034,7 +3034,7 @@ function get_data(event, options2, nodes, csp, global) {
           count -= 1;
           let str;
           try {
-            str = devalue.uneval({ id, data, error }, replacer);
+            str = devalue.uneval({ id, data, error }, replacer2);
           } catch {
             error = await handle_error_and_jsonify(
               event,
@@ -3042,7 +3042,7 @@ function get_data(event, options2, nodes, csp, global) {
               new Error(`Failed to serialize promise while rendering ${event.route.id}`)
             );
             data = void 0;
-            str = devalue.uneval({ id, data, error }, replacer);
+            str = devalue.uneval({ id, data, error }, replacer2);
           }
           const nonce = csp.script_needs_nonce ? ` nonce="${csp.nonce}"` : "";
           push2(`<script${nonce}>${global}.resolve(${str})<\/script>
@@ -3056,7 +3056,7 @@ function get_data(event, options2, nodes, csp, global) {
   try {
     const strings = nodes.map((node) => {
       if (!node) return "null";
-      return `{"type":"data","data":${devalue.uneval(node.data, replacer)},${stringify_uses(node)}${node.slash ? `,"slash":${JSON.stringify(node.slash)}` : ""}}`;
+      return `{"type":"data","data":${devalue.uneval(node.data, replacer2)},${stringify_uses(node)}${node.slash ? `,"slash":${JSON.stringify(node.slash)}` : ""}}`;
     });
     return {
       data: `[${strings.join(",")}]`,
@@ -4597,7 +4597,7 @@ const options = {
   root,
   service_worker: false,
   templates: {
-    app: ({ head, body: body2, assets: assets2, nonce, env }) => '<!doctype html>\n<html lang="en">\n  <head>\n    <meta charset="utf-8" />\n    <meta content="width=device-width, initial-scale=1" name="viewport" />\n\n    <title>FootballGod</title>\n    <link href="https://footballgod.xyz" rel="canonical" />\n    <meta\n      content="FootballGod is a tokenised betting platform on the Internet Computer blockchain."\n      name="description"\n    />\n    <meta content="FootballGod" property="og:title" />\n    <meta\n      content="FootballGod is a tokenised betting platform on the Internet Computer blockchain."\n      property="og:description"\n    />\n    <meta content="website" property="og:type" />\n    <meta content="https://footballgod.xyz" property="og:url" />\n    <meta\n      content="https://footballgod.xyz/meta-share.jpg"\n      property="og:image"\n    />\n    <meta content="summary_large_image" name="twitter:card" />\n    <meta content="FootballGod" name="twitter:title" />\n    <meta\n      content="FootballGod is a tokenised betting platform on the Internet Computer blockchain."\n      name="twitter:description"\n    />\n    <meta\n      content="https://footballgod.xyz/meta-share.jpg"\n      name="twitter:image"\n    />\n    <meta content="@beadle1989" name="twitter:creator" />\n\n    <link crossorigin="anonymous" href="/manifest.webmanifest" rel="manifest" />\n\n    <!-- Favicon -->\n    <link\n      rel="icon"\n      type="image/png"\n      sizes="32x32"\n      href="' + assets2 + '/favicons/favicon-32x32.png"\n    />\n    <link\n      rel="icon"\n      type="image/png"\n      sizes="16x16"\n      href="' + assets2 + '/favicons/favicon-16x16.png"\n    />\n    <link rel="shortcut icon" href="' + assets2 + '/favicons/favicon.ico" />\n\n    <!-- iOS meta tags & icons -->\n    <meta name="apple-mobile-web-app-capable" content="yes" />\n    <meta name="apple-mobile-web-app-status-bar-style" content="#7F56F1" />\n    <meta name="apple-mobile-web-app-title" content="FootballGod" />\n    <link\n      rel="apple-touch-icon"\n      href="' + assets2 + '/favicons/apple-touch-icon.png"\n    />\n    <link\n      rel="mask-icon"\n      href="' + assets2 + '/favicons/safari-pinned-tab.svg"\n      color="#7F56F1"\n    />\n\n    <!-- MS -->\n    <meta name="msapplication-TileColor" content="#7F56F1" />\n    <meta\n      name="msapplication-config"\n      content="' + assets2 + '/favicons/browserconfig.xml"\n    />\n\n    <meta content="#7F56F1" name="theme-color" />\n    ' + head + '\n\n    <style>\n      html,\n      body {\n        height: 100%;\n        margin: 0;\n      }\n\n      @font-face {\n        font-display: swap;\n        font-family: "Poppins";\n        font-style: normal;\n        font-weight: 400;\n        src: url("' + assets2 + '/poppins-regular-webfont.woff2")\n          format("woff2");\n      }\n\n      @font-face {\n        font-display: swap;\n        font-family: "Manrope";\n        font-style: normal;\n        font-weight: 400;\n        src: url("' + assets2 + '/Manrope-Regular.woff2") format("woff2");\n      }\n      body {\n        font-family: "Poppins", sans-serif !important;\n        color: white !important;\n        background-color: #1a1a1d;\n        height: 100vh;\n        margin: 0;\n      }\n\n      #app-spinner {\n        --spinner-size: 30px;\n\n        width: var(--spinner-size);\n        height: var(--spinner-size);\n\n        animation: app-spinner-linear-rotate 2000ms linear infinite;\n\n        position: absolute;\n        top: calc(50% - (var(--spinner-size) / 2));\n        left: calc(50% - (var(--spinner-size) / 2));\n\n        --radius: 45px;\n        --circumference: calc(3.14159265359 * var(--radius) * 2);\n\n        --start: calc((1 - 0.05) * var(--circumference));\n        --end: calc((1 - 0.8) * var(--circumference));\n      }\n\n      #app-spinner circle {\n        stroke-dasharray: var(--circumference);\n        stroke-width: 10%;\n        transform-origin: 50% 50% 0;\n\n        transition-property: stroke;\n\n        animation-name: app-spinner-stroke-rotate-100;\n        animation-duration: 4000ms;\n        animation-timing-function: cubic-bezier(0.35, 0, 0.25, 1);\n        animation-iteration-count: infinite;\n\n        fill: transparent;\n        stroke: currentColor;\n\n        transition: stroke-dashoffset 225ms linear;\n      }\n\n      @keyframes app-spinner-linear-rotate {\n        0% {\n          transform: rotate(0deg);\n        }\n        100% {\n          transform: rotate(360deg);\n        }\n      }\n\n      @keyframes app-spinner-stroke-rotate-100 {\n        0% {\n          stroke-dashoffset: var(--start);\n          transform: rotate(0);\n        }\n        12.5% {\n          stroke-dashoffset: var(--end);\n          transform: rotate(0);\n        }\n        12.5001% {\n          stroke-dashoffset: var(--end);\n          transform: rotateX(180deg) rotate(72.5deg);\n        }\n        25% {\n          stroke-dashoffset: var(--start);\n          transform: rotateX(180deg) rotate(72.5deg);\n        }\n\n        25.0001% {\n          stroke-dashoffset: var(--start);\n          transform: rotate(270deg);\n        }\n        37.5% {\n          stroke-dashoffset: var(--end);\n          transform: rotate(270deg);\n        }\n        37.5001% {\n          stroke-dashoffset: var(--end);\n          transform: rotateX(180deg) rotate(161.5deg);\n        }\n        50% {\n          stroke-dashoffset: var(--start);\n          transform: rotateX(180deg) rotate(161.5deg);\n        }\n\n        50.0001% {\n          stroke-dashoffset: var(--start);\n          transform: rotate(180deg);\n        }\n        62.5% {\n          stroke-dashoffset: var(--end);\n          transform: rotate(180deg);\n        }\n        62.5001% {\n          stroke-dashoffset: var(--end);\n          transform: rotateX(180deg) rotate(251.5deg);\n        }\n        75% {\n          stroke-dashoffset: var(--start);\n          transform: rotateX(180deg) rotate(251.5deg);\n        }\n\n        75.0001% {\n          stroke-dashoffset: var(--start);\n          transform: rotate(90deg);\n        }\n        87.5% {\n          stroke-dashoffset: var(--end);\n          transform: rotate(90deg);\n        }\n        87.5001% {\n          stroke-dashoffset: var(--end);\n          transform: rotateX(180deg) rotate(341.5deg);\n        }\n        100% {\n          stroke-dashoffset: var(--start);\n          transform: rotateX(180deg) rotate(341.5deg);\n        }\n      }\n    </style>\n  </head>\n  <body data-sveltekit-preload-data="hover">\n    <div style="display: contents">' + body2 + '</div>\n\n    <svg\n      id="app-spinner"\n      preserveAspectRatio="xMidYMid meet"\n      focusable="false"\n      aria-hidden="true"\n      data-tid="spinner"\n      viewBox="0 0 100 100"\n    >\n      <circle cx="50%" cy="50%" r="45" />\n    </svg>\n  </body>\n</html>\n',
+    app: ({ head, body: body2, assets: assets2, nonce, env }) => '<!doctype html>\n<html lang="en">\n  <head>\n    <meta charset="utf-8" />\n    <meta content="width=device-width, initial-scale=1" name="viewport" />\n\n    <title>FootballGod</title>\n    <link href="https://footballgod.xyz" rel="canonical" />\n    <meta\n      content="FootballGod is a tokenised betting platform on the Internet Computer blockchain."\n      name="description"\n    />\n    <meta content="FootballGod" property="og:title" />\n    <meta\n      content="FootballGod is a tokenised betting platform on the Internet Computer blockchain."\n      property="og:description"\n    />\n    <meta content="website" property="og:type" />\n    <meta content="https://footballgod.xyz" property="og:url" />\n    <meta\n      content="https://footballgod.xyz/meta-share.jpg"\n      property="og:image"\n    />\n    <meta content="summary_large_image" name="twitter:card" />\n    <meta content="FootballGod" name="twitter:title" />\n    <meta\n      content="FootballGod is a tokenised betting platform on the Internet Computer blockchain."\n      name="twitter:description"\n    />\n    <meta\n      content="https://footballgod.xyz/meta-share.jpg"\n      name="twitter:image"\n    />\n    <meta content="@beadle1989" name="twitter:creator" />\n\n    <link crossorigin="anonymous" href="/manifest.webmanifest" rel="manifest" />\n\n    <link\n      rel="icon"\n      type="image/png"\n      sizes="32x32"\n      href="' + assets2 + '/favicons/favicon-32x32.png"\n    />\n    <link\n      rel="icon"\n      type="image/png"\n      sizes="16x16"\n      href="' + assets2 + '/favicons/favicon-16x16.png"\n    />\n    <link rel="shortcut icon" href="' + assets2 + '/favicons/favicon.ico" />\n\n    <meta name="apple-mobile-web-app-capable" content="yes" />\n    <meta name="apple-mobile-web-app-status-bar-style" content="#7F56F1" />\n    <meta name="apple-mobile-web-app-title" content="FootballGod" />\n    <link\n      rel="apple-touch-icon"\n      href="' + assets2 + '/favicons/apple-touch-icon.png"\n    />\n    <link\n      rel="mask-icon"\n      href="' + assets2 + '/favicons/safari-pinned-tab.svg"\n      color="#7F56F1"\n    />\n\n    <meta name="msapplication-TileColor" content="#7F56F1" />\n    <meta\n      name="msapplication-config"\n      content="' + assets2 + '/favicons/browserconfig.xml"\n    />\n\n    <meta content="#7F56F1" name="theme-color" />\n    ' + head + '\n\n    <style>\n      html,\n      body {\n        height: 100%;\n        margin: 0;\n      }\n\n      @font-face {\n        font-display: swap;\n        font-family: "Poppins";\n        font-style: normal;\n        font-weight: 400;\n        src: url("' + assets2 + '/poppins-regular-webfont.woff2")\n          format("woff2");\n      }\n\n      @font-face {\n        font-display: swap;\n        font-family: "Manrope";\n        font-style: normal;\n        font-weight: 400;\n        src: url("' + assets2 + '/Manrope-Regular.woff2") format("woff2");\n      }\n      body {\n        font-family: "Poppins", sans-serif !important;\n        color: white !important;\n        background-color: #1a1a1d;\n        height: 100vh;\n        margin: 0;\n      }\n\n      #app-spinner {\n        --spinner-size: 30px;\n\n        width: var(--spinner-size);\n        height: var(--spinner-size);\n\n        animation: app-spinner-linear-rotate 2000ms linear infinite;\n\n        position: absolute;\n        top: calc(50% - (var(--spinner-size) / 2));\n        left: calc(50% - (var(--spinner-size) / 2));\n\n        --radius: 45px;\n        --circumference: calc(3.14159265359 * var(--radius) * 2);\n\n        --start: calc((1 - 0.05) * var(--circumference));\n        --end: calc((1 - 0.8) * var(--circumference));\n      }\n\n      #app-spinner circle {\n        stroke-dasharray: var(--circumference);\n        stroke-width: 10%;\n        transform-origin: 50% 50% 0;\n\n        transition-property: stroke;\n\n        animation-name: app-spinner-stroke-rotate-100;\n        animation-duration: 4000ms;\n        animation-timing-function: cubic-bezier(0.35, 0, 0.25, 1);\n        animation-iteration-count: infinite;\n\n        fill: transparent;\n        stroke: currentColor;\n\n        transition: stroke-dashoffset 225ms linear;\n      }\n\n      @keyframes app-spinner-linear-rotate {\n        0% {\n          transform: rotate(0deg);\n        }\n        100% {\n          transform: rotate(360deg);\n        }\n      }\n\n      @keyframes app-spinner-stroke-rotate-100 {\n        0% {\n          stroke-dashoffset: var(--start);\n          transform: rotate(0);\n        }\n        12.5% {\n          stroke-dashoffset: var(--end);\n          transform: rotate(0);\n        }\n        12.5001% {\n          stroke-dashoffset: var(--end);\n          transform: rotateX(180deg) rotate(72.5deg);\n        }\n        25% {\n          stroke-dashoffset: var(--start);\n          transform: rotateX(180deg) rotate(72.5deg);\n        }\n\n        25.0001% {\n          stroke-dashoffset: var(--start);\n          transform: rotate(270deg);\n        }\n        37.5% {\n          stroke-dashoffset: var(--end);\n          transform: rotate(270deg);\n        }\n        37.5001% {\n          stroke-dashoffset: var(--end);\n          transform: rotateX(180deg) rotate(161.5deg);\n        }\n        50% {\n          stroke-dashoffset: var(--start);\n          transform: rotateX(180deg) rotate(161.5deg);\n        }\n\n        50.0001% {\n          stroke-dashoffset: var(--start);\n          transform: rotate(180deg);\n        }\n        62.5% {\n          stroke-dashoffset: var(--end);\n          transform: rotate(180deg);\n        }\n        62.5001% {\n          stroke-dashoffset: var(--end);\n          transform: rotateX(180deg) rotate(251.5deg);\n        }\n        75% {\n          stroke-dashoffset: var(--start);\n          transform: rotateX(180deg) rotate(251.5deg);\n        }\n\n        75.0001% {\n          stroke-dashoffset: var(--start);\n          transform: rotate(90deg);\n        }\n        87.5% {\n          stroke-dashoffset: var(--end);\n          transform: rotate(90deg);\n        }\n        87.5001% {\n          stroke-dashoffset: var(--end);\n          transform: rotateX(180deg) rotate(341.5deg);\n        }\n        100% {\n          stroke-dashoffset: var(--start);\n          transform: rotateX(180deg) rotate(341.5deg);\n        }\n      }\n    </style>\n  </head>\n  <body data-sveltekit-preload-data="hover">\n    <div style="display: contents">' + body2 + '</div>\n\n    <svg\n      id="app-spinner"\n      preserveAspectRatio="xMidYMid meet"\n      focusable="false"\n      aria-hidden="true"\n      data-tid="spinner"\n      viewBox="0 0 100 100"\n    >\n      <circle cx="50%" cy="50%" r="45" />\n    </svg>\n  </body>\n</html>\n',
     error: ({ status, message }) => '<!doctype html>\n<html lang="en">\n	<head>\n		<meta charset="utf-8" />\n		<title>' + message + `</title>
 
 		<style>
@@ -4669,7 +4669,7 @@ const options = {
 		<div class="error">
 			<span class="status">` + status + '</span>\n			<div class="message">\n				<h1>' + message + "</h1>\n			</div>\n		</div>\n	</body>\n</html>\n"
   },
-  version_hash: "181jgil"
+  version_hash: "l7oeny"
 };
 async function get_hooks() {
   return {};
@@ -5126,8 +5126,7 @@ const idlFactory = ({ IDL }) => {
   const PlayerId = IDL.Nat16;
   const PlayerEventDetail = IDL.Record({
     "clubId": ClubId,
-    "playerId": PlayerId,
-    "minute": IDL.Nat8
+    "playerId": PlayerId
   });
   const ClubEventDetail = IDL.Record({ "clubId": ClubId });
   const MatchResult = IDL.Variant({
@@ -5692,6 +5691,13 @@ class ActorFactory {
     });
   }
 }
+function replacer(key2, value) {
+  if (typeof value === "bigint") {
+    return value.toString();
+  } else {
+    return value;
+  }
+}
 function isError(response) {
   return response && response.err !== void 0;
 }
@@ -5916,156 +5922,45 @@ function EmptyBetSlipIcon($$payload, $$props) {
   $$payload.out += `<svg viewBox="0 0 180 180" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true"${attr("class", className)}${attr("fill", fill)}><ellipse opacity="0.1" cx="90" cy="174.6" rx="90" ry="5.4" fill="#7F56F1"></ellipse><path opacity="0.7" fill-rule="evenodd" clip-rule="evenodd" d="M69.6727 39.6C70.8479 35.4447 74.6684 32.4 79.2 32.4H115.713C112.669 34.2341 110.044 36.6934 108.017 39.6H69.6727ZM105.925 43.2H53.1C47.1353 43.2 42.3 48.0354 42.3 54V120.6H98.1H99C99.9941 120.6 100.8 121.406 100.8 122.4V131.85C100.8 139.554 107.046 145.8 114.75 145.8C122.454 145.8 128.7 139.554 128.7 131.85V79.2C114.782 79.2 103.5 67.9176 103.5 54C103.5 50.1351 104.37 46.4734 105.925 43.2ZM132.3 78.9448V129.451C137.408 128.594 141.3 124.151 141.3 118.8V75.8287C138.58 77.4019 135.54 78.4815 132.3 78.9448ZM144.9 73.3037V118.8C144.9 126.158 139.381 132.228 132.257 133.094C131.618 142.206 124.024 149.4 114.75 149.4C114.593 149.4 114.436 149.398 114.28 149.394L114.3 149.4H49.5C39.5589 149.4 31.5 141.341 31.5 131.4V127.8C31.5 123.824 34.7235 120.6 38.7 120.6V54C38.7 46.0471 45.1471 39.6 53.1 39.6H65.9701C67.2209 33.438 72.6688 28.8 79.2 28.8H126.9V28.8633C127.495 28.8214 128.095 28.8 128.7 28.8C142.618 28.8 153.9 40.0825 153.9 54C153.9 61.749 150.402 68.681 144.9 73.3037ZM51.3 90.9C51.3 88.4148 53.3147 86.4 55.8 86.4H82.8C85.2853 86.4 87.3 88.4148 87.3 90.9C87.3 93.3853 85.2853 95.4 82.8 95.4H55.8C53.3147 95.4 51.3 93.3853 51.3 90.9ZM55.8 90C55.3029 90 54.9 90.403 54.9 90.9C54.9 91.3971 55.3029 91.8 55.8 91.8H82.8C83.2971 91.8 83.7 91.3971 83.7 90.9C83.7 90.403 83.2971 90 82.8 90H55.8ZM66.5174 79.4831C66.6545 79.6202 66.8707 79.6887 67.166 79.6887C67.4191 79.6887 67.6037 79.6202 67.7197 79.4831C67.8463 79.3459 67.9096 79.1297 67.9096 78.8344V77.553C68.8904 77.4475 69.7816 77.168 70.5832 76.7145C71.3848 76.2504 72.0281 75.5754 72.5133 74.6895C73.009 73.793 73.2568 72.6856 73.2568 71.3672C73.2568 70.2282 72.9984 69.2895 72.4816 68.5512C71.9648 67.8024 71.3637 67.2276 70.6781 66.8268C69.9926 66.426 69.0697 65.9725 67.9096 65.4663V61.1948C68.4369 61.2159 68.8799 61.2739 69.2385 61.3688C69.6076 61.4637 69.982 61.585 70.3617 61.7327C70.6254 61.8381 70.7994 61.8909 70.8838 61.8909C71.0947 61.8909 71.3162 61.7432 71.5482 61.4479C71.7908 61.1526 71.9965 60.8098 72.1652 60.4196C72.334 60.0188 72.4184 59.6918 72.4184 59.4387C72.4184 59.154 72.2232 58.8692 71.833 58.5844C71.4533 58.2997 70.9154 58.0571 70.2193 57.8567C69.5338 57.6563 68.7639 57.5403 67.9096 57.5086V56.6385C67.9096 56.3327 67.8463 56.1165 67.7197 55.9899C67.5932 55.8633 67.3769 55.8 67.0711 55.8C66.818 55.8 66.6281 55.8686 66.5016 56.0057C66.375 56.1323 66.3117 56.3432 66.3117 56.6385V57.5245C65.2887 57.6405 64.35 57.92 63.4957 58.3629C62.652 58.8059 61.9717 59.4387 61.4549 60.2614C60.9486 61.0735 60.6955 62.0702 60.6955 63.2514C60.6955 64.4959 60.9645 65.5084 61.5023 66.2889C62.0508 67.0588 62.6889 67.6442 63.4166 68.045C64.1549 68.4352 65.1199 68.8518 66.3117 69.2948V73.9301C65.6578 73.9301 65.0566 73.8405 64.5082 73.6612C63.9703 73.4819 63.4166 73.2499 62.8471 72.9651C62.4463 72.7542 62.1826 72.6487 62.0561 72.6487C61.8662 72.6487 61.6289 72.7963 61.3441 73.0916C61.0594 73.3764 60.8115 73.7192 60.6006 74.12C60.4002 74.5207 60.3 74.8582 60.3 75.1325C60.3 75.4594 60.5373 75.8075 61.0119 76.1766C61.4971 76.5457 62.1932 76.8674 63.1002 77.1416C64.0178 77.4053 65.0883 77.5583 66.3117 77.6004V78.8344C66.3117 79.1297 66.3803 79.3459 66.5174 79.4831ZM65.1727 61.9858C65.3836 61.701 65.7633 61.4901 66.3117 61.353V64.7385C65.8371 64.4643 65.4732 64.1795 65.2201 63.8842C64.9775 63.5889 64.8562 63.2409 64.8562 62.8401C64.8562 62.5448 64.9617 62.26 65.1727 61.9858ZM68.7955 72.9651C68.574 73.2499 68.2787 73.4661 67.9096 73.6137V70.0541C68.7217 70.5182 69.1277 71.1299 69.1277 71.8893C69.1277 72.3217 69.017 72.6803 68.7955 72.9651ZM51.3 105.3C51.3 102.815 53.3147 100.8 55.8 100.8H109.8C112.285 100.8 114.3 102.815 114.3 105.3C114.3 107.785 112.285 109.8 109.8 109.8H55.8C53.3147 109.8 51.3 107.785 51.3 105.3ZM55.8 104.4C55.3029 104.4 54.9 104.803 54.9 105.3C54.9 105.797 55.3029 106.2 55.8 106.2H109.8C110.297 106.2 110.7 105.797 110.7 105.3C110.7 104.803 110.297 104.4 109.8 104.4H55.8ZM107.1 54C107.1 42.0707 116.771 32.4 128.7 32.4C140.629 32.4 150.3 42.0707 150.3 54C150.3 65.9294 140.629 75.6 128.7 75.6C116.771 75.6 107.1 65.9294 107.1 54ZM124.2 42.3C124.2 39.8148 126.215 37.8 128.7 37.8C131.185 37.8 133.2 39.8148 133.2 42.3V53.1C133.2 55.5853 131.185 57.6 128.7 57.6C126.215 57.6 124.2 55.5853 124.2 53.1V42.3ZM128.7 41.4C128.203 41.4 127.8 41.803 127.8 42.3V53.1C127.8 53.5971 128.203 54 128.7 54C129.197 54 129.6 53.5971 129.6 53.1V42.3C129.6 41.803 129.197 41.4 128.7 41.4ZM128.7 70.2C126.215 70.2 124.2 68.1853 124.2 65.7C124.2 63.2148 126.215 61.2 128.7 61.2C131.185 61.2 133.2 63.2148 133.2 65.7C133.2 68.1853 131.185 70.2 128.7 70.2ZM127.8 65.7C127.8 66.1971 128.203 66.6 128.7 66.6C129.197 66.6 129.6 66.1971 129.6 65.7C129.6 65.203 129.197 64.8 128.7 64.8C128.203 64.8 127.8 65.203 127.8 65.7Z"></path></svg>`;
   bind_props($$props, { className, fill });
 }
-var define_process_env_default$2 = { BACKEND_CANISTER_ID: "44kin-waaaa-aaaal-qbxra-cai", FRONTEND_CANISTER_ID: "43loz-3yaaa-aaaal-qbxrq-cai", DATA_CANISTER_CANISTER_ID: "52fzd-2aaaa-aaaal-qmzsa-cai", DFX_NETWORK: "ic" };
-class FixtureService {
-  actor;
-  constructor() {
-    this.actor = ActorFactory.createActor(
-      idlFactory,
-      define_process_env_default$2.BACKEND_CANISTER_ID
-    );
-  }
-  async getPostponedFixtures() {
-    const result = await this.actor.getPostponedFixtures();
-    if (isError(result)) throw new Error("Failed to fetch postponed fixtures");
-    return result.ok;
-  }
-  async getFixtures(leagueId) {
-    const result = await this.actor.getFixtures(leagueId);
-    if (isError(result)) throw new Error("Failed to fetch fixtures");
-    return result.ok;
-  }
-  async moveFixture(dto) {
-    const identityActor = await ActorFactory.createIdentityActor(
-      authStore,
-      define_process_env_default$2.BACKEND_CANISTER_ID
-    );
-    const result = await identityActor.executeMoveFixture(dto);
-    if (isError(result)) throw new Error("Failed to move fixture");
-  }
-  async postponeFixture(dto) {
-    const identityActor = await ActorFactory.createIdentityActor(
-      authStore,
-      define_process_env_default$2.BACKEND_CANISTER_ID
-    );
-    const result = await identityActor.executePostponeFixture(dto);
-    if (isError(result)) throw new Error("Failed to postpone fixture");
-  }
-  async submitFixtureData(dto) {
-    const identityActor = await ActorFactory.createIdentityActor(
-      authStore,
-      define_process_env_default$2.BACKEND_CANISTER_ID
-    );
-    const result = await identityActor.executeSubmitFixtureData(dto);
-    if (isError(result)) throw new Error("Failed to submit fixture data");
-  }
-}
-function createFixtureStore() {
-  async function getFixtures(leagueId) {
-    return new FixtureService().getFixtures(leagueId);
-  }
-  async function moveFixture(dto) {
-    return new FixtureService().moveFixture(dto);
-  }
-  async function postponeFixture(dto) {
-    return new FixtureService().postponeFixture(dto);
-  }
-  async function submitFixtureData(dto) {
-    return new FixtureService().submitFixtureData(dto);
-  }
-  async function getPostponedFixtures() {
-    return new FixtureService().getPostponedFixtures();
-  }
-  return {
-    getFixtures,
-    getPostponedFixtures,
-    moveFixture,
-    postponeFixture,
-    submitFixtureData
-  };
-}
-const fixtureStore = createFixtureStore();
-var define_process_env_default$1 = { BACKEND_CANISTER_ID: "44kin-waaaa-aaaal-qbxra-cai", FRONTEND_CANISTER_ID: "43loz-3yaaa-aaaal-qbxrq-cai", DATA_CANISTER_CANISTER_ID: "52fzd-2aaaa-aaaal-qmzsa-cai", DFX_NETWORK: "ic" };
-class ClubService {
-  actor;
-  constructor() {
-    this.actor = ActorFactory.createActor(
-      idlFactory,
-      define_process_env_default$1.BACKEND_CANISTER_ID
-    );
-  }
-  async getClubs(leagueId) {
-    const result = await this.actor.getLeagueClubs(leagueId);
-    if (isError(result)) throw new Error("Failed to fetch clubs");
-    return result.ok;
-  }
-  async createClub(dto) {
-    const identityActor = await ActorFactory.createIdentityActor(
-      authStore,
-      define_process_env_default$1.BACKEND_CANISTER_ID
-    );
-    const result = await identityActor.executeCreateClub(dto);
-    if (isError(result)) throw new Error("Failed to create club");
-  }
-  async removeClub(dto) {
-    const identityActor = await ActorFactory.createIdentityActor(
-      authStore,
-      define_process_env_default$1.BACKEND_CANISTER_ID
-    );
-    const result = await identityActor.executeRemoveClub(dto);
-    if (isError(result)) throw new Error("Failed to remove club");
-  }
-}
-function createClubStore() {
-  async function getClubs(leagueId) {
-    return new ClubService().getClubs(leagueId);
-  }
-  async function createClub(dto) {
-    return new ClubService().createClub(dto);
-  }
-  async function removeClub(dto) {
-    return new ClubService().removeClub(dto);
-  }
-  return {
-    getClubs,
-    createClub,
-    removeClub
-  };
-}
-const clubStore = createClubStore();
 function loadInitial() {
   return [];
 }
+function detailEquals(d1, d2) {
+  return JSON.stringify(d1, replacer) === JSON.stringify(d2, replacer);
+}
+function categoryEquals(c1, c2) {
+  return JSON.stringify(c1, replacer) === JSON.stringify(c2, replacer);
+}
 const initial = loadInitial();
-const selectedBets = writable(initial);
-selectedBets.subscribe((value) => {
+const selectedBetsStore = writable(initial);
+selectedBetsStore.subscribe((value) => {
 });
 function addBet(bet) {
-  selectedBets.update((current) => {
+  selectedBetsStore.update((current) => {
     const exists = current.some(
-      (b) => b.fixtureId === bet.fixtureId && b.description === bet.description && b.odds === bet.odds
+      (b) => b.leagueId === bet.leagueId && b.fixtureId === bet.fixtureId && categoryEquals(b.selectionType, bet.selectionType) && detailEquals(b.selectionDetail, bet.selectionDetail)
     );
     return exists ? current : [...current, bet];
   });
 }
-function removeBet(bet) {
-  selectedBets.update(
+function removeBet(leagueId, fixtureId, category, detail) {
+  selectedBetsStore.update(
     (current) => current.filter(
-      (b) => !(b.fixtureId === bet.fixtureId && b.description === bet.description && b.odds === bet.odds)
+      (b) => !(b.leagueId === leagueId && b.fixtureId === fixtureId && categoryEquals(b.selectionType, category) && detailEquals(b.selectionDetail, detail))
     )
   );
 }
-function isSelected(fixtureId, description, odds) {
+function isSelected(leagueId, fixtureId, category, detail) {
   let found = false;
-  selectedBets.subscribe((current) => {
+  selectedBetsStore.subscribe((current) => {
     found = current.some(
-      (b) => b.fixtureId === fixtureId && b.description === description && b.odds === odds
+      (b) => b.leagueId === leagueId && b.fixtureId === fixtureId && categoryEquals(b.selectionType, category) && detailEquals(b.selectionDetail, detail)
     );
   })();
   return found;
 }
 const betSlipStore = {
-  subscribe: selectedBets.subscribe,
+  subscribe: selectedBetsStore.subscribe,
   addBet,
   removeBet,
   isSelected
@@ -6100,7 +5995,18 @@ function Betslip($$payload, $$props) {
     $$payload.out += `<!----></div> <p class="text-lg text-gray-400 md:text-sm">There are no selections in<br>your bet slip.</p></div>`;
   } else {
     $$payload.out += "<!--[!-->";
-    $$payload.out += `<div class="flex items-center px-4 py-2 mt-2 rounded bg-BrandPurple"><span class="text-white">${escape_html(bets.length)} Singles</span></div> <div class="flex-1 p-4 space-y-2"></div>`;
+    const each_array = ensure_array_like(bets);
+    $$payload.out += `<div class="flex items-center px-4 py-2 mt-2 rounded bg-BrandPurple"><span class="text-white">${escape_html(`${bets.length} Single${bets.length > 1 ? "s" : ""}`)}</span></div> <div class="flex-1 p-4 space-y-2"><!--[-->`;
+    for (let index = 0, $$length = each_array.length; index < $$length; index++) {
+      let bet = each_array[index];
+      $$payload.out += `<div class="p-2 rounded border border-gray-300 flex flex-col gap-2"><div class="flex justify-between"><div><p class="text-sm text-black font-medium">${escape_html(bet.uiDescription)}</p> <p class="text-xs text-gray-500">League: ${escape_html(bet.leagueId)}, Fixture: ${escape_html(bet.fixtureId)}</p></div> <button class="text-gray-400 hover:text-red-500">×</button></div> <div class="flex justify-between items-center"><span class="text-sm text-gray-600">@ ${escape_html(bet.odds.toFixed(2))}</span> `;
+      {
+        $$payload.out += "<!--[-->";
+        $$payload.out += `<input type="number" min="0" placeholder="Stake" class="text-sm w-20 p-1 border rounded"${attr("value", stakes[index])}>`;
+      }
+      $$payload.out += `<!--]--></div></div>`;
+    }
+    $$payload.out += `<!--]--></div>`;
   }
   $$payload.out += `<!--]--> <div class="p-6 mt-auto border-t border-gray-100 md:p-4 md:bg-gray-100"><div class="flex items-center justify-between mb-4"><span class="text-lg text-gray-500 md:text-sm">FPL Balance:</span> <div class="flex items-center space-x-3"><span class="flex items-center text-lg font-medium text-black md:text-sm">`;
   OpenFPLIcon($$payload, { className: "w-3 h-3 mr-1" });
@@ -6113,37 +6019,123 @@ function Betslip($$payload, $$props) {
   bind_props($$props, { isExpanded });
   pop();
 }
-function _page$a($$payload, $$props) {
-  push();
-  let $$settled = true;
-  let $$inner_payload;
-  function $$render_inner($$payload2) {
-    Layout($$payload2, {
-      children: ($$payload3) => {
-        $$payload3.out += `<div class="flex flex-col md:flex-row"><div class="flex-1 md:block">`;
-        {
-          $$payload3.out += "<!--[-->";
-          Full_screen_spinner($$payload3);
-        }
-        $$payload3.out += `<!--]--></div> <div class="flex-shrink-0 lg:ml-4 lg:w-80"><div class="hidden lg:block lg:sticky lg:top-4">`;
-        Betslip($$payload3, {});
-        $$payload3.out += `<!----></div> <div${attr("class", ` fixed bottom-0 left-0 right-0 px-3 py-4 border-t-4 rounded-xl border-BrandOddsDivider bg-BrandGray lg:hidden ${stringify("")} md:left-24 md:right-12 `)}><div class="w-full p-4 bg-white rounded-2xl md:mx-0"><button class="flex items-center w-full text-left"><div class="flex items-center"><span class="flex items-center justify-center w-12 h-10 mr-3 text-xl font-medium text-white rounded-full bg-BrandPurple">Bets</span> <span class="text-xl font-semibold text-black">Bet Slip</span></div></button></div></div> `;
-        {
-          $$payload3.out += "<!--[!-->";
-        }
-        $$payload3.out += `<!--]--></div></div>`;
-      },
-      $$slots: { default: true }
-    });
+var define_process_env_default$2 = { BACKEND_CANISTER_ID: "44kin-waaaa-aaaal-qbxra-cai", FRONTEND_CANISTER_ID: "43loz-3yaaa-aaaal-qbxrq-cai", DATA_CANISTER_CANISTER_ID: "52fzd-2aaaa-aaaal-qmzsa-cai", DFX_NETWORK: "ic" };
+class ClubService {
+  actor;
+  constructor() {
+    this.actor = ActorFactory.createActor(
+      idlFactory,
+      define_process_env_default$2.BACKEND_CANISTER_ID
+    );
   }
-  do {
-    $$settled = true;
-    $$inner_payload = copy_payload($$payload);
-    $$render_inner($$inner_payload);
-  } while (!$$settled);
-  assign_payload($$payload, $$inner_payload);
-  pop();
+  async getClubs(leagueId) {
+    const result = await this.actor.getLeagueClubs(leagueId);
+    if (isError(result)) throw new Error("Failed to fetch clubs");
+    return result.ok;
+  }
+  async createClub(dto) {
+    const identityActor = await ActorFactory.createIdentityActor(
+      authStore,
+      define_process_env_default$2.BACKEND_CANISTER_ID
+    );
+    const result = await identityActor.executeCreateClub(dto);
+    if (isError(result)) throw new Error("Failed to create club");
+  }
+  async removeClub(dto) {
+    const identityActor = await ActorFactory.createIdentityActor(
+      authStore,
+      define_process_env_default$2.BACKEND_CANISTER_ID
+    );
+    const result = await identityActor.executeRemoveClub(dto);
+    if (isError(result)) throw new Error("Failed to remove club");
+  }
 }
+function createClubStore() {
+  async function getClubs(leagueId) {
+    return new ClubService().getClubs(leagueId);
+  }
+  async function createClub(dto) {
+    return new ClubService().createClub(dto);
+  }
+  async function removeClub(dto) {
+    return new ClubService().removeClub(dto);
+  }
+  return {
+    getClubs,
+    createClub,
+    removeClub
+  };
+}
+const clubStore = createClubStore();
+var define_process_env_default$1 = { BACKEND_CANISTER_ID: "44kin-waaaa-aaaal-qbxra-cai", FRONTEND_CANISTER_ID: "43loz-3yaaa-aaaal-qbxrq-cai", DATA_CANISTER_CANISTER_ID: "52fzd-2aaaa-aaaal-qmzsa-cai", DFX_NETWORK: "ic" };
+class FixtureService {
+  actor;
+  constructor() {
+    this.actor = ActorFactory.createActor(
+      idlFactory,
+      define_process_env_default$1.BACKEND_CANISTER_ID
+    );
+  }
+  async getPostponedFixtures() {
+    const result = await this.actor.getPostponedFixtures();
+    if (isError(result)) throw new Error("Failed to fetch postponed fixtures");
+    return result.ok;
+  }
+  async getFixtures(leagueId) {
+    const result = await this.actor.getFixtures(leagueId);
+    if (isError(result)) throw new Error("Failed to fetch fixtures");
+    return result.ok;
+  }
+  async moveFixture(dto) {
+    const identityActor = await ActorFactory.createIdentityActor(
+      authStore,
+      define_process_env_default$1.BACKEND_CANISTER_ID
+    );
+    const result = await identityActor.executeMoveFixture(dto);
+    if (isError(result)) throw new Error("Failed to move fixture");
+  }
+  async postponeFixture(dto) {
+    const identityActor = await ActorFactory.createIdentityActor(
+      authStore,
+      define_process_env_default$1.BACKEND_CANISTER_ID
+    );
+    const result = await identityActor.executePostponeFixture(dto);
+    if (isError(result)) throw new Error("Failed to postpone fixture");
+  }
+  async submitFixtureData(dto) {
+    const identityActor = await ActorFactory.createIdentityActor(
+      authStore,
+      define_process_env_default$1.BACKEND_CANISTER_ID
+    );
+    const result = await identityActor.executeSubmitFixtureData(dto);
+    if (isError(result)) throw new Error("Failed to submit fixture data");
+  }
+}
+function createFixtureStore() {
+  async function getFixtures(leagueId) {
+    return new FixtureService().getFixtures(leagueId);
+  }
+  async function moveFixture(dto) {
+    return new FixtureService().moveFixture(dto);
+  }
+  async function postponeFixture(dto) {
+    return new FixtureService().postponeFixture(dto);
+  }
+  async function submitFixtureData(dto) {
+    return new FixtureService().submitFixtureData(dto);
+  }
+  async function getPostponedFixtures() {
+    return new FixtureService().getPostponedFixtures();
+  }
+  return {
+    getFixtures,
+    getPostponedFixtures,
+    moveFixture,
+    postponeFixture,
+    submitFixtureData
+  };
+}
+const fixtureStore = createFixtureStore();
 var define_process_env_default = { BACKEND_CANISTER_ID: "44kin-waaaa-aaaal-qbxra-cai", FRONTEND_CANISTER_ID: "43loz-3yaaa-aaaal-qbxrq-cai", DATA_CANISTER_CANISTER_ID: "52fzd-2aaaa-aaaal-qmzsa-cai", DFX_NETWORK: "ic" };
 class PlayerService {
   actor;
@@ -6228,6 +6220,60 @@ function createPlayerStore() {
   };
 }
 const playerStore = createPlayerStore();
+const dataStore = writable({});
+async function ensureLeagueData(leagueId) {
+  let currentData;
+  dataStore.subscribe((val) => currentData = val)();
+  if (currentData[leagueId]) {
+    return currentData[leagueId];
+  }
+  const clubsArr = await clubStore.getClubs(leagueId);
+  const playersArr = await playerStore.getPlayers(leagueId);
+  const clubsObj = {};
+  for (const c of clubsArr) clubsObj[c.id] = c;
+  const playersObj = {};
+  for (const p of playersArr) playersObj[p.id] = p;
+  dataStore.update((old) => ({
+    ...old,
+    [leagueId]: { clubs: clubsObj, players: playersObj }
+  }));
+  return { clubs: clubsObj, players: playersObj };
+}
+({
+  subscribe: dataStore.subscribe,
+  ensureLeagueData
+});
+function _page$a($$payload, $$props) {
+  push();
+  let $$settled = true;
+  let $$inner_payload;
+  function $$render_inner($$payload2) {
+    Layout($$payload2, {
+      children: ($$payload3) => {
+        $$payload3.out += `<div class="flex flex-col md:flex-row"><div class="flex-1 md:block">`;
+        {
+          $$payload3.out += "<!--[-->";
+          Full_screen_spinner($$payload3);
+        }
+        $$payload3.out += `<!--]--></div> <div class="flex-shrink-0 lg:ml-4 lg:w-80"><div class="hidden lg:block lg:sticky lg:top-4">`;
+        Betslip($$payload3, {});
+        $$payload3.out += `<!----></div> <div${attr("class", ` fixed bottom-0 left-0 right-0 px-3 py-4 border-t-4 rounded-xl border-BrandOddsDivider bg-BrandGray lg:hidden ${stringify("")} md:left-24 md:right-12 `)}><div class="w-full p-4 bg-white rounded-2xl md:mx-0"><button class="flex items-center w-full text-left"><div class="flex items-center"><span class="flex items-center justify-center w-12 h-10 mr-3 text-xl font-medium text-white rounded-full bg-BrandPurple">Bets</span> <span class="text-xl font-semibold text-black">Bet Slip</span></div></button></div></div> `;
+        {
+          $$payload3.out += "<!--[!-->";
+        }
+        $$payload3.out += `<!--]--></div></div>`;
+      },
+      $$slots: { default: true }
+    });
+  }
+  do {
+    $$settled = true;
+    $$inner_payload = copy_payload($$payload);
+    $$render_inner($$inner_payload);
+  } while (!$$settled);
+  assign_payload($$payload, $$inner_payload);
+  pop();
+}
 function Modal($$payload, $$props) {
   push();
   let showModal = $$props["showModal"];

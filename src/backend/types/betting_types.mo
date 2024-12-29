@@ -163,7 +163,6 @@ module BettingTypes {
     public type PlayerEventDetail = {
         clubId: FootballTypes.ClubId;
         playerId: FootballTypes.PlayerId;
-        minute: Nat8;
     };
 
     public type PlayerGroupEventDetail = {
