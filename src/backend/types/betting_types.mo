@@ -8,6 +8,7 @@ module BettingTypes {
 
     public type MatchOdds = {
         leagueId: FootballTypes.LeagueId;
+        gameweek: FootballTypes.GameweekNumber;
         fixtureId: FootballTypes.FixtureId;
         correctResults: TeamSelectionOdds;
         correctScores: [ScoreSelectionOdds];
@@ -96,6 +97,7 @@ module BettingTypes {
     };
 
     public type Selection = {
+        leagueId: FootballTypes.LeagueId;
         selectionType: Category;
         selectionDetail: SelectionDetail;
         status: SelectionStatus;

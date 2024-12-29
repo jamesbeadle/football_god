@@ -173,12 +173,7 @@ module ResponseDTOs {
     category : Text;
     hash : Text;
   };
-
-  public type BettableFixtureDTO = {
-    fixtureId: FootballTypes.FixtureId;
-    correctResults: BettingTypes.TeamSelectionOdds;
-  };
-
+  
   public type MatchOddsDTO = {
     leagueId: FootballTypes.LeagueId;
     fixtureId: FootballTypes.FixtureId;
@@ -205,6 +200,7 @@ module ResponseDTOs {
 
   public type HomePageFixtureDTO = {
     leagueId: FootballTypes.LeagueId;
+    gameweek: FootballTypes.GameweekNumber;
     fixtureId: FootballTypes.FixtureId;
     homeOdds: Float;
     drawOdds: Float;

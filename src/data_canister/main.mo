@@ -2111,6 +2111,8 @@ import Debug "mo:base/Debug";
                   let _ =  await updateDataHashes(dto.leagueId, "players");
                   let _ =  await updateDataHashes(dto.leagueId, "fixtures");
                   let _ =  await updateDataHashes(dto.leagueId, "player_events");
+                  let _ = await updateBettingOdds(dto.leagueId);
+                  
                 };
               };
             };
@@ -4093,6 +4095,13 @@ import Debug "mo:base/Debug";
         };
       };
       return #ok();
+    };
+
+    private func updateBettingOdds(leagueId: FootballTypes.LeagueId) : async Result.Result<(), T.Error> {
+      let application_canister = actor (Environment.FOOTBALL_GOD_BACKEND_CANISTER_ID) : actor {
+        updateBettingOdds : (leagueId: FootballTypes.LeagueId) -> async Result.Result<(), T.Error>;
+      };
+      let _ = await application_canister.updateBettingOdds(leagueId);
     };
 
     private func notifyAppsOfGameweekStarting(leagueId: FootballTypes.LeagueId, seasonId: FootballTypes.SeasonId, gameweek: FootballTypes.GameweekNumber) : async Result.Result<(), T.Error> {

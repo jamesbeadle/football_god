@@ -7,6 +7,9 @@
     import LogoIcon from "$lib/icons/LogoIcon.svelte";
     import CollapseIcon from "$lib/icons/side-nav/collapse-icon.svelte";
     import ExpandIcon from "$lib/icons/side-nav/expand-icon.svelte";
+    import MenuIcon from "$lib/icons/MenuIcon.svelte";
+    import XIcon from "$lib/icons/XIcon.svelte";
+    import GithubIcon from "$lib/icons/GithubIcon.svelte";
     import { page } from "$app/stores";
     import { authStore, type AuthSignInParams } from "$lib/stores/auth-store";
     import Connect from "$lib/icons/Connect.svelte";
@@ -15,6 +18,7 @@
 
     let isMenuOpen = false;
     let isLoggedIn: Boolean;
+    let isMobileMenuOpen = false;
 
     const menuItems = [
         { icon: HomeIcon, title: "Home", route: "/" },
@@ -42,21 +46,25 @@
         authStore.signOut();
         goto("/");
     }
+
+    function toggleMobileMenu() {
+        isMobileMenuOpen = !isMobileMenuOpen;
+    }
 </script>
 
-<div class="flex h-screen p-2">
-    <div class={`bg-BrandGray text-white rounded-lg transition-all ${isMenuOpen ? "w-72" : "w-16"} flex flex-col relative`}>
+<div class="flex h-screen md:p-2">
+    <div class={`hidden md:flex bg-BrandGray text-white rounded-lg transition-all ${isMenuOpen ? "w-72" : "w-16"} flex-col fixed top-2 bottom-2 left-2`}>
         <div class="relative flex flex-col items-center">
             <a href="/" class={`flex items-center ${isMenuOpen ? "w-full justify-start p-4" : "justify-center py-4"} transition-all`}>
                 <LogoIcon className="w-4 md:w-6" />
                 {#if isMenuOpen}
-                    <span class="ml-2 tracking-wide text-sm md:text-base">FootballGod</span>
+                    <span class="ml-2 text-sm tracking-wide md:text-base">FootballGod</span>
                 {/if}
             </a>
             <button
                 on:click={() => (isMenuOpen = !isMenuOpen)}
-                class={`w-8 h-8 bg-BrandAltGray flex items-center justify-center rounded-full hover:bg-BrandDarkGray transition-all ${
-                    isMenuOpen ? "absolute right-4 top-1/2 transform -translate-y-1/2" : ""
+                class={`w-8 h-8 bg-zinc-700 flex items-center justify-center rounded-full hover:bg-zinc-600 transition-all ${
+                    isMenuOpen ? "absolute right-4 top-1/2 -translate-y-1/2" : ""
                 }`}
             >
                 {#if isMenuOpen}
@@ -67,12 +75,12 @@
             </button>
         </div>
     
-        <ul class="flex-1 space-y-1 mt-2">
+        <ul class="flex-1 mt-2 space-y-1">
             {#each menuItems as item}
                 <li>
                     <a
                         href={item.route}
-                        class={`flex items-center px-4 py-2 space-x-2 hover:bg-BrandAltGray rounded ${
+                        class={`flex items-center px-4 py-2 space-x-2 hover:bg-zinc-700 rounded ${
                             isMenuOpen ? "justify-start" : "justify-center"
                         }`}
                     >
@@ -84,19 +92,29 @@
                     {:else}
                         <svelte:component this={item.icon} className="w-5 h-5" />
                         {#if isMenuOpen}
-                            <span class="text-BrandDisabled">{item.title}</span>
+                            <span class="text-zinc-400">{item.title}</span>
                         {/if}
                     {/if}
                     </a>
                 </li>
             {/each}
         </ul>
+        <div class="absolute left-0 right-0 bottom-20">
+            <div class={`flex ${isMenuOpen ? 'flex-row pl-4 space-x-4' : 'flex-col items-center space-y-4'}`}>
+                <a href="https://x.com/OpenFPL_DAO" target="_blank" rel="noopener noreferrer" class="text-white transition-colors hover:text-zinc-400">
+                    <XIcon className="w-5 h-5" />
+                </a>
+                <a href="https://github.com/jamesbeadle/football_god" target="_blank" rel="noopener noreferrer" class="text-white transition-colors hover:text-zinc-400">
+                    <GithubIcon className="w-5 h-5" />
+                </a>
+            </div>
+        </div>
         
         {#if isLoggedIn}
         <button
             class={`absolute bottom-4 left-4 right-4 flex items-center justify-center ${
                 isMenuOpen ? "px-4 py-2 space-x-2" : "p-2"
-            } bg-BrandAltGray hover:bg-BrandDarkGray text-white rounded transition-all`}
+            } bg-zinc-700 hover:bg-zinc-600 text-white rounded transition-all`}
             on:click={handleLogout}
         >
             <Disconnect className="w-6" />
@@ -104,11 +122,11 @@
                 <span>Disconnect</span>
             {/if}
         </button>
-    {:else}
+        {:else}
         <button
             class={`absolute bottom-4 left-4 right-4 flex items-center justify-center ${
                 isMenuOpen ? "px-4 py-2 space-x-2" : "p-2"
-            } bg-BrandPurple hover:bg-BrandDarkGray text-white rounded transition-all`}
+            } bg-BrandPurple hover:bg-BrandPurpleDark text-white rounded transition-all`}
             on:click={handleLogin}
         >
             <Connect className="w-6" />
@@ -116,11 +134,71 @@
                 <span>Connect</span>
             {/if}
         </button>
+        {/if}
+    </div>
+    <div class="fixed top-0 left-0 right-0 z-30 flex items-center justify-between p-4 bg-BrandGray md:hidden">
+        <div class="flex items-center">
+            <LogoIcon className="w-8" />
+        </div>
+        <div class="flex items-center space-x-4">
+            {#if isLoggedIn}
+                <button 
+                    class="flex items-center justify-center w-10 h-10 text-white rounded-full bg-BrandGray"
+                    on:click={handleLogout}
+                >
+                    <span class="text-sm">U</span>
+                </button>
+            {:else}
+                <button 
+                    class="flex items-center px-4 py-2 space-x-2 text-white transition-colors rounded-full bg-BrandPurple"
+                    on:click={handleLogin}
+                >
+                    <Connect className="w-4" />
+                    <span class="text-lg font-medium">Log In</span>
+                </button>
+            {/if}
+            <button 
+                class="p-2 text-white transition-colors rounded-full bg-BrandGray"
+                on:click={toggleMobileMenu}
+            >
+                <MenuIcon className="w-6" />
+            </button>
+        </div>
+    </div>
+    {#if isMobileMenuOpen}
+        <div class="fixed inset-0 z-40 flex flex-col bg-BrandGray md:hidden mt-[72px]">
+            <ul class="flex-1 p-4 space-y-4">
+                {#each menuItems as item}
+                    <li>
+                        <a
+                            href={item.route}
+                            class="flex items-center p-2 space-x-4 text-white transition-colors rounded hover:bg-BrandGray"
+                            on:click={() => isMobileMenuOpen = false}
+                        >
+                            <svelte:component 
+                                this={item.icon} 
+                                className="w-6 h-6" 
+                                fill={$page.url.pathname === item.route ? '#FFFFFF' : '#9CA3AF'}
+                            />
+                            <span class={$page.url.pathname === item.route ? 'text-white' : 'text-zinc-400'}>
+                                {item.title}
+                            </span>
+                        </a>
+                    </li>
+                {/each}
+            </ul>
+            <div class="flex p-4 pl-6 space-x-6 border-t border-zinc-700">
+                <a href="https://x.com/OpenFPL_DAO" target="_blank" rel="noopener noreferrer" class="text-white transition-colors hover:text-zinc-400">
+                    <XIcon className="w-5 h-5" />
+                </a>
+                <a href="https://github.com/jamesbeadle/football_god" target="_blank" rel="noopener noreferrer" class="text-white transition-colors hover:text-zinc-400">
+                    <GithubIcon className="w-5 h-5" />
+                </a>
+            </div>
+        </div>
     {/if}
 
-    </div>
-    <div class="mx-2 rounded-lg px-6 py-4 w-full bg-BrandGray">
+    <div class={`w-full mt-16 bg-BrandDark md:px-6 md:py-4 md:mx-2 md:rounded-lg md:mt-0 ${isMenuOpen ? "md:ml-[288px]" : "md:ml-20"} transition-all`}>
         <slot></slot>
     </div>
-    
 </div>

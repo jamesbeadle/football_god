@@ -16,6 +16,7 @@ module {
         status = #Settled;
         winnings = selection.odds * Utilities.convertNat64ToFloat(selection.stake);
         expectedReturns = selection.expectedReturns;
+        leagueId = selection.leagueId;
       };
     };
 
@@ -30,6 +31,7 @@ module {
         status = #Settled;
         winnings = 0;
         expectedReturns = selection.expectedReturns;
+        leagueId = selection.leagueId;
       };
     };
 

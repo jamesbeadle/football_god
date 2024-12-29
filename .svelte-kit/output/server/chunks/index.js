@@ -11,17 +11,17 @@ import "@dfinity/principal";
 import "@dfinity/candid/lib/cjs/idl.js";
 let base = "";
 let assets = base;
-const initial = { base, assets };
+const initial$1 = { base, assets };
 function override(paths) {
   base = paths.base;
   assets = paths.assets;
 }
 function reset() {
-  base = initial.base;
-  assets = initial.assets;
+  base = initial$1.base;
+  assets = initial$1.assets;
 }
 function set_assets(path) {
-  assets = initial.assets = path;
+  assets = initial$1.assets = path;
 }
 const SVELTE_KIT_ASSETS = "/_svelte_kit_assets";
 const ENDPOINT_METHODS = ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS", "HEAD"];
@@ -4412,6 +4412,20 @@ function get_parent_context(component_context2) {
 }
 const BLOCK_OPEN = `<!--${HYDRATION_START}-->`;
 const BLOCK_CLOSE = `<!--${HYDRATION_END}-->`;
+function copy_payload({ out, css, head }) {
+  return {
+    out,
+    css: new Set(css),
+    head: {
+      title: head.title,
+      out: head.out
+    }
+  };
+}
+function assign_payload(p1, p2) {
+  p1.out = p2.out;
+  p1.head = p2.head;
+}
 let on_destroy = [];
 function render(component, options2 = {}) {
   const payload = { out: "", css: /* @__PURE__ */ new Set(), head: { title: "", out: "" } };
@@ -4438,6 +4452,9 @@ function render(component, options2 = {}) {
     html: payload.out,
     body: payload.out
   };
+}
+function stringify(value) {
+  return typeof value === "string" ? value : value == null ? "" : value + "";
 }
 function store_get(store_values, store_name, store) {
   if (store_name in store_values && store_values[store_name][0] === store) {
@@ -4652,7 +4669,7 @@ const options = {
 		<div class="error">
 			<span class="status">` + status + '</span>\n			<div class="message">\n				<h1>' + message + "</h1>\n			</div>\n		</div>\n	</body>\n</html>\n"
   },
-  version_hash: "opn05u"
+  version_hash: "181jgil"
 };
 async function get_hooks() {
   return {};
@@ -4864,8 +4881,6 @@ const initAuthStore = () => {
 };
 const authStore = initAuthStore();
 const idlFactory = ({ IDL }) => {
-  const LeagueId = IDL.Nat16;
-  const FixtureId = IDL.Nat32;
   const Error2 = IDL.Variant({
     "DecodeError": IDL.Null,
     "NotAllowed": IDL.Null,
@@ -4878,6 +4893,7 @@ const idlFactory = ({ IDL }) => {
   });
   const Result = IDL.Variant({ "ok": IDL.Null, "err": Error2 });
   const GameweekNumber = IDL.Nat8;
+  const LeagueId = IDL.Nat16;
   const FixtureStatusType = IDL.Variant({
     "Unplayed": IDL.Null,
     "Finalised": IDL.Null,
@@ -4886,6 +4902,7 @@ const idlFactory = ({ IDL }) => {
   });
   const SeasonId = IDL.Nat16;
   const ClubId = IDL.Nat16;
+  const FixtureId = IDL.Nat32;
   const PlayerEventType = IDL.Variant({
     "PenaltyMissed": IDL.Null,
     "Goal": IDL.Null,
@@ -5183,7 +5200,9 @@ const idlFactory = ({ IDL }) => {
     "winnings": IDL.Float64,
     "odds": IDL.Float64,
     "stake": IDL.Nat64,
+    "expectedReturns": IDL.Nat64,
     "selectionDetail": SelectionDetail,
+    "leagueId": LeagueId,
     "selectionType": Category
   });
   const BetSlip = IDL.Record({
@@ -5196,20 +5215,20 @@ const idlFactory = ({ IDL }) => {
     "placedBy": PrincipalId,
     "placedOn": IDL.Int,
     "selections": IDL.Vec(Selection),
+    "expectedReturns": IDL.Nat64,
     "settledOn": IDL.Int
   });
-  const Result_15 = IDL.Variant({ "ok": IDL.Vec(BetSlip), "err": Error2 });
-  const TeamSelectionOdds = IDL.Record({
+  const Result_16 = IDL.Variant({ "ok": IDL.Vec(BetSlip), "err": Error2 });
+  const HomePageFixtureDTO = IDL.Record({
+    "fixtureId": FixtureId,
     "homeOdds": IDL.Float64,
     "drawOdds": IDL.Float64,
-    "awayOdds": IDL.Float64
+    "awayOdds": IDL.Float64,
+    "gameweek": GameweekNumber,
+    "leagueId": LeagueId
   });
-  const BettableFixtureDTO = IDL.Record({
-    "fixtureId": FixtureId,
-    "correctResults": TeamSelectionOdds
-  });
-  const Result_14 = IDL.Variant({
-    "ok": IDL.Vec(BettableFixtureDTO),
+  const Result_15 = IDL.Variant({
+    "ok": IDL.Vec(HomePageFixtureDTO),
     "err": Error2
   });
   const CountryDTO = IDL.Record({
@@ -5217,8 +5236,8 @@ const idlFactory = ({ IDL }) => {
     "code": IDL.Text,
     "name": IDL.Text
   });
-  const Result_13 = IDL.Variant({ "ok": IDL.Vec(CountryDTO), "err": Error2 });
-  const Result_12 = IDL.Variant({ "ok": IDL.Vec(FixtureDTO), "err": Error2 });
+  const Result_14 = IDL.Variant({ "ok": IDL.Vec(CountryDTO), "err": Error2 });
+  const Result_13 = IDL.Variant({ "ok": IDL.Vec(FixtureDTO), "err": Error2 });
   const ClubDTO = IDL.Record({
     "id": ClubId,
     "secondaryColourHex": IDL.Text,
@@ -5229,14 +5248,7 @@ const idlFactory = ({ IDL }) => {
     "shirtType": ShirtType,
     "primaryColourHex": IDL.Text
   });
-  const Result_11 = IDL.Variant({ "ok": IDL.Vec(ClubDTO), "err": Error2 });
-  const HomePageFixtureDTO = IDL.Record({
-    "fixtureId": FixtureId,
-    "homeOdds": IDL.Float64,
-    "drawOdds": IDL.Float64,
-    "awayOdds": IDL.Float64,
-    "leagueId": LeagueId
-  });
+  const Result_12 = IDL.Variant({ "ok": IDL.Vec(ClubDTO), "err": Error2 });
   const PlayerStatus = IDL.Variant({
     "OnLoan": IDL.Null,
     "Active": IDL.Null,
@@ -5255,7 +5267,7 @@ const idlFactory = ({ IDL }) => {
     "lastName": IDL.Text,
     "firstName": IDL.Text
   });
-  const Result_10 = IDL.Variant({ "ok": IDL.Vec(PlayerDTO), "err": Error2 });
+  const Result_11 = IDL.Variant({ "ok": IDL.Vec(PlayerDTO), "err": Error2 });
   const CalendarMonth = IDL.Nat8;
   const LeagueStatus = IDL.Record({
     "transferWindowEndMonth": IDL.Nat8,
@@ -5272,7 +5284,7 @@ const idlFactory = ({ IDL }) => {
     "leagueId": LeagueId,
     "seasonActive": IDL.Bool
   });
-  const Result_9 = IDL.Variant({ "ok": LeagueStatus, "err": Error2 });
+  const Result_10 = IDL.Variant({ "ok": LeagueStatus, "err": Error2 });
   const FootballLeagueDTO = IDL.Record({
     "id": LeagueId,
     "logo": IDL.Vec(IDL.Nat8),
@@ -5284,7 +5296,7 @@ const idlFactory = ({ IDL }) => {
     "governingBody": IDL.Text,
     "formed": IDL.Int
   });
-  const Result_8 = IDL.Variant({
+  const Result_9 = IDL.Variant({
     "ok": IDL.Vec(FootballLeagueDTO),
     "err": Error2
   });
@@ -5300,6 +5312,11 @@ const idlFactory = ({ IDL }) => {
   const YesNoSelectionOdds = IDL.Record({
     "noOdds": IDL.Float64,
     "yesOdds": IDL.Float64
+  });
+  const TeamSelectionOdds = IDL.Record({
+    "homeOdds": IDL.Float64,
+    "drawOdds": IDL.Float64,
+    "awayOdds": IDL.Float64
   });
   const MissPenaltyOdds = IDL.Record({
     "homeTeam": IDL.Float64,
@@ -5346,7 +5363,7 @@ const idlFactory = ({ IDL }) => {
     "halfTimeFullTimeResult": IDL.Vec(HalfTimeFullTimeOdds),
     "bothTeamsToScoreAndWinner": IDL.Vec(ResultAndYesNoSelectionOdds)
   });
-  const Result_7 = IDL.Variant({ "ok": MatchOddsDTO, "err": Error2 });
+  const Result_8 = IDL.Variant({ "ok": MatchOddsDTO, "err": Error2 });
   const ProfileDTO = IDL.Record({
     "username": IDL.Text,
     "maxBetLimit": IDL.Nat64,
@@ -5360,30 +5377,42 @@ const idlFactory = ({ IDL }) => {
     "principalId": PrincipalId,
     "monthlyBetTotal": IDL.Nat64
   });
-  const Result_6 = IDL.Variant({ "ok": ProfileDTO, "err": Error2 });
+  const Result_7 = IDL.Variant({ "ok": ProfileDTO, "err": Error2 });
   const SeasonDTO = IDL.Record({
     "id": SeasonId,
     "name": IDL.Text,
     "year": IDL.Nat16
   });
-  const Result_5 = IDL.Variant({ "ok": IDL.Vec(SeasonDTO), "err": Error2 });
+  const Result_6 = IDL.Variant({ "ok": IDL.Vec(SeasonDTO), "err": Error2 });
   const SystemStateDTO = IDL.Record({
     "version": IDL.Text,
     "onHold": IDL.Bool
   });
-  const Result_4 = IDL.Variant({ "ok": SystemStateDTO, "err": Error2 });
+  const Result_5 = IDL.Variant({ "ok": SystemStateDTO, "err": Error2 });
   const TimerInfo = IDL.Record({
     "id": IDL.Int,
     "callbackName": IDL.Text,
     "triggerTime": IDL.Int
   });
-  const Result_3 = IDL.Variant({ "ok": IDL.Vec(TimerInfo), "err": Error2 });
+  const Result_4 = IDL.Variant({ "ok": IDL.Vec(TimerInfo), "err": Error2 });
+  const UserDTO = IDL.Record({
+    "kyc_ref": IDL.Text,
+    "terms_accepted": IDL.Bool,
+    "joined": IDL.Int,
+    "principalId": PrincipalId
+  });
+  const UserAuditDTO = IDL.Record({
+    "date": IDL.Int,
+    "users": IDL.Vec(UserDTO)
+  });
+  const Result_3 = IDL.Variant({ "ok": UserAuditDTO, "err": Error2 });
   const Result_2 = IDL.Variant({ "ok": IDL.Bool, "err": Error2 });
   const PauseAccountDTO = IDL.Record({
     "pauseDays": IDL.Nat,
     "principalId": PrincipalId
   });
   const SubmitBetslipDTO = IDL.Record({
+    "expectedReturn": IDL.Nat64,
     "seasonId": SeasonId,
     "totalStake": IDL.Nat64,
     "principalId": PrincipalId,
@@ -5417,7 +5446,6 @@ const idlFactory = ({ IDL }) => {
   });
   const RustResult = IDL.Variant({ "Ok": IDL.Text, "Err": IDL.Text });
   return IDL.Service({
-    "addBettableFixture": IDL.Func([LeagueId, FixtureId], [Result], []),
     "calculateGameweekScores": IDL.Func([IDL.Text], [Result], []),
     "calculateLeaderboards": IDL.Func([IDL.Text], [Result], []),
     "calculateWeeklyRewards": IDL.Func(
@@ -5459,33 +5487,33 @@ const idlFactory = ({ IDL }) => {
     "executeUpdateClub": IDL.Func([LeagueId, UpdateClubDTO], [], []),
     "executeUpdateLeague": IDL.Func([UpdateLeagueDTO], [], []),
     "executeUpdatePlayer": IDL.Func([LeagueId, UpdatePlayerDTO], [], []),
-    "getBets": IDL.Func([GetBetsDTO], [Result_15], []),
-    "getBettableLeagueFixtures": IDL.Func([LeagueId], [Result_14], ["query"]),
-    "getCountries": IDL.Func([], [Result_13], ["query"]),
-    "getFixtures": IDL.Func([LeagueId], [Result_12], ["composite_query"]),
-    "getLeagueClubs": IDL.Func([LeagueId], [Result_11], ["composite_query"]),
-    "getLeagueFixtures": IDL.Func(
+    "getBets": IDL.Func([GetBetsDTO], [Result_16], []),
+    "getBettableHomepageFixtures": IDL.Func(
       [LeagueId],
-      [IDL.Vec(HomePageFixtureDTO)],
-      []
+      [Result_15],
+      ["query"]
     ),
-    "getLeaguePlayers": IDL.Func([LeagueId], [Result_10], ["composite_query"]),
-    "getLeagueStatus": IDL.Func([LeagueId], [Result_9], ["composite_query"]),
-    "getLeagues": IDL.Func([], [Result_8], ["composite_query"]),
-    "getMatchOdds": IDL.Func([LeagueId, FixtureId], [Result_7], ["query"]),
-    "getProfile": IDL.Func([], [Result_6], []),
-    "getSeasons": IDL.Func([LeagueId], [Result_5], ["composite_query"]),
-    "getSystemState": IDL.Func([IDL.Text], [Result_4], ["composite_query"]),
-    "getTimers": IDL.Func([], [Result_3], ["composite_query"]),
+    "getCountries": IDL.Func([], [Result_14], ["query"]),
+    "getFixtures": IDL.Func([LeagueId], [Result_13], ["composite_query"]),
+    "getLeagueClubs": IDL.Func([LeagueId], [Result_12], ["composite_query"]),
+    "getLeaguePlayers": IDL.Func([LeagueId], [Result_11], ["composite_query"]),
+    "getLeagueStatus": IDL.Func([LeagueId], [Result_10], ["composite_query"]),
+    "getLeagues": IDL.Func([], [Result_9], ["composite_query"]),
+    "getMatchOdds": IDL.Func([LeagueId, FixtureId], [Result_8], ["query"]),
+    "getProfile": IDL.Func([], [Result_7], []),
+    "getSeasons": IDL.Func([LeagueId], [Result_6], ["composite_query"]),
+    "getSystemState": IDL.Func([IDL.Text], [Result_5], ["composite_query"]),
+    "getTimers": IDL.Func([], [Result_4], ["composite_query"]),
+    "getUserAudit": IDL.Func([], [Result_3], []),
     "isAdmin": IDL.Func([], [Result_2], []),
     "isDataManager": IDL.Func([], [Result_2], []),
     "pauseAccount": IDL.Func([PauseAccountDTO], [Result], []),
     "payWeeklyRewards": IDL.Func([IDL.Text, GameweekNumber], [Result], []),
     "placeBet": IDL.Func([SubmitBetslipDTO], [Result_1], []),
-    "removeBettableFixture": IDL.Func([LeagueId, FixtureId], [Result], []),
     "setMaxBetLimit": IDL.Func([SetMaxBetLimit], [Result], []),
     "setMonthlyBetLimit": IDL.Func([SetMonthlyBetLimitDTO], [Result], []),
     "snapshotManagers": IDL.Func([IDL.Text], [Result], []),
+    "updateBettingOdds": IDL.Func([LeagueId], [Result], []),
     "updateProfilePicture": IDL.Func([UpdateProfilePictureDTO], [Result], []),
     "updateSystemState": IDL.Func(
       [IDL.Text, UpdateAppStatusDTO],
@@ -5719,6 +5747,24 @@ function Expand_icon($$payload, $$props) {
   $$payload.out += `<svg xmlns="http://www.w3.org/2000/svg"${attr("class", className)} viewBox="0 0 24 24" fill="none"><path d="M8.4599 8.29002C8.2716 8.09641 8.01409 7.98554 7.74404 7.98179C7.47399 7.97804 7.21351 8.08172 7.0199 8.27002C6.82629 8.45833 6.71542 8.71583 6.71167 8.98588C6.70792 9.25593 6.8116 9.51641 6.9999 9.71002L9.3399 12L6.9999 14.29C6.90617 14.383 6.83178 14.4936 6.78101 14.6154C6.73024 14.7373 6.7041 14.868 6.7041 15C6.7041 15.132 6.73024 15.2627 6.78101 15.3846C6.83178 15.5065 6.90617 15.6171 6.9999 15.71C7.09286 15.8038 7.20346 15.8781 7.32532 15.9289C7.44718 15.9797 7.57789 16.0058 7.7099 16.0058C7.84191 16.0058 7.97262 15.9797 8.09448 15.9289C8.21634 15.8781 8.32694 15.8038 8.4199 15.71L11.4199 12.71C11.5136 12.6171 11.588 12.5065 11.6388 12.3846C11.6896 12.2627 11.7157 12.132 11.7157 12C11.7157 11.868 11.6896 11.7373 11.6388 11.6154C11.588 11.4936 11.5136 11.383 11.4199 11.29L8.4599 8.29002ZM16.9599 11.29L13.9599 8.29002C13.7716 8.10172 13.5162 7.99593 13.2499 7.99593C12.9836 7.99593 12.7282 8.10172 12.5399 8.29002C12.3516 8.47833 12.2458 8.73372 12.2458 9.00002C12.2458 9.26632 12.3516 9.52172 12.5399 9.71002L14.8399 12L12.5399 14.29C12.4462 14.383 12.3718 14.4936 12.321 14.6154C12.2702 14.7373 12.2441 14.868 12.2441 15C12.2441 15.132 12.2702 15.2627 12.321 15.3846C12.3718 15.5065 12.4462 15.6171 12.5399 15.71C12.6329 15.8038 12.7435 15.8781 12.8653 15.9289C12.9872 15.9797 13.1179 16.0058 13.2499 16.0058C13.3819 16.0058 13.5126 15.9797 13.6345 15.9289C13.7563 15.8781 13.8669 15.8038 13.9599 15.71L16.9599 12.71C17.0563 12.6197 17.1338 12.5112 17.1881 12.3908C17.2423 12.2704 17.2721 12.1404 17.2759 12.0084C17.2796 11.8763 17.2571 11.7449 17.2097 11.6216C17.1624 11.4983 17.0911 11.3856 16.9999 11.29H16.9599Z"${attr("fill", fill)}></path></svg>`;
   bind_props($$props, { className, fill });
 }
+function MenuIcon($$payload, $$props) {
+  let className = fallback($$props["className"], "");
+  let fill = fallback($$props["fill"], "");
+  $$payload.out += `<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"${attr("class", className)}${attr("fill", fill)}><path d="M12 10C10.9 10 10 10.9 10 12C10 13.1 10.9 14 12 14C13.1 14 14 13.1 14 12C14 10.9 13.1 10 12 10ZM12 7C13.1 7 14 6.1 14 5C14 3.9 13.1 3 12 3C10.9 3 10 3.9 10 5C10 6.1 10.9 7 12 7ZM12 17C10.9 17 10 17.9 10 19C10 20.1 10.9 21 12 21C13.1 21 14 20.1 14 19C14 17.9 13.1 17 12 17Z" fill="#919191"></path></svg>`;
+  bind_props($$props, { className, fill });
+}
+function XIcon($$payload, $$props) {
+  let className = fallback($$props["className"], "");
+  let color = fallback($$props["color"], "currentColor");
+  $$payload.out += `<svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true"${attr("class", className)}${attr("fill", color)} viewBox="0 0 19 15"><path d="M12.8767 0.0963813V0.0931396H13.7207L14.029 0.154732C14.2346 0.194718 14.4213 0.24712 14.589 0.311953C14.7567 0.376787 14.9191 0.452431 15.0759 0.538871C15.2328 0.62531 15.3751 0.713387 15.5028 0.803068C15.6294 0.891679 15.743 0.985688 15.8437 1.08509C15.9432 1.18559 16.0985 1.21152 16.3095 1.16289C16.5205 1.11427 16.7477 1.04673 16.9912 0.960289C17.2346 0.87385 17.4754 0.7766 17.7135 0.668538C17.9515 0.560477 18.0965 0.491866 18.1485 0.462691C18.1993 0.432446 18.2264 0.416238 18.2296 0.414066L18.2328 0.409204L18.2491 0.401099L18.2653 0.392995L18.2815 0.384891L18.2978 0.376787L18.301 0.371924L18.3059 0.368683L18.3108 0.365441L18.314 0.360578L18.3302 0.355716L18.3465 0.352474L18.3432 0.376787L18.3383 0.401099L18.3302 0.425412L18.3221 0.449725L18.314 0.465933L18.3059 0.482141L18.2978 0.506454C18.2924 0.522662 18.287 0.544268 18.2815 0.571288C18.2761 0.598307 18.2247 0.706352 18.1273 0.895456C18.03 1.08456 17.9082 1.27635 17.7621 1.47085C17.6161 1.66536 17.4851 1.8123 17.3694 1.91172C17.2525 2.01222 17.1751 2.08245 17.1373 2.12243C17.0994 2.16349 17.0534 2.2013 16.9993 2.23589L16.9181 2.28938L16.9019 2.29748L16.8857 2.30559L16.8824 2.31045L16.8776 2.31369L16.8727 2.31693L16.8694 2.3218L16.8532 2.3299L16.837 2.338L16.8338 2.34287L16.8289 2.34611L16.824 2.34935L16.8208 2.35421L16.8175 2.35908L16.8126 2.36232L16.8078 2.36556L16.8045 2.37042H16.8857L17.3401 2.27317C17.6431 2.20834 17.9326 2.13 18.2085 2.03815L18.6467 1.89227L18.6954 1.87606L18.7198 1.86796L18.736 1.85986L18.7522 1.85175L18.7685 1.84365L18.7847 1.83554L18.8171 1.83068L18.8496 1.82744V1.85986L18.8415 1.8631L18.8334 1.86796L18.8301 1.87282L18.8253 1.87606L18.8204 1.87931L18.8171 1.88417L18.8139 1.88903L18.809 1.89227L18.8042 1.89551L18.8009 1.90038L18.7977 1.90524L18.7928 1.90848L18.7847 1.92469L18.7766 1.9409L18.7717 1.94414C18.7695 1.94738 18.7008 2.03922 18.5656 2.21968C18.4303 2.40122 18.3573 2.49305 18.3465 2.49523C18.3356 2.49847 18.3205 2.51468 18.301 2.54385C18.2826 2.5741 18.1679 2.69459 17.9569 2.9053C17.7459 3.11601 17.5393 3.30347 17.3369 3.46773C17.1335 3.63306 17.0307 3.8362 17.0285 4.07717C17.0253 4.31705 17.0128 4.58828 16.9912 4.89083C16.9695 5.19339 16.929 5.52025 16.8694 5.87144C16.8099 6.22262 16.718 6.61973 16.5935 7.06276C16.4691 7.50578 16.3176 7.93801 16.1391 8.35943C15.9605 8.78085 15.7739 9.15904 15.5791 9.49402C15.3843 9.829 15.2058 10.1126 15.0435 10.345C14.8812 10.5773 14.7162 10.7961 14.5484 11.0014C14.3807 11.2067 14.1687 11.438 13.9122 11.6951C13.6547 11.9512 13.514 12.0917 13.4902 12.1165C13.4653 12.1403 13.3593 12.2289 13.1721 12.3824C12.986 12.5369 12.7858 12.6914 12.5715 12.8459C12.3584 12.9994 12.1625 13.1274 11.984 13.2301C11.8054 13.3327 11.5901 13.4499 11.338 13.5818C11.087 13.7147 10.8153 13.8379 10.5232 13.9513C10.231 14.0648 9.92265 14.1701 9.59803 14.2674C9.27341 14.3646 8.95962 14.4403 8.65664 14.4943C8.35368 14.5483 8.01012 14.5943 7.62598 14.6321L7.04979 14.6888V14.6969H5.99479V14.6888L5.85682 14.6807C5.76486 14.6753 5.68911 14.6699 5.62959 14.6645C5.57009 14.6591 5.34555 14.6294 4.95601 14.5754C4.56647 14.5213 4.2608 14.4673 4.03897 14.4133C3.81716 14.3592 3.48712 14.2566 3.04889 14.1053C2.61066 13.954 2.23572 13.8011 1.92409 13.6466C1.61355 13.4932 1.41878 13.3959 1.33978 13.3549C1.26187 13.3149 1.17423 13.2652 1.07684 13.2057L0.930764 13.1166L0.927534 13.1117L0.922648 13.1085L0.917779 13.1052L0.914533 13.1004L0.898302 13.0923L0.882071 13.0842L0.878841 13.0793L0.873956 13.0761L0.869086 13.0728L0.86584 13.068L0.86261 13.0631L0.857725 13.0599H0.849609V13.0274L0.86584 13.0307L0.882071 13.0356L0.95511 13.0437C1.0038 13.0491 1.13636 13.0572 1.35277 13.068C1.56919 13.0788 1.79911 13.0788 2.04258 13.068C2.28604 13.0572 2.53492 13.0328 2.78919 12.995C3.04348 12.9572 3.34375 12.8924 3.69001 12.8005C4.03627 12.7087 4.3544 12.5995 4.6444 12.4731C4.9333 12.3456 5.13888 12.2505 5.26117 12.1879C5.38235 12.1263 5.56738 12.0117 5.81625 11.8442L6.18956 11.593L6.1928 11.5881L6.19767 11.5849L6.20256 11.5817L6.20579 11.5768L6.20903 11.5719L6.2139 11.5687L6.21879 11.5655L6.22202 11.5606L6.23825 11.5557L6.25448 11.5525L6.25772 11.5363L6.26259 11.5201L6.26748 11.5168L6.27071 11.512L6.14086 11.5039C6.0543 11.4985 5.97044 11.493 5.88928 11.4877C5.80813 11.4823 5.68099 11.4579 5.50786 11.4147C5.33474 11.3715 5.14809 11.3067 4.9479 11.2202C4.74772 11.1338 4.55295 11.0311 4.36359 10.9123C4.17424 10.7934 4.03735 10.6945 3.95295 10.6156C3.86963 10.5378 3.76142 10.4276 3.62833 10.285C3.49632 10.1413 3.38162 9.99377 3.28424 9.8425C3.18685 9.69122 3.0938 9.51669 3.00508 9.31897L2.87035 9.02397L2.86223 8.99966L2.85412 8.97535L2.84925 8.95914L2.846 8.94293L2.87035 8.94617L2.8947 8.95103L3.07323 8.97535C3.19227 8.99156 3.37893 8.99695 3.6332 8.99156C3.88749 8.98616 4.06332 8.97535 4.1607 8.95914C4.25809 8.94293 4.3176 8.93212 4.33924 8.92672L4.3717 8.91862L4.41228 8.91051L4.45286 8.90241L4.4561 8.89755L4.46097 8.89431L4.46586 8.89106L4.46909 8.8862L4.43662 8.8781L4.40416 8.86999L4.3717 8.86189L4.33924 8.85378L4.30678 8.84568C4.28514 8.84028 4.24728 8.82947 4.19316 8.81326C4.13906 8.79706 3.99299 8.73762 3.75493 8.63497C3.51689 8.53232 3.32752 8.43237 3.18685 8.33512C3.04583 8.23758 2.91137 8.13092 2.78433 8.01581C2.65772 7.89911 2.51869 7.74891 2.36719 7.56522C2.21571 7.38153 2.08046 7.16811 1.96142 6.92498C1.8424 6.68186 1.75313 6.44954 1.69361 6.22802C1.63433 6.0078 1.59522 5.78266 1.57677 5.55537L1.54754 5.215L1.56377 5.21824L1.58 5.2231L1.59623 5.2312L1.61246 5.23931L1.62869 5.24741L1.64492 5.25552L1.8965 5.36898C2.06423 5.44462 2.27252 5.50945 2.52139 5.56348C2.77027 5.6175 2.91904 5.64723 2.96773 5.65262L3.04077 5.66073H3.18685L3.18362 5.65587L3.17873 5.65262L3.17387 5.64938L3.17062 5.64452L3.16739 5.63966L3.1625 5.63642L3.15763 5.63317L3.15439 5.62831L3.13816 5.62021L3.12193 5.6121L3.1187 5.60724L3.11381 5.604L3.10894 5.60076L3.1057 5.59589L3.08947 5.58779L3.07323 5.57969L3.07 5.57482C3.06676 5.57265 3.02022 5.53808 2.9304 5.47109C2.84167 5.40301 2.74862 5.31495 2.65123 5.20689C2.55385 5.09883 2.45646 4.98537 2.35908 4.86652C2.26151 4.74739 2.17461 4.61993 2.09938 4.48562C2.02365 4.35055 1.94357 4.17873 1.85917 3.97019C1.77585 3.76272 1.71255 3.55363 1.66927 3.34293C1.626 3.13222 1.60165 2.92421 1.59623 2.7189C1.59082 2.51359 1.59623 2.338 1.61246 2.19213C1.62869 2.04625 1.66115 1.88146 1.70984 1.69777C1.75854 1.51408 1.82888 1.31958 1.92084 1.11427L2.05881 0.80631L2.06692 0.781997L2.07504 0.757684L2.07992 0.754443L2.08315 0.74958L2.0864 0.744718L2.09127 0.741476L2.09615 0.744718L2.09938 0.74958L2.10263 0.754443L2.1075 0.757684L2.11238 0.760926L2.11561 0.765789L2.11886 0.770651L2.12373 0.773893L2.13185 0.790101L2.13996 0.80631L2.14485 0.809551L2.14808 0.814414L2.36719 1.05754C2.51327 1.21962 2.6864 1.40062 2.88658 1.60052C3.08677 1.80042 3.19768 1.90415 3.21931 1.91172C3.24096 1.92036 3.268 1.94521 3.30047 1.98628C3.33293 2.02627 3.44114 2.1219 3.62508 2.27317C3.80904 2.42444 4.0498 2.60005 4.34736 2.79994C4.64493 2.99984 4.97495 3.19705 5.33744 3.39155C5.69994 3.58605 6.08948 3.76164 6.50606 3.91832C6.92265 4.07501 7.21481 4.17766 7.38252 4.22628C7.55025 4.27491 7.83699 4.33704 8.24276 4.41268C8.64853 4.48833 8.95422 4.53695 9.1598 4.55856C9.36539 4.58016 9.50607 4.59259 9.5818 4.59584L9.69542 4.59908L9.69219 4.57476L9.6873 4.55045L9.65484 4.34785C9.6332 4.21278 9.62238 4.02368 9.62238 3.78055C9.62238 3.53743 9.64132 3.31322 9.67919 3.1079C9.71707 2.90259 9.77388 2.69459 9.84961 2.48388C9.92536 2.27317 9.99949 2.10405 10.072 1.97656C10.1456 1.85013 10.2419 1.70588 10.3609 1.54379C10.4799 1.38171 10.6341 1.21423 10.8235 1.04133C11.0128 0.868436 11.2292 0.714457 11.4727 0.579392C11.7162 0.444327 11.9407 0.341663 12.1463 0.271432C12.3519 0.201201 12.525 0.155266 12.6657 0.133661C12.8063 0.112055 12.8767 0.099623 12.8767 0.0963813Z"></path></svg>`;
+  bind_props($$props, { className, color });
+}
+function GithubIcon($$payload, $$props) {
+  let className = fallback($$props["className"], "");
+  let color = fallback($$props["color"], "currentColor");
+  $$payload.out += `<svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true"${attr("class", className)}${attr("fill", color)} viewBox="0 0 18 19"><path d="M9 0.5C4.0305 0.5 0 4.52975 0 9.5C0 13.4765 2.5785 16.85 6.15525 18.0402C6.6045 18.1235 6.75 17.8445 6.75 17.6075V15.932C4.2465 16.4765 3.72525 14.87 3.72525 14.87C3.31575 13.8298 2.7255 13.553 2.7255 13.553C1.90875 12.9942 2.78775 13.0062 2.78775 13.0062C3.6915 13.0692 4.167 13.934 4.167 13.934C4.9695 15.3095 6.27225 14.912 6.786 14.6818C6.86625 14.1005 7.0995 13.703 7.3575 13.4788C5.35875 13.25 3.25725 12.4782 3.25725 9.0305C3.25725 8.04725 3.609 7.24475 4.18425 6.61475C4.09125 6.3875 3.783 5.47175 4.272 4.23275C4.272 4.23275 5.028 3.99125 6.74775 5.15525C7.4655 4.95575 8.235 4.856 9 4.85225C9.765 4.856 10.5352 4.95575 11.2545 5.15525C12.9727 3.99125 13.7272 4.23275 13.7272 4.23275C14.217 5.4725 13.9087 6.38825 13.8158 6.61475C14.3932 7.24475 14.742 8.048 14.742 9.0305C14.742 12.4872 12.6368 13.2485 10.6327 13.4713C10.9552 13.7502 11.25 14.2978 11.25 15.1378V17.6075C11.25 17.8468 11.394 18.128 11.8507 18.0395C15.4245 16.8477 18 13.475 18 9.5C18 4.52975 13.9703 0.5 9 0.5Z"></path></svg>`;
+  bind_props($$props, { className, color });
+}
 function Connect($$payload, $$props) {
   let className = fallback($$props["className"], "");
   let fill = fallback($$props["fill"], "white");
@@ -5747,21 +5793,21 @@ function Dashboard($$payload, $$props) {
     }
   ];
   const each_array = ensure_array_like(menuItems);
-  $$payload.out += `<div class="flex h-screen p-2"><div${attr("class", `bg-BrandGray text-white rounded-lg transition-all ${"w-16"} flex flex-col relative`)}><div class="relative flex flex-col items-center"><a href="/"${attr("class", `flex items-center ${"justify-center py-4"} transition-all`)}>`;
+  $$payload.out += `<div class="flex h-screen md:p-2"><div${attr("class", `hidden md:flex bg-BrandGray text-white rounded-lg transition-all ${"w-16"} flex-col fixed top-2 bottom-2 left-2`)}><div class="relative flex flex-col items-center"><a href="/"${attr("class", `flex items-center ${"justify-center py-4"} transition-all`)}>`;
   LogoIcon($$payload, { className: "w-4 md:w-6" });
   $$payload.out += `<!----> `;
   {
     $$payload.out += "<!--[!-->";
   }
-  $$payload.out += `<!--]--></a> <button${attr("class", `w-8 h-8 bg-BrandAltGray flex items-center justify-center rounded-full hover:bg-BrandDarkGray transition-all ${""}`)}>`;
+  $$payload.out += `<!--]--></a> <button${attr("class", `w-8 h-8 bg-zinc-700 flex items-center justify-center rounded-full hover:bg-zinc-600 transition-all ${""}`)}>`;
   {
     $$payload.out += "<!--[!-->";
     Expand_icon($$payload, { className: "w-6" });
   }
-  $$payload.out += `<!--]--></button></div> <ul class="flex-1 space-y-1 mt-2"><!--[-->`;
+  $$payload.out += `<!--]--></button></div> <ul class="flex-1 mt-2 space-y-1"><!--[-->`;
   for (let $$index = 0, $$length = each_array.length; $$index < $$length; $$index++) {
     let item = each_array[$$index];
-    $$payload.out += `<li><a${attr("href", item.route)}${attr("class", `flex items-center px-4 py-2 space-x-2 hover:bg-BrandAltGray rounded ${"justify-center"}`)}>`;
+    $$payload.out += `<li><a${attr("href", item.route)}${attr("class", `flex items-center px-4 py-2 space-x-2 hover:bg-zinc-700 rounded ${"justify-center"}`)}>`;
     if (store_get($$store_subs ??= {}, "$page", page).url.pathname == item.route) {
       $$payload.out += "<!--[-->";
       $$payload.out += `<!---->`;
@@ -5783,10 +5829,14 @@ function Dashboard($$payload, $$props) {
     }
     $$payload.out += `<!--]--></a></li>`;
   }
-  $$payload.out += `<!--]--></ul> `;
+  $$payload.out += `<!--]--></ul> <div class="absolute left-0 right-0 bottom-20"><div${attr("class", `flex ${"flex-col items-center space-y-4"}`)}><a href="https://x.com/OpenFPL_DAO" target="_blank" rel="noopener noreferrer" class="text-white transition-colors hover:text-zinc-400">`;
+  XIcon($$payload, { className: "w-5 h-5" });
+  $$payload.out += `<!----></a> <a href="https://github.com/jamesbeadle/football_god" target="_blank" rel="noopener noreferrer" class="text-white transition-colors hover:text-zinc-400">`;
+  GithubIcon($$payload, { className: "w-5 h-5" });
+  $$payload.out += `<!----></a></div></div> `;
   {
     $$payload.out += "<!--[!-->";
-    $$payload.out += `<button${attr("class", `absolute bottom-4 left-4 right-4 flex items-center justify-center ${"p-2"} bg-BrandPurple hover:bg-BrandDarkGray text-white rounded transition-all`)}>`;
+    $$payload.out += `<button${attr("class", `absolute bottom-4 left-4 right-4 flex items-center justify-center ${"p-2"} bg-BrandPurple hover:bg-BrandPurpleDark text-white rounded transition-all`)}>`;
     Connect($$payload, { className: "w-6" });
     $$payload.out += `<!----> `;
     {
@@ -5794,7 +5844,22 @@ function Dashboard($$payload, $$props) {
     }
     $$payload.out += `<!--]--></button>`;
   }
-  $$payload.out += `<!--]--></div> <div class="mx-2 rounded-lg px-6 py-4 w-full bg-BrandGray"><!---->`;
+  $$payload.out += `<!--]--></div> <div class="fixed top-0 left-0 right-0 z-30 flex items-center justify-between p-4 bg-BrandGray md:hidden"><div class="flex items-center">`;
+  LogoIcon($$payload, { className: "w-8" });
+  $$payload.out += `<!----></div> <div class="flex items-center space-x-4">`;
+  {
+    $$payload.out += "<!--[!-->";
+    $$payload.out += `<button class="flex items-center px-4 py-2 space-x-2 text-white transition-colors rounded-full bg-BrandPurple">`;
+    Connect($$payload, { className: "w-4" });
+    $$payload.out += `<!----> <span class="text-lg font-medium">Log In</span></button>`;
+  }
+  $$payload.out += `<!--]--> <button class="p-2 text-white transition-colors rounded-full bg-BrandGray">`;
+  MenuIcon($$payload, { className: "w-6" });
+  $$payload.out += `<!----></button></div></div> `;
+  {
+    $$payload.out += "<!--[!-->";
+  }
+  $$payload.out += `<!--]--> <div${attr("class", `w-full mt-16 bg-BrandDark md:px-6 md:py-4 md:mx-2 md:rounded-lg md:mt-0 ${"md:ml-20"} transition-all`)}><!---->`;
   slot($$payload, $$props, "default", {});
   $$payload.out += `<!----></div></div>`;
   if ($$store_subs) unsubscribe_stores($$store_subs);
@@ -5806,11 +5871,11 @@ function Full_screen_spinner($$payload) {
 function Layout($$payload, $$props) {
   push();
   var $$store_subs;
-  const init2 = async () => await Promise.all([syncAuthStore()]);
-  const syncAuthStore = async () => {
-    {
-      return;
-    }
+  async function syncAuthStore() {
+    return;
+  }
+  const init2 = async () => {
+    await Promise.all([syncAuthStore()]);
   };
   store_get($$store_subs ??= {}, "$authStore", authStore);
   $$payload.out += `<!---->`;
@@ -5838,6 +5903,18 @@ function Layout($$payload, $$props) {
 }
 function Local_spinner($$payload) {
   $$payload.out += `<div class="widget svelte-1eu5871"><div class="widget-spinner svelte-1eu5871"></div></div>`;
+}
+function OpenFPLIcon($$payload, $$props) {
+  let className = fallback($$props["className"], "");
+  let fill = fallback($$props["fill"], "");
+  $$payload.out += `<svg xmlns="http://www.w3.org/2000/svg"${attr("class", className)}${attr("fill", fill)} viewBox="0 0 16 17"><circle cx="8" cy="8.5" r="8" fill="black"></circle><path d="M8.02385 3.48511C6.6199 3.71513 5.36083 4.30378 4.30199 5.15248L4.29834 5.16018V10.5697L8.0202 13.7538L11.7005 10.5697L11.7013 5.15787C10.6579 4.34305 9.39726 3.71153 8.02385 3.48511ZM8.7595 11.4071C8.7595 11.4338 8.74279 11.4605 8.71564 11.4672L8.0202 11.6975C8.00662 11.7008 7.99304 11.7008 7.97947 11.6975L7.28402 11.4672C7.25687 11.4572 7.2399 11.4338 7.2399 11.4071V11.1735C7.2399 11.1501 7.25348 11.1268 7.27384 11.1168L7.96929 10.7563C7.98965 10.7463 8.01001 10.7463 8.03038 10.7563L8.72583 11.1168C8.74619 11.1268 8.7595 11.1501 8.7595 11.1735V11.4071ZM10.0674 8.83405C10.0674 8.85741 10.0538 8.88077 10.0301 8.89079L9.53483 9.14108C9.5009 9.15777 9.49072 9.19782 9.50768 9.22785L9.98933 10.1056C10.0029 10.1323 9.99951 10.1623 9.97915 10.1823L9.15813 10.9766C9.13438 11 9.10044 11 9.07329 10.9833L8.13715 10.3192C8.1066 10.2958 8.09982 10.2524 8.12697 10.2224L8.86993 9.40807C8.91405 9.35801 8.86314 9.28459 8.80205 9.30461L8.01837 9.55491C8.00479 9.55825 7.99122 9.55825 7.97764 9.55491L7.19761 9.30461C7.13313 9.28459 7.08562 9.36135 7.12974 9.40807L7.87244 10.2224C7.89959 10.2524 7.8928 10.2958 7.86226 10.3192L6.92612 10.9833C6.89897 11 6.86503 11 6.84127 10.9766L6.02052 10.179C6.00015 10.159 5.99676 10.1289 6.01034 10.1022L6.49198 9.22452C6.50895 9.19114 6.49537 9.15443 6.46483 9.13775L5.96961 8.88745C5.94925 8.87744 5.93228 8.85407 5.93228 8.83071V7.08196C5.93228 7.0319 5.98997 6.99853 6.03409 7.02856L6.44108 7.29889C6.45804 7.31224 6.46823 7.32892 6.46823 7.35228L6.47162 7.80282C6.47162 7.82284 6.4818 7.84287 6.49877 7.85622L7.0958 8.26671C7.13992 8.29674 7.20101 8.26337 7.19761 8.20997L7.16028 7.41569C7.16028 7.39567 7.1501 7.37565 7.13313 7.36563L5.95943 6.57469C5.94246 6.56134 5.93228 6.54132 5.93228 6.52129V6.13083C5.93228 6.11748 5.93567 6.10079 5.94586 6.09078L6.36981 5.56348C6.38678 5.54012 6.41732 5.53345 6.44447 5.54346L7.97425 6.10079C7.98782 6.10747 8.00479 6.10747 8.01837 6.10079L9.54841 5.54346C9.57556 5.53345 9.60584 5.54346 9.62281 5.56348L10.047 6.09078C10.0572 6.10079 10.0606 6.11748 10.0606 6.13083V6.52129C10.0606 6.54132 10.0504 6.56134 10.0334 6.57469L8.85975 7.36563C8.84957 7.37898 8.83938 7.39901 8.83938 7.41903L8.80205 8.21331C8.79866 8.26671 8.85975 8.30008 8.90386 8.27005L9.5009 7.85956C9.51786 7.84621 9.52805 7.82952 9.52805 7.80616L9.53144 7.35562C9.53144 7.3356 9.54162 7.31557 9.55859 7.30222L9.96557 7.0319C10.0097 7.00187 10.0674 7.0319 10.0674 7.0853V8.83405Z" fill="white"></path></svg>`;
+  bind_props($$props, { className, fill });
+}
+function EmptyBetSlipIcon($$payload, $$props) {
+  let className = fallback($$props["className"], "");
+  let fill = fallback($$props["fill"], "");
+  $$payload.out += `<svg viewBox="0 0 180 180" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true"${attr("class", className)}${attr("fill", fill)}><ellipse opacity="0.1" cx="90" cy="174.6" rx="90" ry="5.4" fill="#7F56F1"></ellipse><path opacity="0.7" fill-rule="evenodd" clip-rule="evenodd" d="M69.6727 39.6C70.8479 35.4447 74.6684 32.4 79.2 32.4H115.713C112.669 34.2341 110.044 36.6934 108.017 39.6H69.6727ZM105.925 43.2H53.1C47.1353 43.2 42.3 48.0354 42.3 54V120.6H98.1H99C99.9941 120.6 100.8 121.406 100.8 122.4V131.85C100.8 139.554 107.046 145.8 114.75 145.8C122.454 145.8 128.7 139.554 128.7 131.85V79.2C114.782 79.2 103.5 67.9176 103.5 54C103.5 50.1351 104.37 46.4734 105.925 43.2ZM132.3 78.9448V129.451C137.408 128.594 141.3 124.151 141.3 118.8V75.8287C138.58 77.4019 135.54 78.4815 132.3 78.9448ZM144.9 73.3037V118.8C144.9 126.158 139.381 132.228 132.257 133.094C131.618 142.206 124.024 149.4 114.75 149.4C114.593 149.4 114.436 149.398 114.28 149.394L114.3 149.4H49.5C39.5589 149.4 31.5 141.341 31.5 131.4V127.8C31.5 123.824 34.7235 120.6 38.7 120.6V54C38.7 46.0471 45.1471 39.6 53.1 39.6H65.9701C67.2209 33.438 72.6688 28.8 79.2 28.8H126.9V28.8633C127.495 28.8214 128.095 28.8 128.7 28.8C142.618 28.8 153.9 40.0825 153.9 54C153.9 61.749 150.402 68.681 144.9 73.3037ZM51.3 90.9C51.3 88.4148 53.3147 86.4 55.8 86.4H82.8C85.2853 86.4 87.3 88.4148 87.3 90.9C87.3 93.3853 85.2853 95.4 82.8 95.4H55.8C53.3147 95.4 51.3 93.3853 51.3 90.9ZM55.8 90C55.3029 90 54.9 90.403 54.9 90.9C54.9 91.3971 55.3029 91.8 55.8 91.8H82.8C83.2971 91.8 83.7 91.3971 83.7 90.9C83.7 90.403 83.2971 90 82.8 90H55.8ZM66.5174 79.4831C66.6545 79.6202 66.8707 79.6887 67.166 79.6887C67.4191 79.6887 67.6037 79.6202 67.7197 79.4831C67.8463 79.3459 67.9096 79.1297 67.9096 78.8344V77.553C68.8904 77.4475 69.7816 77.168 70.5832 76.7145C71.3848 76.2504 72.0281 75.5754 72.5133 74.6895C73.009 73.793 73.2568 72.6856 73.2568 71.3672C73.2568 70.2282 72.9984 69.2895 72.4816 68.5512C71.9648 67.8024 71.3637 67.2276 70.6781 66.8268C69.9926 66.426 69.0697 65.9725 67.9096 65.4663V61.1948C68.4369 61.2159 68.8799 61.2739 69.2385 61.3688C69.6076 61.4637 69.982 61.585 70.3617 61.7327C70.6254 61.8381 70.7994 61.8909 70.8838 61.8909C71.0947 61.8909 71.3162 61.7432 71.5482 61.4479C71.7908 61.1526 71.9965 60.8098 72.1652 60.4196C72.334 60.0188 72.4184 59.6918 72.4184 59.4387C72.4184 59.154 72.2232 58.8692 71.833 58.5844C71.4533 58.2997 70.9154 58.0571 70.2193 57.8567C69.5338 57.6563 68.7639 57.5403 67.9096 57.5086V56.6385C67.9096 56.3327 67.8463 56.1165 67.7197 55.9899C67.5932 55.8633 67.3769 55.8 67.0711 55.8C66.818 55.8 66.6281 55.8686 66.5016 56.0057C66.375 56.1323 66.3117 56.3432 66.3117 56.6385V57.5245C65.2887 57.6405 64.35 57.92 63.4957 58.3629C62.652 58.8059 61.9717 59.4387 61.4549 60.2614C60.9486 61.0735 60.6955 62.0702 60.6955 63.2514C60.6955 64.4959 60.9645 65.5084 61.5023 66.2889C62.0508 67.0588 62.6889 67.6442 63.4166 68.045C64.1549 68.4352 65.1199 68.8518 66.3117 69.2948V73.9301C65.6578 73.9301 65.0566 73.8405 64.5082 73.6612C63.9703 73.4819 63.4166 73.2499 62.8471 72.9651C62.4463 72.7542 62.1826 72.6487 62.0561 72.6487C61.8662 72.6487 61.6289 72.7963 61.3441 73.0916C61.0594 73.3764 60.8115 73.7192 60.6006 74.12C60.4002 74.5207 60.3 74.8582 60.3 75.1325C60.3 75.4594 60.5373 75.8075 61.0119 76.1766C61.4971 76.5457 62.1932 76.8674 63.1002 77.1416C64.0178 77.4053 65.0883 77.5583 66.3117 77.6004V78.8344C66.3117 79.1297 66.3803 79.3459 66.5174 79.4831ZM65.1727 61.9858C65.3836 61.701 65.7633 61.4901 66.3117 61.353V64.7385C65.8371 64.4643 65.4732 64.1795 65.2201 63.8842C64.9775 63.5889 64.8562 63.2409 64.8562 62.8401C64.8562 62.5448 64.9617 62.26 65.1727 61.9858ZM68.7955 72.9651C68.574 73.2499 68.2787 73.4661 67.9096 73.6137V70.0541C68.7217 70.5182 69.1277 71.1299 69.1277 71.8893C69.1277 72.3217 69.017 72.6803 68.7955 72.9651ZM51.3 105.3C51.3 102.815 53.3147 100.8 55.8 100.8H109.8C112.285 100.8 114.3 102.815 114.3 105.3C114.3 107.785 112.285 109.8 109.8 109.8H55.8C53.3147 109.8 51.3 107.785 51.3 105.3ZM55.8 104.4C55.3029 104.4 54.9 104.803 54.9 105.3C54.9 105.797 55.3029 106.2 55.8 106.2H109.8C110.297 106.2 110.7 105.797 110.7 105.3C110.7 104.803 110.297 104.4 109.8 104.4H55.8ZM107.1 54C107.1 42.0707 116.771 32.4 128.7 32.4C140.629 32.4 150.3 42.0707 150.3 54C150.3 65.9294 140.629 75.6 128.7 75.6C116.771 75.6 107.1 65.9294 107.1 54ZM124.2 42.3C124.2 39.8148 126.215 37.8 128.7 37.8C131.185 37.8 133.2 39.8148 133.2 42.3V53.1C133.2 55.5853 131.185 57.6 128.7 57.6C126.215 57.6 124.2 55.5853 124.2 53.1V42.3ZM128.7 41.4C128.203 41.4 127.8 41.803 127.8 42.3V53.1C127.8 53.5971 128.203 54 128.7 54C129.197 54 129.6 53.5971 129.6 53.1V42.3C129.6 41.803 129.197 41.4 128.7 41.4ZM128.7 70.2C126.215 70.2 124.2 68.1853 124.2 65.7C124.2 63.2148 126.215 61.2 128.7 61.2C131.185 61.2 133.2 63.2148 133.2 65.7C133.2 68.1853 131.185 70.2 128.7 70.2ZM127.8 65.7C127.8 66.1971 128.203 66.6 128.7 66.6C129.197 66.6 129.6 66.1971 129.6 65.7C129.6 65.203 129.197 64.8 128.7 64.8C128.203 64.8 127.8 65.203 127.8 65.7Z"></path></svg>`;
+  bind_props($$props, { className, fill });
 }
 var define_process_env_default$2 = { BACKEND_CANISTER_ID: "44kin-waaaa-aaaal-qbxra-cai", FRONTEND_CANISTER_ID: "43loz-3yaaa-aaaal-qbxrq-cai", DATA_CANISTER_CANISTER_ID: "52fzd-2aaaa-aaaal-qmzsa-cai", DFX_NETWORK: "ic" };
 class FixtureService {
@@ -5956,18 +6033,115 @@ function createClubStore() {
   };
 }
 const clubStore = createClubStore();
-function _page$9($$payload, $$props) {
-  push();
-  Layout($$payload, {
-    children: ($$payload2) => {
-      {
-        $$payload2.out += "<!--[-->";
-        Full_screen_spinner($$payload2);
-      }
-      $$payload2.out += `<!--]-->`;
-    },
-    $$slots: { default: true }
+function loadInitial() {
+  return [];
+}
+const initial = loadInitial();
+const selectedBets = writable(initial);
+selectedBets.subscribe((value) => {
+});
+function addBet(bet) {
+  selectedBets.update((current) => {
+    const exists = current.some(
+      (b) => b.fixtureId === bet.fixtureId && b.description === bet.description && b.odds === bet.odds
+    );
+    return exists ? current : [...current, bet];
   });
+}
+function removeBet(bet) {
+  selectedBets.update(
+    (current) => current.filter(
+      (b) => !(b.fixtureId === bet.fixtureId && b.description === bet.description && b.odds === bet.odds)
+    )
+  );
+}
+function isSelected(fixtureId, description, odds) {
+  let found = false;
+  selectedBets.subscribe((current) => {
+    found = current.some(
+      (b) => b.fixtureId === fixtureId && b.description === description && b.odds === odds
+    );
+  })();
+  return found;
+}
+const betSlipStore = {
+  subscribe: selectedBets.subscribe,
+  addBet,
+  removeBet,
+  isSelected
+};
+function Betslip($$payload, $$props) {
+  push();
+  var $$store_subs;
+  let bets, totalStakes;
+  let isExpanded = fallback($$props["isExpanded"], false);
+  let stakes = {};
+  let totalReturns = 0;
+  bets = store_get($$store_subs ??= {}, "$betSlipStore", betSlipStore);
+  totalStakes = Object.values(stakes).reduce((total, stake) => total + (stake || 0), 0);
+  if (isExpanded) {
+    $$payload.out += "<!--[-->";
+    $$payload.out += `<div class="fixed inset-0 z-40 bg-black bg-opacity-50 md:hidden"></div>`;
+  } else {
+    $$payload.out += "<!--[!-->";
+  }
+  $$payload.out += `<!--]--> <div${attr("class", `flex flex-col h-[95vh] mx-2 md:h-screen md:mx-0 overflow-hidden bg-white border rounded-2xl md:rounded-xl ${stringify(isExpanded ? "fixed inset-x-0 top-[2.5vh] z-50 w-auto md:relative md:inset-auto md:w-80 md:rounded-lg" : "w-80")}`)}><div class="flex items-center justify-between p-4 border-b border-gray-100 md:px-4 md:py-2 md:bg-gray-100"><div class="flex items-center"><span class="flex items-center justify-center w-8 text-lg font-medium text-white rounded-full h-7 bg-BrandPurple">${escape_html(bets.length)}</span> <span class="px-3 text-xl font-bold text-black">Bet Slip</span></div> `;
+  if (isExpanded) {
+    $$payload.out += "<!--[-->";
+    $$payload.out += `<button class="text-2xl text-gray-400 hover:text-gray-600 md:hidden">×</button>`;
+  } else {
+    $$payload.out += "<!--[!-->";
+  }
+  $$payload.out += `<!--]--></div> <div class="flex flex-col flex-1 overflow-auto">`;
+  if (bets.length === 0) {
+    $$payload.out += "<!--[-->";
+    $$payload.out += `<div class="flex flex-col items-center justify-center flex-1 px-8 py-16 text-center"><div class="w-24 h-24 mb-4">`;
+    EmptyBetSlipIcon($$payload, { className: "w-24 h-24 fill-BrandPurple" });
+    $$payload.out += `<!----></div> <p class="text-lg text-gray-400 md:text-sm">There are no selections in<br>your bet slip.</p></div>`;
+  } else {
+    $$payload.out += "<!--[!-->";
+    $$payload.out += `<div class="flex items-center px-4 py-2 mt-2 rounded bg-BrandPurple"><span class="text-white">${escape_html(bets.length)} Singles</span></div> <div class="flex-1 p-4 space-y-2"></div>`;
+  }
+  $$payload.out += `<!--]--> <div class="p-6 mt-auto border-t border-gray-100 md:p-4 md:bg-gray-100"><div class="flex items-center justify-between mb-4"><span class="text-lg text-gray-500 md:text-sm">FPL Balance:</span> <div class="flex items-center space-x-3"><span class="flex items-center text-lg font-medium text-black md:text-sm">`;
+  OpenFPLIcon($$payload, { className: "w-3 h-3 mr-1" });
+  $$payload.out += `<!----> 0.0000</span> <button class="px-4 py-1.5 md:px-2 md:py-1 text-sm md:text-xs text-white rounded-full bg-BrandPurple">Deposit</button></div></div> <div class="flex items-center justify-between mb-4"><span class="text-lg text-gray-500 md:text-sm">Bet Total:</span> <span class="flex items-center text-lg font-medium text-black md:text-sm">`;
+  OpenFPLIcon($$payload, { className: "w-3 h-3 mr-1" });
+  $$payload.out += `<!----> ${escape_html(totalStakes.toFixed(2))}</span></div> <div class="flex items-center justify-between mb-6 md:mb-4"><span class="text-lg text-gray-500 md:text-sm">Potential Returns:</span> <span class="flex items-center text-lg font-medium text-black md:text-sm">`;
+  OpenFPLIcon($$payload, { className: "w-3 h-3 mr-1", fill: "black" });
+  $$payload.out += `<!----> ${escape_html(totalReturns.toFixed(2))}</span></div> <button class="w-full px-4 py-4 text-lg font-medium text-white rounded-xl md:py-2 md:text-sm bg-BrandPurple hover:bg-BrandPurpleHover disabled:opacity-50 disabled:bg-gray-300"${attr("disabled", totalStakes <= 0 || bets.length === 0, true)}>Place Bet</button></div></div></div>`;
+  if ($$store_subs) unsubscribe_stores($$store_subs);
+  bind_props($$props, { isExpanded });
+  pop();
+}
+function _page$a($$payload, $$props) {
+  push();
+  let $$settled = true;
+  let $$inner_payload;
+  function $$render_inner($$payload2) {
+    Layout($$payload2, {
+      children: ($$payload3) => {
+        $$payload3.out += `<div class="flex flex-col md:flex-row"><div class="flex-1 md:block">`;
+        {
+          $$payload3.out += "<!--[-->";
+          Full_screen_spinner($$payload3);
+        }
+        $$payload3.out += `<!--]--></div> <div class="flex-shrink-0 lg:ml-4 lg:w-80"><div class="hidden lg:block lg:sticky lg:top-4">`;
+        Betslip($$payload3, {});
+        $$payload3.out += `<!----></div> <div${attr("class", ` fixed bottom-0 left-0 right-0 px-3 py-4 border-t-4 rounded-xl border-BrandOddsDivider bg-BrandGray lg:hidden ${stringify("")} md:left-24 md:right-12 `)}><div class="w-full p-4 bg-white rounded-2xl md:mx-0"><button class="flex items-center w-full text-left"><div class="flex items-center"><span class="flex items-center justify-center w-12 h-10 mr-3 text-xl font-medium text-white rounded-full bg-BrandPurple">Bets</span> <span class="text-xl font-semibold text-black">Bet Slip</span></div></button></div></div> `;
+        {
+          $$payload3.out += "<!--[!-->";
+        }
+        $$payload3.out += `<!--]--></div></div>`;
+      },
+      $$slots: { default: true }
+    });
+  }
+  do {
+    $$settled = true;
+    $$inner_payload = copy_payload($$payload);
+    $$render_inner($$inner_payload);
+  } while (!$$settled);
+  assign_payload($$payload, $$inner_payload);
   pop();
 }
 var define_process_env_default = { BACKEND_CANISTER_ID: "44kin-waaaa-aaaal-qbxra-cai", FRONTEND_CANISTER_ID: "43loz-3yaaa-aaaal-qbxrq-cai", DATA_CANISTER_CANISTER_ID: "52fzd-2aaaa-aaaal-qmzsa-cai", DFX_NETWORK: "ic" };
@@ -6114,7 +6288,7 @@ function Clear_draft_modal($$payload, $$props) {
   });
   bind_props($$props, { visible, onConfirm, closeModal });
 }
-function _page$8($$payload, $$props) {
+function _page$9($$payload, $$props) {
   push();
   var $$store_subs;
   let fixtureId, leagueId, seasonId;
@@ -6190,7 +6364,7 @@ function _page$8($$payload, $$props) {
   if ($$store_subs) unsubscribe_stores($$store_subs);
   pop();
 }
-function _page$7($$payload) {
+function _page$8($$payload) {
   Layout($$payload, {
     children: ($$payload2) => {
       {
@@ -6221,21 +6395,40 @@ function _page$7($$payload) {
     $$slots: { default: true }
   });
 }
+function _page$7($$payload) {
+}
 function _page$6($$payload, $$props) {
   push();
   var $$store_subs;
   Number(store_get($$store_subs ??= {}, "$page", page).url.searchParams.get("leagueId"));
   Number(store_get($$store_subs ??= {}, "$page", page).url.searchParams.get("fixtureId"));
-  Layout($$payload, {
-    children: ($$payload2) => {
-      {
-        $$payload2.out += "<!--[-->";
-        Full_screen_spinner($$payload2);
-      }
-      $$payload2.out += `<!--]-->`;
-    },
-    $$slots: { default: true }
-  });
+  let $$settled = true;
+  let $$inner_payload;
+  function $$render_inner($$payload2) {
+    Layout($$payload2, {
+      children: ($$payload3) => {
+        $$payload3.out += `<div class="flex flex-col md:flex-row"><div class="flex-1 md:block">`;
+        {
+          $$payload3.out += "<!--[-->";
+          Full_screen_spinner($$payload3);
+        }
+        $$payload3.out += `<!--]--></div> <div class="flex-shrink-0 lg:ml-4 lg:w-80"><div class="hidden lg:block lg:sticky lg:top-4">`;
+        Betslip($$payload3, {});
+        $$payload3.out += `<!----></div> <div${attr("class", ` fixed bottom-0 left-0 right-0 px-3 py-4 border-t-4 rounded-xl border-BrandOddsDivider bg-BrandGray lg:hidden ${stringify("")} md:left-24 md:right-12 `)}><div class="w-full p-4 bg-white rounded-2xl md:mx-0"><button class="flex items-center w-full text-left"><div class="flex items-center"><span class="flex items-center justify-center w-12 h-10 mr-3 text-xl font-medium text-white rounded-full bg-BrandPurple">Bets</span> <span class="text-xl font-semibold text-black">Bet Slip</span></div></button></div></div> `;
+        {
+          $$payload3.out += "<!--[!-->";
+        }
+        $$payload3.out += `<!--]--></div></div>`;
+      },
+      $$slots: { default: true }
+    });
+  }
+  do {
+    $$settled = true;
+    $$inner_payload = copy_payload($$payload);
+    $$render_inner($$inner_payload);
+  } while (!$$settled);
+  assign_payload($$payload, $$inner_payload);
   if ($$store_subs) unsubscribe_stores($$store_subs);
   pop();
 }
@@ -6373,7 +6566,7 @@ export {
   Error$1 as E,
   Layout$1 as L,
   Server as S,
-  _page$9 as _,
+  _page$a as _,
   set_building as a,
   set_manifest as b,
   set_prerendering as c,
@@ -6382,15 +6575,16 @@ export {
   set_read_implementation as f,
   get_hooks as g,
   set_safe_public_env as h,
-  _page$8 as i,
-  _page$7 as j,
-  _page$6 as k,
-  _page$5 as l,
-  _page$4 as m,
-  _page$3 as n,
+  _page$9 as i,
+  _page$8 as j,
+  _page$7 as k,
+  _page$6 as l,
+  _page$5 as m,
+  _page$4 as n,
   options as o,
-  _page$2 as p,
-  _page$1 as q,
-  _page as r,
-  set_assets as s
+  _page$3 as p,
+  _page$2 as q,
+  _page$1 as r,
+  set_assets as s,
+  _page as t
 };

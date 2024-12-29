@@ -5,8 +5,8 @@ import type {
 import { BettingService } from "../services/betting-service";
 
 function createBettingStore() {
-  async function getLeagueFixtures(leagueId: LeagueId) {
-    return new BettingService().getLeagueFixtures(leagueId);
+  async function getBettableHomepageFixtures(leagueId: LeagueId) {
+    return new BettingService().getBettableHomepageFixtures(leagueId);
   }
 
   async function getMatchOdds(leagueId: LeagueId, fixtureId: FixtureId) {
@@ -14,7 +14,7 @@ function createBettingStore() {
   }
 
   return {
-    getLeagueFixtures,
+    getBettableHomepageFixtures,
     getMatchOdds,
   };
 }

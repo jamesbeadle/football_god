@@ -1,8 +1,10 @@
 import * as FlagIcons from "svelte-flag-icons";
 import type {
+  BetSlip,
   PlayerEventType,
   PlayerPosition,
 } from "../../../../declarations/backend/backend.did";
+import type { Selection } from "../../../../declarations/data_canister/data_canister.did";
 
 export function uint8ArrayToBase64(bytes: Uint8Array): string {
   const binary = Array.from(bytes)
@@ -131,6 +133,14 @@ export function convertDateToReadable(nanoseconds: number): string {
   const milliseconds = nanoseconds / 1e6;
   const date = new Date(milliseconds);
   return date.toLocaleDateString("en-GB");
+}
+
+export function getBetDescription(bet: BetSlip): string {
+  return "";
+}
+
+export function getBetSelectionDescription(bet: Selection): string {
+  return "";
 }
 
 export function calculateAgeFromNanoseconds(nanoseconds: number) {

@@ -18,8 +18,13 @@ export class BettingService {
     );
   }
 
-  async getLeagueFixtures(leagueId: LeagueId): Promise<HomePageFixtureDTO[]> {
-    return await this.actor.getLeagueFixtures(leagueId);
+  async getBettableHomepageFixtures(
+    leagueId: LeagueId,
+  ): Promise<HomePageFixtureDTO[]> {
+    const result = await this.actor.getBettableHomepageFixtures(leagueId);
+    if (isError(result))
+      throw new Error("Failed to fetch bettable league fixtures");
+    return result.ok;
   }
 
   async getMatchOdds(
