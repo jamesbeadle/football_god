@@ -194,6 +194,10 @@ actor class _ProfileCanister() {
               termsAcceptedOn = profile.termsAcceptedOn;
               username = dto.username;
               withdrawalAddress = profile.withdrawalAddress;
+              joinedDate = profile.joinedDate;
+              kycApprovalDate = profile.kycApprovalDate;
+              kycReference = profile.kycReference;
+              kycSubmissionDate = profile.kycSubmissionDate;
             };
             updateProfile(updatedProfile);
             return #ok();
@@ -239,6 +243,10 @@ actor class _ProfileCanister() {
               termsAcceptedOn = profile.termsAcceptedOn;
               username = profile.username;
               withdrawalAddress = profile.withdrawalAddress;
+              joinedDate = profile.joinedDate;
+              kycApprovalDate = profile.kycApprovalDate;
+              kycReference = profile.kycReference;
+              kycSubmissionDate = profile.kycSubmissionDate;
             };
             updateProfile(updatedProfile);
             return #ok();
@@ -284,6 +292,10 @@ actor class _ProfileCanister() {
               termsAcceptedOn = profile.termsAcceptedOn;
               username = profile.username;
               withdrawalAddress = dto.withdrawalAddress;
+              joinedDate = profile.joinedDate;
+              kycApprovalDate = profile.kycApprovalDate;
+              kycReference = profile.kycReference;
+              kycSubmissionDate = profile.kycSubmissionDate;
             };
             updateProfile(updatedProfile);
             return #ok();
@@ -333,6 +345,10 @@ actor class _ProfileCanister() {
               termsAcceptedOn = profile.termsAcceptedOn;
               username = profile.username;
               withdrawalAddress = profile.withdrawalAddress;
+              joinedDate = profile.joinedDate;
+              kycApprovalDate = profile.kycApprovalDate;
+              kycReference = profile.kycReference;
+              kycSubmissionDate = profile.kycSubmissionDate;
             };
             updateProfile(updatedProfile);
             return #ok();
@@ -382,6 +398,10 @@ actor class _ProfileCanister() {
               termsAcceptedOn = profile.termsAcceptedOn;
               username = profile.username;
               withdrawalAddress = profile.withdrawalAddress;
+              joinedDate = profile.joinedDate;
+              kycApprovalDate = profile.kycApprovalDate;
+              kycReference = profile.kycReference;
+              kycSubmissionDate = profile.kycSubmissionDate;
             };
             updateProfile(updatedProfile);
             return #ok();
@@ -431,6 +451,10 @@ actor class _ProfileCanister() {
               termsAcceptedOn = profile.termsAcceptedOn;
               username = profile.username;
               withdrawalAddress = profile.withdrawalAddress;
+              joinedDate = profile.joinedDate;
+              kycApprovalDate = profile.kycApprovalDate;
+              kycReference = profile.kycReference;
+              kycSubmissionDate = profile.kycSubmissionDate;
             };
             updateProfile(updatedProfile);
             return #ok();
@@ -816,6 +840,10 @@ actor class _ProfileCanister() {
       termsAcceptedOn = 0;
       username = "";
       withdrawalAddress = "";
+      joinedDate = Time.now();
+      kycApprovalDate = 0;
+      kycReference = "";
+      kycSubmissionDate = 0;
     };
   };
 
