@@ -4674,7 +4674,7 @@ const options = {
 		<div class="error">
 			<span class="status">` + status + '</span>\n			<div class="message">\n				<h1>' + message + "</h1>\n			</div>\n		</div>\n	</body>\n</html>\n"
   },
-  version_hash: "1tmkyb5"
+  version_hash: "xmkssc"
 };
 async function get_hooks() {
   return {};
@@ -6454,6 +6454,100 @@ function _page$7($$payload) {
 function _page$6($$payload, $$props) {
   push();
   var $$store_subs;
+  function buildSelectionDetail(categoryKey, data) {
+    switch (categoryKey) {
+      case "anytimeScorers":
+        return {
+          AnytimeGoalscorer: { playerId: data.playerId, clubId: data.clubId }
+        };
+      case "anytimeAssist":
+        return {
+          AnytimeAssist: { playerId: data.playerId, clubId: data.clubId }
+        };
+      case "firstGoalscorer":
+        return {
+          FirstGoalscorer: { playerId: data.playerId, clubId: data.clubId }
+        };
+      case "lastGoalscorer":
+        return {
+          LastGoalscorer: { playerId: data.playerId, clubId: data.clubId }
+        };
+      case "missPenalty":
+        return {
+          MissPenalty: { playerId: data.playerId, clubId: data.clubId }
+        };
+      case "redCards":
+        return {
+          RedCard: { playerId: data.playerId, clubId: data.clubId }
+        };
+      case "yellowCards":
+        return {
+          YellowCard: { playerId: data.playerId, clubId: data.clubId }
+        };
+      case "firstAssist":
+        return {
+          FirstAssist: { playerId: data.playerId, clubId: data.clubId }
+        };
+      case "lastAssist":
+        return {
+          LastAssist: { playerId: data.playerId, clubId: data.clubId }
+        };
+      case "scoresBrace":
+        return {
+          ScoreBrace: { playerId: data.playerId, clubId: data.clubId }
+        };
+      case "scoresHatTrick":
+        return {
+          ScoreHatrick: { playerId: data.playerId, clubId: data.clubId }
+        };
+      case "penaltyMissed":
+        return { PenaltyMissed: { clubId: data.clubId } };
+      case "correctScores":
+        return {
+          CorrectScore: {
+            homeGoals: data.homeGoals,
+            awayGoals: data.awayGoals
+          }
+        };
+      case "halfTimeScores":
+        return {
+          HalfTimeScore: {
+            homeGoals: data.homeGoals,
+            awayGoals: data.awayGoals
+          }
+        };
+      case "correctResults":
+        return {
+          CorrectResult: { matchResult: data.matchResult }
+        };
+      case "bothTeamsToScore":
+        return {
+          BothTeamsToScore: { bothTeamsToScore: data.isYes }
+        };
+      case "bothTeamsToScoreAndWinner":
+        return {
+          BothTeamsToScoreAndWinner: {
+            bothTeamsToScore: data.isYes,
+            matchResult: data.result
+          }
+        };
+      case "halfTimeFullTimeResult":
+        return {
+          HalfTimeFullTimeResult: {
+            halfTimeResult: data.halfTime,
+            fullTimeResult: data.fullTime
+          }
+        };
+      case "goalsOverUnder":
+        return {
+          AnyCategoryForGoalsOverUnder: { margin: data.margin, isOver: data.isOver }
+        };
+      default:
+        return {
+          CorrectResult: { matchResult: { Draw: null } }
+        };
+    }
+  }
   Number(store_get($$store_subs ??= {}, "$page", page).url.searchParams.get("leagueId"));
   Number(store_get($$store_subs ??= {}, "$page", page).url.searchParams.get("fixtureId"));
   let $$settled = true;
@@ -6484,6 +6578,7 @@ function _page$6($$payload, $$props) {
   } while (!$$settled);
   assign_payload($$payload, $$inner_payload);
   if ($$store_subs) unsubscribe_stores($$store_subs);
+  bind_props($$props, { buildSelectionDetail });
   pop();
 }
 function _page$5($$payload) {

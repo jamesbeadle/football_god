@@ -197,45 +197,166 @@
       }
     }
   
-    function buildSelectionDetail(categoryKey: string, data: any): SelectionDetail {
+   
+    export function buildSelectionDetail(categoryKey: string, data: any): SelectionDetail {
       switch (categoryKey) {
         case "anytimeScorers":
           return {
             AnytimeGoalscorer: {
-                clubId: data.clubId,
-                playerId: data.playerId
-            }
+              playerId: data.playerId,
+              clubId: data.clubId,
+            },
           };
+
+        case "anytimeAssist":
+          return {
+            AnytimeAssist: {
+              playerId: data.playerId,
+              clubId: data.clubId,
+            },
+          };
+
+        case "firstGoalscorer":
+          return {
+            FirstGoalscorer: {
+              playerId: data.playerId,
+              clubId: data.clubId,
+            },
+          };
+
+        case "lastGoalscorer":
+          return {
+            LastGoalscorer: {
+              playerId: data.playerId,
+              clubId: data.clubId,
+            },
+          };
+
+        case "missPenalty":
+          return {
+            MissPenalty: {
+              playerId: data.playerId,
+              clubId: data.clubId,
+            },
+          };
+
+        case "redCards":
+          return {
+            RedCard: {
+              playerId: data.playerId,
+              clubId: data.clubId,
+            },
+          };
+
+        case "yellowCards":
+          return {
+            YellowCard: {
+              playerId: data.playerId,
+              clubId: data.clubId,
+            },
+          };
+
+        case "firstAssist":
+          return {
+            FirstAssist: {
+              playerId: data.playerId,
+              clubId: data.clubId,
+            },
+          };
+
+        case "lastAssist":
+          return {
+            LastAssist: {
+              playerId: data.playerId,
+              clubId: data.clubId,
+            },
+          };
+        case "scoresBrace":
+          return {
+            ScoreBrace: {
+              playerId: data.playerId,
+              clubId: data.clubId,
+            },
+          };
+
+        case "scoresHatTrick":
+          return {
+            ScoreHatrick: {
+              playerId: data.playerId,
+              clubId: data.clubId,
+            },
+          };
+
+        case "penaltyMissed":
+          return {
+            PenaltyMissed: {
+              clubId: data.clubId,
+            },
+          };
+
         case "correctScores":
           return {
             CorrectScore: {
               homeGoals: data.homeGoals,
-              awayGoals: data.awayGoals
-            }
+              awayGoals: data.awayGoals,
+            },
           };
+
+        case "halfTimeScores":
+          return {
+            HalfTimeScore: {
+              homeGoals: data.homeGoals,
+              awayGoals: data.awayGoals,
+            },
+          };
+
         case "correctResults":
           return {
             CorrectResult: {
-              matchResult: data.matchResult
-            }
+              matchResult: data.matchResult,
+            },
           };
+
+        case "bothTeamsToScore":
+          return {
+            BothTeamsToScore: {
+              bothTeamsToScore: data.isYes,
+            },
+          };
+
         case "bothTeamsToScoreAndWinner":
           return {
             BothTeamsToScoreAndWinner: {
               bothTeamsToScore: data.isYes,
-              matchResult: data.result
-            }
+              matchResult: data.result,
+            },
           };
-        case "bothTeamsToScore":
+
+        case "halfTimeFullTimeResult":
           return {
-            BothTeamsToScore: {
-              bothTeamsToScore: data.isYes
-            }
+            HalfTimeFullTimeResult: {
+              halfTimeResult: data.halfTime,
+              fullTimeResult: data.fullTime,
+            },
           };
+
+        case "goalsOverUnder":
+          return {
+            AnyCategoryForGoalsOverUnder: {
+              margin: data.margin,
+              isOver: data.isOver,
+            } as unknown,
+          } as unknown as SelectionDetail;
+
         default:
-          return { CorrectResult: { matchResult: { Draw: null } } };
+          return {
+            CorrectResult: {
+              matchResult: { Draw: null },
+            },
+          };
       }
     }
+
   
         
     function toggleBet(
@@ -244,30 +365,39 @@
       dataForDetail: any,
       displayedOdds: number
     ) {
-      const catObject = mapCategoryKeyToCategory(categoryKey);
+      console.log("Toggling bet")
+      const category = mapCategoryKeyToCategory(categoryKey);
+      console.log("category");
+      console.log(category);
       const detail = buildSelectionDetail(categoryKey, dataForDetail);
+      console.log("detail");
+      console.log(detail);
+
 
       const isAlreadySelected = betSlipStore.isSelected(
         leagueId,
         fixtureId,
-        catObject,
+        category,
         detail
       );
       
       if (isAlreadySelected) {
-        betSlipStore.removeBet(leagueId, fixtureId, catObject, detail);
+        betSlipStore.removeBet(leagueId, fixtureId, category, detail);
         return;
       }
       
       betSlipDataStore.ensureLeagueData(leagueId).then(({ clubs, players }) => {
-      const description = buildBetUiDescription(detail, clubs, players);
+        
+        console.log(clubs)
+
+        const description = buildBetUiDescription(detail, clubs, players);
 
         betSlipStore.addBet({
           leagueId,
           fixtureId,
           status: { Unsettled: null },
           result: { Open: null },
-          selectionType: catObject,
+          selectionType: category,
           selectionDetail: detail,
           odds: displayedOdds || 0,
           stake: 0n,
@@ -607,8 +737,9 @@
                           {/if}
                         {/each}
                       </div>
-  
-                    {:else if ["yellowCards", "redCards", "penaltyMissers", "scoresBrace", "scoresHatTrick", "halfTimeFullTimeResult", "bothTeamsToScoreAndWinner"].includes(category)}
+
+
+                    {:else if ["scoresBrace"].includes(category)}
                       <div class="overflow-hidden text-sm border rounded-b bg-BrandDarkGray border-BrandPurple">
                         <div class="grid grid-cols-4 font-bold text-center text-black bg-white">
                           <div class="col-span-3 p-2">Selection</div>
@@ -626,7 +757,41 @@
                                   toggleBet(
                                     fixtureId,
                                     category,
-                                    odd, 
+                                    odd, //TODO: Need to pass object not odd
+                                    getOddValue(odd)
+                                  );
+                                }}
+                              >
+                                <span>{formatOdds(getOddValue(odd))}</span>
+                                {#if isBetSelectedByData(fixtureId, category, odd)}
+                                  <BetSelectedIcon className="w-4 h-4 fill-BrandPurple" />
+                                {/if}
+                              </button>
+                            </div>
+                          {/each}
+                        </div>
+                      </div>
+
+  
+                    {:else if ["yellowCards", "redCards", "penaltyMissers", "scoresHatTrick", "halfTimeFullTimeResult", "bothTeamsToScoreAndWinner"].includes(category)}
+                      <div class="overflow-hidden text-sm border rounded-b bg-BrandDarkGray border-BrandPurple">
+                        <div class="grid grid-cols-4 font-bold text-center text-black bg-white">
+                          <div class="col-span-3 p-2">Selection</div>
+                          <div class="p-2">Odds</div>
+                        </div>
+                        <div class="divide-y divide-BrandOddsDivider">
+                          {#each getOddsForCategory(category).sort(sortByLowestOdds) as odd}
+                            <div class="grid grid-cols-4">
+                              <div class="col-span-3 p-4 text-base text-left bg-BrandLightGray">
+                                {getOddDisplayText(odd)}
+                              </div>
+                              <button
+                                class="flex items-center justify-center gap-2 p-4 text-lg text-white bg-BrandGray hover:bg-BrandGray/80"
+                                on:click={() => {
+                                  toggleBet(
+                                    fixtureId,
+                                    category,
+                                    odd,
                                     getOddValue(odd)
                                   );
                                 }}

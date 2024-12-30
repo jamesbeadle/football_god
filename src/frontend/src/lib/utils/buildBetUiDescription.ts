@@ -18,6 +18,9 @@ function lookupPlayer(
   return `${p.firstName} ${p.lastName}`;
 }
 function lookupClub(clubId: number, clubs: Record<number, ClubDTO>): string {
+  console.log("Looking up club");
+  console.log(clubId);
+  console.log(clubs);
   const c = clubs[clubId];
   if (!c) return `Club ${clubId}`;
   return c.name;
@@ -28,6 +31,8 @@ export function buildBetUiDescription(
   clubs: Record<number, ClubDTO>,
   players: Record<number, PlayerDTO>,
 ): string {
+  console.log("building description");
+  console.log(detail);
   if ("MissPenalty" in detail) {
     const d = detail.MissPenalty;
     return `Missed Penalty by ${lookupPlayer(d.playerId, players)} (${lookupClub(d.clubId, clubs)})`;
