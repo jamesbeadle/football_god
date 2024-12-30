@@ -17,13 +17,29 @@ function lookupPlayer(
   if (!p) return `Player ${playerId}`;
   return `${p.firstName} ${p.lastName}`;
 }
+
 function lookupClub(clubId: number, clubs: Record<number, ClubDTO>): string {
-  console.log("Looking up club");
-  console.log(clubId);
-  console.log(clubs);
   const c = clubs[clubId];
   if (!c) return `Club ${clubId}`;
   return c.name;
+}
+
+function lookupClubByPlayerOrId(
+  detail: { clubId?: number; playerId?: number },
+  players: Record<number, PlayerDTO>,
+  clubs: Record<number, ClubDTO>,
+): string {
+  let clubId = detail.clubId;
+  if (!clubId && detail.playerId != null) {
+    const p = players[detail.playerId];
+    if (p?.clubId != null) {
+      clubId = p.clubId;
+    }
+  }
+  if (clubId == null) {
+    return "Unknown Club";
+  }
+  return lookupClub(clubId, clubs);
 }
 
 export function buildBetUiDescription(
@@ -31,23 +47,21 @@ export function buildBetUiDescription(
   clubs: Record<number, ClubDTO>,
   players: Record<number, PlayerDTO>,
 ): string {
-  console.log("building description");
-  console.log(detail);
   if ("MissPenalty" in detail) {
     const d = detail.MissPenalty;
-    return `Missed Penalty by ${lookupPlayer(d.playerId, players)} (${lookupClub(d.clubId, clubs)})`;
+    return `Missed Penalty by ${lookupPlayer(d.playerId, players)} (${lookupClubByPlayerOrId(d, players, clubs)})`;
   } else if ("LastAssist" in detail) {
     const d = detail.LastAssist;
-    return `Last Assist: ${lookupPlayer(d.playerId, players)} (${lookupClub(d.clubId, clubs)})`;
+    return `Last Assist: ${lookupPlayer(d.playerId, players)} (${lookupClubByPlayerOrId(d, players, clubs)})`;
   } else if ("PenaltyMissed" in detail) {
     const d = detail.PenaltyMissed;
-    return `Penalty Missed: ${lookupClub(d.clubId, clubs)}`;
+    return `Penalty Missed: ${lookupClubByPlayerOrId(d, players, clubs)}`;
   } else if ("FirstAssist" in detail) {
     const d = detail.FirstAssist;
-    return `First Assist: ${lookupPlayer(d.playerId, players)} (${lookupClub(d.clubId, clubs)})`;
+    return `First Assist: ${lookupPlayer(d.playerId, players)} (${lookupClubByPlayerOrId(d, players, clubs)})`;
   } else if ("AnytimeGoalscorer" in detail) {
     const d = detail.AnytimeGoalscorer;
-    return `Anytime Goalscorer: ${lookupPlayer(d.playerId, players)} (${lookupClub(d.clubId, clubs)})`;
+    return `Anytime Goalscorer: ${lookupPlayer(d.playerId, players)} (${lookupClubByPlayerOrId(d, players, clubs)})`;
   } else if ("CorrectResult" in detail) {
     const d = detail.CorrectResult as CorrectResultDetail;
     const key = Object.keys(d.matchResult)[0];
@@ -69,22 +83,22 @@ export function buildBetUiDescription(
     return `HT/FT: ${ht} → ${ft}`;
   } else if ("LastGoalscorer" in detail) {
     const d = detail.LastGoalscorer;
-    return `Last Goalscorer: ${lookupPlayer(d.playerId, players)} (${lookupClub(d.clubId, clubs)})`;
+    return `Last Goalscorer: ${lookupPlayer(d.playerId, players)} (${lookupClubByPlayerOrId(d, players, clubs)})`;
   } else if ("RedCard" in detail) {
     const d = detail.RedCard;
-    return `Red Card: ${lookupPlayer(d.playerId, players)} (${lookupClub(d.clubId, clubs)})`;
+    return `Red Card: ${lookupPlayer(d.playerId, players)} (${lookupClubByPlayerOrId(d, players, clubs)})`;
   } else if ("ScoreHatrick" in detail) {
     const d = detail.ScoreHatrick;
-    return `Hat-trick: ${lookupPlayer(d.playerId, players)} (${lookupClub(d.clubId, clubs)})`;
+    return `Hat-trick: ${lookupPlayer(d.playerId, players)} (${lookupClubByPlayerOrId(d, players, clubs)})`;
   } else if ("CorrectScore" in detail) {
     const d = detail.CorrectScore as ScoreDetail;
     return `Correct Score: ${d.homeGoals}-${d.awayGoals}`;
   } else if ("AnytimeAssist" in detail) {
     const d = detail.AnytimeAssist;
-    return `Anytime Assist: ${lookupPlayer(d.playerId, players)} (${lookupClub(d.clubId, clubs)})`;
+    return `Anytime Assist: ${lookupPlayer(d.playerId, players)} (${lookupClubByPlayerOrId(d, players, clubs)})`;
   } else if ("YellowCard" in detail) {
     const d = detail.YellowCard;
-    return `Yellow Card: ${lookupPlayer(d.playerId, players)} (${lookupClub(d.clubId, clubs)})`;
+    return `Yellow Card: ${lookupPlayer(d.playerId, players)} (${lookupClubByPlayerOrId(d, players, clubs)})`;
   } else if ("BothTeamsToScoreAndWinner" in detail) {
     const d =
       detail.BothTeamsToScoreAndWinner as BothTeamsToScoreAndWinnerDetail;
@@ -93,10 +107,10 @@ export function buildBetUiDescription(
     return `Result + BTTS: ${resultKey} & BTTS ${yesNo}`;
   } else if ("FirstGoalscorer" in detail) {
     const d = detail.FirstGoalscorer;
-    return `First Goalscorer: ${lookupPlayer(d.playerId, players)} (${lookupClub(d.clubId, clubs)})`;
+    return `First Goalscorer: ${lookupPlayer(d.playerId, players)} (${lookupClubByPlayerOrId(d, players, clubs)})`;
   } else if ("ScoreBrace" in detail) {
     const d = detail.ScoreBrace;
-    return `Brace: ${lookupPlayer(d.playerId, players)} (${lookupClub(d.clubId, clubs)})`;
+    return `Brace: ${lookupPlayer(d.playerId, players)} (${lookupClubByPlayerOrId(d, players, clubs)})`;
   }
 
   return "Unknown Bet Type";

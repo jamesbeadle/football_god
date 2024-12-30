@@ -55,6 +55,7 @@
   
     let matchOdds: MatchOddsDTO;
     let players: PlayerDTO[] = [];
+    let clubs: ClubDTO[] = [];
     let fixture: FixtureDTO;
     let homeClub: ClubDTO;
     let awayClub: ClubDTO;
@@ -131,8 +132,8 @@
       try {
         matchOdds = await bettingStore.getMatchOdds(leagueId, fixtureId);
         players = await playerStore.getPlayers(leagueId);
+        clubs = await clubStore.getClubs(leagueId);
   
-        const clubs = await clubStore.getClubs(leagueId);
         const fixtures = await fixtureStore.getFixtures(leagueId);
   
         fixture = fixtures.find((x) => x.id === fixtureId)!;
@@ -369,6 +370,8 @@
       const category = mapCategoryKeyToCategory(categoryKey);
       console.log("category");
       console.log(category);
+      console.log("data for detail")
+      console.log(dataForDetail)
       const detail = buildSelectionDetail(categoryKey, dataForDetail);
       console.log("detail");
       console.log(detail);
@@ -430,6 +433,10 @@
       if ("playerId" in odd) {
         const player = players.find((x) => x.id === odd.playerId);
         return player ? `${player.firstName} ${player.lastName}` : "N/A";
+      }
+      if ("clubId" in odd) {
+        const club = clubs.find((x) => x.id === odd.clubId);
+        return club ? `${club.friendlyName}` : "N/A";
       }
       if ("odds" in odd) {
         return `Odds: ${odd.odds}`;
