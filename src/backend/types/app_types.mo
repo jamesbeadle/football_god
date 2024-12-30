@@ -19,7 +19,11 @@ module AppTypes {
         profilePicture: ?Blob;
         profilePictureExtension: Text;
         withdrawalAddress: Text;
+        joinedDate: Int;
         completedKYC: Bool;
+        kycReference: Text;
+        kycSubmissionDate: Int;
+        kycApprovalDate: Int;
         accountOnPause: Bool;
         pauseEndDate: Int;
         maxBetLimit: Nat64;

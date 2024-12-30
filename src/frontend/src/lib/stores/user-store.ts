@@ -175,7 +175,6 @@ function createUserStore() {
   }
 
   async function isDataManager(): Promise<boolean> {
-    console.log("checking is data manager");
     return new AdminService().isDataManager();
   }
 

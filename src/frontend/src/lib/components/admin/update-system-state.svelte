@@ -74,10 +74,7 @@
             return;
       }
 
-      console.log("loading system state")
-
       let currentSystemState = await adminStore.getSystemState(applicationName);
-      console.log(currentSystemState)
       if(!currentSystemState){
         return;
       }

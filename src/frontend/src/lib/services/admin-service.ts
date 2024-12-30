@@ -32,7 +32,6 @@ export class AdminService {
       process.env.BACKEND_CANISTER_ID ?? "",
     );
     const result: any = await identityActor.isDataManager();
-    console.log(result);
     if (isError(result)) {
       throw new Error("Failed to check is data manager");
     }

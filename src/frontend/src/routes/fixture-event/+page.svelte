@@ -366,16 +366,8 @@
       dataForDetail: any,
       displayedOdds: number
     ) {
-      console.log("Toggling bet")
       const category = mapCategoryKeyToCategory(categoryKey);
-      console.log("category");
-      console.log(category);
-      console.log("data for detail")
-      console.log(dataForDetail)
       const detail = buildSelectionDetail(categoryKey, dataForDetail);
-      console.log("detail");
-      console.log(detail);
-
 
       const isAlreadySelected = betSlipStore.isSelected(
         leagueId,
@@ -391,8 +383,6 @@
       
       betSlipDataStore.ensureLeagueData(leagueId).then(({ clubs, players }) => {
         
-        console.log(clubs)
-
         const description = buildBetUiDescription(detail, clubs, players);
 
         betSlipStore.addBet({
