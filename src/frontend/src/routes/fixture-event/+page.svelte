@@ -109,21 +109,21 @@
       matchOdds
         ? (activeTab === "All"
             ? [
-                "bothTeamsToScore",
-                "bothTeamsToScoreAndWinner",
                 "correctResults",
                 "correctScores",
+                "goalsOverUnder",
+                "bothTeamsToScore",
+                "bothTeamsToScoreAndWinner",
                 "halfTimeScores",
                 "halfTimeFullTimeResult",
-                "goalsOverUnder",
                 "anytimeScorers",
+                "anytimeAssist",
                 "scoresBrace",
                 "scoresHatTrick",
-                "anytimeAssist",
-                "penaltyMissed",
-                "penaltyMissers",
+                "yellowCards",
                 "redCards",
-                "yellowCards"
+                "penaltyMissed",
+                "penaltyMissers"
               ].filter((key) => key in matchOdds)
             : categoryGroups[activeTab as keyof typeof categoryGroups]) as readonly (keyof MatchOddsDTO)[]
         : [];

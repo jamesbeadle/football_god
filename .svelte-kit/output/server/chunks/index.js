@@ -4728,7 +4728,7 @@ const options = {
 		<div class="error">
 			<span class="status">` + status + '</span>\n			<div class="message">\n				<h1>' + message + "</h1>\n			</div>\n		</div>\n	</body>\n</html>\n"
   },
-  version_hash: "1c68p4j"
+  version_hash: "12u6plf"
 };
 async function get_hooks() {
   return {};
@@ -6103,7 +6103,7 @@ function Betslip($$payload, $$props) {
     $$payload.out += `<div class="px-4 py-2 mt-2 rounded bg-BrandPurple"><span class="text-white">${escape_html(bets.length > 1 ? bets.length + " Singles" : "Single Bet")}</span></div> <div class="flex-1 p-4 space-y-2"><!--[-->`;
     for (let index = 0, $$length = each_array.length; index < $$length; index++) {
       let bet = each_array[index];
-      $$payload.out += `<div class="p-2 rounded border border-gray-300 flex flex-col gap-2"><div class="flex justify-between"><div><p class="text-sm text-black font-medium">${escape_html(bet.uiDescription)}</p> <p class="text-xs text-gray-500">League: ${escape_html(bet.leagueId)}, Fixture: ${escape_html(bet.fixtureId)}</p></div> <button class="text-gray-400 hover:text-red-500">×</button></div> <div class="flex justify-between items-center"><span class="text-sm text-gray-600">@ ${escape_html(bet.odds.toFixed(2))}</span> <input type="number" min="0" placeholder="Stake" class="text-sm w-20 p-1 border rounded"${attr("value", stakes[index])}></div></div>`;
+      $$payload.out += `<div class="p-2 rounded border border-gray-300 flex flex-col gap-2"><div class="flex justify-between"><div><p class="text-sm text-black font-medium">${escape_html(bet.uiDescription)}</p> <p class="text-xs text-gray-500">League: ${escape_html(bet.leagueId)}, Fixture: ${escape_html(bet.fixtureId)}</p></div> <button class="text-gray-400 hover:text-red-500">×</button></div> <div class="flex justify-between items-center"><span class="text-sm text-gray-600">@ ${escape_html(bet.odds.toFixed(2))}</span> <input type="number" min="0" placeholder="Stake" class="stake-input"${attr("value", stakes[index])}></div></div>`;
     }
     $$payload.out += `<!--]--></div> `;
     if (multiples.length > 0) {

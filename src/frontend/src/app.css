@@ -80,3 +80,7 @@
 .brand-dropdown {
   @apply text-black rounded;
 }
+
+.stake-input {
+  @apply text-sm w-20 p-1 text-black border rounded;
+}

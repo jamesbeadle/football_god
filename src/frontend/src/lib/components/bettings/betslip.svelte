@@ -132,7 +132,7 @@
                 type="number"
                 min="0"
                 placeholder="Stake"
-                class="text-sm w-20 p-1 border rounded"
+                class="stake-input"
                 bind:value={stakes[index]}
               />
             </div>
@@ -165,7 +165,7 @@
                       type="number"
                       min="0"
                       placeholder="Stake"
-                      class="text-sm w-20 p-1 border rounded"
+                      class="stake-input"
                       bind:value={multipleStakes[multipleKey]}
                     />
                   </div>
