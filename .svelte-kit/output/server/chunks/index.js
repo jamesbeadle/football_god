@@ -4728,7 +4728,7 @@ const options = {
 		<div class="error">
 			<span class="status">` + status + '</span>\n			<div class="message">\n				<h1>' + message + "</h1>\n			</div>\n		</div>\n	</body>\n</html>\n"
   },
-  version_hash: "dxgppu"
+  version_hash: "1k600ol"
 };
 async function get_hooks() {
   return {};
@@ -6105,24 +6105,6 @@ function Betslip($$payload, $$props) {
   var $$store_subs;
   let rawSlipState, slipState, bets, isMultiple, singleStakes, multipleStakes, possibleMultiples, combinedOdds, singleStakesTotal, multipleStakesTotal, totalStakes, totalReturns;
   let isExpanded = fallback($$props["isExpanded"], false);
-  if (!isMultiple) {
-    if (Array.isArray(bets)) {
-      bets.forEach((bet, idx) => {
-        const st = singleStakes[idx] || 0;
-        totalReturns += st * bet.odds;
-      });
-    }
-  } else {
-    if (Array.isArray(bets)) {
-      bets.forEach((bet, idx) => {
-        const st = singleStakes[idx] || 0;
-        totalReturns += st * bet.odds;
-      });
-    }
-    for (const [mKey, stVal] of Object.entries(multipleStakes)) {
-      totalReturns += (stVal || 0) * combinedOdds;
-    }
-  }
   rawSlipState = store_get($$store_subs ??= {}, "$betSlipStore", betSlipStore);
   slipState = rawSlipState ?? {
     bets: [],
@@ -6140,6 +6122,28 @@ function Betslip($$payload, $$props) {
   multipleStakesTotal = Object.values(multipleStakes).reduce((acc, v) => acc + (v || 0), 0);
   totalStakes = isMultiple ? singleStakesTotal + multipleStakesTotal : singleStakesTotal;
   totalReturns = 0;
+  {
+    let sum = 0;
+    if (!isMultiple) {
+      if (Array.isArray(bets)) {
+        bets.forEach((bet, idx) => {
+          const st = singleStakes[idx] || 0;
+          sum += st * bet.odds;
+        });
+      }
+    } else {
+      if (Array.isArray(bets)) {
+        bets.forEach((bet, idx) => {
+          const st = singleStakes[idx] || 0;
+          sum += st * bet.odds;
+        });
+      }
+      for (const [mKey, stVal] of Object.entries(multipleStakes)) {
+        sum += (stVal || 0) * combinedOdds;
+      }
+    }
+    totalReturns = sum;
+  }
   if (isExpanded) {
     $$payload.out += "<!--[-->";
     $$payload.out += `<div class="fixed inset-0 z-40 bg-black bg-opacity-50 md:hidden"></div>`;
@@ -6165,7 +6169,14 @@ function Betslip($$payload, $$props) {
     $$payload.out += `<div class="px-4 py-2 mt-2 rounded bg-BrandPurple"><span class="text-white">${escape_html(bets.length > 1 ? bets.length + " Singles" : "Single Bet")}</span></div> <div class="flex-1 p-4 space-y-2"><!--[-->`;
     for (let index = 0, $$length = each_array.length; index < $$length; index++) {
       let bet = each_array[index];
-      $$payload.out += `<div class="p-2 border border-gray-300 rounded flex flex-col gap-2"><div class="flex justify-between"><div><p class="text-sm text-black font-medium">${escape_html(bet.uiDescription)}</p> <p class="text-xs text-gray-500">League: ${escape_html(bet.leagueId)}, Fixture: ${escape_html(bet.fixtureId)}</p></div> <button class="text-gray-400 hover:text-red-500">×</button></div> <div class="flex items-center justify-between"><span class="text-sm text-gray-600">@ ${escape_html(bet.odds.toFixed(2))}</span> <input type="number" min="0" placeholder="Stake" class="stake-input"${attr("value", slipState.singleStakes[index])}></div></div>`;
+      $$payload.out += `<div class="p-2 border border-gray-300 rounded flex flex-col gap-2"><div class="flex justify-between"><div><p class="text-sm text-black font-medium">${escape_html(bet.uiDescription)}</p> <p class="text-xs text-gray-500">League: ${escape_html(bet.leagueId)}, Fixture: ${escape_html(bet.fixtureId)}</p></div> <button class="text-gray-400 hover:text-red-500">×</button></div> <div class="flex items-center justify-between"><span class="text-sm text-gray-600">@ ${escape_html(bet.odds.toFixed(2))}</span> <input type="number" min="0" placeholder="Stake" class="stake-input"${attr("value", slipState.singleStakes[index])}></div> `;
+      if (singleStakes[index] && singleStakes[index] > 0) {
+        $$payload.out += "<!--[-->";
+        $$payload.out += `<div class="text-sm text-gray-700">Potential Returns: <span class="font-medium">${escape_html((singleStakes[index] * bet.odds).toFixed(2))}</span></div>`;
+      } else {
+        $$payload.out += "<!--[!-->";
+      }
+      $$payload.out += `<!--]--></div>`;
     }
     $$payload.out += `<!--]--></div> `;
     if (possibleMultiples.length > 0) {
@@ -6181,7 +6192,14 @@ function Betslip($$payload, $$props) {
           $$payload.out += `<!--[-->`;
           for (let $$index_1 = 0, $$length2 = each_array_2.length; $$index_1 < $$length2; $$index_1++) {
             let mKey = each_array_2[$$index_1];
-            $$payload.out += `<div class="border border-gray-300 rounded p-2 flex flex-col gap-1"><div class="flex items-center justify-between"><p class="text-sm font-medium text-black">${escape_html(mKey)}</p> <input type="number" min="0" placeholder="Stake" class="stake-input"${attr("value", slipState.multipleStakes[mKey])}></div> <p class="text-xs text-gray-500">Combined odds: ${escape_html(combinedOdds.toFixed(2))}</p></div>`;
+            $$payload.out += `<div class="border border-gray-300 rounded p-2 flex flex-col gap-1"><div class="flex items-center justify-between"><p class="text-sm font-medium text-black">${escape_html(mKey)}</p> <input type="number" min="0" placeholder="Stake" class="stake-input"${attr("value", slipState.multipleStakes[mKey])}></div> <p class="text-xs text-gray-500">Combined odds: ${escape_html(combinedOdds.toFixed(2))}</p> `;
+            if (slipState.multipleStakes[mKey] && slipState.multipleStakes[mKey] > 0) {
+              $$payload.out += "<!--[-->";
+              $$payload.out += `<p class="text-sm text-gray-700">Potential Returns: <span class="font-medium">${escape_html((slipState.multipleStakes[mKey] * combinedOdds).toFixed(2))}</span></p>`;
+            } else {
+              $$payload.out += "<!--[!-->";
+            }
+            $$payload.out += `<!--]--></div>`;
           }
           $$payload.out += `<!--]-->`;
         }

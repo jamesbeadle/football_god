@@ -67,7 +67,6 @@ export function addBet(bet: ExtendedSelection) {
         detailEquals(b.selectionDetail, bet.selectionDetail),
     );
     if (!exists) {
-      // Insert bet
       state.bets = [...state.bets, bet];
     }
     return state;
@@ -152,7 +151,6 @@ export function setMultipleStake(multipleName: string, stake: number) {
   });
 }
 
-/** The main store object we export. */
 export const betSlipStore = {
   subscribe: _betSlipStore.subscribe,
   addBet,

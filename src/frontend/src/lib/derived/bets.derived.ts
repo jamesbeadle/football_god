@@ -21,7 +21,7 @@ function getPossibleBetTypes(count: number): BetType[] {
 }
 
 export const availableMultiplesStore = derived(betSlipStore, ($state) => {
-  const { bets } = $state; 
+  const { bets } = $state;
   const count = bets.length;
   if (count === 0) {
     return [];

@@ -31,23 +31,29 @@
     : singleStakesTotal;
 
   $: totalReturns = 0;
-  if (!isMultiple) {
-    if (Array.isArray(bets)) {
-      bets.forEach((bet, idx) => {
-        const st = singleStakes[idx] || 0;
-        totalReturns += st * bet.odds;
-      });
+  $: {
+    let sum = 0;
+    
+    if (!isMultiple) {
+      if (Array.isArray(bets)) {
+        bets.forEach((bet, idx) => {
+          const st = singleStakes[idx] || 0;
+          sum += st * bet.odds;
+        });
+      }
+    } else {
+      if (Array.isArray(bets)) {
+        bets.forEach((bet, idx) => {
+          const st = singleStakes[idx] || 0;
+          sum += st * bet.odds;
+        });
+      }
+      for (const [mKey, stVal] of Object.entries(multipleStakes)) {
+        sum += (stVal || 0) * combinedOdds;
+      }
     }
-  } else {
-    if (Array.isArray(bets)) {
-      bets.forEach((bet, idx) => {
-        const st = singleStakes[idx] || 0;
-        totalReturns += st * bet.odds;
-      });
-    }
-    for (const [mKey, stVal] of Object.entries(multipleStakes)) {
-      totalReturns += (stVal || 0) * combinedOdds;
-    }
+
+    totalReturns = sum;
   }
 
   const {
@@ -155,6 +161,16 @@
               
               />
             </div>
+
+            {#if singleStakes[index] && singleStakes[index] > 0}
+              <div class="text-sm text-gray-700">
+                Potential Returns: 
+                <span class="font-medium">
+                  {(singleStakes[index] * bet.odds).toFixed(2)}
+                </span>
+              </div>
+            {/if}
+            
           </div>
         {/each}
       </div>
@@ -201,6 +217,15 @@
                   <p class="text-xs text-gray-500">
                     Combined odds: {combinedOdds.toFixed(2)}
                   </p>
+
+                  {#if slipState.multipleStakes[mKey] && slipState.multipleStakes[mKey] > 0}
+                    <p class="text-sm text-gray-700">
+                      Potential Returns:
+                      <span class="font-medium">
+                        {(slipState.multipleStakes[mKey] * combinedOdds).toFixed(2)}
+                      </span>
+                    </p>
+                  {/if}
                 </div>
               {/each}
             {/each}
