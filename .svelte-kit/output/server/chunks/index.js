@@ -4728,7 +4728,7 @@ const options = {
 		<div class="error">
 			<span class="status">` + status + '</span>\n			<div class="message">\n				<h1>' + message + "</h1>\n			</div>\n		</div>\n	</body>\n</html>\n"
   },
-  version_hash: "1upzrxx"
+  version_hash: "dxgppu"
 };
 async function get_hooks() {
   return {};
@@ -5982,48 +5982,93 @@ function EmptyBetSlipIcon($$payload, $$props) {
   bind_props($$props, { className, fill });
 }
 function loadInitial() {
-  return [];
-}
-function detailEquals(d1, d2) {
-  return JSON.stringify(d1, replacer) === JSON.stringify(d2, replacer);
-}
-function categoryEquals(c1, c2) {
-  return JSON.stringify(c1, replacer) === JSON.stringify(c2, replacer);
+  {
+    return {
+      bets: [],
+      isMultiple: false,
+      singleStakes: {},
+      multipleStakes: {}
+    };
+  }
 }
 const initial = loadInitial();
 const _betSlipStore = writable(initial);
-_betSlipStore.subscribe((value) => {
+_betSlipStore.subscribe((val) => {
 });
 function addBet(bet) {
-  _betSlipStore.update((current) => {
-    const exists = current.some(
+  _betSlipStore.update((state) => {
+    const exists = state.bets.some(
       (b) => b.leagueId === bet.leagueId && b.fixtureId === bet.fixtureId && categoryEquals(b.selectionType, bet.selectionType) && detailEquals(b.selectionDetail, bet.selectionDetail)
     );
-    return exists ? current : [...current, bet];
+    if (!exists) {
+      state.bets = [...state.bets, bet];
+    }
+    return state;
   });
 }
 function removeBet(leagueId, fixtureId, category, detail) {
-  _betSlipStore.update(
-    (current) => current.filter(
-      (b) => !(b.leagueId === leagueId && b.fixtureId === fixtureId && categoryEquals(b.selectionType, category) && detailEquals(b.selectionDetail, detail))
-    )
-  );
-}
-function isSelected(leagueId, fixtureId, category, detail) {
-  let found = false;
-  _betSlipStore.subscribe((current) => {
-    found = current.some(
+  _betSlipStore.update((state) => {
+    const idx = state.bets.findIndex(
       (b) => b.leagueId === leagueId && b.fixtureId === fixtureId && categoryEquals(b.selectionType, category) && detailEquals(b.selectionDetail, detail)
     );
-  })();
-  return found;
+    if (idx === -1) return state;
+    state.bets.splice(idx, 1);
+    const oldStakes = { ...state.singleStakes };
+    const newStakes = {};
+    state.bets.forEach((_, newIndex) => {
+      if (newIndex < idx) {
+        newStakes[newIndex] = oldStakes[newIndex] ?? 0;
+      } else {
+        newStakes[newIndex] = oldStakes[newIndex + 1] ?? 0;
+      }
+    });
+    state.singleStakes = newStakes;
+    if (state.bets.length === 0) {
+      state.isMultiple = false;
+      state.multipleStakes = {};
+    }
+    return state;
+  });
+}
+function isSelected(leagueId, fixtureId, category, detail) {
+  const state = get$1(_betSlipStore);
+  return state.bets.some(
+    (b) => b.leagueId === leagueId && b.fixtureId === fixtureId && categoryEquals(b.selectionType, category) && detailEquals(b.selectionDetail, detail)
+  );
+}
+function setIsMultiple(value) {
+  _betSlipStore.update((state) => {
+    state.isMultiple = value;
+    return state;
+  });
+}
+function setSingleStake(index, stake) {
+  _betSlipStore.update((state) => {
+    state.singleStakes[index] = stake;
+    return state;
+  });
+}
+function setMultipleStake(multipleName, stake) {
+  _betSlipStore.update((state) => {
+    state.multipleStakes[multipleName] = stake;
+    return state;
+  });
 }
 const betSlipStore = {
   subscribe: _betSlipStore.subscribe,
   addBet,
   removeBet,
-  isSelected
+  isSelected,
+  setIsMultiple,
+  setSingleStake,
+  setMultipleStake
 };
+function categoryEquals(c1, c2) {
+  return JSON.stringify(c1, replacer) === JSON.stringify(c2, replacer);
+}
+function detailEquals(d1, d2) {
+  return JSON.stringify(d1, replacer) === JSON.stringify(d2, replacer);
+}
 const possibleBetTypesByCount = {
   1: [],
   2: [{ Double: null }],
@@ -6039,10 +6084,13 @@ const possibleBetTypesByCount = {
 function getPossibleBetTypes(count) {
   return possibleBetTypesByCount[count] || [];
 }
-const availableMultiplesStore = derived(betSlipStore, ($bets) => {
-  const count = $bets.length;
-  if (count === 0) return [];
-  const uniqueFixtures = new Set($bets.map((b) => b.fixtureId));
+const availableMultiplesStore = derived(betSlipStore, ($state) => {
+  const { bets } = $state;
+  const count = bets.length;
+  if (count === 0) {
+    return [];
+  }
+  const uniqueFixtures = new Set(bets.map((b) => b.fixtureId));
   const allUnique = uniqueFixtures.size === count;
   if (!allUnique && count > 1) {
     return [];
@@ -6055,27 +6103,42 @@ function calculateMultipleOdds(bets) {
 function Betslip($$payload, $$props) {
   push();
   var $$store_subs;
-  let rawBets, bets, rawMultiples, multiples, singleStakesTotal, totalStakes, totalReturns;
+  let rawSlipState, slipState, bets, isMultiple, singleStakes, multipleStakes, possibleMultiples, combinedOdds, singleStakesTotal, multipleStakesTotal, totalStakes, totalReturns;
   let isExpanded = fallback($$props["isExpanded"], false);
-  let stakes = {};
-  let multipleStakes = {};
-  let isMultiple = false;
-  {
+  if (!isMultiple) {
     if (Array.isArray(bets)) {
       bets.forEach((bet, idx) => {
-        const stakeVal = stakes[idx] || 0;
-        totalReturns += stakeVal * bet.odds;
+        const st = singleStakes[idx] || 0;
+        totalReturns += st * bet.odds;
       });
     }
+  } else {
+    if (Array.isArray(bets)) {
+      bets.forEach((bet, idx) => {
+        const st = singleStakes[idx] || 0;
+        totalReturns += st * bet.odds;
+      });
+    }
+    for (const [mKey, stVal] of Object.entries(multipleStakes)) {
+      totalReturns += (stVal || 0) * combinedOdds;
+    }
   }
-  rawBets = store_get($$store_subs ??= {}, "$betSlipStore", betSlipStore);
-  bets = Array.isArray(rawBets) ? rawBets : [];
-  rawMultiples = store_get($$store_subs ??= {}, "$availableMultiplesStore", availableMultiplesStore);
-  multiples = Array.isArray(rawMultiples) ? rawMultiples : [];
-  calculateMultipleOdds(bets);
-  singleStakesTotal = Object.values(stakes).reduce((sum, s2) => sum + (s2 || 0), 0);
-  Object.values(multipleStakes).reduce((sum, s2) => sum + (s2 || 0), 0);
-  totalStakes = singleStakesTotal;
+  rawSlipState = store_get($$store_subs ??= {}, "$betSlipStore", betSlipStore);
+  slipState = rawSlipState ?? {
+    bets: [],
+    isMultiple: false,
+    singleStakes: {},
+    multipleStakes: {}
+  };
+  bets = Array.isArray(slipState.bets) ? slipState.bets : [];
+  isMultiple = slipState.isMultiple;
+  singleStakes = slipState.singleStakes;
+  multipleStakes = slipState.multipleStakes;
+  possibleMultiples = store_get($$store_subs ??= {}, "$availableMultiplesStore", availableMultiplesStore) ?? [];
+  combinedOdds = calculateMultipleOdds(bets);
+  singleStakesTotal = Object.values(singleStakes).reduce((acc, v) => acc + (v || 0), 0);
+  multipleStakesTotal = Object.values(multipleStakes).reduce((acc, v) => acc + (v || 0), 0);
+  totalStakes = isMultiple ? singleStakesTotal + multipleStakesTotal : singleStakesTotal;
   totalReturns = 0;
   if (isExpanded) {
     $$payload.out += "<!--[-->";
@@ -6083,7 +6146,7 @@ function Betslip($$payload, $$props) {
   } else {
     $$payload.out += "<!--[!-->";
   }
-  $$payload.out += `<!--]--> <div${attr("class", `flex flex-col h-[95vh] mx-2 md:h-screen md:mx-0 overflow-hidden bg-white border rounded-2xl md:rounded-xl ${stringify(isExpanded ? "fixed inset-x-0 top-[2.5vh] z-50 w-auto md:relative md:inset-auto md:w-80 md:rounded-lg" : "w-80")}`)}><div class="flex items-center justify-between p-4 border-b border-gray-100 md:px-4 md:py-2 md:bg-gray-100"><div class="flex items-center"><span class="flex items-center justify-center w-8 text-lg font-medium text-white rounded-full h-7 bg-BrandPurple">${escape_html(bets.length)}</span> <span class="px-3 text-xl font-bold text-black">Bet Slip</span></div> `;
+  $$payload.out += `<!--]--> <div${attr("class", `flex flex-col h-[95vh] mx-2 md:h-screen md:mx-0 overflow-hidden bg-white border rounded-2xl md:rounded-xl ${stringify(isExpanded ? "fixed inset-x-0 top-[2.5vh] z-50 w-auto md:relative md:inset-auto md:w-80 md:rounded-lg" : "w-80")}`)}><div class="flex items-center justify-between p-4 border-b border-gray-100 md:px-4 md:py-2 md:bg-gray-100"><div class="flex items-center"><span class="flex items-center justify-center w-8 h-7 text-lg font-medium text-white rounded-full bg-BrandPurple">${escape_html(bets.length)}</span> <span class="px-3 text-xl font-bold text-black">Bet Slip</span></div> `;
   if (isExpanded) {
     $$payload.out += "<!--[-->";
     $$payload.out += `<button class="text-2xl text-gray-400 hover:text-gray-600 md:hidden">×</button>`;
@@ -6091,7 +6154,7 @@ function Betslip($$payload, $$props) {
     $$payload.out += "<!--[!-->";
   }
   $$payload.out += `<!--]--></div> <div class="flex flex-col flex-1 overflow-auto">`;
-  if (!Array.isArray(bets) || bets.length === 0) {
+  if (bets.length === 0) {
     $$payload.out += "<!--[-->";
     $$payload.out += `<div class="flex flex-col items-center justify-center flex-1 px-8 py-16 text-center"><div class="w-24 h-24 mb-4">`;
     EmptyBetSlipIcon($$payload, { className: "w-24 h-24 fill-BrandPurple" });
@@ -6102,13 +6165,28 @@ function Betslip($$payload, $$props) {
     $$payload.out += `<div class="px-4 py-2 mt-2 rounded bg-BrandPurple"><span class="text-white">${escape_html(bets.length > 1 ? bets.length + " Singles" : "Single Bet")}</span></div> <div class="flex-1 p-4 space-y-2"><!--[-->`;
     for (let index = 0, $$length = each_array.length; index < $$length; index++) {
       let bet = each_array[index];
-      $$payload.out += `<div class="p-2 rounded border border-gray-300 flex flex-col gap-2"><div class="flex justify-between"><div><p class="text-sm text-black font-medium">${escape_html(bet.uiDescription)}</p> <p class="text-xs text-gray-500">League: ${escape_html(bet.leagueId)}, Fixture: ${escape_html(bet.fixtureId)}</p></div> <button class="text-gray-400 hover:text-red-500">×</button></div> <div class="flex justify-between items-center"><span class="text-sm text-gray-600">@ ${escape_html(bet.odds.toFixed(2))}</span> <input type="number" min="0" placeholder="Stake" class="stake-input"${attr("value", stakes[index])}></div></div>`;
+      $$payload.out += `<div class="p-2 border border-gray-300 rounded flex flex-col gap-2"><div class="flex justify-between"><div><p class="text-sm text-black font-medium">${escape_html(bet.uiDescription)}</p> <p class="text-xs text-gray-500">League: ${escape_html(bet.leagueId)}, Fixture: ${escape_html(bet.fixtureId)}</p></div> <button class="text-gray-400 hover:text-red-500">×</button></div> <div class="flex items-center justify-between"><span class="text-sm text-gray-600">@ ${escape_html(bet.odds.toFixed(2))}</span> <input type="number" min="0" placeholder="Stake" class="stake-input"${attr("value", slipState.singleStakes[index])}></div></div>`;
     }
     $$payload.out += `<!--]--></div> `;
-    if (multiples.length > 0) {
+    if (possibleMultiples.length > 0) {
       $$payload.out += "<!--[-->";
-      $$payload.out += `<div class="px-4 py-2 mt-2 rounded bg-BrandPurple"><span class="text-white">Multiple Bet</span></div> <div class="p-4 flex items-center space-x-2"><label class="flex items-center space-x-2"><input type="checkbox"${attr("checked", isMultiple, true)}> <span class="text-sm text-gray-700">Enable Multiple Betting</span></label></div> `;
-      {
+      $$payload.out += `<div class="px-4 py-2 mt-2 rounded bg-BrandPurple"><span class="text-white">Multiple Bet</span></div> <div class="p-4 flex items-center space-x-2"><label class="flex items-center space-x-2"><input type="checkbox"${attr("checked", slipState.isMultiple, true)}> <span class="text-sm text-gray-700">Enable Multiple Betting</span></label></div> `;
+      if (slipState.isMultiple) {
+        $$payload.out += "<!--[-->";
+        const each_array_1 = ensure_array_like(possibleMultiples);
+        $$payload.out += `<div class="px-4 pb-4 flex flex-col space-y-2"><!--[-->`;
+        for (let $$index_2 = 0, $$length = each_array_1.length; $$index_2 < $$length; $$index_2++) {
+          let multi = each_array_1[$$index_2];
+          const each_array_2 = ensure_array_like(Object.keys(multi));
+          $$payload.out += `<!--[-->`;
+          for (let $$index_1 = 0, $$length2 = each_array_2.length; $$index_1 < $$length2; $$index_1++) {
+            let mKey = each_array_2[$$index_1];
+            $$payload.out += `<div class="border border-gray-300 rounded p-2 flex flex-col gap-1"><div class="flex items-center justify-between"><p class="text-sm font-medium text-black">${escape_html(mKey)}</p> <input type="number" min="0" placeholder="Stake" class="stake-input"${attr("value", slipState.multipleStakes[mKey])}></div> <p class="text-xs text-gray-500">Combined odds: ${escape_html(combinedOdds.toFixed(2))}</p></div>`;
+          }
+          $$payload.out += `<!--]-->`;
+        }
+        $$payload.out += `<!--]--></div>`;
+      } else {
         $$payload.out += "<!--[!-->";
       }
       $$payload.out += `<!--]-->`;
@@ -6117,13 +6195,11 @@ function Betslip($$payload, $$props) {
     }
     $$payload.out += `<!--]-->`;
   }
-  $$payload.out += `<!--]--> <div class="p-6 mt-auto border-t border-gray-100 md:p-4 md:bg-gray-100"><div class="flex items-center justify-between mb-4"><span class="text-lg text-gray-500 md:text-sm">FPL Balance:</span> <div class="flex items-center space-x-3"><span class="flex items-center text-lg font-medium text-black md:text-sm">`;
-  OpenFPLIcon($$payload, { className: "w-3 h-3 mr-1" });
-  $$payload.out += `<!----> 0.0000</span> <button class="px-4 py-1.5 md:px-2 md:py-1 text-sm md:text-xs text-white rounded-full bg-BrandPurple">Deposit</button></div></div> <div class="flex items-center justify-between mb-4"><span class="text-lg text-gray-500 md:text-sm">Bet Total:</span> <span class="flex items-center text-lg font-medium text-black md:text-sm">`;
+  $$payload.out += `<!--]--> <div class="p-6 mt-auto border-t border-gray-100 md:p-4 md:bg-gray-100"><div class="flex items-center justify-between mb-4"><span class="text-lg text-gray-500 md:text-sm">Bet Total:</span> <span class="flex items-center text-lg font-medium text-black md:text-sm">`;
   OpenFPLIcon($$payload, { className: "w-3 h-3 mr-1" });
   $$payload.out += `<!----> ${escape_html(totalStakes.toFixed(2))}</span></div> <div class="flex items-center justify-between mb-6 md:mb-4"><span class="text-lg text-gray-500 md:text-sm">Potential Returns:</span> <span class="flex items-center text-lg font-medium text-black md:text-sm">`;
-  OpenFPLIcon($$payload, { className: "w-3 h-3 mr-1", fill: "black" });
-  $$payload.out += `<!----> ${escape_html(totalReturns.toFixed(2))}</span></div> <button class="w-full px-4 py-4 text-lg font-medium text-white rounded-xl md:py-2 md:text-sm bg-BrandPurple hover:bg-BrandPurpleHover disabled:opacity-50 disabled:bg-gray-300"${attr("disabled", totalStakes <= 0 || !Array.isArray(bets) || bets.length === 0, true)}>Place Bet</button></div></div></div>`;
+  OpenFPLIcon($$payload, { className: "w-3 h-3 mr-1" });
+  $$payload.out += `<!----> ${escape_html(totalReturns.toFixed(2))}</span></div> <button class="w-full px-4 py-4 text-lg font-medium text-white rounded-xl md:py-2 md:text-sm bg-BrandPurple hover:bg-BrandPurpleHover disabled:opacity-50 disabled:bg-gray-300"${attr("disabled", bets.length === 0 || totalStakes <= 0, true)}>Place Bet</button></div></div></div>`;
   if ($$store_subs) unsubscribe_stores($$store_subs);
   bind_props($$props, { isExpanded });
   pop();

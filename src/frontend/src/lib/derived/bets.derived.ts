@@ -20,11 +20,13 @@ function getPossibleBetTypes(count: number): BetType[] {
   return possibleBetTypesByCount[count] || [];
 }
 
-export const availableMultiplesStore = derived(betSlipStore, ($bets) => {
-  const count = $bets.length;
-  if (count === 0) return [];
-
-  const uniqueFixtures = new Set($bets.map((b) => b.fixtureId));
+export const availableMultiplesStore = derived(betSlipStore, ($state) => {
+  const { bets } = $state; 
+  const count = bets.length;
+  if (count === 0) {
+    return [];
+  }
+  const uniqueFixtures = new Set(bets.map((b) => b.fixtureId));
   const allUnique = uniqueFixtures.size === count;
 
   if (!allUnique && count > 1) {
