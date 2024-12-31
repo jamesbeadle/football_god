@@ -1,12 +1,11 @@
 import { writable } from "svelte/store";
 import { browser } from "$app/environment";
-import type {
-  Category,
-  Selection,
-  SelectionDetail,
-} from "../../../../declarations/data_canister/data_canister.did";
 import { replacer } from "$lib/utils/helpers";
 import type { ExtendedSelection } from "$lib/types/extended-selection";
+import type {
+  Category,
+  SelectionDetail,
+} from "../../../../declarations/data_canister/data_canister.did";
 
 const STORAGE_KEY = "global-selected-bets";
 
@@ -29,16 +28,16 @@ function categoryEquals(c1: Category, c2: Category): boolean {
 }
 
 const initial = loadInitial();
-const selectedBetsStore = writable<ExtendedSelection[]>(initial);
+const _betSlipStore = writable<ExtendedSelection[]>(initial);
 
-selectedBetsStore.subscribe((value) => {
+_betSlipStore.subscribe((value) => {
   if (browser) {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(value, replacer));
   }
 });
 
-function addBet(bet: ExtendedSelection) {
-  selectedBetsStore.update((current) => {
+export function addBet(bet: ExtendedSelection) {
+  _betSlipStore.update((current) => {
     const exists = current.some(
       (b) =>
         b.leagueId === bet.leagueId &&
@@ -50,13 +49,13 @@ function addBet(bet: ExtendedSelection) {
   });
 }
 
-function removeBet(
+export function removeBet(
   leagueId: number,
   fixtureId: number,
   category: Category,
   detail: SelectionDetail,
 ) {
-  selectedBetsStore.update((current) =>
+  _betSlipStore.update((current) =>
     current.filter(
       (b) =>
         !(
@@ -69,14 +68,14 @@ function removeBet(
   );
 }
 
-function isSelected(
+export function isSelected(
   leagueId: number,
   fixtureId: number,
   category: Category,
   detail: SelectionDetail,
 ) {
   let found = false;
-  selectedBetsStore.subscribe((current) => {
+  _betSlipStore.subscribe((current) => {
     found = current.some(
       (b) =>
         b.leagueId === leagueId &&
@@ -89,7 +88,7 @@ function isSelected(
 }
 
 export const betSlipStore = {
-  subscribe: selectedBetsStore.subscribe,
+  subscribe: _betSlipStore.subscribe,
   addBet,
   removeBet,
   isSelected,
