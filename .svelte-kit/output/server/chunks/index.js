@@ -4728,7 +4728,7 @@ const options = {
 		<div class="error">
 			<span class="status">` + status + '</span>\n			<div class="message">\n				<h1>' + message + "</h1>\n			</div>\n		</div>\n	</body>\n</html>\n"
   },
-  version_hash: "12u6plf"
+  version_hash: "1upzrxx"
 };
 async function get_hooks() {
   return {};
@@ -6025,7 +6025,7 @@ const betSlipStore = {
   isSelected
 };
 const possibleBetTypesByCount = {
-  1: [{ Single: null }],
+  1: [],
   2: [{ Double: null }],
   3: [{ Treble: null }, { Trixie: null }, { Patent: null }],
   4: [{ FourFold: null }, { Yankee: null }, { Lucky15: null }],
@@ -6035,7 +6035,6 @@ const possibleBetTypesByCount = {
   8: [{ EightFold: null }, { Goliath: null }],
   9: [{ NineFold: null }],
   10: [{ TenFold: null }]
-  // etc...
 };
 function getPossibleBetTypes(count) {
   return possibleBetTypesByCount[count] || [];
