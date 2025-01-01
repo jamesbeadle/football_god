@@ -110,6 +110,11 @@ export function removeBet(
       state.multipleStakes = {};
     }
 
+    if (state.bets.length < 2) {
+      state.isMultiple = false;
+      state.multipleStakes = {};
+    }
+
     return state;
   });
 }

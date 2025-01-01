@@ -4728,7 +4728,7 @@ const options = {
 		<div class="error">
 			<span class="status">` + status + '</span>\n			<div class="message">\n				<h1>' + message + "</h1>\n			</div>\n		</div>\n	</body>\n</html>\n"
   },
-  version_hash: "tsxvh5"
+  version_hash: "55sdti"
 };
 async function get_hooks() {
   return {};
@@ -6027,6 +6027,10 @@ function removeBet(leagueId, fixtureId, category, detail) {
       state.isMultiple = false;
       state.multipleStakes = {};
     }
+    if (state.bets.length < 2) {
+      state.isMultiple = false;
+      state.multipleStakes = {};
+    }
     return state;
   });
 }
@@ -6072,12 +6076,33 @@ function detailEquals(d1, d2) {
 const possibleBetTypesByCount = {
   1: [],
   2: [{ Double: null }],
-  3: [{ Treble: null }, { Trixie: null }, { Patent: null }],
-  4: [{ FourFold: null }, { Yankee: null }, { Lucky15: null }],
-  5: [{ FiveFold: null }, { Canadian: null }, { Lucky31: null }],
-  6: [{ SixFold: null }, { Heinz: null }, { Lucky63: null }],
-  7: [{ SevenFold: null }, { SuperHeinz: null }],
-  8: [{ EightFold: null }, { Goliath: null }],
+  3: [
+    {
+      Treble: null
+    }
+  ],
+  4: [
+    {
+      FourFold: null
+    }
+  ],
+  5: [
+    {
+      FiveFold: null
+    }
+  ],
+  6: [
+    {
+      SixFold: null
+    }
+  ],
+  7: [
+    { SevenFold: null }
+  ],
+  8: [
+    { EightFold: null }
+    /* //TODO ROMOVED ACCA ROLLUPS, { Goliath: null }*/
+  ],
   9: [{ NineFold: null }],
   10: [{ TenFold: null }]
 };
@@ -6098,7 +6123,99 @@ const availableMultiplesStore = derived(betSlipStore, ($state) => {
   return getPossibleBetTypes(count);
 });
 function calculateMultipleOdds(bets) {
-  return bets.reduce((acc, bet) => acc * bet.odds, 1);
+  if (!bets || bets.length === 0) return 0;
+  const finalDecimal = bets.reduce((acc, bet) => {
+    return acc * (bet.odds + 1);
+  }, 1);
+  return finalDecimal - 1;
+}
+function calculateMultipleOddsForType(bets, betType) {
+  if (!bets || bets.length === 0) return 0;
+  if ("Double" in betType) {
+    const finalDecimal = bets.reduce((acc, bet) => {
+      const decimalOdds = bet.odds + 1;
+      return acc * decimalOdds;
+    }, 1);
+    return finalDecimal - 1;
+  } else if ("Treble" in betType) {
+    const finalDecimal = bets.reduce((acc, bet) => {
+      const decimalOdds = bet.odds + 1;
+      return acc * decimalOdds;
+    }, 1);
+    return finalDecimal - 1;
+  } else if ("FourFold" in betType) {
+    const finalDecimal = bets.reduce((acc, bet) => {
+      const decimalOdds = bet.odds + 1;
+      return acc * decimalOdds;
+    }, 1);
+    return finalDecimal - 1;
+  } else if ("FiveFold" in betType) {
+    const finalDecimal = bets.reduce((acc, bet) => {
+      const decimalOdds = bet.odds + 1;
+      return acc * decimalOdds;
+    }, 1);
+    return finalDecimal - 1;
+  } else if ("SixFold" in betType) {
+    const finalDecimal = bets.reduce((acc, bet) => {
+      const decimalOdds = bet.odds + 1;
+      return acc * decimalOdds;
+    }, 1);
+    return finalDecimal - 1;
+  } else if ("SevenFold" in betType) {
+    const finalDecimal = bets.reduce((acc, bet) => {
+      const decimalOdds = bet.odds + 1;
+      return acc * decimalOdds;
+    }, 1);
+    return finalDecimal - 1;
+  } else if ("EightFold" in betType) {
+    const finalDecimal = bets.reduce((acc, bet) => {
+      const decimalOdds = bet.odds + 1;
+      return acc * decimalOdds;
+    }, 1);
+    return finalDecimal - 1;
+  } else if ("NineFold" in betType) {
+    const finalDecimal = bets.reduce((acc, bet) => {
+      const decimalOdds = bet.odds + 1;
+      return acc * decimalOdds;
+    }, 1);
+    return finalDecimal - 1;
+  } else if ("TenFold" in betType) {
+    const finalDecimal = bets.reduce((acc, bet) => {
+      const decimalOdds = bet.odds + 1;
+      return acc * decimalOdds;
+    }, 1);
+    return finalDecimal - 1;
+  }
+  return 1;
+}
+function Modal($$payload, $$props) {
+  push();
+  let showModal = $$props["showModal"];
+  let onClose = $$props["onClose"];
+  const handleKeydown = (e) => {
+    if (e.key === "Escape" && showModal) {
+      onClose();
+    }
+  };
+  if (typeof window !== "undefined") {
+    window.addEventListener("keydown", handleKeydown);
+  }
+  onDestroy(() => {
+    if (typeof window !== "undefined") {
+      window.removeEventListener("keydown", handleKeydown);
+    }
+  });
+  if (showModal) {
+    $$payload.out += "<!--[-->";
+    $$payload.out += `<div class="fixed inset-0 z-40 bg-black bg-opacity-50 flex items-center justify-center overflow-y-auto"${attr("aria-hidden", showModal ? "false" : "true")}><div class="bg-BrandLightGray rounded-lg shadow-lg max-w-lg w-full mx-auto relative overflow-y-auto max-h-[90vh] px-6 py-4" role="dialog" aria-modal="true" tabindex="-1"><!---->`;
+    slot($$payload, $$props, "default", {});
+    $$payload.out += `<!----></div></div>`;
+  } else {
+    $$payload.out += "<!--[!-->";
+  }
+  $$payload.out += `<!--]-->`;
+  bind_props($$props, { showModal, onClose });
+  pop();
 }
 function Betslip($$payload, $$props) {
   push();
@@ -6139,7 +6256,7 @@ function Betslip($$payload, $$props) {
         });
       }
       for (const [mKey, stVal] of Object.entries(multipleStakes)) {
-        sum += (stVal || 0) * combinedOdds;
+        sum += (stVal || 0) * (1 + combinedOdds);
       }
     }
     totalReturns = sum;
@@ -6192,14 +6309,22 @@ function Betslip($$payload, $$props) {
           $$payload.out += `<!--[-->`;
           for (let $$index_1 = 0, $$length2 = each_array_2.length; $$index_1 < $$length2; $$index_1++) {
             let mKey = each_array_2[$$index_1];
-            $$payload.out += `<div class="border border-gray-300 rounded p-2 flex flex-col gap-1"><div class="flex items-center justify-between"><p class="text-sm font-medium text-black">${escape_html(mKey)}</p> <input type="number" min="0" placeholder="Stake" class="stake-input"${attr("value", slipState.multipleStakes[mKey])}></div> <p class="text-xs text-gray-500">Combined odds: ${escape_html(combinedOdds.toFixed(2))}</p> `;
-            if (slipState.multipleStakes[mKey] && slipState.multipleStakes[mKey] > 0) {
+            if (slipState.isMultiple) {
               $$payload.out += "<!--[-->";
-              $$payload.out += `<p class="text-sm text-gray-700">Potential Returns: <span class="font-medium">${escape_html((slipState.multipleStakes[mKey] * combinedOdds).toFixed(2))}</span></p>`;
+              const multiOdds = calculateMultipleOddsForType(bets, multi);
+              $$payload.out += `<div class="border border-gray-300 rounded p-2 flex flex-col gap-1"><div class="flex items-center justify-between"><p class="text-sm font-medium text-black">${escape_html(mKey)}</p> <input type="number" min="0" placeholder="Stake" class="stake-input"${attr("value", slipState.multipleStakes[mKey])}></div> <p class="text-xs text-gray-500">Combined odds: 
+                      ${escape_html(multiOdds.toFixed(2))}</p> `;
+              if (slipState.multipleStakes[mKey] && slipState.multipleStakes[mKey] > 0) {
+                $$payload.out += "<!--[-->";
+                $$payload.out += `<p class="text-sm text-gray-700">Potential Returns: <span class="font-medium">${escape_html((slipState.multipleStakes[mKey] + slipState.multipleStakes[mKey] * multiOdds).toFixed(2))}</span></p>`;
+              } else {
+                $$payload.out += "<!--[!-->";
+              }
+              $$payload.out += `<!--]--></div>`;
             } else {
               $$payload.out += "<!--[!-->";
             }
-            $$payload.out += `<!--]--></div>`;
+            $$payload.out += `<!--]-->`;
           }
           $$payload.out += `<!--]-->`;
         }
@@ -6217,7 +6342,11 @@ function Betslip($$payload, $$props) {
   OpenFPLIcon($$payload, { className: "w-3 h-3 mr-1" });
   $$payload.out += `<!----> ${escape_html(totalStakes.toFixed(2))}</span></div> <div class="flex items-center justify-between mb-6 md:mb-4"><span class="text-lg text-gray-500 md:text-sm">Potential Returns:</span> <span class="flex items-center text-lg font-medium text-black md:text-sm">`;
   OpenFPLIcon($$payload, { className: "w-3 h-3 mr-1" });
-  $$payload.out += `<!----> ${escape_html(totalReturns.toFixed(2))}</span></div> <button class="w-full px-4 py-4 text-lg font-medium text-white rounded-xl md:py-2 md:text-sm bg-BrandPurple hover:bg-BrandPurpleHover disabled:opacity-50 disabled:bg-gray-300"${attr("disabled", bets.length === 0 || totalStakes <= 0, true)}>Place Bet</button></div></div></div>`;
+  $$payload.out += `<!----> ${escape_html(totalReturns.toFixed(2))}</span></div> <button class="w-full px-4 py-4 text-lg font-medium text-white rounded-xl md:py-2 md:text-sm bg-BrandPurple hover:bg-BrandPurpleHover disabled:opacity-50 disabled:bg-gray-300"${attr("disabled", bets.length === 0 || totalStakes <= 0, true)}>Place Bet</button></div></div></div> `;
+  {
+    $$payload.out += "<!--[!-->";
+  }
+  $$payload.out += `<!--]-->`;
   if ($$store_subs) unsubscribe_stores($$store_subs);
   bind_props($$props, { isExpanded });
   pop();
@@ -6478,35 +6607,6 @@ function _page$a($$payload, $$props) {
     $$render_inner($$inner_payload);
   } while (!$$settled);
   assign_payload($$payload, $$inner_payload);
-  pop();
-}
-function Modal($$payload, $$props) {
-  push();
-  let showModal = $$props["showModal"];
-  let onClose = $$props["onClose"];
-  const handleKeydown = (e) => {
-    if (e.key === "Escape" && showModal) {
-      onClose();
-    }
-  };
-  if (typeof window !== "undefined") {
-    window.addEventListener("keydown", handleKeydown);
-  }
-  onDestroy(() => {
-    if (typeof window !== "undefined") {
-      window.removeEventListener("keydown", handleKeydown);
-    }
-  });
-  if (showModal) {
-    $$payload.out += "<!--[-->";
-    $$payload.out += `<div class="fixed inset-0 z-40 bg-black bg-opacity-50 flex items-center justify-center overflow-y-auto"${attr("aria-hidden", showModal ? "false" : "true")}><div class="bg-BrandLightGray rounded-lg shadow-lg max-w-lg w-full mx-auto relative overflow-y-auto max-h-[90vh] px-6 py-4" role="dialog" aria-modal="true" tabindex="-1"><!---->`;
-    slot($$payload, $$props, "default", {});
-    $$payload.out += `<!----></div></div>`;
-  } else {
-    $$payload.out += "<!--[!-->";
-  }
-  $$payload.out += `<!--]-->`;
-  bind_props($$props, { showModal, onClose });
   pop();
 }
 function Confirm_fixture_data_modal($$payload, $$props) {

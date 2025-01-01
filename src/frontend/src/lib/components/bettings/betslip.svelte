@@ -3,9 +3,12 @@
   import EmptyBetSlipIcon from "$lib/icons/EmptyBetSlipIcon.svelte";
 
   import { betSlipStore } from "$lib/stores/bet-slip-store";
-  import { availableMultiplesStore, calculateMultipleOdds } from "$lib/derived/bets.derived";
+  import { availableMultiplesStore, calculateMultipleOdds, calculateMultipleOddsForType } from "$lib/derived/bets.derived";
+    import BetPlaceholder from "./bet-placeholder.svelte";
 
   export let isExpanded: boolean = false;
+
+  let showPlaceBet = false;
 
   $: rawSlipState = $betSlipStore;
   $: slipState = rawSlipState ?? {
@@ -49,7 +52,7 @@
         });
       }
       for (const [mKey, stVal] of Object.entries(multipleStakes)) {
-        sum += (stVal || 0) * combinedOdds;
+        sum += (stVal || 0) * (1 + combinedOdds);
       }
     }
 
@@ -82,6 +85,14 @@
   function onMultipleStakeInput(mKey: string, val: string) {
     const stakeNum = parseFloat(val) || 0;
     setMultipleStake(mKey, stakeNum);
+  }
+
+  function placebet(){
+    showPlaceBet = true;
+  }
+
+  function closePlaceBet(){
+    showPlaceBet = false;
   }
 </script>
 
@@ -194,7 +205,10 @@
         {#if slipState.isMultiple}
           <div class="px-4 pb-4 flex flex-col space-y-2">
             {#each possibleMultiples as multi}
-              {#each Object.keys(multi) as mKey}
+            {#each Object.keys(multi) as mKey}
+              {#if slipState.isMultiple}
+              
+                {@const multiOdds = calculateMultipleOddsForType(bets, multi)}
                 <div class="border border-gray-300 rounded p-2 flex flex-col gap-1">
                   <div class="flex items-center justify-between">
                     <p class="text-sm font-medium text-black">
@@ -206,28 +220,25 @@
                       placeholder="Stake"
                       class="stake-input"
                       bind:value={slipState.multipleStakes[mKey]}
-                      on:input={(e) => 
-                        onMultipleStakeInput(
-                          mKey, 
-                          (e.currentTarget as HTMLInputElement).value
-                        )
-                      }
+                      on:input={(e) => onMultipleStakeInput(mKey, (e.currentTarget as HTMLInputElement).value)}
                     />
                   </div>
                   <p class="text-xs text-gray-500">
-                    Combined odds: {combinedOdds.toFixed(2)}
+                    Combined odds: 
+                      {multiOdds.toFixed(2)}
                   </p>
-
+            
                   {#if slipState.multipleStakes[mKey] && slipState.multipleStakes[mKey] > 0}
                     <p class="text-sm text-gray-700">
                       Potential Returns:
                       <span class="font-medium">
-                        {(slipState.multipleStakes[mKey] * combinedOdds).toFixed(2)}
+                        { (slipState.multipleStakes[mKey] + (slipState.multipleStakes[mKey] * multiOdds)).toFixed(2)}
                       </span>
                     </p>
                   {/if}
                 </div>
-              {/each}
+              {/if}
+            {/each}
             {/each}
           </div>
         {/if}
@@ -254,9 +265,13 @@
       <button
         class="w-full px-4 py-4 text-lg font-medium text-white rounded-xl md:py-2 md:text-sm bg-BrandPurple hover:bg-BrandPurpleHover disabled:opacity-50 disabled:bg-gray-300"
         disabled={bets.length === 0 || totalStakes <= 0}
+        on:click={placebet}
       >
         Place Bet
       </button>
     </div>
   </div>
 </div>
+{#if showPlaceBet}
+  <BetPlaceholder visible={showPlaceBet} closeModal={closePlaceBet} />
+{/if}
