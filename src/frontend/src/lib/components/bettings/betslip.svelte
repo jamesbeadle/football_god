@@ -38,14 +38,14 @@
       if (Array.isArray(bets)) {
         bets.forEach((bet, idx) => {
           const st = singleStakes[idx] || 0;
-          sum += st * bet.odds;
+          sum += st * (1 + bet.odds);
         });
       }
     } else {
       if (Array.isArray(bets)) {
         bets.forEach((bet, idx) => {
           const st = singleStakes[idx] || 0;
-          sum += st * bet.odds;
+          sum += st * (1 + bet.odds);
         });
       }
       for (const [mKey, stVal] of Object.entries(multipleStakes)) {
@@ -166,7 +166,7 @@
               <div class="text-sm text-gray-700">
                 Potential Returns: 
                 <span class="font-medium">
-                  {(singleStakes[index] * bet.odds).toFixed(2)}
+                  {(singleStakes[index] * (1 + bet.odds)).toFixed(2)}
                 </span>
               </div>
             {/if}
