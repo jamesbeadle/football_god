@@ -7,6 +7,7 @@ import Timer "mo:base/Timer";
 import Nat64 "mo:base/Nat64";
 import Time "mo:base/Time";
 import Debug "mo:base/Debug";
+import Iter "mo:base/Iter";
 
 import T "../types/app_types";
 import Base "../types/base_types";
@@ -1565,4 +1566,36 @@ actor class _ProfileCanister() {
   
   private func postUpgradeCallback() : async (){ };
 
+
+
+  public shared ({caller }) func getAllAuditUsers () : async [ResponseDTOs.UserDTO] {
+    assert Principal.toText(caller) == Environment.BACKEND_CANISTER_ID;
+    let allProfilesBuffer = Buffer.fromArray<ResponseDTOs.UserDTO>([]);
+
+    for(i in Iter.range(1,50)){
+      var currentProfiles: [T.Profile] = [];
+      switch(i){
+        case 1{
+          currentProfiles := profileGroup1;
+        };
+        case _ {
+
+        };
+      };
+
+      for(profile in Iter.fromArray(currentProfiles)){
+        allProfilesBuffer.add({
+          joinedDate = profile.joinedDate;
+          kycApprovalDate = profile.kycApprovalDate;
+          kycComplete = profile.kycComplete;
+          kycRef = profile.kycRef;
+          kycSubmissionDate = profile.kycSubmissionDate;
+          principalId = profile.principalId;
+          termsAcceptedDate = profile.termsAcceptedDate
+        });
+      };
+    };
+
+    return Buffer.toArray(allProfilesBuffer);
+  };
 };

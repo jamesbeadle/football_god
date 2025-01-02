@@ -4719,7 +4719,7 @@ const options = {
 		<div class="error">
 			<span class="status">` + status + '</span>\n			<div class="message">\n				<h1>' + message + "</h1>\n			</div>\n		</div>\n	</body>\n</html>\n"
   },
-  version_hash: "u2fes9"
+  version_hash: "rqs0d6"
 };
 async function get_hooks() {
   return {};
@@ -5460,7 +5460,7 @@ const idlFactory = ({ IDL }) => {
   });
   const UserAuditDTO = IDL.Record({
     "date": IDL.Int,
-    "page": IDL.Nat,
+    "offset": IDL.Nat,
     "users": IDL.Vec(UserDTO)
   });
   const Result_3 = IDL.Variant({ "ok": UserAuditDTO, "err": Error2 });

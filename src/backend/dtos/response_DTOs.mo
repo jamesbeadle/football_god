@@ -215,7 +215,7 @@ module ResponseDTOs {
   public type UserAuditDTO = {
     date: Int;
     users: [UserDTO];
-    page: Nat;
+    offset: Nat;
   };
 
   public type UserDTO = {

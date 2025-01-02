@@ -1021,12 +1021,13 @@ actor Self {
     return #ok(checkAuditor(Principal.toText(caller)));
   };
 
-  public shared ({ caller }) func getUserAudit(page: Nat) : async Result.Result<ResponseDTOs.UserAuditDTO, T.Error> {
+  public shared ({ caller }) func getUserAudit(offset: Nat) : async Result.Result<ResponseDTOs.UserAuditDTO, T.Error> {
     assert checkAuditor(Principal.toText(caller));
+    let allAuditUsers = await userManager.getAllAuditUsers(offset); 
     return #ok({
       date = Time.now();
-      users = [];
-      page = page;
+      users = allAuditUsers;
+      offset = offset;
     });
   };
   

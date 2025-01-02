@@ -8,6 +8,7 @@
     import { auditStore } from "$lib/stores/audit-store";
     import { userStore } from "$lib/stores/user-store";
     import type { UserAuditDTO } from "../../../../declarations/backend/backend.did";
+    import { formatUnixDateToSmallReadable, formatUnixTimeToTime } from "$lib/utils/helpers";
   
     let isLoading = true;
     let auditData: UserAuditDTO | undefined = undefined;
@@ -50,7 +51,6 @@
                         <th class="py-2 px-4 text-left">Principal ID</th>
                         <th class="py-2 px-4 text-left">Joined Date</th>
                         <th class="py-2 px-4 text-left">Terms Accepted Date</th>
-                        <th class="py-2 px-4 text-left">Has KYC</th>
                         <th class="py-2 px-4 text-left">KYC Submission Date</th>
                         <th class="py-2 px-4 text-left">KYC Approval Date</th>
                         <th class="py-2 px-4 text-left">KYC Reference</th>
@@ -59,13 +59,12 @@
                     <tbody>
                     {#each auditData.users as user}
                         <tr class="border-b border-gray-200">
-                        <td class="py-2 px-4">{user.principalId}</td>
-                        <td class="py-2 px-4">{user.joinedDate || "-"}</td>
-                        <td class="py-2 px-4">{user.termsAcceptedDate || "-"}</td>
-                        <td class="py-2 px-4">{user.kycApprovalDate > 0 ? "Yes" : "No"}</td>
-                        <td class="py-2 px-4">{user.kycSubmissionDate || "-"}</td>
-                        <td class="py-2 px-4">{user.kycApprovalDate || "-"}</td>
-                        <td class="py-2 px-4">{user.kycRef || "-"}</td>
+                            <td class="py-2 px-4 font-sm">{user.principalId}</td>
+                            <td class="py-2 px-4">{user.joinedDate && user.joinedDate > 0 ? formatUnixDateToSmallReadable(Number(user.joinedDate)) + ", " + formatUnixTimeToTime(Number(user.joinedDate)) : "-"}</td>
+                            <td class="py-2 px-4">{user.termsAcceptedDate && user.termsAcceptedDate > 0 ? formatUnixDateToSmallReadable(Number(user.termsAcceptedDate)) + ", " + formatUnixTimeToTime(Number(user.termsAcceptedDate))  :  "-"}</td>
+                            <td class="py-2 px-4">{user.kycSubmissionDate && user.kycSubmissionDate > 0 ? formatUnixDateToSmallReadable(Number(user.kycSubmissionDate)) + ", " + formatUnixTimeToTime(Number(user.kycSubmissionDate)) : "-"}</td>
+                            <td class="py-2 px-4">{user.kycApprovalDate && user.kycApprovalDate > 0 ? formatUnixDateToSmallReadable(Number(user.kycApprovalDate)) + ", " + formatUnixTimeToTime(Number(user.kycApprovalDate)) : "-"}</td>
+                            <td class="py-2 px-4">{user.kycRef || "-"}</td>
                         </tr>
                     {/each}
                     </tbody>

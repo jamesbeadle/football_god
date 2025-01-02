@@ -14,6 +14,7 @@ import Order "mo:base/Order";
 import Principal "mo:base/Principal";
 import Time "mo:base/Time";
 import Debug "mo:base/Debug";
+import List "mo:base/List";
 
 import T "../types/app_types";
 import Base "../types/base_types";
@@ -51,8 +52,6 @@ module {
             getProfile : (principalId : Text) -> async Result.Result<ResponseDTOs.ProfileDTO, T.Error>;
           };
           let profile = await profile_canister.getProfile(principalId);
-          Debug.print(debug_show "profile:");
-          Debug.print(debug_show profile);
           return profile;
         };
         case (null){
@@ -1072,6 +1071,20 @@ module {
 
     public func setStableUsernames(stable_usernames: [(Base.PrincipalId, Text)]) {
       usernames := stable_usernames;
+    };
+
+    public func getAllAuditUsers(offset: Nat) : async [ResponseDTOs.UserDTO] {
+      
+      let allUsersBuffer = Buffer.fromArray<ResponseDTOs.UserDTO>([]);
+      for(canisterId in Iter.fromArray(uniqueProfileCanisterIds)){
+        let profile_canister = actor (canisterId) : actor {
+          getAllAuditUsers : () -> async [ResponseDTOs.UserDTO];
+        };
+        let users = await profile_canister.getAllAuditUsers();
+        allUsersBuffer.append(Buffer.fromArray(users));
+      };
+      let droppedEntries = List.drop<ResponseDTOs.UserDTO>(List.fromArray(Buffer.toArray(allUsersBuffer)), offset);
+      return List.toArray(List.take<ResponseDTOs.UserDTO>(droppedEntries, 100));
     };
 
   };
