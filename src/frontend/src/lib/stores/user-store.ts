@@ -100,6 +100,26 @@ function createUserStore() {
     }
   }
 
+  async function agreeTerms(): Promise<any> {
+    try {
+      const identityActor = await ActorFactory.createIdentityActor(
+        authStore,
+        process.env.BACKEND_CANISTER_ID ?? "",
+      );
+      const result = await identityActor.agreeTerms();
+      if (isError(result)) {
+        console.error("Error agreeing terms");
+        return;
+      }
+
+      await cacheProfile();
+      return result;
+    } catch (error) {
+      console.error(error);
+      console.error("Error agreeing terms:", error);
+    }
+  }
+
   async function updateProfilePicture(picture: File): Promise<any> {
     try {
       const maxPictureSize = 1000;
@@ -178,9 +198,14 @@ function createUserStore() {
     return new AdminService().isDataManager();
   }
 
+  async function isAuditor(): Promise<boolean> {
+    return new AdminService().isAuditor();
+  }
+
   return {
     subscribe,
     sync,
+    agreeTerms,
     updateUsername,
     updateProfilePicture,
     isUsernameAvailable,
@@ -188,6 +213,7 @@ function createUserStore() {
     withdrawFPL,
     isDataManager,
     isAdmin,
+    isAuditor,
   };
 }
 

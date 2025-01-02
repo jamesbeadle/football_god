@@ -20,16 +20,21 @@ module ResponseDTOs {
 
   public type ProfileDTO = {
     principalId : Base.PrincipalId;
+    joinedDate: Int;
+    termsAcceptedDate: Int;
     username : Text; 
     profilePicture: ?Blob;
     profilePictureExtension: Text;
     withdrawalAddress: Text;
-    completedKYC: Bool;
     accountOnPause: Bool;
     maxBetLimit: Nat64;
     monthlyBetLimit: Nat64;
     monthlyBetTotal: Nat64;
     accountBalance: Nat64;
+    kycComplete: Bool;
+    kycSubmissionDate: Int;
+    kycApprovalDate: Int;
+    kycRef: Text;
   };
 
   public type PlayerDTO = {
@@ -210,13 +215,17 @@ module ResponseDTOs {
   public type UserAuditDTO = {
     date: Int;
     users: [UserDTO];
+    page: Nat;
   };
 
   public type UserDTO = {
     principalId: Base.PrincipalId;
-    joined: Int;
-    kyc_ref: Text;
-    terms_accepted: Bool;
+    joinedDate: Int;
+    termsAcceptedDate: Int;
+    kycComplete: Bool;
+    kycSubmissionDate: Int;
+    kycApprovalDate: Int;
+    kycRef: Text;
   }
   
 

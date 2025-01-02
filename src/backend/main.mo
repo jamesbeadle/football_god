@@ -27,6 +27,8 @@ import UserManager "managers/user_manager";
 import OddsManager "managers/odds_manager";
 import BettingTypes "types/betting_types";
 import Utilities "utilities/utilities";
+import Management "utilities/Management";
+import ProfileCanister "canister_definitions/profile-canister";
 
 actor Self {
 
@@ -42,6 +44,13 @@ actor Self {
 
   public shared ({ caller }) func getProfile() : async Result.Result<ResponseDTOs.ProfileDTO, T.Error> {
     return await userManager.getProfile(Principal.toText(caller));
+  };
+
+  public shared ({ caller }) func  agreeTerms() : async Result.Result<(), T.Error> {
+    assert not Principal.isAnonymous(caller);
+    let principalId = Principal.toText(caller);
+    Debug.print("Agreeing terms.");
+    return await userManager.agreeTerms(principalId);
   };
 
   public shared ({ caller }) func updateUsername(dto: RequestDTOs.UpdateUsernameDTO) : async Result.Result<(), T.Error> {
@@ -641,7 +650,7 @@ actor Self {
     switch(profileResult){
       case (#ok profile){
         assert not profile.accountOnPause;
-        assert profile.completedKYC;
+        assert profile.kycComplete;
         assert profile.accountBalance >= dto.totalStake;
         assert profile.maxBetLimit >= dto.totalStake;
         assert profile.monthlyBetTotal + dto.totalStake <= profile.monthlyBetLimit;
@@ -823,8 +832,20 @@ actor Self {
   };
 
   private func postUpgradeCallback() : async (){
-    await oddsManager.recalculate(1);
-    await oddsManager.recalculate(2);
+    await updateProfileCanisterWasms();
+    //await oddsManager.recalculate(1);
+    //await oddsManager.recalculate(2);
+  };
+
+  private func updateProfileCanisterWasms() : async (){
+    let profileCanisterIds = userManager.getStableUniqueProfileCanisterIds();
+    let IC : Management.Management = actor (Environment.Default);
+    for(canisterId in Iter.fromArray(profileCanisterIds)){
+      await IC.stop_canister({ canister_id = Principal.fromText(canisterId); });
+      let oldProfileCanister = actor (canisterId) : actor {};
+      let _ = await (system ProfileCanister._ProfileCanister)(#upgrade oldProfileCanister)();
+      await IC.start_canister({ canister_id = Principal.fromText(canisterId); });
+    };
   };
 
   /* Admin functions */
@@ -996,11 +1017,16 @@ actor Self {
 
   //TODO: This will be admin for now then removed, based on the game beginning and also whether the data is up to date
 
-  public shared ({ caller }) func getUserAudit() : async Result.Result<ResponseDTOs.UserAuditDTO, T.Error> {
+  public shared ({ caller }) func isAuditor() : async Result.Result<Bool, T.Error> {
+    return #ok(checkAuditor(Principal.toText(caller)));
+  };
+
+  public shared ({ caller }) func getUserAudit(page: Nat) : async Result.Result<ResponseDTOs.UserAuditDTO, T.Error> {
     assert checkAuditor(Principal.toText(caller));
     return #ok({
       date = Time.now();
       users = [];
+      page = page;
     });
   };
   

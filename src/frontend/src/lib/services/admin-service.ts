@@ -50,6 +50,18 @@ export class AdminService {
     return result.ok;
   }
 
+  async isAuditor(): Promise<boolean> {
+    const identityActor = await ActorFactory.createIdentityActor(
+      authStore,
+      process.env.BACKEND_CANISTER_ID ?? "",
+    );
+    const result: any = await identityActor.isAuditor();
+    if (isError(result)) {
+      throw new Error("Failed to check is auditor");
+    }
+    return result.ok;
+  }
+
   async getSystemState(
     applicationName: string,
   ): Promise<SystemStateDTO | undefined> {

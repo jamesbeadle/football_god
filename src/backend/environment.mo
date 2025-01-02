@@ -25,5 +25,7 @@ module Environment {
 
   public let AUDITOR_PRINCIPALS = [
     "eqlhf-ppkq7-roa5i-4wu6r-jumy3-g2xrc-vfdd5-wtoeu-n7xre-vsktn-lqe", //JB
+    "ulpmr-ff7j7-r2z3t-izrme-ouymq-uar6w-ukrrx-55tii-c6x2x-z43xn-aae", //TOBY
+    "dbw6e-byxso-gds6p-weomp-qsktb-dsdfm-2ap2r-f3y5p-pqeyd-37gpi-vqe", //KH
   ];
 };

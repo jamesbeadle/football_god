@@ -30,6 +30,7 @@
 
   onMount(async () => {
     worker = await initAuthWorker();
+    await userStore.sync();
     isAdmin = await userStore.isAdmin();
   });
 
