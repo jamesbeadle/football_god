@@ -52,6 +52,7 @@
 
   onMount(async () => {
     try {
+      //test
       await leagueStore.syncLeagues();
       leagues = await leagueStore.getLeagues();
     } catch (error) {
