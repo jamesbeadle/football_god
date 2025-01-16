@@ -12,6 +12,7 @@
   import BadgeIcon from "$lib/icons/BadgeIcon.svelte";
   import LocalSpinner from "../shared/local-spinner.svelte";
     import PipsIcon from "$lib/icons/pips-icon.svelte";
+    import PostponeFixture from "../governance/fixture/postpone-fixture.svelte";
   
   let isLoading = true;
 
@@ -181,6 +182,11 @@
   {#if selectedFixtureId > 0 && showMoveFixtureModal}
     {@const selectedFixture = fixtures.find(x => x.id == selectedFixtureId)}
     <MoveFixture visible={showMoveFixtureModal} {closeModal} {selectedFixtureId} selectedGameweek={selectedFixture?.gameweek} selectedLeagueId={leagueId}/>
+  {/if}
+
+  {#if selectedFixtureId > 0 && showPostponeFixtureModal}
+    {@const selectedFixture = fixtures.find(x => x.id == selectedFixtureId)}
+    <PostponeFixture visible={showPostponeFixtureModal} {closeModal} {selectedFixtureId} selectedGameweek={selectedFixture?.gameweek!} selectedLeagueId={leagueId}/>
   {/if}
 
 {/if}

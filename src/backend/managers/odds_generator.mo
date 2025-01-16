@@ -1,63 +1,95 @@
 import BettingTypes "../types/betting_types";
 import ResponseDTOs "../dtos/response_DTOs";
 import BaseOdds "../utilities/BaseOdds";
+import Float "mo:base/Float";
+import Array "mo:base/Array";
+import Buffer "mo:base/Buffer";
+import Iter "mo:base/Iter";
+import FootballTypes "../types/football_types";
 
 module {
 
   public class OddsGenerator() {
     
-    public func getFirstAssistOdds(player: ResponseDTOs.PlayerDTO, onHomeTeam: Bool) : Float{
+    public func getFirstAssistOdds(fixtures: [ResponseDTOs.FixtureDTO], bettingFixture: ResponseDTOs.FixtureDTO, player: ResponseDTOs.PlayerDTO) : Float{
 
-      /* //TODO 
+      var odds_factor: Float = 1;
 
+      let recentFixtures = Array.filter<ResponseDTOs.FixtureDTO>(fixtures, func(entry: ResponseDTOs.FixtureDTO){
+        (entry.homeClubId == player.clubId or entry.awayClubId == player.clubId) and
+        entry.gameweek < bettingFixture.gameweek and
+        entry.gameweek > bettingFixture.gameweek - 7
+      });
 
-        //Phase 1
-        In each function identify the weighted values to adjust the base odds
-          
-        For first assists, look at
-          - Teams league position
-          - Opponents league position
-          - Number of recent assists this player has got
-          - Total assists by seasons
-          - The number of season they've played
-          - Whether they have peaked
-          - The opponent they are facing
-            - The opponents goal conceded record
-        
-        //Phase 2
-        Next level would be using an AI to spot advanced patterns as in when this player 
-          -  plays with another player of a certain position, in a certain predicted line up, typically certain things happen
+      let playerEventsBuffer = Buffer.fromArray<FootballTypes.PlayerEventData>([]);
+      for(fixture in Iter.fromArray(recentFixtures)){
+        let playerEvents = Array.filter<FootballTypes.PlayerEventData>(fixture.events, func(entry: FootballTypes.PlayerEventData) {
+          return entry.playerId == player.id;
+        });
 
-      */
+        playerEventsBuffer.append(Buffer.fromArray(playerEvents));
+      };
 
+      let playeEvents = Buffer.toArray(playerEventsBuffer);
+
+      for(event in Iter.fromArray(playeEvents)){
+        if(event.eventType == #Goal){
+          odds_factor := odds_factor * 0.95; 
+        };
+        if(event.eventType == #GoalAssisted){
+          odds_factor := odds_factor * 0.95;
+        };
+      };
+
+      let totalAppearances = Array.filter<FootballTypes.PlayerEventData>(playeEvents, func(entry: FootballTypes.PlayerEventData){
+        entry.eventType == #Appearance;
+      });
+
+      if(Array.size(totalAppearances) == Array.size(recentFixtures)){
+          odds_factor := odds_factor * 0.90;
+      };
+
+      let playerHomeWins = Array.filter<ResponseDTOs.FixtureDTO>(recentFixtures, func(entry: ResponseDTOs.FixtureDTO){
+        entry.homeGoals > entry.awayGoals and entry.homeClubId == player.clubId;
+      });
+
+      let playerAwayWins = Array.filter<ResponseDTOs.FixtureDTO>(recentFixtures, func(entry: ResponseDTOs.FixtureDTO){
+        entry.awayGoals > entry.homeGoals and entry.awayClubId == player.clubId;
+      });
+
+      let totalRecentFixtures = Array.size(recentFixtures);
+
+      odds_factor := odds_factor / Float.fromInt(totalRecentFixtures) * Float.fromInt(Array.size(playerHomeWins) + Array.size(playerAwayWins));
+
+      let onHomeTeam = player.clubId == bettingFixture.homeClubId;
 
       switch(player.position){
         case (#Goalkeeper){
           if(onHomeTeam){
-            return BaseOdds.HOME_GOALKEEPER_FIRST_ASSIST;
+            return formatOdds(odds_factor, BaseOdds.HOME_GOALKEEPER_FIRST_ASSIST);
           } else {
-            return BaseOdds.AWAY_GOALKEEPER_FIRST_ASSIST;
+            return formatOdds(odds_factor, BaseOdds.AWAY_GOALKEEPER_FIRST_ASSIST);
           }
         };
         case (#Defender){
           if(onHomeTeam){
-            return BaseOdds.HOME_DEFENDER_FIRST_ASSIST;
+            return formatOdds(odds_factor, BaseOdds.HOME_DEFENDER_FIRST_ASSIST);
           } else {
-            return BaseOdds.AWAY_DEFENDER_FIRST_ASSIST;
+            return formatOdds(odds_factor, BaseOdds.AWAY_DEFENDER_FIRST_ASSIST);
           }
         };
         case (#Midfielder){
           if(onHomeTeam){
-            return BaseOdds.HOME_MIDFIELDER_FIRST_ASSIST;
+            return formatOdds(odds_factor, BaseOdds.HOME_MIDFIELDER_FIRST_ASSIST);
           } else {
-            return BaseOdds.AWAY_MIDFIELDER_FIRST_ASSIST;
+            return formatOdds(odds_factor, BaseOdds.AWAY_MIDFIELDER_FIRST_ASSIST);
           }
         };
         case (#Forward){
           if(onHomeTeam){
-            return BaseOdds.HOME_FORWARD_FIRST_ASSIST;
+            return formatOdds(odds_factor, BaseOdds.HOME_FORWARD_FIRST_ASSIST);
           } else {
-            return BaseOdds.AWAY_FORWARD_FIRST_ASSIST;
+            return formatOdds(odds_factor, BaseOdds.AWAY_FORWARD_FIRST_ASSIST);
           }
         }
       };
@@ -97,35 +129,89 @@ module {
       };
       return 0;
     };
+
+    private func formatOdds (odds_factor: Float, baseOdds: Float) : Float  {
+      return Float.nearest((baseOdds * odds_factor) * 4) / 4;
+    };
     
-    public func getAnytimeAssistOdds(player: ResponseDTOs.PlayerDTO, onHomeTeam: Bool) : Float{
+    public func getAnytimeAssistOdds(fixtures: [ResponseDTOs.FixtureDTO], bettingFixture: ResponseDTOs.FixtureDTO, player: ResponseDTOs.PlayerDTO) : Float{
+      var odds_factor: Float = 1;
+
+      let recentFixtures = Array.filter<ResponseDTOs.FixtureDTO>(fixtures, func(entry: ResponseDTOs.FixtureDTO){
+        (entry.homeClubId == player.clubId or entry.awayClubId == player.clubId) and
+        entry.gameweek < bettingFixture.gameweek and
+        entry.gameweek > bettingFixture.gameweek - 7
+      });
+
+      let playerEventsBuffer = Buffer.fromArray<FootballTypes.PlayerEventData>([]);
+      for(fixture in Iter.fromArray(recentFixtures)){
+        let playerEvents = Array.filter<FootballTypes.PlayerEventData>(fixture.events, func(entry: FootballTypes.PlayerEventData) {
+          return entry.playerId == player.id;
+        });
+
+        playerEventsBuffer.append(Buffer.fromArray(playerEvents));
+      };
+
+      let playeEvents = Buffer.toArray(playerEventsBuffer);
+
+      for(event in Iter.fromArray(playeEvents)){
+        if(event.eventType == #Goal){
+          odds_factor := odds_factor * 0.95; 
+        };
+        if(event.eventType == #GoalAssisted){
+          odds_factor := odds_factor * 0.95;
+        };
+      };
+
+      let totalAppearances = Array.filter<FootballTypes.PlayerEventData>(playeEvents, func(entry: FootballTypes.PlayerEventData){
+        entry.eventType == #Appearance;
+      });
+
+      if(Array.size(totalAppearances) == Array.size(recentFixtures)){
+          odds_factor := odds_factor * 0.90;
+      };
+
+      let playerHomeWins = Array.filter<ResponseDTOs.FixtureDTO>(recentFixtures, func(entry: ResponseDTOs.FixtureDTO){
+        entry.homeGoals > entry.awayGoals and entry.homeClubId == player.clubId;
+      });
+
+      let playerAwayWins = Array.filter<ResponseDTOs.FixtureDTO>(recentFixtures, func(entry: ResponseDTOs.FixtureDTO){
+        entry.awayGoals > entry.homeGoals and entry.awayClubId == player.clubId;
+      });
+
+      let totalRecentFixtures = Array.size(recentFixtures);
+
+      odds_factor := odds_factor / Float.fromInt(totalRecentFixtures) * Float.fromInt(Array.size(playerHomeWins) + Array.size(playerAwayWins));
+
+      let onHomeTeam = player.clubId == bettingFixture.homeClubId;
+
       switch(player.position){
         case (#Goalkeeper){
           if(onHomeTeam){
-            return BaseOdds.HOME_GOALKEEPER_ANYTIME_ASSIST;
+            return formatOdds(odds_factor, BaseOdds.HOME_GOALKEEPER_FIRST_ASSIST);
           } else {
-            return BaseOdds.AWAY_GOALKEEPER_ANYTIME_ASSIST;
+            return formatOdds(odds_factor, BaseOdds.AWAY_GOALKEEPER_FIRST_ASSIST);
           }
         };
         case (#Defender){
           if(onHomeTeam){
-            return BaseOdds.HOME_DEFENDER_ANYTIME_ASSIST;
+            return formatOdds(odds_factor, BaseOdds.HOME_DEFENDER_FIRST_ASSIST);
           } else {
-            return BaseOdds.AWAY_DEFENDER_ANYTIME_ASSIST;
+            return formatOdds(odds_factor, BaseOdds.AWAY_DEFENDER_FIRST_ASSIST);
           }
         };
         case (#Midfielder){
           if(onHomeTeam){
-            return BaseOdds.HOME_MIDFIELDER_ANYTIME_ASSIST;
+            return formatOdds(odds_factor, BaseOdds.HOME_MIDFIELDER_FIRST_ASSIST);
           } else {
-            return BaseOdds.AWAY_MIDFIELDER_ANYTIME_ASSIST;
+            return formatOdds(odds_factor, BaseOdds.AWAY_MIDFIELDER_FIRST_ASSIST);
           }
         };
         case (#Forward){
           if(onHomeTeam){
-            return BaseOdds.HOME_FORWARD_ANYTIME_ASSIST;
+            return formatOdds(odds_factor, BaseOdds.HOME_FORWARD_FIRST_ASSIST);
           } else {
-            return BaseOdds.AWAY_FORWARD_ANYTIME_ASSIST;
+            return formatOdds(odds_factor, BaseOdds.AWAY_FORWARD_FIRST_ASSIST);
           }
         }
       };

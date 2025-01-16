@@ -115,7 +115,7 @@ module {
 
                   firstAssistersOddsBuffer.add({
                     playerId = player.id;
-                    odds = oddsGenerator.getFirstAssistOdds(player, player.clubId == fixture.homeClubId);
+                    odds = oddsGenerator.getFirstAssistOdds(fixtures, fixture, player);
                   });
 
                   firstGoalscorersOddsBuffer.add({
@@ -125,7 +125,7 @@ module {
 
                   anytimeAssistOddsBuffer.add({
                     playerId = player.id;
-                    odds = oddsGenerator.getAnytimeAssistOdds(player, player.clubId == fixture.homeClubId);
+                    odds = oddsGenerator.getAnytimeAssistOdds(fixtures, fixture, player);
                   });
 
                   anytimeScorerOddsBuffer.add({

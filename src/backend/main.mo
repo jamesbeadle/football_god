@@ -832,8 +832,8 @@ actor Self {
   };
 
   private func postUpgradeCallback() : async (){
-    await updateProfileCanisterWasms();
-    //await oddsManager.recalculate(1);
+    //await updateProfileCanisterWasms();
+    await oddsManager.recalculate(1);
     //await oddsManager.recalculate(2);
   };
 

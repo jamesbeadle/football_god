@@ -41,7 +41,10 @@
       FixtureDTO,
       PlayerDTO,
       FixtureId,
-      LeagueId
+      LeagueId,
+
+      ClubId
+
     } from "../../../../declarations/data_canister/data_canister.did";
     import { betSlipDataStore } from "$lib/stores/bet-slip-data-store";
     import { buildBetUiDescription } from "$lib/utils/buildBetUiDescription";
@@ -495,6 +498,31 @@
         return Array.isArray(odds) ? odds : [odds];
     }
 
+    function sortPlayersByTeamAndValue(
+      players: PlayerDTO[],
+      homeClubId: ClubId,
+      awayClubId: ClubId
+    ): PlayerDTO[] {
+      return players.sort((a, b) => {
+        if (a.clubId === homeClubId && b.clubId !== homeClubId) {
+          return -1;
+        }
+        if (b.clubId === homeClubId && a.clubId !== homeClubId) {
+          return 1;
+        }
+
+        if (a.clubId === awayClubId && b.clubId !== awayClubId) {
+          return -1;
+        }
+        if (b.clubId === awayClubId && a.clubId !== awayClubId) {
+          return 1;
+        }
+
+        return b.valueQuarterMillions - a.valueQuarterMillions;
+      });
+    }
+
+
   </script>
   
   <Layout>
@@ -666,7 +694,7 @@
                           <div class="p-2">Anytime</div>
                         </div>
   
-                        {#each players as player}
+                        {#each sortPlayersByTeamAndValue(players, homeClub.id, awayClub.id) as player}
                           {@const firstAssist = matchOdds.firstAssisters?.find((x) => x.playerId === player.id)}
                           {@const lastAssist = matchOdds.lastAssist?.find((x) => x.playerId === player.id)}
                           {@const anytimeAssist = matchOdds.anytimeAssist?.find((x) => x.playerId === player.id)}

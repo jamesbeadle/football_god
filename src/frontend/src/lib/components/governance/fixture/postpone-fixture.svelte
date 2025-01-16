@@ -7,15 +7,16 @@
   import { isError } from "$lib/utils/helpers";
   import type { ClubDTO, FixtureDTO } from "../../../../../../declarations/backend/backend.did";
     import Modal from "$lib/components/shared/modal.svelte";
+    import type { PostponeFixtureDTO } from "../../../../../../declarations/data_canister/data_canister.did";
+    import { leagueStore } from "$lib/stores/league-store";
 
   export let visible: boolean;
   export let closeModal: () => void;
+  export let selectedFixtureId: number;
+  export let selectedLeagueId: number;
+  export let selectedGameweek: number;
 
-  let selectedLeagueId: number = 0;
-  let selectedSeasonId: number = 0;
   let gameweeks = Array.from({ length: Number(process.env.TOTAL_GAMEWEEKS) }, (_, i) => i + 1);
-  let selectedGameweek: number = 0;
-  let selectedFixtureId: number = 0;
   let gameweekFixtures: FixtureDTO[] = [];
   let clubs: ClubDTO[] = [];
 
@@ -26,7 +27,7 @@
   }
 
   async function loadGameweekFixtures() {
-    let leagueFixtures = await fixtureStore.getFixtures({ leagueId: selectedLeagueId, seasonId: selectedSeasonId });
+    let leagueFixtures = await fixtureStore.getFixtures(selectedLeagueId);
     gameweekFixtures = leagueFixtures.filter(
       (x) => x.gameweek == selectedGameweek
     );
@@ -41,6 +42,11 @@
 
   onMount(async () => {
     try {
+      let leagueStatus = await leagueStore.getLeagueStatus(selectedLeagueId);
+      gameweeks = Array.from({ length: leagueStatus.totalGameweeks }, (_, i) => i + 1);
+      if(selectedLeagueId > 0){
+          clubs = await clubStore.getClubs(selectedLeagueId);
+      }
       await loadGameweekFixtures();
     } catch (error) {
       console.error("Error syncing proposal data.", error);
@@ -59,6 +65,32 @@
 
   async function confirmProposal() {
     isLoading = true;
+
+    let applicationName = "";
+
+    switch(selectedLeagueId){
+      case 1:
+        applicationName = "OpenFPL";
+        break;
+      case 2:
+        applicationName = "OpenWSL";
+        break;
+      default: 
+        return;
+    }
+    
+    let leagueStatus = await leagueStore.getLeagueStatus(selectedLeagueId);
+    if(!leagueStatus){
+      return
+    }
+
+    let dto: PostponeFixtureDTO = {
+      leagueId: selectedLeagueId,
+      seasonId: leagueStatus.activeSeasonId,
+      fixtureId : selectedFixtureId
+    };
+    await fixtureStore.postponeFixture(dto);
+    
     /*
     let result = await governanceStore.postponeFixture(selectedFixtureId);
     if (isError(result)) {
@@ -89,6 +121,9 @@
       <button class="times-button" on:click={cancelModal}>&times;</button>
     </div>
 
+    {#if isLoading}
+      <LocalSpinner />
+    {:else}
     <div class="flex justify-start items-center w-full">
       <div class="w-full flex-col space-y-4 mb-2">
         <div class="flex-col space-y-2">
@@ -161,8 +196,6 @@
       </div>
     </div>
 
-    {#if isLoading}
-      <LocalSpinner />
     {/if}
   </div>
 </Modal>
