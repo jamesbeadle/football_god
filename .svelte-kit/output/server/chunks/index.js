@@ -4719,7 +4719,7 @@ const options = {
 		<div class="error">
 			<span class="status">` + status + '</span>\n			<div class="message">\n				<h1>' + message + "</h1>\n			</div>\n		</div>\n	</body>\n</html>\n"
   },
-  version_hash: "q8dvun"
+  version_hash: "98jovn"
 };
 async function get_hooks() {
   return {};
@@ -5672,13 +5672,21 @@ const idlFactory = ({ IDL }) => {
     )
   });
 };
-const canisterId = "44kin-waaaa-aaaal-qbxra-cai";
+const canisterId = "by6od-j4aaa-aaaaa-qaadq-cai";
 const createActor = (canisterId2, options2 = {}) => {
   const agent = options2.agent || new HttpAgent({ ...options2.agentOptions });
   if (options2.agent && options2.agentOptions) {
     console.warn(
       "Detected both agent and agentOptions passed to createActor. Ignoring agentOptions and proceeding with the provided agent."
     );
+  }
+  {
+    agent.fetchRootKey().catch((err) => {
+      console.warn(
+        "Unable to fetch root key. Check to ensure that your local replica is running"
+      );
+      console.error(err);
+    });
   }
   return Actor.createActor(idlFactory, {
     agent,
@@ -5690,7 +5698,7 @@ createActor(canisterId);
 class ActorFactory {
   static createActor(idlFactory2, canisterId2 = "", identity = null, options2 = null) {
     const hostOptions = {
-      host: `https://${canisterId2}.icp-api.io`,
+      host: `http://localhost:8080/?canisterId=qhbym-qaaaa-aaaaa-aaafq-cai`,
       identity
     };
     if (!options2) {
@@ -5703,6 +5711,14 @@ class ActorFactory {
       options2.agentOptions.host = hostOptions.host;
     }
     const agent = new HttpAgent({ ...options2.agentOptions });
+    {
+      agent.fetchRootKey().catch((err) => {
+        console.warn(
+          "Unable to fetch root key. Ensure your local replica is running"
+        );
+        console.error(err);
+      });
+    }
     return Actor.createActor(idlFactory2, {
       agent,
       canisterId: canisterId2,
@@ -5711,7 +5727,7 @@ class ActorFactory {
   }
   static getAgent(canisterId2 = "", identity = null, options2 = null) {
     const hostOptions = {
-      host: `https://${canisterId2}.icp-api.io`,
+      host: `http://localhost:8080/?canisterId=qhbym-qaaaa-aaaaa-aaafq-cai`,
       identity
     };
     if (!options2) {
@@ -5994,7 +6010,7 @@ function Modal($$payload, $$props) {
   bind_props($$props, { showModal, onClose });
   pop();
 }
-var define_process_env_default$2 = { BACKEND_CANISTER_ID: "44kin-waaaa-aaaal-qbxra-cai", FRONTEND_CANISTER_ID: "43loz-3yaaa-aaaal-qbxrq-cai", DATA_CANISTER_CANISTER_ID: "52fzd-2aaaa-aaaal-qmzsa-cai", DFX_NETWORK: "ic" };
+var define_process_env_default$2 = { __CANDID_UI_CANISTER_ID: "a3shf-5eaaa-aaaaa-qaafa-cai", BACKEND_CANISTER_ID: "by6od-j4aaa-aaaaa-qaadq-cai", DATA_CANISTER_CANISTER_ID: "avqkn-guaaa-aaaaa-qaaea-cai", FRONTEND_CANISTER_ID: "asrmz-lmaaa-aaaaa-qaaeq-cai", DFX_NETWORK: "local" };
 class ClubService {
   actor;
   constructor() {
@@ -6042,7 +6058,7 @@ function createClubStore() {
   };
 }
 const clubStore = createClubStore();
-var define_process_env_default$1 = { BACKEND_CANISTER_ID: "44kin-waaaa-aaaal-qbxra-cai", FRONTEND_CANISTER_ID: "43loz-3yaaa-aaaal-qbxrq-cai", DATA_CANISTER_CANISTER_ID: "52fzd-2aaaa-aaaal-qmzsa-cai", DFX_NETWORK: "ic" };
+var define_process_env_default$1 = { __CANDID_UI_CANISTER_ID: "a3shf-5eaaa-aaaaa-qaafa-cai", BACKEND_CANISTER_ID: "by6od-j4aaa-aaaaa-qaadq-cai", DATA_CANISTER_CANISTER_ID: "avqkn-guaaa-aaaaa-qaaea-cai", FRONTEND_CANISTER_ID: "asrmz-lmaaa-aaaaa-qaaeq-cai", DFX_NETWORK: "local" };
 class FixtureService {
   actor;
   constructor() {
@@ -6111,7 +6127,7 @@ function createFixtureStore() {
   };
 }
 const fixtureStore = createFixtureStore();
-var define_process_env_default = { BACKEND_CANISTER_ID: "44kin-waaaa-aaaal-qbxra-cai", FRONTEND_CANISTER_ID: "43loz-3yaaa-aaaal-qbxrq-cai", DATA_CANISTER_CANISTER_ID: "52fzd-2aaaa-aaaal-qmzsa-cai", DFX_NETWORK: "ic" };
+var define_process_env_default = { __CANDID_UI_CANISTER_ID: "a3shf-5eaaa-aaaaa-qaafa-cai", BACKEND_CANISTER_ID: "by6od-j4aaa-aaaaa-qaadq-cai", DATA_CANISTER_CANISTER_ID: "avqkn-guaaa-aaaaa-qaaea-cai", FRONTEND_CANISTER_ID: "asrmz-lmaaa-aaaaa-qaaeq-cai", DFX_NETWORK: "local" };
 class PlayerService {
   actor;
   constructor() {

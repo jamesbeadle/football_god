@@ -1,5 +1,5 @@
 import { idlFactory } from "../../../../declarations/backend";
-import { ActorFactory } from "../../utils/ActorFactory";
+import { ActorFactory } from "../utils/ActorFactory";
 import type { DataHashDTO } from "../../../../declarations/backend/backend.did";
 import { isError } from "../utils/helpers";
 

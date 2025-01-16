@@ -34,6 +34,9 @@
 
     onMount( async () => {
         await checkUser();
+        //TODO remove later
+        checkingTerms = false;
+        termsAgreed = true;
     });
 
     async function handleLogin() {
@@ -211,16 +214,16 @@
 
     {/if}
 {:else}
-    <div class="flex flex-col items-center justify-center min-h-screen bg-black px-4">
+    <div class="flex flex-col items-center justify-center min-h-screen px-4 bg-black">
         <LogoIcon className="w-24 h-24 mb-6" />
-        <h1 class="text-4xl font-bold text-white mb-2">
+        <h1 class="mb-2 text-4xl font-bold text-white">
             FootballGod
         </h1>
-        <p class="text-gray-300 mb-6">
+        <p class="mb-6 text-gray-300">
             Football betting controlled by the fans.
         </p>
         <button 
-            class="bg-BrandPurple hover:bg-BrandPurpleDark text-white rounded px-6 py-3"
+            class="px-6 py-3 text-white rounded bg-BrandPurple hover:bg-BrandPurpleDark"
             on:click={handleLogin}
         >
             Connect Internet Indentity
