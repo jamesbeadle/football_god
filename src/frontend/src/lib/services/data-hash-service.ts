@@ -20,4 +20,15 @@ export class DataHashService {
     if (isError(result)) throw new Error("Failed to fetch data hashes");
     return result.ok;
   }
+
+  async getLeaguesHash(): Promise<string | undefined> {
+    try {
+      const allHashes = await this.getDataHashes();
+      const leagueEntry = allHashes.find((entry) => entry.category === "leagues");
+      return leagueEntry?.hash;
+    } catch (error) {
+      console.error("Failed to get leagues hash:", error);
+      return undefined;
+    }
+  }
 }

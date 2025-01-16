@@ -4719,7 +4719,7 @@ const options = {
 		<div class="error">
 			<span class="status">` + status + '</span>\n			<div class="message">\n				<h1>' + message + "</h1>\n			</div>\n		</div>\n	</body>\n</html>\n"
   },
-  version_hash: "98jovn"
+  version_hash: "1ved7gf"
 };
 async function get_hooks() {
   return {};
@@ -5267,7 +5267,7 @@ const idlFactory = ({ IDL }) => {
     "expectedReturns": IDL.Nat64,
     "settledOn": IDL.Int
   });
-  const Result_16 = IDL.Variant({ "ok": IDL.Vec(BetSlip), "err": Error2 });
+  const Result_17 = IDL.Variant({ "ok": IDL.Vec(BetSlip), "err": Error2 });
   const HomePageFixtureDTO = IDL.Record({
     "fixtureId": FixtureId,
     "homeOdds": IDL.Float64,
@@ -5276,7 +5276,7 @@ const idlFactory = ({ IDL }) => {
     "gameweek": GameweekNumber,
     "leagueId": LeagueId
   });
-  const Result_15 = IDL.Variant({
+  const Result_16 = IDL.Variant({
     "ok": IDL.Vec(HomePageFixtureDTO),
     "err": Error2
   });
@@ -5285,7 +5285,9 @@ const idlFactory = ({ IDL }) => {
     "code": IDL.Text,
     "name": IDL.Text
   });
-  const Result_14 = IDL.Variant({ "ok": IDL.Vec(CountryDTO), "err": Error2 });
+  const Result_15 = IDL.Variant({ "ok": IDL.Vec(CountryDTO), "err": Error2 });
+  const DataHashDTO = IDL.Record({ "hash": IDL.Text, "category": IDL.Text });
+  const Result_14 = IDL.Variant({ "ok": IDL.Vec(DataHashDTO), "err": Error2 });
   const Result_13 = IDL.Variant({ "ok": IDL.Vec(FixtureDTO), "err": Error2 });
   const ClubDTO = IDL.Record({
     "id": ClubId,
@@ -5546,13 +5548,14 @@ const idlFactory = ({ IDL }) => {
     "executeUpdateClub": IDL.Func([LeagueId, UpdateClubDTO], [], []),
     "executeUpdateLeague": IDL.Func([UpdateLeagueDTO], [], []),
     "executeUpdatePlayer": IDL.Func([LeagueId, UpdatePlayerDTO], [], []),
-    "getBets": IDL.Func([GetBetsDTO], [Result_16], []),
+    "getBets": IDL.Func([GetBetsDTO], [Result_17], []),
     "getBettableHomepageFixtures": IDL.Func(
       [LeagueId],
-      [Result_15],
+      [Result_16],
       ["query"]
     ),
-    "getCountries": IDL.Func([], [Result_14], ["query"]),
+    "getCountries": IDL.Func([], [Result_15], ["query"]),
+    "getDataHashes": IDL.Func([], [Result_14], ["composite_query"]),
     "getFixtures": IDL.Func([LeagueId], [Result_13], ["composite_query"]),
     "getLeagueClubs": IDL.Func([LeagueId], [Result_12], ["composite_query"]),
     "getLeaguePlayers": IDL.Func([LeagueId], [Result_11], ["composite_query"]),
@@ -5807,9 +5810,9 @@ function Dashboard($$payload, $$props) {
   push();
   {
     $$payload.out += "<!--[!-->";
-    $$payload.out += `<div class="flex flex-col items-center justify-center min-h-screen bg-black px-4">`;
+    $$payload.out += `<div class="flex flex-col items-center justify-center min-h-screen px-4 bg-black">`;
     LogoIcon($$payload, { className: "w-24 h-24 mb-6" });
-    $$payload.out += `<!----> <h1 class="text-4xl font-bold text-white mb-2">FootballGod</h1> <p class="text-gray-300 mb-6">Football betting controlled by the fans.</p> <button class="bg-BrandPurple hover:bg-BrandPurpleDark text-white rounded px-6 py-3">Connect Internet Indentity</button></div>`;
+    $$payload.out += `<!----> <h1 class="mb-2 text-4xl font-bold text-white">FootballGod</h1> <p class="mb-6 text-gray-300">Football betting controlled by the fans.</p> <button class="px-6 py-3 text-white rounded bg-BrandPurple hover:bg-BrandPurpleDark">Connect Internet Indentity</button></div>`;
   }
   $$payload.out += `<!--]-->`;
   pop();

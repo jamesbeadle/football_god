@@ -52,6 +52,7 @@
 
   onMount(async () => {
     try {
+      await leagueStore.syncLeagues();
       leagues = await leagueStore.getLeagues();
     } catch (error) {
       console.error("Error fetching leagues:", error);
@@ -65,11 +66,10 @@
     try {
       leagueFixtures[leagueId] = await fixtureStore.getFixtures(leagueId);
       await fetchClubs(leagueId);
-
       const leagueStatus = await leagueStore.getLeagueStatus(leagueId);
       selectedGameweeks[leagueId] = leagueStatus.unplayedGameweek;
+      selectedGameweeks[leagueId] = 22;
       leagueTotalGameweeks[leagueId] = leagueStatus.totalGameweeks;
-
       allBettingFixtures[leagueId] = await bettingStore.getBettableHomepageFixtures(leagueId);
     } catch (error) {
       console.error(`Error fetching data for league ${leagueId}:`, error);
@@ -116,6 +116,7 @@
   function filteredBettingFixtures(leagueId: LeagueId) {
     const gw = selectedGameweeks[leagueId];
     const all = allBettingFixtures[leagueId] ?? [];
+    //const all = leagueFixtures[leagueId] ?? [];
     return all.filter((f) => f.gameweek === gw);
   }
 
@@ -171,6 +172,7 @@
 
   function getOddsForFixture(leagueId: LeagueId, fixtureId: number) {
     return filteredBettingFixtures(leagueId).find((x) => x.fixtureId === fixtureId);
+    //return filteredBettingFixtures(leagueId).find((x) => x.id === fixtureId);
   }
 
   function selectCorrectResultHome(leagueId: number, fixtureId: number, odds: number) {
