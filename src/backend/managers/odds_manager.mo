@@ -76,11 +76,17 @@ module {
       let data_canister = actor (Environment.DATA_CANISTER_ID) : actor {
         getFixtures : shared query (leagueId: FootballTypes.LeagueId) -> async Result.Result<[ResponseDTOs.FixtureDTO], T.Error>;
         getPlayers : shared query (leagueId: FootballTypes.LeagueId) -> async Result.Result<[ResponseDTOs.PlayerDTO], T.Error>;
-     };
+      };
       let fixturesResult = await data_canister.getFixtures(leagueId);
       let playersResult = await data_canister.getPlayers(leagueId);
 
-      Debug.print("Recalculating league " # Nat16.toText(leagueId));
+      matchOddsCache := Array.map<(FootballTypes.LeagueId, [(FootballTypes.FixtureId, BettingTypes.MatchOdds)]), (FootballTypes.LeagueId, [(FootballTypes.FixtureId, BettingTypes.MatchOdds)])>(matchOddsCache, func(entry: (FootballTypes.LeagueId, [(FootballTypes.FixtureId, BettingTypes.MatchOdds)])){
+        if(entry.0 == leagueId){
+          return (entry.0, [])
+        } else {
+          return entry;
+        }
+      }); 
       
       switch(fixturesResult){
         case (#ok fixtures){
@@ -120,7 +126,7 @@ module {
 
                   firstGoalscorersOddsBuffer.add({
                     playerId = player.id;
-                    odds = oddsGenerator.getFirstGoalscorerOdds(player, player.clubId == fixture.homeClubId);
+                    odds = oddsGenerator.getFirstGoalscorerOdds(fixtures, fixture, player);
                   });
 
                   anytimeAssistOddsBuffer.add({
@@ -130,17 +136,17 @@ module {
 
                   anytimeScorerOddsBuffer.add({
                     playerId = player.id;
-                    odds = oddsGenerator.getAnytimeScorerOdds(player, player.clubId == fixture.homeClubId);
+                    odds = oddsGenerator.getAnytimeScorerOdds(fixtures, fixture, player);
                   });
 
                   lastAssistOddsBuffer.add({
                     playerId = player.id;
-                    odds = oddsGenerator.getLastAssistOdds(player, player.clubId == fixture.homeClubId);
+                    odds = oddsGenerator.getLastAssistOdds(fixtures, fixture, player);
                   });
 
                   lastGoalscorerOddsBuffer.add({
                     playerId = player.id;
-                    odds = oddsGenerator.getLastScorerOdds(player, player.clubId == fixture.homeClubId);
+                    odds = oddsGenerator.getLastScorerOdds(fixtures, fixture, player);
                   });
 
                   scoresBraceOddsBuffer.add({
@@ -173,7 +179,7 @@ module {
                 
                 let bothTeamsToScoreOdds = oddsGenerator.getBothTeamsToScoreOdds();
                 let bothTeamsToScoreAndWinnerOdds = oddsGenerator.getBothTeamsToScoreAndWinnerOdds();
-                let correctResultsOdds = oddsGenerator.getCorrectResultOdds();
+                let correctResultsOdds = oddsGenerator.getCorrectResultOdds(fixtures, fixture);
                 let correctScoresOdds = oddsGenerator.getCorrectScoreOdds();
                 let goalsOverUnderOdds = oddsGenerator.getGoalsOverUnderOdds();
                 let halfTimeFullTimeResultOdds = oddsGenerator.getHalfTimeFullTimeResultOdds();

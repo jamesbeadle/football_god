@@ -3,35 +3,71 @@ module BaseOdds {
     public let DRAW : Float = 1;
     public let AWAY_WIN : Float = 3;
 
-    public let HOME_FORWARD_FIRST_GOALSCORER : Float = 5;
-    public let HOME_MIDFIELDER_FIRST_GOALSCORER : Float = 10;
-    public let HOME_DEFENDER_FIRST_GOALSCORER : Float = 15;
-    public let HOME_GOALKEEPER_FIRST_GOALSCORER : Float = 100;
+    //ASSISTS
 
-    public let HOME_FORWARD_LAST_GOALSCORER : Float = 6;
-    public let HOME_MIDFIELDER_LAST_GOALSCORER : Float = 12;
-    public let HOME_DEFENDER_LAST_GOALSCORER : Float = 18;
-    public let HOME_GOALKEEPER_LAST_GOALSCORER : Float = 100;
+    public let HOME_FORWARD_ANYTIME_ASSIST : Float = 3;
+    public let HOME_MIDFIELDER_ANYTIME_ASSIST : Float = 4;
+    public let HOME_DEFENDER_ANYTIME_ASSIST : Float = 5;
+    public let HOME_GOALKEEPER_ANYTIME_ASSIST : Float = 10;
+
+    public let HOME_FORWARD_FIRST_ASSIST : Float = 5;
+    public let HOME_MIDFIELDER_FIRST_ASSIST : Float = 7;
+    public let HOME_DEFENDER_FIRST_ASSIST : Float = 9;
+    public let HOME_GOALKEEPER_FIRST_ASSIST : Float = 20;
+
+    public let HOME_FORWARD_LAST_ASSIST : Float = 6;
+    public let HOME_MIDFIELDER_LAST_ASSIST : Float = 8;
+    public let HOME_DEFENDER_LAST_ASSIST : Float = 10;
+    public let HOME_GOALKEEPER_LAST_ASSIST : Float = 25;
+    
+    public let AWAY_FORWARD_ANYTIME_ASSIST : Float = 4;
+    public let AWAY_MIDFIELDER_ANYTIME_ASSIST : Float = 5;
+    public let AWAY_DEFENDER_ANYTIME_ASSIST : Float = 6;
+    public let AWAY_GOALKEEPER_ANYTIME_ASSIST : Float = 15;
+
+    public let AWAY_FORWARD_FIRST_ASSIST : Float = 6;
+    public let AWAY_MIDFIELDER_FIRST_ASSIST : Float = 8;
+    public let AWAY_DEFENDER_FIRST_ASSIST : Float = 10;
+    public let AWAY_GOALKEEPER_FIRST_ASSIST : Float = 25;
+
+    public let AWAY_FORWARD_LAST_ASSIST : Float = 7;
+    public let AWAY_MIDFIELDER_LAST_ASSIST : Float = 9;
+    public let AWAY_DEFENDER_LAST_ASSIST : Float = 11;
+    public let AWAY_GOALKEEPER_LAST_ASSIST : Float = 30;
+
+    //GOALSCORERS
 
     public let HOME_FORWARD_ANYTIME_GOALSCORER : Float = 3;
     public let HOME_MIDFIELDER_ANYTIME_GOALSCORER : Float = 5;
     public let HOME_DEFENDER_ANYTIME_GOALSCORER : Float = 8;
-    public let HOME_GOALKEEPER_ANYTIME_GOALSCORER : Float = 100;
+    public let HOME_GOALKEEPER_ANYTIME_GOALSCORER : Float = 50;
+
+    public let AWAY_FORWARD_ANYTIME_GOALSCORER : Float = 4;
+    public let AWAY_MIDFIELDER_ANYTIME_GOALSCORER : Float = 6;
+    public let AWAY_DEFENDER_ANYTIME_GOALSCORER : Float = 9;
+    public let AWAY_GOALKEEPER_ANYTIME_GOALSCORER : Float = 60;
+
+    public let HOME_FORWARD_FIRST_GOALSCORER : Float = 6;
+    public let HOME_MIDFIELDER_FIRST_GOALSCORER : Float = 9;
+    public let HOME_DEFENDER_FIRST_GOALSCORER : Float = 12;
+    public let HOME_GOALKEEPER_FIRST_GOALSCORER : Float = 75;
 
     public let AWAY_FORWARD_FIRST_GOALSCORER : Float = 7;
-    public let AWAY_MIDFIELDER_FIRST_GOALSCORER : Float = 12;
-    public let AWAY_DEFENDER_FIRST_GOALSCORER : Float = 17;
-    public let AWAY_GOALKEEPER_FIRST_GOALSCORER : Float = 100;
+    public let AWAY_MIDFIELDER_FIRST_GOALSCORER : Float = 10;
+    public let AWAY_DEFENDER_FIRST_GOALSCORER : Float = 13;
+    public let AWAY_GOALKEEPER_FIRST_GOALSCORER : Float = 80;
+
+    public let HOME_FORWARD_LAST_GOALSCORER : Float = 7;
+    public let HOME_MIDFIELDER_LAST_GOALSCORER : Float = 10;
+    public let HOME_DEFENDER_LAST_GOALSCORER : Float = 13;
+    public let HOME_GOALKEEPER_LAST_GOALSCORER : Float = 80;
 
     public let AWAY_FORWARD_LAST_GOALSCORER : Float = 8;
-    public let AWAY_MIDFIELDER_LAST_GOALSCORER : Float = 14;
-    public let AWAY_DEFENDER_LAST_GOALSCORER : Float = 20;
+    public let AWAY_MIDFIELDER_LAST_GOALSCORER : Float = 12;
+    public let AWAY_DEFENDER_LAST_GOALSCORER : Float = 15;
     public let AWAY_GOALKEEPER_LAST_GOALSCORER : Float = 100;
 
-    public let AWAY_FORWARD_ANYTIME_GOALSCORER : Float = 5;
-    public let AWAY_MIDFIELDER_ANYTIME_GOALSCORER : Float = 7;
-    public let AWAY_DEFENDER_ANYTIME_GOALSCORER : Float = 10;
-    public let AWAY_GOALKEEPER_ANYTIME_GOALSCORER : Float = 100;
+
 
     public let HOME_FORWARD_YELLOW_CARD : Float = 11;
     public let HOME_MIDFIELDER_YELLOW_CARD : Float = 9;
@@ -66,35 +102,12 @@ module BaseOdds {
     public let AWAY_DEFENDER_PENALTY_MISS : Float = 24;
     public let AWAY_GOALKEEPER_PENALTY_MISS : Float = 100;
 
-    public let HOME_FORWARD_ANYTIME_ASSIST : Float = 3;
-    public let HOME_MIDFIELDER_ANYTIME_ASSIST : Float = 4;
-    public let HOME_DEFENDER_ANYTIME_ASSIST : Float = 5;
-    public let HOME_GOALKEEPER_ANYTIME_ASSIST : Float = 10;
-    
-    public let AWAY_FORWARD_ANYTIME_ASSIST : Float = 4;
-    public let AWAY_MIDFIELDER_ANYTIME_ASSIST : Float = 5;
-    public let AWAY_DEFENDER_ANYTIME_ASSIST : Float = 6;
-    public let AWAY_GOALKEEPER_ANYTIME_ASSIST : Float = 12;
 
-    public let HOME_FORWARD_FIRST_ASSIST : Float = 5;
-    public let HOME_MIDFIELDER_FIRST_ASSIST : Float = 7;
-    public let HOME_DEFENDER_FIRST_ASSIST : Float = 9;
-    public let HOME_GOALKEEPER_FIRST_ASSIST : Float = 18;
 
-    public let AWAY_FORWARD_FIRST_ASSIST : Float = 7;
-    public let AWAY_MIDFIELDER_FIRST_ASSIST : Float = 9;
-    public let AWAY_DEFENDER_FIRST_ASSIST : Float = 12;
-    public let AWAY_GOALKEEPER_FIRST_ASSIST : Float = 25;
 
-    public let HOME_FORWARD_LAST_ASSIST : Float = 5;
-    public let HOME_MIDFIELDER_LAST_ASSIST : Float = 7;
-    public let HOME_DEFENDER_LAST_ASSIST : Float = 9;
-    public let HOME_GOALKEEPER_LAST_ASSIST : Float = 18;
 
-    public let AWAY_FORWARD_LAST_ASSIST : Float = 8;
-    public let AWAY_MIDFIELDER_LAST_ASSIST : Float = 10;
-    public let AWAY_DEFENDER_LAST_ASSIST : Float = 14;
-    public let AWAY_GOALKEEPER_LAST_ASSIST : Float = 30;
+
+
 
     public let HOME_FORWARD_SCORE_BRACE : Float = 12;
     public let HOME_MIDFIELDER_SCORE_BRACE : Float = 15;
@@ -233,9 +246,9 @@ module BaseOdds {
     public let BOTH_TEAMS_NOT_TO_SCORE_AND_AWAY_WIN : Float = 7;
     public let BOTH_TEAMS_NOT_TO_SCORE_AND_DRAW : Float = 6;
     
-    public let HOME_WIN_ODDS : Float = 1.5;
+    public let HOME_WIN_ODDS : Float = 3;
     public let DRAW_ODDS : Float = 2;
-    public let AWAY_WIN_ODDS : Float = 2.5;
+    public let AWAY_WIN_ODDS : Float = 4;
     
     public let OVER_ODDS_ZERO_POINT_FIVE : Float = 2;
     public let OVER_ODDS_ONE_POINT_FIVE : Float = 3;

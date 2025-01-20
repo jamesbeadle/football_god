@@ -26,6 +26,7 @@ import Debug "mo:base/Debug";
   
   import Countries "../backend/utilities/Countries";
   import Utilities "../backend/utilities/utilities";
+  import SHA224 "../backend/utilities/SHA224";
   
   import Environment "environment";
   
@@ -110,6 +111,8 @@ import Debug "mo:base/Debug";
 
     private stable var timers : [Base.TimerInfo] = [];
 
+    private stable var leagueDataHashes: [(FootballTypes.LeagueId, [Base.DataHash])] = [];
+
     private func callerAllowed(caller: Principal) : Bool {
       let foundCaller = Array.find<Base.PrincipalId>(Environment.APPROVED_CANISTERS, func(canisterId: Base.CanisterId) : Bool {
         Principal.toText(caller) == canisterId
@@ -118,6 +121,46 @@ import Debug "mo:base/Debug";
     };
 
     /* Verified Getters */
+
+    public shared composite query func getDataHashes(leagueId: FootballTypes.LeagueId) : async Result.Result<[ResponseDTOs.DataHashDTO], T.Error> {
+      let leagueDataHashesResult = Array.find<(FootballTypes.LeagueId, [Base.DataHash])>(leagueDataHashes, func(entry: (FootballTypes.LeagueId, [Base.DataHash])) : Bool {
+        entry.0 == leagueId
+      });
+      switch(leagueDataHashesResult){
+        case (?foundHashes){
+          return #ok(foundHashes.1)
+        };
+        case (null){}
+      };
+      return #err(#NotFound);
+    };
+
+    public func updateDataHash(leagueId: FootballTypes.LeagueId, category : Text) : async () {
+      let randomHash = await SHA224.getRandomHash();
+
+      leagueDataHashes := Array.map<(FootballTypes.LeagueId, [Base.DataHash]), (FootballTypes.LeagueId, [Base.DataHash])>(leagueDataHashes, func(entry: (FootballTypes.LeagueId, [Base.DataHash])){
+        if(entry.0 == leagueId){
+
+
+          let hashBuffer = Buffer.fromArray<Base.DataHash>([]);
+          var updated = false;
+
+          for (hashObj in Iter.fromArray(entry.1)) {
+            if (hashObj.category == category) {
+              hashBuffer.add({ category = hashObj.category; hash = randomHash });
+              updated := true;
+            } else { hashBuffer.add(hashObj) };
+          };
+
+          if(not updated){
+              hashBuffer.add({ category = category; hash = randomHash });
+          };
+          return (entry.0, entry.1);
+        } else {
+          return entry;
+        }
+      });
+    };
 
     public shared ( {caller} ) func getVerifiedPlayers(leagueId: FootballTypes.LeagueId) : async Result.Result<[ResponseDTOs.PlayerDTO], T.Error>{
       assert callerAllowed(caller);
