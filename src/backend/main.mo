@@ -101,6 +101,13 @@ actor Self {
     return #ok(Countries.countries);
   };
 
+  public shared composite query func getDataHashForCategory(leagueId: FootballTypes.LeagueId, category: Text) : async Result.Result<[Base.DataHash], T.Error> {
+    let data_canister = actor (Environment.DATA_CANISTER_ID) : actor {
+      getDataHashForCategory : shared query (leagueId: FootballTypes.LeagueId, category: Text) -> async Result.Result<[Base.DataHash], T.Error>;
+    };
+    return await data_canister.getDataHashForCategory(leagueId, category);
+  };
+
   public shared composite query func getLeagues() : async Result.Result<[ResponseDTOs.FootballLeagueDTO], T.Error> {
     let data_canister = actor (Environment.DATA_CANISTER_ID) : actor {
       getLeagues : shared query () -> async Result.Result<[FootballTypes.League], T.Error>;
