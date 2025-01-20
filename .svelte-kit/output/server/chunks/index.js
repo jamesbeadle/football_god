@@ -4719,7 +4719,7 @@ const options = {
 		<div class="error">
 			<span class="status">` + status + '</span>\n			<div class="message">\n				<h1>' + message + "</h1>\n			</div>\n		</div>\n	</body>\n</html>\n"
   },
-  version_hash: "1ved7gf"
+  version_hash: "1gemknn"
 };
 async function get_hooks() {
   return {};
@@ -5267,7 +5267,7 @@ const idlFactory = ({ IDL }) => {
     "expectedReturns": IDL.Nat64,
     "settledOn": IDL.Int
   });
-  const Result_17 = IDL.Variant({ "ok": IDL.Vec(BetSlip), "err": Error2 });
+  const Result_18 = IDL.Variant({ "ok": IDL.Vec(BetSlip), "err": Error2 });
   const HomePageFixtureDTO = IDL.Record({
     "fixtureId": FixtureId,
     "homeOdds": IDL.Float64,
@@ -5276,7 +5276,7 @@ const idlFactory = ({ IDL }) => {
     "gameweek": GameweekNumber,
     "leagueId": LeagueId
   });
-  const Result_16 = IDL.Variant({
+  const Result_17 = IDL.Variant({
     "ok": IDL.Vec(HomePageFixtureDTO),
     "err": Error2
   });
@@ -5285,7 +5285,9 @@ const idlFactory = ({ IDL }) => {
     "code": IDL.Text,
     "name": IDL.Text
   });
-  const Result_15 = IDL.Variant({ "ok": IDL.Vec(CountryDTO), "err": Error2 });
+  const Result_16 = IDL.Variant({ "ok": IDL.Vec(CountryDTO), "err": Error2 });
+  const DataHash = IDL.Record({ "hash": IDL.Text, "category": IDL.Text });
+  const Result_15 = IDL.Variant({ "ok": IDL.Vec(DataHash), "err": Error2 });
   const DataHashDTO = IDL.Record({ "hash": IDL.Text, "category": IDL.Text });
   const Result_14 = IDL.Variant({ "ok": IDL.Vec(DataHashDTO), "err": Error2 });
   const Result_13 = IDL.Variant({ "ok": IDL.Vec(FixtureDTO), "err": Error2 });
@@ -5548,13 +5550,18 @@ const idlFactory = ({ IDL }) => {
     "executeUpdateClub": IDL.Func([LeagueId, UpdateClubDTO], [], []),
     "executeUpdateLeague": IDL.Func([UpdateLeagueDTO], [], []),
     "executeUpdatePlayer": IDL.Func([LeagueId, UpdatePlayerDTO], [], []),
-    "getBets": IDL.Func([GetBetsDTO], [Result_17], []),
+    "getBets": IDL.Func([GetBetsDTO], [Result_18], []),
     "getBettableHomepageFixtures": IDL.Func(
       [LeagueId],
-      [Result_16],
+      [Result_17],
       ["query"]
     ),
-    "getCountries": IDL.Func([], [Result_15], ["query"]),
+    "getCountries": IDL.Func([], [Result_16], ["query"]),
+    "getDataHashForCategory": IDL.Func(
+      [LeagueId, IDL.Text],
+      [Result_15],
+      ["composite_query"]
+    ),
     "getDataHashes": IDL.Func([], [Result_14], ["composite_query"]),
     "getFixtures": IDL.Func([LeagueId], [Result_13], ["composite_query"]),
     "getLeagueClubs": IDL.Func([LeagueId], [Result_12], ["composite_query"]),
@@ -5573,6 +5580,7 @@ const idlFactory = ({ IDL }) => {
     "pauseAccount": IDL.Func([PauseAccountDTO], [Result], []),
     "payWeeklyRewards": IDL.Func([IDL.Text, GameweekNumber], [Result], []),
     "placeBet": IDL.Func([SubmitBetslipDTO], [Result_1], []),
+    "refreshLeagueHashes": IDL.Func([], [Result], []),
     "setMaxBetLimit": IDL.Func([SetMaxBetLimit], [Result], []),
     "setMonthlyBetLimit": IDL.Func([SetMonthlyBetLimitDTO], [Result], []),
     "snapshotManagers": IDL.Func([IDL.Text], [Result], []),
@@ -5797,6 +5805,20 @@ function convertEvent(playerEvent) {
     return 11;
   return 0;
 }
+function serializeData(data) {
+  return JSON.stringify(
+    data,
+    (_, value) => typeof value === "bigint" ? `${value}n` : value
+  );
+}
+function deserializeData(data) {
+  return JSON.parse(data, (_, value) => {
+    if (typeof value === "string" && /^\d+n$/.test(value)) {
+      return BigInt(value.slice(0, -1));
+    }
+    return value;
+  });
+}
 function LogoIcon($$payload, $$props) {
   let className = fallback($$props["className"], "");
   let fill = fallback($$props["fill"], "white");
@@ -6013,6 +6035,54 @@ function Modal($$payload, $$props) {
   bind_props($$props, { showModal, onClose });
   pop();
 }
+var define_process_env_default$3 = { __CANDID_UI_CANISTER_ID: "a3shf-5eaaa-aaaaa-qaafa-cai", BACKEND_CANISTER_ID: "by6od-j4aaa-aaaaa-qaadq-cai", DATA_CANISTER_CANISTER_ID: "avqkn-guaaa-aaaaa-qaaea-cai", FRONTEND_CANISTER_ID: "asrmz-lmaaa-aaaaa-qaaeq-cai", DFX_NETWORK: "local" };
+class DataHashService {
+  actor;
+  constructor() {
+    const canisterId2 = define_process_env_default$3.BACKEND_CANISTER_ID;
+    this.actor = ActorFactory.createActor(idlFactory, canisterId2);
+  }
+  async refreshLeagueHashes() {
+    const response = await this.actor.refreshLeagueHashes();
+    console.log("Response:", response);
+    if (isError(response)) {
+      console.error("Error refreshing hashes:", response.err);
+      throw new Error("Failed to refresh league hashes");
+    }
+  }
+  async getDataHashes() {
+    const result = await this.actor.getDataHashes();
+    if (isError(result)) throw new Error("Failed to fetch data hashes");
+    return result.ok;
+  }
+  async getLeaguesHash() {
+    try {
+      const allHashes = await this.getDataHashes();
+      const leagueEntry = allHashes.find(
+        (entry) => entry.category === "leagues"
+      );
+      return leagueEntry?.hash ?? null;
+    } catch (error) {
+      console.error("Failed to get leagues hash:", error);
+      return null;
+    }
+  }
+  async getFixturesHash(leagueId) {
+    try {
+      const allHashes = await this.getDataHashes();
+      console.log(`All hashes:`, allHashes);
+      console.log("Looking for category:", `fixtures_${leagueId}`);
+      const fixtureEntry = allHashes.find(
+        (entry) => entry.category === `fixtures_${leagueId}`
+      );
+      console.log(`Fixture entry for league ${leagueId}:`, fixtureEntry);
+      return fixtureEntry?.hash ?? null;
+    } catch (error) {
+      console.error("Failed to get fixtures hash:", error);
+      return null;
+    }
+  }
+}
 var define_process_env_default$2 = { __CANDID_UI_CANISTER_ID: "a3shf-5eaaa-aaaaa-qaafa-cai", BACKEND_CANISTER_ID: "by6od-j4aaa-aaaaa-qaadq-cai", DATA_CANISTER_CANISTER_ID: "avqkn-guaaa-aaaaa-qaaea-cai", FRONTEND_CANISTER_ID: "asrmz-lmaaa-aaaaa-qaaeq-cai", DFX_NETWORK: "local" };
 class ClubService {
   actor;
@@ -6070,6 +6140,11 @@ class FixtureService {
       define_process_env_default$1.BACKEND_CANISTER_ID
     );
   }
+  async getFixturesHash(leagueId) {
+    const result = await this.actor.getFixturesHash(leagueId);
+    if (isError(result)) throw new Error("Failed to fetch fixtures hash");
+    return result.ok;
+  }
   async getPostponedFixtures() {
     const result = await this.actor.getPostponedFixtures();
     if (isError(result)) throw new Error("Failed to fetch postponed fixtures");
@@ -6106,6 +6181,65 @@ class FixtureService {
   }
 }
 function createFixtureStore() {
+  const { subscribe, update } = writable({});
+  async function syncFixtures(leagueId) {
+    try {
+      await new DataHashService().refreshLeagueHashes();
+      const localHashKey = `fixtures_hash_${leagueId}`;
+      const localFixturesKey = `fixtures_${leagueId}`;
+      const localHash = localStorage.getItem(localHashKey);
+      console.log(`Current local hash for league ${leagueId}:`, localHash);
+      const fixtureHash = await new DataHashService().getFixturesHash(leagueId);
+      console.log(`Server hash for league ${leagueId}:`, fixtureHash);
+      let fixtures;
+      if (!localHash || fixtureHash !== localHash) {
+        console.log(`Fetching fresh fixtures for league ${leagueId}`);
+        fixtures = await getFixtures(leagueId);
+        console.log(`Fetched fixtures for league ${leagueId}:`, fixtures);
+        localStorage.setItem(localFixturesKey, serializeData(fixtures));
+        localStorage.setItem(localHashKey, fixtureHash || "");
+      } else {
+        console.log(`Using cached fixtures for league ${leagueId}`);
+        const cached = localStorage.getItem(localFixturesKey);
+        if (cached) {
+          fixtures = deserializeData(cached);
+        } else {
+          fixtures = await getFixtures(leagueId);
+          console.log(
+            `Fetched fixtures in else else for league ${leagueId}:`,
+            fixtures
+          );
+          localStorage.setItem(localFixturesKey, serializeData(fixtures));
+        }
+      }
+      update((current) => {
+        const updated2 = {
+          ...current,
+          [leagueId]: fixtures
+        };
+        console.log(`Updated fixtures for league ${leagueId}:`, updated2);
+        return updated2;
+      });
+    } catch (error) {
+      console.error(`Error syncing fixtures for league ${leagueId}:`, error);
+      const cached = localStorage.getItem(`fixtures_${leagueId}`);
+      if (cached) {
+        console.log(`Using cached fixtures for league ${leagueId}`);
+        const fixtures = deserializeData(cached);
+        update((current) => {
+          const updated2 = {
+            ...current,
+            [leagueId]: fixtures
+          };
+          console.log(
+            `Updated fixtures for league ${leagueId} in fallback:`,
+            updated2
+          );
+          return updated2;
+        });
+      }
+    }
+  }
   async function getFixtures(leagueId) {
     return new FixtureService().getFixtures(leagueId);
   }
@@ -6121,12 +6255,22 @@ function createFixtureStore() {
   async function getPostponedFixtures() {
     return new FixtureService().getPostponedFixtures();
   }
+  function getFixturesByLeagueId(leagueId) {
+    let data = {};
+    const unsubscribe = subscribe((value) => {
+      data = value;
+    });
+    unsubscribe();
+    return data[leagueId];
+  }
   return {
+    syncFixtures,
     getFixtures,
     getPostponedFixtures,
     moveFixture,
     postponeFixture,
-    submitFixtureData
+    submitFixtureData,
+    getFixturesByLeagueId
   };
 }
 const fixtureStore = createFixtureStore();

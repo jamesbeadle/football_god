@@ -4,62 +4,61 @@ import { DataHashService } from "$lib/services/data-hash-service";
 import type {
   CreateLeagueDTO,
   UpdateLeagueDTO,
+  FootballLeagueDTO,
 } from "../../../../declarations/backend/backend.did";
 import type { LeagueStatus } from "../../../../declarations/data_canister/data_canister.did";
-
+import { serializeData, deserializeData } from "../utils/helpers";
 function createLeagueStore() {
-  const { subscribe, set } = writable<any[]>([]);
-
-  // Helper function to handle BigInt serialization
-  function serializeData(data: any): any {
-    return JSON.stringify(data, (_, value) =>
-      typeof value === 'bigint' ? value.toString() : value
-    );
-  }
-
-  // Helper function to deserialize data
-  function deserializeData(data: string): any {
-    return JSON.parse(data, (_, value) => {
-      // Look for strings that might be BigInt
-      if (typeof value === 'string' && /^\d+n$/.test(value)) {
-        return BigInt(value.slice(0, -1));
-      }
-      return value;
-    });
-  }
+  const { subscribe, set } = writable<Record<number, FootballLeagueDTO>>({});
 
   async function syncLeagues() {
     try {
+      await new DataHashService().refreshLeagueHashes();
       const localHash = localStorage.getItem("leagues_hash");
       console.log("Current local hash:", localHash);
-      
+
       const leagueHash = await new DataHashService().getLeaguesHash();
       console.log("Server hash:", leagueHash);
 
+      let leagues;
+
       if (!localHash || leagueHash !== localHash) {
         console.log("Fetching fresh data from server");
-        const leagues = await getLeagues();
-        
-        // Use the serialize helper
+        leagues = await new LeagueService().getLeagues();
         localStorage.setItem("leagues", serializeData(leagues));
         localStorage.setItem("leagues_hash", leagueHash || "");
-        set(leagues);
       } else {
         console.log("Using cached data");
         const cached = localStorage.getItem("leagues");
         if (cached) {
-          // Use the deserialize helper
-          set(deserializeData(cached));
+          leagues = deserializeData(cached) as FootballLeagueDTO[];
         } else {
-          const leagues = await getLeagues();
+          leagues = await new LeagueService().getLeagues();
           localStorage.setItem("leagues", serializeData(leagues));
-          set(leagues);
         }
       }
+      const leaguesDict: Record<number, FootballLeagueDTO> = leagues.reduce(
+        (acc, league) => {
+          acc[Number(league.id)] = league;
+          return acc;
+        },
+        {} as Record<number, FootballLeagueDTO>,
+      );
+      set(leaguesDict);
     } catch (error) {
       console.error("Error syncing leagues:", error);
       const cached = localStorage.getItem("leagues");
-      if (cached) set(deserializeData(cached));
+      if (cached) {
+        const leagues = deserializeData(cached) as FootballLeagueDTO[];
+        const leaguesDict: Record<number, FootballLeagueDTO> = leagues.reduce(
+          (acc, league) => {
+            acc[Number(league.id)] = league;
+            return acc;
+          },
+          {} as Record<number, FootballLeagueDTO>,
+        );
+        set(leaguesDict);
+      }
     }
   }
 
@@ -79,6 +78,16 @@ function createLeagueStore() {
     return await new LeagueService().getLeagueStatus(leagueId);
   }
 
+  function getLeagueById(leagueId: number): FootballLeagueDTO | undefined {
+    let data: Record<number, FootballLeagueDTO> = {};
+    const unsubscribe = subscribe((value) => {
+      data = value;
+    });
+    unsubscribe();
+
+    return data[leagueId]; // Directly access the league by its id
+  }
+
   return {
     subscribe,
     syncLeagues,
@@ -86,6 +95,7 @@ function createLeagueStore() {
     createLeague,
     updateLeague,
     getLeagueStatus,
+    getLeagueById,
   };
 }
 

@@ -54,7 +54,6 @@
             });
 
             userStore.subscribe((store) => {
-                console.log(store)
                 if(store == null){
                     return;
                 }

@@ -11,6 +11,7 @@ import Float "mo:base/Float";
 import Iter "mo:base/Iter";
 import Time "mo:base/Time";
 import Debug "mo:base/Debug";
+import Nat16 "mo:base/Nat16";
 
 import T "types/app_types";
 import Base "types/base_types";
@@ -95,14 +96,41 @@ actor Self {
     return await userManager.setMonthlyBetLimit(dto);
   };
 
+  public shared func refreshLeagueHashes(): async Result.Result<(), T.Error> {
+      let data_canister = actor (Environment.DATA_CANISTER_ID) : actor {
+        getLeagues : shared query () -> async Result.Result<[FootballTypes.League], T.Error>;
+      };
+      let leagueIdsResult = await data_canister.getLeagues();
+
+      switch (leagueIdsResult) {
+          case (#ok(leagues)) {
+              await oddsManager.ensureLeagueHashes(Array.map<ResponseDTOs.FootballLeagueDTO, Nat>(leagues, func (league: ResponseDTOs.FootballLeagueDTO) : Nat {
+                  Nat16.toNat(league.id);
+              }));
+              return #ok(());
+          };
+          case (#err(err)) {
+              return #err(err);
+          };
+      };
+  };
+
   /* Data functions */
 
-  public shared composite query func getDataHashes() : async Result.Result<[ResponseDTOs.DataHashDTO], T.Error> {
-      return oddsManager.getDataHashes();
+  public shared composite query func getDataHashes(): async Result.Result<[ResponseDTOs.DataHashDTO], T.Error> {
+    
+    return oddsManager.getDataHashes();
   };
 
   public shared query func getCountries() : async Result.Result<[ResponseDTOs.CountryDTO], T.Error> {
     return #ok(Countries.countries);
+  };
+
+  public shared composite query func getDataHashForCategory(leagueId: FootballTypes.LeagueId, category: Text) : async Result.Result<[Base.DataHash], T.Error> {
+    let data_canister = actor (Environment.DATA_CANISTER_ID) : actor {
+      getDataHashForCategory : shared query (leagueId: FootballTypes.LeagueId, category: Text) -> async Result.Result<[Base.DataHash], T.Error>;
+    };
+    return await data_canister.getDataHashForCategory(leagueId, category);
   };
 
   public shared composite query func getLeagues() : async Result.Result<[ResponseDTOs.FootballLeagueDTO], T.Error> {
@@ -582,6 +610,7 @@ actor Self {
     let data_canister = actor (Environment.DATA_CANISTER_ID) : actor {
       createLeague : (dto : GovernanceDTOs.CreateLeagueDTO) -> async Result.Result<(), T.Error>;
     };
+    //TODO: need to call ensureLeagueHashes somewhere when creating a league
     let _ = await data_canister.createLeague( dto);
     return;
   };

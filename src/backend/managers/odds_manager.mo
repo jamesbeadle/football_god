@@ -296,6 +296,12 @@ module {
       { category = "seasons"; hash = "OPENFPL_1" }
     ];
 
+    private func findHash(category: Text): ?Base.DataHash {
+      return Array.find<Base.DataHash>(dataHashes, func(hashObj: Base.DataHash): Bool {
+        hashObj.category == category;
+      });
+    };
+
     public func updateDataHash(category : Text) : async () {
       let hashBuffer = Buffer.fromArray<Base.DataHash>([]);
       var updated = false;
@@ -316,10 +322,23 @@ module {
       dataHashes := Buffer.toArray<Base.DataHash>(hashBuffer);
     };
 
+    public func updateFixtureHash(leagueId: Nat): async () {
+      let category = "fixtures_" # Nat.toText(leagueId);
+      await updateDataHash(category);
+    };
+
+    public func updateClubHash(leagueId: Nat): async () {
+      let category = "clubs_" # Nat.toText(leagueId);
+      await updateDataHash(category);
+    };
+
+    public func updatePlayerHash(leagueId: Nat): async () {
+      let category = "players_" # Nat.toText(leagueId);
+      await updateDataHash(category);
+    };
+
     public func addNewDataHash(category: Text) : async () {
-      let exists = Array.find<Base.DataHash>(dataHashes, func(foundHash: Base.DataHash) : Bool {
-        foundHash.category == category;
-      });
+      let exists = findHash(category);
       if(Option.isNull(exists)){
         let hashBuffer = Buffer.fromArray<Base.DataHash>(dataHashes);
         let randomHash = await SHA224.getRandomHash();
@@ -328,6 +347,23 @@ module {
       }
     };
 
+    public func ensureLeagueHashes(leagueIds: [Nat]): async () {
+      for (leagueId in Iter.fromArray(leagueIds)) {
+        let fixtureCategory = "fixtures_" # Nat.toText(leagueId);
+        let clubCategory = "clubs_" # Nat.toText(leagueId);
+        let playerCategory = "players_" # Nat.toText(leagueId);
+        let playerEventCategory = "player_events_" # Nat.toText(leagueId);
+        let countryCategory = "countries_" # Nat.toText(leagueId);
+        let seasonCategory = "seasons_" # Nat.toText(leagueId);
+        await addNewDataHash(fixtureCategory);
+        await addNewDataHash(clubCategory);
+        await addNewDataHash(playerCategory);
+        await addNewDataHash(playerEventCategory);
+        await addNewDataHash(countryCategory);
+        await addNewDataHash(seasonCategory);
+      }
+    };
+    
     public func getDataHashes() : Result.Result<[ResponseDTOs.DataHashDTO], T.Error> {
       return #ok(dataHashes)
     };

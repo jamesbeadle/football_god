@@ -19,6 +19,12 @@ export class FixtureService {
     );
   }
 
+  async getFixturesHash(leagueId: number): Promise<string> {
+    const result = await this.actor.getFixturesHash(leagueId);
+    if (isError(result)) throw new Error("Failed to fetch fixtures hash");
+    return result.ok;
+  }
+
   async getPostponedFixtures(): Promise<FixtureDTO[]> {
     const result = await this.actor.getPostponedFixtures();
     if (isError(result)) throw new Error("Failed to fetch postponed fixtures");

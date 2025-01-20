@@ -53,7 +53,7 @@
   onMount(async () => {
     try {
       //test
-      await leagueStore.syncLeagues();
+      //await leagueStore.syncLeagues();
       leagues = await leagueStore.getLeagues();
     } catch (error) {
       console.error("Error fetching leagues:", error);
@@ -91,11 +91,22 @@
     }
   }
 
-  function toggleLeague(leagueId: LeagueId) {
-    expandedLeagues[leagueId] = !expandedLeagues[leagueId];
-    expandedLeagues = { ...expandedLeagues };
-    if (expandedLeagues[leagueId] && !leagueFixtures[leagueId]) {
-      fetchLeagueData(leagueId);
+  async function toggleLeague(leagueId: LeagueId) {
+    if (expandedLeagues[leagueId]) {
+      expandedLeagues[leagueId] = false;
+    } else {
+      expandedLeagues[leagueId] = true;
+      loadingFixtures[leagueId] = true;
+
+      try {
+        await fetchLeagueData(leagueId);
+        await leagueStore.syncLeagues();
+        await fixtureStore.syncFixtures(leagueId);
+      } catch (error) {
+        console.error(`Error while toggling league ${leagueId}:`, error);
+      } finally {
+        loadingFixtures[leagueId] = false;
+      }
     }
   }
 
@@ -173,7 +184,6 @@
 
   function getOddsForFixture(leagueId: LeagueId, fixtureId: number) {
     return filteredBettingFixtures(leagueId).find((x) => x.fixtureId === fixtureId);
-    //return filteredBettingFixtures(leagueId).find((x) => x.id === fixtureId);
   }
 
   function selectCorrectResultHome(leagueId: number, fixtureId: number, odds: number) {
