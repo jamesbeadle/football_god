@@ -29,12 +29,15 @@ import BettingTypes "types/betting_types";
 import Utilities "utilities/utilities";
 import Management "utilities/Management";
 import ProfileCanister "canister_definitions/profile-canister";
+import AppTypes "types/app_types";
+import KYCManager "managers/kyc_manager";
 
 actor Self {
 
   private let ledger = FPLLedger.FPLLedger();
   private let userManager = UserManager.UserManager(); 
   private let oddsManager = OddsManager.OddsManager(); 
+  private let kycManager = KYCManager.KYCManager();
   
   private stable var openBets: [BettingTypes.BetSlip] = [];
   private stable var totalBetsStaked: Nat64 = 0;
@@ -134,6 +137,13 @@ actor Self {
       getPlayers : shared query (leagueId: FootballTypes.LeagueId) -> async Result.Result<[ResponseDTOs.PlayerDTO], T.Error>;
     };
     return await data_canister.getPlayers(leagueId);
+  };
+
+  public shared composite query func getLoanedPlayers(leagueId: FootballTypes.LeagueId) : async Result.Result<[ResponseDTOs.LoanedPlayerDTO], T.Error> {  
+    let data_canister = actor (Environment.DATA_CANISTER_ID) : actor {
+      getLoanedPlayers : shared query (leagueId: FootballTypes.LeagueId) -> async Result.Result<[ResponseDTOs.LoanedPlayerDTO], T.Error>;
+    };
+    return await data_canister.getLoanedPlayers(leagueId);
   };
 
   public shared composite query func getSeasons(leagueId: FootballTypes.LeagueId) : async Result.Result<[ResponseDTOs.SeasonDTO], T.Error>  {
@@ -443,16 +453,16 @@ actor Self {
     return;
   };
 
-  public shared ({ caller }) func executeRecallPlayer(leagueId: FootballTypes.LeagueId, dto : GovernanceDTOs.RecallPlayerDTO) : async () {
+  public shared ({ caller }) func executeRecallPlayer(dto : GovernanceDTOs.RecallPlayerDTO) : async () {
     //assert Principal.toText(caller) == NetworkEnvironmentVariables.OPENFPL_GOVERNANCE_CANISTER_ID;
     assert checkDataManager(Principal.toText(caller));
 
     //TODO: Implement validation check
 
     let data_canister = actor (Environment.DATA_CANISTER_ID) : actor {
-      recallPlayer : (leagueId: FootballTypes.LeagueId, dto : GovernanceDTOs.RecallPlayerDTO) -> async Result.Result<(), T.Error>;
+      recallPlayer : (dto : GovernanceDTOs.RecallPlayerDTO) -> async Result.Result<(), T.Error>;
     };
-    let _ = await data_canister.recallPlayer(leagueId, dto);
+    let _ = await data_canister.recallPlayer(dto);
     return;
   };
 
@@ -815,6 +825,7 @@ actor Self {
   private stable var stable_unique_profile_canister_ids: [Base.CanisterId] = [];
   private stable var stable_active_profile_canister_id: Text = "";
   private stable var stable_usernames: [(Base.PrincipalId, Text)] = [];
+  private stable var stable_kyc_profiles: [(Base.PrincipalId, AppTypes.ShuftiResponse)] = [];
 
   //Odds Manager
   private stable var stable_match_odds_cache: [(FootballTypes.LeagueId, [(FootballTypes.FixtureId, BettingTypes.MatchOdds)])] = [];
@@ -825,6 +836,8 @@ actor Self {
     stable_active_profile_canister_id := userManager.getStableActiveProfileCanisterId();
     stable_usernames := userManager.getStableUsernames();
     stable_match_odds_cache := oddsManager.getStableMatchOddsCache();
+
+    stable_kyc_profiles := kycManager.getStableKYCProfiles();
   };
 
   system func postupgrade() {
@@ -834,6 +847,8 @@ actor Self {
     userManager.setStableActiveProfileCanisterId(stable_active_profile_canister_id);
     userManager.setStableUsernames(stable_usernames);
     oddsManager.setStableMatchOddsCache(stable_match_odds_cache);
+
+    kycManager.setStableKYCProfiles(stable_kyc_profiles);
 
     ignore Timer.setTimer<system>(#nanoseconds(Int.abs(1)), postUpgradeCallback); 
   };
@@ -1048,6 +1063,10 @@ actor Self {
     assert Principal.toText(caller) == Environment.DATA_CANISTER_ID;
     await oddsManager.recalculate(leagueId);
     return #ok();
+  };
+
+  public shared func kycVerificationCallback(response: AppTypes.ShuftiResponse) : async () {
+
   };
    
 };

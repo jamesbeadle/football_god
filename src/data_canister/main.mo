@@ -208,6 +208,10 @@ import Debug "mo:base/Debug";
               shirtNumber = player.shirtNumber;
               status = player.status;
               valueQuarterMillions = player.valueQuarterMillions;
+              leagueId = player.leagueId;
+              parentLeagueId = player.parentLeagueId;
+              parentClubId = player.parentClubId;
+              currentLoanEndDate = player.currentLoanEndDate;
             };
 
           }));
@@ -243,6 +247,10 @@ import Debug "mo:base/Debug";
               shirtNumber = player.shirtNumber;
               status = player.status;
               valueQuarterMillions = player.valueQuarterMillions;
+              leagueId = player.leagueId;
+              parentLeagueId = player.parentLeagueId;
+              parentClubId = player.parentClubId;
+              currentLoanEndDate = player.currentLoanEndDate;
             };
 
           }));
@@ -431,7 +439,7 @@ import Debug "mo:base/Debug";
       };
     };
 
-    public shared query ( {caller} ) func getLoanedPlayers(leagueId: FootballTypes.LeagueId, dto: RequestDTOs.ClubFilterDTO) : async Result.Result<[ResponseDTOs.PlayerDTO], T.Error>{
+    public shared query ( {caller} ) func getLoanedPlayers(leagueId: FootballTypes.LeagueId) : async Result.Result<[ResponseDTOs.LoanedPlayerDTO], T.Error>{
       assert callerAllowed(caller);
 
       let filteredLeaguePlayers = Array.find<(FootballTypes.LeagueId, [FootballTypes.Player])>(leaguePlayers, 
@@ -443,10 +451,10 @@ import Debug "mo:base/Debug";
         case (?foundLeaguePlayers){             
 
           let loanedClubPlayers = Array.filter<FootballTypes.Player>(foundLeaguePlayers.1, func(player: FootballTypes.Player) : Bool {
-            player.status == #OnLoan and player.clubId == dto.clubId
+            player.parentClubId > 0
           });
 
-          return #ok(Array.map<FootballTypes.Player, ResponseDTOs.PlayerDTO>(loanedClubPlayers, func(player: FootballTypes.Player){
+          return #ok(Array.map<FootballTypes.Player, ResponseDTOs.LoanedPlayerDTO>(loanedClubPlayers, func(player: FootballTypes.Player){
             
             return {
               clubId = player.clubId;
@@ -460,6 +468,10 @@ import Debug "mo:base/Debug";
               status = player.status;
               totalPoints = 0;
               valueQuarterMillions = player.valueQuarterMillions;
+              currentLoanEndDate = player.currentLoanEndDate;
+              parentClubId = player.parentClubId;
+              parentLeagueId = player.parentLeagueId;
+              leagueId = player.leagueId;
             };
 
           }));
@@ -499,6 +511,10 @@ import Debug "mo:base/Debug";
               status = player.status;
               totalPoints = 0;
               valueQuarterMillions = player.valueQuarterMillions;
+              leagueId = player.leagueId;
+              parentLeagueId = player.parentLeagueId;
+              parentClubId = player.parentClubId;
+              currentLoanEndDate = player.currentLoanEndDate;
             };
 
           }));
@@ -1563,63 +1579,98 @@ import Debug "mo:base/Debug";
       return #ok();
     };
 
-    public shared ( {caller} ) func recallPlayer(leagueId: FootballTypes.LeagueId, dto : GovernanceDTOs.RecallPlayerDTO) : async Result.Result<(), T.Error>{
+    public shared ( {caller} ) func recallPlayer(dto: GovernanceDTOs.RecallPlayerDTO) : async Result.Result<(), T.Error>{
       assert callerAllowed(caller);
-      assert leagueExists(leagueId);
+      assert leagueExists(dto.recallFromLeagueId);
 
-      leaguePlayers := Array.map<(FootballTypes.LeagueId, [FootballTypes.Player]), (FootballTypes.LeagueId, [FootballTypes.Player])>(leaguePlayers, 
-        func(leaguePlayersEntry: (FootballTypes.LeagueId, [FootballTypes.Player])){
-          if(leaguePlayersEntry.0 == leagueId){
-
-            let existingPlayer = Array.find<FootballTypes.Player>(leaguePlayersEntry.1, func(player: FootballTypes.Player) : Bool{
-              player.id == dto.playerId
-            });
-
-            let updatedPlayersBuffer = Buffer.fromArray<FootballTypes.Player>(Array.filter<FootballTypes.Player>(leaguePlayersEntry.1, func(player: FootballTypes.Player) : Bool{
-              player.id != dto.playerId
-            }));
-
-            switch(existingPlayer){
-              case (?currentPlayer){
-                let updatedPlayer: FootballTypes.Player = {
-                  id = currentPlayer.id;
-                  leagueId = currentPlayer.leagueId;
-                  clubId = currentPlayer.clubId;
-                  position = currentPlayer.position;
-                  firstName = currentPlayer.firstName;
-                  lastName = currentPlayer.lastName;
-                  shirtNumber = currentPlayer.shirtNumber;
-                  valueQuarterMillions = currentPlayer.valueQuarterMillions;
-                  dateOfBirth = currentPlayer.dateOfBirth;
-                  nationality = currentPlayer.nationality;
-                  seasons = currentPlayer.seasons;
-                  valueHistory = currentPlayer.valueHistory;
-                  status = currentPlayer.status;
-                  parentLeagueId = currentPlayer.parentLeagueId;
-                  parentClubId = currentPlayer.parentClubId;
-                  currentLoanEndDate = Time.now();
-                  latestInjuryEndDate = currentPlayer.latestInjuryEndDate;
-                  injuryHistory = currentPlayer.injuryHistory;
-                  retirementDate = currentPlayer.retirementDate;
-                  transferHistory = currentPlayer.transferHistory;
-                  gender = currentPlayer.gender;
-                };
-                updatedPlayersBuffer.add(updatedPlayer);
-
-              };
-              case (null){
-
-              }
-            };
-
-            return (leaguePlayersEntry.0, Buffer.toArray(updatedPlayersBuffer));
-          } else {
-            return leaguePlayersEntry;
-          }
+      let fromPlayerLeagueResult = Array.find(leaguePlayers, func(entry: (FootballTypes.LeagueId, [FootballTypes.Player])) : Bool {
+        entry.0 == dto.recallFromLeagueId
       });
-      await loanExpiredCallback();
-      let _ = await notifyAppsOfTransfer(leagueId, dto.playerId);
-      return #ok();
+
+      switch(fromPlayerLeagueResult){
+        case (?foundLeaguePlayers){
+          let foundPlayer = Array.find<FootballTypes.Player>(foundLeaguePlayers.1, func(entry: FootballTypes.Player) : Bool {
+            entry.id == dto.playerId
+          });
+          switch(foundPlayer){
+            case (?player){
+              leaguePlayers := Array.map<(FootballTypes.LeagueId, [FootballTypes.Player]), (FootballTypes.LeagueId, [FootballTypes.Player])>(leaguePlayers, func(entry: (FootballTypes.LeagueId, [FootballTypes.Player])){
+                if(entry.0 == dto.recallFromLeagueId and dto.recallFromLeagueId == player.parentLeagueId){
+                  return (entry.0, Array.map<FootballTypes.Player, FootballTypes.Player>(entry.1, func(playerEntry: FootballTypes.Player){
+                    if(playerEntry.id == player.id){
+                      return {
+                        clubId = playerEntry.parentClubId;
+                        currentLoanEndDate = 0;
+                        dateOfBirth = playerEntry.dateOfBirth;
+                        firstName = playerEntry.firstName;
+                        gender = playerEntry.gender;
+                        id = playerEntry.id;
+                        injuryHistory = playerEntry.injuryHistory;
+                        lastName = playerEntry.lastName;
+                        latestInjuryEndDate = playerEntry.latestInjuryEndDate;
+                        leagueId = playerEntry.leagueId;
+                        nationality = playerEntry.nationality;
+                        parentClubId = 0;
+                        parentLeagueId = 0;
+                        position = playerEntry.position;
+                        retirementDate = playerEntry.retirementDate;
+                        seasons = playerEntry.seasons;
+                        shirtNumber = playerEntry.shirtNumber;
+                        status = playerEntry.status;
+                        transferHistory = playerEntry.transferHistory;
+                        valueHistory = playerEntry.valueHistory;
+                        valueQuarterMillions = playerEntry.valueQuarterMillions;
+                      };
+                    } else {
+                      return playerEntry;
+                    }
+                  }));
+                }
+                else if(entry.0 == dto.recallFromLeagueId){
+                  return (entry.0, Array.filter<FootballTypes.Player>(entry.1, func(playerEntry: FootballTypes.Player){
+                    playerEntry.id != player.id
+                  }));
+                } else if (entry.0 == player.parentLeagueId) {
+                  let playerBuffer = Buffer.fromArray<FootballTypes.Player>(entry.1);
+                  playerBuffer.add({
+                      clubId = player.parentClubId;
+                      currentLoanEndDate = 0;
+                      dateOfBirth = player.dateOfBirth;
+                      firstName = player.firstName;
+                      gender = player.gender;
+                      id = player.id;
+                      injuryHistory = player.injuryHistory;
+                      lastName = player.lastName;
+                      latestInjuryEndDate = player.latestInjuryEndDate;
+                      leagueId = player.parentLeagueId;
+                      nationality = player.nationality;
+                      parentClubId = 0;
+                      parentLeagueId = 0;
+                      position = player.position;
+                      retirementDate = player.retirementDate;
+                      seasons = player.seasons;
+                      shirtNumber = player.shirtNumber;
+                      status = #Active;
+                      transferHistory = player.transferHistory;
+                      valueHistory = player.valueHistory;
+                      valueQuarterMillions = player.valueQuarterMillions;
+                    });
+                  return (entry.0, Buffer.toArray(playerBuffer));
+                } else {
+                  return entry;
+                };
+              });
+
+              let _ = await notifyAppsOfTransfer(dto.recallFromLeagueId, dto.playerId);
+              let _ = await notifyAppsOfTransfer(player.parentLeagueId, dto.playerId);
+              return #ok();
+            };
+            case (null){};
+          };
+        };
+        case (null){};
+      };
+      return #err(#NotFound);
     };
 
     public shared ( {caller} ) func createPlayer(leagueId: FootballTypes.LeagueId, dto : GovernanceDTOs.CreatePlayerDTO) : async Result.Result<(), T.Error>{

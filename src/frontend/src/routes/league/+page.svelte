@@ -13,6 +13,7 @@
     import LeagueFixtures from "$lib/components/league/league-fixtures.svelte";
     import FullScreenSpinner from "$lib/components/shared/full-screen-spinner.svelte";
     import type { LeagueStatus } from "../../../../declarations/data_canister/data_canister.did";
+    import LeagueLoanedPlayers from "$lib/components/league/league-loaned-players.svelte";
     
     let isLoading = true;
     let countries: CountryDTO[] = [];
@@ -121,6 +122,11 @@
           on:click={() => setActiveTab("fixtures")}>
           Fixtures
         </button>
+        <button 
+          class={`p-2 ${activeTab === "loaned-players" ? "text-white border-b-2 border-white" : "text-BrandDisabled"}`} 
+          on:click={() => setActiveTab("loaned-players")}>
+          Loaned Players
+        </button>
       </div>
 
       {#if activeTab === "clubs"}
@@ -128,6 +134,9 @@
       {/if}
       {#if activeTab === "fixtures"}
         <LeagueFixtures leagueId={league.id} />
+      {/if}
+      {#if activeTab === "loaned-players"}
+        <LeagueLoanedPlayers leagueId={league.id} />
       {/if}
     {:else}
       <p>League not found.</p>

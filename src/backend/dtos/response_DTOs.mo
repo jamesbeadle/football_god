@@ -48,6 +48,27 @@ module ResponseDTOs {
     dateOfBirth : Int;
     nationality : Base.CountryId;
     status : FootballTypes.PlayerStatus;
+    leagueId: FootballTypes.LeagueId;
+    parentLeagueId: FootballTypes.LeagueId;
+    parentClubId: FootballTypes.ClubId;
+    currentLoanEndDate: Int;
+  };
+
+  public type LoanedPlayerDTO = {
+    id : Nat16;
+    clubId : FootballTypes.ClubId;
+    position : FootballTypes.PlayerPosition;
+    firstName : Text;
+    lastName : Text;
+    shirtNumber : Nat8;
+    valueQuarterMillions : Nat16;
+    dateOfBirth : Int;
+    nationality : Base.CountryId;
+    status : FootballTypes.PlayerStatus;
+    currentLoanEndDate: Int;
+    parentClubId: FootballTypes.ClubId;
+    parentLeagueId: FootballTypes.LeagueId;
+    leagueId: FootballTypes.LeagueId;
   };
 
   public type SnapshotPlayerDTO = {

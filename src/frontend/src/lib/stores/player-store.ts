@@ -1,16 +1,21 @@
 import type {
   CreatePlayerDTO,
   LeagueId,
+  PlayerId,
   LoanPlayerDTO,
   SetFreeAgentDTO,
   TransferPlayerDTO,
   UpdatePlayerDTO,
-} from "../../../../declarations/backend/backend.did";
+} from "../../../../declarations/data_canister/data_canister.did";
 import { PlayerService } from "../services/player-service";
 
 function createPlayerStore() {
   async function getPlayers(leagueId: LeagueId) {
     return new PlayerService().getPlayers(leagueId);
+  }
+
+  async function getLoanedPlayers(leagueId: LeagueId) {
+    return new PlayerService().getLoanedPlayers(leagueId);
   }
 
   async function transferPlayer(
@@ -48,6 +53,13 @@ function createPlayerStore() {
     return new PlayerService().updatePlayer(leagueId, dto);
   }
 
+  async function recallLoan(
+    recallFromLeagueId: LeagueId,
+    recallPlayerId: PlayerId,
+  ): Promise<any> {
+    return new PlayerService().recallLoan(recallFromLeagueId, recallPlayerId);
+  }
+
   return {
     getPlayers,
     transferPlayer,
@@ -55,6 +67,8 @@ function createPlayerStore() {
     loanPlayer,
     createPlayer,
     updatePlayer,
+    getLoanedPlayers,
+    recallLoan,
   };
 }
 
