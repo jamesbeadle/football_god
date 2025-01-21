@@ -117,6 +117,14 @@ actor Self {
 
   /* Data functions */
 
+  //Giving me ic0 trap error
+  public shared composite query func getPlayerDetailsForGameweek(leagueId: FootballTypes.LeagueId, dto: RequestDTOs.GameweekFiltersDTO) : async Result.Result<ResponseDTOs.PlayerDetailDTO, T.Error> {
+    let data_canister = actor (Environment.DATA_CANISTER_ID) : actor {
+      getPlayerDetailsForGameweek : shared query (leagueId: FootballTypes.LeagueId, dto: RequestDTOs.GameweekFiltersDTO) -> async Result.Result<ResponseDTOs.PlayerDetailDTO, T.Error>;
+    };
+    return await data_canister.getPlayerDetailsForGameweek(leagueId, dto);
+  };
+
   public shared composite query func getDataHashes(): async Result.Result<[ResponseDTOs.DataHashDTO], T.Error> {
     
     return oddsManager.getDataHashes();

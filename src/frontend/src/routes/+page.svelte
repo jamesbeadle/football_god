@@ -21,6 +21,8 @@
   import { bettingStore } from "$lib/stores/betting-store";
   import { betSlipStore } from "$lib/stores/bet-slip-store";
 
+  import { storeManager } from "$lib/managers/store-manager";
+
   import { convertDateToReadable } from "$lib/utils/helpers";
 
   import type {
@@ -35,8 +37,8 @@
   } from "../../../declarations/data_canister/data_canister.did";
 
   import type { HomePageFixtureDTO } from "../../../declarations/backend/backend.did";
-    import { betSlipDataStore } from "$lib/stores/bet-slip-data-store";
-    import { buildBetUiDescription } from "$lib/utils/buildBetUiDescription";
+  import { betSlipDataStore } from "$lib/stores/bet-slip-data-store";
+  import { buildBetUiDescription } from "$lib/utils/buildBetUiDescription";
 
   let isLoading = true;
   let isBetSlipExpanded = false;
@@ -52,8 +54,6 @@
 
   onMount(async () => {
     try {
-      //test
-      //await leagueStore.syncLeagues();
       leagues = await leagueStore.getLeagues();
     } catch (error) {
       console.error("Error fetching leagues:", error);
@@ -100,8 +100,7 @@
 
       try {
         await fetchLeagueData(leagueId);
-        await leagueStore.syncLeagues();
-        await fixtureStore.syncFixtures(leagueId);
+        await storeManager.syncStores(leagueId);
       } catch (error) {
         console.error(`Error while toggling league ${leagueId}:`, error);
       } finally {
@@ -128,7 +127,6 @@
   function filteredBettingFixtures(leagueId: LeagueId) {
     const gw = selectedGameweeks[leagueId];
     const all = allBettingFixtures[leagueId] ?? [];
-    //const all = leagueFixtures[leagueId] ?? [];
     return all.filter((f) => f.gameweek === gw);
   }
 
@@ -171,7 +169,6 @@
     uiDescription: description,
   });
 }
-
 
   function isBetSelected(
     leagueId: number,

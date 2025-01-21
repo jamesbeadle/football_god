@@ -285,15 +285,15 @@ module {
     //Stable storage
 
      private var dataHashes : [Base.DataHash] = [
-      { category = "leagues"; hash = "OPENFPL_1" },
-      { category = "clubs"; hash = "OPENFPL_1" },
-      { category = "fixtures"; hash = "OPENFPL_1" },
-      { category = "players"; hash = "OPENFPL_1" },
-      { category = "player_events"; hash = "OPENFPL_1" },
-      { category = "countries"; hash = "OPENFPL_1" },
-      { category = "app_status"; hash = "OPENFPL_1" },
-      { category = "league_status"; hash = "OPENFPL_1" },
-      { category = "seasons"; hash = "OPENFPL_1" }
+      { category = "leagues"; hash = "FOOTBALLGOD" },
+      { category = "clubs"; hash = "FOOTBALLGOD" },
+      { category = "fixtures"; hash = "FOOTBALLGOD" },
+      { category = "players"; hash = "FOOTBALLGOD" },
+      { category = "player_events"; hash = "FOOTBALLGOD" },
+      { category = "countries"; hash = "FOOTBALLGOD" },
+      { category = "app_status"; hash = "FOOTBALLGOD" },
+      { category = "league_status"; hash = "FOOTBALLGOD" },
+      { category = "seasons"; hash = "FOOTBALLGOD" }
     ];
 
     private func findHash(category: Text): ?Base.DataHash {
@@ -352,15 +352,17 @@ module {
         let fixtureCategory = "fixtures_" # Nat.toText(leagueId);
         let clubCategory = "clubs_" # Nat.toText(leagueId);
         let playerCategory = "players_" # Nat.toText(leagueId);
-        let playerEventCategory = "player_events_" # Nat.toText(leagueId);
-        let countryCategory = "countries_" # Nat.toText(leagueId);
+        //let playerEventCategory = "player_events_" # Nat.toText(leagueId);
+        let countryCategory = "countries";
         let seasonCategory = "seasons_" # Nat.toText(leagueId);
+        let leagueStatusCategory = "league_status_" # Nat.toText(leagueId);
         await addNewDataHash(fixtureCategory);
         await addNewDataHash(clubCategory);
         await addNewDataHash(playerCategory);
-        await addNewDataHash(playerEventCategory);
+        //await addNewDataHash(playerEventCategory);
         await addNewDataHash(countryCategory);
         await addNewDataHash(seasonCategory);
+        await addNewDataHash(leagueStatusCategory);
       }
     };
     
