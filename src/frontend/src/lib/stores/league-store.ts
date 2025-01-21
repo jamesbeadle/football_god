@@ -82,14 +82,14 @@ function createLeagueStore() {
         );
       });
 
-      update((current) => 
+      update((current) =>
         filteredLeagues.reduce(
           (acc, league) => {
             acc[league.id] = league;
             return acc;
           },
           {} as Record<number, FootballLeagueDTO>,
-        )
+        ),
       );
     } catch (error) {
       console.error("Error syncing leagues:", error);
@@ -97,7 +97,7 @@ function createLeagueStore() {
       const cached = localStorage.getItem("leagues");
       if (cached) {
         const leagues = deserializeData(cached) as FootballLeagueDTO[];
-        update((current) => 
+        update((current) =>
           leagues.reduce(
             (acc, league) => {
               acc[league.id] = league;
@@ -116,7 +116,10 @@ function createLeagueStore() {
       const localLeagueStatusKey = `league_status_${leagueId}`;
 
       const localHash = localStorage.getItem(localHashKey);
-      const leagueStatusHash = await new DataHashService().getCategoryHash("league_status", leagueId);
+      const leagueStatusHash = await new DataHashService().getCategoryHash(
+        "league_status",
+        leagueId,
+      );
 
       let leagueStatus: LeagueStatus;
 

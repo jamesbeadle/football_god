@@ -24,7 +24,10 @@ function createPlayerStore() {
       const localPlayersKey = `players_${leagueId}`;
 
       const localHash = localStorage.getItem(localHashKey);
-      const playersHash = await new DataHashService().getCategoryHash("players",leagueId);
+      const playersHash = await new DataHashService().getCategoryHash(
+        "players",
+        leagueId,
+      );
       let players: PlayerDTO[];
 
       if (!localHash || playersHash !== localHash) {

@@ -4719,7 +4719,7 @@ const options = {
 		<div class="error">
 			<span class="status">` + status + '</span>\n			<div class="message">\n				<h1>' + message + "</h1>\n			</div>\n		</div>\n	</body>\n</html>\n"
   },
-  version_hash: "1gemknn"
+  version_hash: "qntyk2"
 };
 async function get_hooks() {
   return {};
@@ -4857,6 +4857,7 @@ const AUTH_MAX_TIME_TO_LIVE = BigInt(
 );
 const AUTH_POPUP_WIDTH = 576;
 const AUTH_POPUP_HEIGHT = 625;
+const MAX_CACHED_LEAGUES = 1;
 const createAuthClient = () => AuthClient.create({
   idleOptions: {
     disableIdle: true,
@@ -5267,7 +5268,7 @@ const idlFactory = ({ IDL }) => {
     "expectedReturns": IDL.Nat64,
     "settledOn": IDL.Int
   });
-  const Result_18 = IDL.Variant({ "ok": IDL.Vec(BetSlip), "err": Error2 });
+  const Result_19 = IDL.Variant({ "ok": IDL.Vec(BetSlip), "err": Error2 });
   const HomePageFixtureDTO = IDL.Record({
     "fixtureId": FixtureId,
     "homeOdds": IDL.Float64,
@@ -5276,7 +5277,7 @@ const idlFactory = ({ IDL }) => {
     "gameweek": GameweekNumber,
     "leagueId": LeagueId
   });
-  const Result_17 = IDL.Variant({
+  const Result_18 = IDL.Variant({
     "ok": IDL.Vec(HomePageFixtureDTO),
     "err": Error2
   });
@@ -5285,12 +5286,12 @@ const idlFactory = ({ IDL }) => {
     "code": IDL.Text,
     "name": IDL.Text
   });
-  const Result_16 = IDL.Variant({ "ok": IDL.Vec(CountryDTO), "err": Error2 });
+  const Result_17 = IDL.Variant({ "ok": IDL.Vec(CountryDTO), "err": Error2 });
   const DataHash = IDL.Record({ "hash": IDL.Text, "category": IDL.Text });
-  const Result_15 = IDL.Variant({ "ok": IDL.Vec(DataHash), "err": Error2 });
+  const Result_16 = IDL.Variant({ "ok": IDL.Vec(DataHash), "err": Error2 });
   const DataHashDTO = IDL.Record({ "hash": IDL.Text, "category": IDL.Text });
-  const Result_14 = IDL.Variant({ "ok": IDL.Vec(DataHashDTO), "err": Error2 });
-  const Result_13 = IDL.Variant({ "ok": IDL.Vec(FixtureDTO), "err": Error2 });
+  const Result_15 = IDL.Variant({ "ok": IDL.Vec(DataHashDTO), "err": Error2 });
+  const Result_14 = IDL.Variant({ "ok": IDL.Vec(FixtureDTO), "err": Error2 });
   const ClubDTO = IDL.Record({
     "id": ClubId,
     "secondaryColourHex": IDL.Text,
@@ -5301,7 +5302,7 @@ const idlFactory = ({ IDL }) => {
     "shirtType": ShirtType,
     "primaryColourHex": IDL.Text
   });
-  const Result_12 = IDL.Variant({ "ok": IDL.Vec(ClubDTO), "err": Error2 });
+  const Result_13 = IDL.Variant({ "ok": IDL.Vec(ClubDTO), "err": Error2 });
   const PlayerStatus = IDL.Variant({
     "OnLoan": IDL.Null,
     "Active": IDL.Null,
@@ -5320,7 +5321,7 @@ const idlFactory = ({ IDL }) => {
     "lastName": IDL.Text,
     "firstName": IDL.Text
   });
-  const Result_11 = IDL.Variant({ "ok": IDL.Vec(PlayerDTO), "err": Error2 });
+  const Result_12 = IDL.Variant({ "ok": IDL.Vec(PlayerDTO), "err": Error2 });
   const CalendarMonth = IDL.Nat8;
   const LeagueStatus = IDL.Record({
     "transferWindowEndMonth": IDL.Nat8,
@@ -5337,7 +5338,7 @@ const idlFactory = ({ IDL }) => {
     "leagueId": LeagueId,
     "seasonActive": IDL.Bool
   });
-  const Result_10 = IDL.Variant({ "ok": LeagueStatus, "err": Error2 });
+  const Result_11 = IDL.Variant({ "ok": LeagueStatus, "err": Error2 });
   const FootballLeagueDTO = IDL.Record({
     "id": LeagueId,
     "logo": IDL.Vec(IDL.Nat8),
@@ -5349,7 +5350,7 @@ const idlFactory = ({ IDL }) => {
     "governingBody": IDL.Text,
     "formed": IDL.Int
   });
-  const Result_9 = IDL.Variant({
+  const Result_10 = IDL.Variant({
     "ok": IDL.Vec(FootballLeagueDTO),
     "err": Error2
   });
@@ -5416,7 +5417,47 @@ const idlFactory = ({ IDL }) => {
     "halfTimeFullTimeResult": IDL.Vec(HalfTimeFullTimeOdds),
     "bothTeamsToScoreAndWinner": IDL.Vec(ResultAndYesNoSelectionOdds)
   });
-  const Result_8 = IDL.Variant({ "ok": MatchOddsDTO, "err": Error2 });
+  const Result_9 = IDL.Variant({ "ok": MatchOddsDTO, "err": Error2 });
+  const GameweekFiltersDTO = IDL.Record({
+    "seasonId": SeasonId,
+    "gameweek": GameweekNumber
+  });
+  const InjuryHistory = IDL.Record({
+    "description": IDL.Text,
+    "injuryStartDate": IDL.Int,
+    "expectedEndDate": IDL.Int
+  });
+  const PlayerGameweekDTO = IDL.Record({
+    "fixtureId": FixtureId,
+    "events": IDL.Vec(PlayerEventData),
+    "number": IDL.Nat8,
+    "points": IDL.Int16
+  });
+  const ValueHistory = IDL.Record({
+    "oldValue": IDL.Nat16,
+    "changedOn": IDL.Int,
+    "newValue": IDL.Nat16
+  });
+  const PlayerDetailDTO = IDL.Record({
+    "id": PlayerId,
+    "status": PlayerStatus,
+    "clubId": ClubId,
+    "parentClubId": ClubId,
+    "valueQuarterMillions": IDL.Nat16,
+    "dateOfBirth": IDL.Int,
+    "injuryHistory": IDL.Vec(InjuryHistory),
+    "seasonId": SeasonId,
+    "gameweeks": IDL.Vec(PlayerGameweekDTO),
+    "nationality": CountryId,
+    "retirementDate": IDL.Int,
+    "valueHistory": IDL.Vec(ValueHistory),
+    "latestInjuryEndDate": IDL.Int,
+    "shirtNumber": IDL.Nat8,
+    "position": PlayerPosition,
+    "lastName": IDL.Text,
+    "firstName": IDL.Text
+  });
+  const Result_8 = IDL.Variant({ "ok": PlayerDetailDTO, "err": Error2 });
   const ProfileDTO = IDL.Record({
     "username": IDL.Text,
     "maxBetLimit": IDL.Nat64,
@@ -5550,25 +5591,30 @@ const idlFactory = ({ IDL }) => {
     "executeUpdateClub": IDL.Func([LeagueId, UpdateClubDTO], [], []),
     "executeUpdateLeague": IDL.Func([UpdateLeagueDTO], [], []),
     "executeUpdatePlayer": IDL.Func([LeagueId, UpdatePlayerDTO], [], []),
-    "getBets": IDL.Func([GetBetsDTO], [Result_18], []),
+    "getBets": IDL.Func([GetBetsDTO], [Result_19], []),
     "getBettableHomepageFixtures": IDL.Func(
       [LeagueId],
-      [Result_17],
+      [Result_18],
       ["query"]
     ),
-    "getCountries": IDL.Func([], [Result_16], ["query"]),
+    "getCountries": IDL.Func([], [Result_17], ["query"]),
     "getDataHashForCategory": IDL.Func(
       [LeagueId, IDL.Text],
-      [Result_15],
+      [Result_16],
       ["composite_query"]
     ),
-    "getDataHashes": IDL.Func([], [Result_14], ["composite_query"]),
-    "getFixtures": IDL.Func([LeagueId], [Result_13], ["composite_query"]),
-    "getLeagueClubs": IDL.Func([LeagueId], [Result_12], ["composite_query"]),
-    "getLeaguePlayers": IDL.Func([LeagueId], [Result_11], ["composite_query"]),
-    "getLeagueStatus": IDL.Func([LeagueId], [Result_10], ["composite_query"]),
-    "getLeagues": IDL.Func([], [Result_9], ["composite_query"]),
-    "getMatchOdds": IDL.Func([LeagueId, FixtureId], [Result_8], ["query"]),
+    "getDataHashes": IDL.Func([], [Result_15], ["composite_query"]),
+    "getFixtures": IDL.Func([LeagueId], [Result_14], ["composite_query"]),
+    "getLeagueClubs": IDL.Func([LeagueId], [Result_13], ["composite_query"]),
+    "getLeaguePlayers": IDL.Func([LeagueId], [Result_12], ["composite_query"]),
+    "getLeagueStatus": IDL.Func([LeagueId], [Result_11], ["composite_query"]),
+    "getLeagues": IDL.Func([], [Result_10], ["composite_query"]),
+    "getMatchOdds": IDL.Func([LeagueId, FixtureId], [Result_9], ["query"]),
+    "getPlayerDetailsForGameweek": IDL.Func(
+      [LeagueId, GameweekFiltersDTO],
+      [Result_8],
+      ["composite_query"]
+    ),
     "getProfile": IDL.Func([], [Result_7], []),
     "getSeasons": IDL.Func([LeagueId], [Result_6], ["composite_query"]),
     "getSystemState": IDL.Func([IDL.Text], [Result_5], ["composite_query"]),
@@ -6035,16 +6081,51 @@ function Modal($$payload, $$props) {
   bind_props($$props, { showModal, onClose });
   pop();
 }
-var define_process_env_default$3 = { __CANDID_UI_CANISTER_ID: "a3shf-5eaaa-aaaaa-qaafa-cai", BACKEND_CANISTER_ID: "by6od-j4aaa-aaaaa-qaadq-cai", DATA_CANISTER_CANISTER_ID: "avqkn-guaaa-aaaaa-qaaea-cai", FRONTEND_CANISTER_ID: "asrmz-lmaaa-aaaaa-qaaeq-cai", DFX_NETWORK: "local" };
+var define_process_env_default$7 = { __CANDID_UI_CANISTER_ID: "a3shf-5eaaa-aaaaa-qaafa-cai", BACKEND_CANISTER_ID: "by6od-j4aaa-aaaaa-qaadq-cai", DATA_CANISTER_CANISTER_ID: "avqkn-guaaa-aaaaa-qaaea-cai", FRONTEND_CANISTER_ID: "asrmz-lmaaa-aaaaa-qaaeq-cai", DFX_NETWORK: "local" };
+class LeagueService {
+  actor;
+  constructor() {
+    this.actor = ActorFactory.createActor(
+      idlFactory,
+      define_process_env_default$7.BACKEND_CANISTER_ID
+    );
+  }
+  async getLeagues() {
+    const result = await this.actor.getLeagues();
+    if (isError(result)) throw new Error("Failed to fetch leagues");
+    return result.ok;
+  }
+  async createLeague(dto) {
+    const identityActor = await ActorFactory.createIdentityActor(
+      authStore,
+      define_process_env_default$7.BACKEND_CANISTER_ID
+    );
+    const result = await identityActor.executeCreateLeague(dto);
+    if (isError(result)) throw new Error("Failed to create league");
+  }
+  async updateLeague(dto) {
+    const identityActor = await ActorFactory.createIdentityActor(
+      authStore,
+      define_process_env_default$7.BACKEND_CANISTER_ID
+    );
+    const result = await identityActor.executeUpdateLeague(dto);
+    if (isError(result)) throw new Error("Failed to update league");
+  }
+  async getLeagueStatus(leagueId) {
+    const result = await this.actor.getLeagueStatus(leagueId);
+    if (isError(result)) throw new Error("Failed to fetch league status");
+    return result.ok;
+  }
+}
+var define_process_env_default$6 = { __CANDID_UI_CANISTER_ID: "a3shf-5eaaa-aaaaa-qaafa-cai", BACKEND_CANISTER_ID: "by6od-j4aaa-aaaaa-qaadq-cai", DATA_CANISTER_CANISTER_ID: "avqkn-guaaa-aaaaa-qaaea-cai", FRONTEND_CANISTER_ID: "asrmz-lmaaa-aaaaa-qaaeq-cai", DFX_NETWORK: "local" };
 class DataHashService {
   actor;
   constructor() {
-    const canisterId2 = define_process_env_default$3.BACKEND_CANISTER_ID;
+    const canisterId2 = define_process_env_default$6.BACKEND_CANISTER_ID;
     this.actor = ActorFactory.createActor(idlFactory, canisterId2);
   }
   async refreshLeagueHashes() {
     const response = await this.actor.refreshLeagueHashes();
-    console.log("Response:", response);
     if (isError(response)) {
       console.error("Error refreshing hashes:", response.err);
       throw new Error("Failed to refresh league hashes");
@@ -6057,6 +6138,7 @@ class DataHashService {
   }
   async getLeaguesHash() {
     try {
+      await this.refreshLeagueHashes();
       const allHashes = await this.getDataHashes();
       const leagueEntry = allHashes.find(
         (entry) => entry.category === "leagues"
@@ -6067,29 +6149,209 @@ class DataHashService {
       return null;
     }
   }
-  async getFixturesHash(leagueId) {
+  async getCategoryHash(category, leagueId) {
     try {
+      await this.refreshLeagueHashes();
       const allHashes = await this.getDataHashes();
-      console.log(`All hashes:`, allHashes);
-      console.log("Looking for category:", `fixtures_${leagueId}`);
-      const fixtureEntry = allHashes.find(
-        (entry) => entry.category === `fixtures_${leagueId}`
+      const entry = allHashes.find(
+        (hash2) => hash2.category === `${category}_${leagueId}`
       );
-      console.log(`Fixture entry for league ${leagueId}:`, fixtureEntry);
-      return fixtureEntry?.hash ?? null;
+      return entry?.hash ?? null;
     } catch (error) {
-      console.error("Failed to get fixtures hash:", error);
+      console.error(
+        `Failed to get ${category} hash for league ${leagueId}:`,
+        error
+      );
       return null;
     }
   }
 }
-var define_process_env_default$2 = { __CANDID_UI_CANISTER_ID: "a3shf-5eaaa-aaaaa-qaafa-cai", BACKEND_CANISTER_ID: "by6od-j4aaa-aaaaa-qaadq-cai", DATA_CANISTER_CANISTER_ID: "avqkn-guaaa-aaaaa-qaaea-cai", FRONTEND_CANISTER_ID: "asrmz-lmaaa-aaaaa-qaaeq-cai", DFX_NETWORK: "local" };
+function createLeagueStore() {
+  const { subscribe, update } = writable({});
+  const { subscribe: subscribeLeagueStatus, update: updateLeagueStatus } = writable({});
+  let leagueCacheOrder = [];
+  async function syncLeagues(toggledLeagueId) {
+    try {
+      const localHashKey = "leagues_hash";
+      const localLeaguesKey = "leagues";
+      const localHash = localStorage.getItem(localHashKey);
+      const leagueHash = await new DataHashService().getLeaguesHash();
+      let leagues;
+      if (!localHash || leagueHash !== localHash) {
+        leagues = await getLeagues();
+        localStorage.setItem(localLeaguesKey, serializeData(leagues));
+        localStorage.setItem(localHashKey, leagueHash || "");
+      } else {
+        const cached = localStorage.getItem(localLeaguesKey);
+        if (cached) {
+          const cachedLeagues = deserializeData(cached);
+          const serverLeagues = await getLeagues();
+          const cachedLeagueMap = new Map(
+            cachedLeagues.map((league) => [league.id, league])
+          );
+          serverLeagues.forEach((serverLeague) => {
+            cachedLeagueMap.set(serverLeague.id, serverLeague);
+          });
+          leagues = Array.from(
+            new Map(
+              serverLeagues.map((league) => [league.id, league])
+            ).values()
+          );
+        } else {
+          leagues = await getLeagues();
+          localStorage.setItem(localLeaguesKey, serializeData(leagues));
+        }
+      }
+      if (toggledLeagueId !== void 0) {
+        if (!leagueCacheOrder.includes(toggledLeagueId)) {
+          leagueCacheOrder.push(toggledLeagueId);
+        } else {
+          leagueCacheOrder = leagueCacheOrder.filter(
+            (id) => id !== toggledLeagueId
+          );
+          leagueCacheOrder.push(toggledLeagueId);
+        }
+      }
+      const excessLeagues = leagueCacheOrder.slice(
+        0,
+        leagueCacheOrder.length - MAX_CACHED_LEAGUES
+      );
+      const filteredLeagues = leagueCacheOrder.slice(-MAX_CACHED_LEAGUES).map((id) => leagues.find((league) => league.id === id)).filter((league) => league !== void 0);
+      localStorage.setItem(localLeaguesKey, serializeData(filteredLeagues));
+      excessLeagues.forEach((excessLeagueId) => {
+        leagueCacheOrder = leagueCacheOrder.filter(
+          (id) => id !== excessLeagueId
+        );
+      });
+      update(
+        (current) => filteredLeagues.reduce(
+          (acc, league) => {
+            acc[league.id] = league;
+            return acc;
+          },
+          {}
+        )
+      );
+    } catch (error) {
+      console.error("Error syncing leagues:", error);
+      const cached = localStorage.getItem("leagues");
+      if (cached) {
+        const leagues = deserializeData(cached);
+        update(
+          (current) => leagues.reduce(
+            (acc, league) => {
+              acc[league.id] = league;
+              return acc;
+            },
+            {}
+          )
+        );
+      }
+    }
+  }
+  async function syncLeagueStatus(leagueId) {
+    try {
+      const localHashKey = `league_status_hash_${leagueId}`;
+      const localLeagueStatusKey = `league_status_${leagueId}`;
+      const localHash = localStorage.getItem(localHashKey);
+      const leagueStatusHash = await new DataHashService().getCategoryHash(
+        "league_status",
+        leagueId
+      );
+      let leagueStatus;
+      if (!localHash || leagueStatusHash !== localHash) {
+        leagueStatus = await getLeagueStatus(leagueId);
+        localStorage.setItem(localLeagueStatusKey, serializeData(leagueStatus));
+        localStorage.setItem(localHashKey, leagueStatusHash || "");
+      } else {
+        const cached = localStorage.getItem(localLeagueStatusKey);
+        if (cached) {
+          leagueStatus = deserializeData(cached);
+        } else {
+          leagueStatus = await getLeagueStatus(leagueId);
+          localStorage.setItem(
+            localLeagueStatusKey,
+            serializeData(leagueStatus)
+          );
+        }
+      }
+      let currentStatuses = {};
+      const unsubscribe = subscribeLeagueStatus((value) => {
+        currentStatuses = value;
+      });
+      unsubscribe();
+      updateLeagueStatus((currentStatuses2) => ({
+        ...currentStatuses2,
+        [leagueId]: leagueStatus
+      }));
+      if (!leagueCacheOrder.includes(leagueId)) {
+        leagueCacheOrder.push(leagueId);
+      } else {
+        leagueCacheOrder = leagueCacheOrder.filter((id) => id !== leagueId);
+        leagueCacheOrder.push(leagueId);
+      }
+      if (leagueCacheOrder.length > MAX_CACHED_LEAGUES) {
+        const leastUsedLeagueId = leagueCacheOrder.shift();
+        if (leastUsedLeagueId !== void 0) {
+          localStorage.removeItem(`league_status_${leastUsedLeagueId}`);
+          localStorage.removeItem(`league_status_hash_${leastUsedLeagueId}`);
+        }
+      }
+    } catch (error) {
+      console.error(
+        `Error syncing league status for league ${leagueId}:`,
+        error
+      );
+      const cached = localStorage.getItem(`league_status_${leagueId}`);
+      if (cached) {
+        const leagueStatus = deserializeData(cached);
+        updateLeagueStatus((currentStatuses) => ({
+          ...currentStatuses,
+          [leagueId]: leagueStatus
+        }));
+      }
+    }
+  }
+  async function getLeagues() {
+    return new LeagueService().getLeagues();
+  }
+  async function createLeague(dto) {
+    return new LeagueService().createLeague(dto);
+  }
+  async function updateLeague(dto) {
+    return new LeagueService().updateLeague(dto);
+  }
+  async function getLeagueStatus(leagueId) {
+    return new LeagueService().getLeagueStatus(leagueId);
+  }
+  function getLeagueById(leagueId) {
+    let data = {};
+    const unsubscribe = subscribe((value) => {
+      data = value;
+    });
+    unsubscribe();
+    return data[leagueId];
+  }
+  return {
+    subscribe,
+    syncLeagues,
+    getLeagues,
+    createLeague,
+    updateLeague,
+    getLeagueStatus,
+    getLeagueById,
+    syncLeagueStatus,
+    subscribeLeagueStatus
+  };
+}
+const leagueStore = createLeagueStore();
+var define_process_env_default$5 = { __CANDID_UI_CANISTER_ID: "a3shf-5eaaa-aaaaa-qaafa-cai", BACKEND_CANISTER_ID: "by6od-j4aaa-aaaaa-qaadq-cai", DATA_CANISTER_CANISTER_ID: "avqkn-guaaa-aaaaa-qaaea-cai", FRONTEND_CANISTER_ID: "asrmz-lmaaa-aaaaa-qaaeq-cai", DFX_NETWORK: "local" };
 class ClubService {
   actor;
   constructor() {
     this.actor = ActorFactory.createActor(
       idlFactory,
-      define_process_env_default$2.BACKEND_CANISTER_ID
+      define_process_env_default$5.BACKEND_CANISTER_ID
     );
   }
   async getClubs(leagueId) {
@@ -6100,7 +6362,7 @@ class ClubService {
   async createClub(dto) {
     const identityActor = await ActorFactory.createIdentityActor(
       authStore,
-      define_process_env_default$2.BACKEND_CANISTER_ID
+      define_process_env_default$5.BACKEND_CANISTER_ID
     );
     const result = await identityActor.executeCreateClub(dto);
     if (isError(result)) throw new Error("Failed to create club");
@@ -6108,13 +6370,67 @@ class ClubService {
   async removeClub(dto) {
     const identityActor = await ActorFactory.createIdentityActor(
       authStore,
-      define_process_env_default$2.BACKEND_CANISTER_ID
+      define_process_env_default$5.BACKEND_CANISTER_ID
     );
     const result = await identityActor.executeRemoveClub(dto);
     if (isError(result)) throw new Error("Failed to remove club");
   }
 }
 function createClubStore() {
+  const { subscribe, update } = writable({});
+  let leagueCacheOrder = [];
+  async function syncClubs(leagueId) {
+    try {
+      const localHashKey = `clubs_hash_${leagueId}`;
+      const localClubsKey = `clubs_${leagueId}`;
+      const localHash = localStorage.getItem(localHashKey);
+      const clubHash = await new DataHashService().getCategoryHash(
+        "clubs",
+        leagueId
+      );
+      let clubs;
+      if (!localHash || clubHash !== localHash) {
+        clubs = await getClubs(leagueId);
+        localStorage.setItem(localClubsKey, serializeData(clubs));
+        localStorage.setItem(localHashKey, clubHash || "");
+      } else {
+        const cached = localStorage.getItem(localClubsKey);
+        if (cached) {
+          clubs = deserializeData(cached);
+        } else {
+          clubs = await getClubs(leagueId);
+          localStorage.setItem(localClubsKey, serializeData(clubs));
+        }
+      }
+      update((current) => ({
+        ...current,
+        [leagueId]: clubs
+      }));
+      if (!leagueCacheOrder.includes(leagueId)) {
+        leagueCacheOrder.push(leagueId);
+      } else {
+        leagueCacheOrder = leagueCacheOrder.filter((id) => id !== leagueId);
+        leagueCacheOrder.push(leagueId);
+      }
+      if (leagueCacheOrder.length > MAX_CACHED_LEAGUES) {
+        const leastUsedLeagueId = leagueCacheOrder.shift();
+        if (leastUsedLeagueId !== void 0) {
+          localStorage.removeItem(`clubs_${leastUsedLeagueId}`);
+          localStorage.removeItem(`clubs_hash_${leastUsedLeagueId}`);
+        }
+      }
+    } catch (error) {
+      console.error(`Error syncing clubs for league ${leagueId}:`, error);
+      const cached = localStorage.getItem(`clubs_${leagueId}`);
+      if (cached) {
+        const clubs = deserializeData(cached);
+        update((current) => ({
+          ...current,
+          [leagueId]: clubs
+        }));
+      }
+    }
+  }
   async function getClubs(leagueId) {
     return new ClubService().getClubs(leagueId);
   }
@@ -6127,17 +6443,18 @@ function createClubStore() {
   return {
     getClubs,
     createClub,
-    removeClub
+    removeClub,
+    syncClubs
   };
 }
 const clubStore = createClubStore();
-var define_process_env_default$1 = { __CANDID_UI_CANISTER_ID: "a3shf-5eaaa-aaaaa-qaafa-cai", BACKEND_CANISTER_ID: "by6od-j4aaa-aaaaa-qaadq-cai", DATA_CANISTER_CANISTER_ID: "avqkn-guaaa-aaaaa-qaaea-cai", FRONTEND_CANISTER_ID: "asrmz-lmaaa-aaaaa-qaaeq-cai", DFX_NETWORK: "local" };
+var define_process_env_default$4 = { __CANDID_UI_CANISTER_ID: "a3shf-5eaaa-aaaaa-qaafa-cai", BACKEND_CANISTER_ID: "by6od-j4aaa-aaaaa-qaadq-cai", DATA_CANISTER_CANISTER_ID: "avqkn-guaaa-aaaaa-qaaea-cai", FRONTEND_CANISTER_ID: "asrmz-lmaaa-aaaaa-qaaeq-cai", DFX_NETWORK: "local" };
 class FixtureService {
   actor;
   constructor() {
     this.actor = ActorFactory.createActor(
       idlFactory,
-      define_process_env_default$1.BACKEND_CANISTER_ID
+      define_process_env_default$4.BACKEND_CANISTER_ID
     );
   }
   async getFixturesHash(leagueId) {
@@ -6158,7 +6475,7 @@ class FixtureService {
   async moveFixture(dto) {
     const identityActor = await ActorFactory.createIdentityActor(
       authStore,
-      define_process_env_default$1.BACKEND_CANISTER_ID
+      define_process_env_default$4.BACKEND_CANISTER_ID
     );
     const result = await identityActor.executeMoveFixture(dto);
     if (isError(result)) throw new Error("Failed to move fixture");
@@ -6166,7 +6483,7 @@ class FixtureService {
   async postponeFixture(dto) {
     const identityActor = await ActorFactory.createIdentityActor(
       authStore,
-      define_process_env_default$1.BACKEND_CANISTER_ID
+      define_process_env_default$4.BACKEND_CANISTER_ID
     );
     const result = await identityActor.executePostponeFixture(dto);
     if (isError(result)) throw new Error("Failed to postpone fixture");
@@ -6174,7 +6491,7 @@ class FixtureService {
   async submitFixtureData(dto) {
     const identityActor = await ActorFactory.createIdentityActor(
       authStore,
-      define_process_env_default$1.BACKEND_CANISTER_ID
+      define_process_env_default$4.BACKEND_CANISTER_ID
     );
     const result = await identityActor.executeSubmitFixtureData(dto);
     if (isError(result)) throw new Error("Failed to submit fixture data");
@@ -6182,61 +6499,56 @@ class FixtureService {
 }
 function createFixtureStore() {
   const { subscribe, update } = writable({});
+  let leagueCacheOrder = [];
   async function syncFixtures(leagueId) {
     try {
-      await new DataHashService().refreshLeagueHashes();
       const localHashKey = `fixtures_hash_${leagueId}`;
       const localFixturesKey = `fixtures_${leagueId}`;
       const localHash = localStorage.getItem(localHashKey);
-      console.log(`Current local hash for league ${leagueId}:`, localHash);
-      const fixtureHash = await new DataHashService().getFixturesHash(leagueId);
-      console.log(`Server hash for league ${leagueId}:`, fixtureHash);
+      const fixtureHash = await new DataHashService().getCategoryHash(
+        "fixtures",
+        leagueId
+      );
       let fixtures;
       if (!localHash || fixtureHash !== localHash) {
-        console.log(`Fetching fresh fixtures for league ${leagueId}`);
         fixtures = await getFixtures(leagueId);
-        console.log(`Fetched fixtures for league ${leagueId}:`, fixtures);
         localStorage.setItem(localFixturesKey, serializeData(fixtures));
         localStorage.setItem(localHashKey, fixtureHash || "");
       } else {
-        console.log(`Using cached fixtures for league ${leagueId}`);
         const cached = localStorage.getItem(localFixturesKey);
         if (cached) {
           fixtures = deserializeData(cached);
         } else {
           fixtures = await getFixtures(leagueId);
-          console.log(
-            `Fetched fixtures in else else for league ${leagueId}:`,
-            fixtures
-          );
           localStorage.setItem(localFixturesKey, serializeData(fixtures));
         }
       }
-      update((current) => {
-        const updated2 = {
-          ...current,
-          [leagueId]: fixtures
-        };
-        console.log(`Updated fixtures for league ${leagueId}:`, updated2);
-        return updated2;
-      });
+      update((current) => ({
+        ...current,
+        [leagueId]: fixtures
+      }));
+      if (!leagueCacheOrder.includes(leagueId)) {
+        leagueCacheOrder.push(leagueId);
+      } else {
+        leagueCacheOrder = leagueCacheOrder.filter((id) => id !== leagueId);
+        leagueCacheOrder.push(leagueId);
+      }
+      if (leagueCacheOrder.length > MAX_CACHED_LEAGUES) {
+        const leastUsedLeagueId = leagueCacheOrder.shift();
+        if (leastUsedLeagueId !== void 0) {
+          localStorage.removeItem(`fixtures_${leastUsedLeagueId}`);
+          localStorage.removeItem(`fixtures_hash_${leastUsedLeagueId}`);
+        }
+      }
     } catch (error) {
       console.error(`Error syncing fixtures for league ${leagueId}:`, error);
       const cached = localStorage.getItem(`fixtures_${leagueId}`);
       if (cached) {
-        console.log(`Using cached fixtures for league ${leagueId}`);
         const fixtures = deserializeData(cached);
-        update((current) => {
-          const updated2 = {
-            ...current,
-            [leagueId]: fixtures
-          };
-          console.log(
-            `Updated fixtures for league ${leagueId} in fallback:`,
-            updated2
-          );
-          return updated2;
-        });
+        update((current) => ({
+          ...current,
+          [leagueId]: fixtures
+        }));
       }
     }
   }
@@ -6274,13 +6586,40 @@ function createFixtureStore() {
   };
 }
 const fixtureStore = createFixtureStore();
-var define_process_env_default = { __CANDID_UI_CANISTER_ID: "a3shf-5eaaa-aaaaa-qaafa-cai", BACKEND_CANISTER_ID: "by6od-j4aaa-aaaaa-qaadq-cai", DATA_CANISTER_CANISTER_ID: "avqkn-guaaa-aaaaa-qaaea-cai", FRONTEND_CANISTER_ID: "asrmz-lmaaa-aaaaa-qaaeq-cai", DFX_NETWORK: "local" };
+var define_process_env_default$3 = { __CANDID_UI_CANISTER_ID: "a3shf-5eaaa-aaaaa-qaafa-cai", BACKEND_CANISTER_ID: "by6od-j4aaa-aaaaa-qaadq-cai", DATA_CANISTER_CANISTER_ID: "avqkn-guaaa-aaaaa-qaaea-cai", FRONTEND_CANISTER_ID: "asrmz-lmaaa-aaaaa-qaaeq-cai", DFX_NETWORK: "local" };
+class CountryService {
+  actor;
+  constructor() {
+    this.actor = ActorFactory.createActor(
+      idlFactory,
+      define_process_env_default$3.BACKEND_CANISTER_ID
+    );
+  }
+  async getCountries() {
+    const result = await this.actor.getCountries();
+    if (isError(result)) throw new Error("Failed to fetch countries");
+    return result.ok;
+  }
+}
+function createCountryStore() {
+  const { subscribe, set: set2 } = writable([]);
+  async function getCountries() {
+    return new CountryService().getCountries();
+  }
+  return {
+    getCountries,
+    subscribe,
+    setCountries: (countries) => set2(countries)
+  };
+}
+const countryStore = createCountryStore();
+var define_process_env_default$2 = { __CANDID_UI_CANISTER_ID: "a3shf-5eaaa-aaaaa-qaafa-cai", BACKEND_CANISTER_ID: "by6od-j4aaa-aaaaa-qaadq-cai", DATA_CANISTER_CANISTER_ID: "avqkn-guaaa-aaaaa-qaaea-cai", FRONTEND_CANISTER_ID: "asrmz-lmaaa-aaaaa-qaaeq-cai", DFX_NETWORK: "local" };
 class PlayerService {
   actor;
   constructor() {
     this.actor = ActorFactory.createActor(
       idlFactory,
-      define_process_env_default.BACKEND_CANISTER_ID
+      define_process_env_default$2.BACKEND_CANISTER_ID
     );
   }
   async getPlayers(leagueId) {
@@ -6291,7 +6630,7 @@ class PlayerService {
   async transferPlayer(leagueId, dto) {
     const identityActor = await ActorFactory.createIdentityActor(
       authStore,
-      define_process_env_default.BACKEND_CANISTER_ID
+      define_process_env_default$2.BACKEND_CANISTER_ID
     );
     const result = await identityActor.executeTransferPlayer(leagueId, dto);
     if (isError(result)) throw new Error("Failed to transfer player");
@@ -6299,7 +6638,7 @@ class PlayerService {
   async setFreeAgent(leagueId, dto) {
     const identityActor = await ActorFactory.createIdentityActor(
       authStore,
-      define_process_env_default.BACKEND_CANISTER_ID
+      define_process_env_default$2.BACKEND_CANISTER_ID
     );
     const result = await identityActor.executeSetFreeAgent(leagueId, dto);
     if (isError(result)) throw new Error("Failed to set player as free agent");
@@ -6307,7 +6646,7 @@ class PlayerService {
   async loanPlayer(leagueId, dto) {
     const identityActor = await ActorFactory.createIdentityActor(
       authStore,
-      define_process_env_default.BACKEND_CANISTER_ID
+      define_process_env_default$2.BACKEND_CANISTER_ID
     );
     const result = await identityActor.executeLoanPlayer(leagueId, dto);
     if (isError(result)) throw new Error("Failed to loan player");
@@ -6315,7 +6654,7 @@ class PlayerService {
   async createPlayer(leagueId, dto) {
     const identityActor = await ActorFactory.createIdentityActor(
       authStore,
-      define_process_env_default.BACKEND_CANISTER_ID
+      define_process_env_default$2.BACKEND_CANISTER_ID
     );
     const result = await identityActor.executeCreatePlayer(leagueId, dto);
     if (isError(result)) throw new Error("Failed to creaete player");
@@ -6323,13 +6662,67 @@ class PlayerService {
   async updatePlayer(leagueId, dto) {
     const identityActor = await ActorFactory.createIdentityActor(
       authStore,
-      define_process_env_default.BACKEND_CANISTER_ID
+      define_process_env_default$2.BACKEND_CANISTER_ID
     );
     const result = await identityActor.executeUpdatePlayer(leagueId, dto);
     if (isError(result)) throw new Error("Failed to update player");
   }
 }
 function createPlayerStore() {
+  const { subscribe, update } = writable({});
+  let leagueCacheOrder = [];
+  async function syncPlayers(leagueId) {
+    try {
+      const localHashKey = `players_hash_${leagueId}`;
+      const localPlayersKey = `players_${leagueId}`;
+      const localHash = localStorage.getItem(localHashKey);
+      const playersHash = await new DataHashService().getCategoryHash(
+        "players",
+        leagueId
+      );
+      let players;
+      if (!localHash || playersHash !== localHash) {
+        players = await getPlayers(leagueId);
+        localStorage.setItem(localPlayersKey, serializeData(players));
+        localStorage.setItem(localHashKey, playersHash || "");
+      } else {
+        const cached = localStorage.getItem(localPlayersKey);
+        if (cached) {
+          players = deserializeData(cached);
+        } else {
+          players = await getPlayers(leagueId);
+          localStorage.setItem(localPlayersKey, serializeData(players));
+        }
+      }
+      update((current) => ({
+        ...current,
+        [leagueId]: players
+      }));
+      if (!leagueCacheOrder.includes(leagueId)) {
+        leagueCacheOrder.push(leagueId);
+      } else {
+        leagueCacheOrder = leagueCacheOrder.filter((id) => id !== leagueId);
+        leagueCacheOrder.push(leagueId);
+      }
+      if (leagueCacheOrder.length > MAX_CACHED_LEAGUES) {
+        const leastUsedLeagueId = leagueCacheOrder.shift();
+        if (leastUsedLeagueId !== void 0) {
+          localStorage.removeItem(`players_${leastUsedLeagueId}`);
+          localStorage.removeItem(`players_hash_${leastUsedLeagueId}`);
+        }
+      }
+    } catch (error) {
+      console.error(`Error syncing players for league ${leagueId}:`, error);
+      const cached = localStorage.getItem(`players_${leagueId}`);
+      if (cached) {
+        const players = deserializeData(cached);
+        update((current) => ({
+          ...current,
+          [leagueId]: players
+        }));
+      }
+    }
+  }
   async function getPlayers(leagueId) {
     return new PlayerService().getPlayers(leagueId);
   }
@@ -6354,10 +6747,235 @@ function createPlayerStore() {
     setFreeAgent,
     loanPlayer,
     createPlayer,
-    updatePlayer
+    updatePlayer,
+    syncPlayers
   };
 }
 const playerStore = createPlayerStore();
+var define_process_env_default$1 = { __CANDID_UI_CANISTER_ID: "a3shf-5eaaa-aaaaa-qaafa-cai", BACKEND_CANISTER_ID: "by6od-j4aaa-aaaaa-qaadq-cai", DATA_CANISTER_CANISTER_ID: "avqkn-guaaa-aaaaa-qaaea-cai", FRONTEND_CANISTER_ID: "asrmz-lmaaa-aaaaa-qaaeq-cai", DFX_NETWORK: "local" };
+class SeasonService {
+  actor;
+  constructor() {
+    this.actor = ActorFactory.createActor(
+      idlFactory,
+      define_process_env_default$1.BACKEND_CANISTER_ID
+    );
+  }
+  async getSeasons(leagueId) {
+    const result = await this.actor.getSeasons(leagueId);
+    if (isError(result)) throw new Error("Failed to fetch seasons");
+    return result.ok;
+  }
+}
+function createSeasonStore() {
+  const { subscribe, update } = writable({});
+  let leagueCacheOrder = [];
+  async function getSeasons(leagueId) {
+    const seasons = await new SeasonService().getSeasons(leagueId);
+    return seasons ?? [];
+  }
+  async function syncSeasons(leagueId) {
+    try {
+      const localHashKey = `seasons_hash_${leagueId}`;
+      const localSeasonsKey = `seasons_${leagueId}`;
+      const localHash = localStorage.getItem(localHashKey);
+      const seasonHash = await new DataHashService().getCategoryHash(
+        "seasons",
+        leagueId
+      );
+      let seasons;
+      if (!localHash || seasonHash !== localHash) {
+        seasons = await getSeasons(leagueId);
+        localStorage.setItem(localSeasonsKey, serializeData(seasons));
+        localStorage.setItem(localHashKey, seasonHash || "");
+      } else {
+        const cached = localStorage.getItem(localSeasonsKey);
+        if (cached) {
+          seasons = deserializeData(cached);
+        } else {
+          seasons = await getSeasons(leagueId);
+          localStorage.setItem(localSeasonsKey, serializeData(seasons));
+        }
+      }
+      update((current) => ({
+        ...current,
+        [leagueId]: seasons
+      }));
+      if (!leagueCacheOrder.includes(leagueId)) {
+        leagueCacheOrder.push(leagueId);
+      } else {
+        leagueCacheOrder = leagueCacheOrder.filter((id) => id !== leagueId);
+        leagueCacheOrder.push(leagueId);
+      }
+      if (leagueCacheOrder.length > MAX_CACHED_LEAGUES) {
+        const leastUsedLeagueId = leagueCacheOrder.shift();
+        if (leastUsedLeagueId !== void 0) {
+          localStorage.removeItem(`seasons_${leastUsedLeagueId}`);
+          localStorage.removeItem(`seasons_hash_${leastUsedLeagueId}`);
+        }
+      }
+    } catch (error) {
+      console.error(`Error syncing seasons for league ${leagueId}:`, error);
+      const cached = localStorage.getItem(`seasons_${leagueId}`);
+      if (cached) {
+        const seasons = deserializeData(cached);
+        update((current) => ({
+          ...current,
+          [leagueId]: seasons
+        }));
+      }
+    }
+  }
+  return {
+    subscribe,
+    getSeasons,
+    syncSeasons
+  };
+}
+const seasonStore = createSeasonStore();
+var define_process_env_default = { __CANDID_UI_CANISTER_ID: "a3shf-5eaaa-aaaaa-qaafa-cai", BACKEND_CANISTER_ID: "by6od-j4aaa-aaaaa-qaadq-cai", DATA_CANISTER_CANISTER_ID: "avqkn-guaaa-aaaaa-qaaea-cai", FRONTEND_CANISTER_ID: "asrmz-lmaaa-aaaaa-qaaeq-cai", DFX_NETWORK: "local" };
+class PlayerEventsService {
+  actor;
+  constructor() {
+    this.actor = ActorFactory.createActor(
+      idlFactory,
+      define_process_env_default.BACKEND_CANISTER_ID
+    );
+  }
+  async getPlayerDetails(playerId, seasonId) {
+    try {
+      let dto = {
+        playerId,
+        seasonId
+      };
+      let result = await this.actor.getPlayerDetails(dto);
+      if (isError(result)) {
+        console.error("Error fetching player details");
+      }
+      return result.ok;
+    } catch (error) {
+      console.error("Error fetching player data:", error);
+      throw error;
+    }
+  }
+  async getPlayerDetailsForGameweek(leagueId, seasonId, gameweek) {
+    let dto = {
+      seasonId,
+      gameweek
+    };
+    const result = await this.actor.getPlayerDetailsForGameweek(leagueId, dto);
+    if (isError(result))
+      throw new Error(
+        "Failed to fetch player details for gameweek in player events service"
+      );
+    return result.ok;
+  }
+  async getPlayerEvents(seasonId, gameweek) {
+    try {
+      let dto = {
+        seasonId,
+        gameweek
+      };
+      let result = await this.actor.getPlayerDetailsForGameweek(dto);
+      if (isError(result)) {
+        console.error("Error fetching player details for gameweek");
+      }
+      return result.ok;
+    } catch (error) {
+      console.error("Error fetching player events: ", error);
+    }
+  }
+}
+class StoreManager {
+  dataHashService;
+  countryService;
+  leagueService;
+  fixtureService;
+  clubService;
+  playerService;
+  seasonService;
+  playerEventsService;
+  categories = [
+    "leagues",
+    "players",
+    "clubs",
+    "fixtures",
+    "league_status",
+    "seasons"
+    //"player_events",
+  ];
+  constructor() {
+    this.dataHashService = new DataHashService();
+    this.countryService = new CountryService();
+    this.leagueService = new LeagueService();
+    this.fixtureService = new FixtureService();
+    this.clubService = new ClubService();
+    this.playerService = new PlayerService();
+    this.seasonService = new SeasonService();
+    this.playerEventsService = new PlayerEventsService();
+  }
+  async syncStores(leagueId) {
+    const newHashes = await this.dataHashService.getDataHashes();
+    if (newHashes == void 0) {
+      return;
+    }
+    await leagueStore.syncLeagues(leagueId);
+    for (const category of this.categories) {
+      const categoryHash = newHashes.find((hash2) => hash2.category === category);
+      if (categoryHash?.hash !== localStorage.getItem(`${category}_hash`)) {
+        await this.syncCategory(category, leagueId);
+      } else {
+        console.log("Loading from cache", category);
+      }
+    }
+    const countriesHash = newHashes.find(
+      (hash2) => hash2.category === "countries"
+    );
+    if (countriesHash?.hash !== localStorage.getItem(`countries_hash`)) {
+      await this.syncCountries();
+      localStorage.setItem(`countries_hash`, countriesHash?.hash || "");
+    } else {
+      console.log("Loading Countries from cache");
+      this.loadFromCache();
+    }
+  }
+  async syncCategory(category, leagueId) {
+    switch (category) {
+      case "fixtures":
+        await fixtureStore.syncFixtures(leagueId);
+        break;
+      case "clubs":
+        await clubStore.syncClubs(leagueId);
+        break;
+      case "players":
+        await playerStore.syncPlayers(leagueId);
+        break;
+      case "league_status":
+        await leagueStore.syncLeagueStatus(leagueId);
+        break;
+      case "seasons":
+        await seasonStore.syncSeasons(leagueId);
+        break;
+    }
+  }
+  async syncCountries() {
+    const updatedCountries = await this.countryService.getCountries();
+    if (!updatedCountries) {
+      return;
+    }
+    countryStore.setCountries(updatedCountries);
+    localStorage.setItem(
+      "countries",
+      JSON.stringify(updatedCountries, replacer)
+    );
+  }
+  loadFromCache() {
+    const cachedData = localStorage.getItem("countries");
+    const cachedCountries = JSON.parse(cachedData || "[]");
+    countryStore.setCountries(cachedCountries);
+  }
+}
+new StoreManager();
 const dataStore = writable({});
 async function ensureLeagueData(leagueId) {
   const current = get$1(dataStore);
