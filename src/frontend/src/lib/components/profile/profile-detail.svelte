@@ -8,6 +8,8 @@
     import { authStore } from "$lib/stores/auth-store";
     import FullScreenSpinner from "../shared/full-screen-spinner.svelte";
     import { KYCService } from "$lib/services/kyc-service";
+    import { Cbor } from "@dfinity/agent";
+    import { SHUFTI_CLIENT_ID, SHUFTI_SECRET_KEY } from "$lib/environment/environment";
 
   let isLoading = true;
   let loadingBalances = true;
@@ -100,16 +102,74 @@
       console.error("Failed to copy:", err);
     }
   }
-    //TODO:
-    let reference: string = "";
-    let verificationUrl: string = "";
-    async function beginKYC(){
-      reference = crypto.randomUUID();  
-      let kycService = new KYCService();
-      //await kycService.sendRequest();
-      //await kycStore.storePendingKyc(reference);
-      //await kycStore.beginKYC();
+   
+  async function beginKYC() {
+    try {
+      let reference = crypto.randomUUID();
+      const payload = {
+        reference: `SP_REQUEST_${reference}`,
+        callback_url: "https://ic0.app/api/v3/canister/44kin-waaaa-aaaal-qbxra-cai/call",
+        redirect_url: "https://footballgod.xyz/",
+        country: "GB",
+        language: "EN",
+        verification_mode: "any",
+        ttl: 60,
+        document: {
+          supported_types: ["id_card", "passport"],
+          allow_offline: "1",
+          allow_online: "1",
+        },
+        address: {
+          address_fuzzy_match: "1",
+          supported_types: ["utility_bill", "passport", "bank_statement"],
+        },
+      };
+
+      const token = btoa(`${SHUFTI_CLIENT_ID}:${SHUFTI_SECRET_KEY}`);
+      const response = await fetch("https://api.shuftipro.com/", {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+          Authorization: `Basic ${token}`,
+        },
+        body: JSON.stringify(payload),
+      });
+
+      const data = await response.json();
+      if (data.event === "request.pending") {
+        let verificationUrl = data.verification_url;
+        createIframe(verificationUrl);
+      } else {
+        console.error("Unexpected response:", data);
+      }
+    } catch (error) {
+      console.error("Error starting KYC:", error);
     }
+  }
+
+  function createIframe(src: string) {
+    const iframe = document.createElement("iframe");
+    iframe.style.position = "fixed";
+    iframe.id = "shuftipro-iframe";
+    iframe.name = "shuftipro-iframe";
+    iframe.allow = "camera";
+    iframe.src = src;
+    iframe.style.top = "0";
+    iframe.style.left = "0";
+    iframe.style.bottom = "0";
+    iframe.style.right = "0";
+    iframe.style.margin = "0";
+    iframe.style.padding = "0";
+    iframe.style.overflow = "hidden";
+    iframe.style.border = "none";
+    iframe.style.zIndex = "2147483647";
+    iframe.width = "100%";
+    iframe.height = "100%";
+    iframe.dataset.removable = "true";
+
+    document.body.appendChild(iframe);
+  }
 </script>
 
 {#if isLoading}
