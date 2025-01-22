@@ -99,6 +99,16 @@
       console.error("Failed to copy:", err);
     }
   }
+  /*
+    //TODO:
+    let reference: string = "";
+    let verificationUrl: string = "";
+    async function beginKYC(){
+      reference = crypto.randomUUID();  
+      await kycStore.storePendingKyc(reference);
+      await kycStore.beginKYC();
+    }
+  */
 </script>
 
 {#if isLoading}
@@ -119,7 +129,9 @@
   />
   <div class="container mt-4 mx-6">
     <div class="flex flex-wrap">
-
+      <!--
+        <button on:click={beginKYC}>KYC Verification</button>
+      -->
       <div class="w-full mb-4 md:mb-0">
         <div class="mt-2 md:mt-1 rounded-lg">
           <p class="mb-1 text-xs">Username:</p>
