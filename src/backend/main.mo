@@ -1099,8 +1099,29 @@ actor Self {
     return #ok();
   };
 
-  public shared func kycVerificationCallback(response: AppTypes.ShuftiResponse) : async () {
-
+  //KYC Functions
+  /*
+  public shared ({ caller }) func storePendingKYC(keyReference: Text) : async (){
+    assert not Principal.isAnonymous(caller);
+    let principalId = Principal.toText(caller);
+    kycManager.storePendingKYC(kycReference, principalId);
   };
+
+  public shared ({ caller }) func getKYCStatus() : async ?Text {
+    assert not Principal.isAnonymous(caller);
+    let principalId = Principal.toText(caller);
+    return kycManager.getKYCStatus();
+  };
+
+  public shared ({ caller }) func isKycVerified() : async Bool {
+    assert not Principal.isAnonymous(caller);
+    let principalId = Principal.toText(caller);
+    return kycManager.isKycVerified(principalId);
+  };
+
+  public shared func kycVerificationCallback(response: AppTypes.ShuftiResponse) : async () {
+    //Check response and update if verified to allow betting
+  };
+  */
    
 };

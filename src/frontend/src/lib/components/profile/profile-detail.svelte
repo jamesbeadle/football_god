@@ -7,6 +7,7 @@
   import WithdrawFplModal from "./withdraw-fpl-modal.svelte";
     import { authStore } from "$lib/stores/auth-store";
     import FullScreenSpinner from "../shared/full-screen-spinner.svelte";
+    import { KYCService } from "$lib/services/kyc-service";
 
   let isLoading = true;
   let loadingBalances = true;
@@ -99,6 +100,16 @@
       console.error("Failed to copy:", err);
     }
   }
+    //TODO:
+    let reference: string = "";
+    let verificationUrl: string = "";
+    async function beginKYC(){
+      reference = crypto.randomUUID();  
+      let kycService = new KYCService();
+      //await kycService.sendRequest();
+      //await kycStore.storePendingKyc(reference);
+      //await kycStore.beginKYC();
+    }
 </script>
 
 {#if isLoading}
@@ -119,7 +130,7 @@
   />
   <div class="container mt-4 mx-6">
     <div class="flex flex-wrap">
-
+      <button on:click={beginKYC}>KYC Verification</button>
       <div class="w-full mb-4 md:mb-0">
         <div class="mt-2 md:mt-1 rounded-lg">
           <p class="mb-1 text-xs">Username:</p>
