@@ -32,6 +32,7 @@ import Management "utilities/Management";
 import ProfileCanister "canister_definitions/profile-canister";
 import AppTypes "types/app_types";
 import KYCManager "managers/kyc_manager";
+import ShuftiTypes "types/shufti_types";
 
 actor Self {
 
@@ -860,7 +861,7 @@ actor Self {
   private stable var stable_active_profile_canister_id: Text = "";
   private stable var stable_usernames: [(Base.PrincipalId, Text)] = [];
   private stable var stable_kyc_references: [(Base.PrincipalId, Text)] = [];
-  private stable var stable_kyc_profiles: [(Base.PrincipalId, AppTypes.ShuftiResponse)] = [];
+  private stable var stable_kyc_profiles: [(Base.PrincipalId, ShuftiTypes.ShuftiResponse)] = [];
 
   //Odds Manager
   private stable var stable_match_odds_cache: [(FootballTypes.LeagueId, [(FootballTypes.FixtureId, BettingTypes.MatchOdds)])] = [];
@@ -1109,25 +1110,17 @@ actor Self {
     kycManager.storeKYCReference(kycReference, principalId);
   };
 
-  public shared func kycVerificationCallback(response: AppTypes.ShuftiResponse) : async () {
-    //Check response and update if verified to allow betting
+  public shared func kycVerificationCallback(response: ShuftiTypes.ShuftiResponse) : async Result.Result<(), T.Error> {
+      let principalResult = kycManager.storeVerificationResponse(response);
 
-
+      switch(principalResult){
+        case (?principalId){
+          await userManager.verifyBettingAccount(principalId);
+          return #ok();
+        };
+        case (null){}
+      };
+    return #err(#NotFound);
   };
-
-  /*
-
-  public shared ({ caller }) func getKYCStatus() : async ?Text {
-    assert not Principal.isAnonymous(caller);
-    let principalId = Principal.toText(caller);
-    return kycManager.getKYCStatus();
-  };
-
-  public shared ({ caller }) func isKycVerified() : async Bool {
-    assert not Principal.isAnonymous(caller);
-    let principalId = Principal.toText(caller);
-    return kycManager.isKycVerified(principalId);
-  };
-  */
    
 };

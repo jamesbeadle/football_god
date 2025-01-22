@@ -171,7 +171,7 @@ actor class _ProfileCanister() {
     };
   };
 
-  public shared ({caller }) func acceptTerms(principalId: Base.PrincipalId) : async Result.Result<(), T.Error>{
+  public shared ({ caller }) func acceptTerms(principalId: Base.PrincipalId) : async Result.Result<(), T.Error>{
     Debug.print("Accepting terms in profile canister");
     assert Principal.toText(caller) == Environment.BACKEND_CANISTER_ID;
     let profileGroupEntry = Array.find<(Base.PrincipalId, Nat)>(profileGroupDictionary, 
@@ -205,6 +205,53 @@ actor class _ProfileCanister() {
               kycRef = profile.kycRef;
               kycSubmissionDate = profile.kycSubmissionDate;
               kycComplete = profile.kycComplete;
+            };
+            updateProfile(updatedProfile, profileGroup.1);
+            return #ok();
+          };
+          case (null){
+            return #err(#NotFound);
+          }
+        };
+      };
+      case (null){
+        return #err(#NotFound);
+      }
+    };
+  };
+
+  public shared ({ caller }) func verifyBettingAccount(principalId: Base.PrincipalId) : async Result.Result<(), T.Error>{
+    assert Principal.toText(caller) == Environment.BACKEND_CANISTER_ID;
+    let profileGroupEntry = Array.find<(Base.PrincipalId, Nat)>(profileGroupDictionary, 
+      func(groupEntry: (Base.PrincipalId, Nat)) : Bool {
+        groupEntry.0 == principalId;
+    });
+    switch(profileGroupEntry){
+      case (?profileGroup){
+        let profileResult = getProfileFromGroup(principalId, profileGroup.1);
+        switch(profileResult){
+          case (?profile){
+            let updatedProfile: T.Profile = {
+              accountOnPause = profile.accountOnPause;
+              bets = profile.bets;
+              maxBetLimit = profile.maxBetLimit;
+              maxBetLimitSet = profile.maxBetLimitSet;
+              monthlyBetLimit = profile.monthlyBetLimit;
+              monthlyBetLimitSet = profile.monthlyBetLimitSet;
+              monthlyBetTotals = profile.monthlyBetTotals;
+              monthlyProfitLoss = profile.monthlyProfitLoss;
+              pauseEndDate = profile.pauseEndDate;
+              principalId = profile.principalId;
+              profilePicture = profile.profilePicture;
+              profilePictureExtension = profile.profilePictureExtension;
+              termsAcceptedDate = profile.termsAcceptedDate;
+              username = profile.username;
+              withdrawalAddress = profile.withdrawalAddress;
+              joinedDate = profile.joinedDate;
+              kycApprovalDate = Time.now();
+              kycRef = profile.kycRef;  //TODO need to set for auditing
+              kycSubmissionDate = profile.kycSubmissionDate;  //TODO need to set for auditing
+              kycComplete = true;
             };
             updateProfile(updatedProfile, profileGroup.1);
             return #ok();

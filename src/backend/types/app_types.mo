@@ -1,5 +1,6 @@
 import Base "base_types";
 import BettingTypes "betting_types";
+import Text "mo:base/Text";
 module AppTypes {
 
     public type Error = {
@@ -34,10 +35,6 @@ module AppTypes {
         kycSubmissionDate: Int;
         kycApprovalDate: Int;
         kycRef: Text;
-    };
-
-    public type ShuftiResponse = {
-        
     };
 
 };

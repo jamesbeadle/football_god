@@ -1087,5 +1087,22 @@ module {
       return List.toArray(List.take<ResponseDTOs.UserDTO>(droppedEntries, 100));
     };
 
+    public func verifyBettingAccount(principalId: Base.PrincipalId) : async (){
+      let profileCanisterId = Array.find(profileCanisterIds, func(profileCanisterEntry: (Base.PrincipalId, Base.CanisterId)) : Bool {
+        profileCanisterEntry.0 == principalId;
+      });
+
+      switch(profileCanisterId){
+        case (?foundCanisterId){
+          
+          let profile_canister = actor (foundCanisterId.1) : actor {
+            verifyBettingAccount : (principalId: Base.PrincipalId) -> async ();
+          };
+          return await profile_canister.verifyBettingAccount(principalId);
+        };
+        case (null){ }
+      };
+    };
+
   };
 };
