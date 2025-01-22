@@ -62,12 +62,7 @@ class StoreManager {
     await leagueStore.syncLeagues(leagueId);
 
     for (const category of this.categories) {
-      const categoryHash = newHashes.find((hash) => hash.category === category);
-      if (categoryHash?.hash !== localStorage.getItem(`${category}_hash`)) {
-        await this.syncCategory(category, leagueId);
-      } else {
-        console.log("Loading from cache", category);
-      }
+      await this.syncCategory(category, leagueId);
     }
     const countriesHash = newHashes.find(
       (hash) => hash.category === "countries",
