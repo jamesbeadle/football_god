@@ -1,6 +1,6 @@
 import { idlFactory } from "../../../../declarations/backend";
-import { ActorFactory } from "../../utils/ActorFactory";
-import type { DataHashDTO } from "../../../../declarations/backend/backend.did";
+import { ActorFactory } from "../utils/ActorFactory";
+import type { DataHash } from "../../../../declarations/backend/backend.did";
 import { isError } from "../utils/helpers";
 
 export class DataHashService {
@@ -15,7 +15,7 @@ export class DataHashService {
     this.actor = ActorFactory.createActor(idlFactory, canisterId);
   }
 
-  async getDataHashes(): Promise<DataHashDTO[]> {
+  async getDataHashes(): Promise<DataHash[]> {
     const result = await this.actor.getDataHashes();
     if (isError(result)) throw new Error("Failed to fetch data hashes");
     return result.ok;
