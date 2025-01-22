@@ -21,6 +21,8 @@
   import { bettingStore } from "$lib/stores/betting-store";
   import { betSlipStore } from "$lib/stores/bet-slip-store";
 
+  import { storeManager } from "$lib/managers/store-manager";
+
   import { convertDateToReadable } from "$lib/utils/helpers";
 
   import type {
@@ -35,8 +37,8 @@
   } from "../../../declarations/data_canister/data_canister.did";
 
   import type { HomePageFixtureDTO } from "../../../declarations/backend/backend.did";
-    import { betSlipDataStore } from "$lib/stores/bet-slip-data-store";
-    import { buildBetUiDescription } from "$lib/utils/buildBetUiDescription";
+  import { betSlipDataStore } from "$lib/stores/bet-slip-data-store";
+  import { buildBetUiDescription } from "$lib/utils/buildBetUiDescription";
 
   let isLoading = true;
   let isBetSlipExpanded = false;
@@ -65,11 +67,10 @@
     try {
       leagueFixtures[leagueId] = await fixtureStore.getFixtures(leagueId);
       await fetchClubs(leagueId);
-
       const leagueStatus = await leagueStore.getLeagueStatus(leagueId);
       selectedGameweeks[leagueId] = leagueStatus.unplayedGameweek;
+      selectedGameweeks[leagueId] = 22;
       leagueTotalGameweeks[leagueId] = leagueStatus.totalGameweeks;
-
       allBettingFixtures[leagueId] = await bettingStore.getBettableHomepageFixtures(leagueId);
     } catch (error) {
       console.error(`Error fetching data for league ${leagueId}:`, error);
@@ -90,11 +91,21 @@
     }
   }
 
-  function toggleLeague(leagueId: LeagueId) {
-    expandedLeagues[leagueId] = !expandedLeagues[leagueId];
-    expandedLeagues = { ...expandedLeagues };
-    if (expandedLeagues[leagueId] && !leagueFixtures[leagueId]) {
-      fetchLeagueData(leagueId);
+  async function toggleLeague(leagueId: LeagueId) {
+    if (expandedLeagues[leagueId]) {
+      expandedLeagues[leagueId] = false;
+    } else {
+      expandedLeagues[leagueId] = true;
+      loadingFixtures[leagueId] = true;
+
+      try {
+        await fetchLeagueData(leagueId);
+        await storeManager.syncStores(leagueId);
+      } catch (error) {
+        console.error(`Error while toggling league ${leagueId}:`, error);
+      } finally {
+        loadingFixtures[leagueId] = false;
+      }
     }
   }
 
@@ -158,7 +169,6 @@
     uiDescription: description,
   });
 }
-
 
   function isBetSelected(
     leagueId: number,

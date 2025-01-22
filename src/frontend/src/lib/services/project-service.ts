@@ -5,7 +5,7 @@ import type {
   CanisterDTO,
   ProjectDTO,
 } from "../../../../declarations/backend/backend.did";
-import { ActorFactory } from "../../utils/ActorFactory";
+import { ActorFactory } from "../utils/ActorFactory";
 
 export class ProjectService {
   private actor: any;

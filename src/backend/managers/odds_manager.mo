@@ -1,6 +1,7 @@
 import T "../types/app_types";
 import FootballTypes "../types/football_types";
 import BettingTypes "../types/betting_types";
+import Base "../types/base_types";
 import Result "mo:base/Result";
 import Array "mo:base/Array";
 import Option "mo:base/Option";
@@ -12,8 +13,8 @@ import Nat16 "mo:base/Nat16";
 import Nat "mo:base/Nat";
 import ResponseDTOs "../dtos/response_DTOs";
 import Environment "../environment";
-import RequestDTOs "../dtos/request_DTOs";
 import OddsGenerator "odds_generator";
+import SHA224 "../../shared/lib/SHA224";
 
 module {
 
@@ -23,10 +24,15 @@ module {
     private let oddsGenerator = OddsGenerator.OddsGenerator();
   
     public func getHomepageLeagueFixtures(leagueId: FootballTypes.LeagueId) : [ResponseDTOs.HomePageFixtureDTO] {
+
+      Debug.print("getHomepageLeagueFixtures called for league: " # debug_show(leagueId));
+      Debug.print("matchOddsCache size: " # debug_show(Array.size(matchOddsCache)));
        
       let matchOddsResult = Array.find<(FootballTypes.LeagueId, [(FootballTypes.FixtureId, BettingTypes.MatchOdds)])>(matchOddsCache, func(matchOddsCacheEntry: (FootballTypes.LeagueId, [(FootballTypes.FixtureId, BettingTypes.MatchOdds)])) : Bool {
         matchOddsCacheEntry.0 == leagueId;
       });
+
+      Debug.print("matchOddsResult: " # debug_show(matchOddsResult));
 
       switch(matchOddsResult){
         case (?foundMatchOdds){
@@ -283,6 +289,92 @@ module {
     };
 
     //Stable storage
+
+     private var dataHashes : [Base.DataHash] = [
+      { category = "leagues"; hash = "FOOTBALLGOD" },
+      { category = "clubs"; hash = "FOOTBALLGOD" },
+      { category = "fixtures"; hash = "FOOTBALLGOD" },
+      { category = "players"; hash = "FOOTBALLGOD" },
+      { category = "player_events"; hash = "FOOTBALLGOD" },
+      { category = "countries"; hash = "FOOTBALLGOD" },
+      { category = "app_status"; hash = "FOOTBALLGOD" },
+      { category = "league_status"; hash = "FOOTBALLGOD" },
+      { category = "seasons"; hash = "FOOTBALLGOD" }
+    ];
+
+    private func findHash(category: Text): ?Base.DataHash {
+      return Array.find<Base.DataHash>(dataHashes, func(hashObj: Base.DataHash): Bool {
+        hashObj.category == category;
+      });
+    };
+
+    public func updateDataHash(category : Text) : async () {
+      let hashBuffer = Buffer.fromArray<Base.DataHash>([]);
+      var updated = false;
+
+      for (hashObj in Iter.fromArray(dataHashes)) {
+        if (hashObj.category == category) {
+          let randomHash = await SHA224.getRandomHash();
+          hashBuffer.add({ category = hashObj.category; hash = randomHash });
+          updated := true;
+        } else { hashBuffer.add(hashObj) };
+      };
+
+      if(not updated){
+          let randomHash = await SHA224.getRandomHash();
+          hashBuffer.add({ category = category; hash = randomHash });
+      };
+
+      dataHashes := Buffer.toArray<Base.DataHash>(hashBuffer);
+    };
+
+    public func updateFixtureHash(leagueId: Nat): async () {
+      let category = "fixtures_" # Nat.toText(leagueId);
+      await updateDataHash(category);
+    };
+
+    public func updateClubHash(leagueId: Nat): async () {
+      let category = "clubs_" # Nat.toText(leagueId);
+      await updateDataHash(category);
+    };
+
+    public func updatePlayerHash(leagueId: Nat): async () {
+      let category = "players_" # Nat.toText(leagueId);
+      await updateDataHash(category);
+    };
+
+    public func addNewDataHash(category: Text) : async () {
+      let exists = findHash(category);
+      if(Option.isNull(exists)){
+        let hashBuffer = Buffer.fromArray<Base.DataHash>(dataHashes);
+        let randomHash = await SHA224.getRandomHash();
+        hashBuffer.add({ category = category; hash = randomHash });
+        dataHashes := Buffer.toArray<Base.DataHash>(hashBuffer);
+      }
+    };
+
+    public func ensureLeagueHashes(leagueIds: [Nat]): async () {
+      for (leagueId in Iter.fromArray(leagueIds)) {
+        let fixtureCategory = "fixtures_" # Nat.toText(leagueId);
+        let clubCategory = "clubs_" # Nat.toText(leagueId);
+        let playerCategory = "players_" # Nat.toText(leagueId);
+        //let playerEventCategory = "player_events_" # Nat.toText(leagueId);
+        let countryCategory = "countries";
+        let seasonCategory = "seasons_" # Nat.toText(leagueId);
+        let leagueStatusCategory = "league_status_" # Nat.toText(leagueId);
+        await addNewDataHash(fixtureCategory);
+        await addNewDataHash(clubCategory);
+        await addNewDataHash(playerCategory);
+        //await addNewDataHash(playerEventCategory);
+        await addNewDataHash(countryCategory);
+        await addNewDataHash(seasonCategory);
+        await addNewDataHash(leagueStatusCategory);
+      }
+    };
+    
+    public func getDataHashes() : Result.Result<[ResponseDTOs.DataHashDTO], T.Error> {
+      return #ok(dataHashes)
+    };
 
     public func getStableMatchOddsCache(): [(FootballTypes.LeagueId, [(FootballTypes.FixtureId, BettingTypes.MatchOdds)])]{
       return matchOddsCache;

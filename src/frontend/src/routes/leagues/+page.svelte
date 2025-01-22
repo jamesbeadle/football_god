@@ -22,7 +22,7 @@
   onMount(async () => {
     document.addEventListener("click", handleClickOutside);
     try {
-      isDataManager = await userStore.isDataManager();
+      //isDataManager = await userStore.isDataManager();
       leagues = await leagueStore.getLeagues();
       countries = await countryStore.getCountries();
     } catch (error) {
@@ -73,7 +73,7 @@
   {#if isLoading}
     <LocalSpinner />
   {:else}
-    <div class="flex justify-between items-center w-full mb-4">
+    <div class="flex items-center justify-between w-full mb-4">
       <p class="text-lg">League Explorer</p>
       <button class="brand-button" on:click={createNewLeague}>+ League Explorer</button>
     </div>
@@ -81,16 +81,16 @@
     <div class="space-y-4">
       {#each leagues.sort((a, b) => Number(a.id) - Number(b.id)) as league}
         <div
-          class="flex flex-row items-center justify-between bg-BrandGray rounded-lg shadow p-4 w-full hover:bg-BrandLightGray transition"
+          class="flex flex-row items-center justify-between w-full p-4 transition rounded-lg shadow bg-BrandGray hover:bg-BrandLightGray"
         >
           <div class="flex items-center space-x-4">
             <img
               src={getImageURL(league.logo)}
-              class="w-12 h-12 object-cover rounded-full border-2 border-gray-600"
+              class="object-cover w-12 h-12 border-2 border-gray-600 rounded-full"
               alt="logo"
             />
             <div>
-              <p class="text-md font-bold text-BrandActive">{league.name}</p>
+              <p class="font-bold text-md text-BrandActive">{league.name}</p>
               <p class="text-sm text-BrandDisabled">
                 {Object.keys(league.relatedGender)[0]} • {league.teamCount} Teams • Formed:{" "}
                 { convertDateToReadable(Number(league.formed))}
@@ -107,7 +107,7 @@
             </button>
             {#if dropdownVisible === league.id}
               <div
-                class="absolute right-0 mt-2 w-48 bg-BrandDarkGray rounded-lg shadow-lg z-10"
+                class="absolute right-0 z-10 w-48 mt-2 rounded-lg shadow-lg bg-BrandDarkGray"
               >
                 <button
                   class="block w-full px-4 py-2 text-left text-BrandActive hover:bg-BrandLightGray"
