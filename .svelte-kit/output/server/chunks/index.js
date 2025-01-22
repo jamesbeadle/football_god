@@ -4719,7 +4719,7 @@ const options = {
 		<div class="error">
 			<span class="status">` + status + '</span>\n			<div class="message">\n				<h1>' + message + "</h1>\n			</div>\n		</div>\n	</body>\n</html>\n"
   },
-  version_hash: "qntyk2"
+  version_hash: "xqofde"
 };
 async function get_hooks() {
   return {};
@@ -5058,7 +5058,10 @@ const idlFactory = ({ IDL }) => {
     "shirtType": ShirtType,
     "primaryColourHex": IDL.Text
   });
-  const RecallPlayerDTO = IDL.Record({ "playerId": ClubId });
+  const RecallPlayerDTO = IDL.Record({
+    "recallFromLeagueId": LeagueId,
+    "playerId": ClubId
+  });
   const RemoveClubDTO = IDL.Record({
     "clubId": ClubId,
     "leagueId": LeagueId
@@ -5268,7 +5271,7 @@ const idlFactory = ({ IDL }) => {
     "expectedReturns": IDL.Nat64,
     "settledOn": IDL.Int
   });
-  const Result_19 = IDL.Variant({ "ok": IDL.Vec(BetSlip), "err": Error2 });
+  const Result_18 = IDL.Variant({ "ok": IDL.Vec(BetSlip), "err": Error2 });
   const HomePageFixtureDTO = IDL.Record({
     "fixtureId": FixtureId,
     "homeOdds": IDL.Float64,
@@ -5277,7 +5280,7 @@ const idlFactory = ({ IDL }) => {
     "gameweek": GameweekNumber,
     "leagueId": LeagueId
   });
-  const Result_18 = IDL.Variant({
+  const Result_17 = IDL.Variant({
     "ok": IDL.Vec(HomePageFixtureDTO),
     "err": Error2
   });
@@ -5286,11 +5289,9 @@ const idlFactory = ({ IDL }) => {
     "code": IDL.Text,
     "name": IDL.Text
   });
-  const Result_17 = IDL.Variant({ "ok": IDL.Vec(CountryDTO), "err": Error2 });
+  const Result_16 = IDL.Variant({ "ok": IDL.Vec(CountryDTO), "err": Error2 });
   const DataHash = IDL.Record({ "hash": IDL.Text, "category": IDL.Text });
-  const Result_16 = IDL.Variant({ "ok": IDL.Vec(DataHash), "err": Error2 });
-  const DataHashDTO = IDL.Record({ "hash": IDL.Text, "category": IDL.Text });
-  const Result_15 = IDL.Variant({ "ok": IDL.Vec(DataHashDTO), "err": Error2 });
+  const Result_15 = IDL.Variant({ "ok": IDL.Vec(DataHash), "err": Error2 });
   const Result_14 = IDL.Variant({ "ok": IDL.Vec(FixtureDTO), "err": Error2 });
   const ClubDTO = IDL.Record({
     "id": ClubId,
@@ -5313,12 +5314,16 @@ const idlFactory = ({ IDL }) => {
     "id": IDL.Nat16,
     "status": PlayerStatus,
     "clubId": ClubId,
+    "parentClubId": ClubId,
     "valueQuarterMillions": IDL.Nat16,
     "dateOfBirth": IDL.Int,
     "nationality": CountryId,
+    "currentLoanEndDate": IDL.Int,
     "shirtNumber": IDL.Nat8,
+    "parentLeagueId": LeagueId,
     "position": PlayerPosition,
     "lastName": IDL.Text,
+    "leagueId": LeagueId,
     "firstName": IDL.Text
   });
   const Result_12 = IDL.Variant({ "ok": IDL.Vec(PlayerDTO), "err": Error2 });
@@ -5352,6 +5357,26 @@ const idlFactory = ({ IDL }) => {
   });
   const Result_10 = IDL.Variant({
     "ok": IDL.Vec(FootballLeagueDTO),
+    "err": Error2
+  });
+  const LoanedPlayerDTO = IDL.Record({
+    "id": IDL.Nat16,
+    "status": PlayerStatus,
+    "clubId": ClubId,
+    "parentClubId": ClubId,
+    "valueQuarterMillions": IDL.Nat16,
+    "dateOfBirth": IDL.Int,
+    "nationality": CountryId,
+    "currentLoanEndDate": IDL.Int,
+    "shirtNumber": IDL.Nat8,
+    "parentLeagueId": LeagueId,
+    "position": PlayerPosition,
+    "lastName": IDL.Text,
+    "leagueId": LeagueId,
+    "firstName": IDL.Text
+  });
+  const Result_9 = IDL.Variant({
+    "ok": IDL.Vec(LoanedPlayerDTO),
     "err": Error2
   });
   const PlayerSelectionOdds = IDL.Record({
@@ -5510,6 +5535,7 @@ const idlFactory = ({ IDL }) => {
   });
   const Result_3 = IDL.Variant({ "ok": UserAuditDTO, "err": Error2 });
   const Result_2 = IDL.Variant({ "ok": IDL.Bool, "err": Error2 });
+  const ShuftiResponse = IDL.Record({});
   const PauseAccountDTO = IDL.Record({
     "pauseDays": IDL.Nat,
     "principalId": PrincipalId
@@ -5569,7 +5595,7 @@ const idlFactory = ({ IDL }) => {
     "executeMoveFixture": IDL.Func([MoveFixtureDTO], [], []),
     "executePostponeFixture": IDL.Func([PostponeFixtureDTO], [], []),
     "executePromoteClub": IDL.Func([LeagueId, PromoteClubDTO], [], []),
-    "executeRecallPlayer": IDL.Func([LeagueId, RecallPlayerDTO], [], []),
+    "executeRecallPlayer": IDL.Func([RecallPlayerDTO], [], []),
     "executeRemoveClub": IDL.Func([RemoveClubDTO], [], []),
     "executeRescheduleFixture": IDL.Func(
       [LeagueId, RescheduleFixtureDTO],
@@ -5591,30 +5617,25 @@ const idlFactory = ({ IDL }) => {
     "executeUpdateClub": IDL.Func([LeagueId, UpdateClubDTO], [], []),
     "executeUpdateLeague": IDL.Func([UpdateLeagueDTO], [], []),
     "executeUpdatePlayer": IDL.Func([LeagueId, UpdatePlayerDTO], [], []),
-    "getBets": IDL.Func([GetBetsDTO], [Result_19], []),
+    "getBets": IDL.Func([GetBetsDTO], [Result_18], []),
     "getBettableHomepageFixtures": IDL.Func(
       [LeagueId],
-      [Result_18],
+      [Result_17],
       ["query"]
     ),
-    "getCountries": IDL.Func([], [Result_17], ["query"]),
+    "getCountries": IDL.Func([], [Result_16], ["query"]),
     "getDataHashForCategory": IDL.Func(
       [LeagueId, IDL.Text],
-      [Result_16],
+      [Result_15],
       ["composite_query"]
     ),
-    "getDataHashes": IDL.Func([], [Result_15], ["composite_query"]),
     "getFixtures": IDL.Func([LeagueId], [Result_14], ["composite_query"]),
     "getLeagueClubs": IDL.Func([LeagueId], [Result_13], ["composite_query"]),
     "getLeaguePlayers": IDL.Func([LeagueId], [Result_12], ["composite_query"]),
     "getLeagueStatus": IDL.Func([LeagueId], [Result_11], ["composite_query"]),
     "getLeagues": IDL.Func([], [Result_10], ["composite_query"]),
-    "getMatchOdds": IDL.Func([LeagueId, FixtureId], [Result_9], ["query"]),
-    "getPlayerDetailsForGameweek": IDL.Func(
-      [LeagueId, GameweekFiltersDTO],
-      [Result_8],
-      ["composite_query"]
-    ),
+    "getLoanedPlayers": IDL.Func([LeagueId], [Result_9], ["composite_query"]),
+    "getMatchOdds": IDL.Func([LeagueId, FixtureId], [Result_8], ["query"]),
     "getProfile": IDL.Func([], [Result_7], []),
     "getSeasons": IDL.Func([LeagueId], [Result_6], ["composite_query"]),
     "getSystemState": IDL.Func([IDL.Text], [Result_5], ["composite_query"]),
@@ -5623,6 +5644,7 @@ const idlFactory = ({ IDL }) => {
     "isAdmin": IDL.Func([], [Result_2], []),
     "isAuditor": IDL.Func([], [Result_2], []),
     "isDataManager": IDL.Func([], [Result_2], []),
+    "kycVerificationCallback": IDL.Func([ShuftiResponse], [], []),
     "pauseAccount": IDL.Func([PauseAccountDTO], [Result], []),
     "payWeeklyRewards": IDL.Func([IDL.Text, GameweekNumber], [Result], []),
     "placeBet": IDL.Func([SubmitBetslipDTO], [Result_1], []),
@@ -6627,6 +6649,11 @@ class PlayerService {
     if (isError(result)) throw new Error("Failed to fetch players");
     return result.ok;
   }
+  async getLoanedPlayers(leagueId) {
+    const result = await this.actor.getLoanedPlayers(leagueId);
+    if (isError(result)) throw new Error("Failed to fetch players");
+    return result.ok;
+  }
   async transferPlayer(leagueId, dto) {
     const identityActor = await ActorFactory.createIdentityActor(
       authStore,
@@ -6666,6 +6693,18 @@ class PlayerService {
     );
     const result = await identityActor.executeUpdatePlayer(leagueId, dto);
     if (isError(result)) throw new Error("Failed to update player");
+  }
+  async recallLoan(recallFromLeagueId, playerId) {
+    const identityActor = await ActorFactory.createIdentityActor(
+      authStore,
+      define_process_env_default.BACKEND_CANISTER_ID
+    );
+    let dto = {
+      recallFromLeagueId,
+      playerId
+    };
+    const result = await identityActor.executeRecallPlayer(dto);
+    if (isError(result)) throw new Error("Failed to recall player");
   }
 }
 function createPlayerStore() {
@@ -6726,6 +6765,9 @@ function createPlayerStore() {
   async function getPlayers(leagueId) {
     return new PlayerService().getPlayers(leagueId);
   }
+  async function getLoanedPlayers(leagueId) {
+    return new PlayerService().getLoanedPlayers(leagueId);
+  }
   async function transferPlayer(leagueId, dto) {
     return new PlayerService().transferPlayer(leagueId, dto);
   }
@@ -6741,6 +6783,9 @@ function createPlayerStore() {
   async function updatePlayer(leagueId, dto) {
     return new PlayerService().updatePlayer(leagueId, dto);
   }
+  async function recallLoan(recallFromLeagueId, recallPlayerId) {
+    return new PlayerService().recallLoan(recallFromLeagueId, recallPlayerId);
+  }
   return {
     getPlayers,
     transferPlayer,
@@ -6748,7 +6793,8 @@ function createPlayerStore() {
     loanPlayer,
     createPlayer,
     updatePlayer,
-    syncPlayers
+    getLoanedPlayers,
+    recallLoan
   };
 }
 const playerStore = createPlayerStore();

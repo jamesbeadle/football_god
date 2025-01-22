@@ -36,4 +36,8 @@ module AppTypes {
         kycRef: Text;
     };
 
+    public type ShuftiResponse = {
+        
+    };
+
 };

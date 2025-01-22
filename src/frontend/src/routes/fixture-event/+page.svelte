@@ -685,7 +685,84 @@
                         </div>
                       </div>
   
-                    {:else if category === "anytimeScorers" || category === "anytimeAssist"}
+                    {:else if category === "anytimeScorers" }
+                      <div class="overflow-hidden text-sm border rounded-b bg-BrandDarkGray border-BrandPurple">
+                        <div class="grid grid-cols-4 font-bold text-center text-black bg-white">
+                          <div class="p-2">Player</div>
+                          <div class="p-2">First</div>
+                          <div class="p-2">Last</div>
+                          <div class="p-2">Anytime</div>
+                        </div>
+  
+                        {#each sortPlayersByTeamAndValue(players, homeClub.id, awayClub.id) as player}
+                          {@const firstGoal = matchOdds.firstGoalscorers?.find((x) => x.playerId === player.id)}
+                          {@const lastGoal = matchOdds.lastGoalscorers?.find((x) => x.playerId === player.id)}
+                          {@const anytimeGoal = matchOdds.anytimeScorers?.find((x) => x.playerId === player.id)}
+  
+                          {#if firstGoal || lastGoal || anytimeGoal}
+                            <div class="grid grid-cols-4 text-center">
+                              <div class="p-4 text-base text-left border-b border-x border-BrandGray bg-BrandLightGray">
+                                {player.firstName} {player.lastName}
+                              </div>
+                              <button
+                                class="flex items-center justify-center gap-2 p-4 text-lg text-white border-b border-r bg-BrandGray border-BrandOddsDivider hover:bg-BrandGray/80"
+                                on:click={() => {
+                                  if (firstGoal) {
+                                    toggleBet(
+                                      fixtureId,
+                                      category,
+                                      { playerId: player.id, timing: "first" },
+                                      firstGoal.odds
+                                    );
+                                  }
+                                }}
+                              >
+                                {firstGoal ? formatOdds(firstGoal.odds) : "N/A"}
+                                {#if firstGoal && isBetSelectedByData(fixtureId, category, { playerId: player.id, timing: "first" })}
+                                  <BetSelectedIcon className="w-4 h-4 fill-BrandPurple" />
+                                {/if}
+                              </button>
+                              <button
+                                class="flex items-center justify-center gap-2 p-4 text-lg text-white border-b border-r bg-BrandGray border-BrandOddsDivider hover:bg-BrandGray/80"
+                                on:click={() => {
+                                  if (lastGoal) {
+                                    toggleBet(
+                                      fixtureId,
+                                      category,
+                                      { playerId: player.id, timing: "last" },
+                                      lastGoal.odds
+                                    );
+                                  }
+                                }}
+                              >
+                                {lastGoal ? formatOdds(lastGoal.odds) : "N/A"}
+                                {#if lastGoal && isBetSelectedByData(fixtureId, category, { playerId: player.id, timing: "last" })}
+                                  <BetSelectedIcon className="w-4 h-4 fill-BrandPurple" />
+                                {/if}
+                              </button>
+                              <button
+                                class="flex items-center justify-center gap-2 p-4 text-lg text-white border-b border-r bg-BrandGray border-BrandOddsDivider hover:bg-BrandGray/80"
+                                on:click={() => {
+                                  if (anytimeGoal) {
+                                    toggleBet(
+                                      fixtureId,
+                                      category,
+                                      { playerId: player.id, timing: "anytime" },
+                                      anytimeGoal.odds
+                                    );
+                                  }
+                                }}
+                              >
+                                {anytimeGoal ? formatOdds(anytimeGoal.odds) : "N/A"}
+                                {#if anytimeGoal && isBetSelectedByData(fixtureId, category, { playerId: player.id, timing: "anytime" })}
+                                  <BetSelectedIcon className="w-4 h-4 fill-BrandPurple" />
+                                {/if}
+                              </button>
+                            </div>
+                          {/if}
+                        {/each}
+                      </div>
+                      {:else if category === "anytimeAssist"}
                       <div class="overflow-hidden text-sm border rounded-b bg-BrandDarkGray border-BrandPurple">
                         <div class="grid grid-cols-4 font-bold text-center text-black bg-white">
                           <div class="p-2">Player</div>
@@ -762,7 +839,6 @@
                           {/if}
                         {/each}
                       </div>
-
 
                     {:else if ["scoresBrace"].includes(category)}
                       <div class="overflow-hidden text-sm border rounded-b bg-BrandDarkGray border-BrandPurple">

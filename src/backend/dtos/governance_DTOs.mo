@@ -72,6 +72,7 @@ module GovernanceDTOs {
   };
 
   public type RecallPlayerDTO = {
+    recallFromLeagueId: FootballTypes.LeagueId;
     playerId : FootballTypes.ClubId;
   };
 

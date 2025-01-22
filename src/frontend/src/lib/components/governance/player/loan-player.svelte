@@ -11,9 +11,7 @@
   export let visible: boolean;
   export let closeModal: () => void;
 
-  export let selectedLeagueId: number = 0;
-  export let selectedClubId: number = 0;
-  export let selectedPlayerId: number = 0;
+  export let selectedPlayer: PlayerDTO;
   
   let loanLeagueId: number = 0;
   let loanClubId: number = 0;
@@ -21,7 +19,6 @@
   let date = "";
 
   let leagues: FootballLeagueDTO[] = [];
-  let clubs: ClubDTO[] = [];
   let clubPlayers: PlayerDTO[] = [];
   let loanClubs: ClubDTO[] = [];
 
@@ -29,25 +26,13 @@
   let showConfirm = false;
   let leaguesLoaded = false;
 
-  $: isSubmitDisabled =
-    selectedPlayerId <= 0 ||
-    (selectedLeagueId <= 0 && selectedClubId <= 0) ||
-    date == "";
+  $: isSubmitDisabled = loanLeagueId == 0 || loanClubId == 0 || date == "";
 
   onMount(async () => {
     try {
       isLoading = true;
       leagues = await leagueStore.getLeagues();
       leaguesLoaded = true; 
-      
-      if (selectedLeagueId > 0) {
-        // Set the selected league and fetch clubs
-        await getClubs();
-      }
-      
-      if (selectedLeagueId > 0 && selectedClubId > 0) {
-        await getClubPlayers();
-      }
     } catch (error) {
       console.error("Error mounting loan player modal.", error);
     } finally {
@@ -55,30 +40,12 @@
     }
   });
 
-  $: if (leaguesLoaded && selectedLeagueId > 0) {
-    getClubs();
-  }
-
-  $: if (leaguesLoaded && selectedLeagueId > 0 && selectedClubId > 0) {
-    getClubPlayers();
-  }
-
   $: if(loanLeagueId > 0){
     getLoanClubs();
   };
-
-  async function getClubs() {
-    clubs = await clubStore.getClubs(selectedLeagueId);
-  }
-
+  
   async function getLoanClubs() {
     loanClubs = await clubStore.getClubs(loanLeagueId);
-  }
-
-  async function getClubPlayers() {
-    clubPlayers = (await playerStore.getPlayers(selectedLeagueId)).filter(
-      (x) => x.clubId == selectedClubId
-    );
   }
 
   function raiseProposal() {
@@ -90,13 +57,12 @@
     
     let dto: LoanPlayerDTO = {
       loanEndDate: convertDateInputToUnixNano(date),
-      playerId: selectedPlayerId,
+      playerId: selectedPlayer.id,
       loanClubId: loanClubId,
       loanLeagueId: loanLeagueId
     };
     
-    await playerStore.loanPlayer(selectedLeagueId, dto);
-
+    await playerStore.loanPlayer(selectedPlayer.leagueId, dto);
     closeModal();
   }
 
@@ -106,8 +72,6 @@
   }
 
   function resetForm() {
-    selectedClubId = 0;
-    selectedPlayerId = 0;
     clubPlayers = [];
     isLoading = false;
   }
@@ -125,11 +89,14 @@
         <LocalSpinner />
       {:else}
         <div class="w-full flex-col space-y-4 mb-2">
-          <p>Select the player's league:</p>
+
+          <p>Loan {selectedPlayer.firstName} {selectedPlayer}</p>
+        
+          <p>Please select players loan club league:</p>
 
           <select
             class="p-2 brand-dropdown min-w-[100px]"
-            bind:value={selectedLeagueId}
+            bind:value={loanLeagueId}
           >
             <option value={0}>Select League</option>
             {#each leagues as league}
@@ -137,71 +104,24 @@
             {/each}
           </select>
 
-          {#if selectedLeagueId > 0}
-            <p>Select the player's club:</p>
+          {#if loanLeagueId > 0}
 
             <select
               class="p-2 brand-dropdown min-w-[100px]"
-              bind:value={selectedClubId}
+              bind:value={loanClubId}
             >
               <option value={0}>Select Club</option>
-              {#each clubs as club}
+              {#each loanClubs as club}
                 <option value={club.id}>{club.friendlyName}</option>
               {/each}
             </select>
-          {/if}
 
-          {#if selectedClubId > 0}
-            <p>Select a player to loan:</p>
-
-            <select
-              class="p-2 brand-dropdown my-4 min-w-[100px]"
-              bind:value={selectedPlayerId}
-            >
-              <option value={0}>Select Player</option>
-              {#each clubPlayers as player}
-                <option value={player.id}
-                  >{player.firstName} {player.lastName}</option
-                >
-              {/each}
-            </select>
-
-            {#if selectedPlayerId > 0}
-              <p>Please select players loan club league:</p>
-
-              <select
-                class="p-2 brand-dropdown min-w-[100px]"
-                bind:value={loanLeagueId}
-              >
-                <option value={0}>Select League</option>
-                {#each leagues as league}
-                  <option value={league.id}>{league.name}</option>
-                {/each}
-              </select>
-
-              {#if loanLeagueId > 0}
-    
-                <select
-                  class="p-2 brand-dropdown min-w-[100px]"
-                  bind:value={loanClubId}
-                >
-                  <option value={0}>Select Club</option>
-                  {#each loanClubs as club}
-                    <option value={club.id}>{club.friendlyName}</option>
-                  {/each}
-                </select>
-
-                {#if loanClubId > 0}
-                  <div class="flex flex-row my-2">
-                    <p class="mr-2">Select Date:</p>
-                    <input type="date" bind:value={date} class="brand-input" />
-                  </div>
-
-                {/if}
-              {/if}
-
+            {#if loanClubId > 0}
+              <div class="flex flex-row my-2">
+                <p class="mr-2">Select Date:</p>
+                <input type="date" bind:value={date} class="brand-input" />
+              </div>
             {/if}
-
           {/if}
 
           <div class="items-center flex space-x-4">

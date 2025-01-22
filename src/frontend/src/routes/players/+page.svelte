@@ -14,6 +14,7 @@
   import LoanPlayer from "$lib/components/governance/player/loan-player.svelte";
   import SetFreeAgent from "$lib/components/governance/player/set-free-agent.svelte";
   import LocalSpinner from "$lib/components/shared/local-spinner.svelte";
+    import RecallPlayer from "$lib/components/governance/player/recall-player.svelte";
 
   let isLoading = true;
   let loadingPlayers = false;
@@ -335,7 +336,8 @@
               <p class="flex-grow text-lg md:text-sm text-white">
                 {player.firstName} {player.lastName} <br />
                 Player ID: {player.id} <br />
-                Value: £{(player.valueQuarterMillions / 4)}M
+                Value: £{(player.valueQuarterMillions / 4)}M <br />
+                Status: {Object.keys(player.status)[0]}
               </p>
               <div class="relative">
                 <button class="text-white brand-button" on:click={(event) => toggleDropdown(player.id, event)}>Actions</button>
@@ -361,7 +363,7 @@
 
       {#if selectedPlayerId > 0 && showLoanPlayerModal}
         {@const selectedPlayer = filteredPlayers.find(x => x.id == selectedPlayerId) }
-        <LoanPlayer visible={showLoanPlayerModal} {closeModal} selectedClubId={selectedPlayer ? selectedPlayer.clubId ?? 0 : 0} {selectedPlayerId} {selectedLeagueId}/>
+        <LoanPlayer visible={showLoanPlayerModal} {closeModal} selectedPlayer={selectedPlayer!} />
       {/if}
     
       {#if showCreatePlayerModal}
@@ -376,6 +378,11 @@
       {#if selectedPlayerId > 0 && showTransferPlayerModal}
         {@const selectedPlayer = filteredPlayers.find(x => x.id == selectedPlayerId) }
         <TransferPlayer visible={showTransferPlayerModal} {closeModal} selectedClubId={selectedPlayer ? selectedPlayer.clubId ?? 0 : 0} {selectedPlayerId} {selectedLeagueId} />
+      {/if}
+    
+      {#if selectedPlayerId > 0 && showRecallPlayerModal}
+        {@const selectedPlayer = filteredPlayers.find(x => x.id == selectedPlayerId) }
+        <RecallPlayer visible={showRecallPlayerModal} {closeModal} selectedPlayer={selectedPlayer!} />
       {/if}
     
       {#if selectedPlayerId > 0 && showSetFreeAgentModal}

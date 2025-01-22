@@ -3,11 +3,12 @@ import type {
   PlayerDTO,
   CreatePlayerDTO,
   LeagueId,
+  PlayerId,
   LoanPlayerDTO,
   SetFreeAgentDTO,
   TransferPlayerDTO,
   UpdatePlayerDTO,
-} from "../../../../declarations/backend/backend.did";
+} from "../../../../declarations/data_canister/data_canister.did";
 import { PlayerService } from "../services/player-service";
 import { DataHashService } from "../services/data-hash-service";
 import { serializeData, deserializeData } from "../utils/helpers";
@@ -80,6 +81,10 @@ function createPlayerStore() {
     return new PlayerService().getPlayers(leagueId);
   }
 
+  async function getLoanedPlayers(leagueId: LeagueId) {
+    return new PlayerService().getLoanedPlayers(leagueId);
+  }
+
   async function transferPlayer(
     leagueId: LeagueId,
     dto: TransferPlayerDTO,
@@ -115,6 +120,13 @@ function createPlayerStore() {
     return new PlayerService().updatePlayer(leagueId, dto);
   }
 
+  async function recallLoan(
+    recallFromLeagueId: LeagueId,
+    recallPlayerId: PlayerId,
+  ): Promise<any> {
+    return new PlayerService().recallLoan(recallFromLeagueId, recallPlayerId);
+  }
+
   return {
     getPlayers,
     transferPlayer,
@@ -123,6 +135,8 @@ function createPlayerStore() {
     createPlayer,
     updatePlayer,
     syncPlayers,
+    getLoanedPlayers,
+    recallLoan,
   };
 }
 

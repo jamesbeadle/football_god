@@ -1,33 +1,21 @@
 <script lang="ts">
   import { onMount } from "svelte";
-  import { clubStore } from "$lib/stores/club-store";
-  import { playerStore } from "$lib/stores/player-store";
-  //import { governanceStore } from "$lib/stores/governance-store";
   import LocalSpinner from "$lib/components/shared/local-spinner.svelte";
-  import { isError } from "$lib/utils/helpers";
-    import type { ClubDTO, PlayerDTO } from "../../../../../../declarations/backend/backend.did";
-    import Modal from "$lib/components/shared/modal.svelte";
+  import Modal from "$lib/components/shared/modal.svelte";
+  import { playerStore } from "$lib/stores/player-store";
+  import type { LoanedPlayerDTO } from "../../../../../../declarations/data_canister/data_canister.did";
 
   export let visible: boolean;
   export let closeModal: () => void;
 
-  let selectedClubId: number = 0;
-  let selectedPlayerId: number = 0;
-  let clubs: ClubDTO[] = [];
-  let loanedPlayers: PlayerDTO[] = [];
+  export let selectedPlayer: LoanedPlayerDTO;
+
 
   let isLoading = true;
   let showConfirm = false;
 
-  $: isSubmitDisabled = selectedPlayerId <= 0 || selectedClubId <= 0;
-
-  $: if (isSubmitDisabled && showConfirm) {
-    showConfirm = false;
-  }
-
   onMount(async () => {
     try {
-      isLoading = false;
     } catch (error) {
       console.error("Error mounting recall player.", error);
     } finally {
@@ -35,22 +23,13 @@
     }
   });
 
-  $: if (selectedClubId) {
-    getLoanedPlayers();
-  }
-
-  async function getLoanedPlayers() {
-    isLoading = true;
-    //loanedPlayers = await playerStore.getLoanedPlayers(selectedClubId);
-    isLoading = false;
-  }
-
   function raiseProposal() {
     showConfirm = true;
   }
 
   async function confirmProposal() {
     isLoading = true;
+    await playerStore.recallLoan(selectedPlayer.parentLeagueId, selectedPlayer.id);
     /*
     let result = await governanceStore.recallPlayer(selectedPlayerId);
     if (isError(result)) {
@@ -65,10 +44,7 @@
   }
 
   function resetForm() {
-    selectedClubId = 0;
-    selectedPlayerId = 0;
     showConfirm = false;
-    loanedPlayers = [];
   }
 
   function cancelModal() {
@@ -86,36 +62,8 @@
 
     <div class="flex justify-start items-center w-full">
       <div class="w-full flex-col space-y-4 mb-2">
-        <div class="flex-col space-y-2">
-          <p>Select the player's club:</p>
-          <select
-            class="p-2 brand-dropdown min-w-[100px]"
-            bind:value={selectedClubId}
-          >
-            <option value={0}>Select Club</option>
-            {#each clubs as club}
-              <option value={club.id}>{club.friendlyName}</option>
-            {/each}
-          </select>
-        </div>
-
-        {#if selectedClubId > 0}
-          <div class="flex-col space-y-2">
-            <p>Select a player to recall:</p>
-
-            <select
-              class="p-2 brand-dropdown my-4 min-w-[100px]"
-              bind:value={selectedPlayerId}
-            >
-              <option value={0}>Select Player</option>
-              {#each loanedPlayers as player}
-                <option value={player.id}
-                  >{player.firstName} {player.lastName}</option
-                >
-              {/each}
-            </select>
-          </div>
-        {/if}
+        
+        <p>Recall loan for {selectedPlayer.firstName} {selectedPlayer.lastName}</p>
 
         <div class="items-center flex space-x-4">
           <button
@@ -126,10 +74,8 @@
             Cancel
           </button>
           <button
-            class={`${isSubmitDisabled ? "brand-button-disabled" : "brand-button"} 
-                        px-4 py-2 min-w-[150px]`}
+            class="brand-button px-4 py-2 min-w-[150px]"
             on:click={raiseProposal}
-            disabled={isSubmitDisabled}
           >
             Raise Proposal
           </button>
@@ -143,10 +89,8 @@
           </div>
           <div class="items-center flex">
             <button
-              class={`${isSubmitDisabled ? "brand-button-disabled" : "brand-button"} 
-                            px-4 py-2 w-full`}
+              class="brand-button px-4 py-2 w-full"
               on:click={confirmProposal}
-              disabled={isSubmitDisabled}
             >
               Confirm Submit Proposal
             </button>
