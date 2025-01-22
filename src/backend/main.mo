@@ -859,6 +859,7 @@ actor Self {
   private stable var stable_unique_profile_canister_ids: [Base.CanisterId] = [];
   private stable var stable_active_profile_canister_id: Text = "";
   private stable var stable_usernames: [(Base.PrincipalId, Text)] = [];
+  private stable var stable_kyc_references: [(Base.PrincipalId, Text)] = [];
   private stable var stable_kyc_profiles: [(Base.PrincipalId, AppTypes.ShuftiResponse)] = [];
 
   //Odds Manager
@@ -871,6 +872,7 @@ actor Self {
     stable_usernames := userManager.getStableUsernames();
     stable_match_odds_cache := oddsManager.getStableMatchOddsCache();
 
+    stable_kyc_references := kycManager.getStableKYCReferences();
     stable_kyc_profiles := kycManager.getStableKYCProfiles();
   };
 
@@ -882,6 +884,7 @@ actor Self {
     userManager.setStableUsernames(stable_usernames);
     oddsManager.setStableMatchOddsCache(stable_match_odds_cache);
 
+    kycManager.setStableKYCReferences(stable_kyc_references);
     kycManager.setStableKYCProfiles(stable_kyc_profiles);
 
     ignore Timer.setTimer<system>(#nanoseconds(Int.abs(1)), postUpgradeCallback); 
@@ -1100,12 +1103,19 @@ actor Self {
   };
 
   //KYC Functions
-  /*
-  public shared ({ caller }) func storePendingKYC(keyReference: Text) : async (){
+  public shared ({ caller }) func storeKYCReference(kycReference: Text) : async (){
     assert not Principal.isAnonymous(caller);
     let principalId = Principal.toText(caller);
-    kycManager.storePendingKYC(kycReference, principalId);
+    kycManager.storeKYCReference(kycReference, principalId);
   };
+
+  public shared func kycVerificationCallback(response: AppTypes.ShuftiResponse) : async () {
+    //Check response and update if verified to allow betting
+
+
+  };
+
+  /*
 
   public shared ({ caller }) func getKYCStatus() : async ?Text {
     assert not Principal.isAnonymous(caller);
@@ -1117,10 +1127,6 @@ actor Self {
     assert not Principal.isAnonymous(caller);
     let principalId = Principal.toText(caller);
     return kycManager.isKycVerified(principalId);
-  };
-
-  public shared func kycVerificationCallback(response: AppTypes.ShuftiResponse) : async () {
-    //Check response and update if verified to allow betting
   };
   */
    

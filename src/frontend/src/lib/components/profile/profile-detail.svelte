@@ -7,9 +7,8 @@
   import WithdrawFplModal from "./withdraw-fpl-modal.svelte";
     import { authStore } from "$lib/stores/auth-store";
     import FullScreenSpinner from "../shared/full-screen-spinner.svelte";
-    import { KYCService } from "$lib/services/kyc-service";
-    import { Cbor } from "@dfinity/agent";
     import { SHUFTI_CLIENT_ID, SHUFTI_SECRET_KEY } from "$lib/environment/environment";
+    import { kycStore } from "$lib/stores/kyc-store";
 
   let isLoading = true;
   let loadingBalances = true;
@@ -106,6 +105,7 @@
   async function beginKYC() {
     try {
       let reference = crypto.randomUUID();
+      await kycStore.storeKYCReference(reference);
       const payload = {
         reference: `SP_REQUEST_${reference}`,
         callback_url: "https://ic0.app/api/v3/canister/44kin-waaaa-aaaal-qbxra-cai/call",
