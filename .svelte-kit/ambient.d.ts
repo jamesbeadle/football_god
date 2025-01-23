@@ -29,8 +29,8 @@ declare module '$env/static/private' {
 	export const DFX_VERSION: string;
 	export const DFX_NETWORK: string;
 	export const CANISTER_ID_DATA_CANISTER: string;
-	export const CANISTER_ID_BACKEND: string;
 	export const CANISTER_ID_FRONTEND: string;
+	export const CANISTER_ID_BACKEND: string;
 	export const CANISTER_ID: string;
 	export const CANISTER_CANDID_PATH: string;
 	export const VITE_AUTH_PROVIDER_URL: string;
@@ -47,7 +47,6 @@ declare module '$env/static/private' {
 	export const ZDOTDIR: string;
 	export const ORIGINAL_XDG_CURRENT_DESKTOP: string;
 	export const MallocNanoZone: string;
-	export const CURSOR_TRACE_ID: string;
 	export const COLOR: string;
 	export const npm_config_noproxy: string;
 	export const npm_config_local_prefix: string;
@@ -74,6 +73,7 @@ declare module '$env/static/private' {
 	export const npm_config_npm_version: string;
 	export const XPC_FLAGS: string;
 	export const VSCODE_GIT_ASKPASS_EXTRA_ARGS: string;
+	export const NODE_ENV: string;
 	export const npm_config_node_gyp: string;
 	export const npm_package_version: string;
 	export const XPC_SERVICE_NAME: string;
@@ -94,11 +94,9 @@ declare module '$env/static/private' {
 	export const npm_node_execpath: string;
 	export const npm_config_prefix: string;
 	export const COLORTERM: string;
-	export const NODE_ENV: string;
-	export const VITE___CANDID_UI_CANISTER_ID: string;
 	export const VITE_BACKEND_CANISTER_ID: string;
-	export const VITE_DATA_CANISTER_CANISTER_ID: string;
 	export const VITE_FRONTEND_CANISTER_ID: string;
+	export const VITE_DATA_CANISTER_CANISTER_ID: string;
 }
 
 /**
@@ -133,8 +131,8 @@ declare module '$env/dynamic/private' {
 		DFX_VERSION: string;
 		DFX_NETWORK: string;
 		CANISTER_ID_DATA_CANISTER: string;
-		CANISTER_ID_BACKEND: string;
 		CANISTER_ID_FRONTEND: string;
+		CANISTER_ID_BACKEND: string;
 		CANISTER_ID: string;
 		CANISTER_CANDID_PATH: string;
 		VITE_AUTH_PROVIDER_URL: string;
@@ -151,7 +149,6 @@ declare module '$env/dynamic/private' {
 		ZDOTDIR: string;
 		ORIGINAL_XDG_CURRENT_DESKTOP: string;
 		MallocNanoZone: string;
-		CURSOR_TRACE_ID: string;
 		COLOR: string;
 		npm_config_noproxy: string;
 		npm_config_local_prefix: string;
@@ -178,6 +175,7 @@ declare module '$env/dynamic/private' {
 		npm_config_npm_version: string;
 		XPC_FLAGS: string;
 		VSCODE_GIT_ASKPASS_EXTRA_ARGS: string;
+		NODE_ENV: string;
 		npm_config_node_gyp: string;
 		npm_package_version: string;
 		XPC_SERVICE_NAME: string;
@@ -198,11 +196,9 @@ declare module '$env/dynamic/private' {
 		npm_node_execpath: string;
 		npm_config_prefix: string;
 		COLORTERM: string;
-		NODE_ENV: string;
-		VITE___CANDID_UI_CANISTER_ID: string;
 		VITE_BACKEND_CANISTER_ID: string;
-		VITE_DATA_CANISTER_CANISTER_ID: string;
 		VITE_FRONTEND_CANISTER_ID: string;
+		VITE_DATA_CANISTER_CANISTER_ID: string;
 		[key: `PUBLIC_${string}`]: undefined;
 		[key: `${string}`]: string | undefined;
 	}

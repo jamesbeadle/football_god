@@ -7,9 +7,8 @@ module Environment {
   public let NNS_LEDGER_CANISTER_ID = "ryjl3-tyaaa-aaaaa-aaaba-cai"; 
   public let BACKEND_CANISTER_ID = "44kin-waaaa-aaaal-qbxra-cai";
   public let FRONTEND_CANISTER_ID = "43loz-3yaaa-aaaal-qbxrq-cai";
-  
-  public let DATA_CANISTER_ID = "avqkn-guaaa-aaaaa-qaaea-cai"; 
-  //public let DATA_CANISTER_ID = "52fzd-2aaaa-aaaal-qmzsa-cai"; //LIVE
+   
+  public let DATA_CANISTER_ID = "52fzd-2aaaa-aaaal-qmzsa-cai"; 
   public let OPENFPL_BACKEND_CANISTER_ID = "y22zx-giaaa-aaaal-qmzpq-cai";
   public let OPENWSL_BACKEND_CANISTER_ID = "5bafg-ayaaa-aaaal-qmzqq-cai";
   public let OPENFPL_GOVERNANCE_CANISTER_ID = "detjl-sqaaa-aaaaq-aacqa-cai";

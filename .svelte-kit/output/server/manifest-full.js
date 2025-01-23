@@ -7,10 +7,10 @@ function __memo(fn) {
 return {
 	appDir: "_app",
 	appPath: "_app",
-	assets: new Set([".ic-assets.json",".well-known/ic-domains",".well-known/ii-alternative-origins","FPLCoin.png","Gods.png","ICPCoin.png","banner.jpg","favicons/apple-touch-icon.png","favicons/browserconfig.xml","favicons/favicon-16x16.png","favicons/favicon-32x32.png","favicons/favicon.ico","favicons/icon-192x192.png","favicons/icon-512x512.png","favicons/mstile-150x150.png","favicons/safari-pinned-tab.svg","fpl.jpg","manifest.webmanifest","poppins-regular-webfont.woff2","profile_placeholder.png","transferkings.png","whitepaper.jpg","wsl.jpg"]),
+	assets: new Set([".DS_Store",".ic-assets.json",".well-known/ic-domains",".well-known/ii-alternative-origins","FPLCoin.png","Gods.png","ICPCoin.png","banner.jpg","favicons/.DS_Store","favicons/apple-touch-icon.png","favicons/browserconfig.xml","favicons/favicon-16x16.png","favicons/favicon-32x32.png","favicons/favicon.ico","favicons/icon-192x192.png","favicons/icon-512x512.png","favicons/mstile-150x150.png","favicons/safari-pinned-tab.svg","fpl.jpg","manifest.webmanifest","poppins-regular-webfont.woff2","profile_placeholder.png","transferkings.png","whitepaper.jpg","wsl.jpg"]),
 	mimeTypes: {".json":"application/json",".png":"image/png",".jpg":"image/jpeg",".xml":"text/xml",".svg":"image/svg+xml",".webmanifest":"application/manifest+json",".woff2":"font/woff2"},
 	_: {
-		client: {"start":"_app/immutable/entry/start.ByNv3Oum.js","app":"_app/immutable/entry/app.LLRgoPQs.js","imports":["_app/immutable/entry/start.ByNv3Oum.js","_app/immutable/chunks/index.DnvMF2h0.js","_app/immutable/chunks/vendor.BRQfKsJt.js","_app/immutable/entry/app.LLRgoPQs.js","_app/immutable/chunks/index.DnvMF2h0.js","_app/immutable/chunks/vendor.BRQfKsJt.js"],"stylesheets":["_app/immutable/assets/index.Cxrw_qxx.css","_app/immutable/assets/index.Cxrw_qxx.css"],"fonts":[],"uses_env_dynamic_public":false},
+		client: {"start":"_app/immutable/entry/start.ws9sK-F0.js","app":"_app/immutable/entry/app.DPR1FNez.js","imports":["_app/immutable/entry/start.ws9sK-F0.js","_app/immutable/chunks/index.BGglJL7C.js","_app/immutable/chunks/vendor.D2hkZpzI.js","_app/immutable/entry/app.DPR1FNez.js","_app/immutable/chunks/index.BGglJL7C.js","_app/immutable/chunks/vendor.D2hkZpzI.js"],"stylesheets":["_app/immutable/assets/index.Cxrw_qxx.css","_app/immutable/assets/index.Cxrw_qxx.css"],"fonts":[],"uses_env_dynamic_public":false},
 		nodes: [
 			__memo(() => import('./nodes/0.js')),
 			__memo(() => import('./nodes/1.js')),

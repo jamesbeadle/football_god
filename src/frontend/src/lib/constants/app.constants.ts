@@ -16,4 +16,4 @@ export const MINUTES_IN_HOUR = 60;
 export const HOURS_IN_DAY = 24;
 export const DAYS_IN_NON_LEAP_YEAR = 365;
 
-export const MAX_CACHED_LEAGUES = 1;
+export const MAX_CACHED_LEAGUES = 3;

@@ -108,7 +108,7 @@
       await kycStore.storeKYCReference(reference);
       const payload = {
         reference: `SP_REQUEST_${reference}`,
-        callback_url: "https://ic0.app/api/v3/canister/44kin-waaaa-aaaal-qbxra-cai/call",
+        callback_url: "https://us-central1.openfpl1.cloudfunctions.net/api/forwardKYCResponse",
         redirect_url: "https://footballgod.xyz/",
         country: "GB",
         language: "EN",

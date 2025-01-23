@@ -4243,7 +4243,7 @@
       };
 
       if(Array.size(leaguePlayers) > 0){
-
+        return;
       };
 
       leagues := [

@@ -4719,7 +4719,7 @@ const options = {
 		<div class="error">
 			<span class="status">` + status + '</span>\n			<div class="message">\n				<h1>' + message + "</h1>\n			</div>\n		</div>\n	</body>\n</html>\n"
   },
-  version_hash: "xqofde"
+  version_hash: "1uodo54"
 };
 async function get_hooks() {
   return {};
@@ -4857,7 +4857,7 @@ const AUTH_MAX_TIME_TO_LIVE = BigInt(
 );
 const AUTH_POPUP_WIDTH = 576;
 const AUTH_POPUP_HEIGHT = 625;
-const MAX_CACHED_LEAGUES = 1;
+const MAX_CACHED_LEAGUES = 3;
 const createAuthClient = () => AuthClient.create({
   idleOptions: {
     disableIdle: true,
@@ -5271,7 +5271,7 @@ const idlFactory = ({ IDL }) => {
     "expectedReturns": IDL.Nat64,
     "settledOn": IDL.Int
   });
-  const Result_18 = IDL.Variant({ "ok": IDL.Vec(BetSlip), "err": Error2 });
+  const Result_20 = IDL.Variant({ "ok": IDL.Vec(BetSlip), "err": Error2 });
   const HomePageFixtureDTO = IDL.Record({
     "fixtureId": FixtureId,
     "homeOdds": IDL.Float64,
@@ -5280,7 +5280,7 @@ const idlFactory = ({ IDL }) => {
     "gameweek": GameweekNumber,
     "leagueId": LeagueId
   });
-  const Result_17 = IDL.Variant({
+  const Result_19 = IDL.Variant({
     "ok": IDL.Vec(HomePageFixtureDTO),
     "err": Error2
   });
@@ -5289,10 +5289,12 @@ const idlFactory = ({ IDL }) => {
     "code": IDL.Text,
     "name": IDL.Text
   });
-  const Result_16 = IDL.Variant({ "ok": IDL.Vec(CountryDTO), "err": Error2 });
+  const Result_18 = IDL.Variant({ "ok": IDL.Vec(CountryDTO), "err": Error2 });
   const DataHash = IDL.Record({ "hash": IDL.Text, "category": IDL.Text });
-  const Result_15 = IDL.Variant({ "ok": IDL.Vec(DataHash), "err": Error2 });
-  const Result_14 = IDL.Variant({ "ok": IDL.Vec(FixtureDTO), "err": Error2 });
+  const Result_17 = IDL.Variant({ "ok": IDL.Vec(DataHash), "err": Error2 });
+  const DataHashDTO = IDL.Record({ "hash": IDL.Text, "category": IDL.Text });
+  const Result_16 = IDL.Variant({ "ok": IDL.Vec(DataHashDTO), "err": Error2 });
+  const Result_15 = IDL.Variant({ "ok": IDL.Vec(FixtureDTO), "err": Error2 });
   const ClubDTO = IDL.Record({
     "id": ClubId,
     "secondaryColourHex": IDL.Text,
@@ -5303,7 +5305,7 @@ const idlFactory = ({ IDL }) => {
     "shirtType": ShirtType,
     "primaryColourHex": IDL.Text
   });
-  const Result_13 = IDL.Variant({ "ok": IDL.Vec(ClubDTO), "err": Error2 });
+  const Result_14 = IDL.Variant({ "ok": IDL.Vec(ClubDTO), "err": Error2 });
   const PlayerStatus = IDL.Variant({
     "OnLoan": IDL.Null,
     "Active": IDL.Null,
@@ -5326,7 +5328,7 @@ const idlFactory = ({ IDL }) => {
     "leagueId": LeagueId,
     "firstName": IDL.Text
   });
-  const Result_12 = IDL.Variant({ "ok": IDL.Vec(PlayerDTO), "err": Error2 });
+  const Result_13 = IDL.Variant({ "ok": IDL.Vec(PlayerDTO), "err": Error2 });
   const CalendarMonth = IDL.Nat8;
   const LeagueStatus = IDL.Record({
     "transferWindowEndMonth": IDL.Nat8,
@@ -5343,7 +5345,7 @@ const idlFactory = ({ IDL }) => {
     "leagueId": LeagueId,
     "seasonActive": IDL.Bool
   });
-  const Result_11 = IDL.Variant({ "ok": LeagueStatus, "err": Error2 });
+  const Result_12 = IDL.Variant({ "ok": LeagueStatus, "err": Error2 });
   const FootballLeagueDTO = IDL.Record({
     "id": LeagueId,
     "logo": IDL.Vec(IDL.Nat8),
@@ -5355,7 +5357,7 @@ const idlFactory = ({ IDL }) => {
     "governingBody": IDL.Text,
     "formed": IDL.Int
   });
-  const Result_10 = IDL.Variant({
+  const Result_11 = IDL.Variant({
     "ok": IDL.Vec(FootballLeagueDTO),
     "err": Error2
   });
@@ -5375,7 +5377,7 @@ const idlFactory = ({ IDL }) => {
     "leagueId": LeagueId,
     "firstName": IDL.Text
   });
-  const Result_9 = IDL.Variant({
+  const Result_10 = IDL.Variant({
     "ok": IDL.Vec(LoanedPlayerDTO),
     "err": Error2
   });
@@ -5535,7 +5537,112 @@ const idlFactory = ({ IDL }) => {
   });
   const Result_3 = IDL.Variant({ "ok": UserAuditDTO, "err": Error2 });
   const Result_2 = IDL.Variant({ "ok": IDL.Bool, "err": Error2 });
-  const ShuftiResponse = IDL.Record({});
+  const ShuftiVerificationInfo = IDL.Record({
+    "geolocation": IDL.Record({
+      "ip": IDL.Text,
+      "asn": IDL.Text,
+      "isp": IDL.Text,
+      "latitude": IDL.Text,
+      "timezone": IDL.Text,
+      "city": IDL.Text,
+      "host": IDL.Text,
+      "rdns": IDL.Text,
+      "postal_code": IDL.Text,
+      "continent_code": IDL.Text,
+      "continent_name": IDL.Text,
+      "region_code": IDL.Text,
+      "region_name": IDL.Text,
+      "country_code": IDL.Text,
+      "longitude": IDL.Text,
+      "country_name": IDL.Text,
+      "metro_code": IDL.Text
+    }),
+    "agent": IDL.Record({
+      "platform_name": IDL.Text,
+      "useragent": IDL.Text,
+      "device_name": IDL.Text,
+      "browser_name": IDL.Text,
+      "is_phone": IDL.Bool,
+      "is_desktop": IDL.Bool
+    })
+  });
+  const ShuftiVerificationResponse = IDL.Record({
+    "face": IDL.Record({ "face": IDL.Int }),
+    "document": IDL.Record({
+      "age": IDL.Int,
+      "dob": IDL.Int,
+      "name": IDL.Int,
+      "expiry_date": IDL.Int,
+      "document": IDL.Int,
+      "gender": IDL.Text,
+      "issue_date": IDL.Int,
+      "document_number": IDL.Int
+    }),
+    "address": IDL.Record({ "full_address": IDL.Int, "name": IDL.Int })
+  });
+  const ShuftiVerificationData = IDL.Record({
+    "face": IDL.Record({ "duplicate_account_detected": IDL.Text }),
+    "document": IDL.Record({
+      "age": IDL.Int,
+      "dob": IDL.Text,
+      "supported_types": IDL.Vec(IDL.Text),
+      "name": IDL.Record({
+        "middle_name": IDL.Text,
+        "first_name": IDL.Text,
+        "last_name": IDL.Text
+      }),
+      "selected_type": IDL.Vec(IDL.Text),
+      "expiry_date": IDL.Text,
+      "gender": IDL.Text,
+      "issue_date": IDL.Text,
+      "document_number": IDL.Text
+    }),
+    "address": IDL.Record({
+      "full_address": IDL.Text,
+      "supported_types": IDL.Vec(IDL.Text),
+      "name": IDL.Record({
+        "middle_name": IDL.Text,
+        "first_name": IDL.Text,
+        "last_name": IDL.Text
+      }),
+      "selected_type": IDL.Vec(IDL.Text)
+    })
+  });
+  const ShuftiAdditionalData = IDL.Record({
+    "document": IDL.Record({
+      "proof": IDL.Record({
+        "age": IDL.Int,
+        "dob": IDL.Text,
+        "height": IDL.Text,
+        "document_type": IDL.Text,
+        "country": IDL.Text,
+        "personal_number": IDL.Text,
+        "nationality": IDL.Text,
+        "place_of_birth": IDL.Text,
+        "expiry_date": IDL.Text,
+        "country_code": IDL.Text,
+        "gender": IDL.Text,
+        "first_name": IDL.Text,
+        "issue_date": IDL.Text,
+        "authority": IDL.Text,
+        "last_name": IDL.Text,
+        "document_number": IDL.Text
+      })
+    })
+  });
+  const ShuftiAcceptedResponse = IDL.Record({
+    "info": ShuftiVerificationInfo,
+    "reference": IDL.Text,
+    "verification_result": ShuftiVerificationResponse,
+    "event": IDL.Text,
+    "verification_data": ShuftiVerificationData,
+    "additional_data": ShuftiAdditionalData
+  });
+  const ShuftiRejectedResponse = IDL.Record({});
+  const ShuftiResponse = IDL.Variant({
+    "ShuftiAcceptedResponse": ShuftiAcceptedResponse,
+    "ShuftiRejectedResponse": ShuftiRejectedResponse
+  });
   const PauseAccountDTO = IDL.Record({
     "pauseDays": IDL.Nat,
     "principalId": PrincipalId
@@ -5617,25 +5724,31 @@ const idlFactory = ({ IDL }) => {
     "executeUpdateClub": IDL.Func([LeagueId, UpdateClubDTO], [], []),
     "executeUpdateLeague": IDL.Func([UpdateLeagueDTO], [], []),
     "executeUpdatePlayer": IDL.Func([LeagueId, UpdatePlayerDTO], [], []),
-    "getBets": IDL.Func([GetBetsDTO], [Result_18], []),
+    "getBets": IDL.Func([GetBetsDTO], [Result_20], []),
     "getBettableHomepageFixtures": IDL.Func(
       [LeagueId],
-      [Result_17],
+      [Result_19],
       ["query"]
     ),
-    "getCountries": IDL.Func([], [Result_16], ["query"]),
+    "getCountries": IDL.Func([], [Result_18], ["query"]),
     "getDataHashForCategory": IDL.Func(
       [LeagueId, IDL.Text],
-      [Result_15],
+      [Result_17],
       ["composite_query"]
     ),
-    "getFixtures": IDL.Func([LeagueId], [Result_14], ["composite_query"]),
-    "getLeagueClubs": IDL.Func([LeagueId], [Result_13], ["composite_query"]),
-    "getLeaguePlayers": IDL.Func([LeagueId], [Result_12], ["composite_query"]),
-    "getLeagueStatus": IDL.Func([LeagueId], [Result_11], ["composite_query"]),
-    "getLeagues": IDL.Func([], [Result_10], ["composite_query"]),
-    "getLoanedPlayers": IDL.Func([LeagueId], [Result_9], ["composite_query"]),
-    "getMatchOdds": IDL.Func([LeagueId, FixtureId], [Result_8], ["query"]),
+    "getDataHashes": IDL.Func([], [Result_16], ["composite_query"]),
+    "getFixtures": IDL.Func([LeagueId], [Result_15], ["composite_query"]),
+    "getLeagueClubs": IDL.Func([LeagueId], [Result_14], ["composite_query"]),
+    "getLeaguePlayers": IDL.Func([LeagueId], [Result_13], ["composite_query"]),
+    "getLeagueStatus": IDL.Func([LeagueId], [Result_12], ["composite_query"]),
+    "getLeagues": IDL.Func([], [Result_11], ["composite_query"]),
+    "getLoanedPlayers": IDL.Func([LeagueId], [Result_10], ["composite_query"]),
+    "getMatchOdds": IDL.Func([LeagueId, FixtureId], [Result_9], ["query"]),
+    "getPlayerDetailsForGameweek": IDL.Func(
+      [LeagueId, GameweekFiltersDTO],
+      [Result_8],
+      ["composite_query"]
+    ),
     "getProfile": IDL.Func([], [Result_7], []),
     "getSeasons": IDL.Func([LeagueId], [Result_6], ["composite_query"]),
     "getSystemState": IDL.Func([IDL.Text], [Result_5], ["composite_query"]),
@@ -5644,7 +5757,7 @@ const idlFactory = ({ IDL }) => {
     "isAdmin": IDL.Func([], [Result_2], []),
     "isAuditor": IDL.Func([], [Result_2], []),
     "isDataManager": IDL.Func([], [Result_2], []),
-    "kycVerificationCallback": IDL.Func([ShuftiResponse], [], []),
+    "kycVerificationCallback": IDL.Func([ShuftiResponse], [Result], []),
     "pauseAccount": IDL.Func([PauseAccountDTO], [Result], []),
     "payWeeklyRewards": IDL.Func([IDL.Text, GameweekNumber], [Result], []),
     "placeBet": IDL.Func([SubmitBetslipDTO], [Result_1], []),
@@ -5652,6 +5765,7 @@ const idlFactory = ({ IDL }) => {
     "setMaxBetLimit": IDL.Func([SetMaxBetLimit], [Result], []),
     "setMonthlyBetLimit": IDL.Func([SetMonthlyBetLimitDTO], [Result], []),
     "snapshotManagers": IDL.Func([IDL.Text], [Result], []),
+    "storeKYCReference": IDL.Func([IDL.Text], [], []),
     "updateBettingOdds": IDL.Func([LeagueId], [Result], []),
     "updateProfilePicture": IDL.Func([UpdateProfilePictureDTO], [Result], []),
     "updateSystemState": IDL.Func(
@@ -5751,21 +5865,13 @@ const idlFactory = ({ IDL }) => {
     )
   });
 };
-const canisterId = "by6od-j4aaa-aaaaa-qaadq-cai";
+const canisterId = "44kin-waaaa-aaaal-qbxra-cai";
 const createActor = (canisterId2, options2 = {}) => {
   const agent = options2.agent || new HttpAgent({ ...options2.agentOptions });
   if (options2.agent && options2.agentOptions) {
     console.warn(
       "Detected both agent and agentOptions passed to createActor. Ignoring agentOptions and proceeding with the provided agent."
     );
-  }
-  {
-    agent.fetchRootKey().catch((err) => {
-      console.warn(
-        "Unable to fetch root key. Check to ensure that your local replica is running"
-      );
-      console.error(err);
-    });
   }
   return Actor.createActor(idlFactory, {
     agent,
@@ -5777,7 +5883,7 @@ createActor(canisterId);
 class ActorFactory {
   static createActor(idlFactory2, canisterId2 = "", identity = null, options2 = null) {
     const hostOptions = {
-      host: `http://localhost:8080/?canisterId=qhbym-qaaaa-aaaaa-aaafq-cai`,
+      host: `https://${canisterId2}.icp-api.io`,
       identity
     };
     if (!options2) {
@@ -5790,14 +5896,6 @@ class ActorFactory {
       options2.agentOptions.host = hostOptions.host;
     }
     const agent = new HttpAgent({ ...options2.agentOptions });
-    {
-      agent.fetchRootKey().catch((err) => {
-        console.warn(
-          "Unable to fetch root key. Ensure your local replica is running"
-        );
-        console.error(err);
-      });
-    }
     return Actor.createActor(idlFactory2, {
       agent,
       canisterId: canisterId2,
@@ -5806,7 +5904,7 @@ class ActorFactory {
   }
   static getAgent(canisterId2 = "", identity = null, options2 = null) {
     const hostOptions = {
-      host: `http://localhost:8080/?canisterId=qhbym-qaaaa-aaaaa-aaafq-cai`,
+      host: `https://${canisterId2}.icp-api.io`,
       identity
     };
     if (!options2) {
@@ -6103,7 +6201,7 @@ function Modal($$payload, $$props) {
   bind_props($$props, { showModal, onClose });
   pop();
 }
-var define_process_env_default$7 = { __CANDID_UI_CANISTER_ID: "a3shf-5eaaa-aaaaa-qaafa-cai", BACKEND_CANISTER_ID: "by6od-j4aaa-aaaaa-qaadq-cai", DATA_CANISTER_CANISTER_ID: "avqkn-guaaa-aaaaa-qaaea-cai", FRONTEND_CANISTER_ID: "asrmz-lmaaa-aaaaa-qaaeq-cai", DFX_NETWORK: "local" };
+var define_process_env_default$7 = { BACKEND_CANISTER_ID: "44kin-waaaa-aaaal-qbxra-cai", FRONTEND_CANISTER_ID: "43loz-3yaaa-aaaal-qbxrq-cai", DATA_CANISTER_CANISTER_ID: "52fzd-2aaaa-aaaal-qmzsa-cai", DFX_NETWORK: "ic" };
 class LeagueService {
   actor;
   constructor() {
@@ -6139,7 +6237,7 @@ class LeagueService {
     return result.ok;
   }
 }
-var define_process_env_default$6 = { __CANDID_UI_CANISTER_ID: "a3shf-5eaaa-aaaaa-qaafa-cai", BACKEND_CANISTER_ID: "by6od-j4aaa-aaaaa-qaadq-cai", DATA_CANISTER_CANISTER_ID: "avqkn-guaaa-aaaaa-qaaea-cai", FRONTEND_CANISTER_ID: "asrmz-lmaaa-aaaaa-qaaeq-cai", DFX_NETWORK: "local" };
+var define_process_env_default$6 = { BACKEND_CANISTER_ID: "44kin-waaaa-aaaal-qbxra-cai", FRONTEND_CANISTER_ID: "43loz-3yaaa-aaaal-qbxrq-cai", DATA_CANISTER_CANISTER_ID: "52fzd-2aaaa-aaaal-qmzsa-cai", DFX_NETWORK: "ic" };
 class DataHashService {
   actor;
   constructor() {
@@ -6367,7 +6465,7 @@ function createLeagueStore() {
   };
 }
 const leagueStore = createLeagueStore();
-var define_process_env_default$5 = { __CANDID_UI_CANISTER_ID: "a3shf-5eaaa-aaaaa-qaafa-cai", BACKEND_CANISTER_ID: "by6od-j4aaa-aaaaa-qaadq-cai", DATA_CANISTER_CANISTER_ID: "avqkn-guaaa-aaaaa-qaaea-cai", FRONTEND_CANISTER_ID: "asrmz-lmaaa-aaaaa-qaaeq-cai", DFX_NETWORK: "local" };
+var define_process_env_default$5 = { BACKEND_CANISTER_ID: "44kin-waaaa-aaaal-qbxra-cai", FRONTEND_CANISTER_ID: "43loz-3yaaa-aaaal-qbxrq-cai", DATA_CANISTER_CANISTER_ID: "52fzd-2aaaa-aaaal-qmzsa-cai", DFX_NETWORK: "ic" };
 class ClubService {
   actor;
   constructor() {
@@ -6470,7 +6568,7 @@ function createClubStore() {
   };
 }
 const clubStore = createClubStore();
-var define_process_env_default$4 = { __CANDID_UI_CANISTER_ID: "a3shf-5eaaa-aaaaa-qaafa-cai", BACKEND_CANISTER_ID: "by6od-j4aaa-aaaaa-qaadq-cai", DATA_CANISTER_CANISTER_ID: "avqkn-guaaa-aaaaa-qaaea-cai", FRONTEND_CANISTER_ID: "asrmz-lmaaa-aaaaa-qaaeq-cai", DFX_NETWORK: "local" };
+var define_process_env_default$4 = { BACKEND_CANISTER_ID: "44kin-waaaa-aaaal-qbxra-cai", FRONTEND_CANISTER_ID: "43loz-3yaaa-aaaal-qbxrq-cai", DATA_CANISTER_CANISTER_ID: "52fzd-2aaaa-aaaal-qmzsa-cai", DFX_NETWORK: "ic" };
 class FixtureService {
   actor;
   constructor() {
@@ -6608,7 +6706,7 @@ function createFixtureStore() {
   };
 }
 const fixtureStore = createFixtureStore();
-var define_process_env_default$3 = { __CANDID_UI_CANISTER_ID: "a3shf-5eaaa-aaaaa-qaafa-cai", BACKEND_CANISTER_ID: "by6od-j4aaa-aaaaa-qaadq-cai", DATA_CANISTER_CANISTER_ID: "avqkn-guaaa-aaaaa-qaaea-cai", FRONTEND_CANISTER_ID: "asrmz-lmaaa-aaaaa-qaaeq-cai", DFX_NETWORK: "local" };
+var define_process_env_default$3 = { BACKEND_CANISTER_ID: "44kin-waaaa-aaaal-qbxra-cai", FRONTEND_CANISTER_ID: "43loz-3yaaa-aaaal-qbxrq-cai", DATA_CANISTER_CANISTER_ID: "52fzd-2aaaa-aaaal-qmzsa-cai", DFX_NETWORK: "ic" };
 class CountryService {
   actor;
   constructor() {
@@ -6635,7 +6733,7 @@ function createCountryStore() {
   };
 }
 const countryStore = createCountryStore();
-var define_process_env_default$2 = { __CANDID_UI_CANISTER_ID: "a3shf-5eaaa-aaaaa-qaafa-cai", BACKEND_CANISTER_ID: "by6od-j4aaa-aaaaa-qaadq-cai", DATA_CANISTER_CANISTER_ID: "avqkn-guaaa-aaaaa-qaaea-cai", FRONTEND_CANISTER_ID: "asrmz-lmaaa-aaaaa-qaaeq-cai", DFX_NETWORK: "local" };
+var define_process_env_default$2 = { BACKEND_CANISTER_ID: "44kin-waaaa-aaaal-qbxra-cai", FRONTEND_CANISTER_ID: "43loz-3yaaa-aaaal-qbxrq-cai", DATA_CANISTER_CANISTER_ID: "52fzd-2aaaa-aaaal-qmzsa-cai", DFX_NETWORK: "ic" };
 class PlayerService {
   actor;
   constructor() {
@@ -6697,7 +6795,7 @@ class PlayerService {
   async recallLoan(recallFromLeagueId, playerId) {
     const identityActor = await ActorFactory.createIdentityActor(
       authStore,
-      define_process_env_default.BACKEND_CANISTER_ID
+      define_process_env_default$2.BACKEND_CANISTER_ID
     );
     let dto = {
       recallFromLeagueId,
@@ -6793,12 +6891,13 @@ function createPlayerStore() {
     loanPlayer,
     createPlayer,
     updatePlayer,
+    syncPlayers,
     getLoanedPlayers,
     recallLoan
   };
 }
 const playerStore = createPlayerStore();
-var define_process_env_default$1 = { __CANDID_UI_CANISTER_ID: "a3shf-5eaaa-aaaaa-qaafa-cai", BACKEND_CANISTER_ID: "by6od-j4aaa-aaaaa-qaadq-cai", DATA_CANISTER_CANISTER_ID: "avqkn-guaaa-aaaaa-qaaea-cai", FRONTEND_CANISTER_ID: "asrmz-lmaaa-aaaaa-qaaeq-cai", DFX_NETWORK: "local" };
+var define_process_env_default$1 = { BACKEND_CANISTER_ID: "44kin-waaaa-aaaal-qbxra-cai", FRONTEND_CANISTER_ID: "43loz-3yaaa-aaaal-qbxrq-cai", DATA_CANISTER_CANISTER_ID: "52fzd-2aaaa-aaaal-qmzsa-cai", DFX_NETWORK: "ic" };
 class SeasonService {
   actor;
   constructor() {
@@ -6879,7 +6978,7 @@ function createSeasonStore() {
   };
 }
 const seasonStore = createSeasonStore();
-var define_process_env_default = { __CANDID_UI_CANISTER_ID: "a3shf-5eaaa-aaaaa-qaafa-cai", BACKEND_CANISTER_ID: "by6od-j4aaa-aaaaa-qaadq-cai", DATA_CANISTER_CANISTER_ID: "avqkn-guaaa-aaaaa-qaaea-cai", FRONTEND_CANISTER_ID: "asrmz-lmaaa-aaaaa-qaaeq-cai", DFX_NETWORK: "local" };
+var define_process_env_default = { BACKEND_CANISTER_ID: "44kin-waaaa-aaaal-qbxra-cai", FRONTEND_CANISTER_ID: "43loz-3yaaa-aaaal-qbxrq-cai", DATA_CANISTER_CANISTER_ID: "52fzd-2aaaa-aaaal-qmzsa-cai", DFX_NETWORK: "ic" };
 class PlayerEventsService {
   actor;
   constructor() {
@@ -6967,12 +7066,7 @@ class StoreManager {
     }
     await leagueStore.syncLeagues(leagueId);
     for (const category of this.categories) {
-      const categoryHash = newHashes.find((hash2) => hash2.category === category);
-      if (categoryHash?.hash !== localStorage.getItem(`${category}_hash`)) {
-        await this.syncCategory(category, leagueId);
-      } else {
-        console.log("Loading from cache", category);
-      }
+      await this.syncCategory(category, leagueId);
     }
     const countriesHash = newHashes.find(
       (hash2) => hash2.category === "countries"
