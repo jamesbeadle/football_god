@@ -109,7 +109,7 @@
       const payload = {
         reference: `SP_REQUEST_${reference}`,
         callback_url: "https://us-central1.openfpl1.cloudfunctions.net/api/forwardKYCResponse",
-        redirect_url: "https://footballgod.xyz/",
+        redirect_url: "https://footballgod.xyz/profile",
         country: "GB",
         language: "EN",
         verification_mode: "any",
@@ -120,6 +120,7 @@
           allow_online: "1",
         },
         address: {
+          full_address: "48 Clare Crescent, Leatherhead, Surrey KT22 7QZ",
           address_fuzzy_match: "1",
           supported_types: ["utility_bill", "passport", "bank_statement"],
         },
