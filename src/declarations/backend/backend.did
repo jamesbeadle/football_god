@@ -306,12 +306,12 @@ type Result_17 =
 type Result_16 = 
  variant {
    err: Error;
-   ok: vec DataHashDTO;
+   ok: vec FixtureDTO;
  };
 type Result_15 = 
  variant {
    err: Error;
-   ok: vec FixtureDTO;
+   ok: vec DataHashDTO;
  };
 type Result_14 = 
  variant {
@@ -853,8 +853,9 @@ service : {
   getBettableHomepageFixtures: (LeagueId) -> (Result_19) query;
   getCountries: () -> (Result_18) query;
   getDataHashForCategory: (LeagueId, text) -> (Result_17) composite_query;
-  getDataHashes: () -> (Result_16) composite_query;
-  getFixtures: (LeagueId) -> (Result_15) composite_query;
+  getDataHashes: () -> (Result_15) composite_query;
+  getFixtures: (LeagueId) -> (Result_16) composite_query;
+  getHashes: () -> (Result_15) query;
   getLeagueClubs: (LeagueId) -> (Result_14) composite_query;
   getLeaguePlayers: (LeagueId) -> (Result_13) composite_query;
   getLeagueStatus: (LeagueId) -> (Result_12) composite_query;

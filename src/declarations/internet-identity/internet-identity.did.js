@@ -28,9 +28,9 @@ export const idlFactory = ({ IDL }) => {
           map: MetadataMap,
           string: IDL.Text,
           bytes: IDL.Vec(IDL.Nat8),
-        })
-      )
-    )
+        }),
+      ),
+    ),
   );
   const DeviceProtection = IDL.Variant({
     unprotected: IDL.Null,
@@ -90,9 +90,9 @@ export const idlFactory = ({ IDL }) => {
           Map: MetadataMapV2,
           String: IDL.Text,
           Bytes: IDL.Vec(IDL.Nat8),
-        })
-      )
-    )
+        }),
+      ),
+    ),
   );
   const PublicKeyAuthn = IDL.Record({ pubkey: PublicKey });
   const WebAuthn = IDL.Record({
@@ -321,12 +321,12 @@ export const idlFactory = ({ IDL }) => {
     add_tentative_device: IDL.Func(
       [UserNumber, DeviceData],
       [AddTentativeDeviceResponse],
-      []
+      [],
     ),
     authn_method_add: IDL.Func(
       [IdentityNumber, AuthnMethodData],
       [IDL.Variant({ Ok: IDL.Null, Err: AuthnMethodAddError })],
-      []
+      [],
     ),
     authn_method_confirm: IDL.Func(
       [IdentityNumber, IDL.Text],
@@ -336,7 +336,7 @@ export const idlFactory = ({ IDL }) => {
           Err: AuthnMethodConfirmationError,
         }),
       ],
-      []
+      [],
     ),
     authn_method_metadata_replace: IDL.Func(
       [IdentityNumber, PublicKey, MetadataMapV2],
@@ -346,7 +346,7 @@ export const idlFactory = ({ IDL }) => {
           Err: AuthnMethodMetadataReplaceError,
         }),
       ],
-      []
+      [],
     ),
     authn_method_register: IDL.Func(
       [IdentityNumber, AuthnMethodData],
@@ -356,7 +356,7 @@ export const idlFactory = ({ IDL }) => {
           Err: AuthnMethodRegisterError,
         }),
       ],
-      []
+      [],
     ),
     authn_method_registration_mode_enter: IDL.Func(
       [IdentityNumber],
@@ -366,22 +366,22 @@ export const idlFactory = ({ IDL }) => {
           Err: IDL.Null,
         }),
       ],
-      []
+      [],
     ),
     authn_method_registration_mode_exit: IDL.Func(
       [IdentityNumber],
       [IDL.Variant({ Ok: IDL.Null, Err: IDL.Null })],
-      []
+      [],
     ),
     authn_method_remove: IDL.Func(
       [IdentityNumber, PublicKey],
       [IDL.Variant({ Ok: IDL.Null, Err: IDL.Null })],
-      []
+      [],
     ),
     authn_method_replace: IDL.Func(
       [IdentityNumber, PublicKey, AuthnMethodData],
       [IDL.Variant({ Ok: IDL.Null, Err: AuthnMethodReplaceError })],
-      []
+      [],
     ),
     authn_method_security_settings_replace: IDL.Func(
       [IdentityNumber, PublicKey, AuthnMethodSecuritySettings],
@@ -391,12 +391,12 @@ export const idlFactory = ({ IDL }) => {
           Err: AuthnMethodSecuritySettingsReplaceError,
         }),
       ],
-      []
+      [],
     ),
     captcha_create: IDL.Func(
       [],
       [IDL.Variant({ Ok: Challenge, Err: IDL.Null })],
-      []
+      [],
     ),
     create_challenge: IDL.Func([], [Challenge], []),
     deploy_archive: IDL.Func([IDL.Vec(IDL.Nat8)], [DeployArchiveResult], []),
@@ -406,35 +406,35 @@ export const idlFactory = ({ IDL }) => {
     get_anchor_credentials: IDL.Func(
       [UserNumber],
       [AnchorCredentials],
-      ["query"]
+      ["query"],
     ),
     get_anchor_info: IDL.Func([UserNumber], [IdentityAnchorInfo], []),
     get_delegation: IDL.Func(
       [UserNumber, FrontendHostname, SessionKey, Timestamp],
       [GetDelegationResponse],
-      ["query"]
+      ["query"],
     ),
     get_id_alias: IDL.Func(
       [GetIdAliasRequest],
       [IDL.Variant({ Ok: IdAliasCredentials, Err: GetIdAliasError })],
-      ["query"]
+      ["query"],
     ),
     get_principal: IDL.Func(
       [UserNumber, FrontendHostname],
       [IDL.Principal],
-      ["query"]
+      ["query"],
     ),
     http_request: IDL.Func([HttpRequest], [HttpResponse], ["query"]),
     http_request_update: IDL.Func([HttpRequest], [HttpResponse], []),
     identity_authn_info: IDL.Func(
       [IdentityNumber],
       [IDL.Variant({ Ok: IdentityAuthnInfo, Err: IDL.Null })],
-      ["query"]
+      ["query"],
     ),
     identity_info: IDL.Func(
       [IdentityNumber],
       [IDL.Variant({ Ok: IdentityInfo, Err: IdentityInfoError })],
-      []
+      [],
     ),
     identity_metadata_replace: IDL.Func(
       [IdentityNumber, MetadataMapV2],
@@ -444,29 +444,29 @@ export const idlFactory = ({ IDL }) => {
           Err: IdentityMetadataReplaceError,
         }),
       ],
-      []
+      [],
     ),
     identity_register: IDL.Func(
       [AuthnMethodData, CaptchaResult, IDL.Opt(IDL.Principal)],
       [IDL.Variant({ Ok: IdentityNumber, Err: IdentityRegisterError })],
-      []
+      [],
     ),
     init_salt: IDL.Func([], [], []),
     lookup: IDL.Func([UserNumber], [IDL.Vec(DeviceData)], ["query"]),
     prepare_delegation: IDL.Func(
       [UserNumber, FrontendHostname, SessionKey, IDL.Opt(IDL.Nat64)],
       [UserKey, Timestamp],
-      []
+      [],
     ),
     prepare_id_alias: IDL.Func(
       [PrepareIdAliasRequest],
       [IDL.Variant({ Ok: PreparedIdAlias, Err: PrepareIdAliasError })],
-      []
+      [],
     ),
     register: IDL.Func(
       [DeviceData, ChallengeResult, IDL.Opt(IDL.Principal)],
       [RegisterResponse],
-      []
+      [],
     ),
     remove: IDL.Func([UserNumber, DeviceKey], [], []),
     replace: IDL.Func([UserNumber, DeviceKey, DeviceData], [], []),
@@ -475,7 +475,7 @@ export const idlFactory = ({ IDL }) => {
     verify_tentative_device: IDL.Func(
       [UserNumber, IDL.Text],
       [VerifyTentativeDeviceResponse],
-      []
+      [],
     ),
   });
 };

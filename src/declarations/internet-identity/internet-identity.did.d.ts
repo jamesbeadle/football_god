@@ -212,7 +212,11 @@ export type KeyType =
 export type MetadataMap = Array<
   [
     string,
-    { map: MetadataMap } | { string: string } | { bytes: Uint8Array | number[] }
+    (
+      | { map: MetadataMap }
+      | { string: string }
+      | { bytes: Uint8Array | number[] }
+    ),
   ]
 >;
 export type MetadataMapV2 = Array<
@@ -222,7 +226,7 @@ export type MetadataMapV2 = Array<
       | { Map: MetadataMapV2 }
       | { String: string }
       | { Bytes: Uint8Array | number[] }
-    )
+    ),
   ]
 >;
 export type PrepareIdAliasError =

@@ -50,7 +50,7 @@ export const idlFactory = ({ IDL }) => {
   const QueryArchiveFn = IDL.Func(
     [GetBlocksArgs],
     [QueryArchiveResult],
-    ["query"]
+    ["query"],
   );
   const QueryBlocksResponse = IDL.Record({
     certificate: IDL.Opt(IDL.Vec(IDL.Nat8)),
@@ -62,7 +62,7 @@ export const idlFactory = ({ IDL }) => {
         callback: QueryArchiveFn,
         start: BlockIndex,
         length: IDL.Nat64,
-      })
+      }),
     ),
   });
   const SubAccount = IDL.Vec(IDL.Nat8);
