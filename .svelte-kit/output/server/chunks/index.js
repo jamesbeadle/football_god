@@ -4719,7 +4719,7 @@ const options = {
 		<div class="error">
 			<span class="status">` + status + '</span>\n			<div class="message">\n				<h1>' + message + "</h1>\n			</div>\n		</div>\n	</body>\n</html>\n"
   },
-  version_hash: "1i8x526"
+  version_hash: "111i9cj"
 };
 async function get_hooks() {
   return {};
@@ -5537,106 +5537,9 @@ const idlFactory = ({ IDL }) => {
   });
   const Result_3 = IDL.Variant({ "ok": UserAuditDTO, "err": Error2 });
   const Result_2 = IDL.Variant({ "ok": IDL.Bool, "err": Error2 });
-  const ShuftiVerificationInfo = IDL.Record({
-    "geolocation": IDL.Record({
-      "ip": IDL.Text,
-      "asn": IDL.Text,
-      "isp": IDL.Text,
-      "latitude": IDL.Text,
-      "timezone": IDL.Text,
-      "city": IDL.Text,
-      "host": IDL.Text,
-      "rdns": IDL.Text,
-      "postal_code": IDL.Text,
-      "continent_code": IDL.Text,
-      "continent_name": IDL.Text,
-      "region_code": IDL.Text,
-      "region_name": IDL.Text,
-      "country_code": IDL.Text,
-      "longitude": IDL.Text,
-      "country_name": IDL.Text,
-      "metro_code": IDL.Text
-    }),
-    "agent": IDL.Record({
-      "platform_name": IDL.Text,
-      "useragent": IDL.Text,
-      "device_name": IDL.Text,
-      "browser_name": IDL.Text,
-      "is_phone": IDL.Bool,
-      "is_desktop": IDL.Bool
-    })
-  });
-  const ShuftiVerificationResponse = IDL.Record({
-    "face": IDL.Record({ "face": IDL.Int }),
-    "document": IDL.Record({
-      "age": IDL.Int,
-      "dob": IDL.Int,
-      "name": IDL.Int,
-      "expiry_date": IDL.Int,
-      "document": IDL.Int,
-      "gender": IDL.Text,
-      "issue_date": IDL.Int,
-      "document_number": IDL.Int
-    }),
-    "address": IDL.Record({ "full_address": IDL.Int, "name": IDL.Int })
-  });
-  const ShuftiVerificationData = IDL.Record({
-    "face": IDL.Record({ "duplicate_account_detected": IDL.Text }),
-    "document": IDL.Record({
-      "age": IDL.Int,
-      "dob": IDL.Text,
-      "supported_types": IDL.Vec(IDL.Text),
-      "name": IDL.Record({
-        "middle_name": IDL.Text,
-        "first_name": IDL.Text,
-        "last_name": IDL.Text
-      }),
-      "selected_type": IDL.Vec(IDL.Text),
-      "expiry_date": IDL.Text,
-      "gender": IDL.Text,
-      "issue_date": IDL.Text,
-      "document_number": IDL.Text
-    }),
-    "address": IDL.Record({
-      "full_address": IDL.Text,
-      "supported_types": IDL.Vec(IDL.Text),
-      "name": IDL.Record({
-        "middle_name": IDL.Text,
-        "first_name": IDL.Text,
-        "last_name": IDL.Text
-      }),
-      "selected_type": IDL.Vec(IDL.Text)
-    })
-  });
-  const ShuftiAdditionalData = IDL.Record({
-    "document": IDL.Record({
-      "proof": IDL.Record({
-        "age": IDL.Int,
-        "dob": IDL.Text,
-        "height": IDL.Text,
-        "document_type": IDL.Text,
-        "country": IDL.Text,
-        "personal_number": IDL.Text,
-        "nationality": IDL.Text,
-        "place_of_birth": IDL.Text,
-        "expiry_date": IDL.Text,
-        "country_code": IDL.Text,
-        "gender": IDL.Text,
-        "first_name": IDL.Text,
-        "issue_date": IDL.Text,
-        "authority": IDL.Text,
-        "last_name": IDL.Text,
-        "document_number": IDL.Text
-      })
-    })
-  });
   const ShuftiAcceptedResponse = IDL.Record({
-    "info": ShuftiVerificationInfo,
     "reference": IDL.Text,
-    "verification_result": ShuftiVerificationResponse,
-    "event": IDL.Text,
-    "verification_data": ShuftiVerificationData,
-    "additional_data": ShuftiAdditionalData
+    "event": IDL.Text
   });
   const ShuftiRejectedResponse = IDL.Record({});
   const ShuftiResponse = IDL.Variant({

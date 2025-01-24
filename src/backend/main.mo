@@ -1111,15 +1111,16 @@ actor Self {
   };
 
   public shared func kycVerificationCallback(response: ShuftiTypes.ShuftiResponse) : async Result.Result<(), T.Error> {
-      let principalResult = kycManager.storeVerificationResponse(response);
+    
+    let principalResult = kycManager.storeVerificationResponse(response);
 
-      switch(principalResult){
-        case (?principalId){
-          await userManager.verifyBettingAccount(principalId);
-          return #ok();
-        };
-        case (null){}
+    switch(principalResult){
+      case (?principalId){
+        await userManager.verifyBettingAccount(principalId);
+        return #ok();
       };
+      case (null){}
+    };
     return #err(#NotFound);
   };
    
