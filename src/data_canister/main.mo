@@ -134,6 +134,7 @@
       };
       return #err(#NotFound);
     };
+
     public func updateDataHash(leagueId: FootballTypes.LeagueId, category : Text) : async () {
       let randomHash = await SHA224.getRandomHash();
       leagueDataHashes := Array.map<(FootballTypes.LeagueId, [Base.DataHash]), (FootballTypes.LeagueId, [Base.DataHash])>(leagueDataHashes, func(entry: (FootballTypes.LeagueId, [Base.DataHash])){

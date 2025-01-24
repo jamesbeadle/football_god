@@ -134,6 +134,10 @@ actor Self {
     return oddsManager.getDataHashes();
   };
 
+  public shared query func getHashes(): async Result.Result<[ResponseDTOs.DataHashDTO], T.Error> {
+    return oddsManager.getDataHashes();
+  };
+
   public shared query func getCountries() : async Result.Result<[ResponseDTOs.CountryDTO], T.Error> {
     return #ok(Countries.countries);
   };
