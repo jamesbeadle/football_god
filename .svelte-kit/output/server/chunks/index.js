@@ -4719,7 +4719,7 @@ const options = {
 		<div class="error">
 			<span class="status">` + status + '</span>\n			<div class="message">\n				<h1>' + message + "</h1>\n			</div>\n		</div>\n	</body>\n</html>\n"
   },
-  version_hash: "j5pmc8"
+  version_hash: "n5qmd7"
 };
 async function get_hooks() {
   return {};
@@ -4887,7 +4887,6 @@ const initAuthStore = () => {
     sync: async () => {
       authClient = authClient ?? await createAuthClient();
       const isAuthenticated = await authClient.isAuthenticated();
-      console.log(isAuthenticated);
       set2({
         identity: isAuthenticated ? authClient.getIdentity() : null
       });
@@ -5856,22 +5855,14 @@ function deserializeData(data) {
     return value;
   });
 }
-function LogoIcon($$payload, $$props) {
-  let className = fallback($$props["className"], "");
-  let fill = fallback($$props["fill"], "white");
-  $$payload.out += `<svg xmlns="http://www.w3.org/2000/svg"${attr("class", className)} fill="currentColor" viewBox="0 0 36 36"><path fill-rule="evenodd" clip-rule="evenodd" d="M36 18C36 27.9411 27.9411 36 18 36C8.05887 36 0 27.9411 0 18C0 8.05887 8.05887 0 18 0C27.9411 0 36 8.05887 36 18ZM29.7637 14.815L31.3422 8.55242C29.4196 5.84223 26.692 3.74327 23.5078 2.60406L17.7243 5.6939L12.3027 2.67331C9.27944 3.79761 6.67883 5.79086 4.80443 8.3495L6.43409 14.815L1.75327 19.8188C2.0331 22.3467 2.88938 24.7008 4.18772 26.7468L10.6178 28.0847L12.6832 33.4627C14.3501 34.0358 16.1388 34.3469 18.0002 34.3469C19.8148 34.3469 21.5605 34.0512 23.1915 33.5054L25.2732 28.0847L31.8292 26.7206C33.1506 24.6296 34.0108 22.2181 34.2669 19.629L29.7637 14.815Z" fill="#F9F9F9"></path><g clip-path="url(#clip0_2409_110)"><path d="M24.4289 11.9818V13.5233C24.4289 13.9534 24.084 14.301 23.657 14.301H15.9452C15.2279 14.301 14.6456 14.8877 14.6456 15.6103V24.0183C14.6456 24.4484 14.3007 24.7959 13.8737 24.7959H12.3436C11.9167 24.7959 11.5718 24.4484 11.5718 24.0183V15.6189C11.5718 13.1809 13.5339 11.2041 15.9537 11.2041H23.657C24.084 11.2041 24.4289 11.5516 24.4289 11.9818Z" fill="#F9F9F9"></path><path d="M24.429 17.0229V21.7026C24.429 23.411 23.0544 24.7978 21.3569 24.7978H17.419C17.1065 24.7978 16.8521 24.5414 16.8521 24.2266V22.2704C16.8521 21.9555 17.1065 21.6992 17.419 21.6992H20.7883C21.1008 21.6992 21.3552 21.4428 21.3552 21.128V20.118C21.3552 19.8032 21.1008 19.5468 20.7883 19.5468H17.419C17.1065 19.5468 16.8521 19.2905 16.8521 18.9756V17.0194C16.8521 16.7046 17.1065 16.4482 17.419 16.4482H23.8621C24.1746 16.4482 24.429 16.7046 24.429 17.0194V17.0229Z" fill="#F9F9F9"></path></g><defs><clipPath id="clip0_2409_110"><rect width="12.8571" height="13.5918" fill="white" transform="translate(11.5718 11.2041)"></rect></clipPath></defs></svg>`;
-  bind_props($$props, { className, fill });
-}
 function Full_screen_spinner($$payload) {
   $$payload.out += `<div class="local-spinner svelte-pvdm52"></div>`;
 }
 function Dashboard($$payload, $$props) {
   push();
   {
-    $$payload.out += "<!--[!-->";
-    $$payload.out += `<div class="flex flex-col items-center justify-center min-h-screen px-4 bg-black">`;
-    LogoIcon($$payload, { className: "w-24 h-24 mb-6" });
-    $$payload.out += `<!----> <h1 class="mb-2 text-4xl font-bold text-white">FootballGod</h1> <p class="mb-6 text-gray-300">Football betting controlled by the fans.</p> <button class="brand-button">Connect Internet Indentity</button></div>`;
+    $$payload.out += "<!--[-->";
+    Full_screen_spinner($$payload);
   }
   $$payload.out += `<!--]-->`;
   pop();
