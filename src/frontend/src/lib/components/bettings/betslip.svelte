@@ -263,7 +263,7 @@
       </div>
 
       <button
-        class="w-full px-4 py-4 text-lg font-medium text-white rounded-xl md:py-2 md:text-sm bg-BrandPurple hover:bg-BrandPurpleHover disabled:opacity-50 disabled:bg-gray-300"
+        class="brand-button"
         disabled={bets.length === 0 || totalStakes <= 0}
         on:click={placebet}
       >

@@ -12,12 +12,12 @@
     import GithubIcon from "$lib/icons/GithubIcon.svelte";
     import { page } from "$app/stores";
     import { authStore, type AuthSignInParams } from "$lib/stores/auth-store";
-    import Connect from "$lib/icons/Connect.svelte";
     import Disconnect from "$lib/icons/Disconnect.svelte";
     import { goto } from "$app/navigation";
     import { userStore } from "$lib/stores/user-store";
     import Terms from "../terms/terms.svelte";
     import FullScreenSpinner from "./full-screen-spinner.svelte";
+    import ProfileIcon from "$lib/icons/ProfileIcon.svelte";
 
     let checkingTerms = true;
     let isMenuOpen = false;
@@ -34,9 +34,6 @@
 
     onMount( async () => {
         await checkUser();
-        //TODO remove later
-        checkingTerms = false;
-        termsAgreed = true;
     });
 
     async function handleLogin() {
@@ -50,20 +47,21 @@
 
     async function checkUser(){
         authStore.subscribe((store) => {
-                isLoggedIn = store.identity !== null && store.identity !== undefined;
-            });
+            isLoggedIn = store.identity !== null && store.identity !== undefined;
+        });
 
-            userStore.subscribe((store) => {
-                if(store == null){
-                    return;
-                }
-                termsAgreed = store == null 
-                    ? false 
-                    : store.termsAcceptedDate == undefined 
-                        ? false 
-                        : store.termsAcceptedDate > 0;
+        userStore.subscribe((store) => {
+            if(store == null){
                 checkingTerms = false;
-            });
+                return;
+            }
+            termsAgreed = store == null 
+                ? false 
+                : store.termsAcceptedDate == undefined 
+                    ? false 
+                    : store.termsAcceptedDate > 0;
+            checkingTerms = false;
+        });
     }
 
     function handleLogout() {
@@ -130,6 +128,11 @@
                     </ul>
                     <div class="absolute left-0 right-0 bottom-20">
                         <div class={`flex ${isMenuOpen ? 'flex-row pl-4 space-x-4' : 'flex-col items-center space-y-4'}`}>
+                            {#if isLoggedIn}
+                                <a href="/profile" class="text-white transition-colors hover:text-zinc-400">
+                                    <ProfileIcon className="w-5 h-5" />
+                                </a>
+                            {/if}
                             <a href="https://x.com/OpenFPL_DAO" target="_blank" rel="noopener noreferrer" class="text-white transition-colors hover:text-zinc-400">
                                 <XIcon className="w-5 h-5" />
                             </a>
@@ -193,7 +196,12 @@
                             {/each}
                         </ul>
                         <div class="flex p-4 pl-6 space-x-6 border-t border-zinc-700">
-                            <a href="https://x.com/OpenFPL_DAO" target="_blank" rel="noopener noreferrer" class="text-white transition-colors hover:text-zinc-400">
+                            {#if isLoggedIn}
+                                <a href="/profile" class="text-white transition-colors hover:text-zinc-400">
+                                    <ProfileIcon className="w-5 h-5" />
+                                </a>
+                            {/if}
+                           <a href="https://x.com/OpenFPL_DAO" target="_blank" rel="noopener noreferrer" class="text-white transition-colors hover:text-zinc-400">
                                 <XIcon className="w-5 h-5" />
                             </a>
                             <a href="https://github.com/jamesbeadle/football_god" target="_blank" rel="noopener noreferrer" class="text-white transition-colors hover:text-zinc-400">
@@ -222,7 +230,7 @@
             Football betting controlled by the fans.
         </p>
         <button 
-            class="px-6 py-3 text-white rounded bg-BrandPurple hover:bg-BrandPurpleDark"
+            class="brand-button"
             on:click={handleLogin}
         >
             Connect Internet Indentity

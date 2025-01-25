@@ -530,7 +530,10 @@ export interface ShuftiAcceptedResponse {
   reference: string;
   event: string;
 }
-export type ShuftiRejectedResponse = {};
+export interface ShuftiRejectedResponse {
+  reference: string;
+  event: string;
+}
 export type ShuftiResponse =
   | {
       ShuftiAcceptedResponse: ShuftiAcceptedResponse;

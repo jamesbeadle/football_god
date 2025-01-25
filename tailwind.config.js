@@ -40,6 +40,7 @@ export default {
         BrandNegative: "#FF403C",
         BrandPositive: "#66E094",
         BrandPurple: "#7F56F1",
+        BrandPurpleDark: "#462F84",
         BrandDarkGray: "#32353F",
         BrandGray: "#242529",
         BrandLightGray: "#2F3035",

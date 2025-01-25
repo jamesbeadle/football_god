@@ -61,8 +61,7 @@
       </div>
     {:else}
     <button
-      class={`flex items-center justify-center px-4 py-2 space-x-2
-        bg-BrandPurple hover:bg-BrandPurpleDark text-white rounded transition-all`}
+      class="brand-button"
       on:click={handleLogin}
   >
   Connect

@@ -20,7 +20,6 @@ const NNS_IC_APP_DERIVATION_ORIGIN =
   "https://43loz-3yaaa-aaaal-qbxrq-cai.icp0.io";
 
 const isNnsAlternativeOrigin = () => {
-  if (typeof window === "undefined") return false;
   return window.location.origin === NNS_IC_ORG_ALTERNATIVE_ORIGIN;
 };
 
@@ -45,6 +44,7 @@ const initAuthStore = (): AuthStore => {
     sync: async () => {
       authClient = authClient ?? (await createAuthClient());
       const isAuthenticated: boolean = await authClient.isAuthenticated();
+      console.log(isAuthenticated);
 
       set({
         identity: isAuthenticated ? authClient.getIdentity() : null,

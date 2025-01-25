@@ -12,7 +12,8 @@ module ShuftiTypes {
     };
 
     public type ShuftiRejectedResponse = {
-
+        reference: Text;
+        event: Text;
     };
 
 };

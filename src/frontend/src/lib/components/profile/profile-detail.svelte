@@ -9,6 +9,7 @@
     import FullScreenSpinner from "../shared/full-screen-spinner.svelte";
     import { SHUFTI_CLIENT_ID, SHUFTI_SECRET_KEY } from "$lib/environment/environment";
     import { kycStore } from "$lib/stores/kyc-store";
+    import type { ProfileDTO } from "../../../../../declarations/backend/backend.did";
 
   let isLoading = true;
   let loadingBalances = true;
@@ -17,11 +18,14 @@
   let fplBalanceFormatted = "0.0000"; 
   let dots = writable('.');
   let dot_interval: ReturnType<typeof setInterval>;
-  let username = "";
   let principalId = "";
+  let profile: ProfileDTO | null = null;
 
   let showUsernameModal = false;
   let showFPLModal = false;
+
+  let kycComplete = false;
+  let loadingKYC = false;
 
   onMount(async () => {
     try {
@@ -33,7 +37,8 @@
         if (!value) {
           return;
         }
-        username = value.username;
+        profile = value;
+        console.log(profile);
       });
       isLoading = false;
       await fetchBalances();
@@ -104,6 +109,7 @@
    
   async function beginKYC() {
     try {
+      loadingKYC = true;
       let reference = crypto.randomUUID();
       await kycStore.storeKYCReference(reference);
       const payload = {
@@ -146,6 +152,8 @@
       }
     } catch (error) {
       console.error("Error starting KYC:", error);
+    } finally {
+      loadingKYC = false;
     }
   }
 
@@ -173,7 +181,7 @@
   }
 </script>
 
-{#if isLoading}
+{#if isLoading || loadingKYC}
   <FullScreenSpinner />
 {:else}
   <UpdateUsernameModal
@@ -191,12 +199,11 @@
   />
   <div class="container mt-4 mx-6">
     <div class="flex flex-wrap">
-      <button on:click={beginKYC}>KYC Verification</button>
       <div class="w-full mb-4 md:mb-0">
         <div class="mt-2 md:mt-1 rounded-lg">
           <p class="mb-1 text-xs">Username:</p>
           <h2 class="default-header mb-1 md:mb-2">
-            {username == principalId ? "Not Set" : principalId}
+            {profile == null || profile.username == "" ? "Not Set" : profile.username}
           </h2>
           <button
             class="text-sm md:text-sm p-1 md:p-2 px-2 md:px-4 rounded fg-button button-hover"
@@ -262,6 +269,22 @@
                 </div>
                 {/if}
                 
+                {#if profile}
+                  {#if kycComplete}
+                    <p>KYC Verification Complete</p>
+                  {:else}
+                    <div class="flex items-center mt-2">
+                      <div class="flex items-center text-xs mt-2">
+                        <button
+                        class="text-sm md:text-sm p-1 md:p-2 px-2 md:px-4 rounded fg-button button-hover"
+                          on:click={beginKYC}
+                        >
+                          KYC Verification
+                        </button>
+                      </div>
+                    </div>
+                  {/if}
+                {/if}
               </div>
             </div>
           </div>

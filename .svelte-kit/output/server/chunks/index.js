@@ -4719,7 +4719,7 @@ const options = {
 		<div class="error">
 			<span class="status">` + status + '</span>\n			<div class="message">\n				<h1>' + message + "</h1>\n			</div>\n		</div>\n	</body>\n</html>\n"
   },
-  version_hash: "1vcrpjk"
+  version_hash: "j5pmc8"
 };
 async function get_hooks() {
   return {};
@@ -4876,7 +4876,6 @@ let authClient;
 const NNS_IC_ORG_ALTERNATIVE_ORIGIN = "https://footballgod.xyz";
 const NNS_IC_APP_DERIVATION_ORIGIN = "https://43loz-3yaaa-aaaal-qbxrq-cai.icp0.io";
 const isNnsAlternativeOrigin = () => {
-  if (typeof window === "undefined") return false;
   return window.location.origin === NNS_IC_ORG_ALTERNATIVE_ORIGIN;
 };
 const initAuthStore = () => {
@@ -4888,6 +4887,7 @@ const initAuthStore = () => {
     sync: async () => {
       authClient = authClient ?? await createAuthClient();
       const isAuthenticated = await authClient.isAuthenticated();
+      console.log(isAuthenticated);
       set2({
         identity: isAuthenticated ? authClient.getIdentity() : null
       });
@@ -5541,7 +5541,10 @@ const idlFactory = ({ IDL }) => {
     reference: IDL.Text,
     event: IDL.Text
   });
-  const ShuftiRejectedResponse = IDL.Record({});
+  const ShuftiRejectedResponse = IDL.Record({
+    reference: IDL.Text,
+    event: IDL.Text
+  });
   const ShuftiResponse = IDL.Variant({
     ShuftiAcceptedResponse,
     ShuftiRejectedResponse
@@ -5868,7 +5871,7 @@ function Dashboard($$payload, $$props) {
     $$payload.out += "<!--[!-->";
     $$payload.out += `<div class="flex flex-col items-center justify-center min-h-screen px-4 bg-black">`;
     LogoIcon($$payload, { className: "w-24 h-24 mb-6" });
-    $$payload.out += `<!----> <h1 class="mb-2 text-4xl font-bold text-white">FootballGod</h1> <p class="mb-6 text-gray-300">Football betting controlled by the fans.</p> <button class="px-6 py-3 text-white rounded bg-BrandPurple hover:bg-BrandPurpleDark">Connect Internet Indentity</button></div>`;
+    $$payload.out += `<!----> <h1 class="mb-2 text-4xl font-bold text-white">FootballGod</h1> <p class="mb-6 text-gray-300">Football betting controlled by the fans.</p> <button class="brand-button">Connect Internet Indentity</button></div>`;
   }
   $$payload.out += `<!--]-->`;
   pop();

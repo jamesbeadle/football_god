@@ -162,9 +162,9 @@
                   </button>
                   {#if dropdownVisible === fixture.id}
                     <div class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-10">
-                      <button class="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100" on:click={() => loadAddFixtureData(fixture.id)}>Add Fixture Data</button>
-                      <button class="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100" on:click={() => loadMoveFixture(fixture.id)}>Move Fixture</button>
-                      <button class="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100" on:click={() => loadPostponeFixture(fixture.id)}>Postpone Fixture</button>
+                      <button class="dropdown-link" on:click={() => loadAddFixtureData(fixture.id)}>Add Fixture Data</button>
+                      <button class="dropdown-link" on:click={() => loadMoveFixture(fixture.id)}>Move Fixture</button>
+                      <button class="dropdown-link" on:click={() => loadPostponeFixture(fixture.id)}>Postpone Fixture</button>
                     </div>
                   {/if}
                 </div>

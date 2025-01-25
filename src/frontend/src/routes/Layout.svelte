@@ -13,7 +13,6 @@
   import "../app.css";
 
   let worker: { syncAuthIdle: (auth: AuthStoreData) => void } | undefined;
-  let isAdmin = false;
 
   async function syncAuthStore() {
     if (!browser) return;
@@ -30,9 +29,7 @@
 
   onMount(async () => {
     worker = await initAuthWorker();
-    //await userStore.sync();
-    //isAdmin = await userStore.isAdmin();
-    isAdmin = true;
+    await userStore.sync();
   });
 
   $: worker, $authStore, (() => worker?.syncAuthIdle($authStore))();

@@ -48,7 +48,11 @@ actor Self {
   /* User management functions */
 
   public shared ({ caller }) func getProfile() : async Result.Result<ResponseDTOs.ProfileDTO, T.Error> {
-    return await userManager.getProfile(Principal.toText(caller));
+    assert not Principal.isAnonymous(caller);
+    let principalId = Principal.toText(caller);
+    let kycProfile = kycManager.getKYCProfile(principalId);
+    
+    return await userManager.getProfile(principalId, kycProfile);
   };
 
   public shared ({ caller }) func  agreeTerms() : async Result.Result<(), T.Error> {
@@ -702,7 +706,9 @@ actor Self {
     assert validateBetslip(dto);
     assert await betWithinPlatformLimits(dto.totalStake);
 
-    let profileResult = await userManager.getProfile(principalId);
+    let kycProfile = kycManager.getKYCProfile(principalId);
+
+    let profileResult = await userManager.getProfile(principalId, kycProfile);
     switch(profileResult){
       case (#ok profile){
         assert not profile.accountOnPause;
@@ -864,8 +870,7 @@ actor Self {
   private stable var stable_unique_profile_canister_ids: [Base.CanisterId] = [];
   private stable var stable_active_profile_canister_id: Text = "";
   private stable var stable_usernames: [(Base.PrincipalId, Text)] = [];
-  private stable var stable_kyc_references: [(Base.PrincipalId, Text)] = [];
-  private stable var stable_kyc_profiles: [(Base.PrincipalId, ShuftiTypes.ShuftiResponse)] = [];
+  private stable var stable_kyc_profiles: [(Base.PrincipalId, AppTypes.KYCProfile)] = [];
 
   //Odds Manager
   private stable var stable_match_odds_cache: [(FootballTypes.LeagueId, [(FootballTypes.FixtureId, BettingTypes.MatchOdds)])] = [];
@@ -877,7 +882,6 @@ actor Self {
     stable_usernames := userManager.getStableUsernames();
     stable_match_odds_cache := oddsManager.getStableMatchOddsCache();
 
-    stable_kyc_references := kycManager.getStableKYCReferences();
     stable_kyc_profiles := kycManager.getStableKYCProfiles();
   };
 
@@ -889,7 +893,6 @@ actor Self {
     userManager.setStableUsernames(stable_usernames);
     oddsManager.setStableMatchOddsCache(stable_match_odds_cache);
 
-    kycManager.setStableKYCReferences(stable_kyc_references);
     kycManager.setStableKYCProfiles(stable_kyc_profiles);
 
     ignore Timer.setTimer<system>(#nanoseconds(Int.abs(1)), postUpgradeCallback); 

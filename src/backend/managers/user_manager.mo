@@ -30,6 +30,8 @@ import Environment "../environment";
 import Management "../utilities/Management";
 import SNSToken "../utilities/ledger";
 import Utilities "../utilities/utilities";
+import AppTypes "../types/app_types";
+import ShuftiTypes "../types/shufti_types";
 
 module {
 
@@ -40,7 +42,7 @@ module {
     private var activeProfileCanisterId = "";
     private var usernames: [(Base.PrincipalId, Text)] = [];
     
-    public func getProfile(principalId : Text) : async Result.Result<ResponseDTOs.ProfileDTO, T.Error> {
+    public func getProfile(principalId : Text, kycProfile: ?AppTypes.KYCProfile) : async Result.Result<ResponseDTOs.ProfileDTO, T.Error> {
       await checkOrCreateProfile(principalId);
       let profileCanisterId = Array.find(profileCanisterIds, func(profileCanisterEntry: (Base.PrincipalId, Base.CanisterId)) : Bool {
         profileCanisterEntry.0 == principalId;
@@ -51,8 +53,59 @@ module {
           let profile_canister = actor (foundCanisterId.1) : actor {
             getProfile : (principalId : Text) -> async Result.Result<ResponseDTOs.ProfileDTO, T.Error>;
           };
-          let profile = await profile_canister.getProfile(principalId);
-          return profile;
+          let profileResult = await profile_canister.getProfile(principalId);
+
+          var kycApprovalDate: Int = 0;
+          var kycComplete = false;
+          var kycRef = "";
+          var kycSubmissionDate: Int = 0;
+
+          switch(kycProfile){
+            case (?foundKYCProfile){
+              kycRef := foundKYCProfile.reference;
+              kycSubmissionDate := foundKYCProfile.kycSubmissionDate;
+              switch(foundKYCProfile.shuftiResponse){
+                case (?foundResponse){
+                  switch(foundResponse){
+                    case(#ShuftiAcceptedResponse accepted){
+                      kycComplete := foundKYCProfile.kycApprovalDate < Time.now() and accepted.event == "verification.accepted";
+                      kycApprovalDate := foundKYCProfile.kycApprovalDate;
+                    };
+                    case (_){}
+                  };
+                };
+                case (null){}
+              };
+            };
+            case (null){}
+          };
+          
+
+          switch(profileResult){
+            case (#ok profile){
+              return #ok({
+                accountBalance = profile.accountBalance;
+                accountOnPause = profile.accountOnPause;
+                joinedDate = profile.joinedDate;
+                kycApprovalDate = kycApprovalDate;
+                kycComplete = kycComplete;
+                kycRef = kycRef;
+                kycSubmissionDate = kycSubmissionDate;
+                maxBetLimit = profile.maxBetLimit;
+                monthlyBetLimit = profile.monthlyBetLimit;
+                monthlyBetTotal = profile.monthlyBetTotal;
+                principalId = profile.principalId;
+                profilePicture = profile.profilePicture;
+                profilePictureExtension = profile.profilePictureExtension;
+                termsAcceptedDate = profile.termsAcceptedDate;
+                username = profile.username;
+                withdrawalAddress = profile.withdrawalAddress;
+              });
+            };
+            case (_){
+              return #err(#NotFound);
+            }
+          }
         };
         case (null){
           return #err(#NotFound);

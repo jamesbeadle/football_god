@@ -220,7 +220,7 @@
         to be bound by these Terms and Conditions.</strong>
       </p>
       <div class="flex flex-row items-center my-4">
-          <button class="bg-BrandPurple hover:bg-BrandPurpleDark text-white rounded" on:click={agreeTerms}>Agree Terms</button>
+          <button class="brand-button" on:click={agreeTerms}>Agree Terms</button>
       </div>
   </div>
 {/if}

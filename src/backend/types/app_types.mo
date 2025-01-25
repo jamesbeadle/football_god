@@ -1,6 +1,7 @@
 import Base "base_types";
 import BettingTypes "betting_types";
 import Text "mo:base/Text";
+import ShuftiTypes "shufti_types";
 module AppTypes {
 
     public type Error = {
@@ -36,5 +37,13 @@ module AppTypes {
         kycApprovalDate: Int;
         kycRef: Text;
     };
+
+    public type KYCProfile = {
+        principalId: Base.PrincipalId;
+        reference: Text;
+        shuftiResponse: ?ShuftiTypes.ShuftiResponse;
+        kycSubmissionDate: Int;
+        kycApprovalDate: Int;
+    }
 
 };

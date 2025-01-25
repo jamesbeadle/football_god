@@ -131,7 +131,11 @@ type ShuftiResponse =
    ShuftiAcceptedResponse: ShuftiAcceptedResponse;
    ShuftiRejectedResponse: ShuftiRejectedResponse;
  };
-type ShuftiRejectedResponse = record {};
+type ShuftiRejectedResponse = 
+ record {
+   event: text;
+   reference: text;
+ };
 type ShuftiAcceptedResponse = 
  record {
    event: text;

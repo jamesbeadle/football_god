@@ -608,7 +608,10 @@ export const idlFactory = ({ IDL }) => {
     reference: IDL.Text,
     event: IDL.Text,
   });
-  const ShuftiRejectedResponse = IDL.Record({});
+  const ShuftiRejectedResponse = IDL.Record({
+    reference: IDL.Text,
+    event: IDL.Text,
+  });
   const ShuftiResponse = IDL.Variant({
     ShuftiAcceptedResponse: ShuftiAcceptedResponse,
     ShuftiRejectedResponse: ShuftiRejectedResponse,

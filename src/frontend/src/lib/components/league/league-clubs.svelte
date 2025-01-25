@@ -110,8 +110,8 @@
                 </button>
                 {#if dropdownVisible === club.id}
                   <div class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg z-10 text-sm dropdown-menu">
-                    <button class="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100" on:click={() => viewClub(club.id)}>View Details</button>
-                    <button class="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100" on:click={() => loadRemoveClub(club.id)}>Remove Club</button>
+                    <button class="dropdown-link" on:click={() => viewClub(club.id)}>View Details</button>
+                    <button class="dropdown-link" on:click={() => loadRemoveClub(club.id)}>Remove Club</button>
                   </div>
                 {/if}
               </div>
