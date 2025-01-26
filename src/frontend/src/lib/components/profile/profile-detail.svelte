@@ -24,7 +24,6 @@
   let showUsernameModal = false;
   let showFPLModal = false;
 
-  let kycComplete = false;
   let loadingKYC = false;
 
   onMount(async () => {
@@ -265,8 +264,8 @@
                 {/if}
                 
                 {#if profile}
-                  {#if kycComplete}
-                    <p>KYC Verification Complete</p>
+                  {#if profile.kycComplete}
+                    <p class="mt-2 text-sm">KYC Verification Complete</p>
                   {:else}
                     <div class="flex items-center mt-2">
                       <div class="flex items-center text-xs mt-2">
