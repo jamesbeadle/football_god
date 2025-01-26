@@ -67,19 +67,15 @@
     await fetchBalances();
   };
 
+  
+
   async function fetchBalances() {
     try {
-      /*
-      let userBalances = await userStore.getAccountBalances();
-      if(userBalances){
-        fplBalance = userBalances.fplBalance;
-        fplBalanceFormatted = (Number(fplBalance) / 100_000_000).toFixed(4);
-        clearInterval(dot_interval);
-        loadingBalances = false;
-      }
-      */
+      let fplBalance = await userStore.getFPLBalance();
+      fplBalanceFormatted = (Number(fplBalance) / 100_000_000).toFixed(4);
     } catch (error) {
       console.error("Error fetching profile detail:", error);
+    } finally {
       clearInterval(dot_interval);
       loadingBalances = false;
     }

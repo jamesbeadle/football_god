@@ -202,6 +202,47 @@ function createUserStore() {
     return new AdminService().isAuditor();
   }
 
+  async function getFPLBalance(): Promise<bigint> {
+    let identity: OptionIdentity;
+
+    authStore.subscribe(async (auth) => {
+      identity = auth.identity;
+    });
+
+    if (!identity) {
+      return 0n;
+    }
+
+    let principalId = identity.getPrincipal();
+
+    const agent = await createAgent({
+      identity: identity,
+      host: import.meta.env.VITE_AUTH_PROVIDER_URL,
+      fetchRootKey: process.env.DFX_NETWORK === "local",
+    });
+
+    const { balance } = IcrcLedgerCanister.create({
+      agent,
+      canisterId:
+        process.env.DFX_NETWORK === "ic"
+          ? Principal.fromText("ddsp7-7iaaa-aaaaq-aacqq-cai")
+          : Principal.fromText("avqkn-guaaa-aaaaa-qaaea-cai"),
+    });
+
+    if (principalId) {
+      try {
+        let result = await balance({
+          owner: principalId,
+          certified: false,
+        });
+        return result;
+      } catch (err: any) {
+        console.error(err);
+      }
+    }
+
+    return 0n;
+  }
   return {
     subscribe,
     sync,
@@ -214,6 +255,7 @@ function createUserStore() {
     isDataManager,
     isAdmin,
     isAuditor,
+    getFPLBalance,
   };
 }
 

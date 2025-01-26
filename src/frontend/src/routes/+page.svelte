@@ -69,7 +69,6 @@
       await fetchClubs(leagueId);
       const leagueStatus = await leagueStore.getLeagueStatus(leagueId);
       selectedGameweeks[leagueId] = leagueStatus.unplayedGameweek;
-      selectedGameweeks[leagueId] = 22;
       leagueTotalGameweeks[leagueId] = leagueStatus.totalGameweeks;
       allBettingFixtures[leagueId] = await bettingStore.getBettableHomepageFixtures(leagueId);
     } catch (error) {

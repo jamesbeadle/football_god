@@ -4719,7 +4719,7 @@ const options = {
 		<div class="error">
 			<span class="status">` + status + '</span>\n			<div class="message">\n				<h1>' + message + "</h1>\n			</div>\n		</div>\n	</body>\n</html>\n"
   },
-  version_hash: "l5zaog"
+  version_hash: "14tmilu"
 };
 async function get_hooks() {
   return {};
@@ -5979,13 +5979,9 @@ var define_process_env_default$8 = { BACKEND_CANISTER_ID: "44kin-waaaa-aaaal-qbx
 function createUserStore() {
   const { subscribe, set: set2 } = writable(null);
   async function sync() {
-    console.log("syncing user store");
     let localStorageString = localStorage.getItem("user_profile_data");
-    console.log(localStorageString);
     if (localStorageString) {
       const localProfile = JSON.parse(localStorageString);
-      console.log("setting local profile");
-      console.log(localProfile);
       set2(localProfile);
       return;
     }
@@ -6122,21 +6118,17 @@ function createUserStore() {
     return await identityActor.isUsernameValid(username);
   }
   async function cacheProfile() {
-    console.log("caching profile");
     const identityActor = await ActorFactory.createIdentityActor(
       authStore,
       define_process_env_default$8.BACKEND_CANISTER_ID
     );
-    console.log("getting profile");
     let getProfileResponse = await identityActor.getProfile();
-    console.log(getProfileResponse);
     let error = isError(getProfileResponse);
     if (error) {
       console.error("Error fetching user profile");
       return;
     }
     let profileData = getProfileResponse.ok;
-    console.log(profileData);
     set2(profileData);
   }
   async function isAdmin() {
@@ -6147,6 +6139,37 @@ function createUserStore() {
   }
   async function isAuditor() {
     return new AdminService().isAuditor();
+  }
+  async function getFPLBalance() {
+    let identity;
+    authStore.subscribe(async (auth) => {
+      identity = auth.identity;
+    });
+    if (!identity) {
+      return 0n;
+    }
+    let principalId = identity.getPrincipal();
+    const agent = await createAgent({
+      identity,
+      host: "https://identity.ic0.app",
+      fetchRootKey: define_process_env_default$8.DFX_NETWORK === "local"
+    });
+    const { balance } = IcrcLedgerCanister.create({
+      agent,
+      canisterId: Principal.fromText("ddsp7-7iaaa-aaaaq-aacqq-cai")
+    });
+    if (principalId) {
+      try {
+        let result = await balance({
+          owner: principalId,
+          certified: false
+        });
+        return result;
+      } catch (err) {
+        console.error(err);
+      }
+    }
+    return 0n;
   }
   return {
     subscribe,
@@ -6159,7 +6182,8 @@ function createUserStore() {
     withdrawFPL,
     isDataManager,
     isAdmin,
-    isAuditor
+    isAuditor,
+    getFPLBalance
   };
 }
 const userStore = createUserStore();
@@ -6213,7 +6237,6 @@ function Layout($$payload, $$props) {
   var $$store_subs;
   let worker;
   async function syncAuthStore() {
-    console.log("Syncing auth store");
     return;
   }
   const init2 = async () => {
@@ -7282,7 +7305,6 @@ class StoreManager {
       await this.syncCountries();
       localStorage.setItem(`countries_hash`, countriesHash?.hash || "");
     } else {
-      console.log("Loading Countries from cache");
       this.loadFromCache();
     }
   }
