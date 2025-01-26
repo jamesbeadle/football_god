@@ -24,15 +24,10 @@ module {
     private let oddsGenerator = OddsGenerator.OddsGenerator();
   
     public func getHomepageLeagueFixtures(leagueId: FootballTypes.LeagueId) : [ResponseDTOs.HomePageFixtureDTO] {
-
-      Debug.print("getHomepageLeagueFixtures called for league: " # debug_show(leagueId));
-      Debug.print("matchOddsCache size: " # debug_show(Array.size(matchOddsCache)));
-       
+ 
       let matchOddsResult = Array.find<(FootballTypes.LeagueId, [(FootballTypes.FixtureId, BettingTypes.MatchOdds)])>(matchOddsCache, func(matchOddsCacheEntry: (FootballTypes.LeagueId, [(FootballTypes.FixtureId, BettingTypes.MatchOdds)])) : Bool {
         matchOddsCacheEntry.0 == leagueId;
       });
-
-      Debug.print("matchOddsResult: " # debug_show(matchOddsResult));
 
       switch(matchOddsResult){
         case (?foundMatchOdds){
@@ -101,10 +96,7 @@ module {
           }); 
           switch(playersResult){
             case (#ok players){
-
-
-               Debug.print("Recalculating league " # Nat.toText(Array.size(futureFixtures)) # " future fixtures");
-              
+  
               for(fixture in Iter.fromArray(futureFixtures)){
 
                 let fixturePlayers = Array.filter<ResponseDTOs.PlayerDTO>(players, func(player: ResponseDTOs.PlayerDTO){

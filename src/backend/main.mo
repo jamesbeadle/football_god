@@ -58,7 +58,6 @@ actor Self {
   public shared ({ caller }) func  agreeTerms() : async Result.Result<(), T.Error> {
     assert not Principal.isAnonymous(caller);
     let principalId = Principal.toText(caller);
-    Debug.print("Agreeing terms.");
     return await userManager.agreeTerms(principalId);
   };
 
@@ -902,6 +901,8 @@ actor Self {
     //await updateProfileCanisterWasms();
     await oddsManager.recalculate(1);
     //await oddsManager.recalculate(2);
+    let profiles = kycManager.getStableKYCProfiles();
+    Debug.print(debug_show profiles);
   };
 
   private func updateProfileCanisterWasms() : async (){
@@ -923,7 +924,6 @@ actor Self {
   };
 
   public shared ({ caller }) func isDataManager() : async Result.Result<Bool, T.Error> {
-    Debug.print("checking is data manager");
     return #ok(checkDataManager(Principal.toText(caller)));
   };
   
@@ -1118,7 +1118,8 @@ actor Self {
   };
 
   public shared func kycVerificationCallback(response: ShuftiTypes.ShuftiResponse) : async Result.Result<(), T.Error> {
-    
+    Debug.print("KYC Callback");
+    Debug.print(debug_show response);
     let principalResult = kycManager.storeVerificationResponse(response);
 
     switch(principalResult){

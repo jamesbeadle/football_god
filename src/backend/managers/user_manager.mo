@@ -117,7 +117,6 @@ module {
 
     public func  agreeTerms(principalId: Base.PrincipalId) : async Result.Result<(), T.Error> {
       
-      Debug.print("Checking for profile canister.");
       await checkOrCreateProfile(principalId);
       
       let userProfileCanisterId = Array.find<(Base.PrincipalId, Base.CanisterId)>(profileCanisterIds, func(entry: (Base.PrincipalId, Base.CanisterId)) : Bool {
@@ -127,12 +126,10 @@ module {
       switch(userProfileCanisterId){
         case (?foundCanisterId){
 
-          Debug.print("Found profile canister id." # foundCanisterId.1);
           let profile_canister = actor (foundCanisterId.1) : actor {
             acceptTerms : (principalId: Base.PrincipalId) -> async Result.Result<(), T.Error>;
           };
           let result = await profile_canister.acceptTerms(principalId);
-          Debug.print(debug_show result);
           return result;
         };
         case (null){
@@ -969,8 +966,6 @@ module {
     };
 
     private func checkOrCreateProfile(principalId: Base.PrincipalId) : async () {
-      Debug.print("Check or create profile");
-      Debug.print(debug_show activeProfileCanisterId);
       if(activeProfileCanisterId == ""){
         await createProfileCanister();
         await createProfile(principalId);
@@ -981,14 +976,11 @@ module {
       });
 
 
-      Debug.print("found profile: ");
-      Debug.print(debug_show foundProfileCanisterId);
 
       if(Option.isNull(foundProfileCanisterId)){
         if(await activeCanisterFull()){
           await createProfileCanister();
         };
-        Debug.print("creating profile");
         await createProfile(principalId);
       };
     };

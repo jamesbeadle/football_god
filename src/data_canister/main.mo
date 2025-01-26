@@ -3588,7 +3588,6 @@
     private func defaultCallback() : async () {};
 
     private func checkCurrentGameweekExpired() : async () {
-      Debug.print("checking current gameweek expired");
       for(league in Iter.fromArray(leagueSeasons)){
         let leagueStatusResult = Array.find<FootballTypes.LeagueStatus>(leagueStatuses, func(statusEntry: FootballTypes.LeagueStatus) : Bool {
           statusEntry.leagueId == league.0;

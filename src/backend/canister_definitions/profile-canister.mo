@@ -172,7 +172,6 @@ actor class _ProfileCanister() {
   };
 
   public shared ({ caller }) func acceptTerms(principalId: Base.PrincipalId) : async Result.Result<(), T.Error>{
-    Debug.print("Accepting terms in profile canister");
     assert Principal.toText(caller) == Environment.BACKEND_CANISTER_ID;
     let profileGroupEntry = Array.find<(Base.PrincipalId, Nat)>(profileGroupDictionary, 
       func(groupEntry: (Base.PrincipalId, Nat)) : Bool {
@@ -183,7 +182,6 @@ actor class _ProfileCanister() {
         let profileResult = getProfileFromGroup(principalId, profileGroup.1);
         switch(profileResult){
           case (?profile){
-            Debug.print("found profile to update");
             let updatedProfile: T.Profile = {
               accountOnPause = profile.accountOnPause;
               bets = profile.bets;

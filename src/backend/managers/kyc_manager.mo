@@ -5,6 +5,7 @@ import Result "mo:base/Result";
 import Text "mo:base/Text";
 import Array "mo:base/Array";
 import Time "mo:base/Time";
+import Debug "mo:base/Debug";
 import ShuftiTypes "../types/shufti_types";
 import T "../types/app_types";
 import AppTypes "../types/app_types";
@@ -46,25 +47,30 @@ module {
     };
 
     public func storeVerificationResponse(response: ShuftiTypes.ShuftiResponse) : ?Base.PrincipalId {
+      Debug.print("Storing verification response");
 
       switch(response){
         case (#ShuftiAcceptedResponse accepted){
+      Debug.print("Accepted");
           let reference = extractReference(accepted.reference);
-
+          Debug.print(reference);
           let profileResult = Array.find<(Base.PrincipalId, AppTypes.KYCProfile)>(kycProfiles, 
             func(entry: (Base.PrincipalId, AppTypes.KYCProfile)) : Bool {
-            entry.0 == reference;
+              entry.1.reference == reference;
           });          
+          Debug.print(debug_show profileResult);
 
           switch(profileResult){
             case (?kycProfile){
+              Debug.print("found kyc profile");
+          Debug.print(debug_show kycProfile);
               kycProfiles := Array.map<(Base.PrincipalId, AppTypes.KYCProfile), (Base.PrincipalId, AppTypes.KYCProfile)>(kycProfiles, func(entry: (Base.PrincipalId, AppTypes.KYCProfile)) {
-                if(entry.0 == kycProfile.0 and entry.1.reference == accepted.reference){
+                if(entry.0 == kycProfile.0 and entry.1.reference == reference){
                   return (kycProfile.0, {
                     kycApprovalDate = Time.now();
                     kycSubmissionDate = entry.1.kycSubmissionDate;
                     principalId = entry.0;
-                    reference = accepted.reference;
+                    reference = reference;
                     shuftiResponse = ?response;
                   })
                 } else {
@@ -80,18 +86,18 @@ module {
 
           let profileResult = Array.find<(Base.PrincipalId, AppTypes.KYCProfile)>(kycProfiles, 
             func(entry: (Base.PrincipalId, AppTypes.KYCProfile)) : Bool {
-            entry.0 == reference;
+            entry.1.reference == reference;
           });          
 
           switch(profileResult){
             case (?kycProfile){
               kycProfiles := Array.map<(Base.PrincipalId, AppTypes.KYCProfile), (Base.PrincipalId, AppTypes.KYCProfile)>(kycProfiles, func(entry: (Base.PrincipalId, AppTypes.KYCProfile)) {
-                if(entry.0 == kycProfile.0 and entry.1.reference == rejected.reference){
+                if(entry.0 == kycProfile.0 and entry.1.reference == reference){
                   return (kycProfile.0, {
                     kycApprovalDate = 0;
                     kycSubmissionDate = entry.1.kycSubmissionDate;
                     principalId = entry.0;
-                    reference = rejected.reference;
+                    reference = reference;
                     shuftiResponse = ?response;
                   })
                 } else {
