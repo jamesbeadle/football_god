@@ -75,7 +75,7 @@
   {:else}
     <div class="flex items-center justify-between w-full mb-4">
       <p class="text-lg">League Explorer</p>
-      <button class="brand-button" on:click={createNewLeague}>+ League Explorer</button>
+      <button class="brand-button" on:click={createNewLeague}>+ New League</button>
     </div>
     
     <div class="space-y-4">
