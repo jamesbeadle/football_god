@@ -38,7 +38,6 @@
           return;
         }
         profile = value;
-        console.log(profile);
       });
       isLoading = false;
       await fetchBalances();

@@ -71,7 +71,6 @@ class StoreManager {
       await this.syncCountries();
       localStorage.setItem(`countries_hash`, countriesHash?.hash || "");
     } else {
-      console.log("Loading Countries from cache");
       this.loadFromCache();
     }
   }

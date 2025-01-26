@@ -35,12 +35,11 @@
 
     onMount( async () => {
         try{
-            await userStore.sync();
             await checkUser();
         } catch {
             console.error('Error loading dashboard')
         } finally {
-            isLoading = false
+            isLoading = false;
         }
     });
 
@@ -57,7 +56,6 @@
         authStore.subscribe((store) => {
             isLoggedIn = store.identity !== null && store.identity !== undefined;
         });
-
         userStore.subscribe((store) => {
             if(store == null){
                 checkingTerms = false;
@@ -171,12 +169,6 @@
                         </div>
                         <div class="flex items-center space-x-4">
                             <button 
-                                class="flex items-center justify-center w-10 h-10 text-white rounded-full bg-BrandGray"
-                                on:click={handleLogout}
-                            >
-                                <span class="text-sm">U</span>
-                            </button>
-                            <button 
                                 class="p-2 text-white transition-colors rounded-full bg-BrandGray"
                                 on:click={toggleMobileMenu}
                             >
@@ -211,8 +203,14 @@
                                     <a href="/profile" class="text-white transition-colors hover:text-zinc-400">
                                         <ProfileIcon className="w-5 h-5" />
                                     </a>
+                                    <button 
+                                        class="flex items-center justify-center w-10 h-10 text-white rounded-full bg-BrandGray"
+                                        on:click={handleLogout}
+                                    >
+                                        <Disconnect className="w-6" />
+                                    </button>
                                 {/if}
-                            <a href="https://x.com/OpenFPL_DAO" target="_blank" rel="noopener noreferrer" class="text-white transition-colors hover:text-zinc-400">
+                                <a href="https://x.com/OpenFPL_DAO" target="_blank" rel="noopener noreferrer" class="text-white transition-colors hover:text-zinc-400">
                                     <XIcon className="w-5 h-5" />
                                 </a>
                                 <a href="https://github.com/jamesbeadle/football_god" target="_blank" rel="noopener noreferrer" class="text-white transition-colors hover:text-zinc-400">
