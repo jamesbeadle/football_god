@@ -127,13 +127,6 @@ function createPlayerStore() {
     return new PlayerService().recallLoan(recallFromLeagueId, recallPlayerId);
   }
 
-  async function updatePlayerValue(
-    playerId: PlayerId,
-    updatedValue: Number,
-  ): Promise<any> {
-    return new PlayerService().updatePlayerValue(playerId, updatedValue);
-  }
-
   return {
     getPlayers,
     transferPlayer,
@@ -143,8 +136,7 @@ function createPlayerStore() {
     updatePlayer,
     syncPlayers,
     getLoanedPlayers,
-    recallLoan,
-    updatePlayerValue,
+    recallLoan
   };
 }
 

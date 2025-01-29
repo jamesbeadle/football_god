@@ -19,7 +19,6 @@ import Countries "types/Countries";
 import FootballTypes "types/football_types";
 import Environment "environment";
 
-import GovernanceDTOs "dtos/governance_DTOs";
 import RequestDTOs "dtos/request_DTOs";
 import ResponseDTOs "dtos/response_DTOs";
 
@@ -674,18 +673,6 @@ actor Self {
       case (null){}
     };
     return #err(#NotFound);
-  };
-
-  //ONE OFF FUNCTION FOR UPDATING PLAYER VALUES
-  public shared ({ caller }) func updatePlayerValue(playerId: FootballTypes.PlayerId, value: Nat16) : async Result.Result<(), T.Error>{
-    assert not Principal.isAnonymous(caller);
-    let principalId = Principal.toText(caller);
-    assert checkDataManager(principalId);
-    let data_canister = actor (Environment.DATA_CANISTER_ID) : actor {
-      updatePlayerValue : shared query (playerId: FootballTypes.PlayerId, value: Nat16) -> async Result.Result<(), T.Error>;
-    };
-    
-    return await data_canister.updatePlayerValue(playerId, value);
   };
    
 };

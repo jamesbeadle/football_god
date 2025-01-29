@@ -109,14 +109,4 @@ export class PlayerService {
     const result = await identityActor.executeRecallPlayer(dto);
     if (isError(result)) throw new Error("Failed to recall player");
   }
-
-  async updatePlayerValue(playerId: PlayerId, value: Number): Promise<void> {
-    const identityActor: any = await ActorFactory.createIdentityActor(
-      authStore,
-      process.env.BACKEND_CANISTER_ID ?? "",
-    );
-
-    const result = await identityActor.updatePlayerValue(playerId, value);
-    if (isError(result)) throw new Error("Failed to udpate player value");
-  }
 }
