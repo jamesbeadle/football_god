@@ -143,6 +143,7 @@ module GovernanceDTOs {
   public type RelegateClubDTO = {
     leagueId: FootballTypes.LeagueId;
     clubId: FootballTypes.ClubId;
+    relegatedToLeagueId: FootballTypes.LeagueId;
   };
   
   public type CreateLeagueDTO = {

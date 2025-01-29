@@ -821,32 +821,8 @@
       assert Principal.toText(caller) == Environment.SNS_GOVERNANCE_CANISTER_ID;
       assert callerAllowed(caller);
       assert leagueExists(dto.leagueId);
-
-      //TODO
-
       assert checkPlayerExists(dto.leagueId, dto.playerId);
-
-      let filteredLeaguePlayers = Array.find<(FootballTypes.LeagueId, [FootballTypes.Player])>(leaguePlayers, func(leagueWithPlayers: (FootballTypes.LeagueId, [FootballTypes.Player])){
-        leagueWithPlayers.0 == dto.leagueId
-      });
-      //TODO (KELLY): Add validation checks
-
-      switch(filteredLeaguePlayers){
-        case (?foundLeaguePlayers){
-          let playerToUnretire = Array.find<FootballTypes.Player>(foundLeaguePlayers.1, 
-            func(p : FootballTypes.Player) : Bool { p.id == dto.playerId and p.status == #Retired });
-            switch (playerToUnretire) {
-              case (null) {
-                return #Err("Not Found");
-              };
-              case (?_) {};
-            };
-            return #Ok("Valid");
-        };
-        case (null){
-          return #Err("Not Found");
-        }
-      }; 
+      return #Ok("Valid");
     };
 
     /* League */
@@ -854,8 +830,7 @@
     public shared ( {caller} ) func validateCreateLeague(dto : GovernanceDTOs.CreateLeagueDTO) : async Base.RustResult{
       assert Principal.toText(caller) == Environment.SNS_GOVERNANCE_CANISTER_ID;
       assert callerAllowed(caller);
-      
-      //TODO (KELLY): Add validation checks
+      //TODO (KELLY): Add check to see if league with existing name exists
       return #Ok("Valid");
     };
 
@@ -863,7 +838,7 @@
       assert Principal.toText(caller) == Environment.SNS_GOVERNANCE_CANISTER_ID;
       assert callerAllowed(caller);
       assert leagueExists(dto.leagueId);
-      //TODO (KELLY): Add validation checks
+      //TODO (KELLY): Add league detail validation checks
       return #Ok("Valid");
     };
 
@@ -883,6 +858,7 @@
       assert fixtureExists(dto.leagueId, dto.seasonId, dto.fixtureId);
       //TODO (KELLY): Add validation checks
         //valid gameweek but that can go in a data check module in the backend
+        //gameweek in the future
       return #Ok("Valid");
     };
 
@@ -891,7 +867,6 @@
       assert callerAllowed(caller);
       assert leagueExists(dto.leagueId);
       assert fixtureExists(dto.leagueId, dto.seasonId, dto.fixtureId);
-      //TODO (KELLY): Add validation checks
       return #Ok("Valid");
     };
 
@@ -900,7 +875,6 @@
       assert callerAllowed(caller);
       assert leagueExists(dto.leagueId);
       assert postponedFixtureExists(dto.leagueId, dto.seasonId, dto.fixtureId);
-      //TODO (KELLY): Add validation checks
       return #Ok("Valid");
     };
 
@@ -910,7 +884,6 @@
       assert leagueExists(dto.leagueId);
       assert fixtureExists(dto.leagueId, dto.seasonId, dto.fixtureId);
       assert validatePlayerEvents(dto.playerEventData);
-      //TODO (KELLY): Add validation checks
       return #Ok("Valid");
     };
 
@@ -920,7 +893,7 @@
       assert Principal.toText(caller) == Environment.SNS_GOVERNANCE_CANISTER_ID;
       assert callerAllowed(caller);
       assert leagueExists(dto.leagueId);
-      //TODO (KELLY): Add validation checks
+      //TODO (KELLY): Add validation checks on club details
       return #Ok("Valid");
     };
 
@@ -938,8 +911,8 @@
       assert Principal.toText(caller) == Environment.SNS_GOVERNANCE_CANISTER_ID;
       assert callerAllowed(caller);
       assert leagueExists(dto.leagueId);
+      assert leagueExists(dto.relegatedToLeagueId);
       assert clubExists(dto.leagueId, dto.clubId);
-      //TODO (KELLY): Add validation checks
       return #Ok("Valid");
     };
 
@@ -948,7 +921,7 @@
       assert callerAllowed(caller);
       assert leagueExists(dto.leagueId);
       assert clubExists(dto.leagueId, dto.clubId);
-      //TODO (KELLY): Add validation checks
+      //TODO (KELLY): Add validation checks on update details
       return #Ok("Valid");
     };
 
@@ -1478,7 +1451,6 @@
     public shared ( {caller} ) func setPlayerInjury(dto : GovernanceDTOs.SetPlayerInjuryDTO) : async (){
       assert Principal.toText(caller) == Environment.SNS_GOVERNANCE_CANISTER_ID;
 
-
       leaguePlayers := Array.map<(FootballTypes.LeagueId, [FootballTypes.Player]), (FootballTypes.LeagueId, [FootballTypes.Player])>(leaguePlayers, 
         func(leaguePlayersEntry: (FootballTypes.LeagueId, [FootballTypes.Player]))
         {
@@ -1829,9 +1801,9 @@
       await setCheckCurrentGameweekTimer();
 
 
-    //TODO: Add function to add initial fixtures to league from csv file
-      //TODO: Add the fixtures in the data manager
-      //TODO: Call back to each app notifying them of fixtures added for season
+      //TODO: Add function to add initial fixtures to league from csv file
+        //TODO: Add the fixtures in the data manager
+        //TODO: Call back to each app notifying them of fixtures added for season
 
     };
 
@@ -3162,7 +3134,6 @@
     private func postUpgradeCallback() : async (){
       await setSystemTimers();
       await checkCurrentGameweekExpired();
-      //TODO: Check cycles for betting canisters when created
     };
 
     //Timer Callback Functions
@@ -3766,6 +3737,7 @@
       };
     };
 
+    //TODO
     private func setFinishSeasonTimer() : async (){
 
       for(league in Iter.fromArray(leagueSeasons)){
@@ -3857,13 +3829,6 @@
       return #ok();
     };
 
-    private func updateBettingOdds(leagueId: FootballTypes.LeagueId) : async Result.Result<(), T.Error> {
-      let application_canister = actor (Environment.FOOTBALL_GOD_BACKEND_CANISTER_ID) : actor {
-        updateBettingOdds : (leagueId: FootballTypes.LeagueId) -> async Result.Result<(), T.Error>;
-      };
-      let _ = await application_canister.updateBettingOdds(leagueId);
-    };
-
     private func notifyAppsOfGameweekStarting(leagueId: FootballTypes.LeagueId, seasonId: FootballTypes.SeasonId, gameweek: FootballTypes.GameweekNumber) : async Result.Result<(), T.Error> {
       for(leagueApplication in Iter.fromArray(leagueApplications)){
         if(leagueApplication.0 == leagueId){
@@ -3904,75 +3869,6 @@
       });
     };
 
-    private func revaluePlayer(playerId: FootballTypes.PlayerId, value: Nat16){
-      
-      let updatedLeaguePlayersBuffer = Buffer.fromArray<(FootballTypes.LeagueId, [FootballTypes.Player])>([]);
-
-      for(league in Iter.fromArray(leaguePlayers)){
-        if(league.0 == 1){
-
-          let filteredLeaguePlayers = Array.find<(FootballTypes.LeagueId, [FootballTypes.Player])>(leaguePlayers, func(leagueWithPlayers: (FootballTypes.LeagueId, [FootballTypes.Player])) : Bool{
-            leagueWithPlayers.0 == 1
-          });
-
-          switch(filteredLeaguePlayers){
-            case (?foundLeaguePlayers){
-              
-              var updatedPlayers = Array.map<FootballTypes.Player, FootballTypes.Player>(
-                foundLeaguePlayers.1,
-                  func(p : FootballTypes.Player) : FootballTypes.Player {
-                    if (p.id == playerId) {
-
-                      let historyEntry : FootballTypes.ValueHistory = {
-                        changedOn = Time.now();
-                        oldValue = p.valueQuarterMillions;
-                        newValue = value;
-                      };
-
-                      let updatedPlayer : FootballTypes.Player = {
-                        id = p.id;
-                        leagueId = p.leagueId;
-                        clubId = p.clubId;
-                        position = p.position;
-                        firstName = p.firstName;
-                        lastName = p.lastName;
-                        shirtNumber = p.shirtNumber;
-                        valueQuarterMillions = value;
-                        dateOfBirth = p.dateOfBirth;
-                        nationality = p.nationality;
-                        seasons = p.seasons;
-                        valueHistory = List.append<FootballTypes.ValueHistory>(p.valueHistory, List.make(historyEntry));
-                        status = p.status;
-                        parentLeagueId = p.parentLeagueId;
-                        parentClubId = p.parentClubId;
-                        currentLoanEndDate = p.currentLoanEndDate;
-                        latestInjuryEndDate = p.latestInjuryEndDate;
-                        injuryHistory = p.injuryHistory;
-                        retirementDate = p.retirementDate;
-                        transferHistory = p.transferHistory;
-                        gender = p.gender;
-                      };
-
-                      return updatedPlayer;
-                    };
-                    return p;
-                },
-              );
-
-              updatedLeaguePlayersBuffer.add((1, updatedPlayers));
-            };
-            case (null){
-
-            }
-          };
-        } else {
-          updatedLeaguePlayersBuffer.add(league);
-        } 
-      };
-
-      leaguePlayers := Buffer.toArray(updatedLeaguePlayersBuffer);
-    };
-
     private func updateDataHash(leagueId: FootballTypes.LeagueId, category : Text) : async () {
       let randomHash = await SHA224.getRandomHash();
       leagueDataHashes := Array.map<(FootballTypes.LeagueId, [Base.DataHash]), (FootballTypes.LeagueId, [Base.DataHash])>(leagueDataHashes, func(entry: (FootballTypes.LeagueId, [Base.DataHash])){
@@ -3993,5 +3889,12 @@
           return entry;
         }
       });
+    };
+
+    private func updateBettingOdds(leagueId: FootballTypes.LeagueId) : async Result.Result<(), T.Error> {
+      let application_canister = actor (Environment.FOOTBALL_GOD_BACKEND_CANISTER_ID) : actor {
+        updateBettingOdds : (leagueId: FootballTypes.LeagueId) -> async Result.Result<(), T.Error>;
+      };
+      let _ = await application_canister.updateBettingOdds(leagueId);
     };
   };
