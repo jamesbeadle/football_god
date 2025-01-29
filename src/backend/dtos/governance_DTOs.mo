@@ -48,7 +48,8 @@ module GovernanceDTOs {
 
   public type RescheduleFixtureDTO = {
     leagueId: FootballTypes.LeagueId;
-    postponedFixtureId : FootballTypes.FixtureId;
+    seasonId: FootballTypes.SeasonId;
+    fixtureId : FootballTypes.FixtureId;
     updatedFixtureGameweek : FootballTypes.GameweekNumber;
     updatedFixtureDate : Int;
   };
@@ -135,13 +136,8 @@ module GovernanceDTOs {
 
   public type PromoteClubDTO = {
     leagueId: FootballTypes.LeagueId;
-    name : Text;
-    friendlyName : Text;
-    primaryColourHex : Text;
-    secondaryColourHex : Text;
-    thirdColourHex : Text;
-    abbreviatedName : Text;
-    shirtType : FootballTypes.ShirtType;
+    clubId: FootballTypes.ClubId;
+    toLeagueId: FootballTypes.LeagueId;
   };
 
   public type RelegateClubDTO = {
@@ -182,10 +178,5 @@ module GovernanceDTOs {
     thirdColourHex : Text;
     abbreviatedName : Text;
     shirtType : FootballTypes.ShirtType;
-  };
-
-  public type RemoveClubDTO = {
-    leagueId: FootballTypes.LeagueId;
-    clubId: FootballTypes.ClubId;
   };
 };

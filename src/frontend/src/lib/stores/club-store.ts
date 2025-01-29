@@ -3,7 +3,6 @@ import type {
   ClubDTO,
   CreateClubDTO,
   LeagueId,
-  RemoveClubDTO,
 } from "../../../../declarations/backend/backend.did";
 import { ClubService } from "../services/club-service";
 import { DataHashService } from "../services/data-hash-service";
@@ -82,14 +81,9 @@ function createClubStore() {
     return new ClubService().createClub(dto);
   }
 
-  async function removeClub(dto: RemoveClubDTO): Promise<any> {
-    return new ClubService().removeClub(dto);
-  }
-
   return {
     getClubs,
     createClub,
-    removeClub,
     syncClubs,
   };
 }

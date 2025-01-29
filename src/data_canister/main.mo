@@ -194,45 +194,6 @@
       };
     };
 
-    private func getClubPlayers(leagueId: FootballTypes.LeagueId, clubId: FootballTypes.ClubId) : Result.Result<[ResponseDTOs.PlayerDTO], T.Error> {
-      let filteredLeaguePlayers = Array.find<(FootballTypes.LeagueId, [FootballTypes.Player])>(leaguePlayers, 
-        func(currentLeaguePlayers: (FootballTypes.LeagueId, [FootballTypes.Player])) : Bool{
-            currentLeaguePlayers.0 == leagueId;
-      });
-
-      switch(filteredLeaguePlayers){
-        case (?foundLeaguePlayers){    
-          let clubPlayers = Array.filter<FootballTypes.Player>(foundLeaguePlayers.1, func(player: FootballTypes.Player) {
-            player.clubId == clubId
-          });         
-          return #ok(Array.map<FootballTypes.Player, ResponseDTOs.PlayerDTO>(clubPlayers, func(player: FootballTypes.Player){
-            
-            
-            return {
-              clubId = player.clubId;
-              dateOfBirth = player.dateOfBirth;
-              firstName = player.firstName;
-              id = player.id;
-              lastName = player.lastName;
-              nationality = player.nationality;
-              position = player.position;
-              shirtNumber = player.shirtNumber;
-              status = player.status;
-              valueQuarterMillions = player.valueQuarterMillions;
-              leagueId = player.leagueId;
-              parentLeagueId = player.parentLeagueId;
-              parentClubId = player.parentClubId;
-              currentLoanEndDate = player.currentLoanEndDate;
-            };
-
-          }));
-        };
-        case (null){
-          return #err(#NotFound);
-        }
-      };
-    };
-
     private func getPrivateFixtures(dto: RequestDTOs.RequestFixturesDTO) : Result.Result<[ResponseDTOs.FixtureDTO], T.Error> {
       let filteredLeagueSeasons = Array.find<(FootballTypes.LeagueId, [FootballTypes.Season])>(leagueSeasons, 
         func(leagueSeason: (FootballTypes.LeagueId, [FootballTypes.Season])) : Bool{
@@ -729,331 +690,146 @@
 
     /* Player */
 
-    public shared ( {caller} ) func validateRevaluePlayerUp(dto : GovernanceDTOs.RevaluePlayerUpDTO) : async Result.Result<(), T.Error>{
+    public shared ( {caller} ) func validateRevaluePlayerUp(dto : GovernanceDTOs.RevaluePlayerUpDTO) : async Base.RustResult{
+      assert Principal.toText(caller) == Environment.SNS_GOVERNANCE_CANISTER_ID;
       assert callerAllowed(caller);
       assert leagueExists(dto.leagueId);
       assert checkPlayerExists(dto.leagueId, dto.playerId);
-      return #ok();
+      return #Ok("Valid");
     };
 
-    public shared ( {caller} ) func validateRevaluePlayerDown(dto : GovernanceDTOs.RevaluePlayerDownDTO) : async Result.Result<(), T.Error>{
+    public shared ( {caller} ) func validateRevaluePlayerDown(dto : GovernanceDTOs.RevaluePlayerDownDTO) : async Base.RustResult{
+      assert Principal.toText(caller) == Environment.SNS_GOVERNANCE_CANISTER_ID;
       assert callerAllowed(caller);
       assert leagueExists(dto.leagueId);
       assert checkPlayerExists(dto.leagueId, dto.playerId);
-      return #ok();
+      return #Ok("Valid");
     };
 
-    public shared ( {caller} ) func validateLoanPlayer(dto : GovernanceDTOs.LoanPlayerDTO) : async Result.Result<(), T.Error>{
+    public shared ( {caller} ) func validateLoanPlayer(dto : GovernanceDTOs.LoanPlayerDTO) : async Base.RustResult{
+      assert Principal.toText(caller) == Environment.SNS_GOVERNANCE_CANISTER_ID;
       assert callerAllowed(caller);
       assert leagueExists(dto.leagueId);
       assert leagueExists(dto.loanLeagueId);
       assert clubExists(dto.loanLeagueId, dto.loanClubId);
       assert checkPlayerExists(dto.leagueId, dto.playerId);
       assert dto.loanEndDate > Time.now();
-      return #ok();
+      return #Ok("Valid");
     };
 
-    public shared ( {caller} ) func validateTransferPlayer(dto : GovernanceDTOs.TransferPlayerDTO) : async Result.Result<(), T.Error>{
+    public shared ( {caller} ) func validateTransferPlayer(dto : GovernanceDTOs.TransferPlayerDTO) : async Base.RustResult{
+      assert Principal.toText(caller) == Environment.SNS_GOVERNANCE_CANISTER_ID;
       assert callerAllowed(caller);
       assert leagueExists(dto.leagueId);
       assert leagueExists(dto.newLeagueId);
+      assert clubExists(dto.leagueId, dto.clubId);
+      assert clubExists(dto.newLeagueId, dto.newClubId);
       assert checkPlayerExists(dto.leagueId, dto.playerId);
-
-      let filteredLeaguePlayers = Array.find<(FootballTypes.LeagueId, [FootballTypes.Player])>(leaguePlayers, func(leagueWithPlayers: (FootballTypes.LeagueId, [FootballTypes.Player])) : Bool{
-        leagueWithPlayers.0 == dto.leagueId
-      });
-
-      switch(filteredLeaguePlayers){
-        case (?foundLeaguePlayers){
-          let player = Array.find<FootballTypes.Player>(
-            foundLeaguePlayers.1,
-            func(p : FootballTypes.Player) : Bool {
-              return p.id == dto.playerId;
-            },
-          );
-
-          switch (player) {
-            case (null) {
-              return #err(#NotFound);
-            };
-            case (?foundPlayer) {
-              //TODO
-            };
-          };
-
-          if (dto.newClubId > 0) {
-
-            let filteredLeagueClubs = Array.find<(FootballTypes.LeagueId, [FootballTypes.Club])>(leagueClubs, 
-              func(leagueClubs: (FootballTypes.LeagueId, [FootballTypes.Club])) : Bool{
-                  leagueClubs.0 == dto.leagueId;
-            });
-
-            switch(filteredLeagueClubs){
-              case (?foundLeagueClubs){
-                let newClub = Array.find<FootballTypes.Club>(
-                  foundLeagueClubs.1,
-                  func(club : FootballTypes.Club) : Bool {
-                    return club.id == dto.newClubId;
-                  },
-                );
-
-                switch (newClub) {
-                  case (null) {
-                    return #err(#NotFound);
-                  };
-                  case (?foundTeam) {};
-                };
-                return #ok();
-
-              };
-              case (null){
-                return #err(#NotFound);
-              }
-            }; 
-          };
-
-          return #ok();
-          
-        };
-        case (null){
-          return #err(#NotFound);
-        }
-      };  
-      //TODO (KELLY): Add validation checks
+      return #Ok("Valid");
     };
 
-    public shared ( {caller} ) func validateSetFreeAgent(dto : GovernanceDTOs.SetFreeAgentDTO) : async Result.Result<(), T.Error>{
+    public shared ( {caller} ) func validateSetFreeAgent(dto : GovernanceDTOs.SetFreeAgentDTO) : async Base.RustResult{
+      assert Principal.toText(caller) == Environment.SNS_GOVERNANCE_CANISTER_ID;
       assert callerAllowed(caller);
       assert leagueExists(dto.leagueId);
       assert checkPlayerExists(dto.leagueId, dto.playerId);
-      return #err(#NotFound);
-
-      //TODO (KELLY): Add validation checks
+      return #Ok("Valid");
     };
 
-    public shared ( {caller} ) func validateRecallPlayer(dto : GovernanceDTOs.RecallPlayerDTO) : async Result.Result<(), T.Error> {
-      
+    public shared ( {caller} ) func validateRecallPlayer(dto : GovernanceDTOs.RecallPlayerDTO) : async Base.RustResult {
+      assert Principal.toText(caller) == Environment.SNS_GOVERNANCE_CANISTER_ID;
       assert callerAllowed(caller);
       assert leagueExists(dto.leagueId);
       assert checkPlayerExists(dto.leagueId, dto.playerId);
-
-      let filteredLeaguePlayers = Array.find<(FootballTypes.LeagueId, [FootballTypes.Player])>(leaguePlayers, func(leagueWithPlayers: (FootballTypes.LeagueId, [FootballTypes.Player])) : Bool{
-        leagueWithPlayers.0 == dto.leagueId
-      });
-
-      switch(filteredLeaguePlayers){
-        case (?foundLeaguePlayers){
-          let player = Array.find<FootballTypes.Player>(
-            foundLeaguePlayers.1,
-            func(p : FootballTypes.Player) : Bool {
-              return p.id == dto.playerId;
-            },
-          );
-
-          switch (player) {
-            case (null) {
-              return #err(#NotFound);
-            };
-            case (?foundPlayer) {
-              if (foundPlayer.status != #OnLoan) {
-                return #err(#NotFound);
-              };
-            };
-          };
-          return #ok();
-          
-        };
-        case (null){
-          return #err(#NotFound);
-        }
-      };  
-      //TODO (KELLY): Add validation checks
+      return #Ok("Valid");
     };
 
-    public shared ( {caller} ) func validateCreatePlayer(dto : GovernanceDTOs.CreatePlayerDTO) : async Result.Result<(), T.Error>{
+    public shared ( {caller} ) func validateCreatePlayer(dto : GovernanceDTOs.CreatePlayerDTO) : async Base.RustResult{
+      assert Principal.toText(caller) == Environment.SNS_GOVERNANCE_CANISTER_ID;
       assert callerAllowed(caller);
       assert leagueExists(dto.leagueId);
+      assert clubExists(dto.leagueId, dto.clubId);
 
       if (Text.size(dto.firstName) > 50) {
-        return #err(#InvalidData);
+        return #Err("Invalid Data");
       };
 
       if (Text.size(dto.lastName) > 50) {
-        return #err(#InvalidData);
+        return #Err("Invalid Data");
       };
 
       let playerCountry = Array.find<Base.Country>(Countries.countries, func(country : Base.Country) : Bool { return country.id == dto.nationality });
       switch (playerCountry) {
         case (null) {
-        return #err(#InvalidData);
+        return #Err("Invalid Data");
         };
-        case (?foundCountry) {};
+        case (?_) {};
       };
 
       if (Utilities.calculateAgeFromUnix(dto.dateOfBirth) < 16) {
-        return #err(#InvalidData);
+        return #Err("Invalid Data");
       };
 
-      let filteredLeagueClubs = Array.find<(FootballTypes.LeagueId, [FootballTypes.Club])>(leagueClubs, 
-        func(leagueClubs: (FootballTypes.LeagueId, [FootballTypes.Club])) : Bool{
-            leagueClubs.0 == dto.leagueId;
-      });
-
-      switch(filteredLeagueClubs){
-        case (?foundLeagueClubs){
-          let newClub = Array.find<FootballTypes.Club>(
-            foundLeagueClubs.1,
-            func(club : FootballTypes.Club) : Bool {
-              return club.id == dto.clubId;
-            },
-          );
-
-          switch (newClub) {
-            case (null) {
-              return #err(#NotFound);
-            };
-            case (?foundTeam) {};
-          };
-          return #ok();
-
-        };
-        case (null){
-          return #err(#NotFound);
-        }
-      };   
-      //TODO (KELLY): Add validation checks 
+      return #Ok("Valid");
     };
 
-    public shared ( {caller} ) func validateUpdatePlayer(dto : GovernanceDTOs.UpdatePlayerDTO) : async Result.Result<(), T.Error>{
+    public shared ( {caller} ) func validateUpdatePlayer(dto : GovernanceDTOs.UpdatePlayerDTO) : async Base.RustResult{
+      assert Principal.toText(caller) == Environment.SNS_GOVERNANCE_CANISTER_ID;
       assert callerAllowed(caller);
       assert leagueExists(dto.leagueId);
       assert checkPlayerExists(dto.leagueId, dto.playerId);
 
-      let filteredLeaguePlayers = Array.find<(FootballTypes.LeagueId, [FootballTypes.Player])>(leaguePlayers, func(leagueWithPlayers: (FootballTypes.LeagueId, [FootballTypes.Player])) : Bool{
-        leagueWithPlayers.0 == dto.leagueId
-      });
+      if (Text.size(dto.firstName) > 50) {
+        return #Err("Invalid Data");
+      };
 
-      switch(filteredLeaguePlayers){
-        case (?foundLeaguePlayers){
-          let player = Array.find<FootballTypes.Player>(
-            foundLeaguePlayers.1,
-            func(p : FootballTypes.Player) : Bool {
-              return p.id == dto.playerId;
-            },
-          );
+      if (Text.size(dto.lastName) > 50) {
+        return #Err("Invalid Data");
+      };
 
-          switch (player) {
-            case (null) {
-              return #err(#NotFound);
-            };
-            case (?foundPlayer) {};
-          };
-
-          if (Text.size(dto.firstName) > 50) {
-            return #err(#InvalidData);
-          };
-
-          if (Text.size(dto.lastName) > 50) {
-            return #err(#InvalidData);
-          };
-
-          let playerCountry = Array.find<Base.Country>(Countries.countries, func(country : Base.Country) : Bool { return country.id == dto.nationality });
-          switch (playerCountry) {
-            case (null) {
-            return #err(#InvalidData);
-            };
-            case (?foundCountry) {};
-          };
-
-          if (Utilities.calculateAgeFromUnix(dto.dateOfBirth) < 16) {
-            return #err(#InvalidData);
-          };
-          return #ok();
-          
+      let playerCountry = Array.find<Base.Country>(Countries.countries, func(country : Base.Country) : Bool { return country.id == dto.nationality });
+      switch (playerCountry) {
+        case (null) {
+        return #Err("Invalid Data");
         };
-        case (null){
-          return #err(#NotFound);
-        }
-      };  
-      //TODO (KELLY): Add validation checks
+        case (?_) {};
+      };
+
+      if (Utilities.calculateAgeFromUnix(dto.dateOfBirth) < 16) {
+        return #Err("Invalid Data");
+      };
+      return #Ok("Valid");
     };
 
-    public shared ( {caller} ) func validateSetPlayerInjury(dto : GovernanceDTOs.SetPlayerInjuryDTO) : async Result.Result<(), T.Error>{
+    public shared ( {caller} ) func validateSetPlayerInjury(dto : GovernanceDTOs.SetPlayerInjuryDTO) : async Base.RustResult{
+      assert Principal.toText(caller) == Environment.SNS_GOVERNANCE_CANISTER_ID;
       assert callerAllowed(caller);
       assert leagueExists(dto.leagueId);
       assert checkPlayerExists(dto.leagueId, dto.playerId);
-
-      let filteredLeaguePlayers = Array.find<(FootballTypes.LeagueId, [FootballTypes.Player])>(leaguePlayers, func(leagueWithPlayers: (FootballTypes.LeagueId, [FootballTypes.Player])) : Bool{
-        leagueWithPlayers.0 == dto.leagueId
-      });
-
-      switch(filteredLeaguePlayers){
-        case (?foundLeaguePlayers){
-         let player = Array.find<FootballTypes.Player>(
-            foundLeaguePlayers.1,
-            func(p : FootballTypes.Player) : Bool {
-              return p.id == dto.playerId;
-            },
-          );
-
-          switch (player) {
-            case (null) {
-              return #err(#NotFound);
-            };
-            case (?foundPlayer) {};
-          };
-
-          return #ok();
-        };
-        case (null){
-          return #err(#NotFound);
-        }
-      }; 
-      //TODO (KELLY): Add validation checks
+      return #Ok("Valid");
     };
 
-    public shared ( {caller} ) func validateRetirePlayer(dto : GovernanceDTOs.RetirePlayerDTO) : async Result.Result<(), T.Error>{
+    public shared ( {caller} ) func validateRetirePlayer(dto : GovernanceDTOs.RetirePlayerDTO) : async Base.RustResult{
+      assert Principal.toText(caller) == Environment.SNS_GOVERNANCE_CANISTER_ID;
       assert callerAllowed(caller);
       assert leagueExists(dto.leagueId);
       assert checkPlayerExists(dto.leagueId, dto.playerId);
-
-      let filteredLeaguePlayers = Array.find<(FootballTypes.LeagueId, [FootballTypes.Player])>(leaguePlayers, func(leagueWithPlayers: (FootballTypes.LeagueId, [FootballTypes.Player])) : Bool {
-        leagueWithPlayers.0 == dto.leagueId
-      });
-
-      switch(filteredLeaguePlayers){
-        case (?foundLeaguePlayers){
-          let player = Array.find<FootballTypes.Player>(
-            foundLeaguePlayers.1,
-            func(p : FootballTypes.Player) : Bool {
-              return p.id == dto.playerId;
-            },
-          );
-
-          switch (player) {
-            case (null) {
-              return #err(#NotFound);
-            };
-            case (?foundPlayer) {};
-          };
-
-          return #ok();
-        };
-        case (null){
-          return #err(#NotFound);
-        }
-      }; 
-      //TODO (KELLY): Add validation checks
+      return #Ok("Valid");
     };
 
-    public shared ( {caller} ) func validateUnretirePlayer(dto : GovernanceDTOs.UnretirePlayerDTO) : async Result.Result<(), T.Error>{
+    public shared ( {caller} ) func validateUnretirePlayer(dto : GovernanceDTOs.UnretirePlayerDTO) : async Base.RustResult{
+      assert Principal.toText(caller) == Environment.SNS_GOVERNANCE_CANISTER_ID;
       assert callerAllowed(caller);
       assert leagueExists(dto.leagueId);
+
+      //TODO
+
       assert checkPlayerExists(dto.leagueId, dto.playerId);
 
       let filteredLeaguePlayers = Array.find<(FootballTypes.LeagueId, [FootballTypes.Player])>(leaguePlayers, func(leagueWithPlayers: (FootballTypes.LeagueId, [FootballTypes.Player])){
         leagueWithPlayers.0 == dto.leagueId
       });
+      //TODO (KELLY): Add validation checks
 
       switch(filteredLeaguePlayers){
         case (?foundLeaguePlayers){
@@ -1061,114 +837,127 @@
             func(p : FootballTypes.Player) : Bool { p.id == dto.playerId and p.status == #Retired });
             switch (playerToUnretire) {
               case (null) {
-                return #err(#NotFound);
+                return #Err("Not Found");
               };
-              case (?foundPlayer) {};
+              case (?_) {};
             };
-            return #ok();
+            return #Ok("Valid");
         };
         case (null){
-          return #err(#NotFound);
+          return #Err("Not Found");
         }
       }; 
-      //TODO (KELLY): Add validation checks
     };
 
     /* League */
 
-    public shared ( {caller} ) func validateCreateLeague(dto : GovernanceDTOs.CreateLeagueDTO) : async Result.Result<(), T.Error>{
+    public shared ( {caller} ) func validateCreateLeague(dto : GovernanceDTOs.CreateLeagueDTO) : async Base.RustResult{
+      assert Principal.toText(caller) == Environment.SNS_GOVERNANCE_CANISTER_ID;
       assert callerAllowed(caller);
+      
       //TODO (KELLY): Add validation checks
-      return #err(#NotFound);
+      return #Ok("Valid");
     };
 
-    public shared ( {caller} ) func validateUpdateLeague(dto : GovernanceDTOs.UpdateLeagueDTO) : async Result.Result<(), T.Error>{
+    public shared ( {caller} ) func validateUpdateLeague(dto : GovernanceDTOs.UpdateLeagueDTO) : async Base.RustResult{
+      assert Principal.toText(caller) == Environment.SNS_GOVERNANCE_CANISTER_ID;
       assert callerAllowed(caller);
+      assert leagueExists(dto.leagueId);
       //TODO (KELLY): Add validation checks
-      return #err(#NotFound);
+      return #Ok("Valid");
     };
 
-    public shared ( {caller} ) func validateAddInitialFixtures(dto : GovernanceDTOs.AddInitialFixturesDTO) : async Result.Result<(), T.Error>{
+    public shared ( {caller} ) func validateAddInitialFixtures(dto : GovernanceDTOs.AddInitialFixturesDTO) : async Base.RustResult{
+      assert Principal.toText(caller) == Environment.SNS_GOVERNANCE_CANISTER_ID;
       assert callerAllowed(caller);
       assert leagueExists(dto.leagueId);
       //TODO (KELLY): Add validation checks
         //should equal the number of teams in the related environment file
-      return #err(#NotFound);
+      return #Ok("Valid");
     };
 
-    public shared ( {caller} ) func validateMoveFixture(dto : GovernanceDTOs.MoveFixtureDTO) : async Result.Result<(), T.Error>{
+    public shared ( {caller} ) func validateMoveFixture(dto : GovernanceDTOs.MoveFixtureDTO) : async Base.RustResult{
+      assert Principal.toText(caller) == Environment.SNS_GOVERNANCE_CANISTER_ID;
       assert callerAllowed(caller);
       assert leagueExists(dto.leagueId);
+      assert fixtureExists(dto.leagueId, dto.seasonId, dto.fixtureId);
       //TODO (KELLY): Add validation checks
         //valid gameweek but that can go in a data check module in the backend
-      return #err(#NotFound);
+      return #Ok("Valid");
     };
 
-    public shared ( {caller} ) func validatePostponeFixture(dto : GovernanceDTOs.PostponeFixtureDTO) : async Result.Result<(), T.Error>{
+    public shared ( {caller} ) func validatePostponeFixture(dto : GovernanceDTOs.PostponeFixtureDTO) : async Base.RustResult{
+      assert Principal.toText(caller) == Environment.SNS_GOVERNANCE_CANISTER_ID;
       assert callerAllowed(caller);
       assert leagueExists(dto.leagueId);
+      assert fixtureExists(dto.leagueId, dto.seasonId, dto.fixtureId);
       //TODO (KELLY): Add validation checks
-      return #err(#NotFound);
+      return #Ok("Valid");
     };
 
-    public shared ( {caller} ) func validateRescheduleFixture(dto : GovernanceDTOs.RescheduleFixtureDTO) : async Result.Result<(), T.Error>{
+    public shared ( {caller} ) func validateRescheduleFixture(dto : GovernanceDTOs.RescheduleFixtureDTO) : async Base.RustResult{
+      assert Principal.toText(caller) == Environment.SNS_GOVERNANCE_CANISTER_ID;
       assert callerAllowed(caller);
       assert leagueExists(dto.leagueId);
+      assert postponedFixtureExists(dto.leagueId, dto.seasonId, dto.fixtureId);
       //TODO (KELLY): Add validation checks
-      return #err(#NotFound);
+      return #Ok("Valid");
     };
 
-    public shared ( {caller} ) func validateSubmitFixtureData(dto : GovernanceDTOs.SubmitFixtureDataDTO) : async Result.Result<(), T.Error>{
+    public shared ( {caller} ) func validateSubmitFixtureData(dto : GovernanceDTOs.SubmitFixtureDataDTO) : async Base.RustResult{
+      assert Principal.toText(caller) == Environment.SNS_GOVERNANCE_CANISTER_ID;
       assert callerAllowed(caller);
       assert leagueExists(dto.leagueId);
+      assert fixtureExists(dto.leagueId, dto.seasonId, dto.fixtureId);
       assert validatePlayerEvents(dto.playerEventData);
       //TODO (KELLY): Add validation checks
-      return #err(#NotFound);
+      return #Ok("Valid");
     };
 
     /* Club */
 
-    public shared ( {caller} ) func validateCreateClub(dto : GovernanceDTOs.CreateClubDTO) : async Result.Result<(), T.Error>{
+    public shared ( {caller} ) func validateCreateClub(dto : GovernanceDTOs.CreateClubDTO) : async Base.RustResult{
+      assert Principal.toText(caller) == Environment.SNS_GOVERNANCE_CANISTER_ID;
       assert callerAllowed(caller);
       assert leagueExists(dto.leagueId);
       //TODO (KELLY): Add validation checks
-      return #err(#NotFound);
+      return #Ok("Valid");
     };
 
-    public shared ( {caller} ) func validationRemoveClub(dto : GovernanceDTOs.RemoveClubDTO) : async Result.Result<(), T.Error>{
+    public shared ( {caller} ) func validatePromoteClub(dto : GovernanceDTOs.PromoteClubDTO) : async Base.RustResult{
+      assert Principal.toText(caller) == Environment.SNS_GOVERNANCE_CANISTER_ID;
       assert callerAllowed(caller);
       assert leagueExists(dto.leagueId);
-      //TODO (KELLY): Add validation checks
-      return #err(#NotFound);
+      assert leagueExists(dto.toLeagueId);
+      assert clubExists(dto.leagueId, dto.clubId);
+      assert not seasonActive(dto.leagueId);
+      return #Ok("Valid");
     };
 
-    public shared ( {caller} ) func validatePromoteClub(dto : GovernanceDTOs.PromoteClubDTO) : async Result.Result<(), T.Error>{
+    public shared ( {caller} ) func validateRelegateClub(dto : GovernanceDTOs.RelegateClubDTO) : async Base.RustResult{
+      assert Principal.toText(caller) == Environment.SNS_GOVERNANCE_CANISTER_ID;
       assert callerAllowed(caller);
       assert leagueExists(dto.leagueId);
+      assert clubExists(dto.leagueId, dto.clubId);
       //TODO (KELLY): Add validation checks
-      return #err(#NotFound);
+      return #Ok("Valid");
     };
 
-    public shared ( {caller} ) func validateRelegateClub(dto : GovernanceDTOs.RelegateClubDTO) : async Result.Result<(), T.Error>{
+    public shared ( {caller} ) func validateUpdateClub(dto : GovernanceDTOs.UpdateClubDTO) : async Base.RustResult{
+      assert Principal.toText(caller) == Environment.SNS_GOVERNANCE_CANISTER_ID;
       assert callerAllowed(caller);
       assert leagueExists(dto.leagueId);
+      assert clubExists(dto.leagueId, dto.clubId);
       //TODO (KELLY): Add validation checks
-      return #err(#NotFound);
-    };
-
-    public shared ( {caller} ) func validateUpdateClub(dto : GovernanceDTOs.UpdateClubDTO) : async Result.Result<(), T.Error>{
-      assert callerAllowed(caller);
-      assert leagueExists(dto.leagueId);
-      //TODO (KELLY): Add validation checks
-      return #err(#NotFound);
+      return #Ok("Valid");
     };
 
     /* Governance Execution Functions */
 
     /* Player */
     
-    public shared ( {caller} ) func revaluePlayerUp(dto : GovernanceDTOs.RevaluePlayerUpDTO) : async Result.Result<(), T.Error>{
-      assert callerAllowed(caller);
+    public shared ( {caller} ) func revaluePlayerUp(dto : GovernanceDTOs.RevaluePlayerUpDTO) : async (){
+      assert Principal.toText(caller) == Environment.SNS_GOVERNANCE_CANISTER_ID;
 
       let updatedLeaguePlayersBuffer = Buffer.fromArray<(FootballTypes.LeagueId, [FootballTypes.Player])>([]);
 
@@ -1239,11 +1028,10 @@
       leaguePlayers := Buffer.toArray(updatedLeaguePlayersBuffer);
       let _ = await updateDataHash(dto.leagueId, "players");
 
-      return #ok();
     };
 
-    public shared ( {caller} ) func revaluePlayerDown(dto : GovernanceDTOs.RevaluePlayerDownDTO) : async Result.Result<(), T.Error>{
-      assert callerAllowed(caller);
+    public shared ( {caller} ) func revaluePlayerDown(dto : GovernanceDTOs.RevaluePlayerDownDTO) : async (){
+      assert Principal.toText(caller) == Environment.SNS_GOVERNANCE_CANISTER_ID;
 
       let updatedLeaguePlayersBuffer = Buffer.fromArray<(FootballTypes.LeagueId, [FootballTypes.Player])>([]);
 
@@ -1316,14 +1104,10 @@
       leaguePlayers := Buffer.toArray(updatedLeaguePlayersBuffer);
       let _ = await updateDataHash(dto.leagueId, "players");
 
-      return #ok();
     };
 
-    public shared ( {caller} ) func loanPlayer(dto : GovernanceDTOs.LoanPlayerDTO) : async Result.Result<(), T.Error>{
-      assert callerAllowed(caller);
-      assert leagueExists(dto.leagueId);
-      assert leagueExists(dto.loanLeagueId);
-      assert clubExists(dto.loanLeagueId, dto.loanClubId);
+    public shared ( {caller} ) func loanPlayer(dto : GovernanceDTOs.LoanPlayerDTO) : async (){
+      assert Principal.toText(caller) == Environment.SNS_GOVERNANCE_CANISTER_ID;
 
       if(dto.leagueId == dto.loanLeagueId){
         leaguePlayers := Array.map<
@@ -1443,7 +1227,6 @@
                 let _ = await updateDataHash(dto.leagueId, "players");
                 let _ = await updateDataHash(dto.loanLeagueId, "players");
                 let _ = await notifyAppsOfLoan(dto.loanLeagueId, dto.playerId);
-                return #ok();
               };
               case (null){ }
             };
@@ -1451,44 +1234,39 @@
           case (null){ }
         };
       };
-      return #err(#NotFound);
     };
 
-    public shared ( {caller} ) func transferPlayer(dto : GovernanceDTOs.TransferPlayerDTO) : async Result.Result<(), T.Error>{
-      assert callerAllowed(caller);
+    public shared ( {caller} ) func transferPlayer(dto : GovernanceDTOs.TransferPlayerDTO) : async (){
+      assert Principal.toText(caller) == Environment.SNS_GOVERNANCE_CANISTER_ID;
 
       if(dto.newClubId == 0 and dto.newLeagueId == 0){
         movePlayerToFreeAgents(dto.leagueId, dto.playerId);
         let _ = await updateDataHash(dto.leagueId, "players");
-        return #ok();
+        return;
       };
 
       if(dto.newLeagueId == dto.leagueId){
         movePlayerWithinLeague(dto.leagueId, dto.newClubId, dto.playerId, dto.newShirtNumber);
         let _ = await updateDataHash(dto.leagueId, "players");
-        return #ok();
+        return;
       };
 
       movePlayerToLeague(dto.leagueId, dto.newLeagueId, dto.newClubId, dto.playerId, dto.newShirtNumber);
       let _ = await updateDataHash(dto.leagueId, "players");
       let _ = await notifyAppsOfTransfer(dto.leagueId, dto.playerId);
-
-      return #ok();
     };
 
-    public shared ( {caller} ) func setFreeAgent(dto : GovernanceDTOs.SetFreeAgentDTO) : async Result.Result<(), T.Error>{
-      assert callerAllowed(caller);
+    public shared ( {caller} ) func setFreeAgent(dto : GovernanceDTOs.SetFreeAgentDTO) : async (){
+      assert Principal.toText(caller) == Environment.SNS_GOVERNANCE_CANISTER_ID;
 
       movePlayerToFreeAgents(dto.leagueId, dto.playerId);
       let _ = await updateDataHash(dto.leagueId, "players");
       let _ = await notifyAppsOfTransfer(dto.leagueId, dto.playerId);
       
-      return #ok();
     };
 
-    public shared ( {caller} ) func recallPlayer(dto: GovernanceDTOs.RecallPlayerDTO) : async Result.Result<(), T.Error>{
-      assert callerAllowed(caller);
-      assert leagueExists(dto.leagueId);
+    public shared ( {caller} ) func recallPlayer(dto: GovernanceDTOs.RecallPlayerDTO) : async (){
+      assert Principal.toText(caller) == Environment.SNS_GOVERNANCE_CANISTER_ID;
 
       let fromPlayerLeagueResult = Array.find(leaguePlayers, func(entry: (FootballTypes.LeagueId, [FootballTypes.Player])) : Bool {
         entry.0 == dto.leagueId
@@ -1570,18 +1348,16 @@
 
               let _ = await notifyAppsOfTransfer(dto.leagueId, dto.playerId);
               let _ = await notifyAppsOfTransfer(player.parentLeagueId, dto.playerId);
-              return #ok();
             };
             case (null){};
           };
         };
         case (null){};
       };
-      return #err(#NotFound);
     };
 
-    public shared ( {caller} ) func createPlayer(dto : GovernanceDTOs.CreatePlayerDTO) : async Result.Result<(), T.Error>{
-      assert callerAllowed(caller);
+    public shared ( {caller} ) func createPlayer(dto : GovernanceDTOs.CreatePlayerDTO) : async (){
+      assert Principal.toText(caller) == Environment.SNS_GOVERNANCE_CANISTER_ID;
 
       let foundLeague = Array.find<FootballTypes.League>(leagues, func(league: FootballTypes.League) : Bool {
         league.id == dto.leagueId
@@ -1627,17 +1403,14 @@
 
           nextPlayerId += 1;
           let _ = await updateDataHash(dto.leagueId, "players");
-          return #ok();
           
         };
-        case (null){
-          return #err(#NotFound);
-        }
+        case (null){}
       };
     };
 
-    public shared ( {caller} ) func updatePlayer(dto : GovernanceDTOs.UpdatePlayerDTO) : async Result.Result<(), T.Error>{
-      assert callerAllowed(caller);
+    public shared ( {caller} ) func updatePlayer(dto : GovernanceDTOs.UpdatePlayerDTO) : async (){
+      assert Principal.toText(caller) == Environment.SNS_GOVERNANCE_CANISTER_ID;
 
       var positionUpdated = false;
 
@@ -1700,11 +1473,10 @@
       };
 
       let _ = await updateDataHash(dto.leagueId, "players");
-      return #ok();
     };
 
-    public shared ( {caller} ) func setPlayerInjury(dto : GovernanceDTOs.SetPlayerInjuryDTO) : async Result.Result<(), T.Error>{
-      assert callerAllowed(caller);
+    public shared ( {caller} ) func setPlayerInjury(dto : GovernanceDTOs.SetPlayerInjuryDTO) : async (){
+      assert Principal.toText(caller) == Environment.SNS_GOVERNANCE_CANISTER_ID;
 
 
       leaguePlayers := Array.map<(FootballTypes.LeagueId, [FootballTypes.Player]), (FootballTypes.LeagueId, [FootballTypes.Player])>(leaguePlayers, 
@@ -1772,11 +1544,10 @@
       let playerInjuryDuration = #nanoseconds(Int.abs((dto.expectedEndDate - Time.now())));
       let _ = await setAndBackupTimer(playerInjuryDuration, "injuryExpired");
       let _ = await updateDataHash(dto.leagueId, "players");
-      return #ok();
     };
 
-    public shared ( {caller} ) func retirePlayer(dto : GovernanceDTOs.RetirePlayerDTO) : async Result.Result<(), T.Error>{
-      assert callerAllowed(caller);
+    public shared ( {caller} ) func retirePlayer(dto : GovernanceDTOs.RetirePlayerDTO) : async (){
+      assert Principal.toText(caller) == Environment.SNS_GOVERNANCE_CANISTER_ID;
       
       leaguePlayers := Array.map<(FootballTypes.LeagueId, [FootballTypes.Player]), (FootballTypes.LeagueId, [FootballTypes.Player])>(leaguePlayers, func(leaguePlayersEntry: (FootballTypes.LeagueId, [FootballTypes.Player])){
         if(leaguePlayersEntry.0 == dto.leagueId){
@@ -1804,11 +1575,10 @@
       });
       let _ = await updateDataHash(dto.leagueId, "players");
       let _ = await notifyAppsOfTransfer(dto.leagueId, dto.playerId);
-      return #ok();
     };
 
-    public shared ( {caller} ) func unretirePlayer(dto : GovernanceDTOs.UnretirePlayerDTO) : async Result.Result<(), T.Error>{
-      assert callerAllowed(caller);
+    public shared ( {caller} ) func unretirePlayer(dto : GovernanceDTOs.UnretirePlayerDTO) : async (){
+      assert Principal.toText(caller) == Environment.SNS_GOVERNANCE_CANISTER_ID;
 
       let leagueRetiredPlayers = Array.find<(FootballTypes.LeagueId, [FootballTypes.Player])>(retiredLeaguePlayers, func(entry: (FootballTypes.LeagueId, [FootballTypes.Player])) : Bool {
         entry.0 == dto.leagueId;
@@ -1868,7 +1638,6 @@
               });
 
               let _ = await updateDataHash(dto.leagueId, "players");
-              return #ok();
             };
             case (null){
 
@@ -1877,14 +1646,12 @@
         };
         case (null){};
       };
-
-      return #err(#NotFound);
     };
 
     /* League */
 
-    public shared ({ caller }) func createLeague(dto: GovernanceDTOs.CreateLeagueDTO) : async Result.Result<(), T.Error> {
-      assert callerAllowed(caller);
+    public shared ({ caller }) func createLeague(dto: GovernanceDTOs.CreateLeagueDTO) : async () {
+      assert Principal.toText(caller) == Environment.SNS_GOVERNANCE_CANISTER_ID;
 
       let leaguesBuffer = Buffer.fromArray<FootballTypes.League>(leagues);
       leaguesBuffer.add({
@@ -1914,11 +1681,10 @@
       leaguePlayers := Buffer.toArray(leaguePlayersBuffer);
 
       nextLeagueId += 1;
-      return #ok();
     };
 
-    public shared ({ caller }) func updateLeague(dto : GovernanceDTOs.UpdateLeagueDTO) : async Result.Result<(), T.Error> {
-      assert callerAllowed(caller);
+    public shared ({ caller }) func updateLeague(dto : GovernanceDTOs.UpdateLeagueDTO) : async () {
+      assert Principal.toText(caller) == Environment.SNS_GOVERNANCE_CANISTER_ID;
       
       let league = Array.find<FootballTypes.League>(leagues, func(currentLeague: FootballTypes.League) : Bool {
         currentLeague.id == dto.leagueId;
@@ -1943,16 +1709,13 @@
               return currentLeague;
             }
           });
-          return #ok();
         };
-        case (null){
-          return #err(#NotFound);
-        }
+        case (null){}
       };
     };
 
-    public shared ({ caller }) func moveFixture(dto : GovernanceDTOs.MoveFixtureDTO) : async Result.Result<(), T.Error> {
-      assert callerAllowed(caller);
+    public shared ({ caller }) func moveFixture(dto : GovernanceDTOs.MoveFixtureDTO) : async () {
+      assert Principal.toText(caller) == Environment.SNS_GOVERNANCE_CANISTER_ID;
 
       leagueSeasons := Array.map<(FootballTypes.LeagueId, [FootballTypes.Season]), (FootballTypes.LeagueId, [FootballTypes.Season])>(
         leagueSeasons, 
@@ -1997,12 +1760,10 @@
       );
       await checkCurrentGameweekExpired();
       let _ = await updateDataHash(dto.leagueId, "fixtures");
-      return #ok();
     };
 
-    public shared ({ caller }) func postponeFixture(dto : GovernanceDTOs.PostponeFixtureDTO) : async Result.Result<(), T.Error> {
-      
-      assert callerAllowed(caller);
+    public shared ({ caller }) func postponeFixture(dto : GovernanceDTOs.PostponeFixtureDTO) : async () {
+      assert Principal.toText(caller) == Environment.SNS_GOVERNANCE_CANISTER_ID;
 
       leagueSeasons := Array.map<(FootballTypes.LeagueId, [FootballTypes.Season]), (FootballTypes.LeagueId, [FootballTypes.Season])>(
         leagueSeasons, 
@@ -2054,14 +1815,13 @@
       );
       await checkCurrentGameweekExpired();
       let _ = await updateDataHash(dto.leagueId, "fixtures");
-      return #ok();
     };
 
     //TODO: Reschedule fixture
         //When a fixture time is changed check gameweek times
 
     public shared ({ caller }) func addInitialFixtures() : async () {
-      assert callerAllowed(caller);
+      assert Principal.toText(caller) == Environment.SNS_GOVERNANCE_CANISTER_ID;
 
       //TODO
       return;
@@ -2075,8 +1835,8 @@
 
     };
 
-    public shared ({ caller }) func submitFixtureData(dto : GovernanceDTOs.SubmitFixtureDataDTO) : async Result.Result<(), T.Error>{
-      assert callerAllowed(caller);
+    public shared ({ caller }) func submitFixtureData(dto : GovernanceDTOs.SubmitFixtureDataDTO) : async (){
+      assert Principal.toText(caller) == Environment.SNS_GOVERNANCE_CANISTER_ID;
      
       for(leagueApplication in Iter.fromArray(leagueApplications)){
         if(leagueApplication.0 == dto.leagueId){
@@ -2121,13 +1881,12 @@
           };
         };
       };        
-      return #ok();
     };
     
     /* Club */
 
-    public shared ({ caller }) func createClub(dto: GovernanceDTOs.CreateClubDTO) : async Result.Result<(), T.Error> {
-      assert callerAllowed(caller);
+    public shared ({ caller }) func createClub(dto: GovernanceDTOs.CreateClubDTO) : async () {
+      assert Principal.toText(caller) == Environment.SNS_GOVERNANCE_CANISTER_ID;
 
       let leagueResult = Array.find<FootballTypes.League>(leagues, func(league: FootballTypes.League) : Bool {
         league.id == dto.leagueId
@@ -2154,51 +1913,13 @@
               return leagueEntry;
             }
           });
-          return #ok();
-          
         };
-        case (null){
-          return #err(#NotFound);
-        }
+        case (null){}
       };
     };
 
-    public shared ( {caller} ) func removeClub(dto: GovernanceDTOs.RemoveClubDTO) : async Result.Result<(), T.Error> {
-      assert callerAllowed(caller);
-      
-      let playersResult = getClubPlayers(dto.leagueId, dto.clubId);
-      switch(playersResult){
-        case (#ok foundPlayers){
-          if(Array.size(foundPlayers) > 0){
-            return #err(#NotAllowed);
-          }
-        };
-        case (#err _) {}
-      };
-      
-      leagueClubs := Array.map<(FootballTypes.LeagueId, [FootballTypes.Club]), (FootballTypes.LeagueId, [FootballTypes.Club])>(leagueClubs, 
-        func(leagueClubsEntry: (FootballTypes.LeagueId, [FootballTypes.Club])){
-          if(leagueClubsEntry.0 == dto.leagueId) {
-            (leagueClubsEntry.0, Array.filter<FootballTypes.Club>(leagueClubsEntry.1, func(club: FootballTypes.Club){
-              club.id != dto.clubId
-            }))
-          } else { return leagueClubsEntry }
-        }
-      );
-
-      return #err(#NotFound);
-    };
-
-    public shared func getLeagueClubs() : async [(FootballTypes.LeagueId, [FootballTypes.Club])] {
-      return leagueClubs;
-    };
-
-    public shared func getLeaguePlayers() : async [(FootballTypes.LeagueId, [FootballTypes.Player])] {
-      return leaguePlayers;
-    };
-
-    public shared ({ caller }) func promoteClub(dto : GovernanceDTOs.PromoteClubDTO) : async Result.Result<(), T.Error> {
-      assert callerAllowed(caller);
+    public shared ({ caller }) func promoteClub(dto : GovernanceDTOs.PromoteClubDTO) : async () {
+      assert Principal.toText(caller) == Environment.SNS_GOVERNANCE_CANISTER_ID;
 
       //TODO (KELLY)
       /*
@@ -2251,17 +1972,15 @@
         return #ok();
         */
 
-      return #err(#NotFound);
     };
 
-    public shared ({ caller }) func relegateClub(dto : GovernanceDTOs.RelegateClubDTO) : async Result.Result<(), T.Error> {
+    public shared ({ caller }) func relegateClub(dto : GovernanceDTOs.RelegateClubDTO) : async () {
       assert callerAllowed(caller);
 
       //TODO (KELLY)
-      return #err(#NotFound);
     };
 
-    public shared ({ caller }) func updateClub(updateClubDTO : GovernanceDTOs.UpdateClubDTO) : async Result.Result<(), T.Error> {
+    public shared ({ caller }) func updateClub(updateClubDTO : GovernanceDTOs.UpdateClubDTO) : async () {
       assert callerAllowed(caller);
 
       //TODO (KELLY)
@@ -2328,7 +2047,6 @@
         return #ok();
       let _ = await updateDataHashes(leagueId, "clubs");
         */
-      return #err(#NotFound);
     };
 
     /* Private Functions */
@@ -3223,6 +2941,67 @@
         league.id == leagueId
       });
       return Option.isSome(foundLeague);
+    }; 
+
+    private func seasonActive(leagueId: FootballTypes.LeagueId) : Bool {
+      let leagueStatusResult = Array.find<FootballTypes.LeagueStatus>(leagueStatuses, func(statusEntry: FootballTypes.LeagueStatus) : Bool {
+        statusEntry.leagueId == leagueId;
+      });
+      switch(leagueStatusResult){
+        case (?leagueStatus){
+          return leagueStatus.seasonActive;
+        };
+        case (null){}
+      };
+      return false;
+    }; 
+
+    private func fixtureExists(leagueId: FootballTypes.LeagueId, seasonId: FootballTypes.SeasonId, fixtureId: FootballTypes.FixtureId) : Bool {
+      let foundLeagueSeasons = Array.find<(FootballTypes.LeagueId, [FootballTypes.Season])>(leagueSeasons, func(entry: (FootballTypes.LeagueId, [FootballTypes.Season])) : Bool {
+        entry.0 == leagueId
+      });
+      switch(foundLeagueSeasons){
+        case (?leagueSeasonsEntry){
+          let foundSeason = Array.find<FootballTypes.Season>(leagueSeasonsEntry.1, func(seasonEntry: FootballTypes.Season) : Bool {
+            seasonEntry.id == seasonId
+          });
+          switch(foundSeason){
+            case (?foundSeasonEntry){
+              let foundFixture = List.find<FootballTypes.Fixture>(foundSeasonEntry.fixtures, func(fixtureEntry: FootballTypes.Fixture) : Bool {
+                fixtureEntry.id == fixtureId
+              });
+              return Option.isSome(foundFixture);
+            };
+            case (null){}
+          };
+        };
+        case (null){}
+      };
+      return false;
+    }; 
+
+    private func postponedFixtureExists(leagueId: FootballTypes.LeagueId, seasonId: FootballTypes.SeasonId, fixtureId: FootballTypes.FixtureId) : Bool {
+      let foundLeagueSeasons = Array.find<(FootballTypes.LeagueId, [FootballTypes.Season])>(leagueSeasons, func(entry: (FootballTypes.LeagueId, [FootballTypes.Season])) : Bool {
+        entry.0 == leagueId
+      });
+      switch(foundLeagueSeasons){
+        case (?leagueSeasonsEntry){
+          let foundSeason = Array.find<FootballTypes.Season>(leagueSeasonsEntry.1, func(seasonEntry: FootballTypes.Season) : Bool {
+            seasonEntry.id == seasonId
+          });
+          switch(foundSeason){
+            case (?foundSeasonEntry){
+              let foundFixture = List.find<FootballTypes.Fixture>(foundSeasonEntry.postponedFixtures, func(fixtureEntry: FootballTypes.Fixture) : Bool {
+                fixtureEntry.id == fixtureId
+              });
+              return Option.isSome(foundFixture);
+            };
+            case (null){}
+          };
+        };
+        case (null){}
+      };
+      return false;
     }; 
 
     private func clubExists(leagueId: FootballTypes.LeagueId, clubId: FootballTypes.ClubId) : Bool {

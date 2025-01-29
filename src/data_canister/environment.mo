@@ -23,6 +23,8 @@ module Environment {
         JEFF_BETS_FRONTEND_CANISTER_ID
     ];
     
+    public let SNS_GOVERNANCE_CANISTER_ID = "detjl-sqaaa-aaaaq-aacqa-cai";
+    
     /*
         //Local
         public let OPENFPL_BACKEND_CANISTER_ID = "bw4dl-smaaa-aaaaa-qaacq-cai";

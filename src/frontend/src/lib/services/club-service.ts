@@ -2,7 +2,6 @@ import type {
   ClubDTO,
   CreateClubDTO,
   LeagueId,
-  RemoveClubDTO,
 } from "../../../../declarations/backend/backend.did";
 import { idlFactory } from "../../../../declarations/backend";
 import { ActorFactory } from "../utils/ActorFactory";
@@ -33,15 +32,5 @@ export class ClubService {
 
     const result = await identityActor.executeCreateClub(dto);
     if (isError(result)) throw new Error("Failed to create club");
-  }
-
-  async removeClub(dto: RemoveClubDTO): Promise<void> {
-    const identityActor: any = await ActorFactory.createIdentityActor(
-      authStore,
-      process.env.BACKEND_CANISTER_ID ?? "",
-    );
-
-    const result = await identityActor.executeRemoveClub(dto);
-    if (isError(result)) throw new Error("Failed to remove club");
   }
 }
