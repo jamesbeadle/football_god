@@ -26,10 +26,10 @@
   const init = async () => {
     await Promise.all([syncAuthStore()]);
     worker = await initAuthWorker();
-    await userStore.sync();
   };
 
   onMount(async () => {
+    await userStore.sync();
   });
 
   $: worker, $authStore, (() => worker?.syncAuthIdle($authStore))();

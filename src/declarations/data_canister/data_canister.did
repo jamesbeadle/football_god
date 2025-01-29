@@ -736,6 +736,7 @@ service : {
   updateDataHash: (LeagueId, text) -> ();
   updateLeague: (UpdateLeagueDTO) -> (Result);
   updatePlayer: (LeagueId, UpdatePlayerDTO) -> (Result);
+  updatePlayerValue: (PlayerId, nat16) -> (Result);
   validateAddInitialFixtures: (LeagueId, AddInitialFixturesDTO) -> (Result);
   validateCreateClub: (LeagueId, CreateClubDTO) -> (Result);
   validateCreateLeague: (CreateLeagueDTO) -> (Result);

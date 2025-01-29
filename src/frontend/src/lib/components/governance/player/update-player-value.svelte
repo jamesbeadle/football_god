@@ -17,7 +17,7 @@
 
   onMount(async () => {
     try {
-      updatedValue = player.valueQuarterMillions;
+      updatedValue = player.valueQuarterMillions / 4;
       isLoading = false;
     } catch (error) {
       console.error("Error syncing proposal data.", error);
@@ -32,7 +32,7 @@
 
   async function confirmProposal() {
     isLoading = true;
-    await playerStore.updatePlayerValue(player.id, updatedValue);
+    await playerStore.updatePlayerValue(player.id, updatedValue * 4);
     isLoading = false;
     resetForm();
     closeModal();
@@ -57,8 +57,22 @@
 
     <div class="flex justify-start items-center w-full">
       <div class="w-full flex-col space-y-4 mb-2">
-        <p>Update {player}</p>
+        <p>Update {player.firstName} {player.lastName}</p>
 
+
+        <div class="flex-col space-y-2">
+          <p class="py-2">New Value:</p>
+
+          <input
+            type="number"
+            class="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
+            placeholder="New Value"
+            min="1"
+            max="999"
+            step="0.25"
+            bind:value={updatedValue}
+          />
+        </div>
 
 
         <div class="items-center flex space-x-4">

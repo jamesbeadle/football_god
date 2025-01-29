@@ -4233,9 +4233,10 @@
     };
 
     //ONE OFF FUNCTION FOR UPDATING PLAYER VALUES
-    public shared ({ caller }) func updatePlayerValue(playerId: FootballTypes.PlayerId, value: Nat16) : async (){
+    public shared ({ caller }) func updatePlayerValue(playerId: FootballTypes.PlayerId, value: Nat16) : async Result.Result<(), T.Error>{
       assert callerAllowed(caller);
       revaluePlayer(playerId, value);
+      return #ok();
     };
 
     private func revaluePlayer(playerId: FootballTypes.PlayerId, value: Nat16){

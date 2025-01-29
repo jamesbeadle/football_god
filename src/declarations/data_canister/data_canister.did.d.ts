@@ -585,6 +585,7 @@ export interface _SERVICE {
   updateDataHash: ActorMethod<[LeagueId, string], undefined>;
   updateLeague: ActorMethod<[UpdateLeagueDTO], Result>;
   updatePlayer: ActorMethod<[LeagueId, UpdatePlayerDTO], Result>;
+  updatePlayerValue: ActorMethod<[PlayerId, number], Result>;
   validateAddInitialFixtures: ActorMethod<
     [LeagueId, AddInitialFixturesDTO],
     Result

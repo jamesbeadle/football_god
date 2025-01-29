@@ -630,6 +630,7 @@ export const idlFactory = ({ IDL }) => {
     updateDataHash: IDL.Func([LeagueId, IDL.Text], [], []),
     updateLeague: IDL.Func([UpdateLeagueDTO], [Result], []),
     updatePlayer: IDL.Func([LeagueId, UpdatePlayerDTO], [Result], []),
+    updatePlayerValue: IDL.Func([PlayerId, IDL.Nat16], [Result], []),
     validateAddInitialFixtures: IDL.Func(
       [LeagueId, AddInitialFixturesDTO],
       [Result],

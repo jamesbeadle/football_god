@@ -733,6 +733,7 @@ export const idlFactory = ({ IDL }) => {
     snapshotManagers: IDL.Func([IDL.Text], [Result], []),
     storeKYCReference: IDL.Func([IDL.Text], [], []),
     updateBettingOdds: IDL.Func([LeagueId], [Result], []),
+    updatePlayerValue: IDL.Func([PlayerId, IDL.Nat16], [Result], []),
     updateProfilePicture: IDL.Func([UpdateProfilePictureDTO], [Result], []),
     updateSystemState: IDL.Func([IDL.Text, UpdateAppStatusDTO], [Result], []),
     updateUsername: IDL.Func([UpdateUsernameDTO], [Result], []),

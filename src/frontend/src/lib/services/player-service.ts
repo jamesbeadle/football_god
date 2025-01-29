@@ -110,10 +110,7 @@ export class PlayerService {
     if (isError(result)) throw new Error("Failed to recall player");
   }
 
-  async updatePlayerValue(
-    playerId: PlayerId,
-    value: Number,
-  ): Promise<void> {
+  async updatePlayerValue(playerId: PlayerId, value: Number): Promise<void> {
     const identityActor: any = await ActorFactory.createIdentityActor(
       authStore,
       process.env.BACKEND_CANISTER_ID ?? "",

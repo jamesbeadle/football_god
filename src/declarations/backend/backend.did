@@ -886,6 +886,7 @@ service : {
   snapshotManagers: (text) -> (Result);
   storeKYCReference: (text) -> ();
   updateBettingOdds: (LeagueId) -> (Result);
+  updatePlayerValue: (PlayerId, nat16) -> (Result);
   updateProfilePicture: (UpdateProfilePictureDTO) -> (Result);
   updateSystemState: (text, UpdateAppStatusDTO) -> (Result);
   updateUsername: (UpdateUsernameDTO) -> (Result);

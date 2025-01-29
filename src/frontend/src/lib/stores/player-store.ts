@@ -144,7 +144,7 @@ function createPlayerStore() {
     syncPlayers,
     getLoanedPlayers,
     recallLoan,
-    updatePlayerValue
+    updatePlayerValue,
   };
 }
 

@@ -726,6 +726,7 @@ export interface _SERVICE {
   snapshotManagers: ActorMethod<[string], Result>;
   storeKYCReference: ActorMethod<[string], undefined>;
   updateBettingOdds: ActorMethod<[LeagueId], Result>;
+  updatePlayerValue: ActorMethod<[PlayerId, number], Result>;
   updateProfilePicture: ActorMethod<[UpdateProfilePictureDTO], Result>;
   updateSystemState: ActorMethod<[string, UpdateAppStatusDTO], Result>;
   updateUsername: ActorMethod<[UpdateUsernameDTO], Result>;

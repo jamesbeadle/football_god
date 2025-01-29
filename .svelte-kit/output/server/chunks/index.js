@@ -4,11 +4,11 @@ import { Buffer } from "buffer";
 import { parse, serialize } from "cookie";
 import * as set_cookie_parser from "set-cookie-parser";
 import { AuthClient } from "@dfinity/auth-client";
-import { createAgent } from "@dfinity/utils";
+import "@dfinity/utils";
 import { HttpAgent, Actor } from "@dfinity/agent";
-import { IcrcLedgerCanister } from "@dfinity/ledger-icrc";
-import { Principal } from "@dfinity/principal";
-import { Text as Text$1 } from "@dfinity/candid/lib/cjs/idl.js";
+import "@dfinity/ledger-icrc";
+import "@dfinity/principal";
+import "@dfinity/candid/lib/cjs/idl.js";
 let base = "";
 let assets = base;
 const initial$1 = { base, assets };
@@ -4719,7 +4719,7 @@ const options = {
 		<div class="error">
 			<span class="status">` + status + '</span>\n			<div class="message">\n				<h1>' + message + "</h1>\n			</div>\n		</div>\n	</body>\n</html>\n"
   },
-  version_hash: "imzej8"
+  version_hash: "gjw6zc"
 };
 async function get_hooks() {
   return {};
@@ -5666,6 +5666,7 @@ const idlFactory = ({ IDL }) => {
     snapshotManagers: IDL.Func([IDL.Text], [Result], []),
     storeKYCReference: IDL.Func([IDL.Text], [], []),
     updateBettingOdds: IDL.Func([LeagueId], [Result], []),
+    updatePlayerValue: IDL.Func([PlayerId, IDL.Nat16], [Result], []),
     updateProfilePicture: IDL.Func([UpdateProfilePictureDTO], [Result], []),
     updateSystemState: IDL.Func([IDL.Text, UpdateAppStatusDTO], [Result], []),
     updateUsername: IDL.Func([UpdateUsernameDTO], [Result], []),
@@ -5856,337 +5857,6 @@ function deserializeData(data) {
     return value;
   });
 }
-var define_process_env_default$9 = { BACKEND_CANISTER_ID: "44kin-waaaa-aaaal-qbxra-cai", FRONTEND_CANISTER_ID: "43loz-3yaaa-aaaal-qbxrq-cai", DATA_CANISTER_CANISTER_ID: "52fzd-2aaaa-aaaal-qmzsa-cai", DFX_NETWORK: "ic" };
-class AdminService {
-  actor;
-  constructor() {
-    this.actor = ActorFactory.createActor(
-      idlFactory,
-      define_process_env_default$9.BACKEND_CANISTER_ID
-    );
-  }
-  async isDataManager() {
-    await authStore.sync();
-    let isLoggedIn = false;
-    authStore.subscribe((store) => {
-      isLoggedIn = store.identity !== null && store.identity !== void 0;
-    });
-    if (!isLoggedIn) {
-      return false;
-    }
-    const identityActor = await ActorFactory.createIdentityActor(
-      authStore,
-      define_process_env_default$9.BACKEND_CANISTER_ID
-    );
-    const result = await identityActor.isDataManager();
-    if (isError(result)) {
-      throw new Error("Failed to check is data manager");
-    }
-    return result.ok;
-  }
-  async isAdmin() {
-    const identityActor = await ActorFactory.createIdentityActor(
-      authStore,
-      define_process_env_default$9.BACKEND_CANISTER_ID
-    );
-    const result = await identityActor.isAdmin();
-    if (isError(result)) {
-      throw new Error("Failed to check is admin");
-    }
-    return result.ok;
-  }
-  async isAuditor() {
-    const identityActor = await ActorFactory.createIdentityActor(
-      authStore,
-      define_process_env_default$9.BACKEND_CANISTER_ID
-    );
-    const result = await identityActor.isAuditor();
-    if (isError(result)) {
-      throw new Error("Failed to check is auditor");
-    }
-    return result.ok;
-  }
-  async getSystemState(applicationName) {
-    const identityActor = await ActorFactory.createIdentityActor(
-      authStore,
-      define_process_env_default$9.BACKEND_CANISTER_ID
-    );
-    const result = await identityActor.getSystemState(applicationName);
-    if (isError(result)) throw new Error("Failed to get system state");
-    return result.ok;
-  }
-  async updateSystemState(applicationName, dto) {
-    const identityActor = await ActorFactory.createIdentityActor(
-      authStore,
-      define_process_env_default$9.BACKEND_CANISTER_ID
-    );
-    const result = await identityActor.updateSystemState(applicationName, dto);
-    if (isError(result)) throw new Error("Failed to update system state");
-  }
-  async snapshotManagers(applicationName) {
-    const identityActor = await ActorFactory.createIdentityActor(
-      authStore,
-      define_process_env_default$9.BACKEND_CANISTER_ID
-    );
-    const result = await identityActor.snapshotManagers(applicationName);
-    if (isError(result)) throw new Error("Failed to snapshot managers");
-  }
-  async calculateGameweekScores(applicationName) {
-    const identityActor = await ActorFactory.createIdentityActor(
-      authStore,
-      define_process_env_default$9.BACKEND_CANISTER_ID
-    );
-    const result = await identityActor.calculateGameweekScores(applicationName);
-    if (isError(result)) throw new Error("Failed to calculate gameweek scores");
-  }
-  async calculateLeaderboards(applicationName) {
-    const identityActor = await ActorFactory.createIdentityActor(
-      authStore,
-      define_process_env_default$9.BACKEND_CANISTER_ID
-    );
-    const result = await identityActor.calculateLeaderboards(applicationName);
-    if (isError(result)) throw new Error("Failed to calculate leaderboards");
-  }
-  async calculateWeeklyRewards(applicationName, gameweek) {
-    const identityActor = await ActorFactory.createIdentityActor(
-      authStore,
-      define_process_env_default$9.BACKEND_CANISTER_ID
-    );
-    const result = await identityActor.calculateWeeklyRewards(
-      applicationName,
-      gameweek
-    );
-    if (isError(result)) throw new Error("Failed to calculate weekly rewards");
-  }
-  async payWeeklyRewards(applicationName, gameweek) {
-    const identityActor = await ActorFactory.createIdentityActor(
-      authStore,
-      define_process_env_default$9.BACKEND_CANISTER_ID
-    );
-    const result = await identityActor.payWeeklyRewards(
-      applicationName,
-      gameweek
-    );
-    if (isError(result)) throw new Error("Failed to pay weekly rewards");
-  }
-  async getTimers() {
-    const result = await this.actor.getTimers();
-    if (isError(result)) throw new Error("Failed to fetch timers");
-    return result.ok;
-  }
-}
-var define_process_env_default$8 = { BACKEND_CANISTER_ID: "44kin-waaaa-aaaal-qbxra-cai", FRONTEND_CANISTER_ID: "43loz-3yaaa-aaaal-qbxrq-cai", DATA_CANISTER_CANISTER_ID: "52fzd-2aaaa-aaaal-qmzsa-cai", DFX_NETWORK: "ic" };
-function createUserStore() {
-  const { subscribe, set: set2 } = writable(null);
-  async function sync() {
-    let localStorageString = localStorage.getItem("user_profile_data");
-    if (localStorageString) {
-      const localProfile = JSON.parse(localStorageString);
-      set2(localProfile);
-      return;
-    }
-    try {
-      await cacheProfile();
-    } catch (error) {
-      console.error("Error fetching user profile:", error);
-      throw error;
-    }
-  }
-  async function updateUsername(username) {
-    try {
-      const identityActor = await ActorFactory.createIdentityActor(
-        authStore,
-        define_process_env_default$8.BACKEND_CANISTER_ID ?? ""
-      );
-      const result = await identityActor.updateDisplayName(username);
-      if (isError(result)) {
-        console.error("Error updating username");
-        return;
-      }
-      await cacheProfile();
-      return result;
-    } catch (error) {
-      console.error("Error updating username:", error);
-      throw error;
-    }
-  }
-  async function withdrawFPL(withdrawalAddress, withdrawalAmount) {
-    try {
-      let identity;
-      authStore.subscribe(async (auth) => {
-        identity = auth.identity;
-      });
-      if (!identity) {
-        return;
-      }
-      let principalId = identity.getPrincipal();
-      const agent = await createAgent({
-        identity,
-        host: "https://identity.ic0.app",
-        fetchRootKey: define_process_env_default$8.DFX_NETWORK === "local"
-      });
-      const { transfer } = IcrcLedgerCanister.create({
-        agent,
-        canisterId: define_process_env_default$8.DFX_NETWORK === "ic" ? Principal.fromText("ddsp7-7iaaa-aaaaq-aacqq-cai") : Principal.fromText("avqkn-guaaa-aaaaa-qaaea-cai")
-      });
-      if (principalId) {
-        try {
-          let transfer_result = await transfer({
-            to: {
-              owner: Principal.fromText(withdrawalAddress),
-              subaccount: []
-            },
-            fee: 100000n,
-            memo: new Uint8Array(Text$1.encodeValue("0")),
-            from_subaccount: void 0,
-            created_at_time: BigInt(Date.now()) * BigInt(1e6),
-            amount: withdrawalAmount - 100000n
-          });
-        } catch (err) {
-          console.error(err.errorType);
-        }
-      }
-    } catch (error) {
-      console.error("Error withdrawing FPL.", error);
-      throw error;
-    }
-  }
-  async function agreeTerms() {
-    try {
-      const identityActor = await ActorFactory.createIdentityActor(
-        authStore,
-        define_process_env_default$8.BACKEND_CANISTER_ID ?? ""
-      );
-      const result = await identityActor.agreeTerms();
-      if (isError(result)) {
-        console.error("Error agreeing terms");
-        return;
-      }
-      await cacheProfile();
-      return result;
-    } catch (error) {
-      console.error(error);
-      console.error("Error agreeing terms:", error);
-    }
-  }
-  async function updateProfilePicture(picture) {
-    try {
-      const maxPictureSize = 1e3;
-      const extension = getFileExtensionFromFile(picture);
-      if (picture.size > maxPictureSize * 1024) {
-        return null;
-      }
-      const reader = new FileReader();
-      reader.readAsArrayBuffer(picture);
-      reader.onloadend = async () => {
-        const arrayBuffer = reader.result;
-        const uint8Array = new Uint8Array(arrayBuffer);
-        try {
-          const identityActor = await ActorFactory.createIdentityActor(
-            authStore,
-            define_process_env_default$8.BACKEND_CANISTER_ID ?? ""
-          );
-          const result = await identityActor.updateProfilePicture(
-            uint8Array,
-            extension
-          );
-          if (isError(result)) {
-            console.error("Error updating profile picture");
-            return;
-          }
-          await cacheProfile();
-          return result;
-        } catch (error) {
-          console.error(error);
-        }
-      };
-    } catch (error) {
-      console.error("Error updating username:", error);
-      throw error;
-    }
-  }
-  function getFileExtensionFromFile(file) {
-    const filename = file.name;
-    const lastIndex = filename.lastIndexOf(".");
-    return lastIndex !== -1 ? filename.substring(lastIndex + 1) : "";
-  }
-  async function isUsernameAvailable(username) {
-    const identityActor = await ActorFactory.createIdentityActor(
-      authStore,
-      define_process_env_default$8.BACKEND_CANISTER_ID
-    );
-    return await identityActor.isUsernameValid(username);
-  }
-  async function cacheProfile() {
-    const identityActor = await ActorFactory.createIdentityActor(
-      authStore,
-      define_process_env_default$8.BACKEND_CANISTER_ID
-    );
-    let getProfileResponse = await identityActor.getProfile();
-    let error = isError(getProfileResponse);
-    if (error) {
-      console.error("Error fetching user profile");
-      return;
-    }
-    let profileData = getProfileResponse.ok;
-    set2(profileData);
-  }
-  async function isAdmin() {
-    return new AdminService().isAdmin();
-  }
-  async function isDataManager() {
-    return new AdminService().isDataManager();
-  }
-  async function isAuditor() {
-    return new AdminService().isAuditor();
-  }
-  async function getFPLBalance() {
-    let identity;
-    authStore.subscribe(async (auth) => {
-      identity = auth.identity;
-    });
-    if (!identity) {
-      return 0n;
-    }
-    let principalId = identity.getPrincipal();
-    const agent = await createAgent({
-      identity,
-      host: "https://identity.ic0.app",
-      fetchRootKey: define_process_env_default$8.DFX_NETWORK === "local"
-    });
-    const { balance } = IcrcLedgerCanister.create({
-      agent,
-      canisterId: Principal.fromText("ddsp7-7iaaa-aaaaq-aacqq-cai")
-    });
-    if (principalId) {
-      try {
-        let result = await balance({
-          owner: principalId,
-          certified: false
-        });
-        return result;
-      } catch (err) {
-        console.error(err);
-      }
-    }
-    return 0n;
-  }
-  return {
-    subscribe,
-    sync,
-    agreeTerms,
-    updateUsername,
-    updateProfilePicture,
-    isUsernameAvailable,
-    cacheProfile,
-    withdrawFPL,
-    isDataManager,
-    isAdmin,
-    isAuditor,
-    getFPLBalance
-  };
-}
-const userStore = createUserStore();
 const idleSignOut = async () => logout();
 const logout = async () => {
   await authStore.signOut();
@@ -6242,7 +5912,6 @@ function Layout($$payload, $$props) {
   const init2 = async () => {
     await Promise.all([syncAuthStore()]);
     worker = await initAuthWorker();
-    await userStore.sync();
   };
   store_get($$store_subs ??= {}, "$authStore", authStore), (() => worker?.syncAuthIdle(store_get($$store_subs ??= {}, "$authStore", authStore)))();
   $$payload.out += `<!---->`;
@@ -7034,6 +6703,14 @@ class PlayerService {
     const result = await identityActor.executeRecallPlayer(dto);
     if (isError(result)) throw new Error("Failed to recall player");
   }
+  async updatePlayerValue(playerId, value) {
+    const identityActor = await ActorFactory.createIdentityActor(
+      authStore,
+      define_process_env_default$2.BACKEND_CANISTER_ID
+    );
+    const result = await identityActor.updatePlayerValue(playerId, value);
+    if (isError(result)) throw new Error("Failed to udpate player value");
+  }
 }
 function createPlayerStore() {
   const { subscribe, update } = writable({});
@@ -7114,6 +6791,9 @@ function createPlayerStore() {
   async function recallLoan(recallFromLeagueId, recallPlayerId) {
     return new PlayerService().recallLoan(recallFromLeagueId, recallPlayerId);
   }
+  async function updatePlayerValue(playerId, updatedValue) {
+    return new PlayerService().updatePlayerValue(playerId, updatedValue);
+  }
   return {
     getPlayers,
     transferPlayer,
@@ -7123,7 +6803,8 @@ function createPlayerStore() {
     updatePlayer,
     syncPlayers,
     getLoanedPlayers,
-    recallLoan
+    recallLoan,
+    updatePlayerValue
   };
 }
 const playerStore = createPlayerStore();
