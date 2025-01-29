@@ -14,7 +14,6 @@
   import Time "mo:base/Time";
   import Timer "mo:base/Timer";
   import TrieMap "mo:base/TrieMap";
-  import Debug "mo:base/Debug";
   
   import Base "../backend/types/base_types";
   import FootballTypes "../backend/types/football_types";
@@ -97,13 +96,7 @@
     private stable var leagueClubs: [(FootballTypes.LeagueId, [FootballTypes.Club])] = [];
     private stable var leaguePlayers: [(FootballTypes.LeagueId, [FootballTypes.Player])] = [];
     private stable var freeAgents: [FootballTypes.Player] = [];
-    
     private stable var retiredLeaguePlayers: [(FootballTypes.LeagueId, [FootballTypes.Player])] = [];
-    private stable var retiredFreeAgents: [FootballTypes.Player] = []; //TODO
-    private stable var unknownPlayers: [FootballTypes.Player] = []; //TODO
-
-    private stable var untrackedClubs: [FootballTypes.Club] = []; //TODO
-    private stable var clubsInAdministration: [FootballTypes.Club] = []; //TODO
 
     private stable var nextLeagueId: FootballTypes.LeagueId = 10;
     private stable var nextClubId: FootballTypes.ClubId = 24;
@@ -122,64 +115,48 @@
 
     /* Verified Getters */
 
-    public shared composite query func getDataHashes(leagueId: FootballTypes.LeagueId) : async Result.Result<[ResponseDTOs.DataHashDTO], T.Error> {
-      let leagueDataHashesResult = Array.find<(FootballTypes.LeagueId, [Base.DataHash])>(leagueDataHashes, func(entry: (FootballTypes.LeagueId, [Base.DataHash])) : Bool {
-        entry.0 == leagueId
-      });
-      switch(leagueDataHashesResult){
-        case (?foundHashes){
-          return #ok(foundHashes.1)
-        };
-        case (null){}
-      };
-      return #err(#NotFound);
-    };
-
-    public func updateDataHash(leagueId: FootballTypes.LeagueId, category : Text) : async () {
-      let randomHash = await SHA224.getRandomHash();
-      leagueDataHashes := Array.map<(FootballTypes.LeagueId, [Base.DataHash]), (FootballTypes.LeagueId, [Base.DataHash])>(leagueDataHashes, func(entry: (FootballTypes.LeagueId, [Base.DataHash])){
-        if(entry.0 == leagueId){
-          let hashBuffer = Buffer.fromArray<Base.DataHash>([]);
-          var updated = false;
-          for (hashObj in Iter.fromArray(entry.1)) {
-            if (hashObj.category == category) {
-              hashBuffer.add({ category = hashObj.category; hash = randomHash });
-              updated := true;
-            } else { hashBuffer.add(hashObj) };
-          };
-          if(not updated){
-              hashBuffer.add({ category = category; hash = randomHash });
-          };
-          return (entry.0, entry.1);
-        } else {
-          return entry;
-        }
-      });
-    };
-
     public shared ( {caller} ) func getVerifiedPlayers(leagueId: FootballTypes.LeagueId) : async Result.Result<[ResponseDTOs.PlayerDTO], T.Error>{
       assert callerAllowed(caller);
       return getPrivatePlayers(leagueId);
     };
 
     public shared query ( {caller} ) func getPlayers(leagueId: FootballTypes.LeagueId) : async Result.Result<[ResponseDTOs.PlayerDTO], T.Error>{
-      //assert callerAllowed(caller);
+      assert callerAllowed(caller);
       return getPrivatePlayers(leagueId);
     };
 
-    public shared query func getLeagueStatus(leagueId: FootballTypes.LeagueId) : async Result.Result<FootballTypes.LeagueStatus, T.Error>{
-      let status = Array.find<FootballTypes.LeagueStatus>(leagueStatuses, func(entry: FootballTypes.LeagueStatus) : Bool {
-        entry.leagueId == leagueId
+    public shared ( {caller} ) func getVerifiedFixtures(dto: RequestDTOs.RequestFixturesDTO) : async Result.Result<[ResponseDTOs.FixtureDTO], T.Error>{
+      assert callerAllowed(caller);
+      return getPrivateFixtures(dto);
+    };
+
+    public shared query ( {caller} ) func getFixtures(leagueId: FootballTypes.LeagueId) : async Result.Result<[ResponseDTOs.FixtureDTO], T.Error>{
+      assert callerAllowed(caller);
+      let seasonResult = Array.find<FootballTypes.LeagueStatus>(leagueStatuses, func(entry: FootballTypes.LeagueStatus) : Bool {
+        entry.leagueId == leagueId;
       });
-      switch(status){
-        case (?foundStatus){
-          return #ok(foundStatus)
+      
+      switch(seasonResult){
+        case (?foundSeason){
+          return getPrivateFixtures({leagueId; seasonId = foundSeason.activeSeasonId});
         };
         case (null){
           return #err(#NotFound);
         }
       };
     };
+
+    public shared ( {caller} ) func getVerifiedClubs(leagueId: FootballTypes.LeagueId) : async Result.Result<[ResponseDTOs.ClubDTO], T.Error>{
+      assert callerAllowed(caller);
+      return getPrivateClubs(leagueId);
+    };
+
+    public shared query ( {caller} ) func getClubs(leagueId: FootballTypes.LeagueId) : async Result.Result<[ResponseDTOs.ClubDTO], T.Error>{
+      assert callerAllowed(caller);
+      return getPrivateClubs(leagueId);
+    };
+
+    //Private getters
 
     private func getPrivatePlayers(leagueId: FootballTypes.LeagueId) : Result.Result<[ResponseDTOs.PlayerDTO], T.Error> {
       let filteredLeaguePlayers = Array.find<(FootballTypes.LeagueId, [FootballTypes.Player])>(leaguePlayers, 
@@ -256,27 +233,6 @@
       };
     };
 
-    public shared ( {caller} ) func getVerifiedFixtures(dto: RequestDTOs.RequestFixturesDTO) : async Result.Result<[ResponseDTOs.FixtureDTO], T.Error>{
-      assert callerAllowed(caller);
-      return getPrivateFixtures(dto);
-    };
-
-    public shared query ( {caller} ) func getFixtures(leagueId: FootballTypes.LeagueId) : async Result.Result<[ResponseDTOs.FixtureDTO], T.Error>{
-      assert callerAllowed(caller);
-      let seasonResult = Array.find<FootballTypes.LeagueStatus>(leagueStatuses, func(entry: FootballTypes.LeagueStatus) : Bool {
-        entry.leagueId == leagueId;
-      });
-      
-      switch(seasonResult){
-        case (?foundSeason){
-          return getPrivateFixtures({leagueId; seasonId = foundSeason.activeSeasonId});
-        };
-        case (null){
-          return #err(#NotFound);
-        }
-      };
-    };
-
     private func getPrivateFixtures(dto: RequestDTOs.RequestFixturesDTO) : Result.Result<[ResponseDTOs.FixtureDTO], T.Error> {
       let filteredLeagueSeasons = Array.find<(FootballTypes.LeagueId, [FootballTypes.Season])>(leagueSeasons, 
         func(leagueSeason: (FootballTypes.LeagueId, [FootballTypes.Season])) : Bool{
@@ -320,16 +276,6 @@
       };
     };
 
-    public shared ( {caller} ) func getVerifiedClubs(leagueId: FootballTypes.LeagueId) : async Result.Result<[ResponseDTOs.ClubDTO], T.Error>{
-      assert callerAllowed(caller);
-      return getPrivateClubs(leagueId);
-    };
-
-    public shared query ( {caller} ) func getClubs(leagueId: FootballTypes.LeagueId) : async Result.Result<[ResponseDTOs.ClubDTO], T.Error>{
-      assert callerAllowed(caller);
-      return getPrivateClubs(leagueId);
-    };
-
     private func getPrivateClubs(leagueId: FootballTypes.LeagueId) : Result.Result<[ResponseDTOs.ClubDTO], T.Error> {
       
       let filteredLeagueClubs = Array.find<(FootballTypes.LeagueId, [FootballTypes.Club])>(leagueClubs, 
@@ -358,9 +304,44 @@
 
     /* Query functions */
 
-    public shared query func getLeagues() : async Result.Result<[ResponseDTOs.FootballLeagueDTO], T.Error>{
+    public shared query ( {caller} ) func getDataHashes(leagueId: FootballTypes.LeagueId) : async Result.Result<[ResponseDTOs.DataHashDTO], T.Error> {
+      assert callerAllowed(caller);
+      let leagueDataHashesResult = Array.find<(FootballTypes.LeagueId, [Base.DataHash])>(leagueDataHashes, func(entry: (FootballTypes.LeagueId, [Base.DataHash])) : Bool {
+        entry.0 == leagueId
+      });
+      switch(leagueDataHashesResult){
+        case (?foundHashes){
+          return #ok(foundHashes.1)
+        };
+        case (null){}
+      };
+      return #err(#NotFound);
+    };
+
+    public shared query ( {caller} ) func getLeagues() : async Result.Result<[ResponseDTOs.FootballLeagueDTO], T.Error>{
+      assert callerAllowed(caller);
       return #ok(leagues);
     };  
+
+    public shared query ( {caller} ) func getLeagueStatus(leagueId: FootballTypes.LeagueId) : async Result.Result<FootballTypes.LeagueStatus, T.Error>{
+      assert callerAllowed(caller);
+      let status = Array.find<FootballTypes.LeagueStatus>(leagueStatuses, func(entry: FootballTypes.LeagueStatus) : Bool {
+        entry.leagueId == leagueId
+      });
+      switch(status){
+        case (?foundStatus){
+          return #ok(foundStatus)
+        };
+        case (null){
+          return #err(#NotFound);
+        }
+      };
+    };
+
+    public shared query ( {caller} ) func getTimers() : async Result.Result<[Base.TimerInfo], T.Error>{
+       assert callerAllowed(caller);
+        return #ok(timers);
+    };
 
     public shared query ( {caller} ) func getSeasons(leagueId: FootballTypes.LeagueId) : async Result.Result<[ResponseDTOs.SeasonDTO], T.Error>{
       assert callerAllowed(caller);
@@ -744,111 +725,42 @@
       };
     };
 
-    public shared query ( {caller} ) func getTimers() : async Result.Result<[Base.TimerInfo], T.Error>{
-      return #ok(timers);
-    };
-
     /* Governance Validation Functions */
 
     /* Player */
 
-    public shared ( {caller} ) func validateRevaluePlayerUp(leagueId: FootballTypes.LeagueId, dto : GovernanceDTOs.RevaluePlayerUpDTO) : async Result.Result<(), T.Error>{
+    public shared ( {caller} ) func validateRevaluePlayerUp(dto : GovernanceDTOs.RevaluePlayerUpDTO) : async Result.Result<(), T.Error>{
       assert callerAllowed(caller);
-      assert leagueExists(leagueId);
-      assert checkPlayerExists(leagueId, dto.playerId);
-      //TODO (KELLY): Add validation checks
+      assert leagueExists(dto.leagueId);
+      assert checkPlayerExists(dto.leagueId, dto.playerId);
       return #ok();
     };
 
-    public shared ( {caller} ) func validateRevaluePlayerDown(leagueId: FootballTypes.LeagueId, dto : GovernanceDTOs.RevaluePlayerDownDTO) : async Result.Result<(), T.Error>{
+    public shared ( {caller} ) func validateRevaluePlayerDown(dto : GovernanceDTOs.RevaluePlayerDownDTO) : async Result.Result<(), T.Error>{
       assert callerAllowed(caller);
-      assert leagueExists(leagueId);
-      assert checkPlayerExists(leagueId, dto.playerId);
-      //TODO (KELLY): Add validation checks
+      assert leagueExists(dto.leagueId);
+      assert checkPlayerExists(dto.leagueId, dto.playerId);
       return #ok();
     };
 
-    public shared ( {caller} ) func validateLoanPlayer(leagueId: FootballTypes.LeagueId, dto : GovernanceDTOs.LoanPlayerDTO) : async Result.Result<(), T.Error>{
+    public shared ( {caller} ) func validateLoanPlayer(dto : GovernanceDTOs.LoanPlayerDTO) : async Result.Result<(), T.Error>{
       assert callerAllowed(caller);
-      assert leagueExists(leagueId);
-      assert checkPlayerExists(leagueId, dto.playerId);
-
-      let filteredLeaguePlayers = Array.find<(FootballTypes.LeagueId, [FootballTypes.Player])>(leaguePlayers, 
-        func(leagueWithPlayers: (FootballTypes.LeagueId, [FootballTypes.Player])) : Bool{
-        leagueWithPlayers.0 == leagueId
-      });
-
-      switch(filteredLeaguePlayers){
-        case (?players){
-          if (dto.loanEndDate <= Time.now()) {
-            return #err(#InvalidData);
-          };
-
-          let player = Array.find<FootballTypes.Player>(players.1, func(currentPlayer: FootballTypes.Player) : Bool{
-            currentPlayer.id == dto.playerId;
-          });
-
-
-          switch (player) {
-            case (null) {
-            return #err(#InvalidData);
-            };
-            case (?foundPlayer) {
-              if (foundPlayer.status == #OnLoan) {
-                return #err(#InvalidData);
-              };
-            };
-          };
-
-          if (dto.loanClubId > 0) {
-
-            let filteredLeagueClubs = Array.find<(FootballTypes.LeagueId, [FootballTypes.Club])>(leagueClubs, 
-              func(leagueClubs: (FootballTypes.LeagueId, [FootballTypes.Club])) : Bool{
-                  leagueClubs.0 == leagueId;
-            });
-
-            switch(filteredLeagueClubs){
-              case (?foundLeagueClubs){
-
-                let loanClub = List.find<FootballTypes.Club>(
-                  List.fromArray(foundLeagueClubs.1),
-                  func(club : FootballTypes.Club) : Bool {
-                    return club.id == dto.loanClubId;
-                  },
-                );
-
-                switch (loanClub) {
-                  case (null) {
-                    return #err(#InvalidData);
-                  };
-                  case (?_) {
-                    return #ok();
-                  };
-                };
-              };
-              case (null){
-                return #err(#NotFound);
-              }
-            };     
-          };
-
-          return #ok();
-          
-        };
-        case (null){
-          return #err(#NotFound);
-        }
-      };      
-      //TODO (KELLY): Add validation checks
+      assert leagueExists(dto.leagueId);
+      assert leagueExists(dto.loanLeagueId);
+      assert clubExists(dto.loanLeagueId, dto.loanClubId);
+      assert checkPlayerExists(dto.leagueId, dto.playerId);
+      assert dto.loanEndDate > Time.now();
+      return #ok();
     };
 
-    public shared ( {caller} ) func validateTransferPlayer(leagueId: FootballTypes.LeagueId, dto : GovernanceDTOs.TransferPlayerDTO) : async Result.Result<(), T.Error>{
+    public shared ( {caller} ) func validateTransferPlayer(dto : GovernanceDTOs.TransferPlayerDTO) : async Result.Result<(), T.Error>{
       assert callerAllowed(caller);
-      assert leagueExists(leagueId);
-      assert checkPlayerExists(leagueId, dto.playerId);
+      assert leagueExists(dto.leagueId);
+      assert leagueExists(dto.newLeagueId);
+      assert checkPlayerExists(dto.leagueId, dto.playerId);
 
       let filteredLeaguePlayers = Array.find<(FootballTypes.LeagueId, [FootballTypes.Player])>(leaguePlayers, func(leagueWithPlayers: (FootballTypes.LeagueId, [FootballTypes.Player])) : Bool{
-        leagueWithPlayers.0 == leagueId
+        leagueWithPlayers.0 == dto.leagueId
       });
 
       switch(filteredLeaguePlayers){
@@ -873,7 +785,7 @@
 
             let filteredLeagueClubs = Array.find<(FootballTypes.LeagueId, [FootballTypes.Club])>(leagueClubs, 
               func(leagueClubs: (FootballTypes.LeagueId, [FootballTypes.Club])) : Bool{
-                  leagueClubs.0 == leagueId;
+                  leagueClubs.0 == dto.leagueId;
             });
 
             switch(filteredLeagueClubs){
@@ -910,23 +822,23 @@
       //TODO (KELLY): Add validation checks
     };
 
-    public shared ( {caller} ) func validateSetFreeAgent(leagueId: FootballTypes.LeagueId, dto : GovernanceDTOs.SetFreeAgentDTO) : async Result.Result<(), T.Error>{
+    public shared ( {caller} ) func validateSetFreeAgent(dto : GovernanceDTOs.SetFreeAgentDTO) : async Result.Result<(), T.Error>{
       assert callerAllowed(caller);
-      assert leagueExists(leagueId);
-      assert checkPlayerExists(leagueId, dto.playerId);
+      assert leagueExists(dto.leagueId);
+      assert checkPlayerExists(dto.leagueId, dto.playerId);
       return #err(#NotFound);
 
       //TODO (KELLY): Add validation checks
     };
 
-    public shared ( {caller} ) func validateRecallPlayer(leagueId: FootballTypes.LeagueId, dto : GovernanceDTOs.RecallPlayerDTO) : async Result.Result<(), T.Error> {
+    public shared ( {caller} ) func validateRecallPlayer(dto : GovernanceDTOs.RecallPlayerDTO) : async Result.Result<(), T.Error> {
       
       assert callerAllowed(caller);
-      assert leagueExists(leagueId);
-      assert checkPlayerExists(leagueId, dto.playerId);
+      assert leagueExists(dto.leagueId);
+      assert checkPlayerExists(dto.leagueId, dto.playerId);
 
       let filteredLeaguePlayers = Array.find<(FootballTypes.LeagueId, [FootballTypes.Player])>(leaguePlayers, func(leagueWithPlayers: (FootballTypes.LeagueId, [FootballTypes.Player])) : Bool{
-        leagueWithPlayers.0 == leagueId
+        leagueWithPlayers.0 == dto.leagueId
       });
 
       switch(filteredLeaguePlayers){
@@ -958,9 +870,9 @@
       //TODO (KELLY): Add validation checks
     };
 
-    public shared ( {caller} ) func validateCreatePlayer(leagueId: FootballTypes.LeagueId, dto : GovernanceDTOs.CreatePlayerDTO) : async Result.Result<(), T.Error>{
+    public shared ( {caller} ) func validateCreatePlayer(dto : GovernanceDTOs.CreatePlayerDTO) : async Result.Result<(), T.Error>{
       assert callerAllowed(caller);
-      assert leagueExists(leagueId);
+      assert leagueExists(dto.leagueId);
 
       if (Text.size(dto.firstName) > 50) {
         return #err(#InvalidData);
@@ -984,7 +896,7 @@
 
       let filteredLeagueClubs = Array.find<(FootballTypes.LeagueId, [FootballTypes.Club])>(leagueClubs, 
         func(leagueClubs: (FootballTypes.LeagueId, [FootballTypes.Club])) : Bool{
-            leagueClubs.0 == leagueId;
+            leagueClubs.0 == dto.leagueId;
       });
 
       switch(filteredLeagueClubs){
@@ -1012,13 +924,13 @@
       //TODO (KELLY): Add validation checks 
     };
 
-    public shared ( {caller} ) func validateUpdatePlayer(leagueId: FootballTypes.LeagueId, dto : GovernanceDTOs.UpdatePlayerDTO) : async Result.Result<(), T.Error>{
+    public shared ( {caller} ) func validateUpdatePlayer(dto : GovernanceDTOs.UpdatePlayerDTO) : async Result.Result<(), T.Error>{
       assert callerAllowed(caller);
-      assert leagueExists(leagueId);
-      assert checkPlayerExists(leagueId, dto.playerId);
+      assert leagueExists(dto.leagueId);
+      assert checkPlayerExists(dto.leagueId, dto.playerId);
 
       let filteredLeaguePlayers = Array.find<(FootballTypes.LeagueId, [FootballTypes.Player])>(leaguePlayers, func(leagueWithPlayers: (FootballTypes.LeagueId, [FootballTypes.Player])) : Bool{
-        leagueWithPlayers.0 == leagueId
+        leagueWithPlayers.0 == dto.leagueId
       });
 
       switch(filteredLeaguePlayers){
@@ -1066,13 +978,13 @@
       //TODO (KELLY): Add validation checks
     };
 
-    public shared ( {caller} ) func validateSetPlayerInjury(leagueId: FootballTypes.LeagueId, dto : GovernanceDTOs.SetPlayerInjuryDTO) : async Result.Result<(), T.Error>{
+    public shared ( {caller} ) func validateSetPlayerInjury(dto : GovernanceDTOs.SetPlayerInjuryDTO) : async Result.Result<(), T.Error>{
       assert callerAllowed(caller);
-      assert leagueExists(leagueId);
-      assert checkPlayerExists(leagueId, dto.playerId);
+      assert leagueExists(dto.leagueId);
+      assert checkPlayerExists(dto.leagueId, dto.playerId);
 
       let filteredLeaguePlayers = Array.find<(FootballTypes.LeagueId, [FootballTypes.Player])>(leaguePlayers, func(leagueWithPlayers: (FootballTypes.LeagueId, [FootballTypes.Player])) : Bool{
-        leagueWithPlayers.0 == leagueId
+        leagueWithPlayers.0 == dto.leagueId
       });
 
       switch(filteredLeaguePlayers){
@@ -1100,13 +1012,13 @@
       //TODO (KELLY): Add validation checks
     };
 
-    public shared ( {caller} ) func validateRetirePlayer(leagueId: FootballTypes.LeagueId, dto : GovernanceDTOs.RetirePlayerDTO) : async Result.Result<(), T.Error>{
+    public shared ( {caller} ) func validateRetirePlayer(dto : GovernanceDTOs.RetirePlayerDTO) : async Result.Result<(), T.Error>{
       assert callerAllowed(caller);
-      assert leagueExists(leagueId);
-      assert checkPlayerExists(leagueId, dto.playerId);
+      assert leagueExists(dto.leagueId);
+      assert checkPlayerExists(dto.leagueId, dto.playerId);
 
       let filteredLeaguePlayers = Array.find<(FootballTypes.LeagueId, [FootballTypes.Player])>(leaguePlayers, func(leagueWithPlayers: (FootballTypes.LeagueId, [FootballTypes.Player])) : Bool {
-        leagueWithPlayers.0 == leagueId
+        leagueWithPlayers.0 == dto.leagueId
       });
 
       switch(filteredLeaguePlayers){
@@ -1134,13 +1046,13 @@
       //TODO (KELLY): Add validation checks
     };
 
-    public shared ( {caller} ) func validateUnretirePlayer(leagueId: FootballTypes.LeagueId, dto : GovernanceDTOs.UnretirePlayerDTO) : async Result.Result<(), T.Error>{
+    public shared ( {caller} ) func validateUnretirePlayer(dto : GovernanceDTOs.UnretirePlayerDTO) : async Result.Result<(), T.Error>{
       assert callerAllowed(caller);
-      assert leagueExists(leagueId);
-      assert checkPlayerExists(leagueId, dto.playerId);
+      assert leagueExists(dto.leagueId);
+      assert checkPlayerExists(dto.leagueId, dto.playerId);
 
       let filteredLeaguePlayers = Array.find<(FootballTypes.LeagueId, [FootballTypes.Player])>(leaguePlayers, func(leagueWithPlayers: (FootballTypes.LeagueId, [FootballTypes.Player])){
-        leagueWithPlayers.0 == leagueId
+        leagueWithPlayers.0 == dto.leagueId
       });
 
       switch(filteredLeaguePlayers){
@@ -1176,39 +1088,39 @@
       return #err(#NotFound);
     };
 
-    public shared ( {caller} ) func validateAddInitialFixtures(leagueId: FootballTypes.LeagueId, dto : GovernanceDTOs.AddInitialFixturesDTO) : async Result.Result<(), T.Error>{
+    public shared ( {caller} ) func validateAddInitialFixtures(dto : GovernanceDTOs.AddInitialFixturesDTO) : async Result.Result<(), T.Error>{
       assert callerAllowed(caller);
-      assert leagueExists(leagueId);
+      assert leagueExists(dto.leagueId);
       //TODO (KELLY): Add validation checks
         //should equal the number of teams in the related environment file
       return #err(#NotFound);
     };
 
-    public shared ( {caller} ) func validateMoveFixture(leagueId: FootballTypes.LeagueId, dto : GovernanceDTOs.MoveFixtureDTO) : async Result.Result<(), T.Error>{
+    public shared ( {caller} ) func validateMoveFixture(dto : GovernanceDTOs.MoveFixtureDTO) : async Result.Result<(), T.Error>{
       assert callerAllowed(caller);
-      assert leagueExists(leagueId);
+      assert leagueExists(dto.leagueId);
       //TODO (KELLY): Add validation checks
         //valid gameweek but that can go in a data check module in the backend
       return #err(#NotFound);
     };
 
-    public shared ( {caller} ) func validatePostponeFixture(leagueId: FootballTypes.LeagueId, dto : GovernanceDTOs.PostponeFixtureDTO) : async Result.Result<(), T.Error>{
+    public shared ( {caller} ) func validatePostponeFixture(dto : GovernanceDTOs.PostponeFixtureDTO) : async Result.Result<(), T.Error>{
       assert callerAllowed(caller);
-      assert leagueExists(leagueId);
+      assert leagueExists(dto.leagueId);
       //TODO (KELLY): Add validation checks
       return #err(#NotFound);
     };
 
-    public shared ( {caller} ) func validateRescehduleFixture(leagueId: FootballTypes.LeagueId, dto : GovernanceDTOs.RescheduleFixtureDTO) : async Result.Result<(), T.Error>{
+    public shared ( {caller} ) func validateRescheduleFixture(dto : GovernanceDTOs.RescheduleFixtureDTO) : async Result.Result<(), T.Error>{
       assert callerAllowed(caller);
-      assert leagueExists(leagueId);
+      assert leagueExists(dto.leagueId);
       //TODO (KELLY): Add validation checks
       return #err(#NotFound);
     };
 
-    public shared ( {caller} ) func validateSubmitFixtureData(leagueId: FootballTypes.LeagueId, dto : GovernanceDTOs.SubmitFixtureDataDTO) : async Result.Result<(), T.Error>{
+    public shared ( {caller} ) func validateSubmitFixtureData(dto : GovernanceDTOs.SubmitFixtureDataDTO) : async Result.Result<(), T.Error>{
       assert callerAllowed(caller);
-      assert leagueExists(leagueId);
+      assert leagueExists(dto.leagueId);
       assert validatePlayerEvents(dto.playerEventData);
       //TODO (KELLY): Add validation checks
       return #err(#NotFound);
@@ -1216,37 +1128,37 @@
 
     /* Club */
 
-    public shared ( {caller} ) func validateCreateClub(leagueId: FootballTypes.LeagueId, dto : GovernanceDTOs.CreateClubDTO) : async Result.Result<(), T.Error>{
+    public shared ( {caller} ) func validateCreateClub(dto : GovernanceDTOs.CreateClubDTO) : async Result.Result<(), T.Error>{
       assert callerAllowed(caller);
-      assert leagueExists(leagueId);
+      assert leagueExists(dto.leagueId);
       //TODO (KELLY): Add validation checks
       return #err(#NotFound);
     };
 
-    public shared ( {caller} ) func validationRemoveClub(leagueId: FootballTypes.LeagueId, dto : GovernanceDTOs.RemoveClubDTO) : async Result.Result<(), T.Error>{
+    public shared ( {caller} ) func validationRemoveClub(dto : GovernanceDTOs.RemoveClubDTO) : async Result.Result<(), T.Error>{
       assert callerAllowed(caller);
-      assert leagueExists(leagueId);
+      assert leagueExists(dto.leagueId);
       //TODO (KELLY): Add validation checks
       return #err(#NotFound);
     };
 
-    public shared ( {caller} ) func validatePromoteClub(leagueId: FootballTypes.LeagueId, dto : GovernanceDTOs.PromoteClubDTO) : async Result.Result<(), T.Error>{
+    public shared ( {caller} ) func validatePromoteClub(dto : GovernanceDTOs.PromoteClubDTO) : async Result.Result<(), T.Error>{
       assert callerAllowed(caller);
-      assert leagueExists(leagueId);
+      assert leagueExists(dto.leagueId);
       //TODO (KELLY): Add validation checks
       return #err(#NotFound);
     };
 
-    public shared ( {caller} ) func validateRelegateClub(leagueId: FootballTypes.LeagueId, dto : GovernanceDTOs.RelegateClubDTO) : async Result.Result<(), T.Error>{
+    public shared ( {caller} ) func validateRelegateClub(dto : GovernanceDTOs.RelegateClubDTO) : async Result.Result<(), T.Error>{
       assert callerAllowed(caller);
-      assert leagueExists(leagueId);
+      assert leagueExists(dto.leagueId);
       //TODO (KELLY): Add validation checks
       return #err(#NotFound);
     };
 
-    public shared ( {caller} ) func validateUpdateClub(leagueId: FootballTypes.LeagueId, dto : GovernanceDTOs.UpdateClubDTO) : async Result.Result<(), T.Error>{
+    public shared ( {caller} ) func validateUpdateClub(dto : GovernanceDTOs.UpdateClubDTO) : async Result.Result<(), T.Error>{
       assert callerAllowed(caller);
-      assert leagueExists(leagueId);
+      assert leagueExists(dto.leagueId);
       //TODO (KELLY): Add validation checks
       return #err(#NotFound);
     };
@@ -1255,16 +1167,16 @@
 
     /* Player */
     
-    public shared ( {caller} ) func revaluePlayerUp(leagueId: FootballTypes.LeagueId, dto : GovernanceDTOs.RevaluePlayerUpDTO) : async Result.Result<(), T.Error>{
+    public shared ( {caller} ) func revaluePlayerUp(dto : GovernanceDTOs.RevaluePlayerUpDTO) : async Result.Result<(), T.Error>{
       assert callerAllowed(caller);
 
       let updatedLeaguePlayersBuffer = Buffer.fromArray<(FootballTypes.LeagueId, [FootballTypes.Player])>([]);
 
       for(league in Iter.fromArray(leaguePlayers)){
-        if(league.0 == leagueId){
+        if(league.0 == dto.leagueId){
 
           let filteredLeaguePlayers = Array.find<(FootballTypes.LeagueId, [FootballTypes.Player])>(leaguePlayers, func(leagueWithPlayers: (FootballTypes.LeagueId, [FootballTypes.Player])) : Bool{
-            leagueWithPlayers.0 == leagueId
+            leagueWithPlayers.0 == dto.leagueId
           });
 
           switch(filteredLeaguePlayers){
@@ -1313,7 +1225,7 @@
                 },
               );
 
-              updatedLeaguePlayersBuffer.add((leagueId, updatedPlayers));
+              updatedLeaguePlayersBuffer.add((dto.leagueId, updatedPlayers));
             };
             case (null){
 
@@ -1325,21 +1237,21 @@
       };
 
       leaguePlayers := Buffer.toArray(updatedLeaguePlayersBuffer);
-      let _ = await updateDataHashes(leagueId, "players");
+      let _ = await updateDataHash(dto.leagueId, "players");
 
       return #ok();
     };
 
-    public shared ( {caller} ) func revaluePlayerDown(leagueId: FootballTypes.LeagueId, dto : GovernanceDTOs.RevaluePlayerDownDTO) : async Result.Result<(), T.Error>{
+    public shared ( {caller} ) func revaluePlayerDown(dto : GovernanceDTOs.RevaluePlayerDownDTO) : async Result.Result<(), T.Error>{
       assert callerAllowed(caller);
 
       let updatedLeaguePlayersBuffer = Buffer.fromArray<(FootballTypes.LeagueId, [FootballTypes.Player])>([]);
 
       for(league in Iter.fromArray(leaguePlayers)){
-        if(league.0 == leagueId){
+        if(league.0 == dto.leagueId){
 
           let filteredLeaguePlayers = Array.find<(FootballTypes.LeagueId, [FootballTypes.Player])>(leaguePlayers, func(leagueWithPlayers: (FootballTypes.LeagueId, [FootballTypes.Player])) : Bool{
-            leagueWithPlayers.0 == leagueId
+            leagueWithPlayers.0 == dto.leagueId
           });
 
           switch(filteredLeaguePlayers){
@@ -1390,7 +1302,7 @@
                 },
               );
 
-              updatedLeaguePlayersBuffer.add((leagueId, updatedPlayers));
+              updatedLeaguePlayersBuffer.add((dto.leagueId, updatedPlayers));
             };
             case (null){
 
@@ -1402,29 +1314,29 @@
       };
 
       leaguePlayers := Buffer.toArray(updatedLeaguePlayersBuffer);
-      let _ = await updateDataHashes(leagueId, "players");
+      let _ = await updateDataHash(dto.leagueId, "players");
 
       return #ok();
     };
 
-    public shared ( {caller} ) func loanPlayer(leagueId: FootballTypes.LeagueId, dto : GovernanceDTOs.LoanPlayerDTO) : async Result.Result<(), T.Error>{
+    public shared ( {caller} ) func loanPlayer(dto : GovernanceDTOs.LoanPlayerDTO) : async Result.Result<(), T.Error>{
       assert callerAllowed(caller);
-      assert leagueExists(leagueId);
+      assert leagueExists(dto.leagueId);
       assert leagueExists(dto.loanLeagueId);
       assert clubExists(dto.loanLeagueId, dto.loanClubId);
 
-      if(leagueId == dto.loanLeagueId){
+      if(dto.leagueId == dto.loanLeagueId){
         leaguePlayers := Array.map<
           (FootballTypes.LeagueId, [FootballTypes.Player]), 
           (FootballTypes.LeagueId, [FootballTypes.Player])>(
             leaguePlayers,  func (entry: (FootballTypes.LeagueId, [FootballTypes.Player])){
-              if(entry.0 == leagueId){
+              if(entry.0 == dto.leagueId){
                 return (entry.0, Array.map<FootballTypes.Player, FootballTypes.Player>(entry.1, func(player: FootballTypes.Player){
                   if(player.id == dto.playerId){  
 
                     let newTransferHistoryEntry : FootballTypes.TransferHistory = {
                       transferDate = Time.now();
-                      fromLeagueId = leagueId;
+                      fromLeagueId = dto.leagueId;
                       fromClub = player.clubId;
                       toLeagueId = dto.loanLeagueId;
                       toClub = dto.loanClubId;
@@ -1443,7 +1355,7 @@
                       lastName = player.lastName;
                       latestInjuryEndDate = player.latestInjuryEndDate;
                       nationality = player.nationality;
-                      parentLeagueId = leagueId;
+                      parentLeagueId = dto.leagueId;
                       parentClubId = player.clubId;
                       position = player.position;
                       retirementDate = player.retirementDate;
@@ -1461,11 +1373,11 @@
               } else { return entry }
             });
 
-        let _ = await updateDataHashes(leagueId, "players");
+        let _ = await updateDataHash(dto.leagueId, "players");
       } else {
 
         let currentLeaguePlayersSet = Array.find<(FootballTypes.LeagueId, [FootballTypes.Player])>(leaguePlayers, func(playersSet: (FootballTypes.LeagueId, [FootballTypes.Player])) : Bool {
-          playersSet.0 == leagueId
+          playersSet.0 == dto.leagueId
         });
         switch(currentLeaguePlayersSet){
           case (?playerSet){
@@ -1480,7 +1392,7 @@
                   (FootballTypes.LeagueId, [FootballTypes.Player]), 
                   (FootballTypes.LeagueId, [FootballTypes.Player])>(
                     leaguePlayers,  func (entry: (FootballTypes.LeagueId, [FootballTypes.Player])){
-                      if(entry.0 == leagueId){
+                      if(entry.0 == dto.leagueId){
                         return (entry.0, Array.filter<FootballTypes.Player>(entry.1, func(foundPlayer: FootballTypes.Player){
                           foundPlayer.id != dto.playerId
                         }));
@@ -1488,7 +1400,7 @@
                         
                         let newTransferHistoryEntry : FootballTypes.TransferHistory = {
                           transferDate = Time.now();
-                          fromLeagueId = leagueId;
+                          fromLeagueId = dto.leagueId;
                           fromClub = player.clubId;
                           toLeagueId = dto.loanLeagueId;
                           toClub = dto.loanClubId;
@@ -1528,8 +1440,8 @@
                 let loanTimerDuration = #nanoseconds(Int.abs((dto.loanEndDate - Time.now())));
                 let _ = setAndBackupTimer(loanTimerDuration, "loanExpired");
 
-                let _ = await updateDataHashes(leagueId, "players");
-                let _ = await updateDataHashes(dto.loanLeagueId, "players");
+                let _ = await updateDataHash(dto.leagueId, "players");
+                let _ = await updateDataHash(dto.loanLeagueId, "players");
                 let _ = await notifyAppsOfLoan(dto.loanLeagueId, dto.playerId);
                 return #ok();
               };
@@ -1542,44 +1454,44 @@
       return #err(#NotFound);
     };
 
-    public shared ( {caller} ) func transferPlayer(leagueId: FootballTypes.LeagueId, dto : GovernanceDTOs.TransferPlayerDTO) : async Result.Result<(), T.Error>{
+    public shared ( {caller} ) func transferPlayer(dto : GovernanceDTOs.TransferPlayerDTO) : async Result.Result<(), T.Error>{
       assert callerAllowed(caller);
 
       if(dto.newClubId == 0 and dto.newLeagueId == 0){
-        movePlayerToFreeAgents(leagueId, dto.playerId);
-        let _ = await updateDataHashes(leagueId, "players");
+        movePlayerToFreeAgents(dto.leagueId, dto.playerId);
+        let _ = await updateDataHash(dto.leagueId, "players");
         return #ok();
       };
 
-      if(dto.newLeagueId == leagueId){
-        movePlayerWithinLeague(leagueId, dto.newClubId, dto.playerId, dto.newShirtNumber);
-        let _ = await updateDataHashes(leagueId, "players");
+      if(dto.newLeagueId == dto.leagueId){
+        movePlayerWithinLeague(dto.leagueId, dto.newClubId, dto.playerId, dto.newShirtNumber);
+        let _ = await updateDataHash(dto.leagueId, "players");
         return #ok();
       };
 
-      movePlayerToLeague(leagueId, dto.newLeagueId, dto.newClubId, dto.playerId, dto.newShirtNumber);
-      let _ = await updateDataHashes(leagueId, "players");
-      let _ = await notifyAppsOfTransfer(leagueId, dto.playerId);
+      movePlayerToLeague(dto.leagueId, dto.newLeagueId, dto.newClubId, dto.playerId, dto.newShirtNumber);
+      let _ = await updateDataHash(dto.leagueId, "players");
+      let _ = await notifyAppsOfTransfer(dto.leagueId, dto.playerId);
 
       return #ok();
     };
 
-    public shared ( {caller} ) func setFreeAgent(leagueId: FootballTypes.LeagueId, dto : GovernanceDTOs.SetFreeAgentDTO) : async Result.Result<(), T.Error>{
+    public shared ( {caller} ) func setFreeAgent(dto : GovernanceDTOs.SetFreeAgentDTO) : async Result.Result<(), T.Error>{
       assert callerAllowed(caller);
 
-      movePlayerToFreeAgents(leagueId, dto.playerId);
-      let _ = await updateDataHashes(leagueId, "players");
-      let _ = await notifyAppsOfTransfer(leagueId, dto.playerId);
+      movePlayerToFreeAgents(dto.leagueId, dto.playerId);
+      let _ = await updateDataHash(dto.leagueId, "players");
+      let _ = await notifyAppsOfTransfer(dto.leagueId, dto.playerId);
       
       return #ok();
     };
 
     public shared ( {caller} ) func recallPlayer(dto: GovernanceDTOs.RecallPlayerDTO) : async Result.Result<(), T.Error>{
       assert callerAllowed(caller);
-      assert leagueExists(dto.recallFromLeagueId);
+      assert leagueExists(dto.leagueId);
 
       let fromPlayerLeagueResult = Array.find(leaguePlayers, func(entry: (FootballTypes.LeagueId, [FootballTypes.Player])) : Bool {
-        entry.0 == dto.recallFromLeagueId
+        entry.0 == dto.leagueId
       });
 
       switch(fromPlayerLeagueResult){
@@ -1590,7 +1502,7 @@
           switch(foundPlayer){
             case (?player){
               leaguePlayers := Array.map<(FootballTypes.LeagueId, [FootballTypes.Player]), (FootballTypes.LeagueId, [FootballTypes.Player])>(leaguePlayers, func(entry: (FootballTypes.LeagueId, [FootballTypes.Player])){
-                if(entry.0 == dto.recallFromLeagueId and dto.recallFromLeagueId == player.parentLeagueId){
+                if(entry.0 == dto.leagueId and dto.leagueId == player.parentLeagueId){
                   return (entry.0, Array.map<FootballTypes.Player, FootballTypes.Player>(entry.1, func(playerEntry: FootballTypes.Player){
                     if(playerEntry.id == player.id){
                       return {
@@ -1621,7 +1533,7 @@
                     }
                   }));
                 }
-                else if(entry.0 == dto.recallFromLeagueId){
+                else if(entry.0 == dto.leagueId){
                   return (entry.0, Array.filter<FootballTypes.Player>(entry.1, func(playerEntry: FootballTypes.Player){
                     playerEntry.id != player.id
                   }));
@@ -1656,7 +1568,7 @@
                 };
               });
 
-              let _ = await notifyAppsOfTransfer(dto.recallFromLeagueId, dto.playerId);
+              let _ = await notifyAppsOfTransfer(dto.leagueId, dto.playerId);
               let _ = await notifyAppsOfTransfer(player.parentLeagueId, dto.playerId);
               return #ok();
             };
@@ -1668,11 +1580,11 @@
       return #err(#NotFound);
     };
 
-    public shared ( {caller} ) func createPlayer(leagueId: FootballTypes.LeagueId, dto : GovernanceDTOs.CreatePlayerDTO) : async Result.Result<(), T.Error>{
+    public shared ( {caller} ) func createPlayer(dto : GovernanceDTOs.CreatePlayerDTO) : async Result.Result<(), T.Error>{
       assert callerAllowed(caller);
 
       let foundLeague = Array.find<FootballTypes.League>(leagues, func(league: FootballTypes.League) : Bool {
-        league.id == leagueId
+        league.id == dto.leagueId
       });
 
       switch(foundLeague){
@@ -1680,7 +1592,7 @@
       
           let newPlayer : FootballTypes.Player = {
             id = nextPlayerId;
-            leagueId = leagueId;
+            leagueId = dto.leagueId;
             clubId = dto.clubId;
             position = dto.position;
             firstName = dto.firstName;
@@ -1704,7 +1616,7 @@
 
           leaguePlayers := Array.map<(FootballTypes.LeagueId, [FootballTypes.Player]), (FootballTypes.LeagueId, [FootballTypes.Player])>(leaguePlayers, 
             func(leaguePlayersEntry: (FootballTypes.LeagueId, [FootballTypes.Player])){
-              if(leaguePlayersEntry.0 == leagueId){
+              if(leaguePlayersEntry.0 == dto.leagueId){
                 let updatedPlayersBuffer = Buffer.fromArray<FootballTypes.Player>(leaguePlayersEntry.1);
                 updatedPlayersBuffer.add(newPlayer);
                 return (leaguePlayersEntry.0, Buffer.toArray(updatedPlayersBuffer));
@@ -1714,7 +1626,7 @@
           });
 
           nextPlayerId += 1;
-          let _ = await updateDataHashes(leagueId, "players");
+          let _ = await updateDataHash(dto.leagueId, "players");
           return #ok();
           
         };
@@ -1724,14 +1636,14 @@
       };
     };
 
-    public shared ( {caller} ) func updatePlayer(leagueId: FootballTypes.LeagueId, dto : GovernanceDTOs.UpdatePlayerDTO) : async Result.Result<(), T.Error>{
+    public shared ( {caller} ) func updatePlayer(dto : GovernanceDTOs.UpdatePlayerDTO) : async Result.Result<(), T.Error>{
       assert callerAllowed(caller);
 
       var positionUpdated = false;
 
       leaguePlayers := Array.map<(FootballTypes.LeagueId, [FootballTypes.Player]), (FootballTypes.LeagueId, [FootballTypes.Player])>(leaguePlayers, 
         func(leaguePlayersEntry: (FootballTypes.LeagueId, [FootballTypes.Player])){
-          if(leaguePlayersEntry.0 == leagueId){
+          if(leaguePlayersEntry.0 == dto.leagueId){
 
             let existingPlayer = Array.find<FootballTypes.Player>(leaguePlayersEntry.1, func(player: FootballTypes.Player) : Bool{
               player.id == dto.playerId
@@ -1784,21 +1696,21 @@
       });
 
       if(positionUpdated){
-        let _ = await notifyAppsOfPositionChange(leagueId, dto.playerId);
+        let _ = await notifyAppsOfPositionChange(dto.leagueId, dto.playerId);
       };
 
-      let _ = await updateDataHashes(leagueId, "players");
+      let _ = await updateDataHash(dto.leagueId, "players");
       return #ok();
     };
 
-    public shared ( {caller} ) func setPlayerInjury(leagueId: FootballTypes.LeagueId, dto : GovernanceDTOs.SetPlayerInjuryDTO) : async Result.Result<(), T.Error>{
+    public shared ( {caller} ) func setPlayerInjury(dto : GovernanceDTOs.SetPlayerInjuryDTO) : async Result.Result<(), T.Error>{
       assert callerAllowed(caller);
 
 
       leaguePlayers := Array.map<(FootballTypes.LeagueId, [FootballTypes.Player]), (FootballTypes.LeagueId, [FootballTypes.Player])>(leaguePlayers, 
         func(leaguePlayersEntry: (FootballTypes.LeagueId, [FootballTypes.Player]))
         {
-          if(leaguePlayersEntry.0 == leagueId){
+          if(leaguePlayersEntry.0 == dto.leagueId){
             
              let existingPlayer = Array.find<FootballTypes.Player>(leaguePlayersEntry.1, func(player: FootballTypes.Player) : Bool{
               player.id == dto.playerId
@@ -1859,23 +1771,23 @@
 
       let playerInjuryDuration = #nanoseconds(Int.abs((dto.expectedEndDate - Time.now())));
       let _ = await setAndBackupTimer(playerInjuryDuration, "injuryExpired");
-      let _ = await updateDataHashes(leagueId, "players");
+      let _ = await updateDataHash(dto.leagueId, "players");
       return #ok();
     };
 
-    public shared ( {caller} ) func retirePlayer(leagueId: FootballTypes.LeagueId, dto : GovernanceDTOs.RetirePlayerDTO) : async Result.Result<(), T.Error>{
+    public shared ( {caller} ) func retirePlayer(dto : GovernanceDTOs.RetirePlayerDTO) : async Result.Result<(), T.Error>{
       assert callerAllowed(caller);
       
       leaguePlayers := Array.map<(FootballTypes.LeagueId, [FootballTypes.Player]), (FootballTypes.LeagueId, [FootballTypes.Player])>(leaguePlayers, func(leaguePlayersEntry: (FootballTypes.LeagueId, [FootballTypes.Player])){
-        if(leaguePlayersEntry.0 == leagueId){
+        if(leaguePlayersEntry.0 == dto.leagueId){
 
           let retiredLeague = Array.find<(FootballTypes.LeagueId, [FootballTypes.Player])>(retiredLeaguePlayers, func(entry: (FootballTypes.LeagueId, [FootballTypes.Player])) : Bool {
-            entry.0 == leagueId;
+            entry.0 == dto.leagueId;
           });
 
           if(Option.isNull(retiredLeague)){
             let retiredLeaguesBuffer = Buffer.fromArray<(FootballTypes.LeagueId, [FootballTypes.Player])>(retiredLeaguePlayers);
-            retiredLeaguesBuffer.add(leagueId, []);
+            retiredLeaguesBuffer.add(dto.leagueId, []);
             retiredLeaguePlayers := Buffer.toArray(retiredLeaguesBuffer);
           };
 
@@ -1890,8 +1802,8 @@
           return leaguePlayersEntry;
         };        
       });
-      let _ = await updateDataHashes(leagueId, "players");
-      let _ = await notifyAppsOfTransfer(leagueId, dto.playerId);
+      let _ = await updateDataHash(dto.leagueId, "players");
+      let _ = await notifyAppsOfTransfer(dto.leagueId, dto.playerId);
       return #ok();
     };
 
@@ -1955,7 +1867,7 @@
                 };                
               });
 
-              let _ = await updateDataHashes(dto.leagueId, "players");
+              let _ = await updateDataHash(dto.leagueId, "players");
               return #ok();
             };
             case (null){
@@ -2084,7 +1996,7 @@
         }
       );
       await checkCurrentGameweekExpired();
-      let _ = await updateDataHashes(dto.leagueId, "fixtures");
+      let _ = await updateDataHash(dto.leagueId, "fixtures");
       return #ok();
     };
 
@@ -2141,7 +2053,7 @@
         }
       );
       await checkCurrentGameweekExpired();
-      let _ = await updateDataHashes(dto.leagueId, "fixtures");
+      let _ = await updateDataHash(dto.leagueId, "fixtures");
       return #ok();
     };
 
@@ -2197,9 +2109,9 @@
                   };
                   finaliseFixture(dto.leagueId, dto.seasonId, dto.fixtureId, highestScoringPlayerId);
                   let _ = await notifyAppsOfFixtureFinalised(dto.leagueId, dto.seasonId, dto.gameweek);
-                  let _ =  await updateDataHashes(dto.leagueId, "players");
-                  let _ =  await updateDataHashes(dto.leagueId, "fixtures");
-                  let _ =  await updateDataHashes(dto.leagueId, "player_events");
+                  let _ =  await updateDataHash(dto.leagueId, "players");
+                  let _ =  await updateDataHash(dto.leagueId, "fixtures");
+                  let _ =  await updateDataHash(dto.leagueId, "player_events");
                   let _ = await updateBettingOdds(dto.leagueId);
                   
                 };
@@ -2285,7 +2197,7 @@
       return leaguePlayers;
     };
 
-    public shared ({ caller }) func promoteClub(leagueId: FootballTypes.LeagueId, dto : GovernanceDTOs.PromoteClubDTO) : async Result.Result<(), T.Error> {
+    public shared ({ caller }) func promoteClub(dto : GovernanceDTOs.PromoteClubDTO) : async Result.Result<(), T.Error> {
       assert callerAllowed(caller);
 
       //TODO (KELLY)
@@ -2342,7 +2254,7 @@
       return #err(#NotFound);
     };
 
-    public shared ({ caller }) func relegateClub(leagueId: FootballTypes.LeagueId, dto : GovernanceDTOs.RelegateClubDTO) : async Result.Result<(), T.Error> {
+    public shared ({ caller }) func relegateClub(dto : GovernanceDTOs.RelegateClubDTO) : async Result.Result<(), T.Error> {
       assert callerAllowed(caller);
 
       //TODO (KELLY)
@@ -2417,13 +2329,6 @@
       let _ = await updateDataHashes(leagueId, "clubs");
         */
       return #err(#NotFound);
-    };
-
-    //TODO SHOULD BE PRIVATE IN HERE
-      //WHERE IS THIS BEING SET
-
-    public shared func getBetslipFixtures(dto: RequestDTOs.GetBetslipFixturesDTO) : async Result.Result<[ResponseDTOs.FixtureDTO], T.Error>{
-      return #err(#NotFound); //TODO: Implement
     };
 
     /* Private Functions */
@@ -4125,18 +4030,6 @@
 
     //Actions
 
-    private func updateDataHashes(leagueId: FootballTypes.LeagueId, category: Text) : async Result.Result<(), T.Error> {
-      for(leagueApplication in Iter.fromArray(leagueApplications)){
-        if(leagueApplication.0 == leagueId){
-          let application_canister = actor (leagueApplication.1) : actor {
-            updateDataHashes : (category: Text) -> async Result.Result<(), T.Error>;
-          };
-         let _ = await application_canister.updateDataHashes(category);
-        };
-      };
-      return #ok();
-    };
-
     private func notifyAppsOfPositionChange(leagueId: FootballTypes.LeagueId, playerId: FootballTypes.PlayerId) : async Result.Result<(), T.Error> {
       for(leagueApplication in Iter.fromArray(leagueApplications)){
         if(leagueApplication.0 == leagueId){
@@ -4306,5 +4199,27 @@
       };
 
       leaguePlayers := Buffer.toArray(updatedLeaguePlayersBuffer);
+    };
+
+    private func updateDataHash(leagueId: FootballTypes.LeagueId, category : Text) : async () {
+      let randomHash = await SHA224.getRandomHash();
+      leagueDataHashes := Array.map<(FootballTypes.LeagueId, [Base.DataHash]), (FootballTypes.LeagueId, [Base.DataHash])>(leagueDataHashes, func(entry: (FootballTypes.LeagueId, [Base.DataHash])){
+        if(entry.0 == leagueId){
+          let hashBuffer = Buffer.fromArray<Base.DataHash>([]);
+          var updated = false;
+          for (hashObj in Iter.fromArray(entry.1)) {
+            if (hashObj.category == category) {
+              hashBuffer.add({ category = hashObj.category; hash = randomHash });
+              updated := true;
+            } else { hashBuffer.add(hashObj) };
+          };
+          if(not updated){
+              hashBuffer.add({ category = category; hash = randomHash });
+          };
+          return (entry.0, entry.1);
+        } else {
+          return entry;
+        }
+      });
     };
   };
