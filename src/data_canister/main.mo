@@ -4231,4 +4231,79 @@
         };
       });
     };
+
+    //ONE OFF FUNCTION FOR UPDATING PLAYER VALUES
+    public shared ({ caller }) func updatePlayerValue(playerId: FootballTypes.PlayerId, value: Nat16) : async (){
+      assert callerAllowed(caller);
+      revaluePlayer(playerId, value);
+    };
+
+    private func revaluePlayer(playerId: FootballTypes.PlayerId, value: Nat16){
+      
+      let updatedLeaguePlayersBuffer = Buffer.fromArray<(FootballTypes.LeagueId, [FootballTypes.Player])>([]);
+
+      for(league in Iter.fromArray(leaguePlayers)){
+        if(league.0 == 1){
+
+          let filteredLeaguePlayers = Array.find<(FootballTypes.LeagueId, [FootballTypes.Player])>(leaguePlayers, func(leagueWithPlayers: (FootballTypes.LeagueId, [FootballTypes.Player])) : Bool{
+            leagueWithPlayers.0 == 1
+          });
+
+          switch(filteredLeaguePlayers){
+            case (?foundLeaguePlayers){
+              
+              var updatedPlayers = Array.map<FootballTypes.Player, FootballTypes.Player>(
+                foundLeaguePlayers.1,
+                  func(p : FootballTypes.Player) : FootballTypes.Player {
+                    if (p.id == playerId) {
+
+                      let historyEntry : FootballTypes.ValueHistory = {
+                        changedOn = Time.now();
+                        oldValue = p.valueQuarterMillions;
+                        newValue = value;
+                      };
+
+                      let updatedPlayer : FootballTypes.Player = {
+                        id = p.id;
+                        leagueId = p.leagueId;
+                        clubId = p.clubId;
+                        position = p.position;
+                        firstName = p.firstName;
+                        lastName = p.lastName;
+                        shirtNumber = p.shirtNumber;
+                        valueQuarterMillions = value;
+                        dateOfBirth = p.dateOfBirth;
+                        nationality = p.nationality;
+                        seasons = p.seasons;
+                        valueHistory = List.append<FootballTypes.ValueHistory>(p.valueHistory, List.make(historyEntry));
+                        status = p.status;
+                        parentLeagueId = p.parentLeagueId;
+                        parentClubId = p.parentClubId;
+                        currentLoanEndDate = p.currentLoanEndDate;
+                        latestInjuryEndDate = p.latestInjuryEndDate;
+                        injuryHistory = p.injuryHistory;
+                        retirementDate = p.retirementDate;
+                        transferHistory = p.transferHistory;
+                        gender = p.gender;
+                      };
+
+                      return updatedPlayer;
+                    };
+                    return p;
+                },
+              );
+
+              updatedLeaguePlayersBuffer.add((1, updatedPlayers));
+            };
+            case (null){
+
+            }
+          };
+        } else {
+          updatedLeaguePlayersBuffer.add(league);
+        } 
+      };
+
+      leaguePlayers := Buffer.toArray(updatedLeaguePlayersBuffer);
+    };
   };

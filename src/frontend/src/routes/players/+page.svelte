@@ -15,6 +15,7 @@
   import SetFreeAgent from "$lib/components/governance/player/set-free-agent.svelte";
   import LocalSpinner from "$lib/components/shared/local-spinner.svelte";
     import RecallPlayer from "$lib/components/governance/player/recall-player.svelte";
+    import UpdatePlayerValue from "$lib/components/governance/player/update-player-value.svelte";
 
   let isLoading = true;
   let loadingPlayers = false;
@@ -56,6 +57,7 @@
   let showUpdatePlayerModal = false;
   let showSetPlayerInjuryModal = false;
   let showSetFreeAgentModal = false;
+  let showUpdatePlayerValueModal = false;
 
   onMount(async () => {
     try {
@@ -184,6 +186,11 @@
       showSetFreeAgentModal = true;
   }
 
+  function loadUpdatePlayerValue(playerId: number) {
+      selectedPlayerId = playerId;
+      showUpdatePlayerValueModal = true;
+  }
+
   function closeModal(){
       selectedPlayerId = 0;
       showTransferPlayerModal = false;
@@ -197,6 +204,7 @@
       showUnretirePlayerModal = false;
       showSetPlayerInjuryModal = false;
       showSetFreeAgentModal = false;
+      showUpdatePlayerValueModal
   }
 
   function handleClickOutside(event: MouseEvent) {
@@ -353,6 +361,7 @@
                     <button class="block w-full text-left px-4 py-2 text-BrandDarkGray hover:bg-BrandLightGray" on:click={() => loadRetirePlayer(player.id)}>Retire Player</button>
                     <button class="block w-full text-left px-4 py-2 text-BrandDarkGray hover:bg-BrandLightGray" on:click={() => loadUnretirePlayer(player.id)}>Unretire Player</button>
                     <button class="block w-full text-left px-4 py-2 text-BrandDarkGray hover:bg-BrandLightGray" on:click={() => loadSetFreeAgent(player.id)}>Set Player As Free Agent</button>
+                    <button class="block w-full text-left px-4 py-2 text-BrandDarkGray hover:bg-BrandLightGray" on:click={() => loadUpdatePlayerValue(player.id)}>Update Player Value</button>
                   </div>
                 {/if}
               </div>
@@ -388,6 +397,11 @@
       {#if selectedPlayerId > 0 && showSetFreeAgentModal}
         {@const selectedPlayer = filteredPlayers.find(x => x.id == selectedPlayerId) }
         <SetFreeAgent visible={showSetFreeAgentModal} {closeModal} selectedClubId={selectedPlayer ? selectedPlayer.clubId ?? 0 : 0} {selectedPlayerId} {selectedLeagueId} />
+      {/if}
+    
+      {#if selectedPlayerId > 0 && showUpdatePlayerValueModal}
+        {@const selectedPlayer = filteredPlayers.find(x => x.id == selectedPlayerId) }
+        <UpdatePlayerValue visible={showUpdatePlayerValueModal} {closeModal} player={selectedPlayer!}  />
       {/if}
     
     {/if}

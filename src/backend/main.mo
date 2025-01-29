@@ -133,7 +133,6 @@ actor Self {
   };
 
   public shared composite query func getDataHashes(): async Result.Result<[ResponseDTOs.DataHashDTO], T.Error> {
-    
     return oddsManager.getDataHashes();
   };
 
@@ -898,11 +897,8 @@ actor Self {
   };
 
   private func postUpgradeCallback() : async (){
-    //await updateProfileCanisterWasms();
     await oddsManager.recalculate(1);
-    //await oddsManager.recalculate(2);
-    let profiles = kycManager.getStableKYCProfiles();
-    Debug.print(debug_show profiles);
+    //await updateProfileCanisterWasms();
   };
 
   private func updateProfileCanisterWasms() : async (){
@@ -1130,6 +1126,18 @@ actor Self {
       case (null){}
     };
     return #err(#NotFound);
+  };
+
+  //ONE OFF FUNCTION FOR UPDATING PLAYER VALUES
+  public shared ({ caller }) func updatePlayerValue(playerId: FootballTypes.PlayerId, value: Nat16) : async Result.Result<(), T.Error>{
+    assert not Principal.isAnonymous(caller);
+    let principalId = Principal.toText(caller);
+    assert checkDataManager(principalId);
+    let data_canister = actor (Environment.DATA_CANISTER_ID) : actor {
+      updatePlayerValue : shared query (playerId: FootballTypes.PlayerId, value: Nat16) -> async Result.Result<(), T.Error>;
+    };
+    
+    return await data_canister.updatePlayerValue(playerId, value);
   };
    
 };

@@ -1,7 +1,6 @@
 import Base "../types/base_types";
 import FootballTypes "../types/football_types";
 
-import RequestDTOs "../dtos/request_DTOs";
 import ResponseDTOs "../dtos/response_DTOs";
 
 module GovernanceDTOs {
