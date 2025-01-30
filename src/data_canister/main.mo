@@ -1854,15 +1854,6 @@
       let _ = await updateDataHash(dto.leagueId, "fixtures");
     };
 
-    public shared ({ caller }) func addInitialFixtures() : async () {
-      assert Principal.toText(caller) == Environment.SNS_GOVERNANCE_CANISTER_ID;
-      //TODO: Add function that receives csv file information on initial fixtures
-      //TODO: Call back to each app notifying them of fixtures added for season
-      //TODO: Make sure timer to roll gameweek over called:
-      //await setCheckCurrentGameweekTimer();
-      return;
-    };
-
     public shared ({ caller }) func submitFixtureData(dto : GovernanceDTOs.SubmitFixtureDataDTO) : async (){
       assert Principal.toText(caller) == Environment.SNS_GOVERNANCE_CANISTER_ID;
      
@@ -1897,10 +1888,6 @@
                   };
                   finaliseFixture(dto.leagueId, dto.seasonId, dto.fixtureId, highestScoringPlayerId);
                   let _ = await notifyAppsOfFixtureFinalised(dto.leagueId, dto.seasonId, dto.gameweek);
-                  let _ =  await updateDataHash(dto.leagueId, "players");
-                  let _ =  await updateDataHash(dto.leagueId, "fixtures");
-                  let _ =  await updateDataHash(dto.leagueId, "player_events");
-                  let _ = await updateBettingOdds(dto.leagueId);
                   
                 };
               };
@@ -1944,24 +1931,6 @@
         };
         case (null){}
       };
-    };
-
-    public shared ({ caller }) func promoteClub(dto : GovernanceDTOs.PromoteClubDTO) : async () {
-      assert Principal.toText(caller) == Environment.SNS_GOVERNANCE_CANISTER_ID;
-
-      //TODO: Actually move club from one league to another
-    };
-
-    public shared ({ caller }) func relegateClub(dto : GovernanceDTOs.RelegateClubDTO) : async () {
-      assert Principal.toText(caller) == Environment.SNS_GOVERNANCE_CANISTER_ID;
-
-      //TODO: Actually move club from one league to another
-    };
-
-    public shared ({ caller }) func updateClub(updateClubDTO : GovernanceDTOs.UpdateClubDTO) : async () {
-      assert Principal.toText(caller) == Environment.SNS_GOVERNANCE_CANISTER_ID;
-
-      //TODO: Actually update the club
     };
 
     /* Private Functions */
@@ -3560,28 +3529,87 @@
     };
 
     private func loanExpiredCallback() : async (){
-      
-      //when the load timer ends
-        //find any player who has a current loan end date greater than now and a parent club id > 0
 
-      //TODO (KELLY)
-      /*
-      assert callerAllowed(caller);
-      let playersToRecall = List.filter<T.Player>(
-        players,
-        func(currentPlayer : FootballTypes.Player) : Bool {
-          return currentPlayer.status == #OnLoan and currentPlayer.currentLoanEndDate <= Time.now();
-        },
-      );
+      for(leaguePlayersEntry in Iter.fromArray(leaguePlayers)){
+        let playersToRecall = Array.filter<FootballTypes.Player>(
+          leaguePlayersEntry.1,
+          func(currentPlayer : FootballTypes.Player) : Bool {
+            return currentPlayer.status == #OnLoan and currentPlayer.currentLoanEndDate <= Time.now();
+          },
+        );
+        
+        for(player in Iter.fromArray(playersToRecall)){
+          leaguePlayers := Array.map<(FootballTypes.LeagueId, [FootballTypes.Player]), (FootballTypes.LeagueId, [FootballTypes.Player])>(leaguePlayers, func(entry: (FootballTypes.LeagueId, [FootballTypes.Player])){
+            if(entry.0 == leaguePlayersEntry.0 and leaguePlayersEntry.0 == player.parentLeagueId){
+              return (entry.0, Array.map<FootballTypes.Player, FootballTypes.Player>(entry.1, func(playerEntry: FootballTypes.Player){
+                if(playerEntry.id == player.id){
+                  return {
+                    clubId = playerEntry.parentClubId;
+                    currentLoanEndDate = 0;
+                    dateOfBirth = playerEntry.dateOfBirth;
+                    firstName = playerEntry.firstName;
+                    gender = playerEntry.gender;
+                    id = playerEntry.id;
+                    injuryHistory = playerEntry.injuryHistory;
+                    lastName = playerEntry.lastName;
+                    latestInjuryEndDate = playerEntry.latestInjuryEndDate;
+                    leagueId = playerEntry.leagueId;
+                    nationality = playerEntry.nationality;
+                    parentClubId = 0;
+                    parentLeagueId = 0;
+                    position = playerEntry.position;
+                    retirementDate = playerEntry.retirementDate;
+                    seasons = playerEntry.seasons;
+                    shirtNumber = playerEntry.shirtNumber;
+                    status = playerEntry.status;
+                    transferHistory = playerEntry.transferHistory;
+                    valueHistory = playerEntry.valueHistory;
+                    valueQuarterMillions = playerEntry.valueQuarterMillions;
+                  };
+                } else {
+                  return playerEntry;
+                }
+              }));
+            }
+            else if(entry.0 == leaguePlayersEntry.0){
+              return (entry.0, Array.filter<FootballTypes.Player>(entry.1, func(playerEntry: FootballTypes.Player){
+                playerEntry.id != player.id
+              }));
+            } else if (entry.0 == player.parentLeagueId) {
+              let playerBuffer = Buffer.fromArray<FootballTypes.Player>(entry.1);
+              playerBuffer.add({
+                  clubId = player.parentClubId;
+                  currentLoanEndDate = 0;
+                  dateOfBirth = player.dateOfBirth;
+                  firstName = player.firstName;
+                  gender = player.gender;
+                  id = player.id;
+                  injuryHistory = player.injuryHistory;
+                  lastName = player.lastName;
+                  latestInjuryEndDate = player.latestInjuryEndDate;
+                  leagueId = player.parentLeagueId;
+                  nationality = player.nationality;
+                  parentClubId = 0;
+                  parentLeagueId = 0;
+                  position = player.position;
+                  retirementDate = player.retirementDate;
+                  seasons = player.seasons;
+                  shirtNumber = player.shirtNumber;
+                  status = #Active;
+                  transferHistory = player.transferHistory;
+                  valueHistory = player.valueHistory;
+                  valueQuarterMillions = player.valueQuarterMillions;
+                });
+              return (entry.0, Buffer.toArray(playerBuffer));
+            } else {
+              return entry;
+            };
+          });
 
-      for (player in Iter.fromList(playersToRecall)) {
-        let recallPlayerDTO : DTOs.RecallPlayerDTO = {
-          playerId = player.id;
+          let _ = await notifyAppsOfTransfer(leaguePlayersEntry.0, player.id);
+          let _ = await notifyAppsOfTransfer(player.parentLeagueId, player.id);
         };
-
-        let _ = await executeRecallPlayer(recallPlayerDTO);
       };
-      */
     };
 
     private func injuryExpiredCallback() : async (){
@@ -3674,7 +3702,7 @@
       };
     };
 
-    //TODO
+    //TODO - Need to implement when last fixture finishes
     private func setFinishSeasonTimer() : async (){
 
       for(league in Iter.fromArray(leagueSeasons)){
@@ -3826,12 +3854,5 @@
           return entry;
         }
       });
-    };
-
-    private func updateBettingOdds(leagueId: FootballTypes.LeagueId) : async Result.Result<(), T.Error> {
-      let application_canister = actor (Environment.FOOTBALL_GOD_BACKEND_CANISTER_ID) : actor {
-        updateBettingOdds : (leagueId: FootballTypes.LeagueId) -> async Result.Result<(), T.Error>;
-      };
-      let _ = await application_canister.updateBettingOdds(leagueId);
     };
   };
