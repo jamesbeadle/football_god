@@ -2,7 +2,7 @@
   import { onMount } from "svelte";
   import LocalSpinner from "$lib/components/shared/local-spinner.svelte";
   import Modal from "$lib/components/shared/modal.svelte";
-  import type { ClubDTO, PlayerDTO, RevaluePlayerDownDTO } from "../../../../../../declarations/data_canister/data_canister.did";
+  import type { ClubDTO, PlayerDTO, RevaluePlayerUpDTO } from "../../../../../../declarations/data_canister/data_canister.did";
     import { governanceStore } from "$lib/stores/governance-store";
     import { isError } from "$lib/utils/helpers";
 
@@ -24,7 +24,7 @@
     try {
       isLoading = false;
     } catch (error) {
-      console.error("Error mounting revalue down modal.", error);
+      console.error("Error mounting revalue up modal.", error);
     } finally {
       isLoading = false;
     }
@@ -36,11 +36,11 @@
 
   async function confirmProposal() {
     isLoading = true;
-    var dto: RevaluePlayerDownDTO = {
+    var dto: RevaluePlayerUpDTO = {
         leagueId: player.leagueId,
         playerId: player.id,
       };
-    let result = await governanceStore.revaluePlayerDown(dto);
+    let result = await governanceStore.revaluePlayerUp(dto);
     if (isError(result)) {
       isLoading = false;
       console.error("Error submitting proposal");
@@ -67,7 +67,7 @@
       <LocalSpinner />
     {:else}
       <div class="flex justify-between items-center my-2">
-        <h3 class="default-header">Revalue Player Down</h3>
+        <h3 class="default-header">Revalue Player Up</h3>
         <button class="times-button" on:click={cancelModal}>&times;</button>
       </div>
 

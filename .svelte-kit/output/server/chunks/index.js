@@ -10,6 +10,7 @@ import "@dfinity/ledger-icrc";
 import { Principal } from "@dfinity/principal";
 import "@dfinity/candid/lib/cjs/idl.js";
 import { SnsGovernanceCanister } from "@dfinity/sns";
+import { IDL } from "@dfinity/candid";
 let base = "";
 let assets = base;
 const initial$1 = { base, assets };
@@ -4560,6 +4561,12 @@ function await_block(promise, pending_fn, then_fn) {
     then_fn(promise);
   }
 }
+function ensure_array_like(array_like_or_iterator) {
+  if (array_like_or_iterator) {
+    return array_like_or_iterator.length !== void 0 ? array_like_or_iterator : Array.from(array_like_or_iterator);
+  }
+  return [];
+}
 function asClassComponent(component) {
   const component_constructor = asClassComponent$1(component);
   const _render = (props, { context } = {}) => {
@@ -4720,7 +4727,7 @@ const options = {
 		<div class="error">
 			<span class="status">` + status + '</span>\n			<div class="message">\n				<h1>' + message + "</h1>\n			</div>\n		</div>\n	</body>\n</html>\n"
   },
-  version_hash: "1vb6cad"
+  version_hash: "d5yv6n"
 };
 async function get_hooks() {
   return {};
@@ -4932,85 +4939,85 @@ const initAuthStore = () => {
 };
 const authStore = initAuthStore();
 const authRemainingTimeStore = writable(void 0);
-const idlFactory$1 = ({ IDL }) => {
-  const Error2 = IDL.Variant({
-    DecodeError: IDL.Null,
-    NotAllowed: IDL.Null,
-    NotFound: IDL.Null,
-    NotAuthorized: IDL.Null,
-    InvalidData: IDL.Null,
-    AlreadyExists: IDL.Null,
-    CanisterCreateError: IDL.Null,
-    CanisterFull: IDL.Null
+const idlFactory$1 = ({ IDL: IDL2 }) => {
+  const Error2 = IDL2.Variant({
+    DecodeError: IDL2.Null,
+    NotAllowed: IDL2.Null,
+    NotFound: IDL2.Null,
+    NotAuthorized: IDL2.Null,
+    InvalidData: IDL2.Null,
+    AlreadyExists: IDL2.Null,
+    CanisterCreateError: IDL2.Null,
+    CanisterFull: IDL2.Null
   });
-  const Result = IDL.Variant({ ok: IDL.Null, err: Error2 });
-  const GameweekNumber = IDL.Nat8;
-  const PrincipalId = IDL.Text;
-  const GetBetsDTO = IDL.Record({ principalId: PrincipalId });
-  const SelectionStatus = IDL.Variant({
-    Void: IDL.Null,
-    Unsettled: IDL.Null,
-    Settled: IDL.Null
+  const Result = IDL2.Variant({ ok: IDL2.Null, err: Error2 });
+  const GameweekNumber = IDL2.Nat8;
+  const PrincipalId = IDL2.Text;
+  const GetBetsDTO = IDL2.Record({ principalId: PrincipalId });
+  const SelectionStatus = IDL2.Variant({
+    Void: IDL2.Null,
+    Unsettled: IDL2.Null,
+    Settled: IDL2.Null
   });
-  const BetResult = IDL.Variant({
-    Won: IDL.Null,
-    Lost: IDL.Null,
-    Open: IDL.Null
+  const BetResult = IDL2.Variant({
+    Won: IDL2.Null,
+    Lost: IDL2.Null,
+    Open: IDL2.Null
   });
-  const BetType = IDL.Variant({
-    SevenFold: IDL.Null,
-    Patent: IDL.Null,
-    FiveFold: IDL.Null,
-    FourFold: IDL.Null,
-    Goliath: IDL.Null,
-    Double: IDL.Null,
-    Lucky15: IDL.Null,
-    Lucky31: IDL.Null,
-    Lucky63: IDL.Null,
-    SuperHeinz: IDL.Null,
-    Treble: IDL.Null,
-    Trixie: IDL.Null,
-    TenFold: IDL.Null,
-    EightFold: IDL.Null,
-    Heinz: IDL.Null,
-    Yankee: IDL.Null,
-    SixFold: IDL.Null,
-    NineFold: IDL.Null,
-    Canadian: IDL.Null,
-    Single: IDL.Null
+  const BetType = IDL2.Variant({
+    SevenFold: IDL2.Null,
+    Patent: IDL2.Null,
+    FiveFold: IDL2.Null,
+    FourFold: IDL2.Null,
+    Goliath: IDL2.Null,
+    Double: IDL2.Null,
+    Lucky15: IDL2.Null,
+    Lucky31: IDL2.Null,
+    Lucky63: IDL2.Null,
+    SuperHeinz: IDL2.Null,
+    Treble: IDL2.Null,
+    Trixie: IDL2.Null,
+    TenFold: IDL2.Null,
+    EightFold: IDL2.Null,
+    Heinz: IDL2.Null,
+    Yankee: IDL2.Null,
+    SixFold: IDL2.Null,
+    NineFold: IDL2.Null,
+    Canadian: IDL2.Null,
+    Single: IDL2.Null
   });
-  const FixtureId = IDL.Nat32;
-  const ClubId = IDL.Nat16;
-  const PlayerId = IDL.Nat16;
-  const PlayerEventDetail = IDL.Record({
+  const FixtureId = IDL2.Nat32;
+  const ClubId = IDL2.Nat16;
+  const PlayerId = IDL2.Nat16;
+  const PlayerEventDetail = IDL2.Record({
     clubId: ClubId,
     playerId: PlayerId
   });
-  const ClubEventDetail = IDL.Record({ clubId: ClubId });
-  const MatchResult = IDL.Variant({
-    HomeWin: IDL.Null,
-    Draw: IDL.Null,
-    AwayWin: IDL.Null
+  const ClubEventDetail = IDL2.Record({ clubId: ClubId });
+  const MatchResult = IDL2.Variant({
+    HomeWin: IDL2.Null,
+    Draw: IDL2.Null,
+    AwayWin: IDL2.Null
   });
-  const CorrectResultDetail = IDL.Record({ matchResult: MatchResult });
-  const ScoreDetail = IDL.Record({
-    homeGoals: IDL.Nat8,
-    awayGoals: IDL.Nat8
+  const CorrectResultDetail = IDL2.Record({ matchResult: MatchResult });
+  const ScoreDetail = IDL2.Record({
+    homeGoals: IDL2.Nat8,
+    awayGoals: IDL2.Nat8
   });
-  const BothTeamsToScoreDetail = IDL.Record({ bothTeamsToScore: IDL.Bool });
-  const HalfTimeFullTimeResultDetail = IDL.Record({
+  const BothTeamsToScoreDetail = IDL2.Record({ bothTeamsToScore: IDL2.Bool });
+  const HalfTimeFullTimeResultDetail = IDL2.Record({
     fullTimeResult: MatchResult,
     halfTimeResult: MatchResult
   });
-  const PlayerGroupEventDetail = IDL.Record({
+  const PlayerGroupEventDetail = IDL2.Record({
     clubId: ClubId,
     playerId: PlayerId
   });
-  const BothTeamsToScoreAndWinnerDetail = IDL.Record({
-    bothTeamsToScore: IDL.Bool,
+  const BothTeamsToScoreAndWinnerDetail = IDL2.Record({
+    bothTeamsToScore: IDL2.Bool,
     matchResult: MatchResult
   });
-  const SelectionDetail = IDL.Variant({
+  const SelectionDetail = IDL2.Variant({
     MissPenalty: PlayerEventDetail,
     LastAssist: PlayerEventDetail,
     PenaltyMissed: ClubEventDetail,
@@ -5030,329 +5037,329 @@ const idlFactory$1 = ({ IDL }) => {
     FirstGoalscorer: PlayerEventDetail,
     ScoreBrace: PlayerGroupEventDetail
   });
-  const LeagueId = IDL.Nat16;
-  const Category = IDL.Variant({
-    MissPenalty: IDL.Null,
-    LastAssist: IDL.Null,
-    PenaltyMissed: IDL.Null,
-    FirstAssist: IDL.Null,
-    AnytimeGoalscorer: IDL.Null,
-    CorrectResult: IDL.Null,
-    HalfTimeScore: IDL.Null,
-    BothTeamsToScore: IDL.Null,
-    HalfTimeFullTimeResult: IDL.Null,
-    LastGoalscorer: IDL.Null,
-    RedCard: IDL.Null,
-    ScoreHatrick: IDL.Null,
-    CorrectScore: IDL.Null,
-    AnytimeAssist: IDL.Null,
-    YellowCard: IDL.Null,
-    BothTeamsToScoreAndWinner: IDL.Null,
-    FirstGoalscorer: IDL.Null,
-    ScoreBrace: IDL.Null
+  const LeagueId = IDL2.Nat16;
+  const Category = IDL2.Variant({
+    MissPenalty: IDL2.Null,
+    LastAssist: IDL2.Null,
+    PenaltyMissed: IDL2.Null,
+    FirstAssist: IDL2.Null,
+    AnytimeGoalscorer: IDL2.Null,
+    CorrectResult: IDL2.Null,
+    HalfTimeScore: IDL2.Null,
+    BothTeamsToScore: IDL2.Null,
+    HalfTimeFullTimeResult: IDL2.Null,
+    LastGoalscorer: IDL2.Null,
+    RedCard: IDL2.Null,
+    ScoreHatrick: IDL2.Null,
+    CorrectScore: IDL2.Null,
+    AnytimeAssist: IDL2.Null,
+    YellowCard: IDL2.Null,
+    BothTeamsToScoreAndWinner: IDL2.Null,
+    FirstGoalscorer: IDL2.Null,
+    ScoreBrace: IDL2.Null
   });
-  const Selection = IDL.Record({
+  const Selection = IDL2.Record({
     status: SelectionStatus,
     result: BetResult,
     fixtureId: FixtureId,
-    winnings: IDL.Float64,
-    odds: IDL.Float64,
-    stake: IDL.Nat64,
-    expectedReturns: IDL.Nat64,
+    winnings: IDL2.Float64,
+    odds: IDL2.Float64,
+    stake: IDL2.Nat64,
+    expectedReturns: IDL2.Nat64,
     selectionDetail: SelectionDetail,
     leagueId: LeagueId,
     selectionType: Category
   });
-  const BetSlip = IDL.Record({
-    id: IDL.Nat,
+  const BetSlip = IDL2.Record({
+    id: IDL2.Nat,
     status: SelectionStatus,
     result: BetResult,
     betType: BetType,
-    totalWinnings: IDL.Nat64,
-    totalStake: IDL.Nat64,
+    totalWinnings: IDL2.Nat64,
+    totalStake: IDL2.Nat64,
     placedBy: PrincipalId,
-    placedOn: IDL.Int,
-    selections: IDL.Vec(Selection),
-    expectedReturns: IDL.Nat64,
-    settledOn: IDL.Int
+    placedOn: IDL2.Int,
+    selections: IDL2.Vec(Selection),
+    expectedReturns: IDL2.Nat64,
+    settledOn: IDL2.Int
   });
-  const Result_10 = IDL.Variant({ ok: IDL.Vec(BetSlip), err: Error2 });
-  const HomePageFixtureDTO = IDL.Record({
+  const Result_10 = IDL2.Variant({ ok: IDL2.Vec(BetSlip), err: Error2 });
+  const HomePageFixtureDTO = IDL2.Record({
     fixtureId: FixtureId,
-    homeOdds: IDL.Float64,
-    drawOdds: IDL.Float64,
-    awayOdds: IDL.Float64,
+    homeOdds: IDL2.Float64,
+    drawOdds: IDL2.Float64,
+    awayOdds: IDL2.Float64,
     gameweek: GameweekNumber,
     leagueId: LeagueId
   });
-  const Result_9 = IDL.Variant({
-    ok: IDL.Vec(HomePageFixtureDTO),
+  const Result_9 = IDL2.Variant({
+    ok: IDL2.Vec(HomePageFixtureDTO),
     err: Error2
   });
-  const DataHashDTO = IDL.Record({ hash: IDL.Text, category: IDL.Text });
-  const Result_8 = IDL.Variant({ ok: IDL.Vec(DataHashDTO), err: Error2 });
-  const PlayerSelectionOdds = IDL.Record({
+  const DataHashDTO = IDL2.Record({ hash: IDL2.Text, category: IDL2.Text });
+  const Result_8 = IDL2.Variant({ ok: IDL2.Vec(DataHashDTO), err: Error2 });
+  const PlayerSelectionOdds = IDL2.Record({
     playerId: PlayerId,
-    odds: IDL.Float64
+    odds: IDL2.Float64
   });
-  const ScoreSelectionOdds = IDL.Record({
-    odds: IDL.Float64,
-    homeGoals: IDL.Nat8,
-    awayGoals: IDL.Nat8
+  const ScoreSelectionOdds = IDL2.Record({
+    odds: IDL2.Float64,
+    homeGoals: IDL2.Nat8,
+    awayGoals: IDL2.Nat8
   });
-  const YesNoSelectionOdds = IDL.Record({
-    noOdds: IDL.Float64,
-    yesOdds: IDL.Float64
+  const YesNoSelectionOdds = IDL2.Record({
+    noOdds: IDL2.Float64,
+    yesOdds: IDL2.Float64
   });
-  const TeamSelectionOdds = IDL.Record({
-    homeOdds: IDL.Float64,
-    drawOdds: IDL.Float64,
-    awayOdds: IDL.Float64
+  const TeamSelectionOdds = IDL2.Record({
+    homeOdds: IDL2.Float64,
+    drawOdds: IDL2.Float64,
+    awayOdds: IDL2.Float64
   });
-  const MissPenaltyOdds = IDL.Record({
-    homeTeam: IDL.Float64,
-    awayTeam: IDL.Float64
+  const MissPenaltyOdds = IDL2.Record({
+    homeTeam: IDL2.Float64,
+    awayTeam: IDL2.Float64
   });
-  const OverUnderSelection = IDL.Record({
-    odds: IDL.Float64,
-    margin: IDL.Float64
+  const OverUnderSelection = IDL2.Record({
+    odds: IDL2.Float64,
+    margin: IDL2.Float64
   });
-  const OverUnderSelectionOdds = IDL.Record({
-    overOdds: IDL.Vec(OverUnderSelection),
-    underOdds: IDL.Vec(OverUnderSelection)
+  const OverUnderSelectionOdds = IDL2.Record({
+    overOdds: IDL2.Vec(OverUnderSelection),
+    underOdds: IDL2.Vec(OverUnderSelection)
   });
-  const HalfTimeFullTimeOdds = IDL.Record({
+  const HalfTimeFullTimeOdds = IDL2.Record({
     firstHalfResult: MatchResult,
-    odds: IDL.Float64,
+    odds: IDL2.Float64,
     secondHalfResult: MatchResult
   });
-  const ResultAndYesNoSelectionOdds = IDL.Record({
+  const ResultAndYesNoSelectionOdds = IDL2.Record({
     result: MatchResult,
-    odds: IDL.Float64,
-    isYes: IDL.Bool
+    odds: IDL2.Float64,
+    isYes: IDL2.Bool
   });
-  const MatchOddsDTO = IDL.Record({
+  const MatchOddsDTO = IDL2.Record({
     fixtureId: FixtureId,
-    lastAssist: IDL.Vec(PlayerSelectionOdds),
-    correctScores: IDL.Vec(ScoreSelectionOdds),
+    lastAssist: IDL2.Vec(PlayerSelectionOdds),
+    correctScores: IDL2.Vec(ScoreSelectionOdds),
     bothTeamsToScore: YesNoSelectionOdds,
-    yellowCards: IDL.Vec(PlayerSelectionOdds),
-    lastGoalscorers: IDL.Vec(PlayerSelectionOdds),
-    halfTimeScores: IDL.Vec(ScoreSelectionOdds),
-    anytimeAssist: IDL.Vec(PlayerSelectionOdds),
-    penaltyMissers: IDL.Vec(PlayerSelectionOdds),
-    redCards: IDL.Vec(PlayerSelectionOdds),
-    anytimeScorers: IDL.Vec(PlayerSelectionOdds),
+    yellowCards: IDL2.Vec(PlayerSelectionOdds),
+    lastGoalscorers: IDL2.Vec(PlayerSelectionOdds),
+    halfTimeScores: IDL2.Vec(ScoreSelectionOdds),
+    anytimeAssist: IDL2.Vec(PlayerSelectionOdds),
+    penaltyMissers: IDL2.Vec(PlayerSelectionOdds),
+    redCards: IDL2.Vec(PlayerSelectionOdds),
+    anytimeScorers: IDL2.Vec(PlayerSelectionOdds),
     correctResults: TeamSelectionOdds,
     penaltyMissed: MissPenaltyOdds,
-    scoresHatTrick: IDL.Vec(PlayerSelectionOdds),
-    scoresBrace: IDL.Vec(PlayerSelectionOdds),
+    scoresHatTrick: IDL2.Vec(PlayerSelectionOdds),
+    scoresBrace: IDL2.Vec(PlayerSelectionOdds),
     goalsOverUnder: OverUnderSelectionOdds,
-    firstAssisters: IDL.Vec(PlayerSelectionOdds),
+    firstAssisters: IDL2.Vec(PlayerSelectionOdds),
     leagueId: LeagueId,
-    firstGoalscorers: IDL.Vec(PlayerSelectionOdds),
-    halfTimeFullTimeResult: IDL.Vec(HalfTimeFullTimeOdds),
-    bothTeamsToScoreAndWinner: IDL.Vec(ResultAndYesNoSelectionOdds)
+    firstGoalscorers: IDL2.Vec(PlayerSelectionOdds),
+    halfTimeFullTimeResult: IDL2.Vec(HalfTimeFullTimeOdds),
+    bothTeamsToScoreAndWinner: IDL2.Vec(ResultAndYesNoSelectionOdds)
   });
-  const Result_7 = IDL.Variant({ ok: MatchOddsDTO, err: Error2 });
-  const SeasonId = IDL.Nat16;
-  const GameweekFiltersDTO = IDL.Record({
+  const Result_7 = IDL2.Variant({ ok: MatchOddsDTO, err: Error2 });
+  const SeasonId = IDL2.Nat16;
+  const GameweekFiltersDTO = IDL2.Record({
     seasonId: SeasonId,
     gameweek: GameweekNumber
   });
-  const PlayerStatus = IDL.Variant({
-    OnLoan: IDL.Null,
-    Active: IDL.Null,
-    FreeAgent: IDL.Null,
-    Retired: IDL.Null
+  const PlayerStatus = IDL2.Variant({
+    OnLoan: IDL2.Null,
+    Active: IDL2.Null,
+    FreeAgent: IDL2.Null,
+    Retired: IDL2.Null
   });
-  const InjuryHistory = IDL.Record({
-    description: IDL.Text,
-    injuryStartDate: IDL.Int,
-    expectedEndDate: IDL.Int
+  const InjuryHistory = IDL2.Record({
+    description: IDL2.Text,
+    injuryStartDate: IDL2.Int,
+    expectedEndDate: IDL2.Int
   });
-  const PlayerEventType = IDL.Variant({
-    PenaltyMissed: IDL.Null,
-    Goal: IDL.Null,
-    GoalConceded: IDL.Null,
-    Appearance: IDL.Null,
-    PenaltySaved: IDL.Null,
-    RedCard: IDL.Null,
-    KeeperSave: IDL.Null,
-    CleanSheet: IDL.Null,
-    YellowCard: IDL.Null,
-    GoalAssisted: IDL.Null,
-    OwnGoal: IDL.Null,
-    HighestScoringPlayer: IDL.Null
+  const PlayerEventType = IDL2.Variant({
+    PenaltyMissed: IDL2.Null,
+    Goal: IDL2.Null,
+    GoalConceded: IDL2.Null,
+    Appearance: IDL2.Null,
+    PenaltySaved: IDL2.Null,
+    RedCard: IDL2.Null,
+    KeeperSave: IDL2.Null,
+    CleanSheet: IDL2.Null,
+    YellowCard: IDL2.Null,
+    GoalAssisted: IDL2.Null,
+    OwnGoal: IDL2.Null,
+    HighestScoringPlayer: IDL2.Null
   });
-  const PlayerEventData = IDL.Record({
+  const PlayerEventData = IDL2.Record({
     fixtureId: FixtureId,
     clubId: ClubId,
-    playerId: IDL.Nat16,
-    eventStartMinute: IDL.Nat8,
-    eventEndMinute: IDL.Nat8,
+    playerId: IDL2.Nat16,
+    eventStartMinute: IDL2.Nat8,
+    eventEndMinute: IDL2.Nat8,
     eventType: PlayerEventType
   });
-  const PlayerGameweekDTO = IDL.Record({
+  const PlayerGameweekDTO = IDL2.Record({
     fixtureId: FixtureId,
-    events: IDL.Vec(PlayerEventData),
-    number: IDL.Nat8,
-    points: IDL.Int16
+    events: IDL2.Vec(PlayerEventData),
+    number: IDL2.Nat8,
+    points: IDL2.Int16
   });
-  const CountryId = IDL.Nat16;
-  const ValueHistory = IDL.Record({
-    oldValue: IDL.Nat16,
-    changedOn: IDL.Int,
-    newValue: IDL.Nat16
+  const CountryId = IDL2.Nat16;
+  const ValueHistory = IDL2.Record({
+    oldValue: IDL2.Nat16,
+    changedOn: IDL2.Int,
+    newValue: IDL2.Nat16
   });
-  const PlayerPosition = IDL.Variant({
-    Goalkeeper: IDL.Null,
-    Midfielder: IDL.Null,
-    Forward: IDL.Null,
-    Defender: IDL.Null
+  const PlayerPosition = IDL2.Variant({
+    Goalkeeper: IDL2.Null,
+    Midfielder: IDL2.Null,
+    Forward: IDL2.Null,
+    Defender: IDL2.Null
   });
-  const PlayerDetailDTO = IDL.Record({
+  const PlayerDetailDTO = IDL2.Record({
     id: PlayerId,
     status: PlayerStatus,
     clubId: ClubId,
     parentClubId: ClubId,
-    valueQuarterMillions: IDL.Nat16,
-    dateOfBirth: IDL.Int,
-    injuryHistory: IDL.Vec(InjuryHistory),
+    valueQuarterMillions: IDL2.Nat16,
+    dateOfBirth: IDL2.Int,
+    injuryHistory: IDL2.Vec(InjuryHistory),
     seasonId: SeasonId,
-    gameweeks: IDL.Vec(PlayerGameweekDTO),
+    gameweeks: IDL2.Vec(PlayerGameweekDTO),
     nationality: CountryId,
-    retirementDate: IDL.Int,
-    valueHistory: IDL.Vec(ValueHistory),
-    latestInjuryEndDate: IDL.Int,
-    shirtNumber: IDL.Nat8,
+    retirementDate: IDL2.Int,
+    valueHistory: IDL2.Vec(ValueHistory),
+    latestInjuryEndDate: IDL2.Int,
+    shirtNumber: IDL2.Nat8,
     position: PlayerPosition,
-    lastName: IDL.Text,
-    firstName: IDL.Text
+    lastName: IDL2.Text,
+    firstName: IDL2.Text
   });
-  const Result_6 = IDL.Variant({ ok: PlayerDetailDTO, err: Error2 });
-  const ProfileDTO = IDL.Record({
-    username: IDL.Text,
-    maxBetLimit: IDL.Nat64,
-    monthlyBetLimit: IDL.Nat64,
-    withdrawalAddress: IDL.Text,
-    profilePictureExtension: IDL.Text,
-    accountBalance: IDL.Nat64,
-    kycApprovalDate: IDL.Int,
-    joinedDate: IDL.Int,
-    accountOnPause: IDL.Bool,
-    termsAcceptedDate: IDL.Int,
-    kycComplete: IDL.Bool,
-    kycRef: IDL.Text,
-    profilePicture: IDL.Opt(IDL.Vec(IDL.Nat8)),
-    kycSubmissionDate: IDL.Int,
+  const Result_6 = IDL2.Variant({ ok: PlayerDetailDTO, err: Error2 });
+  const ProfileDTO = IDL2.Record({
+    username: IDL2.Text,
+    maxBetLimit: IDL2.Nat64,
+    monthlyBetLimit: IDL2.Nat64,
+    withdrawalAddress: IDL2.Text,
+    profilePictureExtension: IDL2.Text,
+    accountBalance: IDL2.Nat64,
+    kycApprovalDate: IDL2.Int,
+    joinedDate: IDL2.Int,
+    accountOnPause: IDL2.Bool,
+    termsAcceptedDate: IDL2.Int,
+    kycComplete: IDL2.Bool,
+    kycRef: IDL2.Text,
+    profilePicture: IDL2.Opt(IDL2.Vec(IDL2.Nat8)),
+    kycSubmissionDate: IDL2.Int,
     principalId: PrincipalId,
-    monthlyBetTotal: IDL.Nat64
+    monthlyBetTotal: IDL2.Nat64
   });
-  const Result_5 = IDL.Variant({ ok: ProfileDTO, err: Error2 });
-  const SystemStateDTO = IDL.Record({
-    version: IDL.Text,
-    onHold: IDL.Bool
+  const Result_5 = IDL2.Variant({ ok: ProfileDTO, err: Error2 });
+  const SystemStateDTO = IDL2.Record({
+    version: IDL2.Text,
+    onHold: IDL2.Bool
   });
-  const Result_4 = IDL.Variant({ ok: SystemStateDTO, err: Error2 });
-  const UserDTO = IDL.Record({
-    kycApprovalDate: IDL.Int,
-    joinedDate: IDL.Int,
-    termsAcceptedDate: IDL.Int,
-    kycComplete: IDL.Bool,
-    kycRef: IDL.Text,
-    kycSubmissionDate: IDL.Int,
+  const Result_4 = IDL2.Variant({ ok: SystemStateDTO, err: Error2 });
+  const UserDTO = IDL2.Record({
+    kycApprovalDate: IDL2.Int,
+    joinedDate: IDL2.Int,
+    termsAcceptedDate: IDL2.Int,
+    kycComplete: IDL2.Bool,
+    kycRef: IDL2.Text,
+    kycSubmissionDate: IDL2.Int,
     principalId: PrincipalId
   });
-  const UserAuditDTO = IDL.Record({
-    date: IDL.Int,
-    offset: IDL.Nat,
-    users: IDL.Vec(UserDTO)
+  const UserAuditDTO = IDL2.Record({
+    date: IDL2.Int,
+    offset: IDL2.Nat,
+    users: IDL2.Vec(UserDTO)
   });
-  const Result_3 = IDL.Variant({ ok: UserAuditDTO, err: Error2 });
-  const Result_2 = IDL.Variant({ ok: IDL.Bool, err: Error2 });
-  const ShuftiAcceptedResponse = IDL.Record({
-    reference: IDL.Text,
-    event: IDL.Text
+  const Result_3 = IDL2.Variant({ ok: UserAuditDTO, err: Error2 });
+  const Result_2 = IDL2.Variant({ ok: IDL2.Bool, err: Error2 });
+  const ShuftiAcceptedResponse = IDL2.Record({
+    reference: IDL2.Text,
+    event: IDL2.Text
   });
-  const ShuftiRejectedResponse = IDL.Record({
-    reference: IDL.Text,
-    event: IDL.Text
+  const ShuftiRejectedResponse = IDL2.Record({
+    reference: IDL2.Text,
+    event: IDL2.Text
   });
-  const ShuftiResponse = IDL.Variant({
+  const ShuftiResponse = IDL2.Variant({
     ShuftiAcceptedResponse,
     ShuftiRejectedResponse
   });
-  const PauseAccountDTO = IDL.Record({
-    pauseDays: IDL.Nat,
+  const PauseAccountDTO = IDL2.Record({
+    pauseDays: IDL2.Nat,
     principalId: PrincipalId
   });
-  const SubmitBetslipDTO = IDL.Record({
-    expectedReturn: IDL.Nat64,
+  const SubmitBetslipDTO = IDL2.Record({
+    expectedReturn: IDL2.Nat64,
     seasonId: SeasonId,
-    totalStake: IDL.Nat64,
+    totalStake: IDL2.Nat64,
     principalId: PrincipalId,
     leagueId: LeagueId
   });
-  const Result_1 = IDL.Variant({ ok: BetSlip, err: Error2 });
-  const SetMaxBetLimit = IDL.Record({
-    maxBetLimit: IDL.Nat64,
+  const Result_1 = IDL2.Variant({ ok: BetSlip, err: Error2 });
+  const SetMaxBetLimit = IDL2.Record({
+    maxBetLimit: IDL2.Nat64,
     principalId: PrincipalId
   });
-  const SetMonthlyBetLimitDTO = IDL.Record({
-    monthlyBetLimit: IDL.Nat64,
+  const SetMonthlyBetLimitDTO = IDL2.Record({
+    monthlyBetLimit: IDL2.Nat64,
     principalId: PrincipalId
   });
-  const UpdateProfilePictureDTO = IDL.Record({
-    profilePictureExtension: IDL.Text,
-    profilePicture: IDL.Vec(IDL.Nat8),
+  const UpdateProfilePictureDTO = IDL2.Record({
+    profilePictureExtension: IDL2.Text,
+    profilePicture: IDL2.Vec(IDL2.Nat8),
     principalId: PrincipalId
   });
-  const UpdateAppStatusDTO = IDL.Record({
-    version: IDL.Text,
-    onHold: IDL.Bool
+  const UpdateAppStatusDTO = IDL2.Record({
+    version: IDL2.Text,
+    onHold: IDL2.Bool
   });
-  const UpdateUsernameDTO = IDL.Record({
-    username: IDL.Text,
+  const UpdateUsernameDTO = IDL2.Record({
+    username: IDL2.Text,
     principalId: PrincipalId
   });
-  const UpdateWithdrawalAddressDTO = IDL.Record({
-    withdrawalAddress: IDL.Text,
+  const UpdateWithdrawalAddressDTO = IDL2.Record({
+    withdrawalAddress: IDL2.Text,
     principalId: PrincipalId
   });
-  return IDL.Service({
-    agreeTerms: IDL.Func([], [Result], []),
-    calculateGameweekScores: IDL.Func([IDL.Text], [Result], []),
-    calculateLeaderboards: IDL.Func([IDL.Text], [Result], []),
-    calculateWeeklyRewards: IDL.Func([IDL.Text, GameweekNumber], [Result], []),
-    getBets: IDL.Func([GetBetsDTO], [Result_10], []),
-    getBettableHomepageFixtures: IDL.Func([LeagueId], [Result_9], ["query"]),
-    getDataHashes: IDL.Func([], [Result_8], ["query"]),
-    getMatchOdds: IDL.Func([LeagueId, FixtureId], [Result_7], ["query"]),
-    getPlayerDetailsForGameweek: IDL.Func(
+  return IDL2.Service({
+    agreeTerms: IDL2.Func([], [Result], []),
+    calculateGameweekScores: IDL2.Func([IDL2.Text], [Result], []),
+    calculateLeaderboards: IDL2.Func([IDL2.Text], [Result], []),
+    calculateWeeklyRewards: IDL2.Func([IDL2.Text, GameweekNumber], [Result], []),
+    getBets: IDL2.Func([GetBetsDTO], [Result_10], []),
+    getBettableHomepageFixtures: IDL2.Func([LeagueId], [Result_9], ["query"]),
+    getDataHashes: IDL2.Func([], [Result_8], ["query"]),
+    getMatchOdds: IDL2.Func([LeagueId, FixtureId], [Result_7], ["query"]),
+    getPlayerDetailsForGameweek: IDL2.Func(
       [LeagueId, GameweekFiltersDTO],
       [Result_6],
       ["composite_query"]
     ),
-    getProfile: IDL.Func([], [Result_5], []),
-    getSystemState: IDL.Func([IDL.Text], [Result_4], ["composite_query"]),
-    getUserAudit: IDL.Func([IDL.Nat], [Result_3], []),
-    isAdmin: IDL.Func([], [Result_2], []),
-    isAuditor: IDL.Func([], [Result_2], []),
-    isDataManager: IDL.Func([], [Result_2], []),
-    kycVerificationCallback: IDL.Func([ShuftiResponse], [Result], []),
-    pauseAccount: IDL.Func([PauseAccountDTO], [Result], []),
-    payWeeklyRewards: IDL.Func([IDL.Text, GameweekNumber], [Result], []),
-    placeBet: IDL.Func([SubmitBetslipDTO], [Result_1], []),
-    setMaxBetLimit: IDL.Func([SetMaxBetLimit], [Result], []),
-    setMonthlyBetLimit: IDL.Func([SetMonthlyBetLimitDTO], [Result], []),
-    snapshotManagers: IDL.Func([IDL.Text], [Result], []),
-    storeKYCReference: IDL.Func([IDL.Text], [], []),
-    updateBettingOdds: IDL.Func([LeagueId], [Result], []),
-    updateProfilePicture: IDL.Func([UpdateProfilePictureDTO], [Result], []),
-    updateSystemState: IDL.Func([IDL.Text, UpdateAppStatusDTO], [Result], []),
-    updateUsername: IDL.Func([UpdateUsernameDTO], [Result], []),
-    updateWithdrawalAddress: IDL.Func(
+    getProfile: IDL2.Func([], [Result_5], []),
+    getSystemState: IDL2.Func([IDL2.Text], [Result_4], ["composite_query"]),
+    getUserAudit: IDL2.Func([IDL2.Nat], [Result_3], []),
+    isAdmin: IDL2.Func([], [Result_2], []),
+    isAuditor: IDL2.Func([], [Result_2], []),
+    isDataManager: IDL2.Func([], [Result_2], []),
+    kycVerificationCallback: IDL2.Func([ShuftiResponse], [Result], []),
+    pauseAccount: IDL2.Func([PauseAccountDTO], [Result], []),
+    payWeeklyRewards: IDL2.Func([IDL2.Text, GameweekNumber], [Result], []),
+    placeBet: IDL2.Func([SubmitBetslipDTO], [Result_1], []),
+    setMaxBetLimit: IDL2.Func([SetMaxBetLimit], [Result], []),
+    setMonthlyBetLimit: IDL2.Func([SetMonthlyBetLimitDTO], [Result], []),
+    snapshotManagers: IDL2.Func([IDL2.Text], [Result], []),
+    storeKYCReference: IDL2.Func([IDL2.Text], [], []),
+    updateBettingOdds: IDL2.Func([LeagueId], [Result], []),
+    updateProfilePicture: IDL2.Func([UpdateProfilePictureDTO], [Result], []),
+    updateSystemState: IDL2.Func([IDL2.Text, UpdateAppStatusDTO], [Result], []),
+    updateUsername: IDL2.Func([UpdateUsernameDTO], [Result], []),
+    updateWithdrawalAddress: IDL2.Func(
       [UpdateWithdrawalAddressDTO],
       [Result],
       []
@@ -5375,560 +5382,560 @@ const createActor$1 = (canisterId2, options2 = {}) => {
   });
 };
 canisterId$1 ? createActor$1(canisterId$1) : void 0;
-const idlFactory = ({ IDL }) => {
-  const List = IDL.Rec();
-  const List_1 = IDL.Rec();
-  const List_2 = IDL.Rec();
-  const List_3 = IDL.Rec();
-  const List_4 = IDL.Rec();
-  const List_5 = IDL.Rec();
-  const ShirtType = IDL.Variant({ Filled: IDL.Null, Striped: IDL.Null });
-  const LeagueId = IDL.Nat16;
-  const CreateClubDTO = IDL.Record({
-    secondaryColourHex: IDL.Text,
-    name: IDL.Text,
-    friendlyName: IDL.Text,
-    thirdColourHex: IDL.Text,
-    abbreviatedName: IDL.Text,
+const idlFactory = ({ IDL: IDL2 }) => {
+  const List = IDL2.Rec();
+  const List_1 = IDL2.Rec();
+  const List_2 = IDL2.Rec();
+  const List_3 = IDL2.Rec();
+  const List_4 = IDL2.Rec();
+  const List_5 = IDL2.Rec();
+  const ShirtType = IDL2.Variant({ Filled: IDL2.Null, Striped: IDL2.Null });
+  const LeagueId = IDL2.Nat16;
+  const CreateClubDTO = IDL2.Record({
+    secondaryColourHex: IDL2.Text,
+    name: IDL2.Text,
+    friendlyName: IDL2.Text,
+    thirdColourHex: IDL2.Text,
+    abbreviatedName: IDL2.Text,
     shirtType: ShirtType,
-    primaryColourHex: IDL.Text,
+    primaryColourHex: IDL2.Text,
     leagueId: LeagueId
   });
-  const Gender = IDL.Variant({ Male: IDL.Null, Female: IDL.Null });
-  const CountryId = IDL.Nat16;
-  const CreateLeagueDTO = IDL.Record({
-    logo: IDL.Vec(IDL.Nat8),
-    name: IDL.Text,
-    teamCount: IDL.Nat8,
+  const Gender = IDL2.Variant({ Male: IDL2.Null, Female: IDL2.Null });
+  const CountryId = IDL2.Nat16;
+  const CreateLeagueDTO = IDL2.Record({
+    logo: IDL2.Vec(IDL2.Nat8),
+    name: IDL2.Text,
+    teamCount: IDL2.Nat8,
     relatedGender: Gender,
     countryId: CountryId,
-    abbreviation: IDL.Text,
-    governingBody: IDL.Text,
-    formed: IDL.Int
+    abbreviation: IDL2.Text,
+    governingBody: IDL2.Text,
+    formed: IDL2.Int
   });
-  const ClubId = IDL.Nat16;
-  const PlayerPosition = IDL.Variant({
-    Goalkeeper: IDL.Null,
-    Midfielder: IDL.Null,
-    Forward: IDL.Null,
-    Defender: IDL.Null
+  const ClubId = IDL2.Nat16;
+  const PlayerPosition = IDL2.Variant({
+    Goalkeeper: IDL2.Null,
+    Midfielder: IDL2.Null,
+    Forward: IDL2.Null,
+    Defender: IDL2.Null
   });
-  const CreatePlayerDTO = IDL.Record({
+  const CreatePlayerDTO = IDL2.Record({
     clubId: ClubId,
-    valueQuarterMillions: IDL.Nat16,
-    dateOfBirth: IDL.Int,
+    valueQuarterMillions: IDL2.Nat16,
+    dateOfBirth: IDL2.Int,
     nationality: CountryId,
-    shirtNumber: IDL.Nat8,
+    shirtNumber: IDL2.Nat8,
     position: PlayerPosition,
-    lastName: IDL.Text,
+    lastName: IDL2.Text,
     leagueId: LeagueId,
-    firstName: IDL.Text
+    firstName: IDL2.Text
   });
-  const ClubDTO = IDL.Record({
+  const ClubDTO = IDL2.Record({
     id: ClubId,
-    secondaryColourHex: IDL.Text,
-    name: IDL.Text,
-    friendlyName: IDL.Text,
-    thirdColourHex: IDL.Text,
-    abbreviatedName: IDL.Text,
+    secondaryColourHex: IDL2.Text,
+    name: IDL2.Text,
+    friendlyName: IDL2.Text,
+    thirdColourHex: IDL2.Text,
+    abbreviatedName: IDL2.Text,
     shirtType: ShirtType,
-    primaryColourHex: IDL.Text
+    primaryColourHex: IDL2.Text
   });
-  const Error2 = IDL.Variant({
-    DecodeError: IDL.Null,
-    NotAllowed: IDL.Null,
-    NotFound: IDL.Null,
-    NotAuthorized: IDL.Null,
-    InvalidData: IDL.Null,
-    AlreadyExists: IDL.Null,
-    CanisterCreateError: IDL.Null,
-    CanisterFull: IDL.Null
+  const Error2 = IDL2.Variant({
+    DecodeError: IDL2.Null,
+    NotAllowed: IDL2.Null,
+    NotFound: IDL2.Null,
+    NotAuthorized: IDL2.Null,
+    InvalidData: IDL2.Null,
+    AlreadyExists: IDL2.Null,
+    CanisterCreateError: IDL2.Null,
+    CanisterFull: IDL2.Null
   });
-  const Result_2 = IDL.Variant({ ok: IDL.Vec(ClubDTO), err: Error2 });
-  const CountryDTO = IDL.Record({
+  const Result_2 = IDL2.Variant({ ok: IDL2.Vec(ClubDTO), err: Error2 });
+  const CountryDTO = IDL2.Record({
     id: CountryId,
-    code: IDL.Text,
-    name: IDL.Text
+    code: IDL2.Text,
+    name: IDL2.Text
   });
-  const Result_12 = IDL.Variant({ ok: IDL.Vec(CountryDTO), err: Error2 });
-  const DataHashDTO = IDL.Record({ hash: IDL.Text, category: IDL.Text });
-  const Result_11 = IDL.Variant({ ok: IDL.Vec(DataHashDTO), err: Error2 });
-  const FixtureStatusType = IDL.Variant({
-    Unplayed: IDL.Null,
-    Finalised: IDL.Null,
-    Active: IDL.Null,
-    Complete: IDL.Null
+  const Result_12 = IDL2.Variant({ ok: IDL2.Vec(CountryDTO), err: Error2 });
+  const DataHashDTO = IDL2.Record({ hash: IDL2.Text, category: IDL2.Text });
+  const Result_11 = IDL2.Variant({ ok: IDL2.Vec(DataHashDTO), err: Error2 });
+  const FixtureStatusType = IDL2.Variant({
+    Unplayed: IDL2.Null,
+    Finalised: IDL2.Null,
+    Active: IDL2.Null,
+    Complete: IDL2.Null
   });
-  const SeasonId = IDL.Nat16;
-  const FixtureId = IDL.Nat32;
-  const PlayerEventType = IDL.Variant({
-    PenaltyMissed: IDL.Null,
-    Goal: IDL.Null,
-    GoalConceded: IDL.Null,
-    Appearance: IDL.Null,
-    PenaltySaved: IDL.Null,
-    RedCard: IDL.Null,
-    KeeperSave: IDL.Null,
-    CleanSheet: IDL.Null,
-    YellowCard: IDL.Null,
-    GoalAssisted: IDL.Null,
-    OwnGoal: IDL.Null,
-    HighestScoringPlayer: IDL.Null
+  const SeasonId = IDL2.Nat16;
+  const FixtureId = IDL2.Nat32;
+  const PlayerEventType = IDL2.Variant({
+    PenaltyMissed: IDL2.Null,
+    Goal: IDL2.Null,
+    GoalConceded: IDL2.Null,
+    Appearance: IDL2.Null,
+    PenaltySaved: IDL2.Null,
+    RedCard: IDL2.Null,
+    KeeperSave: IDL2.Null,
+    CleanSheet: IDL2.Null,
+    YellowCard: IDL2.Null,
+    GoalAssisted: IDL2.Null,
+    OwnGoal: IDL2.Null,
+    HighestScoringPlayer: IDL2.Null
   });
-  const PlayerEventData = IDL.Record({
+  const PlayerEventData = IDL2.Record({
     fixtureId: FixtureId,
     clubId: ClubId,
-    playerId: IDL.Nat16,
-    eventStartMinute: IDL.Nat8,
-    eventEndMinute: IDL.Nat8,
+    playerId: IDL2.Nat16,
+    eventStartMinute: IDL2.Nat8,
+    eventEndMinute: IDL2.Nat8,
     eventType: PlayerEventType
   });
-  const GameweekNumber = IDL.Nat8;
-  const FixtureDTO = IDL.Record({
-    id: IDL.Nat32,
+  const GameweekNumber = IDL2.Nat8;
+  const FixtureDTO = IDL2.Record({
+    id: IDL2.Nat32,
     status: FixtureStatusType,
-    highestScoringPlayerId: IDL.Nat16,
+    highestScoringPlayerId: IDL2.Nat16,
     seasonId: SeasonId,
     awayClubId: ClubId,
-    events: IDL.Vec(PlayerEventData),
+    events: IDL2.Vec(PlayerEventData),
     homeClubId: ClubId,
-    kickOff: IDL.Int,
-    homeGoals: IDL.Nat8,
+    kickOff: IDL2.Int,
+    homeGoals: IDL2.Nat8,
     gameweek: GameweekNumber,
-    awayGoals: IDL.Nat8
+    awayGoals: IDL2.Nat8
   });
-  const Result_1 = IDL.Variant({ ok: IDL.Vec(FixtureDTO), err: Error2 });
-  const CalendarMonth = IDL.Nat8;
-  const LeagueStatus = IDL.Record({
-    transferWindowEndMonth: IDL.Nat8,
-    transferWindowEndDay: IDL.Nat8,
-    transferWindowStartMonth: IDL.Nat8,
-    transferWindowActive: IDL.Bool,
-    totalGameweeks: IDL.Nat8,
+  const Result_1 = IDL2.Variant({ ok: IDL2.Vec(FixtureDTO), err: Error2 });
+  const CalendarMonth = IDL2.Nat8;
+  const LeagueStatus = IDL2.Record({
+    transferWindowEndMonth: IDL2.Nat8,
+    transferWindowEndDay: IDL2.Nat8,
+    transferWindowStartMonth: IDL2.Nat8,
+    transferWindowActive: IDL2.Bool,
+    totalGameweeks: IDL2.Nat8,
     completedGameweek: GameweekNumber,
-    transferWindowStartDay: IDL.Nat8,
+    transferWindowStartDay: IDL2.Nat8,
     unplayedGameweek: GameweekNumber,
     activeMonth: CalendarMonth,
     activeSeasonId: SeasonId,
     activeGameweek: GameweekNumber,
     leagueId: LeagueId,
-    seasonActive: IDL.Bool
+    seasonActive: IDL2.Bool
   });
-  const Result_10 = IDL.Variant({ ok: LeagueStatus, err: Error2 });
-  const FootballLeagueDTO = IDL.Record({
+  const Result_10 = IDL2.Variant({ ok: LeagueStatus, err: Error2 });
+  const FootballLeagueDTO = IDL2.Record({
     id: LeagueId,
-    logo: IDL.Vec(IDL.Nat8),
-    name: IDL.Text,
-    teamCount: IDL.Nat8,
+    logo: IDL2.Vec(IDL2.Nat8),
+    name: IDL2.Text,
+    teamCount: IDL2.Nat8,
     relatedGender: Gender,
     countryId: CountryId,
-    abbreviation: IDL.Text,
-    governingBody: IDL.Text,
-    formed: IDL.Int
+    abbreviation: IDL2.Text,
+    governingBody: IDL2.Text,
+    formed: IDL2.Int
   });
-  const Result_9 = IDL.Variant({
-    ok: IDL.Vec(FootballLeagueDTO),
+  const Result_9 = IDL2.Variant({
+    ok: IDL2.Vec(FootballLeagueDTO),
     err: Error2
   });
-  const PlayerStatus = IDL.Variant({
-    OnLoan: IDL.Null,
-    Active: IDL.Null,
-    FreeAgent: IDL.Null,
-    Retired: IDL.Null
+  const PlayerStatus = IDL2.Variant({
+    OnLoan: IDL2.Null,
+    Active: IDL2.Null,
+    FreeAgent: IDL2.Null,
+    Retired: IDL2.Null
   });
-  const LoanedPlayerDTO = IDL.Record({
-    id: IDL.Nat16,
+  const LoanedPlayerDTO = IDL2.Record({
+    id: IDL2.Nat16,
     status: PlayerStatus,
     clubId: ClubId,
     parentClubId: ClubId,
-    valueQuarterMillions: IDL.Nat16,
-    dateOfBirth: IDL.Int,
+    valueQuarterMillions: IDL2.Nat16,
+    dateOfBirth: IDL2.Int,
     nationality: CountryId,
-    currentLoanEndDate: IDL.Int,
-    shirtNumber: IDL.Nat8,
+    currentLoanEndDate: IDL2.Int,
+    shirtNumber: IDL2.Nat8,
     parentLeagueId: LeagueId,
     position: PlayerPosition,
-    lastName: IDL.Text,
+    lastName: IDL2.Text,
     leagueId: LeagueId,
-    firstName: IDL.Text
+    firstName: IDL2.Text
   });
-  const Result_8 = IDL.Variant({
-    ok: IDL.Vec(LoanedPlayerDTO),
+  const Result_8 = IDL2.Variant({
+    ok: IDL2.Vec(LoanedPlayerDTO),
     err: Error2
   });
-  const GetPlayerDetailsDTO = IDL.Record({
+  const GetPlayerDetailsDTO = IDL2.Record({
     playerId: ClubId,
     seasonId: SeasonId
   });
-  const PlayerId = IDL.Nat16;
-  const InjuryHistory = IDL.Record({
-    description: IDL.Text,
-    injuryStartDate: IDL.Int,
-    expectedEndDate: IDL.Int
+  const PlayerId = IDL2.Nat16;
+  const InjuryHistory = IDL2.Record({
+    description: IDL2.Text,
+    injuryStartDate: IDL2.Int,
+    expectedEndDate: IDL2.Int
   });
-  const PlayerGameweekDTO = IDL.Record({
+  const PlayerGameweekDTO = IDL2.Record({
     fixtureId: FixtureId,
-    events: IDL.Vec(PlayerEventData),
-    number: IDL.Nat8,
-    points: IDL.Int16
+    events: IDL2.Vec(PlayerEventData),
+    number: IDL2.Nat8,
+    points: IDL2.Int16
   });
-  const ValueHistory = IDL.Record({
-    oldValue: IDL.Nat16,
-    changedOn: IDL.Int,
-    newValue: IDL.Nat16
+  const ValueHistory = IDL2.Record({
+    oldValue: IDL2.Nat16,
+    changedOn: IDL2.Int,
+    newValue: IDL2.Nat16
   });
-  const PlayerDetailDTO = IDL.Record({
+  const PlayerDetailDTO = IDL2.Record({
     id: PlayerId,
     status: PlayerStatus,
     clubId: ClubId,
     parentClubId: ClubId,
-    valueQuarterMillions: IDL.Nat16,
-    dateOfBirth: IDL.Int,
-    injuryHistory: IDL.Vec(InjuryHistory),
+    valueQuarterMillions: IDL2.Nat16,
+    dateOfBirth: IDL2.Int,
+    injuryHistory: IDL2.Vec(InjuryHistory),
     seasonId: SeasonId,
-    gameweeks: IDL.Vec(PlayerGameweekDTO),
+    gameweeks: IDL2.Vec(PlayerGameweekDTO),
     nationality: CountryId,
-    retirementDate: IDL.Int,
-    valueHistory: IDL.Vec(ValueHistory),
-    latestInjuryEndDate: IDL.Int,
-    shirtNumber: IDL.Nat8,
+    retirementDate: IDL2.Int,
+    valueHistory: IDL2.Vec(ValueHistory),
+    latestInjuryEndDate: IDL2.Int,
+    shirtNumber: IDL2.Nat8,
     position: PlayerPosition,
-    lastName: IDL.Text,
-    firstName: IDL.Text
+    lastName: IDL2.Text,
+    firstName: IDL2.Text
   });
-  const Result_7 = IDL.Variant({ ok: PlayerDetailDTO, err: Error2 });
-  const GameweekFiltersDTO = IDL.Record({
+  const Result_7 = IDL2.Variant({ ok: PlayerDetailDTO, err: Error2 });
+  const GameweekFiltersDTO = IDL2.Record({
     seasonId: SeasonId,
     gameweek: GameweekNumber
   });
-  const PlayerPointsDTO = IDL.Record({
-    id: IDL.Nat16,
+  const PlayerPointsDTO = IDL2.Record({
+    id: IDL2.Nat16,
     clubId: ClubId,
-    events: IDL.Vec(PlayerEventData),
+    events: IDL2.Vec(PlayerEventData),
     position: PlayerPosition,
     gameweek: GameweekNumber,
-    points: IDL.Int16
+    points: IDL2.Int16
   });
-  const Result_6 = IDL.Variant({
-    ok: IDL.Vec(PlayerPointsDTO),
+  const Result_6 = IDL2.Variant({
+    ok: IDL2.Vec(PlayerPointsDTO),
     err: Error2
   });
-  const PlayerDTO = IDL.Record({
-    id: IDL.Nat16,
+  const PlayerDTO = IDL2.Record({
+    id: IDL2.Nat16,
     status: PlayerStatus,
     clubId: ClubId,
     parentClubId: ClubId,
-    valueQuarterMillions: IDL.Nat16,
-    dateOfBirth: IDL.Int,
+    valueQuarterMillions: IDL2.Nat16,
+    dateOfBirth: IDL2.Int,
     nationality: CountryId,
-    currentLoanEndDate: IDL.Int,
-    shirtNumber: IDL.Nat8,
+    currentLoanEndDate: IDL2.Int,
+    shirtNumber: IDL2.Nat8,
     parentLeagueId: LeagueId,
     position: PlayerPosition,
-    lastName: IDL.Text,
+    lastName: IDL2.Text,
     leagueId: LeagueId,
-    firstName: IDL.Text
+    firstName: IDL2.Text
   });
-  const Result = IDL.Variant({ ok: IDL.Vec(PlayerDTO), err: Error2 });
-  const PlayerScoreDTO = IDL.Record({
-    id: IDL.Nat16,
+  const Result = IDL2.Variant({ ok: IDL2.Vec(PlayerDTO), err: Error2 });
+  const PlayerScoreDTO = IDL2.Record({
+    id: IDL2.Nat16,
     clubId: ClubId,
-    assists: IDL.Int16,
-    dateOfBirth: IDL.Int,
+    assists: IDL2.Int16,
+    dateOfBirth: IDL2.Int,
     nationality: CountryId,
-    goalsScored: IDL.Int16,
-    saves: IDL.Int16,
-    goalsConceded: IDL.Int16,
-    events: IDL.Vec(PlayerEventData),
+    goalsScored: IDL2.Int16,
+    saves: IDL2.Int16,
+    goalsConceded: IDL2.Int16,
+    events: IDL2.Vec(PlayerEventData),
     position: PlayerPosition,
-    points: IDL.Int16
+    points: IDL2.Int16
   });
-  const Result_5 = IDL.Variant({
-    ok: IDL.Vec(IDL.Tuple(IDL.Nat16, PlayerScoreDTO)),
+  const Result_5 = IDL2.Variant({
+    ok: IDL2.Vec(IDL2.Tuple(IDL2.Nat16, PlayerScoreDTO)),
     err: Error2
   });
-  const RequestFixturesDTO = IDL.Record({
+  const RequestFixturesDTO = IDL2.Record({
     seasonId: SeasonId,
     leagueId: LeagueId
   });
-  const ClubFilterDTO = IDL.Record({
+  const ClubFilterDTO = IDL2.Record({
     clubId: ClubId,
     leagueId: LeagueId
   });
-  const SeasonDTO = IDL.Record({
+  const SeasonDTO = IDL2.Record({
     id: SeasonId,
-    name: IDL.Text,
-    year: IDL.Nat16
+    name: IDL2.Text,
+    year: IDL2.Nat16
   });
-  const Result_4 = IDL.Variant({ ok: IDL.Vec(SeasonDTO), err: Error2 });
-  const TimerInfo = IDL.Record({
-    id: IDL.Int,
-    callbackName: IDL.Text,
-    triggerTime: IDL.Int
+  const Result_4 = IDL2.Variant({ ok: IDL2.Vec(SeasonDTO), err: Error2 });
+  const TimerInfo = IDL2.Record({
+    id: IDL2.Int,
+    callbackName: IDL2.Text,
+    triggerTime: IDL2.Int
   });
-  const Result_3 = IDL.Variant({ ok: IDL.Vec(TimerInfo), err: Error2 });
-  const LoanPlayerDTO = IDL.Record({
-    loanEndDate: IDL.Int,
+  const Result_3 = IDL2.Variant({ ok: IDL2.Vec(TimerInfo), err: Error2 });
+  const LoanPlayerDTO = IDL2.Record({
+    loanEndDate: IDL2.Int,
     playerId: ClubId,
     loanClubId: ClubId,
     loanLeagueId: LeagueId,
     leagueId: LeagueId
   });
-  const MoveFixtureDTO = IDL.Record({
+  const MoveFixtureDTO = IDL2.Record({
     fixtureId: FixtureId,
     updatedFixtureGameweek: GameweekNumber,
-    updatedFixtureDate: IDL.Int,
+    updatedFixtureDate: IDL2.Int,
     seasonId: SeasonId,
     leagueId: LeagueId
   });
-  const SubmitFixtureDataDTO = IDL.Record({
+  const SubmitFixtureDataDTO = IDL2.Record({
     fixtureId: FixtureId,
     seasonId: SeasonId,
     gameweek: GameweekNumber,
-    playerEventData: IDL.Vec(PlayerEventData),
+    playerEventData: IDL2.Vec(PlayerEventData),
     leagueId: LeagueId
   });
-  List_3.fill(IDL.Opt(IDL.Tuple(PlayerEventData, List_3)));
-  const PlayerGameweek = IDL.Record({
+  List_3.fill(IDL2.Opt(IDL2.Tuple(PlayerEventData, List_3)));
+  const PlayerGameweek = IDL2.Record({
     events: List_3,
     number: GameweekNumber,
-    points: IDL.Int16
+    points: IDL2.Int16
   });
-  List_2.fill(IDL.Opt(IDL.Tuple(PlayerGameweek, List_2)));
-  const PlayerSeason = IDL.Record({
+  List_2.fill(IDL2.Opt(IDL2.Tuple(PlayerGameweek, List_2)));
+  const PlayerSeason = IDL2.Record({
     id: SeasonId,
     gameweeks: List_2,
-    totalPoints: IDL.Int16
+    totalPoints: IDL2.Int16
   });
-  List_1.fill(IDL.Opt(IDL.Tuple(PlayerSeason, List_1)));
-  List.fill(IDL.Opt(IDL.Tuple(InjuryHistory, List)));
-  const TransferHistory = IDL.Record({
-    transferDate: IDL.Int,
-    loanEndDate: IDL.Int,
+  List_1.fill(IDL2.Opt(IDL2.Tuple(PlayerSeason, List_1)));
+  List.fill(IDL2.Opt(IDL2.Tuple(InjuryHistory, List)));
+  const TransferHistory = IDL2.Record({
+    transferDate: IDL2.Int,
+    loanEndDate: IDL2.Int,
     toLeagueId: LeagueId,
     toClub: ClubId,
     fromLeagueId: LeagueId,
     fromClub: ClubId
   });
-  List_4.fill(IDL.Opt(IDL.Tuple(TransferHistory, List_4)));
-  List_5.fill(IDL.Opt(IDL.Tuple(ValueHistory, List_5)));
-  const Player = IDL.Record({
+  List_4.fill(IDL2.Opt(IDL2.Tuple(TransferHistory, List_4)));
+  List_5.fill(IDL2.Opt(IDL2.Tuple(ValueHistory, List_5)));
+  const Player = IDL2.Record({
     id: PlayerId,
     status: PlayerStatus,
     clubId: ClubId,
     parentClubId: ClubId,
     seasons: List_1,
-    valueQuarterMillions: IDL.Nat16,
-    dateOfBirth: IDL.Int,
+    valueQuarterMillions: IDL2.Nat16,
+    dateOfBirth: IDL2.Int,
     injuryHistory: List,
     transferHistory: List_4,
     nationality: CountryId,
-    retirementDate: IDL.Int,
+    retirementDate: IDL2.Int,
     valueHistory: List_5,
-    latestInjuryEndDate: IDL.Int,
+    latestInjuryEndDate: IDL2.Int,
     gender: Gender,
-    currentLoanEndDate: IDL.Int,
-    shirtNumber: IDL.Nat8,
+    currentLoanEndDate: IDL2.Int,
+    shirtNumber: IDL2.Nat8,
     parentLeagueId: LeagueId,
     position: PlayerPosition,
-    lastName: IDL.Text,
+    lastName: IDL2.Text,
     leagueId: LeagueId,
-    firstName: IDL.Text
+    firstName: IDL2.Text
   });
-  const PostponeFixtureDTO = IDL.Record({
+  const PostponeFixtureDTO = IDL2.Record({
     fixtureId: FixtureId,
     seasonId: SeasonId,
     leagueId: LeagueId
   });
-  const RecallPlayerDTO = IDL.Record({
+  const RecallPlayerDTO = IDL2.Record({
     playerId: ClubId,
     leagueId: LeagueId
   });
-  const RescheduleFixtureDTO = IDL.Record({
+  const RescheduleFixtureDTO = IDL2.Record({
     fixtureId: FixtureId,
     updatedFixtureGameweek: GameweekNumber,
-    updatedFixtureDate: IDL.Int,
+    updatedFixtureDate: IDL2.Int,
     seasonId: SeasonId,
     leagueId: LeagueId
   });
-  const RetirePlayerDTO = IDL.Record({
+  const RetirePlayerDTO = IDL2.Record({
     playerId: ClubId,
-    retirementDate: IDL.Int,
+    retirementDate: IDL2.Int,
     leagueId: LeagueId
   });
-  const RevaluePlayerDownDTO = IDL.Record({
+  const RevaluePlayerDownDTO = IDL2.Record({
     playerId: PlayerId,
     leagueId: LeagueId
   });
-  const RevaluePlayerUpDTO = IDL.Record({
+  const RevaluePlayerUpDTO = IDL2.Record({
     playerId: PlayerId,
     leagueId: LeagueId
   });
-  const SetFreeAgentDTO = IDL.Record({
+  const SetFreeAgentDTO = IDL2.Record({
     playerId: ClubId,
     leagueId: LeagueId
   });
-  const SetPlayerInjuryDTO = IDL.Record({
+  const SetPlayerInjuryDTO = IDL2.Record({
     playerId: ClubId,
-    description: IDL.Text,
+    description: IDL2.Text,
     leagueId: LeagueId,
-    expectedEndDate: IDL.Int
+    expectedEndDate: IDL2.Int
   });
-  const TransferPlayerDTO = IDL.Record({
+  const TransferPlayerDTO = IDL2.Record({
     clubId: ClubId,
     newLeagueId: LeagueId,
     playerId: ClubId,
-    newShirtNumber: IDL.Nat8,
+    newShirtNumber: IDL2.Nat8,
     newClubId: ClubId,
     leagueId: LeagueId
   });
-  const UnretirePlayerDTO = IDL.Record({
+  const UnretirePlayerDTO = IDL2.Record({
     playerId: ClubId,
     leagueId: LeagueId
   });
-  const UpdateLeagueDTO = IDL.Record({
-    logo: IDL.Vec(IDL.Nat8),
-    name: IDL.Text,
-    teamCount: IDL.Nat8,
+  const UpdateLeagueDTO = IDL2.Record({
+    logo: IDL2.Vec(IDL2.Nat8),
+    name: IDL2.Text,
+    teamCount: IDL2.Nat8,
     relatedGender: Gender,
     countryId: CountryId,
-    abbreviation: IDL.Text,
-    governingBody: IDL.Text,
+    abbreviation: IDL2.Text,
+    governingBody: IDL2.Text,
     leagueId: LeagueId,
-    formed: IDL.Int
+    formed: IDL2.Int
   });
-  const UpdatePlayerDTO = IDL.Record({
-    dateOfBirth: IDL.Int,
+  const UpdatePlayerDTO = IDL2.Record({
+    dateOfBirth: IDL2.Int,
     playerId: ClubId,
     nationality: CountryId,
-    shirtNumber: IDL.Nat8,
+    shirtNumber: IDL2.Nat8,
     position: PlayerPosition,
-    lastName: IDL.Text,
+    lastName: IDL2.Text,
     leagueId: LeagueId,
-    firstName: IDL.Text
+    firstName: IDL2.Text
   });
-  const AddInitialFixturesDTO = IDL.Record({
-    seasonFixtures: IDL.Vec(FixtureDTO),
+  const AddInitialFixturesDTO = IDL2.Record({
+    seasonFixtures: IDL2.Vec(FixtureDTO),
     leagueId: LeagueId
   });
-  const RustResult = IDL.Variant({ Ok: IDL.Text, Err: IDL.Text });
-  const PromoteClubDTO = IDL.Record({
+  const RustResult = IDL2.Variant({ Ok: IDL2.Text, Err: IDL2.Text });
+  const PromoteClubDTO = IDL2.Record({
     clubId: ClubId,
     toLeagueId: LeagueId,
     leagueId: LeagueId
   });
-  const RelegateClubDTO = IDL.Record({
+  const RelegateClubDTO = IDL2.Record({
     clubId: ClubId,
     relegatedToLeagueId: LeagueId,
     leagueId: LeagueId
   });
-  const UpdateClubDTO = IDL.Record({
+  const UpdateClubDTO = IDL2.Record({
     clubId: ClubId,
-    secondaryColourHex: IDL.Text,
-    name: IDL.Text,
-    friendlyName: IDL.Text,
-    thirdColourHex: IDL.Text,
-    abbreviatedName: IDL.Text,
+    secondaryColourHex: IDL2.Text,
+    name: IDL2.Text,
+    friendlyName: IDL2.Text,
+    thirdColourHex: IDL2.Text,
+    abbreviatedName: IDL2.Text,
     shirtType: ShirtType,
-    primaryColourHex: IDL.Text,
+    primaryColourHex: IDL2.Text,
     leagueId: LeagueId
   });
-  return IDL.Service({
-    createClub: IDL.Func([CreateClubDTO], [], []),
-    createLeague: IDL.Func([CreateLeagueDTO], [], []),
-    createPlayer: IDL.Func([CreatePlayerDTO], [], []),
-    getClubs: IDL.Func([LeagueId], [Result_2], ["query"]),
-    getCountries: IDL.Func([], [Result_12], ["query"]),
-    getDataHashes: IDL.Func([LeagueId], [Result_11], ["query"]),
-    getFixtures: IDL.Func([LeagueId], [Result_1], ["query"]),
-    getLeagueStatus: IDL.Func([LeagueId], [Result_10], ["query"]),
-    getLeagues: IDL.Func([], [Result_9], ["query"]),
-    getLoanedPlayers: IDL.Func([LeagueId], [Result_8], ["query"]),
-    getPlayerDetails: IDL.Func(
+  return IDL2.Service({
+    createClub: IDL2.Func([CreateClubDTO], [], []),
+    createLeague: IDL2.Func([CreateLeagueDTO], [], []),
+    createPlayer: IDL2.Func([CreatePlayerDTO], [], []),
+    getClubs: IDL2.Func([LeagueId], [Result_2], ["query"]),
+    getCountries: IDL2.Func([], [Result_12], ["query"]),
+    getDataHashes: IDL2.Func([LeagueId], [Result_11], ["query"]),
+    getFixtures: IDL2.Func([LeagueId], [Result_1], ["query"]),
+    getLeagueStatus: IDL2.Func([LeagueId], [Result_10], ["query"]),
+    getLeagues: IDL2.Func([], [Result_9], ["query"]),
+    getLoanedPlayers: IDL2.Func([LeagueId], [Result_8], ["query"]),
+    getPlayerDetails: IDL2.Func(
       [LeagueId, GetPlayerDetailsDTO],
       [Result_7],
       ["query"]
     ),
-    getPlayerDetailsForGameweek: IDL.Func(
+    getPlayerDetailsForGameweek: IDL2.Func(
       [LeagueId, GameweekFiltersDTO],
       [Result_6],
       ["query"]
     ),
-    getPlayers: IDL.Func([LeagueId], [Result], ["query"]),
-    getPlayersMap: IDL.Func(
+    getPlayers: IDL2.Func([LeagueId], [Result], ["query"]),
+    getPlayersMap: IDL2.Func(
       [LeagueId, GameweekFiltersDTO],
       [Result_5],
       ["query"]
     ),
-    getPostponedFixtures: IDL.Func(
+    getPostponedFixtures: IDL2.Func(
       [LeagueId, RequestFixturesDTO],
       [Result_1],
       ["query"]
     ),
-    getRetiredPlayers: IDL.Func([LeagueId, ClubFilterDTO], [Result], ["query"]),
-    getSeasons: IDL.Func([LeagueId], [Result_4], ["query"]),
-    getTimers: IDL.Func([], [Result_3], ["query"]),
-    getVerifiedClubs: IDL.Func([LeagueId], [Result_2], []),
-    getVerifiedFixtures: IDL.Func([RequestFixturesDTO], [Result_1], []),
-    getVerifiedPlayers: IDL.Func([LeagueId], [Result], []),
-    loanPlayer: IDL.Func([LoanPlayerDTO], [], []),
-    moveFixture: IDL.Func([MoveFixtureDTO], [], []),
-    populatePlayerEventData: IDL.Func(
-      [SubmitFixtureDataDTO, IDL.Vec(Player)],
-      [IDL.Opt(IDL.Vec(PlayerEventData))],
+    getRetiredPlayers: IDL2.Func([LeagueId, ClubFilterDTO], [Result], ["query"]),
+    getSeasons: IDL2.Func([LeagueId], [Result_4], ["query"]),
+    getTimers: IDL2.Func([], [Result_3], ["query"]),
+    getVerifiedClubs: IDL2.Func([LeagueId], [Result_2], []),
+    getVerifiedFixtures: IDL2.Func([RequestFixturesDTO], [Result_1], []),
+    getVerifiedPlayers: IDL2.Func([LeagueId], [Result], []),
+    loanPlayer: IDL2.Func([LoanPlayerDTO], [], []),
+    moveFixture: IDL2.Func([MoveFixtureDTO], [], []),
+    populatePlayerEventData: IDL2.Func(
+      [SubmitFixtureDataDTO, IDL2.Vec(Player)],
+      [IDL2.Opt(IDL2.Vec(PlayerEventData))],
       []
     ),
-    postponeFixture: IDL.Func([PostponeFixtureDTO], [], []),
-    recallPlayer: IDL.Func([RecallPlayerDTO], [], []),
-    rescheduleFixure: IDL.Func([RescheduleFixtureDTO], [], []),
-    retirePlayer: IDL.Func([RetirePlayerDTO], [], []),
-    revaluePlayerDown: IDL.Func([RevaluePlayerDownDTO], [], []),
-    revaluePlayerUp: IDL.Func([RevaluePlayerUpDTO], [], []),
-    setFreeAgent: IDL.Func([SetFreeAgentDTO], [], []),
-    setPlayerInjury: IDL.Func([SetPlayerInjuryDTO], [], []),
-    submitFixtureData: IDL.Func([SubmitFixtureDataDTO], [], []),
-    transferPlayer: IDL.Func([TransferPlayerDTO], [], []),
-    unretirePlayer: IDL.Func([UnretirePlayerDTO], [], []),
-    updateLeague: IDL.Func([UpdateLeagueDTO], [], []),
-    updatePlayer: IDL.Func([UpdatePlayerDTO], [], []),
-    validateAddInitialFixtures: IDL.Func(
+    postponeFixture: IDL2.Func([PostponeFixtureDTO], [], []),
+    recallPlayer: IDL2.Func([RecallPlayerDTO], [], []),
+    rescheduleFixure: IDL2.Func([RescheduleFixtureDTO], [], []),
+    retirePlayer: IDL2.Func([RetirePlayerDTO], [], []),
+    revaluePlayerDown: IDL2.Func([RevaluePlayerDownDTO], [], []),
+    revaluePlayerUp: IDL2.Func([RevaluePlayerUpDTO], [], []),
+    setFreeAgent: IDL2.Func([SetFreeAgentDTO], [], []),
+    setPlayerInjury: IDL2.Func([SetPlayerInjuryDTO], [], []),
+    submitFixtureData: IDL2.Func([SubmitFixtureDataDTO], [], []),
+    transferPlayer: IDL2.Func([TransferPlayerDTO], [], []),
+    unretirePlayer: IDL2.Func([UnretirePlayerDTO], [], []),
+    updateLeague: IDL2.Func([UpdateLeagueDTO], [], []),
+    updatePlayer: IDL2.Func([UpdatePlayerDTO], [], []),
+    validateAddInitialFixtures: IDL2.Func(
       [AddInitialFixturesDTO],
       [RustResult],
       []
     ),
-    validateCreateClub: IDL.Func([CreateClubDTO], [RustResult], []),
-    validateCreateLeague: IDL.Func([CreateLeagueDTO], [RustResult], []),
-    validateCreatePlayer: IDL.Func([CreatePlayerDTO], [RustResult], []),
-    validateLoanPlayer: IDL.Func([LoanPlayerDTO], [RustResult], []),
-    validateMoveFixture: IDL.Func([MoveFixtureDTO], [RustResult], []),
-    validatePostponeFixture: IDL.Func([PostponeFixtureDTO], [RustResult], []),
-    validatePromoteClub: IDL.Func([PromoteClubDTO], [RustResult], []),
-    validateRecallPlayer: IDL.Func([RecallPlayerDTO], [RustResult], []),
-    validateRelegateClub: IDL.Func([RelegateClubDTO], [RustResult], []),
-    validateRescheduleFixture: IDL.Func(
+    validateCreateClub: IDL2.Func([CreateClubDTO], [RustResult], []),
+    validateCreateLeague: IDL2.Func([CreateLeagueDTO], [RustResult], []),
+    validateCreatePlayer: IDL2.Func([CreatePlayerDTO], [RustResult], []),
+    validateLoanPlayer: IDL2.Func([LoanPlayerDTO], [RustResult], []),
+    validateMoveFixture: IDL2.Func([MoveFixtureDTO], [RustResult], []),
+    validatePostponeFixture: IDL2.Func([PostponeFixtureDTO], [RustResult], []),
+    validatePromoteClub: IDL2.Func([PromoteClubDTO], [RustResult], []),
+    validateRecallPlayer: IDL2.Func([RecallPlayerDTO], [RustResult], []),
+    validateRelegateClub: IDL2.Func([RelegateClubDTO], [RustResult], []),
+    validateRescheduleFixture: IDL2.Func(
       [RescheduleFixtureDTO],
       [RustResult],
       []
     ),
-    validateRetirePlayer: IDL.Func([RetirePlayerDTO], [RustResult], []),
-    validateRevaluePlayerDown: IDL.Func(
+    validateRetirePlayer: IDL2.Func([RetirePlayerDTO], [RustResult], []),
+    validateRevaluePlayerDown: IDL2.Func(
       [RevaluePlayerDownDTO],
       [RustResult],
       []
     ),
-    validateRevaluePlayerUp: IDL.Func([RevaluePlayerUpDTO], [RustResult], []),
-    validateSetFreeAgent: IDL.Func([SetFreeAgentDTO], [RustResult], []),
-    validateSetPlayerInjury: IDL.Func([SetPlayerInjuryDTO], [RustResult], []),
-    validateSubmitFixtureData: IDL.Func(
+    validateRevaluePlayerUp: IDL2.Func([RevaluePlayerUpDTO], [RustResult], []),
+    validateSetFreeAgent: IDL2.Func([SetFreeAgentDTO], [RustResult], []),
+    validateSetPlayerInjury: IDL2.Func([SetPlayerInjuryDTO], [RustResult], []),
+    validateSubmitFixtureData: IDL2.Func(
       [SubmitFixtureDataDTO],
       [RustResult],
       []
     ),
-    validateTransferPlayer: IDL.Func([TransferPlayerDTO], [RustResult], []),
-    validateUnretirePlayer: IDL.Func([UnretirePlayerDTO], [RustResult], []),
-    validateUpdateClub: IDL.Func([UpdateClubDTO], [RustResult], []),
-    validateUpdateLeague: IDL.Func([UpdateLeagueDTO], [RustResult], []),
-    validateUpdatePlayer: IDL.Func([UpdatePlayerDTO], [RustResult], [])
+    validateTransferPlayer: IDL2.Func([TransferPlayerDTO], [RustResult], []),
+    validateUnretirePlayer: IDL2.Func([UnretirePlayerDTO], [RustResult], []),
+    validateUpdateClub: IDL2.Func([UpdateClubDTO], [RustResult], []),
+    validateUpdateLeague: IDL2.Func([UpdateLeagueDTO], [RustResult], []),
+    validateUpdatePlayer: IDL2.Func([UpdatePlayerDTO], [RustResult], [])
   });
 };
 var define_process_env_default$6 = { BACKEND_CANISTER_ID: "44kin-waaaa-aaaal-qbxra-cai", FRONTEND_CANISTER_ID: "43loz-3yaaa-aaaal-qbxrq-cai", DATA_CANISTER_CANISTER_ID: "52fzd-2aaaa-aaaal-qmzsa-cai", DFX_NETWORK: "ic", SNS_GOVERNANCE_CANISTER_ID: "detjl-sqaaa-aaaaq-aacqa-cai", DATA_CANISTER_ID: "52fzd-2aaaa-aaaal-qmzsa-cai" };
@@ -6110,6 +6117,42 @@ function Dashboard($$payload, $$props) {
   $$payload.out += `<!--]-->`;
   pop();
 }
+function createToastsStore() {
+  const { subscribe, update } = writable([]);
+  let idCounter = 0;
+  function addToast2(toast) {
+    update((toasts2) => [...toasts2, { ...toast, id: ++idCounter }]);
+  }
+  function removeToast(id) {
+    update((toasts2) => toasts2.filter((toast) => toast.id !== id));
+  }
+  return {
+    subscribe,
+    addToast: addToast2,
+    removeToast
+  };
+}
+const toasts = createToastsStore();
+function Toast_item($$payload, $$props) {
+  push();
+  let toast = $$props["toast"];
+  $$payload.out += `<div${attr("class", `fixed top-0 left-0 right-0 z-[9999] p-4 text-white shadow-md flex justify-between items-center bg-${toast.type}`)}><span>${escape_html(toast.message)}</span> <button class="font-bold ml-4">×</button></div>`;
+  bind_props($$props, { toast });
+  pop();
+}
+function Toasts($$payload) {
+  var $$store_subs;
+  const each_array = ensure_array_like(store_get($$store_subs ??= {}, "$toasts", toasts));
+  $$payload.out += `<!--[-->`;
+  for (let $$index = 0, $$length = each_array.length; $$index < $$length; $$index++) {
+    let toast = each_array[$$index];
+    $$payload.out += `<div>`;
+    Toast_item($$payload, { toast });
+    $$payload.out += `<!----></div>`;
+  }
+  $$payload.out += `<!--]-->`;
+  if ($$store_subs) unsubscribe_stores($$store_subs);
+}
 function Layout($$payload, $$props) {
   push();
   var $$store_subs;
@@ -6132,6 +6175,9 @@ function Layout($$payload, $$props) {
     },
     (_) => {
       Dashboard($$payload);
+      $$payload.out += `<!----> `;
+      Toasts($$payload);
+      $$payload.out += `<!---->`;
     }
   );
   $$payload.out += `<!---->`;
@@ -6317,7 +6363,6 @@ class LeagueService {
       authStore,
       define_process_env_default$5.DATA_CANISTER_CANISTER_ID
     );
-    console.log(identityActor);
     const result = await identityActor.getLeagues();
     if (isError(result)) throw new Error("Failed to fetch leagues");
     return result.ok;
@@ -6877,13 +6922,24 @@ function createFixtureStore() {
 }
 const fixtureStore = createFixtureStore();
 var define_process_env_default$1 = { BACKEND_CANISTER_ID: "44kin-waaaa-aaaal-qbxra-cai", FRONTEND_CANISTER_ID: "43loz-3yaaa-aaaal-qbxrq-cai", DATA_CANISTER_CANISTER_ID: "52fzd-2aaaa-aaaal-qmzsa-cai", DFX_NETWORK: "ic", SNS_GOVERNANCE_CANISTER_ID: "detjl-sqaaa-aaaaq-aacqa-cai", DATA_CANISTER_ID: "52fzd-2aaaa-aaaal-qmzsa-cai" };
+const RevaluePlayerUpDTO_Idl = IDL.Record({
+  leagueId: IDL.Nat16,
+  playerId: IDL.Nat16
+});
+const RevaluePlayerDownDTO_Idl = IDL.Record({
+  leagueId: IDL.Nat16,
+  playerId: IDL.Nat16
+});
+IDL.Record({
+  leagueId: IDL.Nat16,
+  playerId: IDL.Nat16,
+  loanLeagueId: IDL.Nat16,
+  loanClubId: IDL.Nat16,
+  loanEndDate: IDL.Int
+});
 function createGovernanceStore() {
-  async function revaluePlayerUp(leagueId, playerId) {
+  async function revaluePlayerUp(dto) {
     try {
-      var dto = {
-        leagueId,
-        playerId
-      };
       const {
         manageNeuron: governanceManageNeuron,
         listNeurons: governanceListNeurons
@@ -6906,15 +6962,13 @@ function createGovernanceStore() {
         beforeNeuronId: { id: [] }
       });
       if (userNeurons.length > 0) {
-        const jsonString = JSON.stringify(dto);
-        const encoder2 = new TextEncoder();
-        const payload = encoder2.encode(jsonString);
+        const encoded = IDL.encode([RevaluePlayerUpDTO_Idl], [dto]);
         const fn = {
-          function_id: 1000n,
-          payload
+          function_id: 50000n,
+          payload: new Uint8Array(encoded)
         };
-        let allPlayers = await playerStore.getPlayers(leagueId);
-        let player = allPlayers.find((x) => x.id == playerId);
+        let allPlayers = await playerStore.getPlayers(dto.leagueId);
+        let player = allPlayers.find((x) => x.id == dto.playerId);
         if (player) {
           const command = {
             MakeProposal: {
@@ -6963,12 +7017,10 @@ function createGovernanceStore() {
         beforeNeuronId: { id: [] }
       });
       if (userNeurons.length > 0) {
-        const jsonString = JSON.stringify(dto);
-        const encoder2 = new TextEncoder();
-        const payload = encoder2.encode(jsonString);
+        const encoded = IDL.encode([RevaluePlayerDownDTO_Idl], [dto]);
         const fn = {
-          function_id: 50000n,
-          payload
+          function_id: 51000n,
+          payload: new Uint8Array(encoded)
         };
         let allPlayers = await playerStore.getPlayers(dto.leagueId);
         let player = allPlayers.find((x) => x.id == dto.playerId);
@@ -6993,6 +7045,78 @@ function createGovernanceStore() {
       }
     } catch (error) {
       console.error("Error revaluing player down:", error);
+      throw error;
+    }
+  }
+  async function loanPlayer(leagueId, playerId, loanLeagueId, loanClubId, loanEndDate) {
+    try {
+      const dateObject = new Date(loanEndDate);
+      const timestampMilliseconds = dateObject.getTime();
+      let nanoseconds = BigInt(timestampMilliseconds) * BigInt(1e6);
+      let dto = {
+        leagueId,
+        playerId,
+        loanLeagueId,
+        loanClubId,
+        loanEndDate: nanoseconds
+      };
+      const identityActor = await ActorFactory.createBackendIdentityActor(
+        authStore,
+        define_process_env_default$1.SNS_GOVERNANCE_CANISTER_ID ?? ""
+      );
+      const governanceAgent = ActorFactory.getAgent(
+        define_process_env_default$1.SNS_GOVERNANCE_CANISTER_ID,
+        identityActor,
+        null
+      );
+      const {
+        manageNeuron: governanceManageNeuron,
+        listNeurons: governanceListNeurons
+      } = SnsGovernanceCanister.create({
+        agent: governanceAgent,
+        canisterId: identityActor
+      });
+      const userNeurons = await governanceListNeurons({
+        principal: identityActor.principal,
+        limit: 10,
+        beforeNeuronId: { id: [] }
+      });
+      if (userNeurons.length > 0) {
+        const jsonString = JSON.stringify(dto);
+        const encoder2 = new TextEncoder();
+        const payload = encoder2.encode(jsonString);
+        const fn = {
+          function_id: 9000n,
+          payload
+        };
+        let allPlayers = await playerStore.getPlayers(leagueId);
+        let clubs = await clubStore.getClubs(leagueId);
+        let player = allPlayers.find((x) => x.id == playerId);
+        if (player) {
+          let club = clubs.find((x) => x.id == player?.clubId);
+          if (!club) {
+            return;
+          }
+          const command = {
+            MakeProposal: {
+              title: `Loan ${player.firstName} to ${club?.friendlyName}.`,
+              url: "openfpl.xyz/governance",
+              summary: `Loan ${player.firstName} to ${club?.friendlyName}.`,
+              action: [{ ExecuteGenericNervousSystemFunction: fn }]
+            }
+          };
+          const neuronId = userNeurons[0].id[0];
+          if (!neuronId) {
+            return;
+          }
+          await governanceManageNeuron({
+            subaccount: neuronId.id,
+            command: [command]
+          });
+        }
+      }
+    } catch (error) {
+      console.error("Error loaning player:", error);
       throw error;
     }
   }
@@ -7413,78 +7537,6 @@ function createGovernanceStore() {
       }
     } catch (error) {
       console.error("Error transferring player:", error);
-      throw error;
-    }
-  }
-  async function loanPlayer(leagueId, playerId, loanLeagueId, loanClubId, loanEndDate) {
-    try {
-      const dateObject = new Date(loanEndDate);
-      const timestampMilliseconds = dateObject.getTime();
-      let nanoseconds = BigInt(timestampMilliseconds) * BigInt(1e6);
-      let dto = {
-        leagueId,
-        playerId,
-        loanLeagueId,
-        loanClubId,
-        loanEndDate: nanoseconds
-      };
-      const identityActor = await ActorFactory.createBackendIdentityActor(
-        authStore,
-        define_process_env_default$1.SNS_GOVERNANCE_CANISTER_ID ?? ""
-      );
-      const governanceAgent = ActorFactory.getAgent(
-        define_process_env_default$1.SNS_GOVERNANCE_CANISTER_ID,
-        identityActor,
-        null
-      );
-      const {
-        manageNeuron: governanceManageNeuron,
-        listNeurons: governanceListNeurons
-      } = SnsGovernanceCanister.create({
-        agent: governanceAgent,
-        canisterId: identityActor
-      });
-      const userNeurons = await governanceListNeurons({
-        principal: identityActor.principal,
-        limit: 10,
-        beforeNeuronId: { id: [] }
-      });
-      if (userNeurons.length > 0) {
-        const jsonString = JSON.stringify(dto);
-        const encoder2 = new TextEncoder();
-        const payload = encoder2.encode(jsonString);
-        const fn = {
-          function_id: 9000n,
-          payload
-        };
-        let allPlayers = await playerStore.getPlayers(leagueId);
-        let clubs = await clubStore.getClubs(leagueId);
-        let player = allPlayers.find((x) => x.id == playerId);
-        if (player) {
-          let club = clubs.find((x) => x.id == player?.clubId);
-          if (!club) {
-            return;
-          }
-          const command = {
-            MakeProposal: {
-              title: `Loan ${player.firstName} to ${club?.friendlyName}.`,
-              url: "openfpl.xyz/governance",
-              summary: `Loan ${player.firstName} to ${club?.friendlyName}.`,
-              action: [{ ExecuteGenericNervousSystemFunction: fn }]
-            }
-          };
-          const neuronId = userNeurons[0].id[0];
-          if (!neuronId) {
-            return;
-          }
-          await governanceManageNeuron({
-            subaccount: neuronId.id,
-            command: [command]
-          });
-        }
-      }
-    } catch (error) {
-      console.error("Error loaning player:", error);
       throw error;
     }
   }
@@ -8118,9 +8170,6 @@ class ClubService {
   constructor() {
   }
   async getClubs(leagueId) {
-    console.log("getting clubs");
-    console.log(define_process_env_default);
-    console.log(define_process_env_default.DATA_CANISTER_ID);
     const identityActor = await ActorFactory.createDataCanisterIdentityActor(
       authStore,
       define_process_env_default.DATA_CANISTER_ID

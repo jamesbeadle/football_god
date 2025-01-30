@@ -12,9 +12,6 @@ export class ClubService {
   constructor() {}
 
   async getClubs(leagueId: LeagueId): Promise<ClubDTO[]> {
-    console.log("getting clubs");
-    console.log(process.env);
-    console.log(process.env.DATA_CANISTER_ID);
     const identityActor: any =
       await ActorFactory.createDataCanisterIdentityActor(
         authStore,

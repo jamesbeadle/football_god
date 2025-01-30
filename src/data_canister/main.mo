@@ -697,7 +697,6 @@
 
     public shared ( {caller} ) func validateRevaluePlayerUp(dto : GovernanceDTOs.RevaluePlayerUpDTO) : async Base.RustResult{
       assert Principal.toText(caller) == Environment.SNS_GOVERNANCE_CANISTER_ID;
-      assert callerAllowed(caller);
       assert leagueExists(dto.leagueId);
       assert checkPlayerExists(dto.leagueId, dto.playerId);
       return #Ok("Valid");
@@ -705,7 +704,6 @@
 
     public shared ( {caller} ) func validateRevaluePlayerDown(dto : GovernanceDTOs.RevaluePlayerDownDTO) : async Base.RustResult{
       assert Principal.toText(caller) == Environment.SNS_GOVERNANCE_CANISTER_ID;
-      assert callerAllowed(caller);
       assert leagueExists(dto.leagueId);
       assert checkPlayerExists(dto.leagueId, dto.playerId);
       return #Ok("Valid");
@@ -713,7 +711,6 @@
 
     public shared ( {caller} ) func validateLoanPlayer(dto : GovernanceDTOs.LoanPlayerDTO) : async Base.RustResult{
       assert Principal.toText(caller) == Environment.SNS_GOVERNANCE_CANISTER_ID;
-      assert callerAllowed(caller);
       assert leagueExists(dto.leagueId);
       assert leagueExists(dto.loanLeagueId);
       assert clubExists(dto.loanLeagueId, dto.loanClubId);
@@ -724,7 +721,6 @@
 
     public shared ( {caller} ) func validateTransferPlayer(dto : GovernanceDTOs.TransferPlayerDTO) : async Base.RustResult{
       assert Principal.toText(caller) == Environment.SNS_GOVERNANCE_CANISTER_ID;
-      assert callerAllowed(caller);
       assert leagueExists(dto.leagueId);
       assert leagueExists(dto.newLeagueId);
       assert clubExists(dto.leagueId, dto.clubId);
@@ -735,7 +731,6 @@
 
     public shared ( {caller} ) func validateSetFreeAgent(dto : GovernanceDTOs.SetFreeAgentDTO) : async Base.RustResult{
       assert Principal.toText(caller) == Environment.SNS_GOVERNANCE_CANISTER_ID;
-      assert callerAllowed(caller);
       assert leagueExists(dto.leagueId);
       assert checkPlayerExists(dto.leagueId, dto.playerId);
       return #Ok("Valid");
@@ -743,7 +738,6 @@
 
     public shared ( {caller} ) func validateRecallPlayer(dto : GovernanceDTOs.RecallPlayerDTO) : async Base.RustResult {
       assert Principal.toText(caller) == Environment.SNS_GOVERNANCE_CANISTER_ID;
-      assert callerAllowed(caller);
       assert leagueExists(dto.leagueId);
       assert checkPlayerExists(dto.leagueId, dto.playerId);
       return #Ok("Valid");
@@ -751,7 +745,6 @@
 
     public shared ( {caller} ) func validateCreatePlayer(dto : GovernanceDTOs.CreatePlayerDTO) : async Base.RustResult{
       assert Principal.toText(caller) == Environment.SNS_GOVERNANCE_CANISTER_ID;
-      assert callerAllowed(caller);
       assert leagueExists(dto.leagueId);
       assert clubExists(dto.leagueId, dto.clubId);
       assert countryExists(dto.nationality);
@@ -773,7 +766,6 @@
 
     public shared ( {caller} ) func validateUpdatePlayer(dto : GovernanceDTOs.UpdatePlayerDTO) : async Base.RustResult{
       assert Principal.toText(caller) == Environment.SNS_GOVERNANCE_CANISTER_ID;
-      assert callerAllowed(caller);
       assert leagueExists(dto.leagueId);
       assert checkPlayerExists(dto.leagueId, dto.playerId);
 
@@ -801,7 +793,6 @@
 
     public shared ( {caller} ) func validateSetPlayerInjury(dto : GovernanceDTOs.SetPlayerInjuryDTO) : async Base.RustResult{
       assert Principal.toText(caller) == Environment.SNS_GOVERNANCE_CANISTER_ID;
-      assert callerAllowed(caller);
       assert leagueExists(dto.leagueId);
       assert checkPlayerExists(dto.leagueId, dto.playerId);
       return #Ok("Valid");
@@ -809,7 +800,6 @@
 
     public shared ( {caller} ) func validateRetirePlayer(dto : GovernanceDTOs.RetirePlayerDTO) : async Base.RustResult{
       assert Principal.toText(caller) == Environment.SNS_GOVERNANCE_CANISTER_ID;
-      assert callerAllowed(caller);
       assert leagueExists(dto.leagueId);
       assert checkPlayerExists(dto.leagueId, dto.playerId);
       return #Ok("Valid");
@@ -817,7 +807,6 @@
 
     public shared ( {caller} ) func validateUnretirePlayer(dto : GovernanceDTOs.UnretirePlayerDTO) : async Base.RustResult{
       assert Principal.toText(caller) == Environment.SNS_GOVERNANCE_CANISTER_ID;
-      assert callerAllowed(caller);
       assert leagueExists(dto.leagueId);
       assert checkPlayerExists(dto.leagueId, dto.playerId);
       return #Ok("Valid");
@@ -827,7 +816,6 @@
 
     public shared ( {caller} ) func validateCreateLeague(dto : GovernanceDTOs.CreateLeagueDTO) : async Base.RustResult{
       assert Principal.toText(caller) == Environment.SNS_GOVERNANCE_CANISTER_ID;
-      assert callerAllowed(caller);
       assert countryExists(dto.countryId);
       assert logoSizeValid(dto.logo);
       if (Text.size(dto.name) > 100) {
@@ -851,7 +839,6 @@
 
     public shared ( {caller} ) func validateUpdateLeague(dto : GovernanceDTOs.UpdateLeagueDTO) : async Base.RustResult{
       assert Principal.toText(caller) == Environment.SNS_GOVERNANCE_CANISTER_ID;
-      assert callerAllowed(caller);
       assert leagueExists(dto.leagueId);
       //TODO (KELLY): Add league detail validation checks
       return #Ok("Valid");
@@ -859,7 +846,6 @@
 
     public shared ( {caller} ) func validateAddInitialFixtures(dto : GovernanceDTOs.AddInitialFixturesDTO) : async Base.RustResult{
       assert Principal.toText(caller) == Environment.SNS_GOVERNANCE_CANISTER_ID;
-      assert callerAllowed(caller);
       assert leagueExists(dto.leagueId);
       //TODO (KELLY): Add validation checks
         //should equal the number of teams in the related environment file
@@ -868,7 +854,6 @@
 
     public shared ( {caller} ) func validateMoveFixture(dto : GovernanceDTOs.MoveFixtureDTO) : async Base.RustResult{
       assert Principal.toText(caller) == Environment.SNS_GOVERNANCE_CANISTER_ID;
-      assert callerAllowed(caller);
       assert leagueExists(dto.leagueId);
       assert fixtureExists(dto.leagueId, dto.seasonId, dto.fixtureId);
       //TODO (KELLY): Add validation checks
@@ -879,7 +864,6 @@
 
     public shared ( {caller} ) func validatePostponeFixture(dto : GovernanceDTOs.PostponeFixtureDTO) : async Base.RustResult{
       assert Principal.toText(caller) == Environment.SNS_GOVERNANCE_CANISTER_ID;
-      assert callerAllowed(caller);
       assert leagueExists(dto.leagueId);
       assert fixtureExists(dto.leagueId, dto.seasonId, dto.fixtureId);
       return #Ok("Valid");
@@ -906,7 +890,6 @@
 
     public shared ( {caller} ) func validateCreateClub(dto : GovernanceDTOs.CreateClubDTO) : async Base.RustResult{
       assert Principal.toText(caller) == Environment.SNS_GOVERNANCE_CANISTER_ID;
-      assert callerAllowed(caller);
       assert leagueExists(dto.leagueId);
       //TODO (KELLY): Add validation checks on club details
       return #Ok("Valid");
@@ -914,7 +897,6 @@
 
     public shared ( {caller} ) func validatePromoteClub(dto : GovernanceDTOs.PromoteClubDTO) : async Base.RustResult{
       assert Principal.toText(caller) == Environment.SNS_GOVERNANCE_CANISTER_ID;
-      assert callerAllowed(caller);
       assert leagueExists(dto.leagueId);
       assert leagueExists(dto.toLeagueId);
       assert clubExists(dto.leagueId, dto.clubId);
@@ -934,7 +916,6 @@
 
     public shared ( {caller} ) func validateUpdateClub(dto : GovernanceDTOs.UpdateClubDTO) : async Base.RustResult{
       assert Principal.toText(caller) == Environment.SNS_GOVERNANCE_CANISTER_ID;
-      assert callerAllowed(caller);
       assert leagueExists(dto.leagueId);
       assert clubExists(dto.leagueId, dto.clubId);
       //TODO (KELLY): Add validation checks on update details

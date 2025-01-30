@@ -1,4 +1,3 @@
-import { idlFactory } from "../../../../declarations/data_canister";
 import { ActorFactory } from "../utils/ActorFactory";
 import type { DataHashDTO } from "../../../../declarations/backend/backend.did";
 import { isError } from "../utils/helpers";

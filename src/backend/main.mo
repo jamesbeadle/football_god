@@ -567,8 +567,6 @@ actor Self {
   };
 
   public shared func kycVerificationCallback(response: ShuftiTypes.ShuftiResponse) : async Result.Result<(), T.Error> {
-    Debug.print("KYC Callback");
-    Debug.print(debug_show response);
     let principalResult = kycManager.storeVerificationResponse(response);
 
     switch(principalResult){

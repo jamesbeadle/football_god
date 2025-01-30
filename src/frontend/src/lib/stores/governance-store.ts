@@ -40,18 +40,29 @@ import { clubStore } from "./club-store";
 import { leagueStore } from "./league-store";
 import { Principal } from "@dfinity/principal";
 import type { OptionIdentity } from "$lib/types/identity";
+import { IDL } from "@dfinity/candid";
+
+const RevaluePlayerUpDTO_Idl = IDL.Record({
+  leagueId: IDL.Nat16,
+  playerId: IDL.Nat16,
+});
+
+const RevaluePlayerDownDTO_Idl = IDL.Record({
+  leagueId: IDL.Nat16,
+  playerId: IDL.Nat16,
+});
+
+const LoanPlayerDTO_Idl = IDL.Record({
+  leagueId: IDL.Nat16,
+  playerId: IDL.Nat16,
+  loanLeagueId: IDL.Nat16,
+  loanClubId: IDL.Nat16,
+  loanEndDate: IDL.Int,
+});
 
 function createGovernanceStore() {
-  async function revaluePlayerUp(
-    leagueId: LeagueId,
-    playerId: PlayerId,
-  ): Promise<any> {
+  async function revaluePlayerUp(dto: RevaluePlayerUpDTO): Promise<any> {
     try {
-      var dto: RevaluePlayerUpDTO = {
-        leagueId,
-        playerId,
-      };
-
       const {
         manageNeuron: governanceManageNeuron,
         listNeurons: governanceListNeurons,
@@ -79,19 +90,16 @@ function createGovernanceStore() {
         beforeNeuronId: { id: [] },
       });
       if (userNeurons.length > 0) {
-        const jsonString = JSON.stringify(dto);
-
-        const encoder = new TextEncoder();
-        const payload = encoder.encode(jsonString);
+        const encoded = IDL.encode([RevaluePlayerUpDTO_Idl], [dto]);
 
         const fn: ExecuteGenericNervousSystemFunction = {
-          function_id: 1000n,
-          payload: payload,
+          function_id: 50000n,
+          payload: new Uint8Array(encoded),
         };
 
-        let allPlayers = await playerStore.getPlayers(leagueId);
+        let allPlayers = await playerStore.getPlayers(dto.leagueId);
 
-        let player = allPlayers.find((x) => x.id == playerId);
+        let player = allPlayers.find((x) => x.id == dto.playerId);
         if (player) {
           const command: Command = {
             MakeProposal: {
@@ -157,14 +165,11 @@ function createGovernanceStore() {
         beforeNeuronId: { id: [] },
       });
       if (userNeurons.length > 0) {
-        const jsonString = JSON.stringify(dto);
-
-        const encoder = new TextEncoder();
-        const payload = encoder.encode(jsonString);
+        const encoded = IDL.encode([RevaluePlayerDownDTO_Idl], [dto]);
 
         const fn: ExecuteGenericNervousSystemFunction = {
-          function_id: 50000n,
-          payload: payload,
+          function_id: 51000n,
+          payload: new Uint8Array(encoded),
         };
 
         let allPlayers = await playerStore.getPlayers(dto.leagueId);
@@ -201,6 +206,96 @@ function createGovernanceStore() {
       }
     } catch (error) {
       console.error("Error revaluing player down:", error);
+      throw error;
+    }
+  }
+
+  async function loanPlayer(
+    leagueId: LeagueId,
+    playerId: PlayerId,
+    loanLeagueId: LeagueId,
+    loanClubId: ClubId,
+    loanEndDate: string,
+  ): Promise<any> {
+    try {
+      const dateObject = new Date(loanEndDate);
+      const timestampMilliseconds = dateObject.getTime();
+      let nanoseconds = BigInt(timestampMilliseconds) * BigInt(1000000);
+
+      let dto: LoanPlayerDTO = {
+        leagueId,
+        playerId,
+        loanLeagueId,
+        loanClubId,
+        loanEndDate: nanoseconds,
+      };
+
+      const identityActor: any = await ActorFactory.createBackendIdentityActor(
+        authStore,
+        process.env.SNS_GOVERNANCE_CANISTER_ID ?? "",
+      );
+
+      const governanceAgent: HttpAgent = ActorFactory.getAgent(
+        process.env.SNS_GOVERNANCE_CANISTER_ID,
+        identityActor,
+        null,
+      );
+
+      const {
+        manageNeuron: governanceManageNeuron,
+        listNeurons: governanceListNeurons,
+      } = SnsGovernanceCanister.create({
+        agent: governanceAgent,
+        canisterId: identityActor,
+      });
+
+      const userNeurons = await governanceListNeurons({
+        principal: identityActor.principal,
+        limit: 10,
+        beforeNeuronId: { id: [] },
+      });
+      if (userNeurons.length > 0) {
+        const jsonString = JSON.stringify(dto);
+
+        const encoder = new TextEncoder();
+        const payload = encoder.encode(jsonString);
+
+        const fn: ExecuteGenericNervousSystemFunction = {
+          function_id: 9000n,
+          payload: payload,
+        };
+
+        let allPlayers = await playerStore.getPlayers(leagueId);
+        let clubs = await clubStore.getClubs(leagueId);
+        let player = allPlayers.find((x) => x.id == playerId);
+        if (player) {
+          let club = clubs.find((x) => x.id == player?.clubId);
+          if (!club) {
+            return;
+          }
+
+          const command: Command = {
+            MakeProposal: {
+              title: `Loan ${player.firstName} to ${club?.friendlyName}.`,
+              url: "openfpl.xyz/governance",
+              summary: `Loan ${player.firstName} to ${club?.friendlyName}.`,
+              action: [{ ExecuteGenericNervousSystemFunction: fn }],
+            },
+          };
+
+          const neuronId = userNeurons[0].id[0];
+          if (!neuronId) {
+            return;
+          }
+
+          await governanceManageNeuron({
+            subaccount: neuronId.id,
+            command: [command],
+          });
+        }
+      }
+    } catch (error) {
+      console.error("Error loaning player:", error);
       throw error;
     }
   }
@@ -723,96 +818,6 @@ function createGovernanceStore() {
       }
     } catch (error) {
       console.error("Error transferring player:", error);
-      throw error;
-    }
-  }
-
-  async function loanPlayer(
-    leagueId: LeagueId,
-    playerId: PlayerId,
-    loanLeagueId: LeagueId,
-    loanClubId: ClubId,
-    loanEndDate: string,
-  ): Promise<any> {
-    try {
-      const dateObject = new Date(loanEndDate);
-      const timestampMilliseconds = dateObject.getTime();
-      let nanoseconds = BigInt(timestampMilliseconds) * BigInt(1000000);
-
-      let dto: LoanPlayerDTO = {
-        leagueId,
-        playerId,
-        loanLeagueId,
-        loanClubId,
-        loanEndDate: nanoseconds,
-      };
-
-      const identityActor: any = await ActorFactory.createBackendIdentityActor(
-        authStore,
-        process.env.SNS_GOVERNANCE_CANISTER_ID ?? "",
-      );
-
-      const governanceAgent: HttpAgent = ActorFactory.getAgent(
-        process.env.SNS_GOVERNANCE_CANISTER_ID,
-        identityActor,
-        null,
-      );
-
-      const {
-        manageNeuron: governanceManageNeuron,
-        listNeurons: governanceListNeurons,
-      } = SnsGovernanceCanister.create({
-        agent: governanceAgent,
-        canisterId: identityActor,
-      });
-
-      const userNeurons = await governanceListNeurons({
-        principal: identityActor.principal,
-        limit: 10,
-        beforeNeuronId: { id: [] },
-      });
-      if (userNeurons.length > 0) {
-        const jsonString = JSON.stringify(dto);
-
-        const encoder = new TextEncoder();
-        const payload = encoder.encode(jsonString);
-
-        const fn: ExecuteGenericNervousSystemFunction = {
-          function_id: 9000n,
-          payload: payload,
-        };
-
-        let allPlayers = await playerStore.getPlayers(leagueId);
-        let clubs = await clubStore.getClubs(leagueId);
-        let player = allPlayers.find((x) => x.id == playerId);
-        if (player) {
-          let club = clubs.find((x) => x.id == player?.clubId);
-          if (!club) {
-            return;
-          }
-
-          const command: Command = {
-            MakeProposal: {
-              title: `Loan ${player.firstName} to ${club?.friendlyName}.`,
-              url: "openfpl.xyz/governance",
-              summary: `Loan ${player.firstName} to ${club?.friendlyName}.`,
-              action: [{ ExecuteGenericNervousSystemFunction: fn }],
-            },
-          };
-
-          const neuronId = userNeurons[0].id[0];
-          if (!neuronId) {
-            return;
-          }
-
-          await governanceManageNeuron({
-            subaccount: neuronId.id,
-            command: [command],
-          });
-        }
-      }
-    } catch (error) {
-      console.error("Error loaning player:", error);
       throw error;
     }
   }

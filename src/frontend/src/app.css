@@ -88,3 +88,15 @@
 .dropdown-link {
   @apply block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100;
 }
+
+.bg-info {
+  @apply bg-BrandDarkGray;
+}
+
+.bg-success {
+  @apply bg-BrandPositive;
+}
+
+.bg-error {
+  @apply bg-BrandNegative;
+}

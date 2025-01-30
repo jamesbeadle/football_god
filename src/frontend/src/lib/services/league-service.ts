@@ -17,7 +17,6 @@ export class LeagueService {
         authStore,
         process.env.DATA_CANISTER_CANISTER_ID ?? "",
       );
-    console.log(identityActor);
     const result = await identityActor.getLeagues();
     if (isError(result)) throw new Error("Failed to fetch leagues");
     return result.ok;
