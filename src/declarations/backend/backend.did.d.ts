@@ -2,9 +2,6 @@ import type { Principal } from "@dfinity/principal";
 import type { ActorMethod } from "@dfinity/agent";
 import type { IDL } from "@dfinity/candid";
 
-export interface AddInitialFixturesDTO {
-  seasonFixtures: Array<FixtureDTO>;
-}
 export type BetResult = { Won: null } | { Lost: null } | { Open: null };
 export interface BetSlip {
   id: bigint;
@@ -90,36 +87,6 @@ export interface CountryDTO {
   name: string;
 }
 export type CountryId = number;
-export interface CreateClubDTO {
-  secondaryColourHex: string;
-  name: string;
-  friendlyName: string;
-  thirdColourHex: string;
-  abbreviatedName: string;
-  shirtType: ShirtType;
-  primaryColourHex: string;
-  leagueId: LeagueId;
-}
-export interface CreateLeagueDTO {
-  logo: Uint8Array | number[];
-  name: string;
-  teamCount: number;
-  relatedGender: Gender;
-  countryId: CountryId;
-  abbreviation: string;
-  governingBody: string;
-  formed: bigint;
-}
-export interface CreatePlayerDTO {
-  clubId: ClubId;
-  valueQuarterMillions: number;
-  dateOfBirth: bigint;
-  nationality: CountryId;
-  shirtNumber: number;
-  position: PlayerPosition;
-  lastName: string;
-  firstName: string;
-}
 export interface DataHash {
   hash: string;
   category: string;
@@ -214,12 +181,6 @@ export interface LeagueStatus {
   leagueId: LeagueId;
   seasonActive: boolean;
 }
-export interface LoanPlayerDTO {
-  loanEndDate: bigint;
-  playerId: ClubId;
-  loanClubId: ClubId;
-  loanLeagueId: LeagueId;
-}
 export interface LoanedPlayerDTO {
   id: number;
   status: PlayerStatus;
@@ -266,13 +227,6 @@ export type MatchResult =
 export interface MissPenaltyOdds {
   homeTeam: number;
   awayTeam: number;
-}
-export interface MoveFixtureDTO {
-  fixtureId: FixtureId;
-  updatedFixtureGameweek: GameweekNumber;
-  updatedFixtureDate: bigint;
-  seasonId: SeasonId;
-  leagueId: LeagueId;
 }
 export interface OverUnderSelection {
   odds: number;
@@ -371,11 +325,6 @@ export type PlayerStatus =
   | { Active: null }
   | { FreeAgent: null }
   | { Retired: null };
-export interface PostponeFixtureDTO {
-  fixtureId: FixtureId;
-  seasonId: SeasonId;
-  leagueId: LeagueId;
-}
 export type PrincipalId = string;
 export interface ProfileDTO {
   username: string;
@@ -394,28 +343,6 @@ export interface ProfileDTO {
   kycSubmissionDate: bigint;
   principalId: PrincipalId;
   monthlyBetTotal: bigint;
-}
-export interface PromoteClubDTO {
-  secondaryColourHex: string;
-  name: string;
-  friendlyName: string;
-  thirdColourHex: string;
-  abbreviatedName: string;
-  shirtType: ShirtType;
-  primaryColourHex: string;
-}
-export interface RecallPlayerDTO {
-  recallFromLeagueId: LeagueId;
-  playerId: ClubId;
-}
-export interface RemoveClubDTO {
-  clubId: ClubId;
-  leagueId: LeagueId;
-}
-export interface RescheduleFixtureDTO {
-  postponedFixtureId: FixtureId;
-  updatedFixtureGameweek: GameweekNumber;
-  updatedFixtureDate: bigint;
 }
 export type Result = { ok: null } | { err: Error };
 export interface ResultAndYesNoSelectionOdds {
@@ -443,21 +370,6 @@ export type Result_6 = { ok: Array<SeasonDTO> } | { err: Error };
 export type Result_7 = { ok: ProfileDTO } | { err: Error };
 export type Result_8 = { ok: PlayerDetailDTO } | { err: Error };
 export type Result_9 = { ok: MatchOddsDTO } | { err: Error };
-export interface RetirePlayerDTO {
-  playerId: ClubId;
-  retirementDate: bigint;
-}
-export interface RevaluePlayerDownDTO {
-  playerId: ClubId;
-  seasonId: SeasonId;
-  gameweek: GameweekNumber;
-}
-export interface RevaluePlayerUpDTO {
-  playerId: ClubId;
-  seasonId: SeasonId;
-  gameweek: GameweekNumber;
-}
-export type RustResult = { Ok: string } | { Err: string };
 export interface ScoreDetail {
   homeGoals: number;
   awayGoals: number;
@@ -508,10 +420,6 @@ export type SelectionStatus =
   | { Void: null }
   | { Unsettled: null }
   | { Settled: null };
-export interface SetFreeAgentDTO {
-  playerId: ClubId;
-  leagueId: LeagueId;
-}
 export interface SetMaxBetLimit {
   maxBetLimit: bigint;
   principalId: PrincipalId;
@@ -519,11 +427,6 @@ export interface SetMaxBetLimit {
 export interface SetMonthlyBetLimitDTO {
   monthlyBetLimit: bigint;
   principalId: PrincipalId;
-}
-export interface SetPlayerInjuryDTO {
-  playerId: ClubId;
-  description: string;
-  expectedEndDate: bigint;
 }
 export type ShirtType = { Filled: null } | { Striped: null };
 export interface ShuftiAcceptedResponse {
@@ -546,13 +449,6 @@ export interface SubmitBetslipDTO {
   principalId: PrincipalId;
   leagueId: LeagueId;
 }
-export interface SubmitFixtureDataDTO {
-  fixtureId: FixtureId;
-  seasonId: SeasonId;
-  gameweek: GameweekNumber;
-  playerEventData: Array<PlayerEventData>;
-  leagueId: LeagueId;
-}
 export interface SystemStateDTO {
   version: string;
   onHold: boolean;
@@ -567,51 +463,9 @@ export interface TimerInfo {
   callbackName: string;
   triggerTime: bigint;
 }
-export interface TransferPlayerDTO {
-  clubId: ClubId;
-  newLeagueId: LeagueId;
-  playerId: ClubId;
-  newShirtNumber: number;
-  newClubId: ClubId;
-  leagueId: LeagueId;
-}
-export interface UnretirePlayerDTO {
-  playerId: ClubId;
-  leagueId: LeagueId;
-}
 export interface UpdateAppStatusDTO {
   version: string;
   onHold: boolean;
-}
-export interface UpdateClubDTO {
-  clubId: ClubId;
-  secondaryColourHex: string;
-  name: string;
-  friendlyName: string;
-  thirdColourHex: string;
-  abbreviatedName: string;
-  shirtType: ShirtType;
-  primaryColourHex: string;
-}
-export interface UpdateLeagueDTO {
-  logo: Uint8Array | number[];
-  name: string;
-  teamCount: number;
-  relatedGender: Gender;
-  countryId: CountryId;
-  abbreviation: string;
-  governingBody: string;
-  leagueId: LeagueId;
-  formed: bigint;
-}
-export interface UpdatePlayerDTO {
-  dateOfBirth: bigint;
-  playerId: ClubId;
-  nationality: CountryId;
-  shirtNumber: number;
-  position: PlayerPosition;
-  lastName: string;
-  firstName: string;
 }
 export interface UpdateProfilePictureDTO {
   profilePictureExtension: string;
@@ -654,43 +508,6 @@ export interface _SERVICE {
   calculateGameweekScores: ActorMethod<[string], Result>;
   calculateLeaderboards: ActorMethod<[string], Result>;
   calculateWeeklyRewards: ActorMethod<[string, GameweekNumber], Result>;
-  executeAddInitialFixtures: ActorMethod<
-    [LeagueId, AddInitialFixturesDTO],
-    undefined
-  >;
-  executeCreateClub: ActorMethod<[CreateClubDTO], undefined>;
-  executeCreateLeague: ActorMethod<[CreateLeagueDTO], undefined>;
-  executeCreatePlayer: ActorMethod<[LeagueId, CreatePlayerDTO], undefined>;
-  executeLoanPlayer: ActorMethod<[LeagueId, LoanPlayerDTO], undefined>;
-  executeMoveFixture: ActorMethod<[MoveFixtureDTO], undefined>;
-  executePostponeFixture: ActorMethod<[PostponeFixtureDTO], undefined>;
-  executePromoteClub: ActorMethod<[LeagueId, PromoteClubDTO], undefined>;
-  executeRecallPlayer: ActorMethod<[RecallPlayerDTO], undefined>;
-  executeRemoveClub: ActorMethod<[RemoveClubDTO], undefined>;
-  executeRescheduleFixture: ActorMethod<
-    [LeagueId, RescheduleFixtureDTO],
-    undefined
-  >;
-  executeRetirePlayer: ActorMethod<[LeagueId, RetirePlayerDTO], undefined>;
-  executeRevaluePlayerDown: ActorMethod<
-    [LeagueId, RevaluePlayerDownDTO],
-    undefined
-  >;
-  executeRevaluePlayerUp: ActorMethod<
-    [LeagueId, RevaluePlayerUpDTO],
-    undefined
-  >;
-  executeSetFreeAgent: ActorMethod<[LeagueId, SetFreeAgentDTO], undefined>;
-  executeSetPlayerInjury: ActorMethod<
-    [LeagueId, SetPlayerInjuryDTO],
-    undefined
-  >;
-  executeSubmitFixtureData: ActorMethod<[SubmitFixtureDataDTO], undefined>;
-  executeTransferPlayer: ActorMethod<[LeagueId, TransferPlayerDTO], undefined>;
-  executeUnretirePlayer: ActorMethod<[LeagueId, UnretirePlayerDTO], undefined>;
-  executeUpdateClub: ActorMethod<[LeagueId, UpdateClubDTO], undefined>;
-  executeUpdateLeague: ActorMethod<[UpdateLeagueDTO], undefined>;
-  executeUpdatePlayer: ActorMethod<[LeagueId, UpdatePlayerDTO], undefined>;
   getBets: ActorMethod<[GetBetsDTO], Result_20>;
   getBettableHomepageFixtures: ActorMethod<[LeagueId], Result_19>;
   getCountries: ActorMethod<[], Result_18>;
@@ -726,31 +543,10 @@ export interface _SERVICE {
   snapshotManagers: ActorMethod<[string], Result>;
   storeKYCReference: ActorMethod<[string], undefined>;
   updateBettingOdds: ActorMethod<[LeagueId], Result>;
-  updatePlayerValue: ActorMethod<[PlayerId, number], Result>;
   updateProfilePicture: ActorMethod<[UpdateProfilePictureDTO], Result>;
   updateSystemState: ActorMethod<[string, UpdateAppStatusDTO], Result>;
   updateUsername: ActorMethod<[UpdateUsernameDTO], Result>;
   updateWithdrawalAddress: ActorMethod<[UpdateWithdrawalAddressDTO], Result>;
-  validateAddInitialFixtures: ActorMethod<[AddInitialFixturesDTO], RustResult>;
-  validateCreateLeague: ActorMethod<[CreateLeagueDTO], RustResult>;
-  validateCreatePlayer: ActorMethod<[CreatePlayerDTO], RustResult>;
-  validateLoanPlayer: ActorMethod<[LoanPlayerDTO], RustResult>;
-  validateMoveFixture: ActorMethod<[MoveFixtureDTO], RustResult>;
-  validatePostponeFixture: ActorMethod<[PostponeFixtureDTO], RustResult>;
-  validatePromoteClub: ActorMethod<[PromoteClubDTO], RustResult>;
-  validateRecallPlayer: ActorMethod<[RecallPlayerDTO], RustResult>;
-  validateRescheduleFixture: ActorMethod<[RescheduleFixtureDTO], RustResult>;
-  validateRetirePlayer: ActorMethod<[RetirePlayerDTO], RustResult>;
-  validateRevaluePlayerDown: ActorMethod<[RevaluePlayerDownDTO], RustResult>;
-  validateRevaluePlayerUp: ActorMethod<[RevaluePlayerUpDTO], RustResult>;
-  validateSetFreeAgent: ActorMethod<[TransferPlayerDTO], RustResult>;
-  validateSetPlayerInjury: ActorMethod<[SetPlayerInjuryDTO], RustResult>;
-  validateSubmitFixtureData: ActorMethod<[SubmitFixtureDataDTO], RustResult>;
-  validateTransferPlayer: ActorMethod<[TransferPlayerDTO], RustResult>;
-  validateUnretirePlayer: ActorMethod<[UnretirePlayerDTO], RustResult>;
-  validateUpdateClub: ActorMethod<[UpdateClubDTO], RustResult>;
-  validateUpdateLeague: ActorMethod<[UpdateLeagueDTO], RustResult>;
-  validateUpdatePlayer: ActorMethod<[UpdatePlayerDTO], RustResult>;
 }
 export declare const idlFactory: IDL.InterfaceFactory;
 export declare const init: (args: { IDL: typeof IDL }) => IDL.Type[];

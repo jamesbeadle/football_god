@@ -1,20 +1,20 @@
 import type {
   PlayerDTO,
-  LeagueId,
-  TransferPlayerDTO,
-  SetFreeAgentDTO,
-  LoanPlayerDTO,
-  CreatePlayerDTO,
-  UpdatePlayerDTO,
-  RecallPlayerDTO,
+  LeagueId
 } from "../../../../declarations/backend/backend.did";
 import { idlFactory } from "../../../../declarations/backend";
 import { ActorFactory } from "../utils/ActorFactory";
 import { isError } from "../utils/helpers";
 import { authStore } from "$lib/stores/auth-store";
 import type {
+  CreatePlayerDTO,
   LoanedPlayerDTO,
+  LoanPlayerDTO,
   PlayerId,
+  RecallPlayerDTO,
+  SetFreeAgentDTO,
+  TransferPlayerDTO,
+  UpdatePlayerDTO,
 } from "../../../../declarations/data_canister/data_canister.did";
 
 export class PlayerService {
@@ -93,19 +93,13 @@ export class PlayerService {
   }
 
   async recallLoan(
-    recallFromLeagueId: number,
-    playerId: PlayerId,
+    leagueId: number, dto: RecallPlayerDTO
   ): Promise<void> {
     const identityActor: any = await ActorFactory.createIdentityActor(
       authStore,
       process.env.BACKEND_CANISTER_ID ?? "",
     );
-
-    let dto: RecallPlayerDTO = {
-      recallFromLeagueId,
-      playerId,
-    };
-
+    
     const result = await identityActor.executeRecallPlayer(dto);
     if (isError(result)) throw new Error("Failed to recall player");
   }

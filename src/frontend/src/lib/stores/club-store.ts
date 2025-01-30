@@ -1,13 +1,13 @@
 import { writable } from "svelte/store";
 import type {
   ClubDTO,
-  CreateClubDTO,
   LeagueId,
 } from "../../../../declarations/backend/backend.did";
 import { ClubService } from "../services/club-service";
 import { DataHashService } from "../services/data-hash-service";
 import { serializeData, deserializeData } from "../utils/helpers";
 import { MAX_CACHED_LEAGUES } from "../constants/app.constants";
+import type { CreateClubDTO } from "../../../../declarations/data_canister/data_canister.did";
 
 function createClubStore() {
   const { subscribe, update } = writable<Record<number, ClubDTO[]>>({});

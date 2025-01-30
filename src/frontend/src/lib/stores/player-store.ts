@@ -8,6 +8,7 @@ import type {
   SetFreeAgentDTO,
   TransferPlayerDTO,
   UpdatePlayerDTO,
+  RecallPlayerDTO,
 } from "../../../../declarations/data_canister/data_canister.did";
 import { PlayerService } from "../services/player-service";
 import { DataHashService } from "../services/data-hash-service";
@@ -121,10 +122,10 @@ function createPlayerStore() {
   }
 
   async function recallLoan(
-    recallFromLeagueId: LeagueId,
-    recallPlayerId: PlayerId,
+    leagueId: LeagueId,
+    dto: RecallPlayerDTO,
   ): Promise<any> {
-    return new PlayerService().recallLoan(recallFromLeagueId, recallPlayerId);
+    return new PlayerService().recallLoan(leagueId, dto);
   }
 
   return {
@@ -136,7 +137,7 @@ function createPlayerStore() {
     updatePlayer,
     syncPlayers,
     getLoanedPlayers,
-    recallLoan
+    recallLoan,
   };
 }
 

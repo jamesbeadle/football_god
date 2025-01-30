@@ -41,57 +41,10 @@ type UpdateProfilePictureDTO =
    profilePicture: blob;
    profilePictureExtension: text;
  };
-type UpdatePlayerDTO = 
- record {
-   dateOfBirth: int;
-   firstName: text;
-   lastName: text;
-   nationality: CountryId;
-   playerId: ClubId;
-   position: PlayerPosition;
-   shirtNumber: nat8;
- };
-type UpdateLeagueDTO = 
- record {
-   abbreviation: text;
-   countryId: CountryId;
-   formed: int;
-   governingBody: text;
-   leagueId: LeagueId;
-   logo: blob;
-   name: text;
-   relatedGender: Gender;
-   teamCount: nat8;
- };
-type UpdateClubDTO = 
- record {
-   abbreviatedName: text;
-   clubId: ClubId;
-   friendlyName: text;
-   name: text;
-   primaryColourHex: text;
-   secondaryColourHex: text;
-   shirtType: ShirtType;
-   thirdColourHex: text;
- };
 type UpdateAppStatusDTO = 
  record {
    onHold: bool;
    version: text;
- };
-type UnretirePlayerDTO = 
- record {
-   leagueId: LeagueId;
-   playerId: ClubId;
- };
-type TransferPlayerDTO = 
- record {
-   clubId: ClubId;
-   leagueId: LeagueId;
-   newClubId: ClubId;
-   newLeagueId: LeagueId;
-   newShirtNumber: nat8;
-   playerId: ClubId;
  };
 type TimerInfo = 
  record {
@@ -109,14 +62,6 @@ type SystemStateDTO =
  record {
    onHold: bool;
    version: text;
- };
-type SubmitFixtureDataDTO = 
- record {
-   fixtureId: FixtureId;
-   gameweek: GameweekNumber;
-   leagueId: LeagueId;
-   playerEventData: vec PlayerEventData;
-   seasonId: SeasonId;
  };
 type SubmitBetslipDTO = 
  record {
@@ -146,12 +91,6 @@ type ShirtType =
    Filled;
    Striped;
  };
-type SetPlayerInjuryDTO = 
- record {
-   description: text;
-   expectedEndDate: int;
-   playerId: ClubId;
- };
 type SetMonthlyBetLimitDTO = 
  record {
    monthlyBetLimit: nat64;
@@ -161,11 +100,6 @@ type SetMaxBetLimit =
  record {
    maxBetLimit: nat64;
    principalId: PrincipalId;
- };
-type SetFreeAgentDTO = 
- record {
-   leagueId: LeagueId;
-   playerId: ClubId;
  };
 type SelectionStatus = 
  variant {
@@ -224,28 +158,6 @@ type ScoreDetail =
  record {
    awayGoals: nat8;
    homeGoals: nat8;
- };
-type RustResult = 
- variant {
-   Err: text;
-   Ok: text;
- };
-type RevaluePlayerUpDTO = 
- record {
-   gameweek: GameweekNumber;
-   playerId: ClubId;
-   seasonId: SeasonId;
- };
-type RevaluePlayerDownDTO = 
- record {
-   gameweek: GameweekNumber;
-   playerId: ClubId;
-   seasonId: SeasonId;
- };
-type RetirePlayerDTO = 
- record {
-   playerId: ClubId;
-   retirementDate: int;
  };
 type Result_9 = 
  variant {
@@ -358,32 +270,6 @@ type Result =
    err: Error;
    ok;
  };
-type RescheduleFixtureDTO = 
- record {
-   postponedFixtureId: FixtureId;
-   updatedFixtureDate: int;
-   updatedFixtureGameweek: GameweekNumber;
- };
-type RemoveClubDTO = 
- record {
-   clubId: ClubId;
-   leagueId: LeagueId;
- };
-type RecallPlayerDTO = 
- record {
-   playerId: ClubId;
-   recallFromLeagueId: LeagueId;
- };
-type PromoteClubDTO = 
- record {
-   abbreviatedName: text;
-   friendlyName: text;
-   name: text;
-   primaryColourHex: text;
-   secondaryColourHex: text;
-   shirtType: ShirtType;
-   thirdColourHex: text;
- };
 type ProfileDTO = 
  record {
    accountBalance: nat64;
@@ -404,12 +290,6 @@ type ProfileDTO =
    withdrawalAddress: text;
  };
 type PrincipalId = text;
-type PostponeFixtureDTO = 
- record {
-   fixtureId: FixtureId;
-   leagueId: LeagueId;
-   seasonId: SeasonId;
- };
 type PlayerStatus = 
  variant {
    Active;
@@ -523,14 +403,6 @@ type OverUnderSelection =
    margin: float64;
    odds: float64;
  };
-type MoveFixtureDTO = 
- record {
-   fixtureId: FixtureId;
-   leagueId: LeagueId;
-   seasonId: SeasonId;
-   updatedFixtureDate: int;
-   updatedFixtureGameweek: GameweekNumber;
- };
 type MissPenaltyOdds = 
  record {
    awayTeam: float64;
@@ -582,13 +454,6 @@ type LoanedPlayerDTO =
    shirtNumber: nat8;
    status: PlayerStatus;
    valueQuarterMillions: nat16;
- };
-type LoanPlayerDTO = 
- record {
-   loanClubId: ClubId;
-   loanEndDate: int;
-   loanLeagueId: LeagueId;
-   playerId: ClubId;
  };
 type LeagueStatus = 
  record {
@@ -700,39 +565,6 @@ type DataHash =
    category: text;
    hash: text;
  };
-type CreatePlayerDTO = 
- record {
-   clubId: ClubId;
-   dateOfBirth: int;
-   firstName: text;
-   lastName: text;
-   nationality: CountryId;
-   position: PlayerPosition;
-   shirtNumber: nat8;
-   valueQuarterMillions: nat16;
- };
-type CreateLeagueDTO = 
- record {
-   abbreviation: text;
-   countryId: CountryId;
-   formed: int;
-   governingBody: text;
-   logo: blob;
-   name: text;
-   relatedGender: Gender;
-   teamCount: nat8;
- };
-type CreateClubDTO = 
- record {
-   abbreviatedName: text;
-   friendlyName: text;
-   leagueId: LeagueId;
-   name: text;
-   primaryColourHex: text;
-   secondaryColourHex: text;
-   shirtType: ShirtType;
-   thirdColourHex: text;
- };
 type CountryId = nat16;
 type CountryDTO = 
  record {
@@ -825,34 +657,11 @@ type BetResult =
    Open;
    Won;
  };
-type AddInitialFixturesDTO = record {seasonFixtures: vec FixtureDTO;};
 service : {
   agreeTerms: () -> (Result);
   calculateGameweekScores: (text) -> (Result);
   calculateLeaderboards: (text) -> (Result);
   calculateWeeklyRewards: (text, GameweekNumber) -> (Result);
-  executeAddInitialFixtures: (LeagueId, AddInitialFixturesDTO) -> ();
-  executeCreateClub: (CreateClubDTO) -> ();
-  executeCreateLeague: (CreateLeagueDTO) -> ();
-  executeCreatePlayer: (LeagueId, CreatePlayerDTO) -> ();
-  executeLoanPlayer: (LeagueId, LoanPlayerDTO) -> ();
-  executeMoveFixture: (MoveFixtureDTO) -> ();
-  executePostponeFixture: (PostponeFixtureDTO) -> ();
-  executePromoteClub: (LeagueId, PromoteClubDTO) -> ();
-  executeRecallPlayer: (RecallPlayerDTO) -> ();
-  executeRemoveClub: (RemoveClubDTO) -> ();
-  executeRescheduleFixture: (LeagueId, RescheduleFixtureDTO) -> ();
-  executeRetirePlayer: (LeagueId, RetirePlayerDTO) -> ();
-  executeRevaluePlayerDown: (LeagueId, RevaluePlayerDownDTO) -> ();
-  executeRevaluePlayerUp: (LeagueId, RevaluePlayerUpDTO) -> ();
-  executeSetFreeAgent: (LeagueId, SetFreeAgentDTO) -> ();
-  executeSetPlayerInjury: (LeagueId, SetPlayerInjuryDTO) -> ();
-  executeSubmitFixtureData: (SubmitFixtureDataDTO) -> ();
-  executeTransferPlayer: (LeagueId, TransferPlayerDTO) -> ();
-  executeUnretirePlayer: (LeagueId, UnretirePlayerDTO) -> ();
-  executeUpdateClub: (LeagueId, UpdateClubDTO) -> ();
-  executeUpdateLeague: (UpdateLeagueDTO) -> ();
-  executeUpdatePlayer: (LeagueId, UpdatePlayerDTO) -> ();
   getBets: (GetBetsDTO) -> (Result_20);
   getBettableHomepageFixtures: (LeagueId) -> (Result_19) query;
   getCountries: () -> (Result_18) query;
@@ -886,29 +695,8 @@ service : {
   snapshotManagers: (text) -> (Result);
   storeKYCReference: (text) -> ();
   updateBettingOdds: (LeagueId) -> (Result);
-  updatePlayerValue: (PlayerId, nat16) -> (Result);
   updateProfilePicture: (UpdateProfilePictureDTO) -> (Result);
   updateSystemState: (text, UpdateAppStatusDTO) -> (Result);
   updateUsername: (UpdateUsernameDTO) -> (Result);
   updateWithdrawalAddress: (UpdateWithdrawalAddressDTO) -> (Result);
-  validateAddInitialFixtures: (AddInitialFixturesDTO) -> (RustResult) query;
-  validateCreateLeague: (CreateLeagueDTO) -> (RustResult) query;
-  validateCreatePlayer: (CreatePlayerDTO) -> (RustResult) query;
-  validateLoanPlayer: (LoanPlayerDTO) -> (RustResult) query;
-  validateMoveFixture: (MoveFixtureDTO) -> (RustResult) query;
-  validatePostponeFixture: (PostponeFixtureDTO) -> (RustResult) query;
-  validatePromoteClub: (PromoteClubDTO) -> (RustResult) query;
-  validateRecallPlayer: (RecallPlayerDTO) -> (RustResult) query;
-  validateRescheduleFixture: (RescheduleFixtureDTO) -> (RustResult) query;
-  validateRetirePlayer: (RetirePlayerDTO) -> (RustResult) query;
-  validateRevaluePlayerDown: (RevaluePlayerDownDTO) -> (RustResult) query;
-  validateRevaluePlayerUp: (RevaluePlayerUpDTO) -> (RustResult) query;
-  validateSetFreeAgent: (TransferPlayerDTO) -> (RustResult) query;
-  validateSetPlayerInjury: (SetPlayerInjuryDTO) -> (RustResult) query;
-  validateSubmitFixtureData: (SubmitFixtureDataDTO) -> (RustResult) query;
-  validateTransferPlayer: (TransferPlayerDTO) -> (RustResult) query;
-  validateUnretirePlayer: (UnretirePlayerDTO) -> (RustResult) query;
-  validateUpdateClub: (UpdateClubDTO) -> (RustResult) query;
-  validateUpdateLeague: (UpdateLeagueDTO) -> (RustResult) query;
-  validateUpdatePlayer: (UpdatePlayerDTO) -> (RustResult) query;
 }
