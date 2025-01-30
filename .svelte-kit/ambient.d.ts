@@ -29,8 +29,8 @@ declare module '$env/static/private' {
 	export const DFX_VERSION: string;
 	export const DFX_NETWORK: string;
 	export const CANISTER_ID_DATA_CANISTER: string;
-	export const CANISTER_ID_BACKEND: string;
 	export const CANISTER_ID_FRONTEND: string;
+	export const CANISTER_ID_BACKEND: string;
 	export const CANISTER_ID_SNS_GOVERNANCE: string;
 	export const CANISTER_ID: string;
 	export const CANISTER_CANDID_PATH: string;
@@ -82,6 +82,7 @@ declare module '$env/static/private' {
 	export const SHLVL: string;
 	export const HOME: string;
 	export const VSCODE_GIT_ASKPASS_MAIN: string;
+	export const CANISTER_CANDID_PATH_DATA_CANISTER: string;
 	export const HOMEBREW_PREFIX: string;
 	export const npm_config_cache: string;
 	export const LOGNAME: string;
@@ -132,8 +133,8 @@ declare module '$env/dynamic/private' {
 		DFX_VERSION: string;
 		DFX_NETWORK: string;
 		CANISTER_ID_DATA_CANISTER: string;
-		CANISTER_ID_BACKEND: string;
 		CANISTER_ID_FRONTEND: string;
+		CANISTER_ID_BACKEND: string;
 		CANISTER_ID_SNS_GOVERNANCE: string;
 		CANISTER_ID: string;
 		CANISTER_CANDID_PATH: string;
@@ -185,6 +186,7 @@ declare module '$env/dynamic/private' {
 		SHLVL: string;
 		HOME: string;
 		VSCODE_GIT_ASKPASS_MAIN: string;
+		CANISTER_CANDID_PATH_DATA_CANISTER: string;
 		HOMEBREW_PREFIX: string;
 		npm_config_cache: string;
 		LOGNAME: string;

@@ -1,4 +1,3 @@
-import { idlFactory } from "../../../../declarations/backend";
 import { ActorFactory } from "../utils/ActorFactory";
 import { isError } from "../utils/helpers";
 import type {
@@ -13,6 +12,9 @@ export class ClubService {
   constructor() {}
 
   async getClubs(leagueId: LeagueId): Promise<ClubDTO[]> {
+    console.log("getting clubs");
+    console.log(process.env);
+    console.log(process.env.DATA_CANISTER_ID);
     const identityActor: any = await ActorFactory.createIdentityActor(
       authStore,
       process.env.DATA_CANISTER_ID ?? "",

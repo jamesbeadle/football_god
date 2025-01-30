@@ -6,7 +6,7 @@
       "optimize": "cycles"
     },
     "frontend": {
-      "dependencies": ["backend"],
+      "dependencies": ["backend", "data_canister"],
       "frontend": {
         "entrypoint": "build/index.html"
       },
