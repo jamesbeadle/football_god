@@ -5,8 +5,6 @@ export class MockService {
   private mockData: MockData = mockData;
 
   async getData<T extends keyof MockData>(category: T): Promise<MockData[T]> {
-    // Simulate network delay
-    await new Promise(resolve => setTimeout(resolve, 100));
     return this.mockData[category];
   }
 

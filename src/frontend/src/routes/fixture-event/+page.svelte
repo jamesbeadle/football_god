@@ -46,6 +46,7 @@
     import { leagueStore } from "$lib/stores/league-store";
     import { fixtureWithClubsStore } from "$lib/derived/fixtures-with-clubs.derived";
     import { storeManager } from "$lib/managers/store-manager";
+    import { clubStore } from "$lib/stores/club-store";
   
     $: leagueId = Number($page.url.searchParams.get("leagueId"));
     $: fixtureId = Number($page.url.searchParams.get("fixtureId"));
@@ -158,11 +159,17 @@
     onMount(async () => {
       try {
         await storeManager.syncStores(leagueId);
-        const { league: loadedLeague, fixture: loadedFixture } = await loadFixtureData(fixtureId, leagueId);
-        league = loadedLeague;
-        fixture = loadedFixture;
         matchOdds = await bettingStore.getMatchOdds(leagueId, fixtureId);
-        players = await playerStore.getPlayers(leagueId);
+
+        const fixtures = $fixtureStore[leagueId] || [];
+        const clubs = $clubStore[leagueId] || [];
+        const leagues = $leagueStore || {};
+        
+        fixture = fixtures.find((x) => x.id === fixtureId)!;
+        league = leagues[leagueId];
+        homeClub = clubs.find((x) => x.id === fixture.homeClubId)!;
+        awayClub = clubs.find((x) => x.id === fixture.awayClubId)!;
+
       } catch (error) {
         console.error(error);
       } finally {
@@ -1170,10 +1177,12 @@
   
       <div class="flex-shrink-0 lg:ml-4 lg:w-80">
         <div class="hidden lg:block lg:sticky lg:top-4">
-          <!-- <Betslip
-            leagueData={{ [league.id]: league }}
-            fixtureData={{ [fixture.id]: { ...fixture, leagueId: league.id } }}
-          /> -->
+          {#if league && fixture}
+            <Betslip
+              leagueData={{ [league.id]: league }}
+              fixtureData={{ [fixture.id]: { ...fixture, leagueId: league.id } }}
+            />
+          {/if}
         </div>
   
         <div
@@ -1198,11 +1207,13 @@
   
         {#if isBetSlipExpanded}
           <div class="lg:hidden">
-            <!-- <Betslip
-              bind:isExpanded={isBetSlipExpanded}
-              leagueData={{ [league.id]: league }}
-              fixtureData={{ [fixture.id]: { ...fixture, leagueId: league.id } }}
-            /> -->
+            {#if league && fixture}
+              <Betslip
+                bind:isExpanded={isBetSlipExpanded}
+                leagueData={{ [league.id]: league }}
+                fixtureData={{ [fixture.id]: { ...fixture, leagueId: league.id } }}
+              />
+            {/if}
           </div>
         {/if}
       </div>

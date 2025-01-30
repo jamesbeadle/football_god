@@ -81,7 +81,7 @@ export const mockData: MockData = {
     5: leagueClubs5
   },
   leagues: leagues.ok,
-  matchOdds,
+  matchOdds: matchOdds,
   players: {
     1: players1,
     2: players2,
