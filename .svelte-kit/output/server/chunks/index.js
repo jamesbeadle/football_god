@@ -4720,7 +4720,7 @@ const options = {
 		<div class="error">
 			<span class="status">` + status + '</span>\n			<div class="message">\n				<h1>' + message + "</h1>\n			</div>\n		</div>\n	</body>\n</html>\n"
   },
-  version_hash: "b7hrzw"
+  version_hash: "1vb6cad"
 };
 async function get_hooks() {
   return {};
@@ -5327,8 +5327,7 @@ const idlFactory$1 = ({ IDL }) => {
     calculateWeeklyRewards: IDL.Func([IDL.Text, GameweekNumber], [Result], []),
     getBets: IDL.Func([GetBetsDTO], [Result_10], []),
     getBettableHomepageFixtures: IDL.Func([LeagueId], [Result_9], ["query"]),
-    getDataHashes: IDL.Func([], [Result_8], ["composite_query"]),
-    getHashes: IDL.Func([], [Result_8], ["query"]),
+    getDataHashes: IDL.Func([], [Result_8], ["query"]),
     getMatchOdds: IDL.Func([LeagueId, FixtureId], [Result_7], ["query"]),
     getPlayerDetailsForGameweek: IDL.Func(
       [LeagueId, GameweekFiltersDTO],
@@ -5345,7 +5344,6 @@ const idlFactory$1 = ({ IDL }) => {
     pauseAccount: IDL.Func([PauseAccountDTO], [Result], []),
     payWeeklyRewards: IDL.Func([IDL.Text, GameweekNumber], [Result], []),
     placeBet: IDL.Func([SubmitBetslipDTO], [Result_1], []),
-    refreshLeagueHashes: IDL.Func([], [Result], []),
     setMaxBetLimit: IDL.Func([SetMaxBetLimit], [Result], []),
     setMonthlyBetLimit: IDL.Func([SetMonthlyBetLimitDTO], [Result], []),
     snapshotManagers: IDL.Func([IDL.Text], [Result], []),
@@ -5361,8 +5359,8 @@ const idlFactory$1 = ({ IDL }) => {
     )
   });
 };
-var define_process_env_default$a = { BACKEND_CANISTER_ID: "44kin-waaaa-aaaal-qbxra-cai", FRONTEND_CANISTER_ID: "43loz-3yaaa-aaaal-qbxrq-cai", DATA_CANISTER_CANISTER_ID: "52fzd-2aaaa-aaaal-qmzsa-cai", DFX_NETWORK: "ic", SNS_GOVERNANCE_CANISTER_ID: "detjl-sqaaa-aaaaq-aacqa-cai", DATA_CANISTER_ID: "52fzd-2aaaa-aaaal-qmzsa-cai" };
-const canisterId$1 = define_process_env_default$a.CANISTER_ID_BACKEND;
+var define_process_env_default$7 = { BACKEND_CANISTER_ID: "44kin-waaaa-aaaal-qbxra-cai", FRONTEND_CANISTER_ID: "43loz-3yaaa-aaaal-qbxrq-cai", DATA_CANISTER_CANISTER_ID: "52fzd-2aaaa-aaaal-qmzsa-cai", DFX_NETWORK: "ic", SNS_GOVERNANCE_CANISTER_ID: "detjl-sqaaa-aaaaq-aacqa-cai", DATA_CANISTER_ID: "52fzd-2aaaa-aaaal-qmzsa-cai" };
+const canisterId$1 = define_process_env_default$7.CANISTER_ID_BACKEND;
 const createActor$1 = (canisterId2, options2 = {}) => {
   const agent = options2.agent || new HttpAgent({ ...options2.agentOptions });
   if (options2.agent && options2.agentOptions) {
@@ -5933,8 +5931,8 @@ const idlFactory = ({ IDL }) => {
     validateUpdatePlayer: IDL.Func([UpdatePlayerDTO], [RustResult], [])
   });
 };
-var define_process_env_default$9 = { BACKEND_CANISTER_ID: "44kin-waaaa-aaaal-qbxra-cai", FRONTEND_CANISTER_ID: "43loz-3yaaa-aaaal-qbxrq-cai", DATA_CANISTER_CANISTER_ID: "52fzd-2aaaa-aaaal-qmzsa-cai", DFX_NETWORK: "ic", SNS_GOVERNANCE_CANISTER_ID: "detjl-sqaaa-aaaaq-aacqa-cai", DATA_CANISTER_ID: "52fzd-2aaaa-aaaal-qmzsa-cai" };
-const canisterId = define_process_env_default$9.CANISTER_ID_DATA_CANISTER;
+var define_process_env_default$6 = { BACKEND_CANISTER_ID: "44kin-waaaa-aaaal-qbxra-cai", FRONTEND_CANISTER_ID: "43loz-3yaaa-aaaal-qbxrq-cai", DATA_CANISTER_CANISTER_ID: "52fzd-2aaaa-aaaal-qmzsa-cai", DFX_NETWORK: "ic", SNS_GOVERNANCE_CANISTER_ID: "detjl-sqaaa-aaaaq-aacqa-cai", DATA_CANISTER_ID: "52fzd-2aaaa-aaaal-qmzsa-cai" };
+const canisterId = define_process_env_default$6.CANISTER_ID_DATA_CANISTER;
 const createActor = (canisterId2, options2 = {}) => {
   const agent = options2.agent || new HttpAgent({ ...options2.agentOptions });
   if (options2.agent && options2.agentOptions) {
@@ -6310,14 +6308,14 @@ function Modal($$payload, $$props) {
   bind_props($$props, { showModal, onClose });
   pop();
 }
-var define_process_env_default$8 = { BACKEND_CANISTER_ID: "44kin-waaaa-aaaal-qbxra-cai", FRONTEND_CANISTER_ID: "43loz-3yaaa-aaaal-qbxrq-cai", DATA_CANISTER_CANISTER_ID: "52fzd-2aaaa-aaaal-qmzsa-cai", DFX_NETWORK: "ic", SNS_GOVERNANCE_CANISTER_ID: "detjl-sqaaa-aaaaq-aacqa-cai", DATA_CANISTER_ID: "52fzd-2aaaa-aaaal-qmzsa-cai" };
+var define_process_env_default$5 = { BACKEND_CANISTER_ID: "44kin-waaaa-aaaal-qbxra-cai", FRONTEND_CANISTER_ID: "43loz-3yaaa-aaaal-qbxrq-cai", DATA_CANISTER_CANISTER_ID: "52fzd-2aaaa-aaaal-qmzsa-cai", DFX_NETWORK: "ic", SNS_GOVERNANCE_CANISTER_ID: "detjl-sqaaa-aaaaq-aacqa-cai", DATA_CANISTER_ID: "52fzd-2aaaa-aaaal-qmzsa-cai" };
 class LeagueService {
   constructor() {
   }
   async getLeagues() {
     const identityActor = await ActorFactory.createDataCanisterIdentityActor(
       authStore,
-      define_process_env_default$8.DATA_CANISTER_CANISTER_ID
+      define_process_env_default$5.DATA_CANISTER_CANISTER_ID
     );
     console.log(identityActor);
     const result = await identityActor.getLeagues();
@@ -6327,7 +6325,7 @@ class LeagueService {
   async createLeague(dto) {
     const identityActor = await ActorFactory.createDataCanisterIdentityActor(
       authStore,
-      define_process_env_default$8.DATA_CANISTER_CANISTER_ID
+      define_process_env_default$5.DATA_CANISTER_CANISTER_ID
     );
     const result = await identityActor.executeCreateLeague(dto);
     if (isError(result)) throw new Error("Failed to create league");
@@ -6335,7 +6333,7 @@ class LeagueService {
   async updateLeague(dto) {
     const identityActor = await ActorFactory.createDataCanisterIdentityActor(
       authStore,
-      define_process_env_default$8.BACKEND_CANISTER_ID
+      define_process_env_default$5.BACKEND_CANISTER_ID
     );
     const result = await identityActor.executeUpdateLeague(dto);
     if (isError(result)) throw new Error("Failed to update league");
@@ -6343,36 +6341,29 @@ class LeagueService {
   async getLeagueStatus(leagueId) {
     const identityActor = await ActorFactory.createDataCanisterIdentityActor(
       authStore,
-      define_process_env_default$8.DATA_CANISTER_CANISTER_ID
+      define_process_env_default$5.DATA_CANISTER_CANISTER_ID
     );
     const result = await identityActor.getLeagueStatus(leagueId);
     if (isError(result)) throw new Error("Failed to fetch league status");
     return result.ok;
   }
 }
-var define_process_env_default$7 = { BACKEND_CANISTER_ID: "44kin-waaaa-aaaal-qbxra-cai", FRONTEND_CANISTER_ID: "43loz-3yaaa-aaaal-qbxrq-cai", DATA_CANISTER_CANISTER_ID: "52fzd-2aaaa-aaaal-qmzsa-cai", DFX_NETWORK: "ic", SNS_GOVERNANCE_CANISTER_ID: "detjl-sqaaa-aaaaq-aacqa-cai", DATA_CANISTER_ID: "52fzd-2aaaa-aaaal-qmzsa-cai" };
+var define_process_env_default$4 = { BACKEND_CANISTER_ID: "44kin-waaaa-aaaal-qbxra-cai", FRONTEND_CANISTER_ID: "43loz-3yaaa-aaaal-qbxrq-cai", DATA_CANISTER_CANISTER_ID: "52fzd-2aaaa-aaaal-qmzsa-cai", DFX_NETWORK: "ic", SNS_GOVERNANCE_CANISTER_ID: "detjl-sqaaa-aaaaq-aacqa-cai", DATA_CANISTER_ID: "52fzd-2aaaa-aaaal-qmzsa-cai" };
 class DataHashService {
-  actor;
   constructor() {
-    const canisterId2 = define_process_env_default$7.DATA_CANISTER_CANISTER_ID;
-    this.actor = ActorFactory.createActor(idlFactory$1, canisterId2);
   }
-  async refreshLeagueHashes() {
-    const response = await this.actor.refreshLeagueHashes();
-    if (isError(response)) {
-      console.error("Error refreshing hashes:", response.err);
-      throw new Error("Failed to refresh league hashes");
-    }
-  }
-  async getDataHashes() {
-    const result = await this.actor.getDataHashes();
+  async getDataHashes(leagueId) {
+    const identityActor = await ActorFactory.createDataCanisterIdentityActor(
+      authStore,
+      define_process_env_default$4.DATA_CANISTER_CANISTER_ID
+    );
+    const result = await identityActor.getDataHashes(leagueId);
     if (isError(result)) throw new Error("Failed to fetch data hashes");
     return result.ok;
   }
-  async getLeaguesHash() {
+  async getLeaguesHash(leagueId) {
     try {
-      await this.refreshLeagueHashes();
-      const allHashes = await this.getDataHashes();
+      const allHashes = await this.getDataHashes(leagueId);
       const leagueEntry = allHashes.find(
         (entry) => entry.category === "leagues"
       );
@@ -6384,8 +6375,7 @@ class DataHashService {
   }
   async getCategoryHash(category, leagueId) {
     try {
-      await this.refreshLeagueHashes();
-      const allHashes = await this.getDataHashes();
+      const allHashes = await this.getDataHashes(leagueId);
       const entry = allHashes.find(
         (hash2) => hash2.category === `${category}_${leagueId}`
       );
@@ -6578,14 +6568,14 @@ function createLeagueStore() {
   };
 }
 const leagueStore = createLeagueStore();
-var define_process_env_default$6 = { BACKEND_CANISTER_ID: "44kin-waaaa-aaaal-qbxra-cai", FRONTEND_CANISTER_ID: "43loz-3yaaa-aaaal-qbxrq-cai", DATA_CANISTER_CANISTER_ID: "52fzd-2aaaa-aaaal-qmzsa-cai", DFX_NETWORK: "ic", SNS_GOVERNANCE_CANISTER_ID: "detjl-sqaaa-aaaaq-aacqa-cai", DATA_CANISTER_ID: "52fzd-2aaaa-aaaal-qmzsa-cai" };
+var define_process_env_default$3 = { BACKEND_CANISTER_ID: "44kin-waaaa-aaaal-qbxra-cai", FRONTEND_CANISTER_ID: "43loz-3yaaa-aaaal-qbxrq-cai", DATA_CANISTER_CANISTER_ID: "52fzd-2aaaa-aaaal-qmzsa-cai", DFX_NETWORK: "ic", SNS_GOVERNANCE_CANISTER_ID: "detjl-sqaaa-aaaaq-aacqa-cai", DATA_CANISTER_ID: "52fzd-2aaaa-aaaal-qmzsa-cai" };
 class PlayerService {
   constructor() {
   }
   async getPlayers(leagueId) {
     const identityActor = await ActorFactory.createDataCanisterIdentityActor(
       authStore,
-      define_process_env_default$6.DATA_CANISTER_CANISTER_ID
+      define_process_env_default$3.DATA_CANISTER_CANISTER_ID
     );
     const result = await identityActor.getPlayers(leagueId);
     if (isError(result)) throw new Error("Failed to fetch players");
@@ -6594,7 +6584,7 @@ class PlayerService {
   async getLoanedPlayers(leagueId) {
     const identityActor = await ActorFactory.createDataCanisterIdentityActor(
       authStore,
-      define_process_env_default$6.DATA_CANISTER_CANISTER_ID
+      define_process_env_default$3.DATA_CANISTER_CANISTER_ID
     );
     const result = await identityActor.getLoanedPlayers(leagueId);
     if (isError(result)) throw new Error("Failed to fetch players");
@@ -6603,7 +6593,7 @@ class PlayerService {
   async transferPlayer(leagueId, dto) {
     const identityActor = await ActorFactory.createDataCanisterIdentityActor(
       authStore,
-      define_process_env_default$6.DATA_CANISTER_CANISTER_ID
+      define_process_env_default$3.DATA_CANISTER_CANISTER_ID
     );
     const result = await identityActor.executeTransferPlayer(leagueId, dto);
     if (isError(result)) throw new Error("Failed to transfer player");
@@ -6611,7 +6601,7 @@ class PlayerService {
   async setFreeAgent(leagueId, dto) {
     const identityActor = await ActorFactory.createDataCanisterIdentityActor(
       authStore,
-      define_process_env_default$6.DATA_CANISTER_CANISTER_ID
+      define_process_env_default$3.DATA_CANISTER_CANISTER_ID
     );
     const result = await identityActor.executeSetFreeAgent(leagueId, dto);
     if (isError(result)) throw new Error("Failed to set player as free agent");
@@ -6619,7 +6609,7 @@ class PlayerService {
   async loanPlayer(leagueId, dto) {
     const identityActor = await ActorFactory.createDataCanisterIdentityActor(
       authStore,
-      define_process_env_default$6.DATA_CANISTER_CANISTER_ID
+      define_process_env_default$3.DATA_CANISTER_CANISTER_ID
     );
     const result = await identityActor.executeLoanPlayer(leagueId, dto);
     if (isError(result)) throw new Error("Failed to loan player");
@@ -6627,7 +6617,7 @@ class PlayerService {
   async createPlayer(leagueId, dto) {
     const identityActor = await ActorFactory.createDataCanisterIdentityActor(
       authStore,
-      define_process_env_default$6.DATA_CANISTER_CANISTER_ID
+      define_process_env_default$3.DATA_CANISTER_CANISTER_ID
     );
     const result = await identityActor.executeCreatePlayer(leagueId, dto);
     if (isError(result)) throw new Error("Failed to creaete player");
@@ -6635,7 +6625,7 @@ class PlayerService {
   async updatePlayer(leagueId, dto) {
     const identityActor = await ActorFactory.createDataCanisterIdentityActor(
       authStore,
-      define_process_env_default$6.DATA_CANISTER_CANISTER_ID
+      define_process_env_default$3.DATA_CANISTER_CANISTER_ID
     );
     const result = await identityActor.executeUpdatePlayer(leagueId, dto);
     if (isError(result)) throw new Error("Failed to update player");
@@ -6643,7 +6633,7 @@ class PlayerService {
   async recallLoan(leagueId, dto) {
     const identityActor = await ActorFactory.createDataCanisterIdentityActor(
       authStore,
-      define_process_env_default$6.DATA_CANISTER_CANISTER_ID
+      define_process_env_default$3.DATA_CANISTER_CANISTER_ID
     );
     const result = await identityActor.executeRecallPlayer(dto);
     if (isError(result)) throw new Error("Failed to recall player");
@@ -6741,14 +6731,14 @@ function createPlayerStore() {
   };
 }
 const playerStore = createPlayerStore();
-var define_process_env_default$5 = { BACKEND_CANISTER_ID: "44kin-waaaa-aaaal-qbxra-cai", FRONTEND_CANISTER_ID: "43loz-3yaaa-aaaal-qbxrq-cai", DATA_CANISTER_CANISTER_ID: "52fzd-2aaaa-aaaal-qmzsa-cai", DFX_NETWORK: "ic", SNS_GOVERNANCE_CANISTER_ID: "detjl-sqaaa-aaaaq-aacqa-cai", DATA_CANISTER_ID: "52fzd-2aaaa-aaaal-qmzsa-cai" };
+var define_process_env_default$2 = { BACKEND_CANISTER_ID: "44kin-waaaa-aaaal-qbxra-cai", FRONTEND_CANISTER_ID: "43loz-3yaaa-aaaal-qbxrq-cai", DATA_CANISTER_CANISTER_ID: "52fzd-2aaaa-aaaal-qmzsa-cai", DFX_NETWORK: "ic", SNS_GOVERNANCE_CANISTER_ID: "detjl-sqaaa-aaaaq-aacqa-cai", DATA_CANISTER_ID: "52fzd-2aaaa-aaaal-qmzsa-cai" };
 class FixtureService {
   constructor() {
   }
   async getFixturesHash(leagueId) {
     const identityActor = await ActorFactory.createDataCanisterIdentityActor(
       authStore,
-      define_process_env_default$5.DATA_CANISTER_CANISTER_ID
+      define_process_env_default$2.DATA_CANISTER_CANISTER_ID
     );
     const result = await identityActor.getFixturesHash(leagueId);
     if (isError(result)) throw new Error("Failed to fetch fixtures hash");
@@ -6757,7 +6747,7 @@ class FixtureService {
   async getPostponedFixtures() {
     const identityActor = await ActorFactory.createDataCanisterIdentityActor(
       authStore,
-      define_process_env_default$5.DATA_CANISTER_CANISTER_ID
+      define_process_env_default$2.DATA_CANISTER_CANISTER_ID
     );
     const result = await identityActor.getPostponedFixtures();
     if (isError(result)) throw new Error("Failed to fetch postponed fixtures");
@@ -6766,7 +6756,7 @@ class FixtureService {
   async getFixtures(leagueId) {
     const identityActor = await ActorFactory.createDataCanisterIdentityActor(
       authStore,
-      define_process_env_default$5.DATA_CANISTER_CANISTER_ID
+      define_process_env_default$2.DATA_CANISTER_CANISTER_ID
     );
     const result = await identityActor.getFixtures(leagueId);
     if (isError(result)) throw new Error("Failed to fetch fixtures");
@@ -6775,7 +6765,7 @@ class FixtureService {
   async moveFixture(dto) {
     const identityActor = await ActorFactory.createDataCanisterIdentityActor(
       authStore,
-      define_process_env_default$5.DATA_CANISTER_CANISTER_ID
+      define_process_env_default$2.DATA_CANISTER_CANISTER_ID
     );
     const result = await identityActor.executeMoveFixture(dto);
     if (isError(result)) throw new Error("Failed to move fixture");
@@ -6783,7 +6773,7 @@ class FixtureService {
   async postponeFixture(dto) {
     const identityActor = await ActorFactory.createDataCanisterIdentityActor(
       authStore,
-      define_process_env_default$5.DATA_CANISTER_CANISTER_ID
+      define_process_env_default$2.DATA_CANISTER_CANISTER_ID
     );
     const result = await identityActor.executePostponeFixture(dto);
     if (isError(result)) throw new Error("Failed to postpone fixture");
@@ -6791,7 +6781,7 @@ class FixtureService {
   async submitFixtureData(dto) {
     const identityActor = await ActorFactory.createDataCanisterIdentityActor(
       authStore,
-      define_process_env_default$5.DATA_CANISTER_CANISTER_ID
+      define_process_env_default$2.DATA_CANISTER_CANISTER_ID
     );
     const result = await identityActor.executeSubmitFixtureData(dto);
     if (isError(result)) throw new Error("Failed to submit fixture data");
@@ -6886,7 +6876,7 @@ function createFixtureStore() {
   };
 }
 const fixtureStore = createFixtureStore();
-var define_process_env_default$4 = { BACKEND_CANISTER_ID: "44kin-waaaa-aaaal-qbxra-cai", FRONTEND_CANISTER_ID: "43loz-3yaaa-aaaal-qbxrq-cai", DATA_CANISTER_CANISTER_ID: "52fzd-2aaaa-aaaal-qmzsa-cai", DFX_NETWORK: "ic", SNS_GOVERNANCE_CANISTER_ID: "detjl-sqaaa-aaaaq-aacqa-cai", DATA_CANISTER_ID: "52fzd-2aaaa-aaaal-qmzsa-cai" };
+var define_process_env_default$1 = { BACKEND_CANISTER_ID: "44kin-waaaa-aaaal-qbxra-cai", FRONTEND_CANISTER_ID: "43loz-3yaaa-aaaal-qbxrq-cai", DATA_CANISTER_CANISTER_ID: "52fzd-2aaaa-aaaal-qmzsa-cai", DFX_NETWORK: "ic", SNS_GOVERNANCE_CANISTER_ID: "detjl-sqaaa-aaaaq-aacqa-cai", DATA_CANISTER_ID: "52fzd-2aaaa-aaaal-qmzsa-cai" };
 function createGovernanceStore() {
   async function revaluePlayerUp(leagueId, playerId) {
     try {
@@ -6899,7 +6889,7 @@ function createGovernanceStore() {
         listNeurons: governanceListNeurons
       } = SnsGovernanceCanister.create({
         canisterId: Principal.fromText(
-          define_process_env_default$4.SNS_GOVERNANCE_CANISTER_ID ?? ""
+          define_process_env_default$1.SNS_GOVERNANCE_CANISTER_ID ?? ""
         )
       });
       let identity;
@@ -6956,7 +6946,7 @@ function createGovernanceStore() {
         listNeurons: governanceListNeurons
       } = SnsGovernanceCanister.create({
         canisterId: Principal.fromText(
-          define_process_env_default$4.SNS_GOVERNANCE_CANISTER_ID ?? ""
+          define_process_env_default$1.SNS_GOVERNANCE_CANISTER_ID ?? ""
         )
       });
       let identity;
@@ -7017,10 +7007,10 @@ function createGovernanceStore() {
       };
       const identityActor = await ActorFactory.createBackendIdentityActor(
         authStore,
-        define_process_env_default$4.SNS_GOVERNANCE_CANISTER_ID ?? ""
+        define_process_env_default$1.SNS_GOVERNANCE_CANISTER_ID ?? ""
       );
       const governanceAgent = ActorFactory.getAgent(
-        define_process_env_default$4.SNS_GOVERNANCE_CANISTER_ID,
+        define_process_env_default$1.SNS_GOVERNANCE_CANISTER_ID,
         identityActor,
         null
       );
@@ -7085,10 +7075,10 @@ function createGovernanceStore() {
       };
       const identityActor = await ActorFactory.createBackendIdentityActor(
         authStore,
-        define_process_env_default$4.SNS_GOVERNANCE_CANISTER_ID ?? ""
+        define_process_env_default$1.SNS_GOVERNANCE_CANISTER_ID ?? ""
       );
       const governanceAgent = ActorFactory.getAgent(
-        define_process_env_default$4.SNS_GOVERNANCE_CANISTER_ID,
+        define_process_env_default$1.SNS_GOVERNANCE_CANISTER_ID,
         identityActor,
         null
       );
@@ -7148,10 +7138,10 @@ function createGovernanceStore() {
       };
       const identityActor = await ActorFactory.createBackendIdentityActor(
         authStore,
-        define_process_env_default$4.SNS_GOVERNANCE_CANISTER_ID ?? ""
+        define_process_env_default$1.SNS_GOVERNANCE_CANISTER_ID ?? ""
       );
       const governanceAgent = ActorFactory.getAgent(
-        define_process_env_default$4.SNS_GOVERNANCE_CANISTER_ID,
+        define_process_env_default$1.SNS_GOVERNANCE_CANISTER_ID,
         identityActor,
         null
       );
@@ -7216,10 +7206,10 @@ function createGovernanceStore() {
       };
       const identityActor = await ActorFactory.createBackendIdentityActor(
         authStore,
-        define_process_env_default$4.SNS_GOVERNANCE_CANISTER_ID ?? ""
+        define_process_env_default$1.SNS_GOVERNANCE_CANISTER_ID ?? ""
       );
       const governanceAgent = ActorFactory.getAgent(
-        define_process_env_default$4.SNS_GOVERNANCE_CANISTER_ID,
+        define_process_env_default$1.SNS_GOVERNANCE_CANISTER_ID,
         identityActor,
         null
       );
@@ -7289,10 +7279,10 @@ function createGovernanceStore() {
       };
       const identityActor = await ActorFactory.createBackendIdentityActor(
         authStore,
-        define_process_env_default$4.SNS_GOVERNANCE_CANISTER_ID ?? ""
+        define_process_env_default$1.SNS_GOVERNANCE_CANISTER_ID ?? ""
       );
       const governanceAgent = ActorFactory.getAgent(
-        define_process_env_default$4.SNS_GOVERNANCE_CANISTER_ID,
+        define_process_env_default$1.SNS_GOVERNANCE_CANISTER_ID,
         identityActor,
         null
       );
@@ -7360,10 +7350,10 @@ function createGovernanceStore() {
       };
       const identityActor = await ActorFactory.createBackendIdentityActor(
         authStore,
-        define_process_env_default$4.SNS_GOVERNANCE_CANISTER_ID ?? ""
+        define_process_env_default$1.SNS_GOVERNANCE_CANISTER_ID ?? ""
       );
       const governanceAgent = ActorFactory.getAgent(
-        define_process_env_default$4.SNS_GOVERNANCE_CANISTER_ID,
+        define_process_env_default$1.SNS_GOVERNANCE_CANISTER_ID,
         identityActor,
         null
       );
@@ -7440,10 +7430,10 @@ function createGovernanceStore() {
       };
       const identityActor = await ActorFactory.createBackendIdentityActor(
         authStore,
-        define_process_env_default$4.SNS_GOVERNANCE_CANISTER_ID ?? ""
+        define_process_env_default$1.SNS_GOVERNANCE_CANISTER_ID ?? ""
       );
       const governanceAgent = ActorFactory.getAgent(
-        define_process_env_default$4.SNS_GOVERNANCE_CANISTER_ID,
+        define_process_env_default$1.SNS_GOVERNANCE_CANISTER_ID,
         identityActor,
         null
       );
@@ -7506,10 +7496,10 @@ function createGovernanceStore() {
       };
       const identityActor = await ActorFactory.createBackendIdentityActor(
         authStore,
-        define_process_env_default$4.SNS_GOVERNANCE_CANISTER_ID ?? ""
+        define_process_env_default$1.SNS_GOVERNANCE_CANISTER_ID ?? ""
       );
       const governanceAgent = ActorFactory.getAgent(
-        define_process_env_default$4.SNS_GOVERNANCE_CANISTER_ID,
+        define_process_env_default$1.SNS_GOVERNANCE_CANISTER_ID,
         identityActor,
         null
       );
@@ -7582,10 +7572,10 @@ function createGovernanceStore() {
       };
       const identityActor = await ActorFactory.createBackendIdentityActor(
         authStore,
-        define_process_env_default$4.SNS_GOVERNANCE_CANISTER_ID ?? ""
+        define_process_env_default$1.SNS_GOVERNANCE_CANISTER_ID ?? ""
       );
       const governanceAgent = ActorFactory.getAgent(
-        define_process_env_default$4.SNS_GOVERNANCE_CANISTER_ID,
+        define_process_env_default$1.SNS_GOVERNANCE_CANISTER_ID,
         identityActor,
         null
       );
@@ -7650,10 +7640,10 @@ function createGovernanceStore() {
       };
       const identityActor = await ActorFactory.createBackendIdentityActor(
         authStore,
-        define_process_env_default$4.SNS_GOVERNANCE_CANISTER_ID ?? ""
+        define_process_env_default$1.SNS_GOVERNANCE_CANISTER_ID ?? ""
       );
       const governanceAgent = ActorFactory.getAgent(
-        define_process_env_default$4.SNS_GOVERNANCE_CANISTER_ID,
+        define_process_env_default$1.SNS_GOVERNANCE_CANISTER_ID,
         identityActor,
         null
       );
@@ -7721,10 +7711,10 @@ function createGovernanceStore() {
       };
       const identityActor = await ActorFactory.createBackendIdentityActor(
         authStore,
-        define_process_env_default$4.SNS_GOVERNANCE_CANISTER_ID ?? ""
+        define_process_env_default$1.SNS_GOVERNANCE_CANISTER_ID ?? ""
       );
       const governanceAgent = ActorFactory.getAgent(
-        define_process_env_default$4.SNS_GOVERNANCE_CANISTER_ID,
+        define_process_env_default$1.SNS_GOVERNANCE_CANISTER_ID,
         identityActor,
         null
       );
@@ -7791,10 +7781,10 @@ function createGovernanceStore() {
       };
       const identityActor = await ActorFactory.createBackendIdentityActor(
         authStore,
-        define_process_env_default$4.SNS_GOVERNANCE_CANISTER_ID ?? ""
+        define_process_env_default$1.SNS_GOVERNANCE_CANISTER_ID ?? ""
       );
       const governanceAgent = ActorFactory.getAgent(
-        define_process_env_default$4.SNS_GOVERNANCE_CANISTER_ID,
+        define_process_env_default$1.SNS_GOVERNANCE_CANISTER_ID,
         identityActor,
         null
       );
@@ -7857,10 +7847,10 @@ function createGovernanceStore() {
       };
       const identityActor = await ActorFactory.createBackendIdentityActor(
         authStore,
-        define_process_env_default$4.SNS_GOVERNANCE_CANISTER_ID ?? ""
+        define_process_env_default$1.SNS_GOVERNANCE_CANISTER_ID ?? ""
       );
       const governanceAgent = ActorFactory.getAgent(
-        define_process_env_default$4.SNS_GOVERNANCE_CANISTER_ID,
+        define_process_env_default$1.SNS_GOVERNANCE_CANISTER_ID,
         identityActor,
         null
       );
@@ -7919,10 +7909,10 @@ function createGovernanceStore() {
     try {
       const identityActor = await ActorFactory.createBackendIdentityActor(
         authStore,
-        define_process_env_default$4.SNS_GOVERNANCE_CANISTER_ID ?? ""
+        define_process_env_default$1.SNS_GOVERNANCE_CANISTER_ID ?? ""
       );
       const governanceAgent = ActorFactory.getAgent(
-        define_process_env_default$4.SNS_GOVERNANCE_CANISTER_ID,
+        define_process_env_default$1.SNS_GOVERNANCE_CANISTER_ID,
         identityActor,
         null
       );
@@ -7978,10 +7968,10 @@ function createGovernanceStore() {
       };
       const identityActor = await ActorFactory.createBackendIdentityActor(
         authStore,
-        define_process_env_default$4.SNS_GOVERNANCE_CANISTER_ID ?? ""
+        define_process_env_default$1.SNS_GOVERNANCE_CANISTER_ID ?? ""
       );
       const governanceAgent = ActorFactory.getAgent(
-        define_process_env_default$4.SNS_GOVERNANCE_CANISTER_ID,
+        define_process_env_default$1.SNS_GOVERNANCE_CANISTER_ID,
         identityActor,
         null
       );
@@ -8047,10 +8037,10 @@ function createGovernanceStore() {
       };
       const identityActor = await ActorFactory.createBackendIdentityActor(
         authStore,
-        define_process_env_default$4.SNS_GOVERNANCE_CANISTER_ID ?? ""
+        define_process_env_default$1.SNS_GOVERNANCE_CANISTER_ID ?? ""
       );
       const governanceAgent = ActorFactory.getAgent(
-        define_process_env_default$4.SNS_GOVERNANCE_CANISTER_ID,
+        define_process_env_default$1.SNS_GOVERNANCE_CANISTER_ID,
         identityActor,
         null
       );
@@ -8123,17 +8113,17 @@ function createGovernanceStore() {
   };
 }
 const governanceStore = createGovernanceStore();
-var define_process_env_default$3 = { BACKEND_CANISTER_ID: "44kin-waaaa-aaaal-qbxra-cai", FRONTEND_CANISTER_ID: "43loz-3yaaa-aaaal-qbxrq-cai", DATA_CANISTER_CANISTER_ID: "52fzd-2aaaa-aaaal-qmzsa-cai", DFX_NETWORK: "ic", SNS_GOVERNANCE_CANISTER_ID: "detjl-sqaaa-aaaaq-aacqa-cai", DATA_CANISTER_ID: "52fzd-2aaaa-aaaal-qmzsa-cai" };
+var define_process_env_default = { BACKEND_CANISTER_ID: "44kin-waaaa-aaaal-qbxra-cai", FRONTEND_CANISTER_ID: "43loz-3yaaa-aaaal-qbxrq-cai", DATA_CANISTER_CANISTER_ID: "52fzd-2aaaa-aaaal-qmzsa-cai", DFX_NETWORK: "ic", SNS_GOVERNANCE_CANISTER_ID: "detjl-sqaaa-aaaaq-aacqa-cai", DATA_CANISTER_ID: "52fzd-2aaaa-aaaal-qmzsa-cai" };
 class ClubService {
   constructor() {
   }
   async getClubs(leagueId) {
     console.log("getting clubs");
-    console.log(define_process_env_default$3);
-    console.log(define_process_env_default$3.DATA_CANISTER_ID);
+    console.log(define_process_env_default);
+    console.log(define_process_env_default.DATA_CANISTER_ID);
     const identityActor = await ActorFactory.createDataCanisterIdentityActor(
       authStore,
-      define_process_env_default$3.DATA_CANISTER_ID
+      define_process_env_default.DATA_CANISTER_ID
     );
     const result = await identityActor.getClubs(leagueId);
     if (isError(result)) throw new Error("Failed to fetch clubs");
@@ -8212,259 +8202,6 @@ function createClubStore() {
   };
 }
 const clubStore = createClubStore();
-var define_process_env_default$2 = { BACKEND_CANISTER_ID: "44kin-waaaa-aaaal-qbxra-cai", FRONTEND_CANISTER_ID: "43loz-3yaaa-aaaal-qbxrq-cai", DATA_CANISTER_CANISTER_ID: "52fzd-2aaaa-aaaal-qmzsa-cai", DFX_NETWORK: "ic", SNS_GOVERNANCE_CANISTER_ID: "detjl-sqaaa-aaaaq-aacqa-cai", DATA_CANISTER_ID: "52fzd-2aaaa-aaaal-qmzsa-cai" };
-class CountryService {
-  constructor() {
-  }
-  async getCountries() {
-    const identityActor = await ActorFactory.createDataCanisterIdentityActor(
-      authStore,
-      define_process_env_default$2.DATA_CANISTER_CANISTER_ID
-    );
-    const result = await identityActor.getCountries();
-    if (isError(result)) throw new Error("Failed to fetch countries");
-    return result.ok;
-  }
-}
-function createCountryStore() {
-  const { subscribe, set: set2 } = writable([]);
-  async function getCountries() {
-    return new CountryService().getCountries();
-  }
-  return {
-    getCountries,
-    subscribe,
-    setCountries: (countries) => set2(countries)
-  };
-}
-const countryStore = createCountryStore();
-var define_process_env_default$1 = { BACKEND_CANISTER_ID: "44kin-waaaa-aaaal-qbxra-cai", FRONTEND_CANISTER_ID: "43loz-3yaaa-aaaal-qbxrq-cai", DATA_CANISTER_CANISTER_ID: "52fzd-2aaaa-aaaal-qmzsa-cai", DFX_NETWORK: "ic", SNS_GOVERNANCE_CANISTER_ID: "detjl-sqaaa-aaaaq-aacqa-cai", DATA_CANISTER_ID: "52fzd-2aaaa-aaaal-qmzsa-cai" };
-class SeasonService {
-  constructor() {
-  }
-  async getSeasons(leagueId) {
-    const identityActor = await ActorFactory.createDataCanisterIdentityActor(
-      authStore,
-      define_process_env_default$1.DATA_CANISTER_CANISTER_ID
-    );
-    const result = await identityActor.getSeasons(leagueId);
-    if (isError(result)) throw new Error("Failed to fetch seasons");
-    return result.ok;
-  }
-}
-function createSeasonStore() {
-  const { subscribe, update } = writable({});
-  let leagueCacheOrder = [];
-  async function getSeasons(leagueId) {
-    const seasons = await new SeasonService().getSeasons(leagueId);
-    return seasons ?? [];
-  }
-  async function syncSeasons(leagueId) {
-    try {
-      const localHashKey = `seasons_hash_${leagueId}`;
-      const localSeasonsKey = `seasons_${leagueId}`;
-      const localHash = localStorage.getItem(localHashKey);
-      const seasonHash = await new DataHashService().getCategoryHash(
-        "seasons",
-        leagueId
-      );
-      let seasons;
-      if (!localHash || seasonHash !== localHash) {
-        seasons = await getSeasons(leagueId);
-        localStorage.setItem(localSeasonsKey, serializeData(seasons));
-        localStorage.setItem(localHashKey, seasonHash || "");
-      } else {
-        const cached = localStorage.getItem(localSeasonsKey);
-        if (cached) {
-          seasons = deserializeData(cached);
-        } else {
-          seasons = await getSeasons(leagueId);
-          localStorage.setItem(localSeasonsKey, serializeData(seasons));
-        }
-      }
-      update((current) => ({
-        ...current,
-        [leagueId]: seasons
-      }));
-      if (!leagueCacheOrder.includes(leagueId)) {
-        leagueCacheOrder.push(leagueId);
-      } else {
-        leagueCacheOrder = leagueCacheOrder.filter((id) => id !== leagueId);
-        leagueCacheOrder.push(leagueId);
-      }
-      if (leagueCacheOrder.length > MAX_CACHED_LEAGUES) {
-        const leastUsedLeagueId = leagueCacheOrder.shift();
-        if (leastUsedLeagueId !== void 0) {
-          localStorage.removeItem(`seasons_${leastUsedLeagueId}`);
-          localStorage.removeItem(`seasons_hash_${leastUsedLeagueId}`);
-        }
-      }
-    } catch (error) {
-      console.error(`Error syncing seasons for league ${leagueId}:`, error);
-      const cached = localStorage.getItem(`seasons_${leagueId}`);
-      if (cached) {
-        const seasons = deserializeData(cached);
-        update((current) => ({
-          ...current,
-          [leagueId]: seasons
-        }));
-      }
-    }
-  }
-  return {
-    subscribe,
-    getSeasons,
-    syncSeasons
-  };
-}
-const seasonStore = createSeasonStore();
-var define_process_env_default = { BACKEND_CANISTER_ID: "44kin-waaaa-aaaal-qbxra-cai", FRONTEND_CANISTER_ID: "43loz-3yaaa-aaaal-qbxrq-cai", DATA_CANISTER_CANISTER_ID: "52fzd-2aaaa-aaaal-qmzsa-cai", DFX_NETWORK: "ic", SNS_GOVERNANCE_CANISTER_ID: "detjl-sqaaa-aaaaq-aacqa-cai", DATA_CANISTER_ID: "52fzd-2aaaa-aaaal-qmzsa-cai" };
-class PlayerEventsService {
-  constructor() {
-  }
-  async getPlayerDetails(playerId, seasonId) {
-    try {
-      let dto = {
-        playerId,
-        seasonId
-      };
-      const identityActor = await ActorFactory.createDataCanisterIdentityActor(
-        authStore,
-        define_process_env_default.DATA_CANISTER_CANISTER_ID ?? ""
-      );
-      const result = await identityActor.getPlayerDetails(dto);
-      if (isError(result)) {
-        console.error("Error fetching player details");
-      }
-      return result.ok;
-    } catch (error) {
-      console.error("Error fetching player data:", error);
-      throw error;
-    }
-  }
-  async getPlayerDetailsForGameweek(leagueId, seasonId, gameweek) {
-    let dto = {
-      seasonId,
-      gameweek
-    };
-    const identityActor = await ActorFactory.createDataCanisterIdentityActor(
-      authStore,
-      define_process_env_default.DATA_CANISTER_CANISTER_ID
-    );
-    const result = await identityActor.getPlayerDetailsForGameweek(
-      leagueId,
-      dto
-    );
-    if (isError(result))
-      throw new Error(
-        "Failed to fetch player details for gameweek in player events service"
-      );
-    return result.ok;
-  }
-  async getPlayerEvents(seasonId, gameweek) {
-    try {
-      let dto = {
-        seasonId,
-        gameweek
-      };
-      const identityActor = await ActorFactory.createDataCanisterIdentityActor(
-        authStore,
-        define_process_env_default.DATA_CANISTER_CANISTER_ID ?? ""
-      );
-      const result = await identityActor.getPlayerDetailsForGameweek(dto);
-      if (isError(result)) {
-        console.error("Error fetching player details for gameweek");
-      }
-      return result.ok;
-    } catch (error) {
-      console.error("Error fetching player events: ", error);
-    }
-  }
-}
-class StoreManager {
-  dataHashService;
-  countryService;
-  leagueService;
-  fixtureService;
-  clubService;
-  playerService;
-  seasonService;
-  playerEventsService;
-  categories = [
-    "leagues",
-    "players",
-    "clubs",
-    "fixtures",
-    "league_status",
-    "seasons"
-    //"player_events",
-  ];
-  constructor() {
-    this.dataHashService = new DataHashService();
-    this.countryService = new CountryService();
-    this.leagueService = new LeagueService();
-    this.fixtureService = new FixtureService();
-    this.clubService = new ClubService();
-    this.playerService = new PlayerService();
-    this.seasonService = new SeasonService();
-    this.playerEventsService = new PlayerEventsService();
-  }
-  async syncStores(leagueId) {
-    const newHashes = await this.dataHashService.getDataHashes();
-    if (newHashes == void 0) {
-      return;
-    }
-    await leagueStore.syncLeagues(leagueId);
-    for (const category of this.categories) {
-      await this.syncCategory(category, leagueId);
-    }
-    const countriesHash = newHashes.find(
-      (hash2) => hash2.category === "countries"
-    );
-    if (countriesHash?.hash !== localStorage.getItem(`countries_hash`)) {
-      await this.syncCountries();
-      localStorage.setItem(`countries_hash`, countriesHash?.hash || "");
-    } else {
-      this.loadFromCache();
-    }
-  }
-  async syncCategory(category, leagueId) {
-    switch (category) {
-      case "fixtures":
-        await fixtureStore.syncFixtures(leagueId);
-        break;
-      case "clubs":
-        await clubStore.syncClubs(leagueId);
-        break;
-      case "players":
-        await playerStore.syncPlayers(leagueId);
-        break;
-      case "league_status":
-        await leagueStore.syncLeagueStatus(leagueId);
-        break;
-      case "seasons":
-        await seasonStore.syncSeasons(leagueId);
-        break;
-    }
-  }
-  async syncCountries() {
-    const updatedCountries = await this.countryService.getCountries();
-    if (!updatedCountries) {
-      return;
-    }
-    countryStore.setCountries(updatedCountries);
-    localStorage.setItem(
-      "countries",
-      JSON.stringify(updatedCountries, replacer)
-    );
-  }
-  loadFromCache() {
-    const cachedData = localStorage.getItem("countries");
-    const cachedCountries = JSON.parse(cachedData || "[]");
-    countryStore.setCountries(cachedCountries);
-  }
-}
-new StoreManager();
 const dataStore = writable({});
 async function ensureLeagueData(leagueId) {
   const current = get$1(dataStore);

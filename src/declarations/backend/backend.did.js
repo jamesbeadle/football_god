@@ -393,8 +393,7 @@ export const idlFactory = ({ IDL }) => {
     calculateWeeklyRewards: IDL.Func([IDL.Text, GameweekNumber], [Result], []),
     getBets: IDL.Func([GetBetsDTO], [Result_10], []),
     getBettableHomepageFixtures: IDL.Func([LeagueId], [Result_9], ["query"]),
-    getDataHashes: IDL.Func([], [Result_8], ["composite_query"]),
-    getHashes: IDL.Func([], [Result_8], ["query"]),
+    getDataHashes: IDL.Func([], [Result_8], ["query"]),
     getMatchOdds: IDL.Func([LeagueId, FixtureId], [Result_7], ["query"]),
     getPlayerDetailsForGameweek: IDL.Func(
       [LeagueId, GameweekFiltersDTO],
@@ -411,7 +410,6 @@ export const idlFactory = ({ IDL }) => {
     pauseAccount: IDL.Func([PauseAccountDTO], [Result], []),
     payWeeklyRewards: IDL.Func([IDL.Text, GameweekNumber], [Result], []),
     placeBet: IDL.Func([SubmitBetslipDTO], [Result_1], []),
-    refreshLeagueHashes: IDL.Func([], [Result], []),
     setMaxBetLimit: IDL.Func([SetMaxBetLimit], [Result], []),
     setMonthlyBetLimit: IDL.Func([SetMonthlyBetLimitDTO], [Result], []),
     snapshotManagers: IDL.Func([IDL.Text], [Result], []),

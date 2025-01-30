@@ -486,8 +486,7 @@ service : {
   calculateWeeklyRewards: (text, GameweekNumber) -> (Result);
   getBets: (GetBetsDTO) -> (Result_10);
   getBettableHomepageFixtures: (LeagueId) -> (Result_9) query;
-  getDataHashes: () -> (Result_8) composite_query;
-  getHashes: () -> (Result_8) query;
+  getDataHashes: () -> (Result_8) query;
   getMatchOdds: (LeagueId, FixtureId) -> (Result_7) query;
   getPlayerDetailsForGameweek: (LeagueId, GameweekFiltersDTO) ->
    (Result_6) composite_query;
@@ -501,7 +500,6 @@ service : {
   pauseAccount: (PauseAccountDTO) -> (Result);
   payWeeklyRewards: (text, GameweekNumber) -> (Result);
   placeBet: (SubmitBetslipDTO) -> (Result_1);
-  refreshLeagueHashes: () -> (Result);
   setMaxBetLimit: (SetMaxBetLimit) -> (Result);
   setMonthlyBetLimit: (SetMonthlyBetLimitDTO) -> (Result);
   snapshotManagers: (text) -> (Result);

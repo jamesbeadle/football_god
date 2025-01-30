@@ -393,7 +393,6 @@ export interface _SERVICE {
   getBets: ActorMethod<[GetBetsDTO], Result_10>;
   getBettableHomepageFixtures: ActorMethod<[LeagueId], Result_9>;
   getDataHashes: ActorMethod<[], Result_8>;
-  getHashes: ActorMethod<[], Result_8>;
   getMatchOdds: ActorMethod<[LeagueId, FixtureId], Result_7>;
   getPlayerDetailsForGameweek: ActorMethod<
     [LeagueId, GameweekFiltersDTO],
@@ -409,7 +408,6 @@ export interface _SERVICE {
   pauseAccount: ActorMethod<[PauseAccountDTO], Result>;
   payWeeklyRewards: ActorMethod<[string, GameweekNumber], Result>;
   placeBet: ActorMethod<[SubmitBetslipDTO], Result_1>;
-  refreshLeagueHashes: ActorMethod<[], Result>;
   setMaxBetLimit: ActorMethod<[SetMaxBetLimit], Result>;
   setMonthlyBetLimit: ActorMethod<[SetMonthlyBetLimitDTO], Result>;
   snapshotManagers: ActorMethod<[string], Result>;

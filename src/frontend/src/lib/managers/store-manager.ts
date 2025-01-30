@@ -13,9 +13,7 @@ import { ClubService } from "../services/club-service";
 import { PlayerService } from "../services/player-service";
 import { SeasonService } from "../services/season-service";
 import { PlayerEventsService } from "../services/player-events-service";
-import {
-  replacer,
-} from "../utils/helpers";
+import { replacer } from "../utils/helpers";
 import { MAX_CACHED_LEAGUES } from "../constants/app.constants";
 
 class StoreManager {
@@ -35,7 +33,7 @@ class StoreManager {
     "fixtures",
     "league_status",
     "seasons",
-    //"player_events",
+    "player_events",
   ];
 
   constructor() {
@@ -50,7 +48,7 @@ class StoreManager {
   }
 
   async syncStores(leagueId: number) {
-    const newHashes = await this.dataHashService.getDataHashes();
+    const newHashes = await this.dataHashService.getDataHashes(leagueId);
     if (newHashes == undefined) {
       return;
     }

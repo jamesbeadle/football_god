@@ -102,25 +102,6 @@ actor Self {
     return await userManager.setMonthlyBetLimit(dto);
   };
 
-  public shared func refreshLeagueHashes(): async Result.Result<(), T.Error> {
-      let data_canister = actor (Environment.DATA_CANISTER_ID) : actor {
-        getLeagues : shared query () -> async Result.Result<[FootballTypes.League], T.Error>;
-      };
-      let leagueIdsResult = await data_canister.getLeagues();
-
-      switch (leagueIdsResult) {
-          case (#ok(leagues)) {
-              await oddsManager.ensureLeagueHashes(Array.map<ResponseDTOs.FootballLeagueDTO, Nat>(leagues, func (league: ResponseDTOs.FootballLeagueDTO) : Nat {
-                  Nat16.toNat(league.id);
-              }));
-              return #ok(());
-          };
-          case (#err(err)) {
-              return #err(err);
-          };
-      };
-  };
-
   /* Data functions */
 
   //Giving me ic0 trap error
