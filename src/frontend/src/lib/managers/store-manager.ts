@@ -29,7 +29,8 @@ import { dev } from '$app/environment';  // Import dev flag from SvelteKit
 import type { FootballLeagueDTO} from "../../../../declarations/backend/backend.did";
 
 type StoreType = {
-  update: (fn: (current: any) => any) => void;
+  subscribe: (run: (value: any) => void) => () => void;
+  [key: string]: any;
 };
 
 interface SyncConfig {
@@ -51,7 +52,39 @@ export class StoreManager {
   private mockService: MockService;
   private isDevEnvironment: boolean;
 
-  
+  private getCategoryStore(category: string): StoreType {
+    switch (category) {
+      case "fixtures":
+        return fixtureStore;
+      case "clubs":
+        return clubStore;
+      case "players":
+        return playerStore;
+      case "league_status":
+        return leagueStore;
+      case "seasons":
+        return seasonStore;
+      default:
+        throw new Error(`Unknown category: ${category}`);
+    }
+  }
+
+  private getCategoryData(category: string, leagueId: number) {
+    switch (category) {
+      case "fixtures":
+        return fixtureStore.getFixtures(leagueId);
+      case "clubs":
+        return clubStore.getClubs(leagueId);
+      case "players":
+        return playerStore.getPlayers(leagueId);
+      case "league_status":
+        return leagueStore.getLeagueStatus(leagueId);
+      case "seasons":
+        return seasonStore.getSeasons(leagueId);
+      default:
+        throw new Error(`Unknown category: ${category}`);
+    }
+  }
 
   private categories: string[] = [
     "players",
@@ -148,7 +181,19 @@ export class StoreManager {
     await this.syncLeagues(leagueId);
 
     for (const category of this.categories) {
-      await this.syncCategory(category, leagueId);
+      const categoryHash = newHashes.find(hash => hash.category === category);
+      const localHash = localStorage.getItem(`${category}_hash_${leagueId}`);
+      
+      if (categoryHash?.hash !== localHash) {
+        await this.syncCategory(category, leagueId);
+        localStorage.setItem(`${category}_hash_${leagueId}`, categoryHash?.hash || "");
+      } else {
+        this.loadFromCache(leagueId, {
+          category,
+          store: this.getCategoryStore(category),
+          getData: (id) => this.getCategoryData(category, id)
+        });
+      }
     }
     const countriesHash = newHashes.find(
       (hash) => hash.category === "countries",
@@ -159,7 +204,6 @@ export class StoreManager {
     } else {
       this.loadCountryFromCache();
     }
-    await this.dataHashService.refreshLeagueHashes();
   }
 
   private async syncData(leagueId: number, config: SyncConfig) {
@@ -234,7 +278,6 @@ export class StoreManager {
         ...current,
         [leagueId]: data,
       }));
-      console.log("data coming from local storage:", data);
     }
   }
 

@@ -120,3 +120,39 @@
 .page-panel-table-header{
   @apply flex flex-row w-full font-bold text-black bg-white;
 }
+
+.fixture-event-panel{
+  @apply flex flex-col items-center p-6 space-y-4 rounded-t-lg bg-BrandLightGray;
+}
+
+.fixture-event-panel-header{
+  @apply flex items-center justify-between w-full;
+}
+
+.fixture-event-panel-header-clubs{
+  @apply flex items-center justify-center flex-1 space-x-4;
+}
+
+.fixture-event-panel-header-clubs-name{
+  @apply text-xl font-medium;
+}
+
+.fixture-event-panel-header-clubs-badge{
+  @apply p-2 rounded-full bg-BrandGray;
+}
+
+.fixture-event-tab-panel{
+  @apply flex p-4 space-x-2 overflow-x-auto border border-BrandDarkGray;
+}
+
+.fixture-event-tab-panel-button{
+  @apply px-4 py-1 rounded-xl whitespace-nowrap;
+}
+
+.fixture-event-tab-panel-button-active{
+  @apply text-white bg-BrandPurple;
+}
+
+.fixture-event-tab-panel-button-inactive{
+  @apply text-white border bg-BrandGray border-BrandDarkGray hover:bg-BrandGray/80;
+}

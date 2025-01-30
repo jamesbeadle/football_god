@@ -148,25 +148,8 @@
     return all.filter((f) => f.gameweek === gw);
   }
 
-  function loadFixtureEvent(league: FootballLeagueDTO, fixture: FixtureDTO) {
-    const serializableLeague = JSON.parse(JSON.stringify(league, (_, value) =>
-      typeof value === 'bigint' ? value.toString() : value
-    ));
-    const serializableFixture = JSON.parse(JSON.stringify(fixture, (_, value) =>
-      typeof value === 'bigint' ? value.toString() : value
-    ));
-
-    // Store the complete fixture data in localStorage for direct access
-    localStorage.setItem(
-      `fixture_event_${fixture.id}`, 
-      JSON.stringify(serializableFixture)
-    );
-    localStorage.setItem(
-      `fixture_event_league_${league.id}`,
-      JSON.stringify(serializableLeague)
-    );
-
-    goto(`/fixture-event?leagueId=${league.id}&fixtureId=${fixture.id}&league=${encodeURIComponent(JSON.stringify(serializableLeague))}&fixture=${encodeURIComponent(JSON.stringify(serializableFixture))}`);
+  function loadFixtureEvent(leagueId: number, fixtureId: number) {
+    goto(`/fixture-event?leagueId=${leagueId}&fixtureId=${fixtureId}`);
   }
 
   function toggleBetSlip() {
@@ -455,7 +438,7 @@
                                   <button
                                     class="p-1 md:p-2"
                                     aria-label="View detailed odds"
-                                    on:click={() => loadFixtureEvent(league, fixture)}
+                                    on:click={() => loadFixtureEvent(league.id, fixture.id)}
                                   >
                                     <OddsIcon className="w-4 h-4 md:w-5 md:h-5" />
                                   </button>

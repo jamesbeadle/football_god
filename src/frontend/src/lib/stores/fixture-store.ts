@@ -26,7 +26,6 @@ function createFixtureStore() {
       const fixtureData = mockData.fixtures[leagueId];
       return fixtureData?.ok || fixtureData as FixtureDTO[];
     }
-    // If not in cache, fetch from service
     return new FixtureService().getFixtures(leagueId);
   }
 

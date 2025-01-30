@@ -57,10 +57,10 @@
     let matchOdds: MatchOddsDTO;
     let players: PlayerDTO[] = [];
     let clubs: ClubDTO[] = [];
+    let league: FootballLeagueDTO;
     let fixture: FixtureDTO;
     let homeClub: ClubDTO;
     let awayClub: ClubDTO;
-    let league: FootballLeagueDTO;
   
     const categoryGroups = {
       Goals: ["goalsOverUnder", "correctScores", "halfTimeScores"],
@@ -129,9 +129,8 @@
               ].filter((key) => key in matchOdds)
             : categoryGroups[activeTab as keyof typeof categoryGroups]) as readonly (keyof MatchOddsDTO)[]
         : [];
+
   
-    $: league = JSON.parse(decodeURIComponent($page.url.searchParams.get("league") || ""));
-    $: fixture = JSON.parse(decodeURIComponent($page.url.searchParams.get("fixture") || ""));
     $: currentFixture = $fixtureWithClubsStore.find(f => f.id === fixtureId);
     $: homeClub = currentFixture?.homeClub ?? {
       id: 0,
@@ -159,6 +158,9 @@
     onMount(async () => {
       try {
         await storeManager.syncStores(leagueId);
+        const { league: loadedLeague, fixture: loadedFixture } = await loadFixtureData(fixtureId, leagueId);
+        league = loadedLeague;
+        fixture = loadedFixture;
         matchOdds = await bettingStore.getMatchOdds(leagueId, fixtureId);
         players = await playerStore.getPlayers(leagueId);
       } catch (error) {
@@ -592,60 +594,54 @@
               <span class="text-white">{homeClub.name} v {awayClub.name}</span>
             </div>
   
-            <div class="p-6 rounded-lg bg-BrandPanelGray">
-              <div class="flex flex-col items-center space-y-4">
-                <div class="flex items-center justify-between w-full">
-                  <div class="flex items-center justify-center flex-1 space-x-4">
-                    <span class="text-xl font-medium">{homeClub.name}</span>
-                    <div class="flex items-center">
-                      <div class="p-2 rounded-full bg-BrandGray">
-                        <BadgeIcon
-                          primaryColour={homeClub.primaryColourHex}
-                          secondaryColour={homeClub.secondaryColourHex}
-                          thirdColour={homeClub.thirdColourHex}
-                          className="w-6 h-6"
-                        />
-                      </div>
-                    </div>
-                    <span class="text-xl text-BrandTextGray">v</span>
-                    <div class="flex items-center">
-                      <div class="p-2 rounded-full bg-BrandGray">
-                        <BadgeIcon
-                          primaryColour={awayClub.primaryColourHex}
-                          secondaryColour={awayClub.secondaryColourHex}
-                          thirdColour={awayClub.thirdColourHex}
-                          className="w-6 h-6"
-                        />
-                      </div>
-                    </div>
-                    <span class="text-xl font-medium">{awayClub.name}</span>
+            <div class="fixture-event-panel">
+              <div class="fixture-event-panel-header">
+                <div class="fixture-event-panel-header-clubs">
+                  <span class="fixture-event-panel-header-clubs-name">{homeClub.name}</span>
+                  <div class="fixture-event-panel-header-clubs-badge">
+                    <BadgeIcon
+                      primaryColour={homeClub.primaryColourHex}
+                      secondaryColour={homeClub.secondaryColourHex}
+                      thirdColour={homeClub.thirdColourHex}
+                      className="w-6 h-6"
+                    />
                   </div>
-                  <div class="flex items-center space-x-4">
-                    <div class="flex flex-col items-center">
-                      <TableIcon className="w-5 h-5" />
-                      <span class="mt-1 text-xs text-BrandTextGray">Table</span>
-                    </div>
-                    <div class="flex flex-col items-center">
-                      <OddsIcon className="w-5 h-5" fill="#919191" />
-                      <span class="mt-1 text-xs text-BrandTextGray">Stats</span>
-                    </div>
+                  <span class="text-xl text-BrandDisabled">v</span>
+                  <div class="fixture-event-panel-header-clubs-badge">
+                    <BadgeIcon
+                      primaryColour={awayClub.primaryColourHex}
+                      secondaryColour={awayClub.secondaryColourHex}
+                      thirdColour={awayClub.thirdColourHex}
+                      className="w-6 h-6"
+                    />
+                  </div>
+                  <span class="fixture-event-panel-header-clubs-name">{awayClub.name}</span>
+                </div>
+                <div class="flex items-center space-x-4">
+                  <div class="flex flex-col items-center">
+                    <TableIcon className="w-5 h-5" />
+                    <span class="mt-1 text-xs text-BrandDisabled">Table</span>
+                  </div>
+                  <div class="flex flex-col items-center">
+                    <OddsIcon className="w-5 h-5" fill="#919191" />
+                    <span class="mt-1 text-xs text-BrandDisabled">Stats</span>
                   </div>
                 </div>
-                <div class="text-center text-BrandTextGray">
-                  {formatUnixDateToReadable(Number(fixture.kickOff))}{" "}
-                  {formatUnixTimeToTime(Number(fixture.kickOff))}
-                </div>
+              </div>
+              <div class="text-center text-BrandDisabled">
+                {formatUnixDateToReadable(Number(fixture.kickOff))}{" "}
+                {formatUnixTimeToTime(Number(fixture.kickOff))}
               </div>
             </div>
   
-            <div class="flex space-x-2 overflow-x-auto">
+            <div class="fixture-event-tab-panel">
               {#each tabs as tab}
                 <button
                   class="
-                    px-4 py-2 rounded-xl whitespace-nowrap
+                    fixture-event-tab-panel-button
                     {activeTab === tab
-                      ? 'bg-BrandPurple text-white'
-                      : 'bg-BrandGray border border-BrandOddsDivider text-gray-400 hover:bg-BrandGray/80'}
+                      ? 'fixture-event-tab-panel-button-active'
+                      : 'fixture-event-tab-panel-button-inactive'}
                   "
                   on:click={() => setActiveTab(tab)}
                 >
@@ -1174,10 +1170,10 @@
   
       <div class="flex-shrink-0 lg:ml-4 lg:w-80">
         <div class="hidden lg:block lg:sticky lg:top-4">
-          <Betslip
+          <!-- <Betslip
             leagueData={{ [league.id]: league }}
             fixtureData={{ [fixture.id]: { ...fixture, leagueId: league.id } }}
-          />
+          /> -->
         </div>
   
         <div
@@ -1202,11 +1198,11 @@
   
         {#if isBetSlipExpanded}
           <div class="lg:hidden">
-            <Betslip
+            <!-- <Betslip
               bind:isExpanded={isBetSlipExpanded}
               leagueData={{ [league.id]: league }}
               fixtureData={{ [fixture.id]: { ...fixture, leagueId: league.id } }}
-            />
+            /> -->
           </div>
         {/if}
       </div>
