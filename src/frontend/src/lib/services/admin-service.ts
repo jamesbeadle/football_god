@@ -1,5 +1,4 @@
 import { authStore } from "../stores/auth-store";
-import { idlFactory } from "../../../../declarations/backend";
 import { ActorFactory } from "../utils/ActorFactory";
 import { isError } from "../utils/helpers";
 import type {
@@ -20,7 +19,7 @@ export class AdminService {
     if (!isLoggedIn) {
       return false;
     }
-    const identityActor = await ActorFactory.createIdentityActor(
+    const identityActor = await ActorFactory.createBackendIdentityActor(
       authStore,
       process.env.BACKEND_CANISTER_ID ?? "",
     );
@@ -32,7 +31,7 @@ export class AdminService {
   }
 
   async isAdmin(): Promise<boolean> {
-    const identityActor = await ActorFactory.createIdentityActor(
+    const identityActor = await ActorFactory.createBackendIdentityActor(
       authStore,
       process.env.BACKEND_CANISTER_ID ?? "",
     );
@@ -44,7 +43,7 @@ export class AdminService {
   }
 
   async isAuditor(): Promise<boolean> {
-    const identityActor = await ActorFactory.createIdentityActor(
+    const identityActor = await ActorFactory.createBackendIdentityActor(
       authStore,
       process.env.BACKEND_CANISTER_ID ?? "",
     );
@@ -58,7 +57,7 @@ export class AdminService {
   async getSystemState(
     applicationName: string,
   ): Promise<SystemStateDTO | undefined> {
-    const identityActor: any = await ActorFactory.createIdentityActor(
+    const identityActor: any = await ActorFactory.createBackendIdentityActor(
       authStore,
       process.env.BACKEND_CANISTER_ID ?? "",
     );
@@ -72,7 +71,7 @@ export class AdminService {
     applicationName: string,
     dto: UpdateAppStatusDTO,
   ): Promise<void> {
-    const identityActor: any = await ActorFactory.createIdentityActor(
+    const identityActor: any = await ActorFactory.createBackendIdentityActor(
       authStore,
       process.env.BACKEND_CANISTER_ID ?? "",
     );
@@ -82,7 +81,7 @@ export class AdminService {
   }
 
   async snapshotManagers(applicationName: string): Promise<void> {
-    const identityActor: any = await ActorFactory.createIdentityActor(
+    const identityActor: any = await ActorFactory.createBackendIdentityActor(
       authStore,
       process.env.BACKEND_CANISTER_ID ?? "",
     );
@@ -92,7 +91,7 @@ export class AdminService {
   }
 
   async calculateGameweekScores(applicationName: string): Promise<void> {
-    const identityActor: any = await ActorFactory.createIdentityActor(
+    const identityActor: any = await ActorFactory.createBackendIdentityActor(
       authStore,
       process.env.BACKEND_CANISTER_ID ?? "",
     );
@@ -102,7 +101,7 @@ export class AdminService {
   }
 
   async calculateLeaderboards(applicationName: string): Promise<void> {
-    const identityActor: any = await ActorFactory.createIdentityActor(
+    const identityActor: any = await ActorFactory.createBackendIdentityActor(
       authStore,
       process.env.BACKEND_CANISTER_ID ?? "",
     );
@@ -115,7 +114,7 @@ export class AdminService {
     applicationName: string,
     gameweek: number,
   ): Promise<void> {
-    const identityActor: any = await ActorFactory.createIdentityActor(
+    const identityActor: any = await ActorFactory.createBackendIdentityActor(
       authStore,
       process.env.BACKEND_CANISTER_ID ?? "",
     );
@@ -131,7 +130,7 @@ export class AdminService {
     applicationName: string,
     gameweek: number,
   ): Promise<void> {
-    const identityActor: any = await ActorFactory.createIdentityActor(
+    const identityActor: any = await ActorFactory.createBackendIdentityActor(
       authStore,
       process.env.BACKEND_CANISTER_ID ?? "",
     );
@@ -145,7 +144,7 @@ export class AdminService {
   }
 
   async getTimers(): Promise<TimerInfo[]> {
-    const identityActor: any = await ActorFactory.createIdentityActor(
+    const identityActor: any = await ActorFactory.createBackendIdentityActor(
       authStore,
       process.env.BACKEND_CANISTER_ID ?? "",
     );

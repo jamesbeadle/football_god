@@ -29,7 +29,7 @@ function createUserStore() {
 
   async function updateUsername(username: string): Promise<any> {
     try {
-      const identityActor = await ActorFactory.createIdentityActor(
+      const identityActor = await ActorFactory.createBackendIdentityActor(
         authStore,
         process.env.BACKEND_CANISTER_ID ?? "",
       );
@@ -102,7 +102,7 @@ function createUserStore() {
 
   async function agreeTerms(): Promise<any> {
     try {
-      const identityActor = await ActorFactory.createIdentityActor(
+      const identityActor = await ActorFactory.createBackendIdentityActor(
         authStore,
         process.env.BACKEND_CANISTER_ID ?? "",
       );
@@ -134,7 +134,7 @@ function createUserStore() {
         const arrayBuffer = reader.result as ArrayBuffer;
         const uint8Array = new Uint8Array(arrayBuffer);
         try {
-          const identityActor = await ActorFactory.createIdentityActor(
+          const identityActor = await ActorFactory.createBackendIdentityActor(
             authStore,
             process.env.BACKEND_CANISTER_ID ?? "",
           );
@@ -166,7 +166,7 @@ function createUserStore() {
   }
 
   async function isUsernameAvailable(username: string): Promise<boolean> {
-    const identityActor: any = await ActorFactory.createIdentityActor(
+    const identityActor: any = await ActorFactory.createBackendIdentityActor(
       authStore,
       process.env.BACKEND_CANISTER_ID ?? "",
     );
@@ -174,7 +174,7 @@ function createUserStore() {
   }
 
   async function cacheProfile() {
-    const identityActor: any = await ActorFactory.createIdentityActor(
+    const identityActor: any = await ActorFactory.createBackendIdentityActor(
       authStore,
       process.env.BACKEND_CANISTER_ID ?? "",
     );

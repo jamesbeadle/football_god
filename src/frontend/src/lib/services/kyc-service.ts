@@ -8,7 +8,7 @@ export class KYCService {
   async storeKYCReference(
     reference: `${string}-${string}-${string}-${string}-${string}`,
   ): Promise<void> {
-    const identityActor: any = await ActorFactory.createIdentityActor(
+    const identityActor: any = await ActorFactory.createBackendIdentityActor(
       authStore,
       process.env.BACKEND_CANISTER_ID ?? "",
     );

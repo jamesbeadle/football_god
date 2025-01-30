@@ -15,10 +15,11 @@ export class ClubService {
     console.log("getting clubs");
     console.log(process.env);
     console.log(process.env.DATA_CANISTER_ID);
-    const identityActor: any = await ActorFactory.createIdentityActor(
-      authStore,
-      process.env.DATA_CANISTER_ID ?? "",
-    );
+    const identityActor: any =
+      await ActorFactory.createDataCanisterIdentityActor(
+        authStore,
+        process.env.DATA_CANISTER_ID ?? "",
+      );
 
     const result = await identityActor.getClubs(leagueId);
     if (isError(result)) throw new Error("Failed to fetch clubs");

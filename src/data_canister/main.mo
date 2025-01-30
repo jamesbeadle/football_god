@@ -121,7 +121,7 @@
     };
 
     public shared query ( {caller} ) func getPlayers(leagueId: FootballTypes.LeagueId) : async Result.Result<[ResponseDTOs.PlayerDTO], T.Error>{
-      assert callerAllowed(caller);
+      assert not Principal.isAnonymous(caller);
       return getPrivatePlayers(leagueId);
     };
 
@@ -131,7 +131,7 @@
     };
 
     public shared query ( {caller} ) func getFixtures(leagueId: FootballTypes.LeagueId) : async Result.Result<[ResponseDTOs.FixtureDTO], T.Error>{
-      assert callerAllowed(caller);
+      assert not Principal.isAnonymous(caller);
       let seasonResult = Array.find<FootballTypes.LeagueStatus>(leagueStatuses, func(entry: FootballTypes.LeagueStatus) : Bool {
         entry.leagueId == leagueId;
       });
@@ -152,7 +152,7 @@
     };
 
     public shared query ( {caller} ) func getClubs(leagueId: FootballTypes.LeagueId) : async Result.Result<[ResponseDTOs.ClubDTO], T.Error>{
-      assert callerAllowed(caller);
+      assert not Principal.isAnonymous(caller);
       return getPrivateClubs(leagueId);
     };
 
@@ -266,7 +266,7 @@
     /* Query functions */
 
     public shared query ( {caller} ) func getDataHashes(leagueId: FootballTypes.LeagueId) : async Result.Result<[ResponseDTOs.DataHashDTO], T.Error> {
-      assert callerAllowed(caller);
+      assert not Principal.isAnonymous(caller);
       let leagueDataHashesResult = Array.find<(FootballTypes.LeagueId, [Base.DataHash])>(leagueDataHashes, func(entry: (FootballTypes.LeagueId, [Base.DataHash])) : Bool {
         entry.0 == leagueId
       });
@@ -280,12 +280,12 @@
     };
 
     public shared query ( {caller} ) func getLeagues() : async Result.Result<[ResponseDTOs.FootballLeagueDTO], T.Error>{
-      assert callerAllowed(caller);
+      assert not Principal.isAnonymous(caller);
       return #ok(leagues);
     };  
 
     public shared query ( {caller} ) func getLeagueStatus(leagueId: FootballTypes.LeagueId) : async Result.Result<FootballTypes.LeagueStatus, T.Error>{
-      assert callerAllowed(caller);
+      assert not Principal.isAnonymous(caller);
       let status = Array.find<FootballTypes.LeagueStatus>(leagueStatuses, func(entry: FootballTypes.LeagueStatus) : Bool {
         entry.leagueId == leagueId
       });
@@ -300,12 +300,12 @@
     };
 
     public shared query ( {caller} ) func getTimers() : async Result.Result<[Base.TimerInfo], T.Error>{
-       assert callerAllowed(caller);
-        return #ok(timers);
+      assert not Principal.isAnonymous(caller);
+      return #ok(timers);
     };
 
     public shared query ( {caller} ) func getSeasons(leagueId: FootballTypes.LeagueId) : async Result.Result<[ResponseDTOs.SeasonDTO], T.Error>{
-      assert callerAllowed(caller);
+      assert not Principal.isAnonymous(caller);
 
       let filteredLeagueSeasons = Array.find<(FootballTypes.LeagueId, [FootballTypes.Season])>(leagueSeasons, 
         func(leagueSeason: (FootballTypes.LeagueId, [FootballTypes.Season])) : Bool{
@@ -332,7 +332,7 @@
     };
 
     public shared query ( {caller} ) func getPostponedFixtures(leagueId: FootballTypes.LeagueId, dto: RequestDTOs.RequestFixturesDTO) : async Result.Result<[ResponseDTOs.FixtureDTO], T.Error>{
-      assert callerAllowed(caller);
+      assert not Principal.isAnonymous(caller);
 
       let filteredLeagueSeasons = Array.find<(FootballTypes.LeagueId, [FootballTypes.Season])>(leagueSeasons, 
         func(currentLeagueSeason: (FootballTypes.LeagueId, [FootballTypes.Season])) : Bool{
@@ -377,7 +377,7 @@
     };
 
     public shared query ( {caller} ) func getLoanedPlayers(leagueId: FootballTypes.LeagueId) : async Result.Result<[ResponseDTOs.LoanedPlayerDTO], T.Error>{
-      assert callerAllowed(caller);
+      assert not Principal.isAnonymous(caller);
 
       let filteredLeaguePlayers = Array.find<(FootballTypes.LeagueId, [FootballTypes.Player])>(leaguePlayers, 
         func(currentLeaguePlayers: (FootballTypes.LeagueId, [FootballTypes.Player])) : Bool{
@@ -420,7 +420,7 @@
     };
 
     public shared query ( {caller} ) func getRetiredPlayers(leagueId: FootballTypes.LeagueId, dto: RequestDTOs.ClubFilterDTO) : async Result.Result<[ResponseDTOs.PlayerDTO], T.Error>{
-      assert callerAllowed(caller);
+      assert not Principal.isAnonymous(caller);
       
       let filteredLeaguePlayers = Array.find<(FootballTypes.LeagueId, [FootballTypes.Player])>(retiredLeaguePlayers, 
         func(currentLeaguePlayers: (FootballTypes.LeagueId, [FootballTypes.Player])) : Bool{
@@ -463,7 +463,7 @@
     };
 
     public shared query ( {caller} ) func getPlayerDetails(leagueId: FootballTypes.LeagueId, dto: RequestDTOs.GetPlayerDetailsDTO) : async Result.Result<ResponseDTOs.PlayerDetailDTO, T.Error> {
-      assert callerAllowed(caller);
+      assert not Principal.isAnonymous(caller);
 
       var clubId : FootballTypes.ClubId = 0;
       var position : FootballTypes.PlayerPosition = #Goalkeeper;
@@ -567,7 +567,7 @@
     };
     
     public shared query ( {caller} ) func getPlayerDetailsForGameweek(leagueId: FootballTypes.LeagueId, dto: RequestDTOs.GameweekFiltersDTO) : async Result.Result<[ResponseDTOs.PlayerPointsDTO], T.Error>{
-      assert callerAllowed(caller);
+      assert not Principal.isAnonymous(caller);
 
       var playerDetailsBuffer = Buffer.fromArray<ResponseDTOs.PlayerPointsDTO>([]);
 
@@ -618,7 +618,7 @@
     };
 
     public shared query ( {caller} ) func getPlayersMap(leagueId: FootballTypes.LeagueId, dto: RequestDTOs.GameweekFiltersDTO) : async Result.Result<[(Nat16, ResponseDTOs.PlayerScoreDTO)], T.Error>{
-      assert callerAllowed(caller);
+      assert not Principal.isAnonymous(caller);
       
       var playersMap : TrieMap.TrieMap<Nat16, ResponseDTOs.PlayerScoreDTO> = TrieMap.TrieMap<Nat16, ResponseDTOs.PlayerScoreDTO>(Utilities.eqNat16, Utilities.hashNat16);
       
@@ -687,7 +687,7 @@
     };
 
     public shared query ( {caller} ) func getCountries() : async Result.Result<[ResponseDTOs.CountryDTO], T.Error> {
-      assert callerAllowed(caller);
+      assert not Principal.isAnonymous(caller);
       return #ok(Countries.countries);
     };  
 

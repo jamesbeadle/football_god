@@ -4720,7 +4720,7 @@ const options = {
 		<div class="error">
 			<span class="status">` + status + '</span>\n			<div class="message">\n				<h1>' + message + "</h1>\n			</div>\n		</div>\n	</body>\n</html>\n"
   },
-  version_hash: "g2b94s"
+  version_hash: "199b0rb"
 };
 async function get_hooks() {
   return {};
@@ -4932,7 +4932,7 @@ const initAuthStore = () => {
 };
 const authStore = initAuthStore();
 const authRemainingTimeStore = writable(void 0);
-const idlFactory = ({ IDL }) => {
+const idlFactory$1 = ({ IDL }) => {
   const Error2 = IDL.Variant({
     DecodeError: IDL.Null,
     NotAllowed: IDL.Null,
@@ -5361,8 +5361,580 @@ const idlFactory = ({ IDL }) => {
     )
   });
 };
+var define_process_env_default$a = { BACKEND_CANISTER_ID: "44kin-waaaa-aaaal-qbxra-cai", FRONTEND_CANISTER_ID: "43loz-3yaaa-aaaal-qbxrq-cai", DATA_CANISTER_CANISTER_ID: "52fzd-2aaaa-aaaal-qmzsa-cai", DFX_NETWORK: "ic", SNS_GOVERNANCE_CANISTER_ID: "detjl-sqaaa-aaaaq-aacqa-cai", DATA_CANISTER_ID: "52fzd-2aaaa-aaaal-qmzsa-cai" };
+const canisterId$1 = define_process_env_default$a.CANISTER_ID_BACKEND;
+const createActor$1 = (canisterId2, options2 = {}) => {
+  const agent = options2.agent || new HttpAgent({ ...options2.agentOptions });
+  if (options2.agent && options2.agentOptions) {
+    console.warn(
+      "Detected both agent and agentOptions passed to createActor. Ignoring agentOptions and proceeding with the provided agent."
+    );
+  }
+  return Actor.createActor(idlFactory$1, {
+    agent,
+    canisterId: canisterId2,
+    ...options2.actorOptions
+  });
+};
+canisterId$1 ? createActor$1(canisterId$1) : void 0;
+const idlFactory = ({ IDL }) => {
+  const List = IDL.Rec();
+  const List_1 = IDL.Rec();
+  const List_2 = IDL.Rec();
+  const List_3 = IDL.Rec();
+  const List_4 = IDL.Rec();
+  const List_5 = IDL.Rec();
+  const ShirtType = IDL.Variant({ Filled: IDL.Null, Striped: IDL.Null });
+  const LeagueId = IDL.Nat16;
+  const CreateClubDTO = IDL.Record({
+    secondaryColourHex: IDL.Text,
+    name: IDL.Text,
+    friendlyName: IDL.Text,
+    thirdColourHex: IDL.Text,
+    abbreviatedName: IDL.Text,
+    shirtType: ShirtType,
+    primaryColourHex: IDL.Text,
+    leagueId: LeagueId
+  });
+  const Gender = IDL.Variant({ Male: IDL.Null, Female: IDL.Null });
+  const CountryId = IDL.Nat16;
+  const CreateLeagueDTO = IDL.Record({
+    logo: IDL.Vec(IDL.Nat8),
+    name: IDL.Text,
+    teamCount: IDL.Nat8,
+    relatedGender: Gender,
+    countryId: CountryId,
+    abbreviation: IDL.Text,
+    governingBody: IDL.Text,
+    formed: IDL.Int
+  });
+  const ClubId = IDL.Nat16;
+  const PlayerPosition = IDL.Variant({
+    Goalkeeper: IDL.Null,
+    Midfielder: IDL.Null,
+    Forward: IDL.Null,
+    Defender: IDL.Null
+  });
+  const CreatePlayerDTO = IDL.Record({
+    clubId: ClubId,
+    valueQuarterMillions: IDL.Nat16,
+    dateOfBirth: IDL.Int,
+    nationality: CountryId,
+    shirtNumber: IDL.Nat8,
+    position: PlayerPosition,
+    lastName: IDL.Text,
+    leagueId: LeagueId,
+    firstName: IDL.Text
+  });
+  const ClubDTO = IDL.Record({
+    id: ClubId,
+    secondaryColourHex: IDL.Text,
+    name: IDL.Text,
+    friendlyName: IDL.Text,
+    thirdColourHex: IDL.Text,
+    abbreviatedName: IDL.Text,
+    shirtType: ShirtType,
+    primaryColourHex: IDL.Text
+  });
+  const Error2 = IDL.Variant({
+    DecodeError: IDL.Null,
+    NotAllowed: IDL.Null,
+    NotFound: IDL.Null,
+    NotAuthorized: IDL.Null,
+    InvalidData: IDL.Null,
+    AlreadyExists: IDL.Null,
+    CanisterCreateError: IDL.Null,
+    CanisterFull: IDL.Null
+  });
+  const Result_2 = IDL.Variant({ ok: IDL.Vec(ClubDTO), err: Error2 });
+  const CountryDTO = IDL.Record({
+    id: CountryId,
+    code: IDL.Text,
+    name: IDL.Text
+  });
+  const Result_12 = IDL.Variant({ ok: IDL.Vec(CountryDTO), err: Error2 });
+  const DataHashDTO = IDL.Record({ hash: IDL.Text, category: IDL.Text });
+  const Result_11 = IDL.Variant({ ok: IDL.Vec(DataHashDTO), err: Error2 });
+  const FixtureStatusType = IDL.Variant({
+    Unplayed: IDL.Null,
+    Finalised: IDL.Null,
+    Active: IDL.Null,
+    Complete: IDL.Null
+  });
+  const SeasonId = IDL.Nat16;
+  const FixtureId = IDL.Nat32;
+  const PlayerEventType = IDL.Variant({
+    PenaltyMissed: IDL.Null,
+    Goal: IDL.Null,
+    GoalConceded: IDL.Null,
+    Appearance: IDL.Null,
+    PenaltySaved: IDL.Null,
+    RedCard: IDL.Null,
+    KeeperSave: IDL.Null,
+    CleanSheet: IDL.Null,
+    YellowCard: IDL.Null,
+    GoalAssisted: IDL.Null,
+    OwnGoal: IDL.Null,
+    HighestScoringPlayer: IDL.Null
+  });
+  const PlayerEventData = IDL.Record({
+    fixtureId: FixtureId,
+    clubId: ClubId,
+    playerId: IDL.Nat16,
+    eventStartMinute: IDL.Nat8,
+    eventEndMinute: IDL.Nat8,
+    eventType: PlayerEventType
+  });
+  const GameweekNumber = IDL.Nat8;
+  const FixtureDTO = IDL.Record({
+    id: IDL.Nat32,
+    status: FixtureStatusType,
+    highestScoringPlayerId: IDL.Nat16,
+    seasonId: SeasonId,
+    awayClubId: ClubId,
+    events: IDL.Vec(PlayerEventData),
+    homeClubId: ClubId,
+    kickOff: IDL.Int,
+    homeGoals: IDL.Nat8,
+    gameweek: GameweekNumber,
+    awayGoals: IDL.Nat8
+  });
+  const Result_1 = IDL.Variant({ ok: IDL.Vec(FixtureDTO), err: Error2 });
+  const CalendarMonth = IDL.Nat8;
+  const LeagueStatus = IDL.Record({
+    transferWindowEndMonth: IDL.Nat8,
+    transferWindowEndDay: IDL.Nat8,
+    transferWindowStartMonth: IDL.Nat8,
+    transferWindowActive: IDL.Bool,
+    totalGameweeks: IDL.Nat8,
+    completedGameweek: GameweekNumber,
+    transferWindowStartDay: IDL.Nat8,
+    unplayedGameweek: GameweekNumber,
+    activeMonth: CalendarMonth,
+    activeSeasonId: SeasonId,
+    activeGameweek: GameweekNumber,
+    leagueId: LeagueId,
+    seasonActive: IDL.Bool
+  });
+  const Result_10 = IDL.Variant({ ok: LeagueStatus, err: Error2 });
+  const FootballLeagueDTO = IDL.Record({
+    id: LeagueId,
+    logo: IDL.Vec(IDL.Nat8),
+    name: IDL.Text,
+    teamCount: IDL.Nat8,
+    relatedGender: Gender,
+    countryId: CountryId,
+    abbreviation: IDL.Text,
+    governingBody: IDL.Text,
+    formed: IDL.Int
+  });
+  const Result_9 = IDL.Variant({
+    ok: IDL.Vec(FootballLeagueDTO),
+    err: Error2
+  });
+  const PlayerStatus = IDL.Variant({
+    OnLoan: IDL.Null,
+    Active: IDL.Null,
+    FreeAgent: IDL.Null,
+    Retired: IDL.Null
+  });
+  const LoanedPlayerDTO = IDL.Record({
+    id: IDL.Nat16,
+    status: PlayerStatus,
+    clubId: ClubId,
+    parentClubId: ClubId,
+    valueQuarterMillions: IDL.Nat16,
+    dateOfBirth: IDL.Int,
+    nationality: CountryId,
+    currentLoanEndDate: IDL.Int,
+    shirtNumber: IDL.Nat8,
+    parentLeagueId: LeagueId,
+    position: PlayerPosition,
+    lastName: IDL.Text,
+    leagueId: LeagueId,
+    firstName: IDL.Text
+  });
+  const Result_8 = IDL.Variant({
+    ok: IDL.Vec(LoanedPlayerDTO),
+    err: Error2
+  });
+  const GetPlayerDetailsDTO = IDL.Record({
+    playerId: ClubId,
+    seasonId: SeasonId
+  });
+  const PlayerId = IDL.Nat16;
+  const InjuryHistory = IDL.Record({
+    description: IDL.Text,
+    injuryStartDate: IDL.Int,
+    expectedEndDate: IDL.Int
+  });
+  const PlayerGameweekDTO = IDL.Record({
+    fixtureId: FixtureId,
+    events: IDL.Vec(PlayerEventData),
+    number: IDL.Nat8,
+    points: IDL.Int16
+  });
+  const ValueHistory = IDL.Record({
+    oldValue: IDL.Nat16,
+    changedOn: IDL.Int,
+    newValue: IDL.Nat16
+  });
+  const PlayerDetailDTO = IDL.Record({
+    id: PlayerId,
+    status: PlayerStatus,
+    clubId: ClubId,
+    parentClubId: ClubId,
+    valueQuarterMillions: IDL.Nat16,
+    dateOfBirth: IDL.Int,
+    injuryHistory: IDL.Vec(InjuryHistory),
+    seasonId: SeasonId,
+    gameweeks: IDL.Vec(PlayerGameweekDTO),
+    nationality: CountryId,
+    retirementDate: IDL.Int,
+    valueHistory: IDL.Vec(ValueHistory),
+    latestInjuryEndDate: IDL.Int,
+    shirtNumber: IDL.Nat8,
+    position: PlayerPosition,
+    lastName: IDL.Text,
+    firstName: IDL.Text
+  });
+  const Result_7 = IDL.Variant({ ok: PlayerDetailDTO, err: Error2 });
+  const GameweekFiltersDTO = IDL.Record({
+    seasonId: SeasonId,
+    gameweek: GameweekNumber
+  });
+  const PlayerPointsDTO = IDL.Record({
+    id: IDL.Nat16,
+    clubId: ClubId,
+    events: IDL.Vec(PlayerEventData),
+    position: PlayerPosition,
+    gameweek: GameweekNumber,
+    points: IDL.Int16
+  });
+  const Result_6 = IDL.Variant({
+    ok: IDL.Vec(PlayerPointsDTO),
+    err: Error2
+  });
+  const PlayerDTO = IDL.Record({
+    id: IDL.Nat16,
+    status: PlayerStatus,
+    clubId: ClubId,
+    parentClubId: ClubId,
+    valueQuarterMillions: IDL.Nat16,
+    dateOfBirth: IDL.Int,
+    nationality: CountryId,
+    currentLoanEndDate: IDL.Int,
+    shirtNumber: IDL.Nat8,
+    parentLeagueId: LeagueId,
+    position: PlayerPosition,
+    lastName: IDL.Text,
+    leagueId: LeagueId,
+    firstName: IDL.Text
+  });
+  const Result = IDL.Variant({ ok: IDL.Vec(PlayerDTO), err: Error2 });
+  const PlayerScoreDTO = IDL.Record({
+    id: IDL.Nat16,
+    clubId: ClubId,
+    assists: IDL.Int16,
+    dateOfBirth: IDL.Int,
+    nationality: CountryId,
+    goalsScored: IDL.Int16,
+    saves: IDL.Int16,
+    goalsConceded: IDL.Int16,
+    events: IDL.Vec(PlayerEventData),
+    position: PlayerPosition,
+    points: IDL.Int16
+  });
+  const Result_5 = IDL.Variant({
+    ok: IDL.Vec(IDL.Tuple(IDL.Nat16, PlayerScoreDTO)),
+    err: Error2
+  });
+  const RequestFixturesDTO = IDL.Record({
+    seasonId: SeasonId,
+    leagueId: LeagueId
+  });
+  const ClubFilterDTO = IDL.Record({
+    clubId: ClubId,
+    leagueId: LeagueId
+  });
+  const SeasonDTO = IDL.Record({
+    id: SeasonId,
+    name: IDL.Text,
+    year: IDL.Nat16
+  });
+  const Result_4 = IDL.Variant({ ok: IDL.Vec(SeasonDTO), err: Error2 });
+  const TimerInfo = IDL.Record({
+    id: IDL.Int,
+    callbackName: IDL.Text,
+    triggerTime: IDL.Int
+  });
+  const Result_3 = IDL.Variant({ ok: IDL.Vec(TimerInfo), err: Error2 });
+  const LoanPlayerDTO = IDL.Record({
+    loanEndDate: IDL.Int,
+    playerId: ClubId,
+    loanClubId: ClubId,
+    loanLeagueId: LeagueId,
+    leagueId: LeagueId
+  });
+  const MoveFixtureDTO = IDL.Record({
+    fixtureId: FixtureId,
+    updatedFixtureGameweek: GameweekNumber,
+    updatedFixtureDate: IDL.Int,
+    seasonId: SeasonId,
+    leagueId: LeagueId
+  });
+  const SubmitFixtureDataDTO = IDL.Record({
+    fixtureId: FixtureId,
+    seasonId: SeasonId,
+    gameweek: GameweekNumber,
+    playerEventData: IDL.Vec(PlayerEventData),
+    leagueId: LeagueId
+  });
+  List_3.fill(IDL.Opt(IDL.Tuple(PlayerEventData, List_3)));
+  const PlayerGameweek = IDL.Record({
+    events: List_3,
+    number: GameweekNumber,
+    points: IDL.Int16
+  });
+  List_2.fill(IDL.Opt(IDL.Tuple(PlayerGameweek, List_2)));
+  const PlayerSeason = IDL.Record({
+    id: SeasonId,
+    gameweeks: List_2,
+    totalPoints: IDL.Int16
+  });
+  List_1.fill(IDL.Opt(IDL.Tuple(PlayerSeason, List_1)));
+  List.fill(IDL.Opt(IDL.Tuple(InjuryHistory, List)));
+  const TransferHistory = IDL.Record({
+    transferDate: IDL.Int,
+    loanEndDate: IDL.Int,
+    toLeagueId: LeagueId,
+    toClub: ClubId,
+    fromLeagueId: LeagueId,
+    fromClub: ClubId
+  });
+  List_4.fill(IDL.Opt(IDL.Tuple(TransferHistory, List_4)));
+  List_5.fill(IDL.Opt(IDL.Tuple(ValueHistory, List_5)));
+  const Player = IDL.Record({
+    id: PlayerId,
+    status: PlayerStatus,
+    clubId: ClubId,
+    parentClubId: ClubId,
+    seasons: List_1,
+    valueQuarterMillions: IDL.Nat16,
+    dateOfBirth: IDL.Int,
+    injuryHistory: List,
+    transferHistory: List_4,
+    nationality: CountryId,
+    retirementDate: IDL.Int,
+    valueHistory: List_5,
+    latestInjuryEndDate: IDL.Int,
+    gender: Gender,
+    currentLoanEndDate: IDL.Int,
+    shirtNumber: IDL.Nat8,
+    parentLeagueId: LeagueId,
+    position: PlayerPosition,
+    lastName: IDL.Text,
+    leagueId: LeagueId,
+    firstName: IDL.Text
+  });
+  const PostponeFixtureDTO = IDL.Record({
+    fixtureId: FixtureId,
+    seasonId: SeasonId,
+    leagueId: LeagueId
+  });
+  const RecallPlayerDTO = IDL.Record({
+    playerId: ClubId,
+    leagueId: LeagueId
+  });
+  const RescheduleFixtureDTO = IDL.Record({
+    fixtureId: FixtureId,
+    updatedFixtureGameweek: GameweekNumber,
+    updatedFixtureDate: IDL.Int,
+    seasonId: SeasonId,
+    leagueId: LeagueId
+  });
+  const RetirePlayerDTO = IDL.Record({
+    playerId: ClubId,
+    retirementDate: IDL.Int,
+    leagueId: LeagueId
+  });
+  const RevaluePlayerDownDTO = IDL.Record({
+    playerId: PlayerId,
+    leagueId: LeagueId
+  });
+  const RevaluePlayerUpDTO = IDL.Record({
+    playerId: PlayerId,
+    leagueId: LeagueId
+  });
+  const SetFreeAgentDTO = IDL.Record({
+    playerId: ClubId,
+    leagueId: LeagueId
+  });
+  const SetPlayerInjuryDTO = IDL.Record({
+    playerId: ClubId,
+    description: IDL.Text,
+    leagueId: LeagueId,
+    expectedEndDate: IDL.Int
+  });
+  const TransferPlayerDTO = IDL.Record({
+    clubId: ClubId,
+    newLeagueId: LeagueId,
+    playerId: ClubId,
+    newShirtNumber: IDL.Nat8,
+    newClubId: ClubId,
+    leagueId: LeagueId
+  });
+  const UnretirePlayerDTO = IDL.Record({
+    playerId: ClubId,
+    leagueId: LeagueId
+  });
+  const UpdateLeagueDTO = IDL.Record({
+    logo: IDL.Vec(IDL.Nat8),
+    name: IDL.Text,
+    teamCount: IDL.Nat8,
+    relatedGender: Gender,
+    countryId: CountryId,
+    abbreviation: IDL.Text,
+    governingBody: IDL.Text,
+    leagueId: LeagueId,
+    formed: IDL.Int
+  });
+  const UpdatePlayerDTO = IDL.Record({
+    dateOfBirth: IDL.Int,
+    playerId: ClubId,
+    nationality: CountryId,
+    shirtNumber: IDL.Nat8,
+    position: PlayerPosition,
+    lastName: IDL.Text,
+    leagueId: LeagueId,
+    firstName: IDL.Text
+  });
+  const AddInitialFixturesDTO = IDL.Record({
+    seasonFixtures: IDL.Vec(FixtureDTO),
+    leagueId: LeagueId
+  });
+  const RustResult = IDL.Variant({ Ok: IDL.Text, Err: IDL.Text });
+  const PromoteClubDTO = IDL.Record({
+    clubId: ClubId,
+    toLeagueId: LeagueId,
+    leagueId: LeagueId
+  });
+  const RelegateClubDTO = IDL.Record({
+    clubId: ClubId,
+    relegatedToLeagueId: LeagueId,
+    leagueId: LeagueId
+  });
+  const UpdateClubDTO = IDL.Record({
+    clubId: ClubId,
+    secondaryColourHex: IDL.Text,
+    name: IDL.Text,
+    friendlyName: IDL.Text,
+    thirdColourHex: IDL.Text,
+    abbreviatedName: IDL.Text,
+    shirtType: ShirtType,
+    primaryColourHex: IDL.Text,
+    leagueId: LeagueId
+  });
+  return IDL.Service({
+    createClub: IDL.Func([CreateClubDTO], [], []),
+    createLeague: IDL.Func([CreateLeagueDTO], [], []),
+    createPlayer: IDL.Func([CreatePlayerDTO], [], []),
+    getClubs: IDL.Func([LeagueId], [Result_2], ["query"]),
+    getCountries: IDL.Func([], [Result_12], ["query"]),
+    getDataHashes: IDL.Func([LeagueId], [Result_11], ["query"]),
+    getFixtures: IDL.Func([LeagueId], [Result_1], ["query"]),
+    getLeagueStatus: IDL.Func([LeagueId], [Result_10], ["query"]),
+    getLeagues: IDL.Func([], [Result_9], ["query"]),
+    getLoanedPlayers: IDL.Func([LeagueId], [Result_8], ["query"]),
+    getPlayerDetails: IDL.Func(
+      [LeagueId, GetPlayerDetailsDTO],
+      [Result_7],
+      ["query"]
+    ),
+    getPlayerDetailsForGameweek: IDL.Func(
+      [LeagueId, GameweekFiltersDTO],
+      [Result_6],
+      ["query"]
+    ),
+    getPlayers: IDL.Func([LeagueId], [Result], ["query"]),
+    getPlayersMap: IDL.Func(
+      [LeagueId, GameweekFiltersDTO],
+      [Result_5],
+      ["query"]
+    ),
+    getPostponedFixtures: IDL.Func(
+      [LeagueId, RequestFixturesDTO],
+      [Result_1],
+      ["query"]
+    ),
+    getRetiredPlayers: IDL.Func([LeagueId, ClubFilterDTO], [Result], ["query"]),
+    getSeasons: IDL.Func([LeagueId], [Result_4], ["query"]),
+    getTimers: IDL.Func([], [Result_3], ["query"]),
+    getVerifiedClubs: IDL.Func([LeagueId], [Result_2], []),
+    getVerifiedFixtures: IDL.Func([RequestFixturesDTO], [Result_1], []),
+    getVerifiedPlayers: IDL.Func([LeagueId], [Result], []),
+    loanPlayer: IDL.Func([LoanPlayerDTO], [], []),
+    moveFixture: IDL.Func([MoveFixtureDTO], [], []),
+    populatePlayerEventData: IDL.Func(
+      [SubmitFixtureDataDTO, IDL.Vec(Player)],
+      [IDL.Opt(IDL.Vec(PlayerEventData))],
+      []
+    ),
+    postponeFixture: IDL.Func([PostponeFixtureDTO], [], []),
+    recallPlayer: IDL.Func([RecallPlayerDTO], [], []),
+    rescheduleFixure: IDL.Func([RescheduleFixtureDTO], [], []),
+    retirePlayer: IDL.Func([RetirePlayerDTO], [], []),
+    revaluePlayerDown: IDL.Func([RevaluePlayerDownDTO], [], []),
+    revaluePlayerUp: IDL.Func([RevaluePlayerUpDTO], [], []),
+    setFreeAgent: IDL.Func([SetFreeAgentDTO], [], []),
+    setPlayerInjury: IDL.Func([SetPlayerInjuryDTO], [], []),
+    submitFixtureData: IDL.Func([SubmitFixtureDataDTO], [], []),
+    transferPlayer: IDL.Func([TransferPlayerDTO], [], []),
+    unretirePlayer: IDL.Func([UnretirePlayerDTO], [], []),
+    updateLeague: IDL.Func([UpdateLeagueDTO], [], []),
+    updatePlayer: IDL.Func([UpdatePlayerDTO], [], []),
+    validateAddInitialFixtures: IDL.Func(
+      [AddInitialFixturesDTO],
+      [RustResult],
+      []
+    ),
+    validateCreateClub: IDL.Func([CreateClubDTO], [RustResult], []),
+    validateCreateLeague: IDL.Func([CreateLeagueDTO], [RustResult], []),
+    validateCreatePlayer: IDL.Func([CreatePlayerDTO], [RustResult], []),
+    validateLoanPlayer: IDL.Func([LoanPlayerDTO], [RustResult], []),
+    validateMoveFixture: IDL.Func([MoveFixtureDTO], [RustResult], []),
+    validatePostponeFixture: IDL.Func([PostponeFixtureDTO], [RustResult], []),
+    validatePromoteClub: IDL.Func([PromoteClubDTO], [RustResult], []),
+    validateRecallPlayer: IDL.Func([RecallPlayerDTO], [RustResult], []),
+    validateRelegateClub: IDL.Func([RelegateClubDTO], [RustResult], []),
+    validateRescheduleFixture: IDL.Func(
+      [RescheduleFixtureDTO],
+      [RustResult],
+      []
+    ),
+    validateRetirePlayer: IDL.Func([RetirePlayerDTO], [RustResult], []),
+    validateRevaluePlayerDown: IDL.Func(
+      [RevaluePlayerDownDTO],
+      [RustResult],
+      []
+    ),
+    validateRevaluePlayerUp: IDL.Func([RevaluePlayerUpDTO], [RustResult], []),
+    validateSetFreeAgent: IDL.Func([SetFreeAgentDTO], [RustResult], []),
+    validateSetPlayerInjury: IDL.Func([SetPlayerInjuryDTO], [RustResult], []),
+    validateSubmitFixtureData: IDL.Func(
+      [SubmitFixtureDataDTO],
+      [RustResult],
+      []
+    ),
+    validateTransferPlayer: IDL.Func([TransferPlayerDTO], [RustResult], []),
+    validateUnretirePlayer: IDL.Func([UnretirePlayerDTO], [RustResult], []),
+    validateUpdateClub: IDL.Func([UpdateClubDTO], [RustResult], []),
+    validateUpdateLeague: IDL.Func([UpdateLeagueDTO], [RustResult], []),
+    validateUpdatePlayer: IDL.Func([UpdatePlayerDTO], [RustResult], [])
+  });
+};
 var define_process_env_default$9 = { BACKEND_CANISTER_ID: "44kin-waaaa-aaaal-qbxra-cai", FRONTEND_CANISTER_ID: "43loz-3yaaa-aaaal-qbxrq-cai", DATA_CANISTER_CANISTER_ID: "52fzd-2aaaa-aaaal-qmzsa-cai", DFX_NETWORK: "ic", SNS_GOVERNANCE_CANISTER_ID: "detjl-sqaaa-aaaaq-aacqa-cai", DATA_CANISTER_ID: "52fzd-2aaaa-aaaal-qmzsa-cai" };
-const canisterId = define_process_env_default$9.CANISTER_ID_BACKEND;
+const canisterId = define_process_env_default$9.CANISTER_ID_DATA_CANISTER;
 const createActor = (canisterId2, options2 = {}) => {
   const agent = options2.agent || new HttpAgent({ ...options2.agentOptions });
   if (options2.agent && options2.agentOptions) {
@@ -5415,7 +5987,7 @@ class ActorFactory {
     }
     return new HttpAgent({ ...options2.agentOptions });
   }
-  static createIdentityActor(authStore2, canisterId2) {
+  static createDataCanisterIdentityActor(authStore2, canisterId2) {
     let unsubscribe;
     return new Promise((resolve2, reject) => {
       unsubscribe = authStore2.subscribe((store) => {
@@ -5428,6 +6000,19 @@ class ActorFactory {
       return ActorFactory.createActor(idlFactory, canisterId2, identity);
     });
   }
+  static createBackendIdentityActor(authStore2, canisterId2) {
+    let unsubscribe;
+    return new Promise((resolve2, reject) => {
+      unsubscribe = authStore2.subscribe((store) => {
+        if (store.identity) {
+          resolve2(store.identity);
+        }
+      });
+    }).then((identity) => {
+      unsubscribe();
+      return ActorFactory.createActor(idlFactory$1, canisterId2, identity);
+    });
+  }
   static createGovernanceAgent(authStore2, canisterId2) {
     let unsubscribe;
     return new Promise((resolve2, reject) => {
@@ -5438,7 +6023,7 @@ class ActorFactory {
       });
     }).then((identity) => {
       unsubscribe();
-      return ActorFactory.createActor(idlFactory, canisterId2, identity);
+      return ActorFactory.createActor(idlFactory$1, canisterId2, identity);
     });
   }
 }
@@ -5730,16 +6315,17 @@ class LeagueService {
   constructor() {
   }
   async getLeagues() {
-    const identityActor = await ActorFactory.createIdentityActor(
+    const identityActor = await ActorFactory.createDataCanisterIdentityActor(
       authStore,
       define_process_env_default$8.DATA_CANISTER_CANISTER_ID
     );
+    console.log(identityActor);
     const result = await identityActor.getLeagues();
     if (isError(result)) throw new Error("Failed to fetch leagues");
     return result.ok;
   }
   async createLeague(dto) {
-    const identityActor = await ActorFactory.createIdentityActor(
+    const identityActor = await ActorFactory.createDataCanisterIdentityActor(
       authStore,
       define_process_env_default$8.DATA_CANISTER_CANISTER_ID
     );
@@ -5747,7 +6333,7 @@ class LeagueService {
     if (isError(result)) throw new Error("Failed to create league");
   }
   async updateLeague(dto) {
-    const identityActor = await ActorFactory.createIdentityActor(
+    const identityActor = await ActorFactory.createDataCanisterIdentityActor(
       authStore,
       define_process_env_default$8.BACKEND_CANISTER_ID
     );
@@ -5755,7 +6341,7 @@ class LeagueService {
     if (isError(result)) throw new Error("Failed to update league");
   }
   async getLeagueStatus(leagueId) {
-    const identityActor = await ActorFactory.createIdentityActor(
+    const identityActor = await ActorFactory.createDataCanisterIdentityActor(
       authStore,
       define_process_env_default$8.DATA_CANISTER_CANISTER_ID
     );
@@ -5769,7 +6355,7 @@ class DataHashService {
   actor;
   constructor() {
     const canisterId2 = define_process_env_default$7.DATA_CANISTER_CANISTER_ID;
-    this.actor = ActorFactory.createActor(idlFactory, canisterId2);
+    this.actor = ActorFactory.createActor(idlFactory$1, canisterId2);
   }
   async refreshLeagueHashes() {
     const response = await this.actor.refreshLeagueHashes();
@@ -5997,7 +6583,7 @@ class PlayerService {
   constructor() {
   }
   async getPlayers(leagueId) {
-    const identityActor = await ActorFactory.createIdentityActor(
+    const identityActor = await ActorFactory.createDataCanisterIdentityActor(
       authStore,
       define_process_env_default$6.DATA_CANISTER_CANISTER_ID
     );
@@ -6006,7 +6592,7 @@ class PlayerService {
     return result.ok;
   }
   async getLoanedPlayers(leagueId) {
-    const identityActor = await ActorFactory.createIdentityActor(
+    const identityActor = await ActorFactory.createDataCanisterIdentityActor(
       authStore,
       define_process_env_default$6.DATA_CANISTER_CANISTER_ID
     );
@@ -6015,7 +6601,7 @@ class PlayerService {
     return result.ok;
   }
   async transferPlayer(leagueId, dto) {
-    const identityActor = await ActorFactory.createIdentityActor(
+    const identityActor = await ActorFactory.createDataCanisterIdentityActor(
       authStore,
       define_process_env_default$6.DATA_CANISTER_CANISTER_ID
     );
@@ -6023,7 +6609,7 @@ class PlayerService {
     if (isError(result)) throw new Error("Failed to transfer player");
   }
   async setFreeAgent(leagueId, dto) {
-    const identityActor = await ActorFactory.createIdentityActor(
+    const identityActor = await ActorFactory.createDataCanisterIdentityActor(
       authStore,
       define_process_env_default$6.DATA_CANISTER_CANISTER_ID
     );
@@ -6031,7 +6617,7 @@ class PlayerService {
     if (isError(result)) throw new Error("Failed to set player as free agent");
   }
   async loanPlayer(leagueId, dto) {
-    const identityActor = await ActorFactory.createIdentityActor(
+    const identityActor = await ActorFactory.createDataCanisterIdentityActor(
       authStore,
       define_process_env_default$6.DATA_CANISTER_CANISTER_ID
     );
@@ -6039,7 +6625,7 @@ class PlayerService {
     if (isError(result)) throw new Error("Failed to loan player");
   }
   async createPlayer(leagueId, dto) {
-    const identityActor = await ActorFactory.createIdentityActor(
+    const identityActor = await ActorFactory.createDataCanisterIdentityActor(
       authStore,
       define_process_env_default$6.DATA_CANISTER_CANISTER_ID
     );
@@ -6047,7 +6633,7 @@ class PlayerService {
     if (isError(result)) throw new Error("Failed to creaete player");
   }
   async updatePlayer(leagueId, dto) {
-    const identityActor = await ActorFactory.createIdentityActor(
+    const identityActor = await ActorFactory.createDataCanisterIdentityActor(
       authStore,
       define_process_env_default$6.DATA_CANISTER_CANISTER_ID
     );
@@ -6055,7 +6641,7 @@ class PlayerService {
     if (isError(result)) throw new Error("Failed to update player");
   }
   async recallLoan(leagueId, dto) {
-    const identityActor = await ActorFactory.createIdentityActor(
+    const identityActor = await ActorFactory.createDataCanisterIdentityActor(
       authStore,
       define_process_env_default$6.DATA_CANISTER_CANISTER_ID
     );
@@ -6160,7 +6746,7 @@ class FixtureService {
   constructor() {
   }
   async getFixturesHash(leagueId) {
-    const identityActor = await ActorFactory.createIdentityActor(
+    const identityActor = await ActorFactory.createDataCanisterIdentityActor(
       authStore,
       define_process_env_default$5.DATA_CANISTER_CANISTER_ID
     );
@@ -6169,7 +6755,7 @@ class FixtureService {
     return result.ok;
   }
   async getPostponedFixtures() {
-    const identityActor = await ActorFactory.createIdentityActor(
+    const identityActor = await ActorFactory.createDataCanisterIdentityActor(
       authStore,
       define_process_env_default$5.DATA_CANISTER_CANISTER_ID
     );
@@ -6178,7 +6764,7 @@ class FixtureService {
     return result.ok;
   }
   async getFixtures(leagueId) {
-    const identityActor = await ActorFactory.createIdentityActor(
+    const identityActor = await ActorFactory.createDataCanisterIdentityActor(
       authStore,
       define_process_env_default$5.DATA_CANISTER_CANISTER_ID
     );
@@ -6187,7 +6773,7 @@ class FixtureService {
     return result.ok;
   }
   async moveFixture(dto) {
-    const identityActor = await ActorFactory.createIdentityActor(
+    const identityActor = await ActorFactory.createDataCanisterIdentityActor(
       authStore,
       define_process_env_default$5.DATA_CANISTER_CANISTER_ID
     );
@@ -6195,7 +6781,7 @@ class FixtureService {
     if (isError(result)) throw new Error("Failed to move fixture");
   }
   async postponeFixture(dto) {
-    const identityActor = await ActorFactory.createIdentityActor(
+    const identityActor = await ActorFactory.createDataCanisterIdentityActor(
       authStore,
       define_process_env_default$5.DATA_CANISTER_CANISTER_ID
     );
@@ -6203,7 +6789,7 @@ class FixtureService {
     if (isError(result)) throw new Error("Failed to postpone fixture");
   }
   async submitFixtureData(dto) {
-    const identityActor = await ActorFactory.createIdentityActor(
+    const identityActor = await ActorFactory.createDataCanisterIdentityActor(
       authStore,
       define_process_env_default$5.DATA_CANISTER_CANISTER_ID
     );
@@ -6429,7 +7015,7 @@ function createGovernanceStore() {
         fixtureId,
         playerEventData
       };
-      const identityActor = await ActorFactory.createIdentityActor(
+      const identityActor = await ActorFactory.createBackendIdentityActor(
         authStore,
         define_process_env_default$4.SNS_GOVERNANCE_CANISTER_ID ?? ""
       );
@@ -6497,7 +7083,7 @@ function createGovernanceStore() {
         leagueId,
         seasonFixtures
       };
-      const identityActor = await ActorFactory.createIdentityActor(
+      const identityActor = await ActorFactory.createBackendIdentityActor(
         authStore,
         define_process_env_default$4.SNS_GOVERNANCE_CANISTER_ID ?? ""
       );
@@ -6560,7 +7146,7 @@ function createGovernanceStore() {
         updatedFixtureGameweek,
         updatedFixtureDate: nanoseconds
       };
-      const identityActor = await ActorFactory.createIdentityActor(
+      const identityActor = await ActorFactory.createBackendIdentityActor(
         authStore,
         define_process_env_default$4.SNS_GOVERNANCE_CANISTER_ID ?? ""
       );
@@ -6628,7 +7214,7 @@ function createGovernanceStore() {
         seasonId,
         fixtureId
       };
-      const identityActor = await ActorFactory.createIdentityActor(
+      const identityActor = await ActorFactory.createBackendIdentityActor(
         authStore,
         define_process_env_default$4.SNS_GOVERNANCE_CANISTER_ID ?? ""
       );
@@ -6701,7 +7287,7 @@ function createGovernanceStore() {
         updatedFixtureGameweek,
         updatedFixtureDate: nanoseconds
       };
-      const identityActor = await ActorFactory.createIdentityActor(
+      const identityActor = await ActorFactory.createBackendIdentityActor(
         authStore,
         define_process_env_default$4.SNS_GOVERNANCE_CANISTER_ID ?? ""
       );
@@ -6772,7 +7358,7 @@ function createGovernanceStore() {
         newLeagueId,
         newClubId
       };
-      const identityActor = await ActorFactory.createIdentityActor(
+      const identityActor = await ActorFactory.createBackendIdentityActor(
         authStore,
         define_process_env_default$4.SNS_GOVERNANCE_CANISTER_ID ?? ""
       );
@@ -6852,7 +7438,7 @@ function createGovernanceStore() {
         loanClubId,
         loanEndDate: nanoseconds
       };
-      const identityActor = await ActorFactory.createIdentityActor(
+      const identityActor = await ActorFactory.createBackendIdentityActor(
         authStore,
         define_process_env_default$4.SNS_GOVERNANCE_CANISTER_ID ?? ""
       );
@@ -6918,7 +7504,7 @@ function createGovernanceStore() {
         leagueId,
         playerId
       };
-      const identityActor = await ActorFactory.createIdentityActor(
+      const identityActor = await ActorFactory.createBackendIdentityActor(
         authStore,
         define_process_env_default$4.SNS_GOVERNANCE_CANISTER_ID ?? ""
       );
@@ -6994,7 +7580,7 @@ function createGovernanceStore() {
         dateOfBirth: nanoseconds,
         nationality
       };
-      const identityActor = await ActorFactory.createIdentityActor(
+      const identityActor = await ActorFactory.createBackendIdentityActor(
         authStore,
         define_process_env_default$4.SNS_GOVERNANCE_CANISTER_ID ?? ""
       );
@@ -7062,7 +7648,7 @@ function createGovernanceStore() {
         dateOfBirth: BigInt(dateOfBirth),
         nationality
       };
-      const identityActor = await ActorFactory.createIdentityActor(
+      const identityActor = await ActorFactory.createBackendIdentityActor(
         authStore,
         define_process_env_default$4.SNS_GOVERNANCE_CANISTER_ID ?? ""
       );
@@ -7133,7 +7719,7 @@ function createGovernanceStore() {
         description,
         expectedEndDate: nanoseconds
       };
-      const identityActor = await ActorFactory.createIdentityActor(
+      const identityActor = await ActorFactory.createBackendIdentityActor(
         authStore,
         define_process_env_default$4.SNS_GOVERNANCE_CANISTER_ID ?? ""
       );
@@ -7203,7 +7789,7 @@ function createGovernanceStore() {
         playerId,
         retirementDate: nanoseconds
       };
-      const identityActor = await ActorFactory.createIdentityActor(
+      const identityActor = await ActorFactory.createBackendIdentityActor(
         authStore,
         define_process_env_default$4.SNS_GOVERNANCE_CANISTER_ID ?? ""
       );
@@ -7269,7 +7855,7 @@ function createGovernanceStore() {
         leagueId,
         playerId
       };
-      const identityActor = await ActorFactory.createIdentityActor(
+      const identityActor = await ActorFactory.createBackendIdentityActor(
         authStore,
         define_process_env_default$4.SNS_GOVERNANCE_CANISTER_ID ?? ""
       );
@@ -7331,7 +7917,7 @@ function createGovernanceStore() {
   }
   async function createClub(dto) {
     try {
-      const identityActor = await ActorFactory.createIdentityActor(
+      const identityActor = await ActorFactory.createBackendIdentityActor(
         authStore,
         define_process_env_default$4.SNS_GOVERNANCE_CANISTER_ID ?? ""
       );
@@ -7390,7 +7976,7 @@ function createGovernanceStore() {
         clubId,
         toLeagueId
       };
-      const identityActor = await ActorFactory.createIdentityActor(
+      const identityActor = await ActorFactory.createBackendIdentityActor(
         authStore,
         define_process_env_default$4.SNS_GOVERNANCE_CANISTER_ID ?? ""
       );
@@ -7459,7 +8045,7 @@ function createGovernanceStore() {
         abbreviatedName,
         shirtType
       };
-      const identityActor = await ActorFactory.createIdentityActor(
+      const identityActor = await ActorFactory.createBackendIdentityActor(
         authStore,
         define_process_env_default$4.SNS_GOVERNANCE_CANISTER_ID ?? ""
       );
@@ -7545,7 +8131,7 @@ class ClubService {
     console.log("getting clubs");
     console.log(define_process_env_default$3);
     console.log(define_process_env_default$3.DATA_CANISTER_ID);
-    const identityActor = await ActorFactory.createIdentityActor(
+    const identityActor = await ActorFactory.createDataCanisterIdentityActor(
       authStore,
       define_process_env_default$3.DATA_CANISTER_ID
     );
@@ -7631,7 +8217,7 @@ class CountryService {
   constructor() {
   }
   async getCountries() {
-    const identityActor = await ActorFactory.createIdentityActor(
+    const identityActor = await ActorFactory.createDataCanisterIdentityActor(
       authStore,
       define_process_env_default$2.DATA_CANISTER_CANISTER_ID
     );
@@ -7657,7 +8243,7 @@ class SeasonService {
   constructor() {
   }
   async getSeasons(leagueId) {
-    const identityActor = await ActorFactory.createIdentityActor(
+    const identityActor = await ActorFactory.createDataCanisterIdentityActor(
       authStore,
       define_process_env_default$1.DATA_CANISTER_CANISTER_ID
     );
@@ -7742,7 +8328,7 @@ class PlayerEventsService {
         playerId,
         seasonId
       };
-      const identityActor = await ActorFactory.createIdentityActor(
+      const identityActor = await ActorFactory.createDataCanisterIdentityActor(
         authStore,
         define_process_env_default.DATA_CANISTER_CANISTER_ID ?? ""
       );
@@ -7761,7 +8347,7 @@ class PlayerEventsService {
       seasonId,
       gameweek
     };
-    const identityActor = await ActorFactory.createIdentityActor(
+    const identityActor = await ActorFactory.createDataCanisterIdentityActor(
       authStore,
       define_process_env_default.DATA_CANISTER_CANISTER_ID
     );
@@ -7781,7 +8367,7 @@ class PlayerEventsService {
         seasonId,
         gameweek
       };
-      const identityActor = await ActorFactory.createIdentityActor(
+      const identityActor = await ActorFactory.createDataCanisterIdentityActor(
         authStore,
         define_process_env_default.DATA_CANISTER_CANISTER_ID ?? ""
       );

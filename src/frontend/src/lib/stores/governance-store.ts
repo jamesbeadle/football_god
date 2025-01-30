@@ -221,7 +221,7 @@ function createGovernanceStore() {
         playerEventData,
       };
 
-      const identityActor: any = await ActorFactory.createIdentityActor(
+      const identityActor: any = await ActorFactory.createBackendIdentityActor(
         authStore,
         process.env.SNS_GOVERNANCE_CANISTER_ID ?? "",
       );
@@ -304,7 +304,7 @@ function createGovernanceStore() {
         seasonFixtures,
       };
 
-      const identityActor: any = await ActorFactory.createIdentityActor(
+      const identityActor: any = await ActorFactory.createBackendIdentityActor(
         authStore,
         process.env.SNS_GOVERNANCE_CANISTER_ID ?? "",
       );
@@ -384,7 +384,7 @@ function createGovernanceStore() {
         updatedFixtureDate: nanoseconds,
       };
 
-      const identityActor: any = await ActorFactory.createIdentityActor(
+      const identityActor: any = await ActorFactory.createBackendIdentityActor(
         authStore,
         process.env.SNS_GOVERNANCE_CANISTER_ID ?? "",
       );
@@ -467,7 +467,7 @@ function createGovernanceStore() {
         fixtureId,
       };
 
-      const identityActor: any = await ActorFactory.createIdentityActor(
+      const identityActor: any = await ActorFactory.createBackendIdentityActor(
         authStore,
         process.env.SNS_GOVERNANCE_CANISTER_ID ?? "",
       );
@@ -558,7 +558,7 @@ function createGovernanceStore() {
         updatedFixtureDate: nanoseconds,
       };
 
-      const identityActor: any = await ActorFactory.createIdentityActor(
+      const identityActor: any = await ActorFactory.createBackendIdentityActor(
         authStore,
         process.env.SNS_GOVERNANCE_CANISTER_ID ?? "",
       );
@@ -647,7 +647,7 @@ function createGovernanceStore() {
         newClubId,
       };
 
-      const identityActor: any = await ActorFactory.createIdentityActor(
+      const identityActor: any = await ActorFactory.createBackendIdentityActor(
         authStore,
         process.env.SNS_GOVERNANCE_CANISTER_ID ?? "",
       );
@@ -747,7 +747,7 @@ function createGovernanceStore() {
         loanEndDate: nanoseconds,
       };
 
-      const identityActor: any = await ActorFactory.createIdentityActor(
+      const identityActor: any = await ActorFactory.createBackendIdentityActor(
         authStore,
         process.env.SNS_GOVERNANCE_CANISTER_ID ?? "",
       );
@@ -827,7 +827,7 @@ function createGovernanceStore() {
         playerId,
       };
 
-      const identityActor: any = await ActorFactory.createIdentityActor(
+      const identityActor: any = await ActorFactory.createBackendIdentityActor(
         authStore,
         process.env.SNS_GOVERNANCE_CANISTER_ID ?? "",
       );
@@ -925,7 +925,7 @@ function createGovernanceStore() {
         nationality,
       };
 
-      const identityActor: any = await ActorFactory.createIdentityActor(
+      const identityActor: any = await ActorFactory.createBackendIdentityActor(
         authStore,
         process.env.SNS_GOVERNANCE_CANISTER_ID ?? "",
       );
@@ -1013,7 +1013,7 @@ function createGovernanceStore() {
         nationality,
       };
 
-      const identityActor: any = await ActorFactory.createIdentityActor(
+      const identityActor: any = await ActorFactory.createBackendIdentityActor(
         authStore,
         process.env.SNS_GOVERNANCE_CANISTER_ID ?? "",
       );
@@ -1101,7 +1101,7 @@ function createGovernanceStore() {
         expectedEndDate: nanoseconds,
       };
 
-      const identityActor: any = await ActorFactory.createIdentityActor(
+      const identityActor: any = await ActorFactory.createBackendIdentityActor(
         authStore,
         process.env.SNS_GOVERNANCE_CANISTER_ID ?? "",
       );
@@ -1187,7 +1187,7 @@ function createGovernanceStore() {
         retirementDate: nanoseconds,
       };
 
-      const identityActor: any = await ActorFactory.createIdentityActor(
+      const identityActor: any = await ActorFactory.createBackendIdentityActor(
         authStore,
         process.env.SNS_GOVERNANCE_CANISTER_ID ?? "",
       );
@@ -1267,7 +1267,7 @@ function createGovernanceStore() {
         playerId,
       };
 
-      const identityActor: any = await ActorFactory.createIdentityActor(
+      const identityActor: any = await ActorFactory.createBackendIdentityActor(
         authStore,
         process.env.SNS_GOVERNANCE_CANISTER_ID ?? "",
       );
@@ -1339,7 +1339,7 @@ function createGovernanceStore() {
 
   async function createClub(dto: CreateClubDTO): Promise<any> {
     try {
-      const identityActor: any = await ActorFactory.createIdentityActor(
+      const identityActor: any = await ActorFactory.createBackendIdentityActor(
         authStore,
         process.env.SNS_GOVERNANCE_CANISTER_ID ?? "",
       );
@@ -1412,7 +1412,7 @@ function createGovernanceStore() {
         toLeagueId,
       };
 
-      const identityActor: any = await ActorFactory.createIdentityActor(
+      const identityActor: any = await ActorFactory.createBackendIdentityActor(
         authStore,
         process.env.SNS_GOVERNANCE_CANISTER_ID ?? "",
       );
@@ -1502,7 +1502,7 @@ function createGovernanceStore() {
         shirtType,
       };
 
-      const identityActor: any = await ActorFactory.createIdentityActor(
+      const identityActor: any = await ActorFactory.createBackendIdentityActor(
         authStore,
         process.env.SNS_GOVERNANCE_CANISTER_ID ?? "",
       );

@@ -3,7 +3,8 @@ import type { AuthStore } from "../stores/auth-store";
 import type { OptionIdentity } from "../types/identity";
 import { Actor, HttpAgent } from "@dfinity/agent";
 import type { Unsubscriber } from "svelte/store";
-import { idlFactory as canister } from "../../../../declarations/backend";
+import { idlFactory as backend_canister } from "../../../../declarations/backend";
+import { idlFactory as data_canister } from "../../../../declarations/data_canister";
 
 export class ActorFactory {
   static createActor(
@@ -74,7 +75,10 @@ export class ActorFactory {
     return new HttpAgent({ ...options.agentOptions });
   }
 
-  static createIdentityActor(authStore: AuthStore, canisterId: string) {
+  static createDataCanisterIdentityActor(
+    authStore: AuthStore,
+    canisterId: string,
+  ) {
     let unsubscribe: Unsubscriber;
     return new Promise<OptionIdentity>((resolve, reject) => {
       unsubscribe = authStore.subscribe((store) => {
@@ -84,7 +88,21 @@ export class ActorFactory {
       });
     }).then((identity) => {
       unsubscribe();
-      return ActorFactory.createActor(canister, canisterId, identity);
+      return ActorFactory.createActor(data_canister, canisterId, identity);
+    });
+  }
+
+  static createBackendIdentityActor(authStore: AuthStore, canisterId: string) {
+    let unsubscribe: Unsubscriber;
+    return new Promise<OptionIdentity>((resolve, reject) => {
+      unsubscribe = authStore.subscribe((store) => {
+        if (store.identity) {
+          resolve(store.identity);
+        }
+      });
+    }).then((identity) => {
+      unsubscribe();
+      return ActorFactory.createActor(backend_canister, canisterId, identity);
     });
   }
 
@@ -98,7 +116,7 @@ export class ActorFactory {
       });
     }).then((identity) => {
       unsubscribe();
-      return ActorFactory.createActor(canister, canisterId, identity);
+      return ActorFactory.createActor(backend_canister, canisterId, identity);
     });
   }
 }

@@ -14,7 +14,7 @@ export class BettingService {
   async getBettableHomepageFixtures(
     leagueId: LeagueId,
   ): Promise<HomePageFixtureDTO[]> {
-    const identityActor: any = await ActorFactory.createIdentityActor(
+    const identityActor: any = await ActorFactory.createBackendIdentityActor(
       authStore,
       process.env.DATA_CANISTER_CANISTER_ID ?? "",
     );
@@ -28,7 +28,7 @@ export class BettingService {
     leagueId: LeagueId,
     fixtureId: FixtureId,
   ): Promise<MatchOddsDTO> {
-    const identityActor: any = await ActorFactory.createIdentityActor(
+    const identityActor: any = await ActorFactory.createBackendIdentityActor(
       authStore,
       process.env.DATA_CANISTER_CANISTER_ID ?? "",
     );

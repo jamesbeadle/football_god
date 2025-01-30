@@ -7,7 +7,7 @@ export class AuditService {
   constructor() {}
 
   async getUserAudit(page: number): Promise<UserAuditDTO | undefined> {
-    const identityActor: any = await ActorFactory.createIdentityActor(
+    const identityActor: any = await ActorFactory.createBackendIdentityActor(
       authStore,
       process.env.BACKEND_CANISTER_ID ?? "",
     );
