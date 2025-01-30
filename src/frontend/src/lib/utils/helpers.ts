@@ -1,16 +1,8 @@
 import * as FlagIcons from "svelte-flag-icons";
 import type {
-  BetSlip,
   PlayerEventType,
-  PlayerGroupEventDetail,
   PlayerPosition,
 } from "../../../../declarations/backend/backend.did";
-import type {
-  ClubDTO,
-  PlayerDTO,
-  PlayerEventDetail,
-  Selection,
-} from "../../../../declarations/data_canister/data_canister.did";
 
 export function uint8ArrayToBase64(bytes: Uint8Array): string {
   const binary = Array.from(bytes)

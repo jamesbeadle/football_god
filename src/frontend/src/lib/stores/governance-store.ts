@@ -8,18 +8,50 @@ import type {
 import { fixtureStore } from "./fixture-store";
 import { ActorFactory } from "$lib/utils/ActorFactory";
 import { authStore } from "./auth-store";
-import type { AddInitialFixturesDTO, ClubId, CreatePlayerDTO, FixtureDTO, FixtureId, GameweekNumber, LeagueId, LoanPlayerDTO, MoveFixtureDTO, PlayerEventData, PlayerId, PlayerPosition, PostponeFixtureDTO, PromoteClubDTO, RecallPlayerDTO, RetirePlayerDTO, RevaluePlayerUpDTO, SeasonId, SetPlayerInjuryDTO, ShirtType, SubmitFixtureDataDTO, TransferPlayerDTO, UnretirePlayerDTO, UpdateClubDTO, UpdatePlayerDTO } from "../../../../declarations/data_canister/data_canister.did";
+import type {
+  AddInitialFixturesDTO,
+  ClubId,
+  CreateClubDTO,
+  CreatePlayerDTO,
+  FixtureDTO,
+  FixtureId,
+  GameweekNumber,
+  LeagueId,
+  LoanPlayerDTO,
+  MoveFixtureDTO,
+  PlayerEventData,
+  PlayerId,
+  PlayerPosition,
+  PostponeFixtureDTO,
+  PromoteClubDTO,
+  RecallPlayerDTO,
+  RetirePlayerDTO,
+  RevaluePlayerUpDTO,
+  SeasonId,
+  SetPlayerInjuryDTO,
+  ShirtType,
+  SubmitFixtureDataDTO,
+  TransferPlayerDTO,
+  UnretirePlayerDTO,
+  UpdateClubDTO,
+  UpdatePlayerDTO,
+} from "../../../../declarations/data_canister/data_canister.did";
 import { clubStore } from "./club-store";
+import { leagueStore } from "./league-store";
 
 function createGovernanceStore() {
-  async function revaluePlayerUp(leagueId: LeagueId, seasonId: SeasonId, gameweek: GameweekNumber, playerId: PlayerId): Promise<any> {
+  async function revaluePlayerUp(
+    leagueId: LeagueId,
+    seasonId: SeasonId,
+    gameweek: GameweekNumber,
+    playerId: PlayerId,
+  ): Promise<any> {
     try {
-      
       var dto: RevaluePlayerUpDTO = {
         leagueId,
         seasonId,
         gameweek,
-        playerId
+        playerId,
       };
 
       const identityActor: any = await ActorFactory.createIdentityActor(
@@ -96,14 +128,18 @@ function createGovernanceStore() {
     }
   }
 
-  async function revaluePlayerDown(leagueId: LeagueId, seasonId: SeasonId, gameweek: GameweekNumber, playerId: PlayerId): Promise<any> {
+  async function revaluePlayerDown(
+    leagueId: LeagueId,
+    seasonId: SeasonId,
+    gameweek: GameweekNumber,
+    playerId: PlayerId,
+  ): Promise<any> {
     try {
-      
       var dto: RevaluePlayerUpDTO = {
         leagueId,
         seasonId,
         gameweek,
-        playerId
+        playerId,
       };
 
       const identityActor: any = await ActorFactory.createIdentityActor(
@@ -187,7 +223,6 @@ function createGovernanceStore() {
     playerEventData: PlayerEventData[],
   ): Promise<any> {
     try {
-      
       let dto: SubmitFixtureDataDTO = {
         leagueId,
         seasonId,
@@ -347,7 +382,6 @@ function createGovernanceStore() {
     updatedFixtureDate: string,
   ): Promise<any> {
     try {
-
       const dateObject = new Date(updatedFixtureDate);
       const timestampMilliseconds = dateObject.getTime();
       let nanoseconds = BigInt(timestampMilliseconds) * BigInt(1000000);
@@ -394,7 +428,7 @@ function createGovernanceStore() {
           function_id: 5000n,
           payload: payload,
         };
-      
+
         let allFixtures = await fixtureStore.getFixtures(leagueId);
         let clubs = await clubStore.getClubs(leagueId);
         let fixture = allFixtures.find((x) => x.id == fixtureId);
@@ -431,9 +465,12 @@ function createGovernanceStore() {
     }
   }
 
-  async function postponeFixture(leagueId: LeagueId, seasonId: SeasonId, fixtureId: FixtureId): Promise<any> {
+  async function postponeFixture(
+    leagueId: LeagueId,
+    seasonId: SeasonId,
+    fixtureId: FixtureId,
+  ): Promise<any> {
     try {
-      
       let dto: PostponeFixtureDTO = {
         leagueId,
         seasonId,
@@ -519,13 +556,12 @@ function createGovernanceStore() {
     updatedFixtureDate: string,
   ): Promise<any> {
     try {
-      
       const dateObject = new Date(updatedFixtureDate);
       const timestampMilliseconds = dateObject.getTime();
       let nanoseconds = BigInt(timestampMilliseconds) * BigInt(1000000);
 
       let dto: MoveFixtureDTO = {
-        leagueId, 
+        leagueId,
         seasonId,
         fixtureId,
         updatedFixtureGameweek,
@@ -609,10 +645,9 @@ function createGovernanceStore() {
     playerId: number,
     newShirtNumber: number,
     newLeagueId: LeagueId,
-    newClubId: number
+    newClubId: number,
   ): Promise<any> {
     try {
-      
       let dto: TransferPlayerDTO = {
         leagueId,
         clubId,
@@ -710,7 +745,6 @@ function createGovernanceStore() {
     loanEndDate: string,
   ): Promise<any> {
     try {
-      
       const dateObject = new Date(loanEndDate);
       const timestampMilliseconds = dateObject.getTime();
       let nanoseconds = BigInt(timestampMilliseconds) * BigInt(1000000);
@@ -793,9 +827,11 @@ function createGovernanceStore() {
     }
   }
 
-  async function recallPlayer(leagueId: LeagueId, playerId: PlayerId): Promise<any> {
+  async function recallPlayer(
+    leagueId: LeagueId,
+    playerId: PlayerId,
+  ): Promise<any> {
     try {
-      
       let dto: RecallPlayerDTO = {
         leagueId,
         playerId,
@@ -883,7 +919,6 @@ function createGovernanceStore() {
     nationality: number,
   ): Promise<any> {
     try {
-     
       const dateObject = new Date(dateOfBirth);
       const timestampMilliseconds = dateObject.getTime();
       let nanoseconds = BigInt(timestampMilliseconds) * BigInt(1000000);
@@ -977,8 +1012,6 @@ function createGovernanceStore() {
     nationality: number,
   ): Promise<any> {
     try {
-     
-
       let dto: UpdatePlayerDTO = {
         leagueId,
         playerId,
@@ -1067,7 +1100,6 @@ function createGovernanceStore() {
     expectedEndDate: string,
   ): Promise<any> {
     try {
-      
       const dateObject = new Date(expectedEndDate);
       const timestampMilliseconds = dateObject.getTime();
       let nanoseconds = BigInt(timestampMilliseconds) * BigInt(1000000);
@@ -1155,7 +1187,6 @@ function createGovernanceStore() {
     retirementDate: string,
   ): Promise<any> {
     try {
-      
       const dateObject = new Date(retirementDate);
       const timestampMilliseconds = dateObject.getTime();
       let nanoseconds = BigInt(timestampMilliseconds) * BigInt(1000000);
@@ -1236,9 +1267,11 @@ function createGovernanceStore() {
     }
   }
 
-  async function unretirePlayer(leagueId: LeagueId, playerId: PlayerId): Promise<any> {
+  async function unretirePlayer(
+    leagueId: LeagueId,
+    playerId: PlayerId,
+  ): Promise<any> {
     try {
-      
       let dto: UnretirePlayerDTO = {
         leagueId,
         playerId,
@@ -1314,9 +1347,75 @@ function createGovernanceStore() {
     }
   }
 
-  async function promoteClub(leagueId: LeagueId, toLeagueId: LeagueId, clubId: ClubId): Promise<any> {
+  async function createClub(dto: CreateClubDTO): Promise<any> {
     try {
-      
+      const identityActor: any = await ActorFactory.createIdentityActor(
+        authStore,
+        process.env.CANISTER_ID_SNS_GOVERNANCE ?? "",
+      );
+
+      const governanceAgent: HttpAgent = ActorFactory.getAgent(
+        process.env.CANISTER_ID_SNS_GOVERNANCE,
+        identityActor,
+        null,
+      );
+
+      const {
+        manageNeuron: governanceManageNeuron,
+        listNeurons: governanceListNeurons,
+      } = SnsGovernanceCanister.create({
+        agent: governanceAgent,
+        canisterId: identityActor,
+      });
+
+      const userNeurons = await governanceListNeurons({
+        principal: identityActor.principal,
+        limit: 10,
+        beforeNeuronId: { id: [] },
+      });
+      if (userNeurons.length > 0) {
+        const jsonString = JSON.stringify(dto);
+
+        const encoder = new TextEncoder();
+        const payload = encoder.encode(jsonString);
+
+        const fn: ExecuteGenericNervousSystemFunction = {
+          function_id: 18000n,
+          payload: payload,
+        };
+
+        let league = await leagueStore.getLeagueById(dto.leagueId);
+        const command: Command = {
+          MakeProposal: {
+            title: `Create ${league!.name} club (${dto.friendlyName}).`,
+            url: "openfpl.xyz/governance",
+            summary: `Create ${league!.name} club (${dto.friendlyName}).`,
+            action: [{ ExecuteGenericNervousSystemFunction: fn }],
+          },
+        };
+
+        const neuronId = userNeurons[0].id[0];
+        if (!neuronId) {
+          return;
+        }
+
+        await governanceManageNeuron({
+          subaccount: neuronId.id,
+          command: [command],
+        });
+      }
+    } catch (error) {
+      console.error("Error updating club:", error);
+      throw error;
+    }
+  }
+
+  async function promoteClub(
+    leagueId: LeagueId,
+    toLeagueId: LeagueId,
+    clubId: ClubId,
+  ): Promise<any> {
+    try {
       let dto: PromoteClubDTO = {
         leagueId,
         clubId,
@@ -1401,8 +1500,6 @@ function createGovernanceStore() {
     shirtType: ShirtType,
   ): Promise<any> {
     try {
-      
-
       let dto: UpdateClubDTO = {
         leagueId,
         clubId,
@@ -1497,6 +1594,7 @@ function createGovernanceStore() {
     setPlayerInjury,
     retirePlayer,
     unretirePlayer,
+    createClub,
     promoteClub,
     updateClub,
   };

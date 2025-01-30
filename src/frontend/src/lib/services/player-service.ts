@@ -1,6 +1,6 @@
 import type {
   PlayerDTO,
-  LeagueId
+  LeagueId,
 } from "../../../../declarations/backend/backend.did";
 import { idlFactory } from "../../../../declarations/backend";
 import { ActorFactory } from "../utils/ActorFactory";
@@ -92,14 +92,12 @@ export class PlayerService {
     if (isError(result)) throw new Error("Failed to update player");
   }
 
-  async recallLoan(
-    leagueId: number, dto: RecallPlayerDTO
-  ): Promise<void> {
+  async recallLoan(leagueId: number, dto: RecallPlayerDTO): Promise<void> {
     const identityActor: any = await ActorFactory.createIdentityActor(
       authStore,
       process.env.BACKEND_CANISTER_ID ?? "",
     );
-    
+
     const result = await identityActor.executeRecallPlayer(dto);
     if (isError(result)) throw new Error("Failed to recall player");
   }

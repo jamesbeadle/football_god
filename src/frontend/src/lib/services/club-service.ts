@@ -7,6 +7,7 @@ import { ActorFactory } from "../utils/ActorFactory";
 import { isError } from "../utils/helpers";
 import { authStore } from "$lib/stores/auth-store";
 import type { CreateClubDTO } from "../../../../declarations/data_canister/data_canister.did";
+import { governanceStore } from "$lib/stores/governance-store";
 
 export class ClubService {
   private actor: any;
@@ -25,13 +26,7 @@ export class ClubService {
   }
 
   async createClub(dto: CreateClubDTO): Promise<void> {
-    const identityActor: any = await ActorFactory.createIdentityActor(
-      authStore,
-      process.env.BACKEND_CANISTER_ID ?? "",
-    );
-
-    const result = await identityActor.executeCreateClub(dto);
+    const result = await governanceStore.createClub(dto);
     if (isError(result)) throw new Error("Failed to create club");
   }
-  
 }
