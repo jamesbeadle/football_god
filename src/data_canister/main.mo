@@ -749,6 +749,7 @@
       assert callerAllowed(caller);
       assert leagueExists(dto.leagueId);
       assert clubExists(dto.leagueId, dto.clubId);
+      assert countryExists(dto.nationality);
 
       if (Text.size(dto.firstName) > 50) {
         return #Err("Invalid Data");
@@ -756,14 +757,6 @@
 
       if (Text.size(dto.lastName) > 50) {
         return #Err("Invalid Data");
-      };
-
-      let playerCountry = Array.find<Base.Country>(Countries.countries, func(country : Base.Country) : Bool { return country.id == dto.nationality });
-      switch (playerCountry) {
-        case (null) {
-        return #Err("Invalid Data");
-        };
-        case (?_) {};
       };
 
       if (Utilities.calculateAgeFromUnix(dto.dateOfBirth) < 16) {
@@ -830,7 +823,24 @@
     public shared ( {caller} ) func validateCreateLeague(dto : GovernanceDTOs.CreateLeagueDTO) : async Base.RustResult{
       assert Principal.toText(caller) == Environment.SNS_GOVERNANCE_CANISTER_ID;
       assert callerAllowed(caller);
-      //TODO (KELLY): Add check to see if league with existing name exists
+      assert countryExists(dto.countryId);
+      assert logoSizeValid(dto.logo);
+      if (Text.size(dto.name) > 100) {
+        return #Err("Error: Name greater than 100 characters.");
+      };
+
+      if (Text.size(dto.abbreviation) > 10) {
+        return #Err("Error: Abbreviated Name greater than 10 characters.");
+      };
+
+      if (Text.size(dto.governingBody) > 50) {
+        return #Err("Error: Governing body greater than 10 characters.");
+      };
+
+      if(dto.formed > Time.now()){
+        return #Err("Error: Formed date in the future.");
+      };
+
       return #Ok("Valid");
     };
 
@@ -904,6 +914,7 @@
       assert leagueExists(dto.toLeagueId);
       assert clubExists(dto.leagueId, dto.clubId);
       assert not seasonActive(dto.leagueId);
+      assert not seasonActive(dto.toLeagueId);
       return #Ok("Valid");
     };
 
@@ -1789,22 +1800,67 @@
       let _ = await updateDataHash(dto.leagueId, "fixtures");
     };
 
-    //TODO: Reschedule fixture
-        //When a fixture time is changed check gameweek times
+    public shared ({ caller }) func rescheduleFixure(dto : GovernanceDTOs.RescheduleFixtureDTO) : async () {
+      assert Principal.toText(caller) == Environment.SNS_GOVERNANCE_CANISTER_ID;
+
+      leagueSeasons := Array.map<(FootballTypes.LeagueId, [FootballTypes.Season]), (FootballTypes.LeagueId, [FootballTypes.Season])>(
+        leagueSeasons, 
+        func(leagueSeasonEntry: (FootballTypes.LeagueId, [FootballTypes.Season])){
+          if(leagueSeasonEntry.0 == dto.leagueId){
+            return (
+              leagueSeasonEntry.0, 
+              Array.map<FootballTypes.Season, FootballTypes.Season>(leagueSeasonEntry.1, func(season: FootballTypes.Season){
+                if(season.id == dto.seasonId){
+                  let foundFixture = List.find<FootballTypes.Fixture>(season.fixtures, func(fixture: FootballTypes.Fixture): Bool{
+                    fixture.id == dto.fixtureId
+                  });
+                  switch(foundFixture){
+                    case (?fixture){
+                      return {
+                        fixtures = List.append<FootballTypes.Fixture>(season.fixtures, List.make<FootballTypes.Fixture>({
+                          awayClubId = fixture.awayClubId;
+                          awayGoals = fixture.awayGoals;
+                          events = fixture.events;
+                          gameweek = dto.updatedFixtureGameweek;
+                          highestScoringPlayerId = fixture.highestScoringPlayerId;
+                          homeClubId = fixture.homeClubId;
+                          homeGoals = fixture.homeGoals;
+                          id = fixture.id;
+                          kickOff = dto.updatedFixtureDate;
+                          seasonId = fixture.seasonId;
+                          status = fixture.status
+                        }));
+                        id = season.id;
+                        name = season.name;
+                        postponedFixtures = List.filter<FootballTypes.Fixture>(season.postponedFixtures, func(fixture: FootballTypes.Fixture){
+                          fixture.id != dto.fixtureId
+                        });
+                        year = season.year;
+                      }
+                    };
+                    case (null){
+                      return season;
+                    }
+                  }
+                } else {
+                  return season;
+                }
+              })
+            )
+          } else { return leagueSeasonEntry}
+        }
+      );
+      await checkCurrentGameweekExpired();
+      let _ = await updateDataHash(dto.leagueId, "fixtures");
+    };
 
     public shared ({ caller }) func addInitialFixtures() : async () {
       assert Principal.toText(caller) == Environment.SNS_GOVERNANCE_CANISTER_ID;
-
-      //TODO
-      return;
+      //TODO: Add function that receives csv file information on initial fixtures
+      //TODO: Call back to each app notifying them of fixtures added for season
       //TODO: Make sure timer to roll gameweek over called:
-      await setCheckCurrentGameweekTimer();
-
-
-      //TODO: Add function to add initial fixtures to league from csv file
-        //TODO: Add the fixtures in the data manager
-        //TODO: Call back to each app notifying them of fixtures added for season
-
+      //await setCheckCurrentGameweekTimer();
+      return;
     };
 
     public shared ({ caller }) func submitFixtureData(dto : GovernanceDTOs.SubmitFixtureDataDTO) : async (){
@@ -1893,132 +1949,19 @@
     public shared ({ caller }) func promoteClub(dto : GovernanceDTOs.PromoteClubDTO) : async () {
       assert Principal.toText(caller) == Environment.SNS_GOVERNANCE_CANISTER_ID;
 
-      //TODO (KELLY)
-      /*
-      assert callerAllowed(caller);
-
-
-        if (Array.size(clubs) >= 20) {
-            return #err(#InvalidData);
-        };
-
-        if (Text.size(promoteNewClubDTO.name) > 100) {
-            return #err(#InvalidData);
-        };
-
-        if (Text.size(promoteNewClubDTO.friendlyName) > 50) {
-                return #err(#InvalidData);
-        };
-
-        if (Text.size(promoteNewClubDTO.abbreviatedName) != 3) {
-                return #err(#InvalidData);
-        };
-
-        if (not Utilities.validateHexColor(promoteNewClubDTO.primaryColourHex)) {
-            return #err(#InvalidData);
-        };
-
-        if (not Utilities.validateHexColor(promoteNewClubDTO.secondaryColourHex)) {
-            return #err(#InvalidData);
-        };
-
-        if (not Utilities.validateHexColor(promoteNewClubDTO.thirdColourHex)) {
-            return #err(#InvalidData);
-        };
-      
-        let newClub : T.Club = {
-            id = nextClubId;
-            name = promoteNewClubDTO.name;
-            friendlyName = promoteNewClubDTO.friendlyName;
-            abbreviatedName = promoteNewClubDTO.abbreviatedName;
-            primaryColourHex = promoteNewClubDTO.primaryColourHex;
-            secondaryColourHex = promoteNewClubDTO.secondaryColourHex;
-            thirdColourHex = promoteNewClubDTO.thirdColourHex;
-            shirtType = promoteNewClubDTO.shirtType;
-        };
-
-        let clubsBuffer = Buffer.fromArray<T.Club>(clubs);
-        clubsBuffer.add(newClub);
-        clubs := Buffer.toArray(clubsBuffer);
-      let _ = await updateDataHashes(leagueId, "clubs");
-        return #ok();
-        */
-
+      //TODO: Actually move club from one league to another
     };
 
     public shared ({ caller }) func relegateClub(dto : GovernanceDTOs.RelegateClubDTO) : async () {
-      assert callerAllowed(caller);
+      assert Principal.toText(caller) == Environment.SNS_GOVERNANCE_CANISTER_ID;
 
-      //TODO (KELLY)
+      //TODO: Actually move club from one league to another
     };
 
     public shared ({ caller }) func updateClub(updateClubDTO : GovernanceDTOs.UpdateClubDTO) : async () {
-      assert callerAllowed(caller);
+      assert Principal.toText(caller) == Environment.SNS_GOVERNANCE_CANISTER_ID;
 
-      //TODO (KELLY)
-      /*
-      assert callerAllowed(caller);
-        let club = Array.find(
-            clubs,
-            func(c : T.Club) : Bool {
-            return c.id == updateClubDTO.clubId;
-            },
-        );
-
-        switch (club) {
-            case (null) {
-                return #err(#InvalidData);
-            };
-            case (?foundTeam) {
-
-            if (Text.size(foundTeam.name) > 100) {
-                return #err(#InvalidData);
-            };
-
-            if (Text.size(foundTeam.friendlyName) > 50) {
-                return #err(#InvalidData);
-            };
-
-            if (Text.size(foundTeam.abbreviatedName) != 3) {
-                return #err(#InvalidData);
-            };
-
-            if (not Utilities.validateHexColor(foundTeam.primaryColourHex)) {
-                return #err(#InvalidData);
-            };
-
-            if (not Utilities.validateHexColor(foundTeam.secondaryColourHex)) {
-                return #err(#InvalidData);
-            };
-
-            if (not Utilities.validateHexColor(foundTeam.thirdColourHex)) {
-                return #err(#InvalidData);
-            };
-            };
-        };
-
-        clubs := Array.map<T.Club, T.Club>(
-            clubs,
-            func(currentClub : T.Club) : T.Club {
-            if (currentClub.id == updateClubDTO.clubId) {
-                return {
-                id = currentClub.id;
-                name = updateClubDTO.name;
-                friendlyName = updateClubDTO.friendlyName;
-                primaryColourHex = updateClubDTO.primaryColourHex;
-                secondaryColourHex = updateClubDTO.secondaryColourHex;
-                thirdColourHex = updateClubDTO.thirdColourHex;
-                abbreviatedName = updateClubDTO.abbreviatedName;
-                shirtType = updateClubDTO.shirtType;
-                };
-            } else {
-                return currentClub;
-            };
-            },
-        );
-        return #ok();
-      let _ = await updateDataHashes(leagueId, "clubs");
-        */
+      //TODO: Actually update the club
     };
 
     /* Private Functions */
@@ -3125,6 +3068,16 @@
       return true;
     };
 
+    private func countryExists(countryId: Base.CountryId) : Bool {
+      let playerCountry = Array.find<Base.Country>(Countries.countries, func(country : Base.Country) : Bool { return country.id == countryId });
+      return Option.isSome(playerCountry);
+    };  
+
+    private func logoSizeValid(logo: Blob) : Bool {
+      let sizeInKB = Array.size(Blob.toArray(logo)) / 1024;
+      return (sizeInKB > 0 and sizeInKB <= 500);
+    };
+
     system func preupgrade() { };
 
     system func postupgrade() {
@@ -3607,7 +3560,7 @@
     };
 
     private func loanExpiredCallback() : async (){
-
+      
       //when the load timer ends
         //find any player who has a current loan end date greater than now and a parent club id > 0
 
@@ -3632,23 +3585,7 @@
     };
 
     private func injuryExpiredCallback() : async (){
-      //TODO (KELLY)
-      /*
-      assert callerAllowed(caller);
-
-      let playersNoLongerInjured = Array.filter<FootballTypes.Player>(
-        players,
-        func(currentPlayer : FootballTypes.Player) : Bool {
-          return currentPlayer.latestInjuryEndDate > 0 and currentPlayer.latestInjuryEndDate <= Time.now();
-        },
-      );
-
-      for (player in Iter.fromArray(playersNoLongerInjured)) {
-        let _ = await executeResetPlayerInjury(player.id);
-      };
-      removeExpiredTimers();
-      return #ok();
-      */
+      //TODO: Remove the injury status from the player
     };
 
     //Timer Set Functions
