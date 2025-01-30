@@ -1,0 +1,1204 @@
+{
+  "ok": [
+    {
+      "fixtureId": 231,
+      "homeOdds": 1.5,
+      "drawOdds": 2,
+      "awayOdds": 2.25,
+      "gameweek": 24,
+      "leagueId": 1
+    },
+    {
+      "fixtureId": 232,
+      "homeOdds": 2,
+      "drawOdds": 2,
+      "awayOdds": 2,
+      "gameweek": 24,
+      "leagueId": 1
+    },
+    {
+      "fixtureId": 233,
+      "homeOdds": 1.5,
+      "drawOdds": 1.5,
+      "awayOdds": 2.5,
+      "gameweek": 24,
+      "leagueId": 1
+    },
+    {
+      "fixtureId": 234,
+      "homeOdds": 1.5,
+      "drawOdds": 2,
+      "awayOdds": 2.5,
+      "gameweek": 24,
+      "leagueId": 1
+    },
+    {
+      "fixtureId": 235,
+      "homeOdds": 1.5,
+      "drawOdds": 2,
+      "awayOdds": 2.25,
+      "gameweek": 24,
+      "leagueId": 1
+    },
+    {
+      "fixtureId": 236,
+      "homeOdds": 1.5,
+      "drawOdds": 1.75,
+      "awayOdds": 2.25,
+      "gameweek": 24,
+      "leagueId": 1
+    },
+    {
+      "fixtureId": 237,
+      "homeOdds": 1.75,
+      "drawOdds": 2,
+      "awayOdds": 2.25,
+      "gameweek": 24,
+      "leagueId": 1
+    },
+    {
+      "fixtureId": 238,
+      "homeOdds": 1.5,
+      "drawOdds": 2,
+      "awayOdds": 2.5,
+      "gameweek": 24,
+      "leagueId": 1
+    },
+    {
+      "fixtureId": 239,
+      "homeOdds": 1.5,
+      "drawOdds": 2,
+      "awayOdds": 2.5,
+      "gameweek": 24,
+      "leagueId": 1
+    },
+    {
+      "fixtureId": 240,
+      "homeOdds": 2,
+      "drawOdds": 1.75,
+      "awayOdds": 1.75,
+      "gameweek": 24,
+      "leagueId": 1
+    },
+    {
+      "fixtureId": 241,
+      "homeOdds": 1.25,
+      "drawOdds": 2,
+      "awayOdds": 2.75,
+      "gameweek": 25,
+      "leagueId": 1
+    },
+    {
+      "fixtureId": 242,
+      "homeOdds": 1.75,
+      "drawOdds": 2.5,
+      "awayOdds": 2,
+      "gameweek": 25,
+      "leagueId": 1
+    },
+    {
+      "fixtureId": 243,
+      "homeOdds": 1.75,
+      "drawOdds": 2.5,
+      "awayOdds": 2.25,
+      "gameweek": 25,
+      "leagueId": 1
+    },
+    {
+      "fixtureId": 244,
+      "homeOdds": 1.75,
+      "drawOdds": 2.25,
+      "awayOdds": 2,
+      "gameweek": 25,
+      "leagueId": 1
+    },
+    {
+      "fixtureId": 245,
+      "homeOdds": 2.25,
+      "drawOdds": 2,
+      "awayOdds": 1.75,
+      "gameweek": 25,
+      "leagueId": 1
+    },
+    {
+      "fixtureId": 246,
+      "homeOdds": 1,
+      "drawOdds": 1.75,
+      "awayOdds": 3.25,
+      "gameweek": 25,
+      "leagueId": 1
+    },
+    {
+      "fixtureId": 247,
+      "homeOdds": 1.75,
+      "drawOdds": 1.75,
+      "awayOdds": 2.25,
+      "gameweek": 25,
+      "leagueId": 1
+    },
+    {
+      "fixtureId": 248,
+      "homeOdds": 2.25,
+      "drawOdds": 1.75,
+      "awayOdds": 1.5,
+      "gameweek": 25,
+      "leagueId": 1
+    },
+    {
+      "fixtureId": 249,
+      "homeOdds": 1.75,
+      "drawOdds": 1.5,
+      "awayOdds": 2.25,
+      "gameweek": 25,
+      "leagueId": 1
+    },
+    {
+      "fixtureId": 250,
+      "homeOdds": 1.75,
+      "drawOdds": 1.75,
+      "awayOdds": 2.25,
+      "gameweek": 25,
+      "leagueId": 1
+    },
+    {
+      "fixtureId": 251,
+      "homeOdds": 1.5,
+      "drawOdds": 2.25,
+      "awayOdds": 2.75,
+      "gameweek": 26,
+      "leagueId": 1
+    },
+    {
+      "fixtureId": 252,
+      "homeOdds": 1.75,
+      "drawOdds": 2,
+      "awayOdds": 2.25,
+      "gameweek": 26,
+      "leagueId": 1
+    },
+    {
+      "fixtureId": 253,
+      "homeOdds": 1.25,
+      "drawOdds": 2,
+      "awayOdds": 2.75,
+      "gameweek": 26,
+      "leagueId": 1
+    },
+    {
+      "fixtureId": 254,
+      "homeOdds": 1.75,
+      "drawOdds": 2,
+      "awayOdds": 2.25,
+      "gameweek": 26,
+      "leagueId": 1
+    },
+    {
+      "fixtureId": 255,
+      "homeOdds": 1.5,
+      "drawOdds": 2.5,
+      "awayOdds": 2.5,
+      "gameweek": 26,
+      "leagueId": 1
+    },
+    {
+      "fixtureId": 256,
+      "homeOdds": 1.75,
+      "drawOdds": 1.75,
+      "awayOdds": 2,
+      "gameweek": 26,
+      "leagueId": 1
+    },
+    {
+      "fixtureId": 257,
+      "homeOdds": 2,
+      "drawOdds": 1.75,
+      "awayOdds": 2,
+      "gameweek": 26,
+      "leagueId": 1
+    },
+    {
+      "fixtureId": 258,
+      "homeOdds": 2,
+      "drawOdds": 1.75,
+      "awayOdds": 2,
+      "gameweek": 26,
+      "leagueId": 1
+    },
+    {
+      "fixtureId": 259,
+      "homeOdds": 1.75,
+      "drawOdds": 1.75,
+      "awayOdds": 2.25,
+      "gameweek": 26,
+      "leagueId": 1
+    },
+    {
+      "fixtureId": 260,
+      "homeOdds": 2.25,
+      "drawOdds": 1.75,
+      "awayOdds": 1.75,
+      "gameweek": 26,
+      "leagueId": 1
+    },
+    {
+      "fixtureId": 261,
+      "homeOdds": 1.5,
+      "drawOdds": 1.75,
+      "awayOdds": 2.5,
+      "gameweek": 27,
+      "leagueId": 1
+    },
+    {
+      "fixtureId": 262,
+      "homeOdds": 1.75,
+      "drawOdds": 2.5,
+      "awayOdds": 2,
+      "gameweek": 27,
+      "leagueId": 1
+    },
+    {
+      "fixtureId": 263,
+      "homeOdds": 1.75,
+      "drawOdds": 2,
+      "awayOdds": 2.25,
+      "gameweek": 27,
+      "leagueId": 1
+    },
+    {
+      "fixtureId": 264,
+      "homeOdds": 2,
+      "drawOdds": 1.5,
+      "awayOdds": 2,
+      "gameweek": 27,
+      "leagueId": 1
+    },
+    {
+      "fixtureId": 265,
+      "homeOdds": 1.5,
+      "drawOdds": 1.75,
+      "awayOdds": 2.5,
+      "gameweek": 27,
+      "leagueId": 1
+    },
+    {
+      "fixtureId": 266,
+      "homeOdds": 2,
+      "drawOdds": 2,
+      "awayOdds": 1.75,
+      "gameweek": 27,
+      "leagueId": 1
+    },
+    {
+      "fixtureId": 267,
+      "homeOdds": 1.75,
+      "drawOdds": 2.25,
+      "awayOdds": 2,
+      "gameweek": 27,
+      "leagueId": 1
+    },
+    {
+      "fixtureId": 268,
+      "homeOdds": 1.25,
+      "drawOdds": 1.75,
+      "awayOdds": 3,
+      "gameweek": 27,
+      "leagueId": 1
+    },
+    {
+      "fixtureId": 269,
+      "homeOdds": 1.5,
+      "drawOdds": 1.75,
+      "awayOdds": 2.5,
+      "gameweek": 27,
+      "leagueId": 1
+    },
+    {
+      "fixtureId": 270,
+      "homeOdds": 1.5,
+      "drawOdds": 1.75,
+      "awayOdds": 2.5,
+      "gameweek": 27,
+      "leagueId": 1
+    },
+    {
+      "fixtureId": 271,
+      "homeOdds": 1.75,
+      "drawOdds": 1.75,
+      "awayOdds": 2,
+      "gameweek": 28,
+      "leagueId": 1
+    },
+    {
+      "fixtureId": 272,
+      "homeOdds": 1.75,
+      "drawOdds": 2.5,
+      "awayOdds": 2.25,
+      "gameweek": 28,
+      "leagueId": 1
+    },
+    {
+      "fixtureId": 273,
+      "homeOdds": 1.25,
+      "drawOdds": 2,
+      "awayOdds": 2.75,
+      "gameweek": 28,
+      "leagueId": 1
+    },
+    {
+      "fixtureId": 274,
+      "homeOdds": 1.5,
+      "drawOdds": 2.25,
+      "awayOdds": 2.5,
+      "gameweek": 28,
+      "leagueId": 1
+    },
+    {
+      "fixtureId": 275,
+      "homeOdds": 1,
+      "drawOdds": 1.75,
+      "awayOdds": 3.5,
+      "gameweek": 28,
+      "leagueId": 1
+    },
+    {
+      "fixtureId": 276,
+      "homeOdds": 2,
+      "drawOdds": 2,
+      "awayOdds": 1.75,
+      "gameweek": 28,
+      "leagueId": 1
+    },
+    {
+      "fixtureId": 277,
+      "homeOdds": 1.75,
+      "drawOdds": 1.75,
+      "awayOdds": 2.25,
+      "gameweek": 28,
+      "leagueId": 1
+    },
+    {
+      "fixtureId": 278,
+      "homeOdds": 2,
+      "drawOdds": 1.75,
+      "awayOdds": 2,
+      "gameweek": 28,
+      "leagueId": 1
+    },
+    {
+      "fixtureId": 279,
+      "homeOdds": 2,
+      "drawOdds": 1.75,
+      "awayOdds": 2,
+      "gameweek": 28,
+      "leagueId": 1
+    },
+    {
+      "fixtureId": 280,
+      "homeOdds": 1.75,
+      "drawOdds": 1.75,
+      "awayOdds": 2,
+      "gameweek": 28,
+      "leagueId": 1
+    },
+    {
+      "fixtureId": 281,
+      "homeOdds": 1.5,
+      "drawOdds": 2.25,
+      "awayOdds": 2.5,
+      "gameweek": 29,
+      "leagueId": 1
+    },
+    {
+      "fixtureId": 282,
+      "homeOdds": 2,
+      "drawOdds": 2,
+      "awayOdds": 1.75,
+      "gameweek": 29,
+      "leagueId": 1
+    },
+    {
+      "fixtureId": 283,
+      "homeOdds": 1.5,
+      "drawOdds": 2,
+      "awayOdds": 2.5,
+      "gameweek": 29,
+      "leagueId": 1
+    },
+    {
+      "fixtureId": 284,
+      "homeOdds": 1.75,
+      "drawOdds": 2.25,
+      "awayOdds": 2.25,
+      "gameweek": 29,
+      "leagueId": 1
+    },
+    {
+      "fixtureId": 285,
+      "homeOdds": 1.5,
+      "drawOdds": 2,
+      "awayOdds": 2.5,
+      "gameweek": 29,
+      "leagueId": 1
+    },
+    {
+      "fixtureId": 286,
+      "homeOdds": 2.25,
+      "drawOdds": 2,
+      "awayOdds": 1.75,
+      "gameweek": 29,
+      "leagueId": 1
+    },
+    {
+      "fixtureId": 287,
+      "homeOdds": 1.75,
+      "drawOdds": 1.75,
+      "awayOdds": 2,
+      "gameweek": 29,
+      "leagueId": 1
+    },
+    {
+      "fixtureId": 288,
+      "homeOdds": 1.5,
+      "drawOdds": 2,
+      "awayOdds": 2.5,
+      "gameweek": 29,
+      "leagueId": 1
+    },
+    {
+      "fixtureId": 289,
+      "homeOdds": 1.5,
+      "drawOdds": 2,
+      "awayOdds": 2.5,
+      "gameweek": 29,
+      "leagueId": 1
+    },
+    {
+      "fixtureId": 290,
+      "homeOdds": 1.75,
+      "drawOdds": 1.5,
+      "awayOdds": 2,
+      "gameweek": 29,
+      "leagueId": 1
+    },
+    {
+      "fixtureId": 291,
+      "homeOdds": 1.5,
+      "drawOdds": 2.25,
+      "awayOdds": 2.5,
+      "gameweek": 30,
+      "leagueId": 1
+    },
+    {
+      "fixtureId": 292,
+      "homeOdds": 1.25,
+      "drawOdds": 2,
+      "awayOdds": 2.75,
+      "gameweek": 30,
+      "leagueId": 1
+    },
+    {
+      "fixtureId": 293,
+      "homeOdds": 1.75,
+      "drawOdds": 2.5,
+      "awayOdds": 2.25,
+      "gameweek": 30,
+      "leagueId": 1
+    },
+    {
+      "fixtureId": 294,
+      "homeOdds": 1.5,
+      "drawOdds": 1.75,
+      "awayOdds": 2.5,
+      "gameweek": 30,
+      "leagueId": 1
+    },
+    {
+      "fixtureId": 295,
+      "homeOdds": 1.75,
+      "drawOdds": 1.75,
+      "awayOdds": 2,
+      "gameweek": 30,
+      "leagueId": 1
+    },
+    {
+      "fixtureId": 296,
+      "homeOdds": 1.5,
+      "drawOdds": 1.75,
+      "awayOdds": 2.5,
+      "gameweek": 30,
+      "leagueId": 1
+    },
+    {
+      "fixtureId": 297,
+      "homeOdds": 1.25,
+      "drawOdds": 1.75,
+      "awayOdds": 2.75,
+      "gameweek": 30,
+      "leagueId": 1
+    },
+    {
+      "fixtureId": 298,
+      "homeOdds": 1.5,
+      "drawOdds": 1.75,
+      "awayOdds": 2.5,
+      "gameweek": 30,
+      "leagueId": 1
+    },
+    {
+      "fixtureId": 299,
+      "homeOdds": 2,
+      "drawOdds": 1.75,
+      "awayOdds": 1.75,
+      "gameweek": 30,
+      "leagueId": 1
+    },
+    {
+      "fixtureId": 300,
+      "homeOdds": 1.25,
+      "drawOdds": 2,
+      "awayOdds": 3,
+      "gameweek": 30,
+      "leagueId": 1
+    },
+    {
+      "fixtureId": 301,
+      "homeOdds": 1.75,
+      "drawOdds": 2,
+      "awayOdds": 2,
+      "gameweek": 31,
+      "leagueId": 1
+    },
+    {
+      "fixtureId": 302,
+      "homeOdds": 1.75,
+      "drawOdds": 1.75,
+      "awayOdds": 2,
+      "gameweek": 31,
+      "leagueId": 1
+    },
+    {
+      "fixtureId": 303,
+      "homeOdds": 1.75,
+      "drawOdds": 2.5,
+      "awayOdds": 2,
+      "gameweek": 31,
+      "leagueId": 1
+    },
+    {
+      "fixtureId": 304,
+      "homeOdds": 2,
+      "drawOdds": 2.25,
+      "awayOdds": 1.75,
+      "gameweek": 31,
+      "leagueId": 1
+    },
+    {
+      "fixtureId": 305,
+      "homeOdds": 2,
+      "drawOdds": 2.25,
+      "awayOdds": 1.75,
+      "gameweek": 31,
+      "leagueId": 1
+    },
+    {
+      "fixtureId": 306,
+      "homeOdds": 1.75,
+      "drawOdds": 2,
+      "awayOdds": 2.25,
+      "gameweek": 31,
+      "leagueId": 1
+    },
+    {
+      "fixtureId": 307,
+      "homeOdds": 2,
+      "drawOdds": 1.75,
+      "awayOdds": 1.75,
+      "gameweek": 31,
+      "leagueId": 1
+    },
+    {
+      "fixtureId": 308,
+      "homeOdds": 2,
+      "drawOdds": 1.75,
+      "awayOdds": 2,
+      "gameweek": 31,
+      "leagueId": 1
+    },
+    {
+      "fixtureId": 309,
+      "homeOdds": 1.25,
+      "drawOdds": 1.5,
+      "awayOdds": 2.5,
+      "gameweek": 31,
+      "leagueId": 1
+    },
+    {
+      "fixtureId": 310,
+      "homeOdds": 2,
+      "drawOdds": 2,
+      "awayOdds": 2,
+      "gameweek": 31,
+      "leagueId": 1
+    },
+    {
+      "fixtureId": 311,
+      "homeOdds": 1.5,
+      "drawOdds": 2,
+      "awayOdds": 2.5,
+      "gameweek": 32,
+      "leagueId": 1
+    },
+    {
+      "fixtureId": 312,
+      "homeOdds": 1.5,
+      "drawOdds": 2.25,
+      "awayOdds": 2.5,
+      "gameweek": 32,
+      "leagueId": 1
+    },
+    {
+      "fixtureId": 313,
+      "homeOdds": 1.5,
+      "drawOdds": 2.25,
+      "awayOdds": 2.5,
+      "gameweek": 32,
+      "leagueId": 1
+    },
+    {
+      "fixtureId": 314,
+      "homeOdds": 1.25,
+      "drawOdds": 2,
+      "awayOdds": 2.75,
+      "gameweek": 32,
+      "leagueId": 1
+    },
+    {
+      "fixtureId": 315,
+      "homeOdds": 1.25,
+      "drawOdds": 1.75,
+      "awayOdds": 3,
+      "gameweek": 32,
+      "leagueId": 1
+    },
+    {
+      "fixtureId": 316,
+      "homeOdds": 1.5,
+      "drawOdds": 2,
+      "awayOdds": 2.5,
+      "gameweek": 32,
+      "leagueId": 1
+    },
+    {
+      "fixtureId": 317,
+      "homeOdds": 1.5,
+      "drawOdds": 1.75,
+      "awayOdds": 2.5,
+      "gameweek": 32,
+      "leagueId": 1
+    },
+    {
+      "fixtureId": 318,
+      "homeOdds": 1.5,
+      "drawOdds": 2,
+      "awayOdds": 2.75,
+      "gameweek": 32,
+      "leagueId": 1
+    },
+    {
+      "fixtureId": 319,
+      "homeOdds": 2.25,
+      "drawOdds": 1.75,
+      "awayOdds": 1.5,
+      "gameweek": 32,
+      "leagueId": 1
+    },
+    {
+      "fixtureId": 320,
+      "homeOdds": 1.75,
+      "drawOdds": 1.5,
+      "awayOdds": 2,
+      "gameweek": 32,
+      "leagueId": 1
+    },
+    {
+      "fixtureId": 321,
+      "homeOdds": 1.75,
+      "drawOdds": 2,
+      "awayOdds": 2.25,
+      "gameweek": 33,
+      "leagueId": 1
+    },
+    {
+      "fixtureId": 322,
+      "homeOdds": 1.75,
+      "drawOdds": 2,
+      "awayOdds": 2.25,
+      "gameweek": 33,
+      "leagueId": 1
+    },
+    {
+      "fixtureId": 323,
+      "homeOdds": 2,
+      "drawOdds": 2.25,
+      "awayOdds": 2,
+      "gameweek": 33,
+      "leagueId": 1
+    },
+    {
+      "fixtureId": 324,
+      "homeOdds": 2,
+      "drawOdds": 2,
+      "awayOdds": 2,
+      "gameweek": 33,
+      "leagueId": 1
+    },
+    {
+      "fixtureId": 325,
+      "homeOdds": 1.75,
+      "drawOdds": 2.25,
+      "awayOdds": 2,
+      "gameweek": 33,
+      "leagueId": 1
+    },
+    {
+      "fixtureId": 326,
+      "homeOdds": 2.25,
+      "drawOdds": 2.25,
+      "awayOdds": 1.5,
+      "gameweek": 33,
+      "leagueId": 1
+    },
+    {
+      "fixtureId": 327,
+      "homeOdds": 2.25,
+      "drawOdds": 1.75,
+      "awayOdds": 1.5,
+      "gameweek": 33,
+      "leagueId": 1
+    },
+    {
+      "fixtureId": 328,
+      "homeOdds": 1.5,
+      "drawOdds": 1.75,
+      "awayOdds": 2.5,
+      "gameweek": 33,
+      "leagueId": 1
+    },
+    {
+      "fixtureId": 329,
+      "homeOdds": 2,
+      "drawOdds": 1.5,
+      "awayOdds": 1.75,
+      "gameweek": 33,
+      "leagueId": 1
+    },
+    {
+      "fixtureId": 330,
+      "homeOdds": 1.25,
+      "drawOdds": 1.75,
+      "awayOdds": 2.75,
+      "gameweek": 33,
+      "leagueId": 1
+    },
+    {
+      "fixtureId": 331,
+      "homeOdds": 1.5,
+      "drawOdds": 2.25,
+      "awayOdds": 2.75,
+      "gameweek": 34,
+      "leagueId": 1
+    },
+    {
+      "fixtureId": 332,
+      "homeOdds": 1.5,
+      "drawOdds": 2,
+      "awayOdds": 2.5,
+      "gameweek": 34,
+      "leagueId": 1
+    },
+    {
+      "fixtureId": 333,
+      "homeOdds": 1.5,
+      "drawOdds": 2.25,
+      "awayOdds": 2.5,
+      "gameweek": 34,
+      "leagueId": 1
+    },
+    {
+      "fixtureId": 334,
+      "homeOdds": 1.5,
+      "drawOdds": 2.25,
+      "awayOdds": 2.5,
+      "gameweek": 34,
+      "leagueId": 1
+    },
+    {
+      "fixtureId": 335,
+      "homeOdds": 1.25,
+      "drawOdds": 1.75,
+      "awayOdds": 3,
+      "gameweek": 34,
+      "leagueId": 1
+    },
+    {
+      "fixtureId": 336,
+      "homeOdds": 1.5,
+      "drawOdds": 1.75,
+      "awayOdds": 2.25,
+      "gameweek": 34,
+      "leagueId": 1
+    },
+    {
+      "fixtureId": 337,
+      "homeOdds": 1.25,
+      "drawOdds": 1.75,
+      "awayOdds": 2.75,
+      "gameweek": 34,
+      "leagueId": 1
+    },
+    {
+      "fixtureId": 338,
+      "homeOdds": 1.5,
+      "drawOdds": 1.75,
+      "awayOdds": 2.5,
+      "gameweek": 34,
+      "leagueId": 1
+    },
+    {
+      "fixtureId": 339,
+      "homeOdds": 2,
+      "drawOdds": 1.75,
+      "awayOdds": 1.75,
+      "gameweek": 34,
+      "leagueId": 1
+    },
+    {
+      "fixtureId": 340,
+      "homeOdds": 1.75,
+      "drawOdds": 1.75,
+      "awayOdds": 2.25,
+      "gameweek": 34,
+      "leagueId": 1
+    },
+    {
+      "fixtureId": 341,
+      "homeOdds": 1.5,
+      "drawOdds": 2.25,
+      "awayOdds": 2.5,
+      "gameweek": 35,
+      "leagueId": 1
+    },
+    {
+      "fixtureId": 342,
+      "homeOdds": 1.5,
+      "drawOdds": 2.25,
+      "awayOdds": 2.25,
+      "gameweek": 35,
+      "leagueId": 1
+    },
+    {
+      "fixtureId": 343,
+      "homeOdds": 1.75,
+      "drawOdds": 1.75,
+      "awayOdds": 2.25,
+      "gameweek": 35,
+      "leagueId": 1
+    },
+    {
+      "fixtureId": 344,
+      "homeOdds": 1.75,
+      "drawOdds": 2.25,
+      "awayOdds": 2,
+      "gameweek": 35,
+      "leagueId": 1
+    },
+    {
+      "fixtureId": 345,
+      "homeOdds": 2,
+      "drawOdds": 2,
+      "awayOdds": 2,
+      "gameweek": 35,
+      "leagueId": 1
+    },
+    {
+      "fixtureId": 346,
+      "homeOdds": 2,
+      "drawOdds": 2.25,
+      "awayOdds": 2,
+      "gameweek": 35,
+      "leagueId": 1
+    },
+    {
+      "fixtureId": 347,
+      "homeOdds": 1.5,
+      "drawOdds": 2.25,
+      "awayOdds": 2.5,
+      "gameweek": 35,
+      "leagueId": 1
+    },
+    {
+      "fixtureId": 348,
+      "homeOdds": 1.5,
+      "drawOdds": 1.5,
+      "awayOdds": 2.5,
+      "gameweek": 35,
+      "leagueId": 1
+    },
+    {
+      "fixtureId": 349,
+      "homeOdds": 1.25,
+      "drawOdds": 1.75,
+      "awayOdds": 2.75,
+      "gameweek": 35,
+      "leagueId": 1
+    },
+    {
+      "fixtureId": 350,
+      "homeOdds": 1.75,
+      "drawOdds": 1.75,
+      "awayOdds": 2.25,
+      "gameweek": 35,
+      "leagueId": 1
+    },
+    {
+      "fixtureId": 351,
+      "homeOdds": 1.75,
+      "drawOdds": 2,
+      "awayOdds": 2.25,
+      "gameweek": 36,
+      "leagueId": 1
+    },
+    {
+      "fixtureId": 352,
+      "homeOdds": 1.5,
+      "drawOdds": 2.5,
+      "awayOdds": 2.5,
+      "gameweek": 36,
+      "leagueId": 1
+    },
+    {
+      "fixtureId": 353,
+      "homeOdds": 2,
+      "drawOdds": 2,
+      "awayOdds": 2,
+      "gameweek": 36,
+      "leagueId": 1
+    },
+    {
+      "fixtureId": 354,
+      "homeOdds": 1.5,
+      "drawOdds": 2,
+      "awayOdds": 2.5,
+      "gameweek": 36,
+      "leagueId": 1
+    },
+    {
+      "fixtureId": 355,
+      "homeOdds": 1.75,
+      "drawOdds": 1.75,
+      "awayOdds": 2.25,
+      "gameweek": 36,
+      "leagueId": 1
+    },
+    {
+      "fixtureId": 356,
+      "homeOdds": 1.75,
+      "drawOdds": 1.75,
+      "awayOdds": 2.25,
+      "gameweek": 36,
+      "leagueId": 1
+    },
+    {
+      "fixtureId": 357,
+      "homeOdds": 1.25,
+      "drawOdds": 1.75,
+      "awayOdds": 2.75,
+      "gameweek": 36,
+      "leagueId": 1
+    },
+    {
+      "fixtureId": 358,
+      "homeOdds": 2.25,
+      "drawOdds": 1.5,
+      "awayOdds": 1.5,
+      "gameweek": 36,
+      "leagueId": 1
+    },
+    {
+      "fixtureId": 359,
+      "homeOdds": 1.75,
+      "drawOdds": 1.75,
+      "awayOdds": 2.25,
+      "gameweek": 36,
+      "leagueId": 1
+    },
+    {
+      "fixtureId": 360,
+      "homeOdds": 2,
+      "drawOdds": 2,
+      "awayOdds": 1.75,
+      "gameweek": 36,
+      "leagueId": 1
+    },
+    {
+      "fixtureId": 361,
+      "homeOdds": 1.5,
+      "drawOdds": 2,
+      "awayOdds": 2.25,
+      "gameweek": 37,
+      "leagueId": 1
+    },
+    {
+      "fixtureId": 362,
+      "homeOdds": 1.5,
+      "drawOdds": 1.75,
+      "awayOdds": 2.5,
+      "gameweek": 37,
+      "leagueId": 1
+    },
+    {
+      "fixtureId": 363,
+      "homeOdds": 1.75,
+      "drawOdds": 2,
+      "awayOdds": 2.25,
+      "gameweek": 37,
+      "leagueId": 1
+    },
+    {
+      "fixtureId": 364,
+      "homeOdds": 2,
+      "drawOdds": 2.25,
+      "awayOdds": 1.75,
+      "gameweek": 37,
+      "leagueId": 1
+    },
+    {
+      "fixtureId": 365,
+      "homeOdds": 1.5,
+      "drawOdds": 2,
+      "awayOdds": 2.5,
+      "gameweek": 37,
+      "leagueId": 1
+    },
+    {
+      "fixtureId": 366,
+      "homeOdds": 1.5,
+      "drawOdds": 2,
+      "awayOdds": 2.5,
+      "gameweek": 37,
+      "leagueId": 1
+    },
+    {
+      "fixtureId": 367,
+      "homeOdds": 1.25,
+      "drawOdds": 2,
+      "awayOdds": 2.5,
+      "gameweek": 37,
+      "leagueId": 1
+    },
+    {
+      "fixtureId": 368,
+      "homeOdds": 1.5,
+      "drawOdds": 1.75,
+      "awayOdds": 2.25,
+      "gameweek": 37,
+      "leagueId": 1
+    },
+    {
+      "fixtureId": 369,
+      "homeOdds": 1.75,
+      "drawOdds": 1.75,
+      "awayOdds": 2.25,
+      "gameweek": 37,
+      "leagueId": 1
+    },
+    {
+      "fixtureId": 370,
+      "homeOdds": 2,
+      "drawOdds": 1.75,
+      "awayOdds": 2,
+      "gameweek": 37,
+      "leagueId": 1
+    },
+    {
+      "fixtureId": 371,
+      "homeOdds": 1.25,
+      "drawOdds": 2,
+      "awayOdds": 2.75,
+      "gameweek": 38,
+      "leagueId": 1
+    },
+    {
+      "fixtureId": 372,
+      "homeOdds": 1.75,
+      "drawOdds": 2.25,
+      "awayOdds": 2,
+      "gameweek": 38,
+      "leagueId": 1
+    },
+    {
+      "fixtureId": 373,
+      "homeOdds": 1.75,
+      "drawOdds": 2,
+      "awayOdds": 2,
+      "gameweek": 38,
+      "leagueId": 1
+    },
+    {
+      "fixtureId": 374,
+      "homeOdds": 1.25,
+      "drawOdds": 2,
+      "awayOdds": 3,
+      "gameweek": 38,
+      "leagueId": 1
+    },
+    {
+      "fixtureId": 375,
+      "homeOdds": 1.75,
+      "drawOdds": 1.75,
+      "awayOdds": 2,
+      "gameweek": 38,
+      "leagueId": 1
+    },
+    {
+      "fixtureId": 376,
+      "homeOdds": 1.5,
+      "drawOdds": 2,
+      "awayOdds": 2.75,
+      "gameweek": 38,
+      "leagueId": 1
+    },
+    {
+      "fixtureId": 377,
+      "homeOdds": 1.5,
+      "drawOdds": 1.75,
+      "awayOdds": 2.25,
+      "gameweek": 38,
+      "leagueId": 1
+    },
+    {
+      "fixtureId": 378,
+      "homeOdds": 2.5,
+      "drawOdds": 1.75,
+      "awayOdds": 1.5,
+      "gameweek": 38,
+      "leagueId": 1
+    },
+    {
+      "fixtureId": 379,
+      "homeOdds": 1.75,
+      "drawOdds": 1.75,
+      "awayOdds": 2,
+      "gameweek": 38,
+      "leagueId": 1
+    },
+    {
+      "fixtureId": 380,
+      "homeOdds": 2,
+      "drawOdds": 1.5,
+      "awayOdds": 2,
+      "gameweek": 38,
+      "leagueId": 1
+    }
+  ]
+}

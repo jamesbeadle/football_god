@@ -36,6 +36,7 @@
     onMount( async () => {
         try{
             await checkUser();
+            termsAgreed = true;
         } catch {
             console.error('Error loading dashboard')
         } finally {
@@ -89,8 +90,8 @@
 
             {#if termsAgreed}
                 <div class="flex h-screen md:p-2">
-                    <div class={`hidden md:flex bg-BrandGray text-white rounded-lg transition-all ${isMenuOpen ? "w-72" : "w-16"} flex-col fixed top-2 bottom-2 left-2`}>
-                        <div class="relative flex flex-col items-center">
+                    <div class={`hidden md:flex bg-BrandGray/90 text-white rounded-lg transition-all ${isMenuOpen ? "w-72" : "w-16"} flex-col fixed top-2 bottom-2 left-2`}>
+                        <div class="relative flex flex-col items-center py-4">
                             <a href="/" class={`flex items-center ${isMenuOpen ? "w-full justify-start p-4" : "justify-center py-4"} transition-all`}>
                                 <LogoIcon className="w-4 md:w-6" />
                                 {#if isMenuOpen}
@@ -220,7 +221,7 @@
                         </div>
                     {/if}
 
-                    <div class={`w-full mt-16 bg-BrandDark md:px-6 md:py-4 md:mx-2 md:rounded-lg md:mt-0 ${isMenuOpen ? "md:ml-[288px]" : "md:ml-20"} transition-all`}>
+                    <div class={`w-full mt-16 bg-BrandDark lg:${isMenuOpen ? "px-4" : "px-0"} md:px-6 md:py-4 md:mx-2 md:rounded-lg md:mt-0 ${isMenuOpen ? "md:ml-[288px]" : "md:ml-14"} transition-all`}>
                         <slot></slot>
                     </div>
                 </div>

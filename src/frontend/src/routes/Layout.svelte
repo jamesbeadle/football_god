@@ -26,7 +26,7 @@
   const init = async () => {
     await Promise.all([syncAuthStore()]);
     worker = await initAuthWorker();
-    await userStore.sync();
+    //await userStore.sync();
   };
 
   onMount(async () => {

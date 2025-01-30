@@ -2,4 +2,6 @@ import type { Selection } from "../../../../declarations/data_canister/data_cani
 
 export interface ExtendedSelection extends Selection {
   uiDescription?: string;
+  fixtureDetails?: string;
+  leagueName?: string;
 }

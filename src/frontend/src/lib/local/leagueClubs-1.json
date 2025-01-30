@@ -1,0 +1,244 @@
+{
+  "ok": [
+    {
+      "id": 1,
+      "secondaryColourHex": "#FFFFFF",
+      "name": "Arsenal",
+      "friendlyName": "Arsenal",
+      "thirdColourHex": "#F0DCBA",
+      "abbreviatedName": "ARS",
+      "shirtType": {
+        "Filled": null
+      },
+      "primaryColourHex": "#D3121A"
+    },
+    {
+      "id": 2,
+      "secondaryColourHex": "#B7D7FE",
+      "name": "Aston Villa",
+      "friendlyName": "Aston Villa",
+      "thirdColourHex": "#FFFFFF",
+      "abbreviatedName": "AVL",
+      "shirtType": {
+        "Filled": null
+      },
+      "primaryColourHex": "#CA3E69"
+    },
+    {
+      "id": 3,
+      "secondaryColourHex": "#262729",
+      "name": "AFC Bournemouth",
+      "friendlyName": "Bournemouth",
+      "thirdColourHex": "#262729",
+      "abbreviatedName": "BOU",
+      "shirtType": {
+        "Striped": null
+      },
+      "primaryColourHex": "#CA2D26"
+    },
+    {
+      "id": 4,
+      "secondaryColourHex": "#FFFFFF",
+      "name": "Brentford",
+      "friendlyName": "Brentford",
+      "thirdColourHex": "#090F14",
+      "abbreviatedName": "BRE",
+      "shirtType": {
+        "Striped": null
+      },
+      "primaryColourHex": "#CF2E26"
+    },
+    {
+      "id": 5,
+      "secondaryColourHex": "#124098",
+      "name": "Brighton & Hove Albion",
+      "friendlyName": "Brighton",
+      "thirdColourHex": "#124098",
+      "abbreviatedName": "BRI",
+      "shirtType": {
+        "Striped": null
+      },
+      "primaryColourHex": "#FFFFFF"
+    },
+    {
+      "id": 7,
+      "secondaryColourHex": "#FFFFFF",
+      "name": "Chelsea",
+      "friendlyName": "Chelsea",
+      "thirdColourHex": "#020514",
+      "abbreviatedName": "CHE",
+      "shirtType": {
+        "Filled": null
+      },
+      "primaryColourHex": "#2D57C7"
+    },
+    {
+      "id": 8,
+      "secondaryColourHex": "#E12F44",
+      "name": "Crystal Palace",
+      "friendlyName": "Crystal Palace",
+      "thirdColourHex": "#FFFFFF",
+      "abbreviatedName": "CRY",
+      "shirtType": {
+        "Striped": null
+      },
+      "primaryColourHex": "#1A47A0"
+    },
+    {
+      "id": 9,
+      "secondaryColourHex": "#FFFFFF",
+      "name": "Everton",
+      "friendlyName": "Everton",
+      "thirdColourHex": "#13356D",
+      "abbreviatedName": "EVE",
+      "shirtType": {
+        "Filled": null
+      },
+      "primaryColourHex": "#0F3DD1"
+    },
+    {
+      "id": 10,
+      "secondaryColourHex": "#B14C5C",
+      "name": "Fulham",
+      "friendlyName": "Fulham",
+      "thirdColourHex": "#000000",
+      "abbreviatedName": "FUL",
+      "shirtType": {
+        "Filled": null
+      },
+      "primaryColourHex": "#FFFFFF"
+    },
+    {
+      "id": 22,
+      "secondaryColourHex": "#F4656B",
+      "name": "Ipswich Town",
+      "friendlyName": "Ipswich",
+      "thirdColourHex": "#FFFFFF",
+      "abbreviatedName": "IPS",
+      "shirtType": {
+        "Filled": null
+      },
+      "primaryColourHex": "#6493E1"
+    },
+    {
+      "id": 21,
+      "secondaryColourHex": "#FFFFFF",
+      "name": "Leicester City",
+      "friendlyName": "Leicester",
+      "thirdColourHex": "#C8A851",
+      "abbreviatedName": "LEI",
+      "shirtType": {
+        "Filled": null
+      },
+      "primaryColourHex": "#2A4282"
+    },
+    {
+      "id": 11,
+      "secondaryColourHex": "#FFFFFF",
+      "name": "Liverpool",
+      "friendlyName": "Liverpool",
+      "thirdColourHex": "#2CC4B9",
+      "abbreviatedName": "LIV",
+      "shirtType": {
+        "Filled": null
+      },
+      "primaryColourHex": "#E50113"
+    },
+    {
+      "id": 13,
+      "secondaryColourHex": "#FFFFFF",
+      "name": "Manchester City",
+      "friendlyName": "Man City",
+      "thirdColourHex": "#A3E1FE",
+      "abbreviatedName": "MCI",
+      "shirtType": {
+        "Filled": null
+      },
+      "primaryColourHex": "#569ECD"
+    },
+    {
+      "id": 14,
+      "secondaryColourHex": "#FFFFFF",
+      "name": "Manchester United",
+      "friendlyName": "Man United",
+      "thirdColourHex": "#FEF104",
+      "abbreviatedName": "MUN",
+      "shirtType": {
+        "Filled": null
+      },
+      "primaryColourHex": "#C00814"
+    },
+    {
+      "id": 15,
+      "secondaryColourHex": "#1A1A1A",
+      "name": "Newcastle United",
+      "friendlyName": "Newcastle",
+      "thirdColourHex": "#1A1A1A",
+      "abbreviatedName": "NEW",
+      "shirtType": {
+        "Striped": null
+      },
+      "primaryColourHex": "#FFFFFF"
+    },
+    {
+      "id": 16,
+      "secondaryColourHex": "#FFFFFF",
+      "name": "Nottingham Forest",
+      "friendlyName": "Nottingham Forest",
+      "thirdColourHex": "#FFFFFF",
+      "abbreviatedName": "NFO",
+      "shirtType": {
+        "Filled": null
+      },
+      "primaryColourHex": "#BB212A"
+    },
+    {
+      "id": 23,
+      "secondaryColourHex": "#FFFFFF",
+      "name": "Southampton",
+      "friendlyName": "Southampton",
+      "thirdColourHex": "#000000",
+      "abbreviatedName": "SOT",
+      "shirtType": {
+        "Striped": null
+      },
+      "primaryColourHex": "#c00e1a"
+    },
+    {
+      "id": 18,
+      "secondaryColourHex": "#001952",
+      "name": "Tottenham Hotspur",
+      "friendlyName": "Tottenham",
+      "thirdColourHex": "#001952",
+      "abbreviatedName": "TOT",
+      "shirtType": {
+        "Filled": null
+      },
+      "primaryColourHex": "#FFFFFF"
+    },
+    {
+      "id": 19,
+      "secondaryColourHex": "#A7DAF9",
+      "name": "West Ham United",
+      "friendlyName": "West Ham",
+      "thirdColourHex": "#F1D655",
+      "abbreviatedName": "WHU",
+      "shirtType": {
+        "Filled": null
+      },
+      "primaryColourHex": "#6D202A"
+    },
+    {
+      "id": 20,
+      "secondaryColourHex": "#2D2D23",
+      "name": "Wolverhampton Wanderers",
+      "friendlyName": "Wolves",
+      "thirdColourHex": "#2D2D23",
+      "abbreviatedName": "WOL",
+      "shirtType": {
+        "Filled": null
+      },
+      "primaryColourHex": "#F7CA3B"
+    }
+  ]
+}

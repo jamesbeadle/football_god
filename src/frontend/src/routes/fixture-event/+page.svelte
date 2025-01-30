@@ -10,13 +10,11 @@
     import ArrowUp from "$lib/icons/ArrowUp.svelte";
     import ArrowDown from "$lib/icons/ArrowDown.svelte";
     import BetSelectedIcon from "$lib/icons/BetSelectedIcon.svelte";
-  
-    import { clubStore } from "$lib/stores/club-store";
+ 
     import { playerStore } from "$lib/stores/player-store";
-    import { fixtureStore } from "$lib/stores/fixture-store";
     import { bettingStore } from "$lib/stores/betting-store";
     import { betSlipStore } from "$lib/stores/bet-slip-store";
-  
+    import { fixtureStore } from "$lib/stores/fixture-store";
     import {
       formatUnixDateToReadable,
       formatUnixTimeToTime
@@ -40,14 +38,14 @@
       ClubDTO,
       FixtureDTO,
       PlayerDTO,
-      FixtureId,
-      LeagueId,
-
+      FootballLeagueDTO,
       ClubId
-
     } from "../../../../declarations/data_canister/data_canister.did";
     import { betSlipDataStore } from "$lib/stores/bet-slip-data-store";
     import { buildBetUiDescription } from "$lib/utils/buildBetUiDescription";
+    import { leagueStore } from "$lib/stores/league-store";
+    import { fixtureWithClubsStore } from "$lib/derived/fixtures-with-clubs.derived";
+    import { storeManager } from "$lib/managers/store-manager";
   
     $: leagueId = Number($page.url.searchParams.get("leagueId"));
     $: fixtureId = Number($page.url.searchParams.get("fixtureId"));
@@ -62,6 +60,7 @@
     let fixture: FixtureDTO;
     let homeClub: ClubDTO;
     let awayClub: ClubDTO;
+    let league: FootballLeagueDTO;
   
     const categoryGroups = {
       Goals: ["goalsOverUnder", "correctScores", "halfTimeScores"],
@@ -131,17 +130,37 @@
             : categoryGroups[activeTab as keyof typeof categoryGroups]) as readonly (keyof MatchOddsDTO)[]
         : [];
   
+    $: league = JSON.parse(decodeURIComponent($page.url.searchParams.get("league") || ""));
+    $: fixture = JSON.parse(decodeURIComponent($page.url.searchParams.get("fixture") || ""));
+    $: currentFixture = $fixtureWithClubsStore.find(f => f.id === fixtureId);
+    $: homeClub = currentFixture?.homeClub ?? {
+      id: 0,
+      name: "Unknown",
+      friendlyName: "Unknown",
+      abbreviatedName: "UNK",
+      primaryColourHex: "",
+      secondaryColourHex: "",
+      thirdColourHex: "",
+      shirtType: { Filled: null },
+      status: { Active: null }
+    };
+    $: awayClub = currentFixture?.awayClub ?? {
+      id: 0,
+      name: "Unknown", 
+      friendlyName: "Unknown",
+      abbreviatedName: "UNK",
+      primaryColourHex: "",
+      secondaryColourHex: "",
+      thirdColourHex: "",
+      shirtType: { Filled: null },
+      status: { Active: null }
+    };
+  
     onMount(async () => {
       try {
+        await storeManager.syncStores(leagueId);
         matchOdds = await bettingStore.getMatchOdds(leagueId, fixtureId);
         players = await playerStore.getPlayers(leagueId);
-        clubs = await clubStore.getClubs(leagueId);
-  
-        const fixtures = await fixtureStore.getFixtures(leagueId);
-  
-        fixture = fixtures.find((x) => x.id === fixtureId)!;
-        homeClub = clubs.find((x) => x.id === fixture.homeClubId)!;
-        awayClub = clubs.find((x) => x.id === fixture.awayClubId)!;
       } catch (error) {
         console.error(error);
       } finally {
@@ -522,6 +541,41 @@
       });
     }
 
+    async function loadFixtureData(fixtureId: number, leagueId: number) {
+      // First try URL params
+      const urlParams = new URLSearchParams(window.location.search);
+      const fixtureParam = urlParams.get('fixture');
+      const leagueParam = urlParams.get('league');
+      
+      if (fixtureParam && leagueParam) {
+        return {
+          fixture: JSON.parse(decodeURIComponent(fixtureParam)),
+          league: JSON.parse(decodeURIComponent(leagueParam))
+        };
+      }
+
+      // If not in URL, try localStorage
+      const storedFixture = localStorage.getItem(`fixture_event_${fixtureId}`);
+      const storedLeague = localStorage.getItem(`fixture_event_league_${leagueId}`);
+      
+      if (storedFixture && storedLeague) {
+        return {
+          fixture: JSON.parse(storedFixture),
+          league: JSON.parse(storedLeague)
+        };
+      }
+
+      // If not in localStorage, fetch from service
+      const fixture = await fixtureStore.getFixtures(leagueId)
+        .then(fixtures => fixtures.find(f => f.id === fixtureId));
+      const league = await leagueStore.getLeagueById(leagueId);
+
+      if (!fixture || !league) {
+        throw new Error('Fixture or league not found');
+      }
+
+      return { fixture, league };
+    }
 
   </script>
   
@@ -531,8 +585,8 @@
         {#if isLoading}
           <FullScreenSpinner />
         {:else}
-          <div class="flex flex-col p-4 space-y-4 text-white rounded-xl bg-BrandGray">
-            <div class="flex items-center space-x-2 text-base text-BrandTextGray2">
+          <div class="page-panel">
+            <div class="page-panel-header">
               <a href="/" class="hover:text-white">Home</a>
               <span class="text-BrandPurple">></span>
               <span class="text-white">{homeClub.name} v {awayClub.name}</span>
@@ -1120,7 +1174,10 @@
   
       <div class="flex-shrink-0 lg:ml-4 lg:w-80">
         <div class="hidden lg:block lg:sticky lg:top-4">
-          <Betslip />
+          <Betslip
+            leagueData={{ [league.id]: league }}
+            fixtureData={{ [fixture.id]: { ...fixture, leagueId: league.id } }}
+          />
         </div>
   
         <div
@@ -1145,7 +1202,11 @@
   
         {#if isBetSlipExpanded}
           <div class="lg:hidden">
-            <Betslip bind:isExpanded={isBetSlipExpanded} />
+            <Betslip
+              bind:isExpanded={isBetSlipExpanded}
+              leagueData={{ [league.id]: league }}
+              fixtureData={{ [fixture.id]: { ...fixture, leagueId: league.id } }}
+            />
           </div>
         {/if}
       </div>

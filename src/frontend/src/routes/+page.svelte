@@ -40,6 +40,9 @@
   import { betSlipDataStore } from "$lib/stores/bet-slip-data-store";
   import { buildBetUiDescription } from "$lib/utils/buildBetUiDescription";
 
+  import { fixtureWithClubsStore } from "$lib/derived/fixtures-with-clubs.derived";
+  import { derived } from 'svelte/store';
+
   let isLoading = true;
   let isBetSlipExpanded = false;
 
@@ -52,9 +55,25 @@
   let selectedGameweeks: Record<LeagueId, GameweekNumber> = {};
   let leagueTotalGameweeks: Record<LeagueId, number> = {};
 
+  $fixtureWithClubsStore;
+  $: selectedBets = $betSlipStore.bets;
+  $: fixturesWithClubs = $fixtureWithClubsStore;
+
   onMount(async () => {
     try {
       leagues = await leagueStore.getLeagues();
+      const existingBets = $betSlipStore.bets;
+      const toggledLeagues = new Set<number>();
+      
+      if (existingBets.length > 0) {
+        for (const bet of existingBets) {
+          if (!expandedLeagues[bet.leagueId] && !toggledLeagues.has(bet.leagueId)) {
+            await toggleLeague(bet.leagueId);
+            expandedLeagues[bet.leagueId] = false;
+            toggledLeagues.add(bet.leagueId);
+          }
+        }
+      }
     } catch (error) {
       console.error("Error fetching leagues:", error);
     } finally {
@@ -82,7 +101,7 @@
     try {
       const clubsData = await clubStore.getClubs(leagueId);
       leagueClubs[leagueId] = {};
-      clubsData.forEach((club) => {
+      clubsData.forEach((club: ClubDTO) => {
         leagueClubs[leagueId][club.id] = club;
       });
     } catch (error) {
@@ -98,8 +117,8 @@
       loadingFixtures[leagueId] = true;
 
       try {
-        await fetchLeagueData(leagueId);
         await storeManager.syncStores(leagueId);
+        await fetchLeagueData(leagueId);
       } catch (error) {
         console.error(`Error while toggling league ${leagueId}:`, error);
       } finally {
@@ -129,8 +148,25 @@
     return all.filter((f) => f.gameweek === gw);
   }
 
-  function loadFixtureEvent(leagueId: LeagueId, fixtureId: FixtureId) {
-    goto(`/fixture-event?leagueId=${leagueId}&fixtureId=${fixtureId}`);
+  function loadFixtureEvent(league: FootballLeagueDTO, fixture: FixtureDTO) {
+    const serializableLeague = JSON.parse(JSON.stringify(league, (_, value) =>
+      typeof value === 'bigint' ? value.toString() : value
+    ));
+    const serializableFixture = JSON.parse(JSON.stringify(fixture, (_, value) =>
+      typeof value === 'bigint' ? value.toString() : value
+    ));
+
+    // Store the complete fixture data in localStorage for direct access
+    localStorage.setItem(
+      `fixture_event_${fixture.id}`, 
+      JSON.stringify(serializableFixture)
+    );
+    localStorage.setItem(
+      `fixture_event_league_${league.id}`,
+      JSON.stringify(serializableLeague)
+    );
+
+    goto(`/fixture-event?leagueId=${league.id}&fixtureId=${fixture.id}&league=${encodeURIComponent(JSON.stringify(serializableLeague))}&fixture=${encodeURIComponent(JSON.stringify(serializableFixture))}`);
   }
 
   function toggleBetSlip() {
@@ -144,29 +180,28 @@
   detail: SelectionDetail,
   odds: number
 ) {
-  const isCurrentlySelected = betSlipStore.isSelected(leagueId, fixtureId, category, detail);
-  if (isCurrentlySelected) {
-    betSlipStore.removeBet(leagueId, fixtureId, category, detail);
-    return;
-  }
+    const isCurrentlySelected = betSlipStore.isSelected(leagueId, fixtureId, category, detail);
+    if (isCurrentlySelected) {
+      betSlipStore.removeBet(leagueId, fixtureId, category, detail);
+      return;
+    }
 
-  const { clubs, players } = await betSlipDataStore.ensureLeagueData(leagueId);
-
-  const description = buildBetUiDescription(detail, clubs, players);
-
-  betSlipStore.addBet({
-    leagueId,
-    fixtureId,
-    status: { Unsettled: null },
-    result: { Open: null },
-    selectionType: category,
-    selectionDetail: detail,
-    odds,
-    stake: 0n,
-    winnings: 0,
-    expectedReturns: 0n,
-    uiDescription: description,
-  });
+    const { clubs, players } = await betSlipDataStore.ensureLeagueData(leagueId);
+    const description = buildBetUiDescription(detail, clubs, players);
+    
+    betSlipStore.addBet({
+      leagueId,
+      fixtureId,
+      status: { Unsettled: null },
+      result: { Open: null },
+      selectionType: category,
+      selectionDetail: detail,
+      odds,
+      stake: 0n,
+      winnings: 0,
+      expectedReturns: 0n,
+      uiDescription: description,
+    });
 }
 
   function isBetSelected(
@@ -175,7 +210,12 @@
     category: Category,
     detail: SelectionDetail
   ) {
-    return betSlipStore.isSelected(leagueId, fixtureId, category, detail);
+    return selectedBets.some(bet => 
+      bet.leagueId === leagueId && 
+      bet.fixtureId === fixtureId && 
+      JSON.stringify(bet.selectionType) === JSON.stringify(category) && 
+      JSON.stringify(bet.selectionDetail) === JSON.stringify(detail)
+    );
   }
 
   function getOddsForFixture(leagueId: LeagueId, fixtureId: number) {
@@ -219,220 +259,217 @@
       {#if isLoading}
         <FullScreenSpinner />
       {:else}
-        <div class="flex flex-col w-full min-h-screen px-1 py-4 md:px-0 md:py-0 bg-BrandDark">
-          <div class="flex flex-col w-full min-h-screen pb-24 rounded-xl bg-BrandGray md:pb-28 lg:pb-0">
-            <p class="px-4 py-4 text-lg font-bold">Home</p>
-
-            <div class="flex flex-col px-4 space-y-4 lg:space-y-2">
-              {#each leagues as league}
-                <div
-                  class="
-                    {expandedLeagues[league.id] ? 'bg-BrandPurple' : 'bg-BrandLightGray'}
-                    rounded shadow
-                  "
+        <div class="page-panel">
+          <div class="page-panel-header">Home</div>
+          <div class="page-panel-bar-format">
+            {#each leagues as league}
+              <div
+                class="{expandedLeagues[league.id] ? 'bg-BrandPurple' : 'bg-BrandLightGray'} rounded shadow"
+              >
+                <button
+                  type="button"
+                  class="page-panel-bar-button"
+                  on:click={() => toggleLeague(league.id)}
                 >
-                  <button
-                    type="button"
-                    class="flex items-center justify-between w-full px-4 py-2 text-left bg-transparent border-0 cursor-pointer md:py-3"
-                    on:click={() => toggleLeague(league.id)}
-                  >
-                    <p class="text-sm font-medium md:text-base">{league.name}</p>
-                    {#if expandedLeagues[league.id]}
-                      <ArrowUp className="w-5 h-5 text-gray-600" />
-                    {:else}
-                      <ArrowDown className="w-5 h-5 text-gray-600" />
-                    {/if}
-                  </button>
-
+                  <p class="page-panel-bar-button-title">{league.name}</p>
                   {#if expandedLeagues[league.id]}
-                    {#if loadingFixtures[league.id]}
-                      <div class="px-4 py-2 space-y-2 text-sm bg-BrandDarkGray">
-                        <LocalSpinner />
-                      </div>
-                    {:else}
-                      <div class="overflow-hidden text-sm border rounded-b bg-BrandDarkGray border-BrandPurple">
-                        <div class="flex flex-row w-full font-bold text-black bg-white">
-                          <div class="flex items-center justify-center w-5/12 py-2 md:py-3">
-                            <button
-                              class="text-gray-500 hover:text-gray-700"
-                              on:click={() => priorGameweek(league.id)}
-                            >
-                              <ArrowLeft className="w-4" />
-                            </button>
-                            <div class="mx-2 sm:mx-3 md:mx-2 lg:mx-4">
-                              <span class="text-[10px] tracking-wider uppercase sm:text-xs md:text-xs lg:text-sm whitespace-nowrap text-center">
-                                Gameweek
-                                <span class="inline md:block lg:inline">
-                                  {selectedGameweeks[league.id]}
-                                </span>
-                              </span>
-                            </div>
-                            <button
-                              class="text-gray-500 hover:text-gray-700"
-                              on:click={() => nextGameweek(league.id)}
-                            >
-                              <ArrowRight className="w-4" />
-                            </button>
-                          </div>
+                    <ArrowUp className="w-5 h-5 text-gray-600" />
+                  {:else}
+                    <ArrowDown className="w-5 h-5 text-gray-600" />
+                  {/if}
+                </button>
 
-                          <div class="flex items-center justify-center w-2/12 text-[10px] sm:text-xs md:text-xs lg:text-sm">
-                            Home
+                {#if expandedLeagues[league.id]}
+                  {#if loadingFixtures[league.id]}
+                    <div class="page-panel-bar-spinner">
+                      <LocalSpinner />
+                    </div>
+                  {:else}
+                    <div class="page-panel-table-container">
+                      <div class="page-panel-table-header">
+                        <div class="flex items-center justify-center w-5/12 py-2 md:py-3">
+                          <button
+                            class="text-gray-500 hover:text-gray-700"
+                            on:click={() => priorGameweek(league.id)}
+                          >
+                            <ArrowLeft className="w-4" />
+                          </button>
+                          <div class="mx-2 sm:mx-3 md:mx-2 lg:mx-4">
+                            <span class="text-[10px] tracking-wider uppercase sm:text-xs md:text-xs lg:text-sm whitespace-nowrap text-center">
+                              Gameweek
+                              <span class="inline md:block lg:inline">
+                                {selectedGameweeks[league.id]}
+                              </span>
+                            </span>
                           </div>
-                          <div class="flex items-center justify-center w-2/12 text-[10px] sm:text-xs md:text-xs lg:text-sm">
-                            Draw
-                          </div>
-                          <div class="flex items-center justify-center w-2/12 text-[10px] sm:text-xs md:text-xs lg:text-sm">
-                            Away
-                          </div>
-                          <div class="hidden w-1/12 lg:block"></div>
+                          <button
+                            class="text-gray-500 hover:text-gray-700"
+                            on:click={() => nextGameweek(league.id)}
+                          >
+                            <ArrowRight className="w-4" />
+                          </button>
                         </div>
 
-                        <div class="relative">
-                          <div class="absolute inset-0 grid grid-cols-12 pointer-events-none">
-                            <div class="col-span-5"></div>
-                            <div class="col-span-2 bg-BrandGray border-x border-BrandOddsDivider"></div>
-                            <div class="col-span-2 border-r bg-BrandGray border-BrandOddsDivider"></div>
-                            <div class="col-span-2 border-r bg-BrandGray border-BrandOddsDivider"></div>
-                            <div class="col-span-1 border-r bg-BrandGray border-BrandOddsDivider lg:block"></div>
-                          </div>
+                        <div class="flex items-center justify-center w-2/12 text-[10px] sm:text-xs md:text-xs lg:text-sm">
+                          Home
+                        </div>
+                        <div class="flex items-center justify-center w-2/12 text-[10px] sm:text-xs md:text-xs lg:text-sm">
+                          Draw
+                        </div>
+                        <div class="flex items-center justify-center w-2/12 text-[10px] sm:text-xs md:text-xs lg:text-sm">
+                          Away
+                        </div>
+                        <div class="hidden w-1/12 lg:block"></div>
+                      </div>
 
-                          {#each leagueFixtures[league.id] as fixture}
-                            {@const oddsObj = getOddsForFixture(league.id, fixture.id)}
-                            {#if oddsObj}
-                              <div class="relative py-2 border-b border-BrandOddsDivider last:border-b-0">
-                                <div class="grid grid-cols-12">
-                                  <div class="col-span-5 pt-2 pr-2 md:pr-4">
-                                    <div class="flex flex-col px-4 space-y-3 text-md">
-                                      <div class="flex items-center space-x-2 md:space-x-3">
-                                        <BadgeIcon
-                                          primaryColour={leagueClubs[league.id]?.[fixture.homeClubId]?.primaryColourHex}
-                                          secondaryColour={leagueClubs[league.id]?.[fixture.homeClubId]?.secondaryColourHex}
-                                          thirdColour={leagueClubs[league.id]?.[fixture.homeClubId]?.thirdColourHex}
-                                          className="flex-shrink-0 w-4 md:w-6"
-                                        />
-                                        <span class="text-xs truncate md:text-base">
-                                          {leagueClubs[league.id]?.[fixture.homeClubId]?.name || "Unknown"}
-                                        </span>
-                                      </div>
-                                      <div class="flex items-center space-x-2 md:space-x-3">
-                                        <BadgeIcon
-                                          primaryColour={leagueClubs[league.id]?.[fixture.awayClubId]?.primaryColourHex}
-                                          secondaryColour={leagueClubs[league.id]?.[fixture.awayClubId]?.secondaryColourHex}
-                                          thirdColour={leagueClubs[league.id]?.[fixture.awayClubId]?.thirdColourHex}
-                                          className="flex-shrink-0 w-4 md:w-6"
-                                        />
-                                        <span class="text-xs truncate md:text-base">
-                                          {leagueClubs[league.id]?.[fixture.awayClubId]?.name || "Unknown"}
-                                        </span>
-                                      </div>
+                      <div class="relative">
+                        <div class="absolute inset-0 grid grid-cols-12 pointer-events-none">
+                          <div class="col-span-5"></div>
+                          <div class="col-span-2 bg-BrandGray border-x border-BrandOddsDivider"></div>
+                          <div class="col-span-2 border-r bg-BrandGray border-BrandOddsDivider"></div>
+                          <div class="col-span-2 border-r bg-BrandGray border-BrandOddsDivider"></div>
+                          <div class="col-span-1 border-r bg-BrandGray border-BrandOddsDivider lg:block"></div>
+                        </div>
 
-                                      <span class="mt-1 text-[10px] md:text-xs text-gray-400">
-                                        {convertDateToReadable(Number(fixture.kickOff))}
+                        {#each fixturesWithClubs.filter(f => f.leagueId === league.id) as fixture}
+                          {@const oddsObj = getOddsForFixture(league.id, fixture.id)}
+                          {#if oddsObj}
+                            <div class="relative py-2 border-b border-BrandOddsDivider last:border-b-0">
+                              <div class="grid grid-cols-12">
+                                <div class="col-span-5 pt-2 pr-2 md:pr-4">
+                                  <div class="flex flex-col px-4 space-y-3 text-md">
+                                    <div class="flex items-center space-x-2 md:space-x-3">
+                                      <BadgeIcon
+                                        primaryColour={fixture.homeClub?.primaryColourHex}
+                                        secondaryColour={fixture.homeClub?.secondaryColourHex}
+                                        thirdColour={fixture.homeClub?.thirdColourHex}
+                                        className="flex-shrink-0 w-4 md:w-6"
+                                      />
+                                      <span class="text-xs truncate md:text-base">
+                                        {fixture.homeClub?.name || "Unknown"}
                                       </span>
                                     </div>
-                                  </div>
+                                    <div class="flex items-center space-x-2 md:space-x-3">
+                                      <BadgeIcon
+                                        primaryColour={fixture.awayClub?.primaryColourHex}
+                                        secondaryColour={fixture.awayClub?.secondaryColourHex}
+                                        thirdColour={fixture.awayClub?.thirdColourHex}
+                                        className="flex-shrink-0 w-4 md:w-6"
+                                      />
+                                      <span class="text-xs truncate md:text-base">
+                                        {fixture.awayClub?.name || "Unknown"}
+                                      </span>
+                                    </div>
 
-                                  <div class="flex items-center justify-center h-full col-span-2">
-                                    <button
-                                      class="
-                                        flex items-center justify-center gap-2 p-2 text-xs rounded md:text-base
-                                        hover:bg-BrandGray/80 transition-colors duration-200
-                                        {isBetSelected(
-                                          league.id,
-                                          fixture.id,
-                                          { 'CorrectResult': null },
-                                          { 'CorrectResult': { matchResult: { 'HomeWin': null } } }
-                                        ) ? 'bg-BrandGray/60' : ''}"
-                                      on:click={() => 
-                                        selectCorrectResultHome(league.id, fixture.id, oddsObj.homeOdds || 0)
-                                      }
-                                    >
-                                      <span>{oddsObj.homeOdds?.toFixed(2) || "N/A"}</span>
-                                      {#if isBetSelected(
+                                    <span class="mt-1 text-[10px] md:text-xs text-gray-400">
+                                      {convertDateToReadable(Number(fixture.kickOff))}
+                                    </span>
+                                  </div>
+                                </div>
+
+                                <div class="flex items-center justify-center h-full col-span-2">
+                                  <button
+                                    class="
+                                      flex items-center justify-center w-12 h-12 text-xs rounded md:text-base
+                                      hover:bg-BrandGray/80 transition-colors duration-200
+                                      {isBetSelected(
                                         league.id,
                                         fixture.id,
                                         { 'CorrectResult': null },
                                         { 'CorrectResult': { matchResult: { 'HomeWin': null } } }
-                                      )}
-                                        <BetSelectedIcon className="w-4 h-4 fill-BrandPurple" />
-                                      {/if}
-                                    </button>
-                                  </div>
+                                      ) ? 'bg-BrandGray/60' : ''}"
+                                    on:click={() => 
+                                      selectCorrectResultHome(league.id, fixture.id, oddsObj.homeOdds || 0)
+                                    }
+                                  >
+                                    {#if isBetSelected(
+                                      league.id,
+                                      fixture.id,
+                                      { 'CorrectResult': null },
+                                      { 'CorrectResult': { matchResult: { 'HomeWin': null } } }
+                                    )}
+                                      <BetSelectedIcon className="w-8 h-8 fill-BrandPurple" />
+                                    {:else}
+                                      <span>{oddsObj.homeOdds?.toFixed(2) || "N/A"}</span>
+                                    {/if}
+                                  </button>
+                                </div>
 
-                                  <div class="flex items-center justify-center h-full col-span-2">
-                                    <button
-                                      class="
-                                        flex items-center justify-center gap-2 p-2 text-xs rounded md:text-base
-                                        hover:bg-BrandGray/80 transition-colors duration-200
-                                        {isBetSelected(
-                                          league.id,
-                                          fixture.id,
-                                          { 'CorrectResult': null },
-                                          { 'CorrectResult': { matchResult: { 'Draw': null } } }
-                                        ) ? 'bg-BrandGray/60' : ''}"
-                                      on:click={() => 
-                                        selectCorrectResultDraw(league.id, fixture.id, oddsObj.drawOdds || 0)
-                                      }
-                                    >
-                                      <span>{oddsObj.drawOdds?.toFixed(2) || "N/A"}</span>
-                                      {#if isBetSelected(
+                                <div class="flex items-center justify-center h-full col-span-2">
+                                  <button
+                                    class="
+                                      flex items-center justify-center gap-2 p-2 text-xs rounded md:text-base
+                                      hover:bg-BrandGray/80 transition-colors duration-200
+                                      {isBetSelected(
                                         league.id,
                                         fixture.id,
                                         { 'CorrectResult': null },
                                         { 'CorrectResult': { matchResult: { 'Draw': null } } }
-                                      )}
-                                        <BetSelectedIcon className="w-4 h-4 fill-BrandPurple" />
-                                      {/if}
-                                    </button>
-                                  </div>
+                                      ) ? 'bg-BrandGray/60' : ''}"
+                                    on:click={() => 
+                                      selectCorrectResultDraw(league.id, fixture.id, oddsObj.drawOdds || 0)
+                                    }
+                                  >
+                                    {#if isBetSelected(
+                                      league.id,
+                                      fixture.id,
+                                      { 'CorrectResult': null },
+                                      { 'CorrectResult': { matchResult: { 'Draw': null } } }
+                                    )}
+                                      <BetSelectedIcon className="w-8 h-8 fill-BrandPurple" />
+                                    {:else}
+                                      <span>{oddsObj.drawOdds?.toFixed(2) || "N/A"}</span>
+                                    {/if}
+                                  </button>
+                                </div>
 
-                                  <div class="flex items-center justify-center h-full col-span-2">
-                                    <button
-                                      class="
-                                        flex items-center justify-center gap-2 p-2 text-xs rounded md:text-base
-                                        hover:bg-BrandGray/80 transition-colors duration-200
-                                        {isBetSelected(
-                                          league.id,
-                                          fixture.id,
-                                          { 'CorrectResult': null },
-                                          { 'CorrectResult': { matchResult: { 'AwayWin': null } } }
-                                        ) ? 'bg-BrandGray/60' : ''}"
-                                      on:click={() => 
-                                        selectCorrectResultAway(league.id, fixture.id, oddsObj.awayOdds || 0)
-                                      }
-                                    >
-                                      <span>{oddsObj.awayOdds?.toFixed(2) || "N/A"}</span>
-                                      {#if isBetSelected(
+                                <div class="flex items-center justify-center h-full col-span-2">
+                                  <button
+                                    class="
+                                      flex items-center justify-center gap-2 p-2 text-xs rounded md:text-base
+                                      hover:bg-BrandGray/80 transition-colors duration-200
+                                      {isBetSelected(
                                         league.id,
                                         fixture.id,
                                         { 'CorrectResult': null },
                                         { 'CorrectResult': { matchResult: { 'AwayWin': null } } }
-                                      )}
-                                        <BetSelectedIcon className="w-4 h-4 fill-BrandPurple" />
-                                      {/if}
-                                    </button>
-                                  </div>
+                                      ) ? 'bg-BrandGray/60' : ''}"
+                                    on:click={() => 
+                                      selectCorrectResultAway(league.id, fixture.id, oddsObj.awayOdds || 0)
+                                    }
+                                  >
+                                    {#if isBetSelected(
+                                      league.id,
+                                      fixture.id,
+                                      { 'CorrectResult': null },
+                                      { 'CorrectResult': { matchResult: { 'AwayWin': null } } }
+                                    )}
+                                      <BetSelectedIcon className="w-8 h-8 fill-BrandPurple" />
+                                    {:else}
+                                      <span>{oddsObj.awayOdds?.toFixed(2) || "N/A"}</span>
+                                    {/if}
+                                  </button>
+                                </div>
 
-                                  <div class="flex justify-center col-span-1">
-                                    <button
-                                      class="p-1 md:p-2"
-                                      aria-label="View detailed odds"
-                                      on:click={() => loadFixtureEvent(league.id, fixture.id)}
-                                    >
-                                      <OddsIcon className="w-4 h-4 md:w-5 md:h-5" />
-                                    </button>
-                                  </div>
+                                <div class="flex justify-center col-span-1">
+                                  <button
+                                    class="p-1 md:p-2"
+                                    aria-label="View detailed odds"
+                                    on:click={() => loadFixtureEvent(league, fixture)}
+                                  >
+                                    <OddsIcon className="w-4 h-4 md:w-5 md:h-5" />
+                                  </button>
                                 </div>
                               </div>
-                            {/if}
-                          {/each}
-                        </div>
+                            </div>
+                          {/if}
+                        {/each}
                       </div>
-                    {/if}
+                    </div>
                   {/if}
-                </div>
-              {/each}
-            </div>
+                {/if}
+              </div>
+            {/each}
           </div>
         </div>
       {/if}
@@ -440,7 +477,10 @@
 
     <div class="flex-shrink-0 lg:ml-4 lg:w-80">
       <div class="hidden lg:block lg:sticky lg:top-4">
-        <Betslip />
+        <Betslip
+          leagueData={leagues.reduce((acc, league) => ({...acc, [league.id]: league}), {})}
+          fixtureData={fixturesWithClubs.reduce((acc, fixture) => ({...acc, [fixture.id]: fixture}), {})}
+        />
       </div>
 
       <div
@@ -465,7 +505,11 @@
 
       {#if isBetSlipExpanded}
         <div class="lg:hidden">
-          <Betslip bind:isExpanded={isBetSlipExpanded} />
+          <Betslip 
+            bind:isExpanded={isBetSlipExpanded}
+            leagueData={leagues.reduce((acc, league) => ({...acc, [league.id]: league}), {})}
+            fixtureData={fixturesWithClubs.reduce((acc, fixture) => ({...acc, [fixture.id]: fixture}), {})}
+          />
         </div>
       {/if}
     </div>
