@@ -131,11 +131,7 @@ actor Self {
     return await data_canister.getPlayerDetailsForGameweek(leagueId, dto);
   };
 
-  public shared composite query func getDataHashes(): async Result.Result<[ResponseDTOs.DataHashDTO], T.Error> {
-    return oddsManager.getDataHashes();
-  };
-
-  public shared query func getHashes(): async Result.Result<[ResponseDTOs.DataHashDTO], T.Error> {
+  public shared query func getDataHashes(): async Result.Result<[ResponseDTOs.DataHashDTO], T.Error> {
     return oddsManager.getDataHashes();
   };
 

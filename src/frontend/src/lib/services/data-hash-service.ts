@@ -7,7 +7,7 @@ export class DataHashService {
   private readonly actor: any;
 
   constructor() {
-    const canisterId = process.env.DATA_CANISTER_CANISTER_ID;
+    const canisterId = process.env.BACKEND_CANISTER_ID;
     if (!canisterId) {
       throw new Error("Backend canister ID not found in environment variables");
     }

@@ -28,8 +28,8 @@
 declare module '$env/static/private' {
 	export const DFX_VERSION: string;
 	export const DFX_NETWORK: string;
-	export const CANISTER_ID_BACKEND: string;
 	export const CANISTER_ID_DATA_CANISTER: string;
+	export const CANISTER_ID_BACKEND: string;
 	export const CANISTER_ID_FRONTEND: string;
 	export const CANISTER_ID_SNS_GOVERNANCE: string;
 	export const CANISTER_ID: string;
@@ -132,8 +132,8 @@ declare module '$env/dynamic/private' {
 	export const env: {
 		DFX_VERSION: string;
 		DFX_NETWORK: string;
-		CANISTER_ID_BACKEND: string;
 		CANISTER_ID_DATA_CANISTER: string;
+		CANISTER_ID_BACKEND: string;
 		CANISTER_ID_FRONTEND: string;
 		CANISTER_ID_SNS_GOVERNANCE: string;
 		CANISTER_ID: string;

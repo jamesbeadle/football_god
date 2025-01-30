@@ -7,7 +7,7 @@ import type {
   LeagueStatus,
   UpdateLeagueDTO,
 } from "../../../../declarations/data_canister/data_canister.did";
-  
+
 export class LeagueService {
   constructor() {}
 
