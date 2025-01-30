@@ -6,8 +6,6 @@
   import { clubStore } from "$lib/stores/club-store";
   import { fixtureStore } from "$lib/stores/fixture-store";
   import { playerStore } from "$lib/stores/player-store";
-  import type { ClubDTO, FixtureDTO, PlayerDTO, PlayerEventData, SubmitFixtureDataDTO } from "../../../../declarations/backend/backend.did";
-  
   import Layout from "../Layout.svelte";
   import PlayerEventsModal from "$lib/components/fixture-validation/player-events-modal.svelte";
   import SelectPlayersModal from "$lib/components/fixture-validation/select-players-modal.svelte";
@@ -18,6 +16,7 @@
   
   import { convertEvent, replacer } from "$lib/utils/helpers";
     import SelectedPlayerList from "$lib/components/fixture-validation/selected-player-list.svelte";
+    import type { ClubDTO, FixtureDTO, PlayerDTO, PlayerEventData, SubmitFixtureDataDTO } from "../../../../declarations/data_canister/data_canister.did";
   
   let clubs: ClubDTO[] = [];
   let players: PlayerDTO[] = [];

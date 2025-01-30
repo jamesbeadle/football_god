@@ -107,17 +107,13 @@ type RustResult =
  };
 type RevaluePlayerUpDTO = 
  record {
-   gameweek: GameweekNumber;
    leagueId: LeagueId;
    playerId: PlayerId;
-   seasonId: SeasonId;
  };
 type RevaluePlayerDownDTO = 
  record {
-   gameweek: GameweekNumber;
    leagueId: LeagueId;
    playerId: PlayerId;
-   seasonId: SeasonId;
  };
 type RetirePlayerDTO = 
  record {
@@ -167,6 +163,11 @@ type Result_2 =
  variant {
    err: Error;
    ok: vec ClubDTO;
+ };
+type Result_12 = 
+ variant {
+   err: Error;
+   ok: vec CountryDTO;
  };
 type Result_11 = 
  variant {
@@ -553,6 +554,12 @@ type CreateClubDTO =
    thirdColourHex: text;
  };
 type CountryId = nat16;
+type CountryDTO = 
+ record {
+   code: text;
+   id: CountryId;
+   name: text;
+ };
 type ClubId = nat16;
 type ClubFilterDTO = 
  record {
@@ -581,6 +588,7 @@ service : {
   createLeague: (CreateLeagueDTO) -> ();
   createPlayer: (CreatePlayerDTO) -> ();
   getClubs: (LeagueId) -> (Result_2) query;
+  getCountries: () -> (Result_12) query;
   getDataHashes: (LeagueId) -> (Result_11) query;
   getFixtures: (LeagueId) -> (Result_1) query;
   getLeagueStatus: (LeagueId) -> (Result_10) query;

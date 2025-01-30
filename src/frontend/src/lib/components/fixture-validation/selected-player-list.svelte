@@ -1,7 +1,7 @@
 <script lang="ts">
     import type { Writable } from "svelte/store";
-    import type { FixtureDTO, PlayerDTO, PlayerEventData } from "../../../../../declarations/backend/backend.did";
     import { convertEvent } from "$lib/utils/helpers";
+    import type { FixtureDTO, PlayerDTO, PlayerEventData } from "../../../../../declarations/data_canister/data_canister.did";
 
     export let selectedPlayers: Writable<PlayerDTO[]>;
     export let fixture: FixtureDTO;

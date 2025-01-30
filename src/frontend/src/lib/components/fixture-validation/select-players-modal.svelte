@@ -1,9 +1,9 @@
 <script lang="ts">
-  import { convertPlayerPosition, getFlagComponent } from "$lib/utils/helpers";
+  import { convertPlayerPosition } from "$lib/utils/helpers";
   import BadgeIcon from "$lib/icons/BadgeIcon.svelte";
   import { type Writable } from "svelte/store";
-  import type { ClubDTO, PlayerDTO, PlayerEventData } from "../../../../../declarations/backend/backend.did";
     import Modal from "../shared/modal.svelte";
+    import type { ClubDTO, PlayerDTO, PlayerEventData } from "../../../../../declarations/data_canister/data_canister.did";
   
   export let selectedTeam: ClubDTO;
   export let teamPlayers: PlayerDTO[];

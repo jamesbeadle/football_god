@@ -3,10 +3,10 @@
   import { leagueStore } from "$lib/stores/league-store";
   import { clubStore } from "$lib/stores/club-store";
   import { playerStore } from "$lib/stores/player-store";
-  import type { ClubDTO, FootballLeagueDTO, LoanPlayerDTO, PlayerDTO } from "../../../../../../declarations/backend/backend.did";
   import { convertDateInputToUnixNano } from "$lib/utils/helpers";
   import Modal from "$lib/components/shared/modal.svelte";
   import LocalSpinner from "$lib/components/shared/local-spinner.svelte";
+    import type { ClubDTO, FootballLeagueDTO, LoanPlayerDTO, PlayerDTO } from "../../../../../../declarations/data_canister/data_canister.did";
   
   export let visible: boolean;
   export let closeModal: () => void;
@@ -56,6 +56,7 @@
     isLoading = true;
     
     let dto: LoanPlayerDTO = {
+      leagueId: selectedPlayer.leagueId,
       loanEndDate: convertDateInputToUnixNano(date),
       playerId: selectedPlayer.id,
       loanClubId: loanClubId,

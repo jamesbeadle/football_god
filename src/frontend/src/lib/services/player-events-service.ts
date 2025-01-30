@@ -7,16 +7,10 @@ import type {
   GetPlayerDetailsDTO,
   GameweekFiltersDTO,
 } from "../../../../declarations/data_canister/data_canister.did";
+import { authStore } from "$lib/stores/auth-store";
 
 export class PlayerEventsService {
-  private actor: any;
-
-  constructor() {
-    this.actor = ActorFactory.createActor(
-      idlFactory,
-      process.env.BACKEND_CANISTER_ID,
-    );
-  }
+  constructor() {}
 
   async getPlayerDetails(
     playerId: number,
@@ -27,7 +21,11 @@ export class PlayerEventsService {
         playerId: playerId,
         seasonId: seasonId,
       };
-      let result = await this.actor.getPlayerDetails(dto);
+      const identityActor: any = await ActorFactory.createIdentityActor(
+        authStore,
+        process.env.DATA_CANISTER_CANISTER_ID ?? "",
+      );
+      const result = await identityActor.getPlayerDetails(dto);
 
       if (isError(result)) {
         console.error("Error fetching player details");
@@ -51,7 +49,14 @@ export class PlayerEventsService {
       seasonId,
       gameweek,
     };
-    const result = await this.actor.getPlayerDetailsForGameweek(leagueId, dto);
+    const identityActor: any = await ActorFactory.createIdentityActor(
+      authStore,
+      process.env.DATA_CANISTER_CANISTER_ID ?? "",
+    );
+    const result = await identityActor.getPlayerDetailsForGameweek(
+      leagueId,
+      dto,
+    );
     if (isError(result))
       throw new Error(
         "Failed to fetch player details for gameweek in player events service",
@@ -68,7 +73,11 @@ export class PlayerEventsService {
         seasonId,
         gameweek,
       };
-      let result = await this.actor.getPlayerDetailsForGameweek(dto);
+      const identityActor: any = await ActorFactory.createIdentityActor(
+        authStore,
+        process.env.DATA_CANISTER_CANISTER_ID ?? "",
+      );
+      const result = await identityActor.getPlayerDetailsForGameweek(dto);
 
       if (isError(result)) {
         console.error("Error fetching player details for gameweek");

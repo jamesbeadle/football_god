@@ -1,12 +1,12 @@
 <script lang="ts">
   import { LeagueService } from "$lib/services/league-service";
   import { countryStore } from "$lib/stores/country-store";
-  import type { CountryDTO, FootballLeagueDTO, Gender, UpdateLeagueDTO } from "../../../../../../declarations/backend/backend.did";
   import { onMount } from "svelte";
   import { leagueStore } from "$lib/stores/league-store";
   import { getDateFromBigInt } from "$lib/utils/helpers";
   import LocalSpinner from "$lib/components/shared/local-spinner.svelte";
     import Modal from "$lib/components/shared/modal.svelte";
+    import type { CountryDTO, FootballLeagueDTO, Gender, UpdateLeagueDTO } from "../../../../../../declarations/data_canister/data_canister.did";
   
   export let visible: boolean;
   export let closeModal: () => void;

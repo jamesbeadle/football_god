@@ -46,12 +46,6 @@ type UpdateAppStatusDTO =
    onHold: bool;
    version: text;
  };
-type TimerInfo = 
- record {
-   callbackName: text;
-   id: int;
-   triggerTime: int;
- };
 type TeamSelectionOdds = 
  record {
    awayOdds: float64;
@@ -85,11 +79,6 @@ type ShuftiAcceptedResponse =
  record {
    event: text;
    reference: text;
- };
-type ShirtType = 
- variant {
-   Filled;
-   Striped;
  };
 type SetMonthlyBetLimitDTO = 
  record {
@@ -142,12 +131,6 @@ type Selection =
    winnings: float64;
  };
 type SeasonId = nat16;
-type SeasonDTO = 
- record {
-   id: SeasonId;
-   name: text;
-   year: nat16;
- };
 type ScoreSelectionOdds = 
  record {
    awayGoals: nat8;
@@ -162,97 +145,47 @@ type ScoreDetail =
 type Result_9 = 
  variant {
    err: Error;
-   ok: MatchOddsDTO;
+   ok: vec HomePageFixtureDTO;
  };
 type Result_8 = 
  variant {
    err: Error;
-   ok: PlayerDetailDTO;
+   ok: vec DataHashDTO;
  };
 type Result_7 = 
  variant {
    err: Error;
-   ok: ProfileDTO;
+   ok: MatchOddsDTO;
  };
 type Result_6 = 
  variant {
    err: Error;
-   ok: vec SeasonDTO;
+   ok: PlayerDetailDTO;
  };
 type Result_5 = 
  variant {
    err: Error;
-   ok: SystemStateDTO;
+   ok: ProfileDTO;
  };
 type Result_4 = 
  variant {
    err: Error;
-   ok: vec TimerInfo;
+   ok: SystemStateDTO;
  };
 type Result_3 = 
  variant {
    err: Error;
    ok: UserAuditDTO;
  };
-type Result_20 = 
- variant {
-   err: Error;
-   ok: vec BetSlip;
- };
 type Result_2 = 
  variant {
    err: Error;
    ok: bool;
  };
-type Result_19 = 
- variant {
-   err: Error;
-   ok: vec HomePageFixtureDTO;
- };
-type Result_18 = 
- variant {
-   err: Error;
-   ok: vec CountryDTO;
- };
-type Result_17 = 
- variant {
-   err: Error;
-   ok: vec DataHash;
- };
-type Result_16 = 
- variant {
-   err: Error;
-   ok: vec FixtureDTO;
- };
-type Result_15 = 
- variant {
-   err: Error;
-   ok: vec DataHashDTO;
- };
-type Result_14 = 
- variant {
-   err: Error;
-   ok: vec ClubDTO;
- };
-type Result_13 = 
- variant {
-   err: Error;
-   ok: vec PlayerDTO;
- };
-type Result_12 = 
- variant {
-   err: Error;
-   ok: LeagueStatus;
- };
-type Result_11 = 
- variant {
-   err: Error;
-   ok: vec FootballLeagueDTO;
- };
 type Result_10 = 
  variant {
    err: Error;
-   ok: vec LoanedPlayerDTO;
+   ok: vec BetSlip;
  };
 type Result_1 = 
  variant {
@@ -371,23 +304,6 @@ type PlayerDetailDTO =
    valueHistory: vec ValueHistory;
    valueQuarterMillions: nat16;
  };
-type PlayerDTO = 
- record {
-   clubId: ClubId;
-   currentLoanEndDate: int;
-   dateOfBirth: int;
-   firstName: text;
-   id: nat16;
-   lastName: text;
-   leagueId: LeagueId;
-   nationality: CountryId;
-   parentClubId: ClubId;
-   parentLeagueId: LeagueId;
-   position: PlayerPosition;
-   shirtNumber: nat8;
-   status: PlayerStatus;
-   valueQuarterMillions: nat16;
- };
 type PauseAccountDTO = 
  record {
    pauseDays: nat;
@@ -438,39 +354,6 @@ type MatchOddsDTO =
    scoresHatTrick: vec PlayerSelectionOdds;
    yellowCards: vec PlayerSelectionOdds;
  };
-type LoanedPlayerDTO = 
- record {
-   clubId: ClubId;
-   currentLoanEndDate: int;
-   dateOfBirth: int;
-   firstName: text;
-   id: nat16;
-   lastName: text;
-   leagueId: LeagueId;
-   nationality: CountryId;
-   parentClubId: ClubId;
-   parentLeagueId: LeagueId;
-   position: PlayerPosition;
-   shirtNumber: nat8;
-   status: PlayerStatus;
-   valueQuarterMillions: nat16;
- };
-type LeagueStatus = 
- record {
-   activeGameweek: GameweekNumber;
-   activeMonth: CalendarMonth;
-   activeSeasonId: SeasonId;
-   completedGameweek: GameweekNumber;
-   leagueId: LeagueId;
-   seasonActive: bool;
-   totalGameweeks: nat8;
-   transferWindowActive: bool;
-   transferWindowEndDay: nat8;
-   transferWindowEndMonth: nat8;
-   transferWindowStartDay: nat8;
-   transferWindowStartMonth: nat8;
-   unplayedGameweek: GameweekNumber;
- };
 type LeagueId = nat16;
 type InjuryHistory = 
  record {
@@ -499,51 +382,13 @@ type HalfTimeFullTimeOdds =
    secondHalfResult: MatchResult;
  };
 type GetBetsDTO = record {principalId: PrincipalId;};
-type Gender = 
- variant {
-   Female;
-   Male;
- };
 type GameweekNumber = nat8;
 type GameweekFiltersDTO = 
  record {
    gameweek: GameweekNumber;
    seasonId: SeasonId;
  };
-type FootballLeagueDTO = 
- record {
-   abbreviation: text;
-   countryId: CountryId;
-   formed: int;
-   governingBody: text;
-   id: LeagueId;
-   logo: blob;
-   name: text;
-   relatedGender: Gender;
-   teamCount: nat8;
- };
-type FixtureStatusType = 
- variant {
-   Active;
-   Complete;
-   Finalised;
-   Unplayed;
- };
 type FixtureId = nat32;
-type FixtureDTO = 
- record {
-   awayClubId: ClubId;
-   awayGoals: nat8;
-   events: vec PlayerEventData;
-   gameweek: GameweekNumber;
-   highestScoringPlayerId: nat16;
-   homeClubId: ClubId;
-   homeGoals: nat8;
-   id: nat32;
-   kickOff: int;
-   seasonId: SeasonId;
-   status: FixtureStatusType;
- };
 type Error = 
  variant {
    AlreadyExists;
@@ -560,32 +405,10 @@ type DataHashDTO =
    category: text;
    hash: text;
  };
-type DataHash = 
- record {
-   category: text;
-   hash: text;
- };
 type CountryId = nat16;
-type CountryDTO = 
- record {
-   code: text;
-   id: CountryId;
-   name: text;
- };
 type CorrectResultDetail = record {matchResult: MatchResult;};
 type ClubId = nat16;
 type ClubEventDetail = record {clubId: ClubId;};
-type ClubDTO = 
- record {
-   abbreviatedName: text;
-   friendlyName: text;
-   id: ClubId;
-   name: text;
-   primaryColourHex: text;
-   secondaryColourHex: text;
-   shirtType: ShirtType;
-   thirdColourHex: text;
- };
 type Category = 
  variant {
    AnytimeAssist;
@@ -607,7 +430,6 @@ type Category =
    ScoreHatrick;
    YellowCard;
  };
-type CalendarMonth = nat8;
 type BothTeamsToScoreDetail = record {bothTeamsToScore: bool;};
 type BothTeamsToScoreAndWinnerDetail = 
  record {
@@ -662,25 +484,15 @@ service : {
   calculateGameweekScores: (text) -> (Result);
   calculateLeaderboards: (text) -> (Result);
   calculateWeeklyRewards: (text, GameweekNumber) -> (Result);
-  getBets: (GetBetsDTO) -> (Result_20);
-  getBettableHomepageFixtures: (LeagueId) -> (Result_19) query;
-  getCountries: () -> (Result_18) query;
-  getDataHashForCategory: (LeagueId, text) -> (Result_17) composite_query;
-  getDataHashes: () -> (Result_15) composite_query;
-  getFixtures: (LeagueId) -> (Result_16) composite_query;
-  getHashes: () -> (Result_15) query;
-  getLeagueClubs: (LeagueId) -> (Result_14) composite_query;
-  getLeaguePlayers: (LeagueId) -> (Result_13) composite_query;
-  getLeagueStatus: (LeagueId) -> (Result_12) composite_query;
-  getLeagues: () -> (Result_11) composite_query;
-  getLoanedPlayers: (LeagueId) -> (Result_10) composite_query;
-  getMatchOdds: (LeagueId, FixtureId) -> (Result_9) query;
+  getBets: (GetBetsDTO) -> (Result_10);
+  getBettableHomepageFixtures: (LeagueId) -> (Result_9) query;
+  getDataHashes: () -> (Result_8) composite_query;
+  getHashes: () -> (Result_8) query;
+  getMatchOdds: (LeagueId, FixtureId) -> (Result_7) query;
   getPlayerDetailsForGameweek: (LeagueId, GameweekFiltersDTO) ->
-   (Result_8) composite_query;
-  getProfile: () -> (Result_7);
-  getSeasons: (LeagueId) -> (Result_6) composite_query;
-  getSystemState: (text) -> (Result_5) composite_query;
-  getTimers: () -> (Result_4) composite_query;
+   (Result_6) composite_query;
+  getProfile: () -> (Result_5);
+  getSystemState: (text) -> (Result_4) composite_query;
   getUserAudit: (nat) -> (Result_3);
   isAdmin: () -> (Result_2);
   isAuditor: () -> (Result_2);

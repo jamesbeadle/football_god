@@ -1,38 +1,43 @@
 import { ActorFactory } from "../utils/ActorFactory";
 import { isError } from "../utils/helpers";
 import { idlFactory } from "../../../../declarations/backend";
+import { authStore } from "$lib/stores/auth-store";
 import type {
   FixtureDTO,
   MoveFixtureDTO,
   PostponeFixtureDTO,
   SubmitFixtureDataDTO,
-} from "../../../../declarations/backend/backend.did";
-import { authStore } from "$lib/stores/auth-store";
+} from "../../../../declarations/data_canister/data_canister.did";
 
 export class FixtureService {
-  private actor: any;
-
-  constructor() {
-    this.actor = ActorFactory.createActor(
-      idlFactory,
-      process.env.BACKEND_CANISTER_ID,
-    );
-  }
+  constructor() {}
 
   async getFixturesHash(leagueId: number): Promise<string> {
-    const result = await this.actor.getFixturesHash(leagueId);
+    const identityActor: any = await ActorFactory.createIdentityActor(
+      authStore,
+      process.env.DATA_CANISTER_CANISTER_ID ?? "",
+    );
+    const result = await identityActor.getFixturesHash(leagueId);
     if (isError(result)) throw new Error("Failed to fetch fixtures hash");
     return result.ok;
   }
 
   async getPostponedFixtures(): Promise<FixtureDTO[]> {
-    const result = await this.actor.getPostponedFixtures();
+    const identityActor: any = await ActorFactory.createIdentityActor(
+      authStore,
+      process.env.DATA_CANISTER_CANISTER_ID ?? "",
+    );
+    const result = await identityActor.getPostponedFixtures();
     if (isError(result)) throw new Error("Failed to fetch postponed fixtures");
     return result.ok;
   }
 
   async getFixtures(leagueId: number): Promise<FixtureDTO[]> {
-    const result = await this.actor.getFixtures(leagueId);
+    const identityActor: any = await ActorFactory.createIdentityActor(
+      authStore,
+      process.env.DATA_CANISTER_CANISTER_ID ?? "",
+    );
+    const result = await identityActor.getFixtures(leagueId);
     if (isError(result)) throw new Error("Failed to fetch fixtures");
     return result.ok;
   }
@@ -40,7 +45,7 @@ export class FixtureService {
   async moveFixture(dto: MoveFixtureDTO): Promise<void> {
     const identityActor: any = await ActorFactory.createIdentityActor(
       authStore,
-      process.env.BACKEND_CANISTER_ID ?? "",
+      process.env.DATA_CANISTER_CANISTER_ID ?? "",
     );
 
     const result = await identityActor.executeMoveFixture(dto);
@@ -50,7 +55,7 @@ export class FixtureService {
   async postponeFixture(dto: PostponeFixtureDTO): Promise<void> {
     const identityActor: any = await ActorFactory.createIdentityActor(
       authStore,
-      process.env.BACKEND_CANISTER_ID ?? "",
+      process.env.DATA_CANISTER_CANISTER_ID ?? "",
     );
 
     const result = await identityActor.executePostponeFixture(dto);
@@ -60,7 +65,7 @@ export class FixtureService {
   async submitFixtureData(dto: SubmitFixtureDataDTO): Promise<void> {
     const identityActor: any = await ActorFactory.createIdentityActor(
       authStore,
-      process.env.BACKEND_CANISTER_ID ?? "",
+      process.env.DATA_CANISTER_CANISTER_ID ?? "",
     );
 
     const result = await identityActor.executeSubmitFixtureData(dto);

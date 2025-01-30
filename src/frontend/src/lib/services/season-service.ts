@@ -1,20 +1,18 @@
 import { idlFactory } from "../../../../declarations/backend";
 import { ActorFactory } from "$lib/utils/ActorFactory";
 import { isError } from "$lib/utils/helpers";
-import type { SeasonDTO } from "../../../../declarations/backend/backend.did";
+import type { SeasonDTO } from "../../../../declarations/data_canister/data_canister.did";
+import { authStore } from "$lib/stores/auth-store";
 
 export class SeasonService {
-  private actor: any;
-
-  constructor() {
-    this.actor = ActorFactory.createActor(
-      idlFactory,
-      process.env.BACKEND_CANISTER_ID,
-    );
-  }
+  constructor() {}
 
   async getSeasons(leagueId: number): Promise<SeasonDTO[] | undefined> {
-    const result = await this.actor.getSeasons(leagueId);
+    const identityActor: any = await ActorFactory.createIdentityActor(
+      authStore,
+      process.env.DATA_CANISTER_CANISTER_ID ?? "",
+    );
+    const result = await identityActor.getSeasons(leagueId);
     if (isError(result)) throw new Error("Failed to fetch seasons");
     return result.ok;
   }

@@ -2,10 +2,10 @@
   import { onMount } from "svelte";
   import { countryStore } from "$lib/stores/country-store";
   import { leagueStore } from "$lib/stores/league-store";
-  import type { CountryDTO, CreateLeagueDTO, Gender } from "../../../../../../declarations/backend/backend.did";
   
   import Modal from "$lib/components/shared/modal.svelte";
   import LocalSpinner from "$lib/components/shared/local-spinner.svelte";
+    import type { CountryDTO, CreateLeagueDTO, Gender } from "../../../../../../declarations/data_canister/data_canister.did";
   
   export let visible: boolean;
   export let closeModal: () => void;

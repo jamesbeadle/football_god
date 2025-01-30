@@ -4,11 +4,11 @@
   import { fixtureStore } from "$lib/stores/fixture-store";
   //import { governanceStore } from "$lib/stores/governance-store";
   import LocalSpinner from "$lib/components/shared/local-spinner.svelte";
-    import type { ClubDTO, FixtureDTO, FootballLeagueDTO, MoveFixtureDTO } from "../../../../../../declarations/backend/backend.did";
     import { adminStore } from "$lib/stores/admin-store";
     import { leagueStore } from "$lib/stores/league-store";
     import { convertDateTimeInputToUnixNano } from "$lib/utils/helpers";
     import Modal from "$lib/components/shared/modal.svelte";
+    import type { ClubDTO, FixtureDTO, FootballLeagueDTO, MoveFixtureDTO } from "../../../../../../declarations/data_canister/data_canister.did";
 
   export let visible: boolean;
   export let closeModal: () => void;

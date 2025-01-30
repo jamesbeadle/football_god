@@ -38,43 +38,43 @@ import type {
 } from "../../../../declarations/data_canister/data_canister.did";
 import { clubStore } from "./club-store";
 import { leagueStore } from "./league-store";
+import { Principal } from "@dfinity/principal";
+import type { OptionIdentity } from "$lib/types/identity";
 
 function createGovernanceStore() {
   async function revaluePlayerUp(
     leagueId: LeagueId,
-    seasonId: SeasonId,
-    gameweek: GameweekNumber,
     playerId: PlayerId,
   ): Promise<any> {
     try {
       var dto: RevaluePlayerUpDTO = {
         leagueId,
-        seasonId,
-        gameweek,
         playerId,
       };
-
-      const identityActor: any = await ActorFactory.createIdentityActor(
-        authStore,
-        process.env.CANISTER_ID_SNS_GOVERNANCE ?? "",
-      );
-
-      const governanceAgent: HttpAgent = ActorFactory.getAgent(
-        process.env.CANISTER_ID_SNS_GOVERNANCE,
-        identityActor,
-        null,
-      );
 
       const {
         manageNeuron: governanceManageNeuron,
         listNeurons: governanceListNeurons,
       } = SnsGovernanceCanister.create({
-        agent: governanceAgent,
-        canisterId: identityActor,
+        canisterId: Principal.fromText(
+          process.env.SNS_GOVERNANCE_CANISTER_ID ?? "",
+        ),
       });
 
+      let identity: OptionIdentity;
+
+      authStore.subscribe(async (auth) => {
+        identity = auth.identity;
+      });
+
+      if (!identity) {
+        return;
+      }
+
+      let principalId = identity.getPrincipal();
+
       const userNeurons = await governanceListNeurons({
-        principal: identityActor.principal,
+        principal: principalId,
         limit: 10,
         beforeNeuronId: { id: [] },
       });
@@ -128,41 +128,31 @@ function createGovernanceStore() {
     }
   }
 
-  async function revaluePlayerDown(
-    leagueId: LeagueId,
-    seasonId: SeasonId,
-    gameweek: GameweekNumber,
-    playerId: PlayerId,
-  ): Promise<any> {
+  async function revaluePlayerDown(dto: RevaluePlayerUpDTO): Promise<any> {
     try {
-      var dto: RevaluePlayerUpDTO = {
-        leagueId,
-        seasonId,
-        gameweek,
-        playerId,
-      };
-
-      const identityActor: any = await ActorFactory.createIdentityActor(
-        authStore,
-        process.env.CANISTER_ID_SNS_GOVERNANCE ?? "",
-      );
-
-      const governanceAgent: HttpAgent = ActorFactory.getAgent(
-        process.env.CANISTER_ID_SNS_GOVERNANCE,
-        identityActor,
-        null,
-      );
-
       const {
         manageNeuron: governanceManageNeuron,
         listNeurons: governanceListNeurons,
       } = SnsGovernanceCanister.create({
-        agent: governanceAgent,
-        canisterId: identityActor,
+        canisterId: Principal.fromText(
+          process.env.SNS_GOVERNANCE_CANISTER_ID ?? "",
+        ),
       });
 
+      let identity: OptionIdentity;
+
+      authStore.subscribe(async (auth) => {
+        identity = auth.identity;
+      });
+
+      if (!identity) {
+        return;
+      }
+
+      let principalId = identity.getPrincipal();
+
       const userNeurons = await governanceListNeurons({
-        principal: identityActor.principal,
+        principal: principalId,
         limit: 10,
         beforeNeuronId: { id: [] },
       });
@@ -173,12 +163,12 @@ function createGovernanceStore() {
         const payload = encoder.encode(jsonString);
 
         const fn: ExecuteGenericNervousSystemFunction = {
-          function_id: 2000n,
+          function_id: 50000n,
           payload: payload,
         };
 
-        let allPlayers = await playerStore.getPlayers(leagueId);
-        let player = allPlayers.find((x) => x.id == playerId);
+        let allPlayers = await playerStore.getPlayers(dto.leagueId);
+        let player = allPlayers.find((x) => x.id == dto.playerId);
         if (player) {
           const command: Command = {
             MakeProposal: {
@@ -233,11 +223,11 @@ function createGovernanceStore() {
 
       const identityActor: any = await ActorFactory.createIdentityActor(
         authStore,
-        process.env.CANISTER_ID_SNS_GOVERNANCE ?? "",
+        process.env.SNS_GOVERNANCE_CANISTER_ID ?? "",
       );
 
       const governanceAgent: HttpAgent = ActorFactory.getAgent(
-        process.env.CANISTER_ID_SNS_GOVERNANCE,
+        process.env.SNS_GOVERNANCE_CANISTER_ID,
         identityActor,
         null,
       );
@@ -316,11 +306,11 @@ function createGovernanceStore() {
 
       const identityActor: any = await ActorFactory.createIdentityActor(
         authStore,
-        process.env.CANISTER_ID_SNS_GOVERNANCE ?? "",
+        process.env.SNS_GOVERNANCE_CANISTER_ID ?? "",
       );
 
       const governanceAgent: HttpAgent = ActorFactory.getAgent(
-        process.env.CANISTER_ID_SNS_GOVERNANCE,
+        process.env.SNS_GOVERNANCE_CANISTER_ID,
         identityActor,
         null,
       );
@@ -396,11 +386,11 @@ function createGovernanceStore() {
 
       const identityActor: any = await ActorFactory.createIdentityActor(
         authStore,
-        process.env.CANISTER_ID_SNS_GOVERNANCE ?? "",
+        process.env.SNS_GOVERNANCE_CANISTER_ID ?? "",
       );
 
       const governanceAgent: HttpAgent = ActorFactory.getAgent(
-        process.env.CANISTER_ID_SNS_GOVERNANCE,
+        process.env.SNS_GOVERNANCE_CANISTER_ID,
         identityActor,
         null,
       );
@@ -479,11 +469,11 @@ function createGovernanceStore() {
 
       const identityActor: any = await ActorFactory.createIdentityActor(
         authStore,
-        process.env.CANISTER_ID_SNS_GOVERNANCE ?? "",
+        process.env.SNS_GOVERNANCE_CANISTER_ID ?? "",
       );
 
       const governanceAgent: HttpAgent = ActorFactory.getAgent(
-        process.env.CANISTER_ID_SNS_GOVERNANCE,
+        process.env.SNS_GOVERNANCE_CANISTER_ID,
         identityActor,
         null,
       );
@@ -570,11 +560,11 @@ function createGovernanceStore() {
 
       const identityActor: any = await ActorFactory.createIdentityActor(
         authStore,
-        process.env.CANISTER_ID_SNS_GOVERNANCE ?? "",
+        process.env.SNS_GOVERNANCE_CANISTER_ID ?? "",
       );
 
       const governanceAgent: HttpAgent = ActorFactory.getAgent(
-        process.env.CANISTER_ID_SNS_GOVERNANCE,
+        process.env.SNS_GOVERNANCE_CANISTER_ID,
         identityActor,
         null,
       );
@@ -659,11 +649,11 @@ function createGovernanceStore() {
 
       const identityActor: any = await ActorFactory.createIdentityActor(
         authStore,
-        process.env.CANISTER_ID_SNS_GOVERNANCE ?? "",
+        process.env.SNS_GOVERNANCE_CANISTER_ID ?? "",
       );
 
       const governanceAgent: HttpAgent = ActorFactory.getAgent(
-        process.env.CANISTER_ID_SNS_GOVERNANCE,
+        process.env.SNS_GOVERNANCE_CANISTER_ID,
         identityActor,
         null,
       );
@@ -759,11 +749,11 @@ function createGovernanceStore() {
 
       const identityActor: any = await ActorFactory.createIdentityActor(
         authStore,
-        process.env.CANISTER_ID_SNS_GOVERNANCE ?? "",
+        process.env.SNS_GOVERNANCE_CANISTER_ID ?? "",
       );
 
       const governanceAgent: HttpAgent = ActorFactory.getAgent(
-        process.env.CANISTER_ID_SNS_GOVERNANCE,
+        process.env.SNS_GOVERNANCE_CANISTER_ID,
         identityActor,
         null,
       );
@@ -839,11 +829,11 @@ function createGovernanceStore() {
 
       const identityActor: any = await ActorFactory.createIdentityActor(
         authStore,
-        process.env.CANISTER_ID_SNS_GOVERNANCE ?? "",
+        process.env.SNS_GOVERNANCE_CANISTER_ID ?? "",
       );
 
       const governanceAgent: HttpAgent = ActorFactory.getAgent(
-        process.env.CANISTER_ID_SNS_GOVERNANCE,
+        process.env.SNS_GOVERNANCE_CANISTER_ID,
         identityActor,
         null,
       );
@@ -937,11 +927,11 @@ function createGovernanceStore() {
 
       const identityActor: any = await ActorFactory.createIdentityActor(
         authStore,
-        process.env.CANISTER_ID_SNS_GOVERNANCE ?? "",
+        process.env.SNS_GOVERNANCE_CANISTER_ID ?? "",
       );
 
       const governanceAgent: HttpAgent = ActorFactory.getAgent(
-        process.env.CANISTER_ID_SNS_GOVERNANCE,
+        process.env.SNS_GOVERNANCE_CANISTER_ID,
         identityActor,
         null,
       );
@@ -1025,11 +1015,11 @@ function createGovernanceStore() {
 
       const identityActor: any = await ActorFactory.createIdentityActor(
         authStore,
-        process.env.CANISTER_ID_SNS_GOVERNANCE ?? "",
+        process.env.SNS_GOVERNANCE_CANISTER_ID ?? "",
       );
 
       const governanceAgent: HttpAgent = ActorFactory.getAgent(
-        process.env.CANISTER_ID_SNS_GOVERNANCE,
+        process.env.SNS_GOVERNANCE_CANISTER_ID,
         identityActor,
         null,
       );
@@ -1113,11 +1103,11 @@ function createGovernanceStore() {
 
       const identityActor: any = await ActorFactory.createIdentityActor(
         authStore,
-        process.env.CANISTER_ID_SNS_GOVERNANCE ?? "",
+        process.env.SNS_GOVERNANCE_CANISTER_ID ?? "",
       );
 
       const governanceAgent: HttpAgent = ActorFactory.getAgent(
-        process.env.CANISTER_ID_SNS_GOVERNANCE,
+        process.env.SNS_GOVERNANCE_CANISTER_ID,
         identityActor,
         null,
       );
@@ -1199,11 +1189,11 @@ function createGovernanceStore() {
 
       const identityActor: any = await ActorFactory.createIdentityActor(
         authStore,
-        process.env.CANISTER_ID_SNS_GOVERNANCE ?? "",
+        process.env.SNS_GOVERNANCE_CANISTER_ID ?? "",
       );
 
       const governanceAgent: HttpAgent = ActorFactory.getAgent(
-        process.env.CANISTER_ID_SNS_GOVERNANCE,
+        process.env.SNS_GOVERNANCE_CANISTER_ID,
         identityActor,
         null,
       );
@@ -1279,11 +1269,11 @@ function createGovernanceStore() {
 
       const identityActor: any = await ActorFactory.createIdentityActor(
         authStore,
-        process.env.CANISTER_ID_SNS_GOVERNANCE ?? "",
+        process.env.SNS_GOVERNANCE_CANISTER_ID ?? "",
       );
 
       const governanceAgent: HttpAgent = ActorFactory.getAgent(
-        process.env.CANISTER_ID_SNS_GOVERNANCE,
+        process.env.SNS_GOVERNANCE_CANISTER_ID,
         identityActor,
         null,
       );
@@ -1351,11 +1341,11 @@ function createGovernanceStore() {
     try {
       const identityActor: any = await ActorFactory.createIdentityActor(
         authStore,
-        process.env.CANISTER_ID_SNS_GOVERNANCE ?? "",
+        process.env.SNS_GOVERNANCE_CANISTER_ID ?? "",
       );
 
       const governanceAgent: HttpAgent = ActorFactory.getAgent(
-        process.env.CANISTER_ID_SNS_GOVERNANCE,
+        process.env.SNS_GOVERNANCE_CANISTER_ID,
         identityActor,
         null,
       );
@@ -1424,11 +1414,11 @@ function createGovernanceStore() {
 
       const identityActor: any = await ActorFactory.createIdentityActor(
         authStore,
-        process.env.CANISTER_ID_SNS_GOVERNANCE ?? "",
+        process.env.SNS_GOVERNANCE_CANISTER_ID ?? "",
       );
 
       const governanceAgent: HttpAgent = ActorFactory.getAgent(
-        process.env.CANISTER_ID_SNS_GOVERNANCE,
+        process.env.SNS_GOVERNANCE_CANISTER_ID,
         identityActor,
         null,
       );
@@ -1514,11 +1504,11 @@ function createGovernanceStore() {
 
       const identityActor: any = await ActorFactory.createIdentityActor(
         authStore,
-        process.env.CANISTER_ID_SNS_GOVERNANCE ?? "",
+        process.env.SNS_GOVERNANCE_CANISTER_ID ?? "",
       );
 
       const governanceAgent: HttpAgent = ActorFactory.getAgent(
-        process.env.CANISTER_ID_SNS_GOVERNANCE,
+        process.env.SNS_GOVERNANCE_CANISTER_ID,
         identityActor,
         null,
       );

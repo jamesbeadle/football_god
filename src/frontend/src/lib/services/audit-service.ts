@@ -1,5 +1,4 @@
 import { authStore } from "../stores/auth-store";
-import { idlFactory } from "../../../../declarations/backend";
 import { ActorFactory } from "../utils/ActorFactory";
 import { isError } from "../utils/helpers";
 import type { UserAuditDTO } from "../../../../declarations/backend/backend.did";

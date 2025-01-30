@@ -31,23 +31,17 @@
       MissPenaltyOdds,
       OverUnderSelectionOdds,
       HalfTimeFullTimeOdds,
-      ResultAndYesNoSelectionOdds
-    } from "../../../../declarations/backend/backend.did";
-  
-    import type {
+      ResultAndYesNoSelectionOdds,
+
       Category,
-      SelectionDetail,
-      ClubDTO,
-      FixtureDTO,
-      PlayerDTO,
-      FixtureId,
-      LeagueId,
 
-      ClubId
+      SelectionDetail
 
-    } from "../../../../declarations/data_canister/data_canister.did";
+
+    } from "../../../../declarations/backend/backend.did";
     import { betSlipDataStore } from "$lib/stores/bet-slip-data-store";
     import { buildBetUiDescription } from "$lib/utils/buildBetUiDescription";
+    import type { ClubDTO, ClubId, FixtureDTO, PlayerDTO } from "../../../../declarations/data_canister/data_canister.did";
   
     $: leagueId = Number($page.url.searchParams.get("leagueId"));
     $: fixtureId = Number($page.url.searchParams.get("fixtureId"));

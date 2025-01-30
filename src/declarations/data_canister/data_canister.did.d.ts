@@ -22,6 +22,11 @@ export interface ClubFilterDTO {
   leagueId: LeagueId;
 }
 export type ClubId = number;
+export interface CountryDTO {
+  id: CountryId;
+  code: string;
+  name: string;
+}
 export type CountryId = number;
 export interface CreateClubDTO {
   secondaryColourHex: string;
@@ -325,6 +330,7 @@ export type Result = { ok: Array<PlayerDTO> } | { err: Error };
 export type Result_1 = { ok: Array<FixtureDTO> } | { err: Error };
 export type Result_10 = { ok: LeagueStatus } | { err: Error };
 export type Result_11 = { ok: Array<DataHashDTO> } | { err: Error };
+export type Result_12 = { ok: Array<CountryDTO> } | { err: Error };
 export type Result_2 = { ok: Array<ClubDTO> } | { err: Error };
 export type Result_3 = { ok: Array<TimerInfo> } | { err: Error };
 export type Result_4 = { ok: Array<SeasonDTO> } | { err: Error };
@@ -340,14 +346,10 @@ export interface RetirePlayerDTO {
 }
 export interface RevaluePlayerDownDTO {
   playerId: PlayerId;
-  seasonId: SeasonId;
-  gameweek: GameweekNumber;
   leagueId: LeagueId;
 }
 export interface RevaluePlayerUpDTO {
   playerId: PlayerId;
-  seasonId: SeasonId;
-  gameweek: GameweekNumber;
   leagueId: LeagueId;
 }
 export type RustResult = { Ok: string } | { Err: string };
@@ -442,6 +444,7 @@ export interface _SERVICE {
   createLeague: ActorMethod<[CreateLeagueDTO], undefined>;
   createPlayer: ActorMethod<[CreatePlayerDTO], undefined>;
   getClubs: ActorMethod<[LeagueId], Result_2>;
+  getCountries: ActorMethod<[], Result_12>;
   getDataHashes: ActorMethod<[LeagueId], Result_11>;
   getFixtures: ActorMethod<[LeagueId], Result_1>;
   getLeagueStatus: ActorMethod<[LeagueId], Result_10>;

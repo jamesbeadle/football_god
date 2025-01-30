@@ -30,7 +30,7 @@
     isLoading = true;
     const identityActor: any = await ActorFactory.createIdentityActor(
       authStore,
-      process.env.CANISTER_ID_SNS_GOVERNANCE ?? ""
+      process.env.SNS_GOVERNANCE_CANISTER_ID ?? ""
     );
 
     const { listNeurons, registerVote } =

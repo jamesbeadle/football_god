@@ -1,12 +1,10 @@
 <script lang="ts">
   import { onMount } from "svelte";
-  import { clubStore } from "$lib/stores/club-store";
   import { playerStore } from "$lib/stores/player-store";
   //import { governanceStore } from "$lib/stores/governance-store";
   import LocalSpinner from "$lib/components/shared/local-spinner.svelte";
-  import { isError } from "$lib/utils/helpers";
-    import type { ClubDTO, PlayerDTO } from "../../../../../../declarations/backend/backend.did";
     import Modal from "$lib/components/shared/modal.svelte";
+    import type { ClubDTO, PlayerDTO } from "../../../../../../declarations/data_canister/data_canister.did";
 
   export let visible: boolean;
   export let closeModal: () => void;

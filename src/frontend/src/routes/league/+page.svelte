@@ -6,13 +6,11 @@
     import { countryStore } from "$lib/stores/country-store"; 
     import { leagueStore } from "$lib/stores/league-store";
     
-    import type { CountryDTO, FootballLeagueDTO } from "../../../../declarations/backend/backend.did";
-    
     import Layout from "../Layout.svelte";
     import LeagueClubs from "$lib/components/league/league-clubs.svelte";
     import LeagueFixtures from "$lib/components/league/league-fixtures.svelte";
     import FullScreenSpinner from "$lib/components/shared/full-screen-spinner.svelte";
-    import type { LeagueStatus } from "../../../../declarations/data_canister/data_canister.did";
+    import type { CountryDTO, FootballLeagueDTO, LeagueStatus } from "../../../../declarations/data_canister/data_canister.did";
     import LeagueLoanedPlayers from "$lib/components/league/league-loaned-players.svelte";
     
     let isLoading = true;

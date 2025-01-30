@@ -4,19 +4,12 @@ import { ActorFactory } from "../utils/ActorFactory";
 import { isError } from "../utils/helpers";
 import type {
   SystemStateDTO,
-  TimerInfo,
   UpdateAppStatusDTO,
 } from "../../../../declarations/backend/backend.did";
+import type { TimerInfo } from "../../../../declarations/data_canister/data_canister.did";
 
 export class AdminService {
-  private actor: any;
-
-  constructor() {
-    this.actor = ActorFactory.createActor(
-      idlFactory,
-      process.env.BACKEND_CANISTER_ID,
-    );
-  }
+  constructor() {}
 
   async isDataManager(): Promise<boolean> {
     await authStore.sync();
@@ -152,7 +145,12 @@ export class AdminService {
   }
 
   async getTimers(): Promise<TimerInfo[]> {
-    const result = await this.actor.getTimers();
+    const identityActor: any = await ActorFactory.createIdentityActor(
+      authStore,
+      process.env.BACKEND_CANISTER_ID ?? "",
+    );
+
+    const result = await identityActor.getTimers();
     if (isError(result)) throw new Error("Failed to fetch timers");
     return result.ok;
   }

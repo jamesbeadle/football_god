@@ -68,6 +68,12 @@ export const idlFactory = ({ IDL }) => {
     CanisterFull: IDL.Null,
   });
   const Result_2 = IDL.Variant({ ok: IDL.Vec(ClubDTO), err: Error });
+  const CountryDTO = IDL.Record({
+    id: CountryId,
+    code: IDL.Text,
+    name: IDL.Text,
+  });
+  const Result_12 = IDL.Variant({ ok: IDL.Vec(CountryDTO), err: Error });
   const DataHashDTO = IDL.Record({ hash: IDL.Text, category: IDL.Text });
   const Result_11 = IDL.Variant({ ok: IDL.Vec(DataHashDTO), err: Error });
   const FixtureStatusType = IDL.Variant({
@@ -375,14 +381,10 @@ export const idlFactory = ({ IDL }) => {
   });
   const RevaluePlayerDownDTO = IDL.Record({
     playerId: PlayerId,
-    seasonId: SeasonId,
-    gameweek: GameweekNumber,
     leagueId: LeagueId,
   });
   const RevaluePlayerUpDTO = IDL.Record({
     playerId: PlayerId,
-    seasonId: SeasonId,
-    gameweek: GameweekNumber,
     leagueId: LeagueId,
   });
   const SetFreeAgentDTO = IDL.Record({
@@ -459,6 +461,7 @@ export const idlFactory = ({ IDL }) => {
     createLeague: IDL.Func([CreateLeagueDTO], [], []),
     createPlayer: IDL.Func([CreatePlayerDTO], [], []),
     getClubs: IDL.Func([LeagueId], [Result_2], ["query"]),
+    getCountries: IDL.Func([], [Result_12], ["query"]),
     getDataHashes: IDL.Func([LeagueId], [Result_11], ["query"]),
     getFixtures: IDL.Func([LeagueId], [Result_1], ["query"]),
     getLeagueStatus: IDL.Func([LeagueId], [Result_10], ["query"]),

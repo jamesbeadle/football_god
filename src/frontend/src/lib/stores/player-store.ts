@@ -3,7 +3,6 @@ import type {
   PlayerDTO,
   CreatePlayerDTO,
   LeagueId,
-  PlayerId,
   LoanPlayerDTO,
   SetFreeAgentDTO,
   TransferPlayerDTO,

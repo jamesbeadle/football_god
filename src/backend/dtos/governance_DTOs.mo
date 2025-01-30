@@ -8,15 +8,11 @@ module GovernanceDTOs {
   public type RevaluePlayerUpDTO = {
     leagueId: FootballTypes.LeagueId;
     playerId : FootballTypes.PlayerId;
-    seasonId : FootballTypes.SeasonId;
-    gameweek: FootballTypes.GameweekNumber;
   };
 
   public type RevaluePlayerDownDTO = {
     leagueId: FootballTypes.LeagueId;
     playerId : FootballTypes.PlayerId;
-    seasonId : FootballTypes.SeasonId;
-    gameweek: FootballTypes.GameweekNumber;
   };
 
   public type SubmitFixtureDataDTO = {

@@ -686,6 +686,11 @@
       };
     };
 
+    public shared query ( {caller} ) func getCountries() : async Result.Result<[ResponseDTOs.CountryDTO], T.Error> {
+      assert callerAllowed(caller);
+      return #ok(Countries.countries);
+    };  
+
     /* Governance Validation Functions */
 
     /* Player */

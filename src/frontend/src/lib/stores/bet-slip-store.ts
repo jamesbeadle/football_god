@@ -6,7 +6,7 @@ import type { ExtendedSelection } from "$lib/types/extended-selection";
 import type {
   Category,
   SelectionDetail,
-} from "../../../../declarations/data_canister/data_canister.did";
+} from "../../../../declarations/backend/backend.did";
 
 export interface BetSlipState {
   bets: ExtendedSelection[];

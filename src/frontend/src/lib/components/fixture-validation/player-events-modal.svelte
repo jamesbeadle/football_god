@@ -1,9 +1,9 @@
 <script lang="ts">
   import type { Writable } from "svelte/store";
   import { getFlagComponent } from "$lib/utils/helpers";
-  import type { PlayerDTO, PlayerEventData } from "../../../../../declarations/backend/backend.did";
     import { onMount } from "svelte";
     import Modal from "../shared/modal.svelte";
+    import type { PlayerDTO, PlayerEventData } from "../../../../../declarations/data_canister/data_canister.did";
 
   export let visible = false;
   export let player: PlayerDTO;

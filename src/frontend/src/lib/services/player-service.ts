@@ -1,7 +1,4 @@
-import type {
-  PlayerDTO,
-  LeagueId,
-} from "../../../../declarations/backend/backend.did";
+import type { LeagueId } from "../../../../declarations/backend/backend.did";
 import { idlFactory } from "../../../../declarations/backend";
 import { ActorFactory } from "../utils/ActorFactory";
 import { isError } from "../utils/helpers";
@@ -10,6 +7,7 @@ import type {
   CreatePlayerDTO,
   LoanedPlayerDTO,
   LoanPlayerDTO,
+  PlayerDTO,
   PlayerId,
   RecallPlayerDTO,
   SetFreeAgentDTO,
@@ -18,23 +16,25 @@ import type {
 } from "../../../../declarations/data_canister/data_canister.did";
 
 export class PlayerService {
-  private actor: any;
-
-  constructor() {
-    this.actor = ActorFactory.createActor(
-      idlFactory,
-      process.env.BACKEND_CANISTER_ID,
-    );
-  }
+  constructor() {}
 
   async getPlayers(leagueId: LeagueId): Promise<PlayerDTO[]> {
-    const result = await this.actor.getLeaguePlayers(leagueId);
+    const identityActor: any = await ActorFactory.createIdentityActor(
+      authStore,
+      process.env.DATA_CANISTER_CANISTER_ID ?? "",
+    );
+
+    const result = await identityActor.getPlayers(leagueId);
     if (isError(result)) throw new Error("Failed to fetch players");
     return result.ok;
   }
 
   async getLoanedPlayers(leagueId: LeagueId): Promise<LoanedPlayerDTO[]> {
-    const result = await this.actor.getLoanedPlayers(leagueId);
+    const identityActor: any = await ActorFactory.createIdentityActor(
+      authStore,
+      process.env.DATA_CANISTER_CANISTER_ID ?? "",
+    );
+    const result = await identityActor.getLoanedPlayers(leagueId);
     if (isError(result)) throw new Error("Failed to fetch players");
     return result.ok;
   }
@@ -45,7 +45,7 @@ export class PlayerService {
   ): Promise<void> {
     const identityActor: any = await ActorFactory.createIdentityActor(
       authStore,
-      process.env.BACKEND_CANISTER_ID ?? "",
+      process.env.DATA_CANISTER_CANISTER_ID ?? "",
     );
 
     const result = await identityActor.executeTransferPlayer(leagueId, dto);
@@ -55,7 +55,7 @@ export class PlayerService {
   async setFreeAgent(leagueId: number, dto: SetFreeAgentDTO): Promise<void> {
     const identityActor: any = await ActorFactory.createIdentityActor(
       authStore,
-      process.env.BACKEND_CANISTER_ID ?? "",
+      process.env.DATA_CANISTER_CANISTER_ID ?? "",
     );
 
     const result = await identityActor.executeSetFreeAgent(leagueId, dto);
@@ -65,7 +65,7 @@ export class PlayerService {
   async loanPlayer(leagueId: number, dto: LoanPlayerDTO): Promise<void> {
     const identityActor: any = await ActorFactory.createIdentityActor(
       authStore,
-      process.env.BACKEND_CANISTER_ID ?? "",
+      process.env.DATA_CANISTER_CANISTER_ID ?? "",
     );
 
     const result = await identityActor.executeLoanPlayer(leagueId, dto);
@@ -75,7 +75,7 @@ export class PlayerService {
   async createPlayer(leagueId: number, dto: CreatePlayerDTO): Promise<void> {
     const identityActor: any = await ActorFactory.createIdentityActor(
       authStore,
-      process.env.BACKEND_CANISTER_ID ?? "",
+      process.env.DATA_CANISTER_CANISTER_ID ?? "",
     );
 
     const result = await identityActor.executeCreatePlayer(leagueId, dto);
@@ -85,7 +85,7 @@ export class PlayerService {
   async updatePlayer(leagueId: number, dto: UpdatePlayerDTO): Promise<void> {
     const identityActor: any = await ActorFactory.createIdentityActor(
       authStore,
-      process.env.BACKEND_CANISTER_ID ?? "",
+      process.env.DATA_CANISTER_CANISTER_ID ?? "",
     );
 
     const result = await identityActor.executeUpdatePlayer(leagueId, dto);
@@ -95,7 +95,7 @@ export class PlayerService {
   async recallLoan(leagueId: number, dto: RecallPlayerDTO): Promise<void> {
     const identityActor: any = await ActorFactory.createIdentityActor(
       authStore,
-      process.env.BACKEND_CANISTER_ID ?? "",
+      process.env.DATA_CANISTER_CANISTER_ID ?? "",
     );
 
     const result = await identityActor.executeRecallPlayer(dto);

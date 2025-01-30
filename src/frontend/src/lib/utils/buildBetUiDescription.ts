@@ -1,10 +1,12 @@
 import type {
-  SelectionDetail,
-  ScoreDetail,
-  CorrectResultDetail,
-  BothTeamsToScoreDetail,
-  HalfTimeFullTimeResultDetail,
   BothTeamsToScoreAndWinnerDetail,
+  BothTeamsToScoreDetail,
+  CorrectResultDetail,
+  HalfTimeFullTimeResultDetail,
+  ScoreDetail,
+  SelectionDetail,
+} from "../../../../declarations/backend/backend.did";
+import type {
   PlayerDTO,
   ClubDTO,
 } from "../../../../declarations/data_canister/data_canister.did";

@@ -44,7 +44,6 @@ export interface BothTeamsToScoreAndWinnerDetail {
 export interface BothTeamsToScoreDetail {
   bothTeamsToScore: boolean;
 }
-export type CalendarMonth = number;
 export type Category =
   | { MissPenalty: null }
   | { LastAssist: null }
@@ -64,16 +63,6 @@ export type Category =
   | { BothTeamsToScoreAndWinner: null }
   | { FirstGoalscorer: null }
   | { ScoreBrace: null };
-export interface ClubDTO {
-  id: ClubId;
-  secondaryColourHex: string;
-  name: string;
-  friendlyName: string;
-  thirdColourHex: string;
-  abbreviatedName: string;
-  shirtType: ShirtType;
-  primaryColourHex: string;
-}
 export interface ClubEventDetail {
   clubId: ClubId;
 }
@@ -81,16 +70,7 @@ export type ClubId = number;
 export interface CorrectResultDetail {
   matchResult: MatchResult;
 }
-export interface CountryDTO {
-  id: CountryId;
-  code: string;
-  name: string;
-}
 export type CountryId = number;
-export interface DataHash {
-  hash: string;
-  category: string;
-}
 export interface DataHashDTO {
   hash: string;
   category: string;
@@ -104,42 +84,12 @@ export type Error =
   | { AlreadyExists: null }
   | { CanisterCreateError: null }
   | { CanisterFull: null };
-export interface FixtureDTO {
-  id: number;
-  status: FixtureStatusType;
-  highestScoringPlayerId: number;
-  seasonId: SeasonId;
-  awayClubId: ClubId;
-  events: Array<PlayerEventData>;
-  homeClubId: ClubId;
-  kickOff: bigint;
-  homeGoals: number;
-  gameweek: GameweekNumber;
-  awayGoals: number;
-}
 export type FixtureId = number;
-export type FixtureStatusType =
-  | { Unplayed: null }
-  | { Finalised: null }
-  | { Active: null }
-  | { Complete: null };
-export interface FootballLeagueDTO {
-  id: LeagueId;
-  logo: Uint8Array | number[];
-  name: string;
-  teamCount: number;
-  relatedGender: Gender;
-  countryId: CountryId;
-  abbreviation: string;
-  governingBody: string;
-  formed: bigint;
-}
 export interface GameweekFiltersDTO {
   seasonId: SeasonId;
   gameweek: GameweekNumber;
 }
 export type GameweekNumber = number;
-export type Gender = { Male: null } | { Female: null };
 export interface GetBetsDTO {
   principalId: PrincipalId;
 }
@@ -166,37 +116,6 @@ export interface InjuryHistory {
   expectedEndDate: bigint;
 }
 export type LeagueId = number;
-export interface LeagueStatus {
-  transferWindowEndMonth: number;
-  transferWindowEndDay: number;
-  transferWindowStartMonth: number;
-  transferWindowActive: boolean;
-  totalGameweeks: number;
-  completedGameweek: GameweekNumber;
-  transferWindowStartDay: number;
-  unplayedGameweek: GameweekNumber;
-  activeMonth: CalendarMonth;
-  activeSeasonId: SeasonId;
-  activeGameweek: GameweekNumber;
-  leagueId: LeagueId;
-  seasonActive: boolean;
-}
-export interface LoanedPlayerDTO {
-  id: number;
-  status: PlayerStatus;
-  clubId: ClubId;
-  parentClubId: ClubId;
-  valueQuarterMillions: number;
-  dateOfBirth: bigint;
-  nationality: CountryId;
-  currentLoanEndDate: bigint;
-  shirtNumber: number;
-  parentLeagueId: LeagueId;
-  position: PlayerPosition;
-  lastName: string;
-  leagueId: LeagueId;
-  firstName: string;
-}
 export interface MatchOddsDTO {
   fixtureId: FixtureId;
   lastAssist: Array<PlayerSelectionOdds>;
@@ -239,22 +158,6 @@ export interface OverUnderSelectionOdds {
 export interface PauseAccountDTO {
   pauseDays: bigint;
   principalId: PrincipalId;
-}
-export interface PlayerDTO {
-  id: number;
-  status: PlayerStatus;
-  clubId: ClubId;
-  parentClubId: ClubId;
-  valueQuarterMillions: number;
-  dateOfBirth: bigint;
-  nationality: CountryId;
-  currentLoanEndDate: bigint;
-  shirtNumber: number;
-  parentLeagueId: LeagueId;
-  position: PlayerPosition;
-  lastName: string;
-  leagueId: LeagueId;
-  firstName: string;
 }
 export interface PlayerDetailDTO {
   id: PlayerId;
@@ -351,25 +254,15 @@ export interface ResultAndYesNoSelectionOdds {
   isYes: boolean;
 }
 export type Result_1 = { ok: BetSlip } | { err: Error };
-export type Result_10 = { ok: Array<LoanedPlayerDTO> } | { err: Error };
-export type Result_11 = { ok: Array<FootballLeagueDTO> } | { err: Error };
-export type Result_12 = { ok: LeagueStatus } | { err: Error };
-export type Result_13 = { ok: Array<PlayerDTO> } | { err: Error };
-export type Result_14 = { ok: Array<ClubDTO> } | { err: Error };
-export type Result_15 = { ok: Array<DataHashDTO> } | { err: Error };
-export type Result_16 = { ok: Array<FixtureDTO> } | { err: Error };
-export type Result_17 = { ok: Array<DataHash> } | { err: Error };
-export type Result_18 = { ok: Array<CountryDTO> } | { err: Error };
-export type Result_19 = { ok: Array<HomePageFixtureDTO> } | { err: Error };
+export type Result_10 = { ok: Array<BetSlip> } | { err: Error };
 export type Result_2 = { ok: boolean } | { err: Error };
-export type Result_20 = { ok: Array<BetSlip> } | { err: Error };
 export type Result_3 = { ok: UserAuditDTO } | { err: Error };
-export type Result_4 = { ok: Array<TimerInfo> } | { err: Error };
-export type Result_5 = { ok: SystemStateDTO } | { err: Error };
-export type Result_6 = { ok: Array<SeasonDTO> } | { err: Error };
-export type Result_7 = { ok: ProfileDTO } | { err: Error };
-export type Result_8 = { ok: PlayerDetailDTO } | { err: Error };
-export type Result_9 = { ok: MatchOddsDTO } | { err: Error };
+export type Result_4 = { ok: SystemStateDTO } | { err: Error };
+export type Result_5 = { ok: ProfileDTO } | { err: Error };
+export type Result_6 = { ok: PlayerDetailDTO } | { err: Error };
+export type Result_7 = { ok: MatchOddsDTO } | { err: Error };
+export type Result_8 = { ok: Array<DataHashDTO> } | { err: Error };
+export type Result_9 = { ok: Array<HomePageFixtureDTO> } | { err: Error };
 export interface ScoreDetail {
   homeGoals: number;
   awayGoals: number;
@@ -378,11 +271,6 @@ export interface ScoreSelectionOdds {
   odds: number;
   homeGoals: number;
   awayGoals: number;
-}
-export interface SeasonDTO {
-  id: SeasonId;
-  name: string;
-  year: number;
 }
 export type SeasonId = number;
 export interface Selection {
@@ -428,7 +316,6 @@ export interface SetMonthlyBetLimitDTO {
   monthlyBetLimit: bigint;
   principalId: PrincipalId;
 }
-export type ShirtType = { Filled: null } | { Striped: null };
 export interface ShuftiAcceptedResponse {
   reference: string;
   event: string;
@@ -457,11 +344,6 @@ export interface TeamSelectionOdds {
   homeOdds: number;
   drawOdds: number;
   awayOdds: number;
-}
-export interface TimerInfo {
-  id: bigint;
-  callbackName: string;
-  triggerTime: bigint;
 }
 export interface UpdateAppStatusDTO {
   version: string;
@@ -508,27 +390,17 @@ export interface _SERVICE {
   calculateGameweekScores: ActorMethod<[string], Result>;
   calculateLeaderboards: ActorMethod<[string], Result>;
   calculateWeeklyRewards: ActorMethod<[string, GameweekNumber], Result>;
-  getBets: ActorMethod<[GetBetsDTO], Result_20>;
-  getBettableHomepageFixtures: ActorMethod<[LeagueId], Result_19>;
-  getCountries: ActorMethod<[], Result_18>;
-  getDataHashForCategory: ActorMethod<[LeagueId, string], Result_17>;
-  getDataHashes: ActorMethod<[], Result_15>;
-  getFixtures: ActorMethod<[LeagueId], Result_16>;
-  getHashes: ActorMethod<[], Result_15>;
-  getLeagueClubs: ActorMethod<[LeagueId], Result_14>;
-  getLeaguePlayers: ActorMethod<[LeagueId], Result_13>;
-  getLeagueStatus: ActorMethod<[LeagueId], Result_12>;
-  getLeagues: ActorMethod<[], Result_11>;
-  getLoanedPlayers: ActorMethod<[LeagueId], Result_10>;
-  getMatchOdds: ActorMethod<[LeagueId, FixtureId], Result_9>;
+  getBets: ActorMethod<[GetBetsDTO], Result_10>;
+  getBettableHomepageFixtures: ActorMethod<[LeagueId], Result_9>;
+  getDataHashes: ActorMethod<[], Result_8>;
+  getHashes: ActorMethod<[], Result_8>;
+  getMatchOdds: ActorMethod<[LeagueId, FixtureId], Result_7>;
   getPlayerDetailsForGameweek: ActorMethod<
     [LeagueId, GameweekFiltersDTO],
-    Result_8
+    Result_6
   >;
-  getProfile: ActorMethod<[], Result_7>;
-  getSeasons: ActorMethod<[LeagueId], Result_6>;
-  getSystemState: ActorMethod<[string], Result_5>;
-  getTimers: ActorMethod<[], Result_4>;
+  getProfile: ActorMethod<[], Result_5>;
+  getSystemState: ActorMethod<[string], Result_4>;
   getUserAudit: ActorMethod<[bigint], Result_3>;
   isAdmin: ActorMethod<[], Result_2>;
   isAuditor: ActorMethod<[], Result_2>;
