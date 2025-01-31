@@ -17,8 +17,7 @@
     "lint": "prettier --plugin-search-dir . --check . && eslint .",
     "format": "prettier --plugin-search-dir . --write .",
     "prebuild": "npm run generate",
-    "generate": "dfx generate && node ./update.types.mjs && npm run format",
-    "query": "node --loader ts-node/esm src/scripts/query-candid.ts"
+    "generate": "dfx generate && node ./update.types.mjs && npm run format"
   },
   "devDependencies": {
     "@esbuild-plugins/node-modules-polyfill": "^0.2.2",
