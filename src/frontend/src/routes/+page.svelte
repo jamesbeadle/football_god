@@ -38,9 +38,6 @@
   import { betSlipDataStore } from "$lib/stores/bet-slip-data-store";
   import { buildBetUiDescription } from "$lib/utils/buildBetUiDescription";
 
-  import { fixtureWithClubsStore } from "$lib/derived/fixtures-with-clubs.derived";
-  import { derived } from 'svelte/store';
-
   let isLoading = true;
   let isBetSlipExpanded = false;
 
@@ -53,9 +50,7 @@
   let selectedGameweeks: Record<LeagueId, GameweekNumber> = {};
   let leagueTotalGameweeks: Record<LeagueId, number> = {};
 
-  $fixtureWithClubsStore;
   $: selectedBets = $betSlipStore.bets;
-  $: fixturesWithClubs = $fixtureWithClubsStore;
 
   onMount(async () => {
     try {
@@ -87,7 +82,8 @@
       const leagueStatus = await leagueStore.getLeagueStatus(leagueId);
       selectedGameweeks[leagueId] = leagueStatus.unplayedGameweek;
       leagueTotalGameweeks[leagueId] = leagueStatus.totalGameweeks;
-      allBettingFixtures[leagueId] = await bettingStore.getBettableHomepageFixtures(leagueId);
+      const bettingFixtures = await bettingStore.getBettableHomepageFixtures(leagueId);
+      allBettingFixtures[leagueId] = bettingFixtures;
     } catch (error) {
       console.error(`Error fetching data for league ${leagueId}:`, error);
     } finally {
@@ -115,7 +111,7 @@
       loadingFixtures[leagueId] = true;
 
       try {
-        await storeManager.syncStores(leagueId);
+        //await storeManager.syncStores(leagueId);
         await fetchLeagueData(leagueId);
       } catch (error) {
         console.error(`Error while toggling league ${leagueId}:`, error);
@@ -312,7 +308,7 @@
                           <div class="col-span-1 border-r bg-BrandGray border-BrandOddsDivider lg:block"></div>
                         </div>
 
-                        {#each fixturesWithClubs.filter(f => f.leagueId === league.id) as fixture}
+                        {#each leagueFixtures[league.id] as fixture}
                           {@const oddsObj = getOddsForFixture(league.id, fixture.id)}
                           {#if oddsObj}
                             <div class="relative py-2 border-b border-BrandOddsDivider last:border-b-0">
@@ -321,24 +317,24 @@
                                   <div class="flex flex-col px-4 space-y-3 text-md">
                                     <div class="flex items-center space-x-2 md:space-x-3">
                                       <BadgeIcon
-                                        primaryColour={fixture.homeClub?.primaryColourHex}
-                                        secondaryColour={fixture.homeClub?.secondaryColourHex}
-                                        thirdColour={fixture.homeClub?.thirdColourHex}
+                                        primaryColour={leagueClubs[league.id]?.[fixture.homeClubId]?.primaryColourHex}
+                                        secondaryColour={leagueClubs[league.id]?.[fixture.homeClubId]?.secondaryColourHex}
+                                        thirdColour={leagueClubs[league.id]?.[fixture.homeClubId]?.thirdColourHex}
                                         className="flex-shrink-0 w-4 md:w-6"
                                       />
                                       <span class="text-xs truncate md:text-base">
-                                        {fixture.homeClub?.name || "Unknown"}
+                                        {leagueClubs[league.id]?.[fixture.homeClubId]?.name || "Unknown"}
                                       </span>
                                     </div>
                                     <div class="flex items-center space-x-2 md:space-x-3">
                                       <BadgeIcon
-                                        primaryColour={fixture.awayClub?.primaryColourHex}
-                                        secondaryColour={fixture.awayClub?.secondaryColourHex}
-                                        thirdColour={fixture.awayClub?.thirdColourHex}
+                                        primaryColour={leagueClubs[league.id]?.[fixture.awayClubId]?.primaryColourHex}
+                                        secondaryColour={leagueClubs[league.id]?.[fixture.awayClubId]?.secondaryColourHex}
+                                        thirdColour={leagueClubs[league.id]?.[fixture.awayClubId]?.thirdColourHex}
                                         className="flex-shrink-0 w-4 md:w-6"
                                       />
                                       <span class="text-xs truncate md:text-base">
-                                        {fixture.awayClub?.name || "Unknown"}
+                                        {leagueClubs[league.id]?.[fixture.awayClubId]?.name || "Unknown"}
                                       </span>
                                     </div>
 
@@ -460,7 +456,14 @@
       <div class="hidden lg:block lg:sticky lg:top-4">
         <Betslip
           leagueData={leagues.reduce((acc, league) => ({...acc, [league.id]: league}), {})}
-          fixtureData={fixturesWithClubs.reduce((acc, fixture) => ({...acc, [fixture.id]: fixture}), {})}
+          fixtureData={Object.entries(leagueFixtures).reduce((acc, [leagueId, fixtures]) => ({
+            ...acc,
+            ...fixtures.reduce((facc, fixture) => ({
+              ...facc,
+              [fixture.id]: { ...fixture, leagueId: Number(leagueId) }
+            }), {})
+          }), {})}
+          clubsData={leagueClubs}
         />
       </div>
 
@@ -489,7 +492,14 @@
           <Betslip 
             bind:isExpanded={isBetSlipExpanded}
             leagueData={leagues.reduce((acc, league) => ({...acc, [league.id]: league}), {})}
-            fixtureData={fixturesWithClubs.reduce((acc, fixture) => ({...acc, [fixture.id]: fixture}), {})}
+            fixtureData={Object.entries(leagueFixtures).reduce((acc, [leagueId, fixtures]) => ({
+              ...acc,
+              ...fixtures.reduce((facc, fixture) => ({
+                ...facc,
+                [fixture.id]: { ...fixture, leagueId: Number(leagueId) }
+              }), {})
+            }), {})}
+            clubsData={leagueClubs}
           />
         </div>
       {/if}

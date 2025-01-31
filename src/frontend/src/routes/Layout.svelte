@@ -29,10 +29,6 @@
   const init = async () => {
     await Promise.all([syncAuthStore()]);
     worker = await initAuthWorker();
-<<<<<<< HEAD
-    //await userStore.sync();
-=======
->>>>>>> master
   };
 
   onMount(async () => {

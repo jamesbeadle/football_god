@@ -36,8 +36,7 @@
       Category,
       SelectionDetail
     } from "../../../../declarations/backend/backend.did";
-    import { fixtureWithClubsStore } from "$lib/derived/fixtures-with-clubs.derived";
-    import type { FixtureWithClubs } from "$lib/derived/fixtures-with-clubs.derived";
+
     import { betSlipDataStore } from "$lib/stores/bet-slip-data-store";
     import { buildBetUiDescription } from "$lib/utils/buildBetUiDescription";
     import type { ClubDTO, ClubId, FixtureDTO, PlayerDTO, FootballLeagueDTO } from "../../../../declarations/data_canister/data_canister.did";
@@ -56,6 +55,8 @@
     let fixture: FixtureDTO;
     let homeClub: ClubDTO;
     let awayClub: ClubDTO;
+    let allFixturesData: FixtureDTO[] = [];
+    let allClubsData: Record<number, Record<number, ClubDTO>> = {};
     
     const categoryGroups = {
       Goals: ["goalsOverUnder", "correctScores", "halfTimeScores"],
@@ -79,7 +80,6 @@
     } as const;
   
     const tabs = ["All", "Goals", "Player", "Team", "Half Time"];
-    const allFixturesData: Record<number, FixtureWithClubs> = {};
   
     let expandedCategories = {
       anytimeAssist: false,
@@ -126,9 +126,7 @@
             : categoryGroups[activeTab as keyof typeof categoryGroups]) as readonly (keyof MatchOddsDTO)[]
         : [];
 
-  
-    $: currentFixture = $fixtureWithClubsStore.find(f => f.id === fixtureId);
-    $: homeClub = currentFixture?.homeClub ?? {
+    $: homeClub = homeClub ?? {
       id: 0,
       name: "Unknown",
       friendlyName: "Unknown",
@@ -139,7 +137,7 @@
       shirtType: { Filled: null },
       status: { Active: null }
     };
-    $: awayClub = currentFixture?.awayClub ?? {
+    $: awayClub = awayClub ?? {
       id: 0,
       name: "Unknown", 
       friendlyName: "Unknown",
@@ -154,49 +152,46 @@
     onMount(async () => {
       try {
         const existingBets = $betSlipStore.bets;
-        const toggledLeagues = new Set<number>();
-        const toggledFixtures = new Set<number>();
-      
-        await storeManager.syncStores(leagueId);
-        toggledLeagues.add(leagueId);
-
         if (existingBets.length > 0) {
           for (const bet of existingBets) {
-            if (!toggledLeagues.has(bet.leagueId) || !toggledFixtures.has(bet.fixtureId)) {
-              await storeManager.syncStores(bet.leagueId);
-              toggledLeagues.add(bet.leagueId);
-              toggledFixtures.add(bet.fixtureId);
-              const betFixtures = $fixtureStore[bet.leagueId] || [];
-              const betClubs = $clubStore[bet.leagueId] || [];
-              const betFixture = betFixtures.find(f => f.id === bet.fixtureId);
-              if (betFixture) {
-                const betHomeClub = betClubs.find(c => c.id === betFixture.homeClubId);
-                const betAwayClub = betClubs.find(c => c.id === betFixture.awayClubId);
-                allFixturesData[betFixture.id] = {
-                  ...betFixture,
-                  leagueId: bet.leagueId,
-                  homeClub: betHomeClub,
-                  awayClub: betAwayClub
-                };
-              }
+            if (bet.leagueId !== leagueId) {
+              
+              const betFixtures = await fixtureStore.getFixtures(bet.leagueId);
+              const betClubs = await clubStore.getClubs(bet.leagueId);
+              
+              allClubsData[bet.leagueId] = {};
+              betClubs.forEach((club: ClubDTO) => {
+                allClubsData[bet.leagueId][club.id] = club;
+              });
+              
+              allFixturesData = [
+                ...allFixturesData,
+                ...betFixtures.map(f => ({ ...f, leagueId: bet.leagueId }))
+              ];
             }
           }
         }
 
-        const fixtures = $fixtureStore[leagueId] || [];
-        const clubs = $clubStore[leagueId] || [];
-        players = $playerStore[leagueId] || [];
+        const fixtures = await fixtureStore.getFixtures(leagueId);
+        const clubsData = await clubStore.getClubs(leagueId);
+        
+        allClubsData[leagueId] = {};
+        clubsData.forEach((club: ClubDTO) => {
+          allClubsData[leagueId][club.id] = club;
+        });
 
         fixture = fixtures.find((x) => x.id === fixtureId)!;
+        homeClub = clubsData.find((x: ClubDTO) => x.id === fixture.homeClubId)!;
+        awayClub = clubsData.find((x: ClubDTO) => x.id === fixture.awayClubId)!;
+        
+        allFixturesData = [
+          ...allFixturesData,
+          ...fixtures.map(f => ({ ...f, leagueId }))
+        ];
+
         league = leagueStore.getLeagueById(leagueId);
-        
-        homeClub = clubs.find((x) => x.id === fixture.homeClubId)!;
-        awayClub = clubs.find((x) => x.id === fixture.awayClubId)!;
-
-        
-
+        players = await playerStore.getPlayers(leagueId);
         matchOdds = await bettingStore.getMatchOdds(leagueId, fixtureId);
-        
       } catch (error) {
         console.error(error);
       } finally {
@@ -1265,19 +1260,16 @@
       <div class="flex-shrink-0 lg:ml-4 lg:w-80">
         <div class="hidden lg:block lg:sticky lg:top-4">
           {#if league && fixture}
-            <!-- Verify league data has name -->
-            {console.log('League data for betslip:', $leagueStore[leagueId])}
             <Betslip
+              bind:isExpanded={isBetSlipExpanded}
               leagueData={{ [leagueId]: league }}
               fixtureData={{
-                ...allFixturesData,
-                [fixture.id]: {
-                  ...fixture,
-                  leagueId: leagueId,
-                  homeClub,
-                  awayClub
-                }
+                ...allFixturesData.reduce((acc, f) => ({
+                  ...acc,
+                  [f.id]: f
+                }), {})
               }}
+              clubsData={allClubsData}
             />
           {/if}
         </div>
@@ -1309,14 +1301,12 @@
                 bind:isExpanded={isBetSlipExpanded}
                 leagueData={{ [leagueId]: league }}
                 fixtureData={{
-                  ...allFixturesData,
-                  [fixture.id]: {
-                    ...fixture,
-                    leagueId: leagueId,
-                    homeClub,
-                    awayClub
-                  }
+                  ...allFixturesData.reduce((acc, f) => ({
+                    ...acc,
+                    [f.id]: f
+                  }), {})
                 }}
+                clubsData={allClubsData}
               />
             {/if}
           </div>

@@ -2,18 +2,21 @@
   import OpenFPLIcon from "../../icons/OpenFPLIcon.svelte";
   import EmptyBetSlipIcon from "$lib/icons/EmptyBetSlipIcon.svelte";
   import type { FootballLeagueDTO } from "../../../../../declarations/data_canister/data_canister.did";
-  import type { FixtureWithClubs } from "$lib/derived/fixtures-with-clubs.derived";
+  import type { FixtureDTO, ClubDTO } from "../../../../../declarations/data_canister/data_canister.did";
 
   import { betSlipStore } from "$lib/stores/bet-slip-store";
   import { availableMultiplesStore, calculateMultipleOdds, calculateMultipleOddsForType } from "$lib/derived/bets.derived";
   import BetPlaceholder from "./bet-placeholder.svelte";
 
+  interface ExtendedFixtureDTO extends FixtureDTO {
+    leagueId: number;
+  }
+
   export let isExpanded: boolean = false;
   export let leagueData: Record<number, FootballLeagueDTO>;
-  export let fixtureData: Record<number, FixtureWithClubs>;
-
-  $: console.log("Betslip received:", { leagueData, fixtureData });
-
+  export let fixtureData: Record<number, ExtendedFixtureDTO>;
+  export let clubsData: Record<number, Record<number, ClubDTO>>;
+  
   let showPlaceBet = false;
 
   $: rawSlipState = $betSlipStore;
@@ -108,9 +111,13 @@
     return {
       leagueName: league?.name || `League ${bet.leagueId}`,
       fixtureDetails: fixture ? 
-        `${fixture.homeClub?.name || "Unknown"} vs ${fixture.awayClub?.name || "Unknown"}` : 
+        `${getClub(fixture.leagueId, fixture.homeClubId)?.name ?? 'Unknown'} vs ${getClub(fixture.leagueId, fixture.awayClubId)?.name ?? 'Unknown'}` : 
         `Fixture ${bet.fixtureId}`
     };
+  }
+
+  function getClub(leagueId: number, clubId: number): ClubDTO | undefined {
+    return clubsData[leagueId]?.[clubId];
   }
 </script>
 

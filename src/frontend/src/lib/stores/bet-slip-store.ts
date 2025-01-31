@@ -4,7 +4,6 @@ import { replacer } from "$lib/utils/helpers";
 import { clubStore } from "./club-store";
 import { leagueStore } from "./league-store";
 import { fixtureStore } from "./fixture-store";
-import { fixtureWithClubsStore } from "$lib/derived/fixtures-with-clubs.derived";
 
 import type { ExtendedSelection } from "$lib/types/extended-selection";
 import type {
@@ -24,18 +23,8 @@ const STORAGE_KEY = "global-bet-slip-state";
 
 async function loadFixtureData(leagueId: number, fixtureId: number) {
   try {
-    // First try to get fixture with clubs from the derived store
-    const fixtureWithClubs = get(fixtureWithClubsStore).find(f => f.id === fixtureId);
-    if (fixtureWithClubs) {
-      return {
-        fixture: fixtureWithClubs,
-        league: await leagueStore.getLeagueById(leagueId)
-      };
-    }
-
-    // If not in derived store, get fixtures and clubs separately
     const fixtures = await fixtureStore.getFixtures(leagueId);
-    const fixture = fixtures.find(f => f.id === fixtureId);
+    const fixture = fixtures.find((f) => f.id === fixtureId);
     if (!fixture) return null;
 
     const clubs = await clubStore.getClubs(leagueId);
@@ -46,12 +35,12 @@ async function loadFixtureData(leagueId: number, fixtureId: number) {
       fixture: {
         ...fixture,
         homeClub,
-        awayClub
+        awayClub,
       },
-      league: await leagueStore.getLeagueById(leagueId)
+      league: leagueStore.getLeagueById(leagueId),
     };
   } catch (error) {
-    console.error('Error loading fixture data:', error);
+    console.error("Error loading fixture data:", error);
     return null;
   }
 }

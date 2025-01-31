@@ -1,31 +1,16 @@
 import { writable } from "svelte/store";
 import { FixtureService } from "../services/fixture-service";
-import { DataHashService } from "../services/data-hash-service";
-import { serializeData, deserializeData } from "../utils/helpers";
-import { MAX_CACHED_LEAGUES } from "../constants/app.constants";
 import type {
-  ClubDTO,
   FixtureDTO,
   MoveFixtureDTO,
   PostponeFixtureDTO,
   SubmitFixtureDataDTO,
 } from "../../../../declarations/data_canister/data_canister.did";
-import { dev } from '$app/environment';
-import { mockData } from "../local/mock-data";
 
 function createFixtureStore() {
   const { subscribe, update } = writable<Record<number, FixtureDTO[]>>({});
 
   async function getFixtures(leagueId: number): Promise<FixtureDTO[]> {
-    
-    const cached = localStorage.getItem(`fixtures_${leagueId}`);
-    if (cached) {
-      return deserializeData(cached) as FixtureDTO[];
-    }
-    if (dev) {
-      const fixtureData = mockData.fixtures[leagueId];
-      return fixtureData?.ok || fixtureData as FixtureDTO[];
-    }
     return new FixtureService().getFixtures(leagueId);
   }
 

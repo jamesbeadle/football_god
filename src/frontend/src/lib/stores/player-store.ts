@@ -10,25 +10,11 @@ import type {
   RecallPlayerDTO,
 } from "../../../../declarations/data_canister/data_canister.did";
 import { PlayerService } from "../services/player-service";
-import { DataHashService } from "../services/data-hash-service";
-import { serializeData, deserializeData } from "../utils/helpers";
-import { MAX_CACHED_LEAGUES } from "../constants/app.constants";
-import { dev } from '$app/environment';
-import { mockData } from "../local/mock-data";
 
 function createPlayerStore() {
   const { subscribe, update } = writable<Record<number, PlayerDTO[]>>({});
 
   async function getPlayers(leagueId: LeagueId) {
-
-    const cached = localStorage.getItem(`players_${leagueId}`);
-    if (cached) {
-      return deserializeData(cached) as PlayerDTO[];
-    }
-    if (dev) {
-      const playersData = mockData.players[leagueId];
-      return playersData?.ok;
-    }
     return new PlayerService().getPlayers(leagueId);
   }
 
