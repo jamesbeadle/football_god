@@ -4727,7 +4727,7 @@ const options = {
 		<div class="error">
 			<span class="status">` + status + '</span>\n			<div class="message">\n				<h1>' + message + "</h1>\n			</div>\n		</div>\n	</body>\n</html>\n"
   },
-  version_hash: "1imhpi4"
+  version_hash: "17arh9z"
 };
 async function get_hooks() {
   return {};
@@ -5366,8 +5366,8 @@ const idlFactory$1 = ({ IDL: IDL2 }) => {
     )
   });
 };
-var define_process_env_default$6 = { BACKEND_CANISTER_ID: "44kin-waaaa-aaaal-qbxra-cai", FRONTEND_CANISTER_ID: "43loz-3yaaa-aaaal-qbxrq-cai", DATA_CANISTER_CANISTER_ID: "52fzd-2aaaa-aaaal-qmzsa-cai", DFX_NETWORK: "ic", SNS_GOVERNANCE_CANISTER_ID: "detjl-sqaaa-aaaaq-aacqa-cai", DATA_CANISTER_ID: "52fzd-2aaaa-aaaal-qmzsa-cai" };
-const canisterId$1 = define_process_env_default$6.CANISTER_ID_BACKEND;
+var define_process_env_default$7 = { BACKEND_CANISTER_ID: "44kin-waaaa-aaaal-qbxra-cai", FRONTEND_CANISTER_ID: "43loz-3yaaa-aaaal-qbxrq-cai", DATA_CANISTER_CANISTER_ID: "52fzd-2aaaa-aaaal-qmzsa-cai", DFX_NETWORK: "ic", SNS_GOVERNANCE_CANISTER_ID: "detjl-sqaaa-aaaaq-aacqa-cai", DATA_CANISTER_ID: "52fzd-2aaaa-aaaal-qmzsa-cai" };
+const canisterId$1 = define_process_env_default$7.CANISTER_ID_BACKEND;
 const createActor$1 = (canisterId2, options2 = {}) => {
   const agent = options2.agent || new HttpAgent({ ...options2.agentOptions });
   if (options2.agent && options2.agentOptions) {
@@ -5938,8 +5938,8 @@ const idlFactory = ({ IDL: IDL2 }) => {
     validateUpdatePlayer: IDL2.Func([UpdatePlayerDTO], [RustResult], [])
   });
 };
-var define_process_env_default$5 = { BACKEND_CANISTER_ID: "44kin-waaaa-aaaal-qbxra-cai", FRONTEND_CANISTER_ID: "43loz-3yaaa-aaaal-qbxrq-cai", DATA_CANISTER_CANISTER_ID: "52fzd-2aaaa-aaaal-qmzsa-cai", DFX_NETWORK: "ic", SNS_GOVERNANCE_CANISTER_ID: "detjl-sqaaa-aaaaq-aacqa-cai", DATA_CANISTER_ID: "52fzd-2aaaa-aaaal-qmzsa-cai" };
-const canisterId = define_process_env_default$5.CANISTER_ID_DATA_CANISTER;
+var define_process_env_default$6 = { BACKEND_CANISTER_ID: "44kin-waaaa-aaaal-qbxra-cai", FRONTEND_CANISTER_ID: "43loz-3yaaa-aaaal-qbxrq-cai", DATA_CANISTER_CANISTER_ID: "52fzd-2aaaa-aaaal-qmzsa-cai", DFX_NETWORK: "ic", SNS_GOVERNANCE_CANISTER_ID: "detjl-sqaaa-aaaaq-aacqa-cai", DATA_CANISTER_ID: "52fzd-2aaaa-aaaal-qmzsa-cai" };
+const canisterId = define_process_env_default$6.CANISTER_ID_DATA_CANISTER;
 const createActor = (canisterId2, options2 = {}) => {
   const agent = options2.agent || new HttpAgent({ ...options2.agentOptions });
   if (options2.agent && options2.agentOptions) {
@@ -6366,6 +6366,45 @@ function Modal($$payload, $$props) {
   bind_props($$props, { showModal, onClose });
   pop();
 }
+var define_process_env_default$5 = { BACKEND_CANISTER_ID: "44kin-waaaa-aaaal-qbxra-cai", FRONTEND_CANISTER_ID: "43loz-3yaaa-aaaal-qbxrq-cai", DATA_CANISTER_CANISTER_ID: "52fzd-2aaaa-aaaal-qmzsa-cai", DFX_NETWORK: "ic", SNS_GOVERNANCE_CANISTER_ID: "detjl-sqaaa-aaaaq-aacqa-cai", DATA_CANISTER_ID: "52fzd-2aaaa-aaaal-qmzsa-cai" };
+class LeagueService {
+  constructor() {
+  }
+  async getLeagues() {
+    const identityActor = await ActorFactory.createDataCanisterIdentityActor(
+      authStore,
+      define_process_env_default$5.DATA_CANISTER_CANISTER_ID
+    );
+    const result = await identityActor.getLeagues();
+    if (isError(result)) throw new Error("Failed to fetch leagues");
+    return result.ok;
+  }
+  async createLeague(dto) {
+    const identityActor = await ActorFactory.createDataCanisterIdentityActor(
+      authStore,
+      define_process_env_default$5.DATA_CANISTER_CANISTER_ID
+    );
+    const result = await identityActor.executeCreateLeague(dto);
+    if (isError(result)) throw new Error("Failed to create league");
+  }
+  async updateLeague(dto) {
+    const identityActor = await ActorFactory.createDataCanisterIdentityActor(
+      authStore,
+      define_process_env_default$5.BACKEND_CANISTER_ID
+    );
+    const result = await identityActor.executeUpdateLeague(dto);
+    if (isError(result)) throw new Error("Failed to update league");
+  }
+  async getLeagueStatus(leagueId) {
+    const identityActor = await ActorFactory.createDataCanisterIdentityActor(
+      authStore,
+      define_process_env_default$5.DATA_CANISTER_CANISTER_ID
+    );
+    const result = await identityActor.getLeagueStatus(leagueId);
+    if (isError(result)) throw new Error("Failed to fetch league status");
+    return result.ok;
+  }
+}
 var define_process_env_default$4 = { BACKEND_CANISTER_ID: "44kin-waaaa-aaaal-qbxra-cai", FRONTEND_CANISTER_ID: "43loz-3yaaa-aaaal-qbxrq-cai", DATA_CANISTER_CANISTER_ID: "52fzd-2aaaa-aaaal-qmzsa-cai", DFX_NETWORK: "ic", SNS_GOVERNANCE_CANISTER_ID: "detjl-sqaaa-aaaaq-aacqa-cai", DATA_CANISTER_ID: "52fzd-2aaaa-aaaal-qmzsa-cai" };
 class DataHashService {
   constructor() {
@@ -6407,6 +6446,185 @@ class DataHashService {
     }
   }
 }
+function createLeagueStore() {
+  const { subscribe, update } = writable({});
+  const { subscribe: subscribeLeagueStatus, update: updateLeagueStatus } = writable({});
+  let leagueCacheOrder = [];
+  async function syncLeagues(toggledLeagueId) {
+    try {
+      const localHashKey = "leagues_hash";
+      const localLeaguesKey = "leagues";
+      const localHash = localStorage.getItem(localHashKey);
+      const leagueHash = await new DataHashService().getLeaguesHash();
+      let leagues;
+      if (!localHash || leagueHash !== localHash) {
+        leagues = await getLeagues();
+        localStorage.setItem(localLeaguesKey, serializeData(leagues));
+        localStorage.setItem(localHashKey, leagueHash || "");
+      } else {
+        const cached = localStorage.getItem(localLeaguesKey);
+        if (cached) {
+          const cachedLeagues = deserializeData(cached);
+          const serverLeagues = await getLeagues();
+          const cachedLeagueMap = new Map(
+            cachedLeagues.map((league) => [league.id, league])
+          );
+          serverLeagues.forEach((serverLeague) => {
+            cachedLeagueMap.set(serverLeague.id, serverLeague);
+          });
+          leagues = Array.from(
+            new Map(
+              serverLeagues.map((league) => [league.id, league])
+            ).values()
+          );
+        } else {
+          leagues = await getLeagues();
+          localStorage.setItem(localLeaguesKey, serializeData(leagues));
+        }
+      }
+      if (toggledLeagueId !== void 0) {
+        if (!leagueCacheOrder.includes(toggledLeagueId)) {
+          leagueCacheOrder.push(toggledLeagueId);
+        } else {
+          leagueCacheOrder = leagueCacheOrder.filter(
+            (id) => id !== toggledLeagueId
+          );
+          leagueCacheOrder.push(toggledLeagueId);
+        }
+      }
+      const excessLeagues = leagueCacheOrder.slice(
+        0,
+        leagueCacheOrder.length - MAX_CACHED_LEAGUES
+      );
+      const filteredLeagues = leagueCacheOrder.slice(-MAX_CACHED_LEAGUES).map((id) => leagues.find((league) => league.id === id)).filter((league) => league !== void 0);
+      localStorage.setItem(localLeaguesKey, serializeData(filteredLeagues));
+      excessLeagues.forEach((excessLeagueId) => {
+        leagueCacheOrder = leagueCacheOrder.filter(
+          (id) => id !== excessLeagueId
+        );
+      });
+      update(
+        (current) => filteredLeagues.reduce(
+          (acc, league) => {
+            acc[league.id] = league;
+            return acc;
+          },
+          {}
+        )
+      );
+    } catch (error) {
+      console.error("Error syncing leagues:", error);
+      const cached = localStorage.getItem("leagues");
+      if (cached) {
+        const leagues = deserializeData(cached);
+        update(
+          (current) => leagues.reduce(
+            (acc, league) => {
+              acc[league.id] = league;
+              return acc;
+            },
+            {}
+          )
+        );
+      }
+    }
+  }
+  async function syncLeagueStatus(leagueId) {
+    try {
+      const localHashKey = `league_status_hash_${leagueId}`;
+      const localLeagueStatusKey = `league_status_${leagueId}`;
+      const localHash = localStorage.getItem(localHashKey);
+      const leagueStatusHash = await new DataHashService().getCategoryHash(
+        "league_status",
+        leagueId
+      );
+      let leagueStatus;
+      if (!localHash || leagueStatusHash !== localHash) {
+        leagueStatus = await getLeagueStatus(leagueId);
+        localStorage.setItem(localLeagueStatusKey, serializeData(leagueStatus));
+        localStorage.setItem(localHashKey, leagueStatusHash || "");
+      } else {
+        const cached = localStorage.getItem(localLeagueStatusKey);
+        if (cached) {
+          leagueStatus = deserializeData(cached);
+        } else {
+          leagueStatus = await getLeagueStatus(leagueId);
+          localStorage.setItem(
+            localLeagueStatusKey,
+            serializeData(leagueStatus)
+          );
+        }
+      }
+      let currentStatuses = {};
+      const unsubscribe = subscribeLeagueStatus((value) => {
+        currentStatuses = value;
+      });
+      unsubscribe();
+      updateLeagueStatus((currentStatuses2) => ({
+        ...currentStatuses2,
+        [leagueId]: leagueStatus
+      }));
+      if (!leagueCacheOrder.includes(leagueId)) {
+        leagueCacheOrder.push(leagueId);
+      } else {
+        leagueCacheOrder = leagueCacheOrder.filter((id) => id !== leagueId);
+        leagueCacheOrder.push(leagueId);
+      }
+      if (leagueCacheOrder.length > MAX_CACHED_LEAGUES) {
+        const leastUsedLeagueId = leagueCacheOrder.shift();
+        if (leastUsedLeagueId !== void 0) {
+          localStorage.removeItem(`league_status_${leastUsedLeagueId}`);
+          localStorage.removeItem(`league_status_hash_${leastUsedLeagueId}`);
+        }
+      }
+    } catch (error) {
+      console.error(
+        `Error syncing league status for league ${leagueId}:`,
+        error
+      );
+      const cached = localStorage.getItem(`league_status_${leagueId}`);
+      if (cached) {
+        const leagueStatus = deserializeData(cached);
+        updateLeagueStatus((currentStatuses) => ({
+          ...currentStatuses,
+          [leagueId]: leagueStatus
+        }));
+      }
+    }
+  }
+  async function getLeagues() {
+    return new LeagueService().getLeagues();
+  }
+  async function createLeague(dto) {
+    return new LeagueService().createLeague(dto);
+  }
+  async function updateLeague(dto) {
+    return new LeagueService().updateLeague(dto);
+  }
+  async function getLeagueStatus(leagueId) {
+    return new LeagueService().getLeagueStatus(leagueId);
+  }
+  function getLeagueById(leagueId) {
+    let data = {};
+    const unsubscribe = subscribe((value) => {
+      data = value;
+    });
+    unsubscribe();
+    return data[leagueId];
+  }
+  return {
+    subscribe,
+    syncLeagues,
+    getLeagues,
+    createLeague,
+    updateLeague,
+    getLeagueStatus,
+    getLeagueById,
+    syncLeagueStatus,
+    subscribeLeagueStatus
+  };
+}
+const leagueStore = createLeagueStore();
 var define_process_env_default$3 = { BACKEND_CANISTER_ID: "44kin-waaaa-aaaal-qbxra-cai", FRONTEND_CANISTER_ID: "43loz-3yaaa-aaaal-qbxrq-cai", DATA_CANISTER_CANISTER_ID: "52fzd-2aaaa-aaaal-qmzsa-cai", DFX_NETWORK: "ic", SNS_GOVERNANCE_CANISTER_ID: "detjl-sqaaa-aaaaq-aacqa-cai", DATA_CANISTER_ID: "52fzd-2aaaa-aaaal-qmzsa-cai" };
 class PlayerService {
   constructor() {
@@ -6594,6 +6812,14 @@ function buildLoanPlayerText(playerName, currentClubName, loanClubName, loanEndD
 Description: Loan ${playerName} from ${currentClubName} to ${loanClubName} until ${loanEndDateString}.`
   };
 }
+function buildTransferPlayerText(playerName, currentClubName, currentLeagueName, transferClubName, transferLeagueName, newValue) {
+  return {
+    title: `Transfer ${playerName} from ${currentClubName} to ${transferClubName}`,
+    summary: `Transfer ${playerName} from ${currentClubName} (${currentLeagueName}) to ${transferClubName} (${transferLeagueName}).
+
+Description: Transfer ${playerName} from ${currentClubName} (${currentLeagueName}) to ${transferClubName} (${transferLeagueName}) with a value of £${newValue}m.`
+  };
+}
 const RevaluePlayerUpDTO_Idl = IDL.Record({
   leagueId: IDL.Nat16,
   playerId: IDL.Nat16
@@ -6609,7 +6835,7 @@ const LoanPlayerDTO_Idl = IDL.Record({
   loanClubId: IDL.Nat16,
   loanEndDate: IDL.Int
 });
-IDL.Record({
+const TransferPlayerDTO_Idl = IDL.Record({
   leagueId: IDL.Nat16,
   clubId: IDL.Nat16,
   playerId: IDL.Nat16,
@@ -6842,6 +7068,37 @@ function createGovernanceStore() {
     });
   }
   async function transferPlayer(dto) {
+    let userIdentity;
+    authStore.subscribe((auth) => userIdentity = auth.identity);
+    if (!userIdentity) return;
+    const allPlayers = await playerStore.getPlayers(dto.leagueId);
+    const player = allPlayers.find((p) => p.id === dto.playerId);
+    if (!player) throw new Error("Player not found.");
+    const clubs = await clubStore.getClubs(dto.leagueId);
+    const currentClub = clubs.find((c) => c.id === player.clubId);
+    if (!currentClub) throw new Error("Current club not found.");
+    const newLeagueClubs = await clubStore.getClubs(dto.newLeagueId);
+    const newClub = newLeagueClubs.find((c) => c.id === dto.newClubId);
+    if (!newClub) throw new Error("New club not found.");
+    const currentLeague = await leagueStore.getLeagueById(dto.leagueId);
+    const transferLeague = await leagueStore.getLeagueById(dto.newLeagueId);
+    const newValue = (player.valueQuarterMillions / 4).toFixed(2);
+    const { title, summary } = buildTransferPlayerText(
+      `${player.firstName} ${player.lastName}`,
+      currentClub.friendlyName,
+      currentLeague?.name ?? "",
+      newClub.friendlyName,
+      transferLeague?.name ?? "",
+      newValue
+    );
+    const encoded = IDL.encode([TransferPlayerDTO_Idl], [dto]);
+    return await createProposal({
+      identity: userIdentity,
+      functionId: 53000n,
+      payload: new Uint8Array(encoded),
+      title,
+      summary
+    });
   }
   async function createPlayer(dto) {
   }
