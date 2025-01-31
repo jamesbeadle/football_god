@@ -82,14 +82,13 @@ export class ActorFactory {
     let unsubscribe: Unsubscriber;
     return new Promise<OptionIdentity>((resolve, reject) => {
       unsubscribe = authStore.subscribe((store) => {
-        console.log("Auth store state:", store);
         if (store.identity) {
           resolve(store.identity);
         }
       });
     }).then((identity) => {
       unsubscribe();
-      
+
       return ActorFactory.createActor(data_canister, canisterId, identity);
     });
   }
