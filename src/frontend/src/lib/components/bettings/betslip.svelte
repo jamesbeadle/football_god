@@ -1,7 +1,7 @@
 <script lang="ts">
   import OpenFPLIcon from "../../icons/OpenFPLIcon.svelte";
   import EmptyBetSlipIcon from "$lib/icons/EmptyBetSlipIcon.svelte";
-  import type { FootballLeagueDTO} from "../../../../../declarations/backend/backend.did";
+  import type { FootballLeagueDTO } from "../../../../../declarations/data_canister/data_canister.did";
   import type { FixtureWithClubs } from "$lib/derived/fixtures-with-clubs.derived";
 
   import { betSlipStore } from "$lib/stores/bet-slip-store";

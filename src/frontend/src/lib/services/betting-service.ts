@@ -4,24 +4,21 @@ import type {
   LeagueId,
   MatchOddsDTO,
 } from "../../../../declarations/backend/backend.did";
-import { idlFactory } from "../../../../declarations/backend";
-import { ActorFactory } from "../utils/ActorFactory";
 import { isError } from "$lib/utils/helpers";
+import { authStore } from "$lib/stores/auth-store";
+import { ActorFactory } from "$lib/utils/ActorFactory";
 
 export class BettingService {
-  private actor: any;
-
-  constructor() {
-    this.actor = ActorFactory.createActor(
-      idlFactory,
-      process.env.BACKEND_CANISTER_ID,
-    );
-  }
+  constructor() {}
 
   async getBettableHomepageFixtures(
     leagueId: LeagueId,
   ): Promise<HomePageFixtureDTO[]> {
-    const result = await this.actor.getBettableHomepageFixtures(leagueId);
+    const identityActor: any = await ActorFactory.createBackendIdentityActor(
+      authStore,
+      process.env.BACKEND_CANISTER_ID ?? "",
+    );
+    const result = await identityActor.getBettableHomepageFixtures(leagueId);
     if (isError(result))
       throw new Error("Failed to fetch bettable league fixtures");
     return result.ok;
@@ -31,7 +28,11 @@ export class BettingService {
     leagueId: LeagueId,
     fixtureId: FixtureId,
   ): Promise<MatchOddsDTO> {
-    let result = await this.actor.getMatchOdds(leagueId, fixtureId);
+    const identityActor: any = await ActorFactory.createBackendIdentityActor(
+      authStore,
+      process.env.BACKEND_CANISTER_ID ?? "",
+    );
+    const result = await identityActor.getMatchOdds(leagueId, fixtureId);
     if (isError(result)) throw new Error("Failed to fetch match odds");
     return result.ok;
   }

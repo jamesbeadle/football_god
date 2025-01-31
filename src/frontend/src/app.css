@@ -164,3 +164,15 @@
 .fixture-event-table-header-3{
   @apply grid grid-cols-3 font-bold text-center text-black bg-white;
 }
+
+.bg-info {
+  @apply bg-BrandDarkGray;
+}
+
+.bg-success {
+  @apply bg-BrandPositive;
+}
+
+.bg-error {
+  @apply bg-BrandNegative;
+}

@@ -1,6 +1,6 @@
 import { writable } from "svelte/store";
-import type { CountryDTO } from "../../../../declarations/backend/backend.did";
 import { CountryService } from "../services/country-service";
+import type { CountryDTO } from "../../../../declarations/data_canister/data_canister.did";
 
 function createCountryStore() {
   const { subscribe, set } = writable<CountryDTO[]>([]);

@@ -1,5 +1,4 @@
 import { countryStore } from "../stores/country-store";
-import { betSlipStore } from "../stores/bet-slip-store";
 import { playerStore } from "../stores/player-store";
 import { clubStore } from "../stores/club-store";
 import { leagueStore } from "../stores/league-store";
@@ -26,7 +25,7 @@ import {
 } from "../utils/helpers";
 import { MAX_CACHED_LEAGUES } from "../constants/app.constants";
 import { dev } from '$app/environment';  // Import dev flag from SvelteKit
-import type { FootballLeagueDTO} from "../../../../declarations/backend/backend.did";
+import type { FootballLeagueDTO} from "../../../../declarations/data_canister/data_canister.did";
 
 type StoreType = {
   subscribe: (run: (value: any) => void) => () => void;
@@ -92,7 +91,7 @@ export class StoreManager {
     "fixtures",
     "league_status",
     "seasons",
-    //"player_events",
+    "player_events",
   ];
 
   constructor() {
@@ -108,7 +107,7 @@ export class StoreManager {
     this.isDevEnvironment = dev;
   }
 
-  private async syncLeagues(leagueId?: number) {
+  private async syncLeagues(leagueId: number) {
     try {
       const localHashKey = "leagues_hash";
       const localLeaguesKey = "leagues";
@@ -123,7 +122,7 @@ export class StoreManager {
         leagues = mockData.leagues;
       } else {
         const localHash = localStorage.getItem(localHashKey);
-        const leagueHash = await this.dataHashService.getLeaguesHash();
+        const leagueHash = await this.dataHashService.getLeaguesHash(leagueId);
 
         if (!localHash || leagueHash !== localHash) {
           leagues = await leagueStore.getLeagues();
@@ -174,7 +173,7 @@ export class StoreManager {
   }
 
   async syncStores(leagueId: number) {
-    const newHashes = await this.dataHashService.getDataHashes();
+    const newHashes = await this.dataHashService.getDataHashes(leagueId);
     if (newHashes == undefined) {
       return;
     }

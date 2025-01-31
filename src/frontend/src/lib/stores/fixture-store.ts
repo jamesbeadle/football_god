@@ -1,15 +1,15 @@
 import { writable } from "svelte/store";
 import { FixtureService } from "../services/fixture-service";
 import { DataHashService } from "../services/data-hash-service";
+import { serializeData, deserializeData } from "../utils/helpers";
+import { MAX_CACHED_LEAGUES } from "../constants/app.constants";
 import type {
   ClubDTO,
   FixtureDTO,
   MoveFixtureDTO,
   PostponeFixtureDTO,
   SubmitFixtureDataDTO,
-} from "../../../../declarations/backend/backend.did";
-import { serializeData, deserializeData } from "../utils/helpers";
-import { MAX_CACHED_LEAGUES } from "../constants/app.constants";
+} from "../../../../declarations/data_canister/data_canister.did";
 import { dev } from '$app/environment';
 import { mockData } from "../local/mock-data";
 

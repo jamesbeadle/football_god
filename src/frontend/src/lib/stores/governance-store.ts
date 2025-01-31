@@ -1,58 +1,157 @@
-//TODO: Add the governance store back in when under SNS control
-/*
-import { authStore } from "$lib/stores/auth-store";
 import { playerStore } from "$lib/stores/player-store";
-import { Principal } from "@dfinity/principal";
+import type { HttpAgent } from "@dfinity/agent";
 import { SnsGovernanceCanister } from "@dfinity/sns";
 import type {
   Command,
   ExecuteGenericNervousSystemFunction,
 } from "@dfinity/sns/dist/candid/sns_governance";
-import { ActorFactory } from "../../utils/ActorFactory";
 import { fixtureStore } from "./fixture-store";
-import { clubStore } from "./club-store";
-import { IDL } from "@dfinity/candid";
+import { ActorFactory } from "$lib/utils/ActorFactory";
+import { authStore } from "./auth-store";
 import type {
-  ClubDTO,
+  AddInitialFixturesDTO,
+  ClubId,
+  CreateClubDTO,
+  CreatePlayerDTO,
   FixtureDTO,
+  FixtureId,
+  GameweekNumber,
   LeagueId,
-  PlayerDTO,
+  LoanPlayerDTO,
+  MoveFixtureDTO,
   PlayerEventData,
   PlayerId,
+  PlayerPosition,
+  PostponeFixtureDTO,
+  PromoteClubDTO,
+  RecallPlayerDTO,
+  RetirePlayerDTO,
   RevaluePlayerUpDTO,
+  SeasonId,
+  SetPlayerInjuryDTO,
+  ShirtType,
   SubmitFixtureDataDTO,
+  TransferPlayerDTO,
   UnretirePlayerDTO,
-} from "../../../../declarations/backend/backend.did";
+  UpdateClubDTO,
+  UpdatePlayerDTO,
+} from "../../../../declarations/data_canister/data_canister.did";
+import { clubStore } from "./club-store";
+import { leagueStore } from "./league-store";
+import { Principal } from "@dfinity/principal";
+import type { OptionIdentity } from "$lib/types/identity";
+import { IDL } from "@dfinity/candid";
+import { createAgent } from "@dfinity/utils";
+
+const RevaluePlayerUpDTO_Idl = IDL.Record({
+  leagueId: IDL.Nat16,
+  playerId: IDL.Nat16,
+});
+
+const RevaluePlayerDownDTO_Idl = IDL.Record({
+  leagueId: IDL.Nat16,
+  playerId: IDL.Nat16,
+});
+
+const LoanPlayerDTO_Idl = IDL.Record({
+  leagueId: IDL.Nat16,
+  playerId: IDL.Nat16,
+  loanLeagueId: IDL.Nat16,
+  loanClubId: IDL.Nat16,
+  loanEndDate: IDL.Int,
+});
 
 function createGovernanceStore() {
-  async function revaluePlayerUp(leagueId: LeagueId, playerId: PlayerId): Promise<any> {
+  async function revaluePlayerUp(dto: RevaluePlayerUpDTO): Promise<any> {
+    let identity: OptionIdentity;
+
+    authStore.subscribe(async (auth) => {
+      identity = auth.identity;
+    });
+
+    if (!identity) {
+      return 0n;
+    }
+
+    const agent = await createAgent({
+      identity: identity,
+      host: import.meta.env.VITE_AUTH_PROVIDER_URL,
+      fetchRootKey: process.env.DFX_NETWORK === "local",
+    });
+
     try {
-      await storeManager.syncStores();
-
-      let allPlayers: PlayerDTO[] = [];
-      const unsubscribe = playerStore.subscribe((players) => {
-        allPlayers = players;
+      const {
+        manageNeuron: governanceManageNeuron,
+        listNeurons: governanceListNeurons,
+      } = SnsGovernanceCanister.create({
+        canisterId: Principal.fromText(
+          process.env.SNS_GOVERNANCE_CANISTER_ID ?? "",
+        ),
+        agent: agent,
       });
-      unsubscribe();
 
-      var dto: RevaluePlayerUpDTO = {
-        leagueId, playerId
-      };
+      let identity: OptionIdentity;
 
-      let player = allPlayers.find((x) => x.id == playerId);
-      if (player) {
-        let title = `Revalue ${player.lastName} value up.`;
-        let summary = `Revalue ${player.lastName} value up from £${(
-          player.valueQuarterMillions / 4
-        )
-          .toFixed(2)
-          .toLocaleString()}m -> £${((player.valueQuarterMillions + 1) / 4)
-          .toFixed(2)
-          .toLocaleString()}m).`;
+      authStore.subscribe(async (auth) => {
+        identity = auth.identity;
+      });
 
-        await executeProposal(dto, title, summary, 1000n, [
-          IDL.Record({ playerId: IDL.Nat16 }),
-        ]);
+      if (!identity) {
+        return;
+      }
+
+      let principalId = identity.getPrincipal();
+
+      const userNeurons = await governanceListNeurons({
+        principal: principalId,
+        limit: 10,
+        beforeNeuronId: { id: [] },
+      });
+      if (userNeurons.length > 0) {
+        const encoded = IDL.encode([RevaluePlayerUpDTO_Idl], [dto]);
+
+        const fn: ExecuteGenericNervousSystemFunction = {
+          function_id: 50000n,
+          payload: new Uint8Array(encoded),
+        };
+
+        let allPlayers = await playerStore.getPlayers(dto.leagueId);
+
+        let player = allPlayers.find((x) => x.id == dto.playerId);
+        if (player) {
+          const command: Command = {
+            MakeProposal: {
+              title: `Revalue ${player.firstName} ${player.lastName} value to £${(
+                (player.valueQuarterMillions + 1) /
+                4
+              )
+                .toFixed(2)
+                .toLocaleString()}m.`,
+              url: "openfpl.xyz/governance",
+              summary: `Revalue ${player.lastName} value up from £${(
+                player.valueQuarterMillions / 4
+              )
+                .toFixed(2)
+                .toLocaleString()}m -> £${(
+                (player.valueQuarterMillions + 1) /
+                4
+              )
+                .toFixed(2)
+                .toLocaleString()}m.`,
+              action: [{ ExecuteGenericNervousSystemFunction: fn }],
+            },
+          };
+
+          const neuronId = userNeurons[0].id[0];
+          if (!neuronId) {
+            return;
+          }
+
+          await governanceManageNeuron({
+            subaccount: neuronId.id,
+            command: [command],
+          });
+        }
       }
     } catch (error) {
       console.error("Error revaluing player up:", error);
@@ -60,49 +159,73 @@ function createGovernanceStore() {
     }
   }
 
-  async function revaluePlayerDown(playerId: number): Promise<any> {
+  async function revaluePlayerDown(dto: RevaluePlayerUpDTO): Promise<any> {
     try {
-      await storeManager.syncStores();
-
-      let allPlayers: PlayerDTO[] = [];
-      const unsubscribe = playerStore.subscribe((players) => {
-        allPlayers = players;
+      const {
+        manageNeuron: governanceManageNeuron,
+        listNeurons: governanceListNeurons,
+      } = SnsGovernanceCanister.create({
+        canisterId: Principal.fromText(
+          process.env.SNS_GOVERNANCE_CANISTER_ID ?? "",
+        ),
       });
-      unsubscribe();
 
-      var systemState: SystemStateDTO | null = null;
+      let identity: OptionIdentity;
 
-      const unsubscribeSystemState = systemStore.subscribe((state) => {
-        systemState = state;
+      authStore.subscribe(async (auth) => {
+        identity = auth.identity;
       });
-      unsubscribeSystemState();
 
-      var dto: RevaluePlayerDownDTO = {
-        playerId: playerId,
-        seasonId:
-          systemState == null
-            ? 0
-            : (systemState as SystemStateDTO).pickTeamSeasonId,
-        gameweek:
-          systemState == null
-            ? 0
-            : (systemState as SystemStateDTO).pickTeamGameweek,
-      };
+      if (!identity) {
+        return;
+      }
 
-      let player = allPlayers.find((x) => x.id == playerId);
-      if (player) {
-        let title = `Revalue ${player.lastName} value down.`;
-        let summary = `Revalue ${player.lastName} value down from £${(
-          player.valueQuarterMillions / 4
-        )
-          .toFixed(2)
-          .toLocaleString()}m -> £${((player.valueQuarterMillions - 1) / 4)
-          .toFixed(2)
-          .toLocaleString()}m).`;
+      let principalId = identity.getPrincipal();
 
-        await executeProposal(dto, title, summary, 2000n, [
-          IDL.Record({ playerId: IDL.Nat16 }),
-        ]);
+      const userNeurons = await governanceListNeurons({
+        principal: principalId,
+        limit: 10,
+        beforeNeuronId: { id: [] },
+      });
+      if (userNeurons.length > 0) {
+        const encoded = IDL.encode([RevaluePlayerDownDTO_Idl], [dto]);
+
+        const fn: ExecuteGenericNervousSystemFunction = {
+          function_id: 51000n,
+          payload: new Uint8Array(encoded),
+        };
+
+        let allPlayers = await playerStore.getPlayers(dto.leagueId);
+        let player = allPlayers.find((x) => x.id == dto.playerId);
+        if (player) {
+          const command: Command = {
+            MakeProposal: {
+              title: `Revalue ${player.lastName} value down.`,
+              url: "openfpl.xyz/governance",
+              summary: `Revalue ${player.lastName} value down from £${(
+                player.valueQuarterMillions / 4
+              )
+                .toFixed(2)
+                .toLocaleString()}m -> £${(
+                (player.valueQuarterMillions - 1) /
+                4
+              )
+                .toFixed(2)
+                .toLocaleString()}m).`,
+              action: [{ ExecuteGenericNervousSystemFunction: fn }],
+            },
+          };
+
+          const neuronId = userNeurons[0].id[0];
+          if (!neuronId) {
+            return;
+          }
+
+          await governanceManageNeuron({
+            subaccount: neuronId.id,
+            command: [command],
+          });
+        }
       }
     } catch (error) {
       console.error("Error revaluing player down:", error);
@@ -110,73 +233,176 @@ function createGovernanceStore() {
     }
   }
 
+  async function loanPlayer(
+    leagueId: LeagueId,
+    playerId: PlayerId,
+    loanLeagueId: LeagueId,
+    loanClubId: ClubId,
+    loanEndDate: string,
+  ): Promise<any> {
+    try {
+      const dateObject = new Date(loanEndDate);
+      const timestampMilliseconds = dateObject.getTime();
+      let nanoseconds = BigInt(timestampMilliseconds) * BigInt(1000000);
+
+      let dto: LoanPlayerDTO = {
+        leagueId,
+        playerId,
+        loanLeagueId,
+        loanClubId,
+        loanEndDate: nanoseconds,
+      };
+
+      const identityActor: any = await ActorFactory.createBackendIdentityActor(
+        authStore,
+        process.env.SNS_GOVERNANCE_CANISTER_ID ?? "",
+      );
+
+      const governanceAgent: HttpAgent = ActorFactory.getAgent(
+        process.env.SNS_GOVERNANCE_CANISTER_ID,
+        identityActor,
+        null,
+      );
+
+      const {
+        manageNeuron: governanceManageNeuron,
+        listNeurons: governanceListNeurons,
+      } = SnsGovernanceCanister.create({
+        agent: governanceAgent,
+        canisterId: identityActor,
+      });
+
+      const userNeurons = await governanceListNeurons({
+        principal: identityActor.principal,
+        limit: 10,
+        beforeNeuronId: { id: [] },
+      });
+      if (userNeurons.length > 0) {
+        const jsonString = JSON.stringify(dto);
+
+        const encoder = new TextEncoder();
+        const payload = encoder.encode(jsonString);
+
+        const fn: ExecuteGenericNervousSystemFunction = {
+          function_id: 9000n,
+          payload: payload,
+        };
+
+        let allPlayers = await playerStore.getPlayers(leagueId);
+        let clubs = await clubStore.getClubs(leagueId);
+        let player = allPlayers.find((x) => x.id == playerId);
+        if (player) {
+          let club = clubs.find((x) => x.id == player?.clubId);
+          if (!club) {
+            return;
+          }
+
+          const command: Command = {
+            MakeProposal: {
+              title: `Loan ${player.firstName} to ${club?.friendlyName}.`,
+              url: "openfpl.xyz/governance",
+              summary: `Loan ${player.firstName} to ${club?.friendlyName}.`,
+              action: [{ ExecuteGenericNervousSystemFunction: fn }],
+            },
+          };
+
+          const neuronId = userNeurons[0].id[0];
+          if (!neuronId) {
+            return;
+          }
+
+          await governanceManageNeuron({
+            subaccount: neuronId.id,
+            command: [command],
+          });
+        }
+      }
+    } catch (error) {
+      console.error("Error loaning player:", error);
+      throw error;
+    }
+  }
+
   async function submitFixtureData(
-    fixtureId: number,
-    month: number,
+    leagueId: LeagueId,
+    seasonId: SeasonId,
+    gameweek: GameweekNumber,
+    fixtureId: FixtureId,
     playerEventData: PlayerEventData[],
   ): Promise<any> {
     try {
-      clubStore;
-
-      let clubs: ClubDTO[] = [];
-      const unsubscribeTeamStore = clubStore.subscribe((teams) => {
-        if (teams) {
-          clubs = teams;
-        }
-      });
-      unsubscribeTeamStore();
-
-      let allFixtures: FixtureDTO[] = [];
-      const unsubscribeFixtureStore = fixtureStore.subscribe((fixtures) => {
-        allFixtures = fixtures;
-      });
-      unsubscribeFixtureStore();
-
       let dto: SubmitFixtureDataDTO = {
+        leagueId,
+        seasonId,
+        gameweek,
         fixtureId,
         playerEventData,
       };
 
-      let fixture = allFixtures.find((x) => x.id == fixtureId);
-      if (fixture) {
-        let homeClub = clubs.find((x) => x.id == fixture?.homeClubId);
-        let awayClub = clubs.find((x) => x.id == fixture?.awayClubId);
-        if (!homeClub || !awayClub) {
-          return;
+      const identityActor: any = await ActorFactory.createBackendIdentityActor(
+        authStore,
+        process.env.SNS_GOVERNANCE_CANISTER_ID ?? "",
+      );
+
+      const governanceAgent: HttpAgent = ActorFactory.getAgent(
+        process.env.SNS_GOVERNANCE_CANISTER_ID,
+        identityActor,
+        null,
+      );
+
+      const {
+        manageNeuron: governanceManageNeuron,
+        listNeurons: governanceListNeurons,
+      } = SnsGovernanceCanister.create({
+        agent: governanceAgent,
+        canisterId: identityActor,
+      });
+
+      const userNeurons = await governanceListNeurons({
+        principal: identityActor.principal,
+        limit: 10,
+        beforeNeuronId: { id: [] },
+      });
+      if (userNeurons.length > 0) {
+        const jsonString = JSON.stringify(dto);
+
+        const encoder = new TextEncoder();
+        const payload = encoder.encode(jsonString);
+
+        const fn: ExecuteGenericNervousSystemFunction = {
+          function_id: 3000n,
+          payload: payload,
+        };
+
+        let allFixtures = await fixtureStore.getFixtures(leagueId);
+        let clubs = await clubStore.getClubs(leagueId);
+        let fixture = allFixtures.find((x) => x.id == fixtureId);
+        if (fixture) {
+          let homeClub = clubs.find((x) => x.id == fixture?.homeClubId);
+          let awayClub = clubs.find((x) => x.id == fixture?.awayClubId);
+          if (!homeClub || !awayClub) {
+            return;
+          }
+
+          const command: Command = {
+            MakeProposal: {
+              title: `Fixture Data for ${homeClub.friendlyName} v ${awayClub?.friendlyName}.`,
+              url: "openfpl.xyz/governance",
+              summary: `Fixture Data for ${homeClub.friendlyName} v ${awayClub?.friendlyName}.`,
+              action: [{ ExecuteGenericNervousSystemFunction: fn }],
+            },
+          };
+
+          const neuronId = userNeurons[0].id[0];
+          if (!neuronId) {
+            return;
+          }
+
+          await governanceManageNeuron({
+            subaccount: neuronId.id,
+            command: [command],
+          });
         }
-
-        let title = `Fixture Data for ${homeClub.friendlyName} v ${awayClub?.friendlyName}.`;
-        let summary = `Fixture Data for ${homeClub.friendlyName} v ${awayClub?.friendlyName}.`;
-
-        await executeProposal(dto, title, summary, 3000n, [
-          IDL.Record({
-            fixtureId: IDL.Nat32,
-            seasonId: IDL.Nat16,
-            gameweek: IDL.Nat8,
-            playerEventData: IDL.Vec(
-              IDL.Record({
-                fixtureId: IDL.Nat32,
-                clubId: IDL.Nat16,
-                playerId: IDL.Nat16,
-                eventStartMinute: IDL.Nat8,
-                eventEndMinute: IDL.Nat8,
-                eventType: IDL.Variant({
-                  Goal: IDL.Null,
-                  GoalConceded: IDL.Null,
-                  Appearance: IDL.Null,
-                  PenaltySaved: IDL.Null,
-                  RedCard: IDL.Null,
-                  KeeperSave: IDL.Null,
-                  CleanSheet: IDL.Null,
-                  YellowCard: IDL.Null,
-                  GoalAssisted: IDL.Null,
-                  OwnGoal: IDL.Null,
-                  HighestScoringPlayer: IDL.Null,
-                }),
-              }),
-            ),
-          }),
-        ]);
       }
     } catch (error) {
       console.error("Error submitting fixture data:", error);
@@ -185,66 +411,71 @@ function createGovernanceStore() {
   }
 
   async function addInitialFixtures(
+    leagueId: LeagueId,
     seasonFixtures: FixtureDTO[],
-    pickTeamSeasonId: number,
-    seasonName: string,
   ): Promise<any> {
     try {
-      await storeManager.syncStores();
+      let seasonName = "";
 
-      let dto: AddInitialFixtures = {
+      let dto: AddInitialFixturesDTO = {
+        leagueId,
         seasonFixtures,
       };
 
-      let title = `Add initial fixtures for season ${seasonName}`;
-      let summary = `Add initial fixtures for season ${seasonName}`;
+      const identityActor: any = await ActorFactory.createBackendIdentityActor(
+        authStore,
+        process.env.SNS_GOVERNANCE_CANISTER_ID ?? "",
+      );
 
-      await executeProposal(dto, title, summary, 4000n, [
-        IDL.Record({
-          seasonId: IDL.Nat16,
-          seasonFixtures: IDL.Vec(
-            IDL.Record({
-              id: IDL.Nat32,
-              status: IDL.Variant({
-                Unplayed: IDL.Null,
-                Finalised: IDL.Null,
-                Active: IDL.Null,
-                Complete: IDL.Null,
-              }),
-              highestScoringPlayerId: IDL.Nat16,
-              seasonId: IDL.Nat16,
-              awayClubId: IDL.Nat16,
-              events: IDL.Vec(
-                IDL.Record({
-                  fixtureId: IDL.Nat32,
-                  clubId: IDL.Nat16,
-                  playerId: IDL.Nat16,
-                  eventStartMinute: IDL.Nat8,
-                  eventEndMinute: IDL.Nat8,
-                  eventType: IDL.Variant({
-                    Goal: IDL.Null,
-                    GoalConceded: IDL.Null,
-                    Appearance: IDL.Null,
-                    PenaltySaved: IDL.Null,
-                    RedCard: IDL.Null,
-                    KeeperSave: IDL.Null,
-                    CleanSheet: IDL.Null,
-                    YellowCard: IDL.Null,
-                    GoalAssisted: IDL.Null,
-                    OwnGoal: IDL.Null,
-                    HighestScoringPlayer: IDL.Null,
-                  }),
-                }),
-              ),
-            }),
-          ),
-          homeClubId: IDL.Nat16,
-          kickOff: IDL.Int,
-          homeGoals: IDL.Nat8,
-          gameweek: IDL.Nat8,
-          awayGoals: IDL.Nat8,
-        }),
-      ]);
+      const governanceAgent: HttpAgent = ActorFactory.getAgent(
+        process.env.SNS_GOVERNANCE_CANISTER_ID,
+        identityActor,
+        null,
+      );
+
+      const {
+        manageNeuron: governanceManageNeuron,
+        listNeurons: governanceListNeurons,
+      } = SnsGovernanceCanister.create({
+        agent: governanceAgent,
+        canisterId: identityActor,
+      });
+
+      const userNeurons = await governanceListNeurons({
+        principal: identityActor.principal,
+        limit: 10,
+        beforeNeuronId: { id: [] },
+      });
+      if (userNeurons.length > 0) {
+        const jsonString = JSON.stringify(dto);
+
+        const encoder = new TextEncoder();
+        const payload = encoder.encode(jsonString);
+
+        const fn: ExecuteGenericNervousSystemFunction = {
+          function_id: 4000n,
+          payload: payload,
+        };
+
+        const command: Command = {
+          MakeProposal: {
+            title: `Add initial fixtures for season ${seasonName}.`,
+            url: "openfpl.xyz/governance",
+            summary: `Add initial fixtures for season ${seasonName}.`,
+            action: [{ ExecuteGenericNervousSystemFunction: fn }],
+          },
+        };
+
+        const neuronId = userNeurons[0].id[0];
+        if (!neuronId) {
+          return;
+        }
+
+        await governanceManageNeuron({
+          subaccount: neuronId.id,
+          command: [command],
+        });
+      }
     } catch (error) {
       console.error("Error adding initial fixtures:", error);
       throw error;
@@ -252,63 +483,89 @@ function createGovernanceStore() {
   }
 
   async function moveFixture(
-    fixtureId: number,
+    leagueId: LeagueId,
+    seasonId: SeasonId,
+    fixtureId: FixtureId,
     updatedFixtureGameweek: number,
     updatedFixtureDate: string,
   ): Promise<any> {
     try {
-      await storeManager.syncStores();
-
-      let clubs: ClubDTO[] = [];
-      const unsubscribeTeamStore = clubStore.subscribe((teams) => {
-        if (teams) {
-          clubs = teams;
-        }
-      });
-      unsubscribeTeamStore();
-
-      let seasonId = 0;
-
-      const unsubscribeSystemStore = systemStore.subscribe((systemState) => {
-        if (systemState) {
-          seasonId = systemState?.calculationSeasonId;
-        }
-      });
-      unsubscribeSystemStore();
-
-      let allFixtures: FixtureDTO[] = [];
-      const unsubscribeFixtureStore = fixtureStore.subscribe((fixtures) => {
-        allFixtures = fixtures;
-      });
-      unsubscribeFixtureStore();
-
       const dateObject = new Date(updatedFixtureDate);
       const timestampMilliseconds = dateObject.getTime();
       let nanoseconds = BigInt(timestampMilliseconds) * BigInt(1000000);
 
       let dto: MoveFixtureDTO = {
+        leagueId,
+        seasonId,
         fixtureId,
         updatedFixtureGameweek,
         updatedFixtureDate: nanoseconds,
       };
 
-      let fixture = allFixtures.find((x) => x.id == fixtureId);
-      if (fixture) {
-        let homeClub = clubs.find((x) => x.id == fixture?.homeClubId);
-        let awayClub = clubs.find((x) => x.id == fixture?.awayClubId);
-        if (!homeClub || !awayClub) {
-          return;
-        }
+      const identityActor: any = await ActorFactory.createBackendIdentityActor(
+        authStore,
+        process.env.SNS_GOVERNANCE_CANISTER_ID ?? "",
+      );
 
-        let title = `Move fixture ${homeClub.friendlyName} v ${awayClub?.friendlyName}.`;
-        let summary = `Move fixture ${homeClub.friendlyName} v ${awayClub?.friendlyName}.`;
-        await executeProposal(dto, title, summary, 5000n, [
-          IDL.Record({
-            fixtureId: IDL.Nat32,
-            updatedFixtureGameweek: IDL.Nat8,
-            updatedFixtureDate: IDL.Int,
-          }),
-        ]);
+      const governanceAgent: HttpAgent = ActorFactory.getAgent(
+        process.env.SNS_GOVERNANCE_CANISTER_ID,
+        identityActor,
+        null,
+      );
+
+      const {
+        manageNeuron: governanceManageNeuron,
+        listNeurons: governanceListNeurons,
+      } = SnsGovernanceCanister.create({
+        agent: governanceAgent,
+        canisterId: identityActor,
+      });
+
+      const userNeurons = await governanceListNeurons({
+        principal: identityActor.principal,
+        limit: 10,
+        beforeNeuronId: { id: [] },
+      });
+      if (userNeurons.length > 0) {
+        const jsonString = JSON.stringify(dto);
+
+        const encoder = new TextEncoder();
+        const payload = encoder.encode(jsonString);
+
+        const fn: ExecuteGenericNervousSystemFunction = {
+          function_id: 5000n,
+          payload: payload,
+        };
+
+        let allFixtures = await fixtureStore.getFixtures(leagueId);
+        let clubs = await clubStore.getClubs(leagueId);
+        let fixture = allFixtures.find((x) => x.id == fixtureId);
+        if (fixture) {
+          let homeClub = clubs.find((x) => x.id == fixture?.homeClubId);
+          let awayClub = clubs.find((x) => x.id == fixture?.awayClubId);
+          if (!homeClub || !awayClub) {
+            return;
+          }
+
+          const command: Command = {
+            MakeProposal: {
+              title: `Move fixture ${homeClub.friendlyName} v ${awayClub?.friendlyName}.`,
+              url: "openfpl.xyz/governance",
+              summary: `Fixture Data for ${homeClub.friendlyName} v ${awayClub?.friendlyName}.`,
+              action: [{ ExecuteGenericNervousSystemFunction: fn }],
+            },
+          };
+
+          const neuronId = userNeurons[0].id[0];
+          if (!neuronId) {
+            return;
+          }
+
+          await governanceManageNeuron({
+            subaccount: neuronId.id,
+            command: [command],
+          });
+        }
       }
     } catch (error) {
       console.error("Error moving fixture:", error);
@@ -316,49 +573,82 @@ function createGovernanceStore() {
     }
   }
 
-  async function postponeFixture(fixtureId: number): Promise<any> {
+  async function postponeFixture(
+    leagueId: LeagueId,
+    seasonId: SeasonId,
+    fixtureId: FixtureId,
+  ): Promise<any> {
     try {
-      await storeManager.syncStores();
-
-      let clubs: ClubDTO[] = [];
-      const unsubscribeTeamStore = clubStore.subscribe((teams) => {
-        if (teams) {
-          clubs = teams;
-        }
-      });
-      unsubscribeTeamStore();
-
-      let seasonId = 0;
-
-      const unsubscribeSystemStore = systemStore.subscribe((systemState) => {
-        if (systemState) {
-          seasonId = systemState?.calculationSeasonId;
-        }
-      });
-      unsubscribeSystemStore();
-
-      let allFixtures: FixtureDTO[] = [];
-      const unsubscribeFixtureStore = fixtureStore.subscribe((fixtures) => {
-        allFixtures = fixtures;
-      });
-      unsubscribeFixtureStore();
-
       let dto: PostponeFixtureDTO = {
+        leagueId,
+        seasonId,
         fixtureId,
       };
-      let fixture = allFixtures.find((x) => x.id == fixtureId);
-      if (fixture) {
-        let homeClub = clubs.find((x) => x.id == fixture?.homeClubId);
-        let awayClub = clubs.find((x) => x.id == fixture?.awayClubId);
-        if (!homeClub || !awayClub) {
-          return;
-        }
 
-        let title = `Postpone fixture ${homeClub.friendlyName} v ${awayClub?.friendlyName}.`;
-        let summary = `Postpone fixture for ${homeClub.friendlyName} v ${awayClub?.friendlyName}.`;
-        await executeProposal(dto, title, summary, 6000n, [
-          IDL.Record({ fixtureId: IDL.Nat32 }),
-        ]);
+      const identityActor: any = await ActorFactory.createBackendIdentityActor(
+        authStore,
+        process.env.SNS_GOVERNANCE_CANISTER_ID ?? "",
+      );
+
+      const governanceAgent: HttpAgent = ActorFactory.getAgent(
+        process.env.SNS_GOVERNANCE_CANISTER_ID,
+        identityActor,
+        null,
+      );
+
+      const {
+        manageNeuron: governanceManageNeuron,
+        listNeurons: governanceListNeurons,
+      } = SnsGovernanceCanister.create({
+        agent: governanceAgent,
+        canisterId: identityActor,
+      });
+
+      const userNeurons = await governanceListNeurons({
+        principal: identityActor.principal,
+        limit: 10,
+        beforeNeuronId: { id: [] },
+      });
+      if (userNeurons.length > 0) {
+        const jsonString = JSON.stringify(dto);
+
+        const encoder = new TextEncoder();
+        const payload = encoder.encode(jsonString);
+
+        const fn: ExecuteGenericNervousSystemFunction = {
+          function_id: 6000n,
+          payload: payload,
+        };
+
+        let allFixtures = await fixtureStore.getFixtures(leagueId);
+        let clubs = await clubStore.getClubs(leagueId);
+        let fixture = allFixtures.find((x) => x.id == fixtureId);
+        if (fixture) {
+          let homeClub = clubs.find((x) => x.id == fixture?.homeClubId);
+          let awayClub = clubs.find((x) => x.id == fixture?.awayClubId);
+          if (!homeClub || !awayClub) {
+            return;
+          }
+
+          const command: Command = {
+            MakeProposal: {
+              title: `Postpone fixture ${homeClub.friendlyName} v ${awayClub?.friendlyName}.`,
+              url: "openfpl.xyz/governance",
+              summary: `Fixture Data for ${homeClub.friendlyName} v ${awayClub?.friendlyName}.`,
+              action: [{ ExecuteGenericNervousSystemFunction: fn }],
+            },
+          };
+
+          const neuronId = userNeurons[0].id[0];
+          if (!neuronId) {
+            return;
+          }
+
+          await governanceManageNeuron({
+            subaccount: neuronId.id,
+            command: [command],
+          });
+        }
       }
     } catch (error) {
       console.error("Error postponing fixture:", error);
@@ -367,63 +657,89 @@ function createGovernanceStore() {
   }
 
   async function rescheduleFixture(
-    fixtureId: number,
+    leagueId: LeagueId,
+    seasonId: SeasonId,
+    fixtureId: FixtureId,
     updatedFixtureGameweek: number,
     updatedFixtureDate: string,
   ): Promise<any> {
     try {
-      await storeManager.syncStores();
-
-      let clubs: ClubDTO[] = [];
-      const unsubscribeTeamStore = clubStore.subscribe((teams) => {
-        if (teams) {
-          clubs = teams;
-        }
-      });
-      unsubscribeTeamStore();
-
-      let seasonId = 0;
-
-      const unsubscribeSystemStore = systemStore.subscribe((systemState) => {
-        if (systemState) {
-          seasonId = systemState?.calculationSeasonId;
-        }
-      });
-      unsubscribeSystemStore();
-
-      let allFixtures: FixtureDTO[] = [];
-      const unsubscribeFixtureStore = fixtureStore.subscribe((fixtures) => {
-        allFixtures = fixtures;
-      });
-      unsubscribeFixtureStore();
-
       const dateObject = new Date(updatedFixtureDate);
       const timestampMilliseconds = dateObject.getTime();
       let nanoseconds = BigInt(timestampMilliseconds) * BigInt(1000000);
 
       let dto: MoveFixtureDTO = {
+        leagueId,
+        seasonId,
         fixtureId,
         updatedFixtureGameweek,
         updatedFixtureDate: nanoseconds,
       };
 
-      let fixture = allFixtures.find((x) => x.id == fixtureId);
-      if (fixture) {
-        let homeClub = clubs.find((x) => x.id == fixture?.homeClubId);
-        let awayClub = clubs.find((x) => x.id == fixture?.awayClubId);
-        if (!homeClub || !awayClub) {
-          return;
-        }
+      const identityActor: any = await ActorFactory.createBackendIdentityActor(
+        authStore,
+        process.env.SNS_GOVERNANCE_CANISTER_ID ?? "",
+      );
 
-        let title = `Move fixture ${homeClub.friendlyName} v ${awayClub?.friendlyName}.`;
-        let summary = `Move fixture ${homeClub.friendlyName} v ${awayClub?.friendlyName}.`;
-        await executeProposal(dto, title, summary, 7000n, [
-          IDL.Record({
-            postponedFixtureId: IDL.Nat32,
-            updatedFixtureGameweek: IDL.Nat8,
-            updatedFixtureDate: IDL.Int,
-          }),
-        ]);
+      const governanceAgent: HttpAgent = ActorFactory.getAgent(
+        process.env.SNS_GOVERNANCE_CANISTER_ID,
+        identityActor,
+        null,
+      );
+
+      const {
+        manageNeuron: governanceManageNeuron,
+        listNeurons: governanceListNeurons,
+      } = SnsGovernanceCanister.create({
+        agent: governanceAgent,
+        canisterId: identityActor,
+      });
+
+      const userNeurons = await governanceListNeurons({
+        principal: identityActor.principal,
+        limit: 10,
+        beforeNeuronId: { id: [] },
+      });
+      if (userNeurons.length > 0) {
+        const jsonString = JSON.stringify(dto);
+
+        const encoder = new TextEncoder();
+        const payload = encoder.encode(jsonString);
+
+        const fn: ExecuteGenericNervousSystemFunction = {
+          function_id: 7000n,
+          payload: payload,
+        };
+
+        let allFixtures = await fixtureStore.getFixtures(leagueId);
+        let clubs = await clubStore.getClubs(leagueId);
+        let fixture = allFixtures.find((x) => x.id == fixtureId);
+        if (fixture) {
+          let homeClub = clubs.find((x) => x.id == fixture?.homeClubId);
+          let awayClub = clubs.find((x) => x.id == fixture?.awayClubId);
+          if (!homeClub || !awayClub) {
+            return;
+          }
+
+          const command: Command = {
+            MakeProposal: {
+              title: `Move fixture ${homeClub.friendlyName} v ${awayClub?.friendlyName}.`,
+              url: "openfpl.xyz/governance",
+              summary: `Fixture Data for ${homeClub.friendlyName} v ${awayClub?.friendlyName}.`,
+              action: [{ ExecuteGenericNervousSystemFunction: fn }],
+            },
+          };
+
+          const neuronId = userNeurons[0].id[0];
+          if (!neuronId) {
+            return;
+          }
+
+          await governanceManageNeuron({
+            subaccount: neuronId.id,
+            command: [command],
+          });
+        }
       }
     } catch (error) {
       console.error("Error rescheduling fixture:", error);
@@ -432,171 +748,176 @@ function createGovernanceStore() {
   }
 
   async function transferPlayer(
+    leagueId: LeagueId,
+    clubId: ClubId,
     playerId: number,
-    newLeagueId: number,
-    newClubId: number,
     newShirtNumber: number,
-    seasonId: number,
-    gameweek: number,
+    newLeagueId: LeagueId,
+    newClubId: number,
   ): Promise<any> {
     try {
-      await storeManager.syncStores();
-
-      let clubs: ClubDTO[] = [];
-      const unsubscribeTeamStore = clubStore.subscribe((teams) => {
-        if (teams) {
-          clubs = teams;
-        }
-      });
-      unsubscribeTeamStore();
-
-      let allPlayers: PlayerDTO[] = [];
-      const unsubscribePlayerStore = playerStore.subscribe((players) => {
-        if (players) {
-          allPlayers = players;
-        }
-      });
-      unsubscribePlayerStore();
-
-      let title = "";
-      let player = allPlayers.find((x) => x.id == playerId);
-      if (player) {
-        let currentClub = clubs.find((x) => x.id == player?.clubId);
-        let newClub = clubs.find((x) => x.id == newClubId);
-        if (!currentClub) {
-          return;
-        }
-
-        if (newClubId == 0) {
-          title = `Transfer ${player.firstName} ${player.lastName} outside of Premier League.`;
-        }
-
-        if (newClub) {
-          title = `Transfer ${player.firstName} ${player.lastName} to ${newClub.friendlyName}`;
-        }
-      }
-
-      let summary = title;
-
       let dto: TransferPlayerDTO = {
+        leagueId,
+        clubId,
         playerId,
-        newClubId,
         newShirtNumber,
         newLeagueId,
-        clubId: player?.clubId ?? 0,
-        seasonId,
-        gameweek,
+        newClubId,
       };
 
-      await executeProposal(dto, title, summary, 8000n, [
-        IDL.Record({ playerId: IDL.Nat16, newClubId: IDL.Nat16 }),
-      ]);
+      const identityActor: any = await ActorFactory.createBackendIdentityActor(
+        authStore,
+        process.env.SNS_GOVERNANCE_CANISTER_ID ?? "",
+      );
+
+      const governanceAgent: HttpAgent = ActorFactory.getAgent(
+        process.env.SNS_GOVERNANCE_CANISTER_ID,
+        identityActor,
+        null,
+      );
+
+      const {
+        manageNeuron: governanceManageNeuron,
+        listNeurons: governanceListNeurons,
+      } = SnsGovernanceCanister.create({
+        agent: governanceAgent,
+        canisterId: identityActor,
+      });
+
+      const userNeurons = await governanceListNeurons({
+        principal: identityActor.principal,
+        limit: 10,
+        beforeNeuronId: { id: [] },
+      });
+      if (userNeurons.length > 0) {
+        const jsonString = JSON.stringify(dto);
+
+        const encoder = new TextEncoder();
+        const payload = encoder.encode(jsonString);
+
+        const fn: ExecuteGenericNervousSystemFunction = {
+          function_id: 8000n,
+          payload: payload,
+        };
+
+        let allPlayers = await playerStore.getPlayers(leagueId);
+        let clubs = await clubStore.getClubs(leagueId);
+        let player = allPlayers.find((x) => x.id == playerId);
+        if (player) {
+          let currentClub = clubs.find((x) => x.id == player?.clubId);
+          let newClub = clubs.find((x) => x.id == newClubId);
+          if (!currentClub) {
+            return;
+          }
+
+          let title = "";
+          if (newClubId == 0) {
+            title = `Transfer ${player.firstName} ${player.lastName} outside of Premier League.`;
+          }
+
+          if (newClub) {
+            title = `Transfer ${player.firstName} ${player.lastName} to ${newClub.friendlyName}`;
+          }
+
+          const command: Command = {
+            MakeProposal: {
+              title: title,
+              url: "openfpl.xyz/governance",
+              summary: title,
+              action: [{ ExecuteGenericNervousSystemFunction: fn }],
+            },
+          };
+
+          const neuronId = userNeurons[0].id[0];
+          if (!neuronId) {
+            return;
+          }
+
+          await governanceManageNeuron({
+            subaccount: neuronId.id,
+            command: [command],
+          });
+        }
+      }
     } catch (error) {
       console.error("Error transferring player:", error);
       throw error;
     }
   }
 
-  async function loanPlayer(
-    playerId: number,
-    loanLeagueId: number,
-    loanClubId: number,
-    loanEndDate: string,
-    seasonId: number,
-    gameweek: number,
+  async function recallPlayer(
+    leagueId: LeagueId,
+    playerId: PlayerId,
   ): Promise<any> {
     try {
-      await storeManager.syncStores();
-
-      let clubs: ClubDTO[] = [];
-      const unsubscribeTeamStore = clubStore.subscribe((teams) => {
-        if (teams) {
-          clubs = teams;
-        }
-      });
-      unsubscribeTeamStore();
-
-      let allPlayers: PlayerDTO[] = [];
-      const unsubscribePlayerStore = playerStore.subscribe((players) => {
-        if (players) {
-          allPlayers = players;
-        }
-      });
-      unsubscribePlayerStore();
-
-      const dateObject = new Date(loanEndDate);
-      const timestampMilliseconds = dateObject.getTime();
-      let nanoseconds = BigInt(timestampMilliseconds) * BigInt(1000000);
-
-      let dto: LoanPlayerDTO = {
-        playerId,
-        loanLeagueId,
-        loanClubId,
-        loanEndDate: nanoseconds,
-        seasonId,
-        gameweek,
-      };
-
-      let player = allPlayers.find((x) => x.id == playerId);
-      if (player) {
-        let club = clubs.find((x) => x.id == player?.clubId);
-        if (!club) {
-          return;
-        }
-
-        let title = `Loan ${player.firstName} to ${club?.friendlyName}.`;
-        let summary = `Loan ${player.firstName} to ${club?.friendlyName}.`;
-
-        await executeProposal(dto, title, summary, 9000n, [
-          IDL.Record({
-            playerId: IDL.Nat16,
-            loanClubId: IDL.Nat16,
-            loanEndDate: IDL.Int,
-          }),
-        ]);
-      }
-    } catch (error) {
-      console.error("Error loaning player:", error);
-      throw error;
-    }
-  }
-
-  async function recallPlayer(playerId: number): Promise<any> {
-    try {
-      await storeManager.syncStores();
-
-      let clubs: ClubDTO[] = [];
-      const unsubscribeTeamStore = clubStore.subscribe((teams) => {
-        if (teams) {
-          clubs = teams;
-        }
-      });
-      unsubscribeTeamStore();
-
-      let allPlayers: PlayerDTO[] = [];
-      const unsubscribePlayerStore = playerStore.subscribe((players) => {
-        if (players) {
-          allPlayers = players;
-        }
-      });
-      unsubscribePlayerStore();
-
       let dto: RecallPlayerDTO = {
+        leagueId,
         playerId,
       };
 
-      let player = allPlayers.find((x) => x.id == playerId);
-      if (player) {
-        let club = clubs.find((x) => x.id == player?.clubId);
-        if (!club) {
-          return;
-        }
+      const identityActor: any = await ActorFactory.createBackendIdentityActor(
+        authStore,
+        process.env.SNS_GOVERNANCE_CANISTER_ID ?? "",
+      );
 
-        let title = `Recall ${player.firstName} ${player?.lastName} loan.`;
-        let summary = `Recall ${player.firstName} ${player?.lastName} loan.`;
-        await executeProposal(dto, title, summary, 10000n, [
-          IDL.Record({ playerId: IDL.Nat16 }),
-        ]);
+      const governanceAgent: HttpAgent = ActorFactory.getAgent(
+        process.env.SNS_GOVERNANCE_CANISTER_ID,
+        identityActor,
+        null,
+      );
+
+      const {
+        manageNeuron: governanceManageNeuron,
+        listNeurons: governanceListNeurons,
+      } = SnsGovernanceCanister.create({
+        agent: governanceAgent,
+        canisterId: identityActor,
+      });
+
+      const userNeurons = await governanceListNeurons({
+        principal: identityActor.principal,
+        limit: 10,
+        beforeNeuronId: { id: [] },
+      });
+      if (userNeurons.length > 0) {
+        const jsonString = JSON.stringify(dto);
+
+        const encoder = new TextEncoder();
+        const payload = encoder.encode(jsonString);
+
+        const fn: ExecuteGenericNervousSystemFunction = {
+          function_id: 10000n,
+          payload: payload,
+        };
+
+        let allPlayers = await playerStore.getPlayers(leagueId);
+        let clubs = await clubStore.getClubs(leagueId);
+        let player = allPlayers.find((x) => x.id == playerId);
+        if (player) {
+          let club = clubs.find((x) => x.id == player?.clubId);
+          if (!club) {
+            return;
+          }
+
+          const command: Command = {
+            MakeProposal: {
+              title: `Recall ${player.firstName} ${player?.lastName} loan.`,
+              url: "openfpl.xyz/governance",
+              summary: `Recall ${player.firstName} ${player?.lastName} loan.`,
+              action: [{ ExecuteGenericNervousSystemFunction: fn }],
+            },
+          };
+
+          const neuronId = userNeurons[0].id[0];
+          if (!neuronId) {
+            return;
+          }
+
+          await governanceManageNeuron({
+            subaccount: neuronId.id,
+            command: [command],
+          });
+        }
       }
     } catch (error) {
       console.error("Error recalling player loan:", error);
@@ -605,6 +926,7 @@ function createGovernanceStore() {
   }
 
   async function createPlayer(
+    leagueId: LeagueId,
     clubId: number,
     position: PlayerPosition,
     firstName: string,
@@ -613,25 +935,14 @@ function createGovernanceStore() {
     valueQuarterMillions: number,
     dateOfBirth: string,
     nationality: number,
-    gender: Gender,
   ): Promise<any> {
     try {
-      await storeManager.syncStores();
-
-      let clubs: ClubDTO[] = [];
-      const unsubscribeTeamStore = clubStore.subscribe((teams) => {
-        if (teams) {
-          clubs = teams;
-        }
-      });
-      unsubscribeTeamStore();
-
       const dateObject = new Date(dateOfBirth);
       const timestampMilliseconds = dateObject.getTime();
       let nanoseconds = BigInt(timestampMilliseconds) * BigInt(1000000);
 
       let dto: CreatePlayerDTO = {
-        gender,
+        leagueId,
         clubId,
         position,
         firstName,
@@ -642,30 +953,66 @@ function createGovernanceStore() {
         nationality,
       };
 
-      let club = clubs.find((x) => x.id == clubId);
-      if (!club) {
-        return;
-      }
-      let title = `Create New Player: ${firstName} ${lastName}.`;
-      let summary = `Create New Player: ${firstName} ${lastName}.`;
+      const identityActor: any = await ActorFactory.createBackendIdentityActor(
+        authStore,
+        process.env.SNS_GOVERNANCE_CANISTER_ID ?? "",
+      );
 
-      await executeProposal(dto, title, summary, 11000n, [
-        IDL.Record({
-          clubId: IDL.Nat16,
-          valueQuarterMillions: IDL.Nat16,
-          dateOfBirth: IDL.Int,
-          nationality: IDL.Nat16,
-          shirtNumber: IDL.Nat8,
-          position: IDL.Variant({
-            Goalkeeper: IDL.Null,
-            Defender: IDL.Null,
-            Midfielder: IDL.Null,
-            Forward: IDL.Null,
-          }),
-          lastName: IDL.Text,
-          firstName: IDL.Text,
-        }),
-      ]);
+      const governanceAgent: HttpAgent = ActorFactory.getAgent(
+        process.env.SNS_GOVERNANCE_CANISTER_ID,
+        identityActor,
+        null,
+      );
+
+      const {
+        manageNeuron: governanceManageNeuron,
+        listNeurons: governanceListNeurons,
+      } = SnsGovernanceCanister.create({
+        agent: governanceAgent,
+        canisterId: identityActor,
+      });
+
+      const userNeurons = await governanceListNeurons({
+        principal: identityActor.principal,
+        limit: 10,
+        beforeNeuronId: { id: [] },
+      });
+      if (userNeurons.length > 0) {
+        const jsonString = JSON.stringify(dto);
+
+        const encoder = new TextEncoder();
+        const payload = encoder.encode(jsonString);
+
+        const fn: ExecuteGenericNervousSystemFunction = {
+          function_id: 11000n,
+          payload: payload,
+        };
+
+        let clubs = await clubStore.getClubs(leagueId);
+        let club = clubs.find((x) => x.id == clubId);
+        if (!club) {
+          return;
+        }
+
+        const command: Command = {
+          MakeProposal: {
+            title: `Create New Player: ${firstName} v ${lastName}.`,
+            url: "openfpl.xyz/governance",
+            summary: `Create New Player: ${firstName} v ${lastName}.`,
+            action: [{ ExecuteGenericNervousSystemFunction: fn }],
+          },
+        };
+
+        const neuronId = userNeurons[0].id[0];
+        if (!neuronId) {
+          return;
+        }
+
+        await governanceManageNeuron({
+          subaccount: neuronId.id,
+          command: [command],
+        });
+      }
     } catch (error) {
       console.error("Error creating player:", error);
       throw error;
@@ -673,7 +1020,8 @@ function createGovernanceStore() {
   }
 
   async function updatePlayer(
-    playerId: number,
+    leagueId: LeagueId,
+    playerId: PlayerId,
     position: PlayerPosition,
     firstName: string,
     lastName: string,
@@ -682,367 +1030,66 @@ function createGovernanceStore() {
     nationality: number,
   ): Promise<any> {
     try {
-      await storeManager.syncStores();
+      let dto: UpdatePlayerDTO = {
+        leagueId,
+        playerId,
+        position,
+        firstName,
+        lastName,
+        shirtNumber,
+        dateOfBirth: BigInt(dateOfBirth),
+        nationality,
+      };
 
-      let clubs: ClubDTO[] = [];
-      const unsubscribeTeamStore = clubStore.subscribe((teams) => {
-        if (teams) {
-          clubs = teams;
-        }
+      const identityActor: any = await ActorFactory.createBackendIdentityActor(
+        authStore,
+        process.env.SNS_GOVERNANCE_CANISTER_ID ?? "",
+      );
+
+      const governanceAgent: HttpAgent = ActorFactory.getAgent(
+        process.env.SNS_GOVERNANCE_CANISTER_ID,
+        identityActor,
+        null,
+      );
+
+      const {
+        manageNeuron: governanceManageNeuron,
+        listNeurons: governanceListNeurons,
+      } = SnsGovernanceCanister.create({
+        agent: governanceAgent,
+        canisterId: identityActor,
       });
-      unsubscribeTeamStore();
 
-      let allPlayers: PlayerDTO[] = [];
-      const unsubscribePlayerStore = playerStore.subscribe((players) => {
-        if (players) {
-          allPlayers = players;
-        }
+      const userNeurons = await governanceListNeurons({
+        principal: identityActor.principal,
+        limit: 10,
+        beforeNeuronId: { id: [] },
       });
-      unsubscribePlayerStore();
+      if (userNeurons.length > 0) {
+        const jsonString = JSON.stringify(dto);
 
-      let player = allPlayers.find((x) => x.id == playerId);
-      if (player) {
-        let club = clubs.find((x) => x.id == player?.clubId);
-        if (!club) {
-          return;
-        }
-        let dto: UpdatePlayerDTO = {
-          dateOfBirth: dateOfBirth,
-          playerId: playerId,
-          nationality: nationality,
-          shirtNumber: shirtNumber,
-          position: position,
-          lastName: lastName,
-          firstName: firstName,
+        const encoder = new TextEncoder();
+        const payload = encoder.encode(jsonString);
+
+        const fn: ExecuteGenericNervousSystemFunction = {
+          function_id: 12000n,
+          payload: payload,
         };
-        let title = `Update ${player.firstName} ${player.lastName} details.`;
-        let summary = `Update ${player.firstName} ${player.lastName} details.`;
-        await executeProposal(dto, title, summary, 12000n, [
-          IDL.Record({
-            dateOfBirth: IDL.Int,
-            playerId: IDL.Nat16,
-            nationality: IDL.Nat16,
-            shirtNumber: IDL.Nat8,
-            position: IDL.Variant({
-              Goalkeeper: IDL.Null,
-              Defender: IDL.Null,
-              Midfielder: IDL.Null,
-              Forward: IDL.Null,
-            }),
-            lastName: IDL.Text,
-            firstName: IDL.Text,
-          }),
-        ]);
-      }
-    } catch (error) {
-      console.error("Error updating player:", error);
-      throw error;
-    }
-  }
 
-  async function setPlayerInjury(
-    playerId: number,
-    description: string,
-    expectedEndDate: string,
-  ): Promise<any> {
-    try {
-      await storeManager.syncStores();
-
-      let clubs: ClubDTO[] = [];
-      const unsubscribeTeamStore = clubStore.subscribe((teams) => {
-        if (teams) {
-          clubs = teams;
-        }
-      });
-      unsubscribeTeamStore();
-
-      let allPlayers: PlayerDTO[] = [];
-      const unsubscribePlayerStore = playerStore.subscribe((players) => {
-        if (players) {
-          allPlayers = players;
-        }
-      });
-      unsubscribePlayerStore();
-
-      const dateObject = new Date(expectedEndDate);
-      const timestampMilliseconds = dateObject.getTime();
-      let nanoseconds = BigInt(timestampMilliseconds) * BigInt(1000000);
-
-      let dto: SetPlayerInjuryDTO = {
-        playerId,
-        description,
-        expectedEndDate: nanoseconds,
-      };
-
-      let player = allPlayers.find((x) => x.id == playerId);
-      if (player) {
-        let club = clubs.find((x) => x.id == player?.clubId);
-        if (!club) {
-          return;
-        }
-
-        let title = `Set Player Injury for ${player.firstName} ${player.lastName}.`;
-        let summary = `Set Player Injury for ${player.firstName} ${player.lastName}.`;
-        await executeProposal(dto, title, summary, 13000n, [
-          IDL.Record({
-            playerId: IDL.Nat16,
-            description: IDL.Text,
-            expectedEndDate: IDL.Int,
-          }),
-        ]);
-      }
-    } catch (error) {
-      console.error("Error setting player injury:", error);
-      throw error;
-    }
-  }
-
-  async function retirePlayer(
-    playerId: number,
-    retirementDate: string,
-  ): Promise<any> {
-    try {
-      await storeManager.syncStores();
-
-      let clubs: ClubDTO[] = [];
-      const unsubscribeTeamStore = clubStore.subscribe((teams) => {
-        if (teams) {
-          clubs = teams;
-        }
-      });
-      unsubscribeTeamStore();
-
-      let allPlayers: PlayerDTO[] = [];
-      const unsubscribePlayerStore = playerStore.subscribe((players) => {
-        if (players) {
-          allPlayers = players;
-        }
-      });
-      unsubscribePlayerStore();
-
-      const dateObject = new Date(retirementDate);
-      const timestampMilliseconds = dateObject.getTime();
-      let nanoseconds = BigInt(timestampMilliseconds) * BigInt(1000000);
-
-      let dto: RetirePlayerDTO = {
-        playerId,
-        retirementDate: nanoseconds,
-      };
-
-      let player = allPlayers.find((x) => x.id == playerId);
-      if (player) {
-        let club = clubs.find((x) => x.id == player?.clubId);
-        if (!club) {
-          return;
-        }
-        let title = `Retire ${player.firstName} ${player.lastName}.`;
-        let summary = `Retire ${player.firstName} ${player.lastName}.`;
-        await executeProposal(dto, title, summary, 14000n, [
-          IDL.Record({ playerId: IDL.Nat16, retirementDate: IDL.Int }),
-        ]);
-      }
-    } catch (error) {
-      console.error("Error retiring player:", error);
-      throw error;
-    }
-  }
-
-  async function unretirePlayer(playerId: number): Promise<any> {
-    try {
-      await storeManager.syncStores();
-
-      let clubs: ClubDTO[] = [];
-      const unsubscribeTeamStore = clubStore.subscribe((teams) => {
-        if (teams) {
-          clubs = teams;
-        }
-      });
-      unsubscribeTeamStore();
-
-      let allPlayers: PlayerDTO[] = [];
-      const unsubscribePlayerStore = playerStore.subscribe((players) => {
-        if (players) {
-          allPlayers = players;
-        }
-      });
-      unsubscribePlayerStore();
-
-      let dto: UnretirePlayerDTO = {
-        playerId,
-      };
-
-      let player = allPlayers.find((x) => x.id == playerId);
-      if (player) {
-        let club = clubs.find((x) => x.id == player?.clubId);
-        if (!club) {
-          return;
-        }
-
-        let title = `Unretire ${player.firstName} ${player.lastName}.`;
-        let summary = `Unretire ${player.firstName} ${player.lastName}.`;
-        await executeProposal(dto, title, summary, 15000n, [
-          IDL.Record({ playerId: IDL.Nat16 }),
-        ]);
-      }
-    } catch (error) {
-      console.error("Error unretiring player:", error);
-      throw error;
-    }
-  }
-
-  async function promoteNewClub(
-    name: string,
-    friendlyName: string,
-    primaryColourHex: string,
-    secondaryColourHex: string,
-    thirdColourHex: string,
-    abbreviatedName: string,
-    shirtType: ShirtType,
-  ): Promise<any> {
-    try {
-      let dto: PromoteNewClubDTO = {
-        name,
-        friendlyName,
-        primaryColourHex,
-        secondaryColourHex,
-        thirdColourHex,
-        abbreviatedName,
-        shirtType,
-      };
-
-      let title = `Promote ${friendlyName}. to the Premier League`;
-      let summary = `Promote ${name} from the Championship to the Premier League.`;
-      executeProposal(dto, title, summary, 17000n, [
-        IDL.Record({
-          secondaryColourHex: IDL.Text,
-          name: IDL.Text,
-          friendlyName: IDL.Text,
-          thirdColourHex: IDL.Text,
-          abbreviatedName: IDL.Text,
-          shirtType: IDL.Variant({ Filled: IDL.Null, Striped: IDL.Null }),
-          primaryColourHex: IDL.Text,
-        }),
-      ]);
-    } catch (error) {
-      console.error("Error promoting new club:", error);
-      throw error;
-    }
-  }
-
-  async function updateClub(
-    clubId: number,
-    name: string,
-    friendlyName: string,
-    primaryColourHex: string,
-    secondaryColourHex: string,
-    thirdColourHex: string,
-    abbreviatedName: string,
-    shirtType: ShirtType,
-  ): Promise<any> {
-    try {
-      await storeManager.syncStores();
-      let dto: UpdateClubDTO = {
-        clubId: clubId,
-        secondaryColourHex: secondaryColourHex,
-        name: name,
-        friendlyName: friendlyName,
-        thirdColourHex: thirdColourHex,
-        abbreviatedName: abbreviatedName,
-        shirtType: shirtType,
-        primaryColourHex: primaryColourHex,
-      };
-
-      let clubs: ClubDTO[] = [];
-      const unsubscribeTeamStore = clubStore.subscribe((teams) => {
-        if (teams) {
-          clubs = teams;
-        }
-      });
-      unsubscribeTeamStore();
-
-      let seasonId = 0;
-
-      const unsubscribeSystemStore = systemStore.subscribe((systemState) => {
-        if (systemState) {
-          seasonId = systemState?.calculationSeasonId;
-        }
-      });
-      unsubscribeSystemStore();
-
-      let allFixtures: FixtureDTO[] = [];
-      const unsubscribeFixtureStore = fixtureStore.subscribe((fixtures) => {
-        allFixtures = fixtures;
-      });
-      unsubscribeFixtureStore();
-
-      let club = clubs.find((x) => x.id == clubId);
-      if (!club) {
-        return;
-      }
-
-      let title = `Update ${club.friendlyName} club details.`;
-      let summary = `Update ${club.friendlyName} club details.`;
-      await executeProposal(dto, title, summary, 18000n, [
-        IDL.Record({
-          clubId: IDL.Nat16,
-          secondaryColourHex: IDL.Text,
-          name: IDL.Text,
-          friendlyName: IDL.Text,
-          thirdColourHex: IDL.Text,
-          abbreviatedName: IDL.Text,
-          shirtType: IDL.Variant({ Filled: IDL.Null, Striped: IDL.Null }),
-          primaryColourHex: IDL.Text,
-        }),
-      ]);
-    } catch (error) {
-      console.error("Error updating club:", error);
-      throw error;
-    }
-  }
-    
-  async function executeProposal(
-    dto: any,
-    title: string,
-    summary: string,
-    functionId: bigint,
-    argTypes: IDL.Type<any>[],
-  ) {
-    const unsubscribeAuthStore = authStore.subscribe(async (auth) => {
-      if (auth) {
-        let principal = auth.identity?.getPrincipal().toText() ?? "";
-        if (principal == "") {
-          return;
-        }
-        const agent: any = await ActorFactory.getGovernanceAgent(auth.identity);
-        if (process.env.DFX_NETWORK !== "ic") {
-          await agent.fetchRootKey();
-        }
-
-        const snsGovernanceCanisterPrincipal: Principal = Principal.fromText(
-          process.env.CANISTER_ID_SNS_GOVERNANCE ?? "",
-        );
-        const { listNeurons, manageNeuron } = SnsGovernanceCanister.create({
-          agent,
-          canisterId: snsGovernanceCanisterPrincipal,
-        });
-
-        let userNeurons = await listNeurons({
-          certified: false,
-          principal: Principal.fromText(principal),
-        });
-        if (userNeurons.length > 0) {
-          const payloadArrayBuffer = IDL.encode(argTypes, [dto]);
-
-          const fn: ExecuteGenericNervousSystemFunction = {
-            function_id: functionId,
-            payload: new Uint8Array(payloadArrayBuffer),
-          };
+        let allPlayers = await playerStore.getPlayers(leagueId);
+        let clubs = await clubStore.getClubs(leagueId);
+        let player = allPlayers.find((x) => x.id == playerId);
+        if (player) {
+          let club = clubs.find((x) => x.id == player?.clubId);
+          if (!club) {
+            return;
+          }
 
           const command: Command = {
             MakeProposal: {
-              title: title,
+              title: `Update ${player.firstName} ${player.lastName} details.`,
               url: "openfpl.xyz/governance",
-              summary: summary,
+              summary: `Update ${player.firstName} ${player.lastName} details.`,
               action: [{ ExecuteGenericNervousSystemFunction: fn }],
             },
           };
@@ -1052,16 +1099,503 @@ function createGovernanceStore() {
             return;
           }
 
-          await manageNeuron({
+          await governanceManageNeuron({
             subaccount: neuronId.id,
             command: [command],
           });
         }
       }
-    });
-    unsubscribeAuthStore();
+    } catch (error) {
+      console.error("Error updating player:", error);
+      throw error;
+    }
   }
-    
+
+  async function setPlayerInjury(
+    leagueId: LeagueId,
+    playerId: PlayerId,
+    description: string,
+    expectedEndDate: string,
+  ): Promise<any> {
+    try {
+      const dateObject = new Date(expectedEndDate);
+      const timestampMilliseconds = dateObject.getTime();
+      let nanoseconds = BigInt(timestampMilliseconds) * BigInt(1000000);
+
+      let dto: SetPlayerInjuryDTO = {
+        leagueId,
+        playerId,
+        description,
+        expectedEndDate: nanoseconds,
+      };
+
+      const identityActor: any = await ActorFactory.createBackendIdentityActor(
+        authStore,
+        process.env.SNS_GOVERNANCE_CANISTER_ID ?? "",
+      );
+
+      const governanceAgent: HttpAgent = ActorFactory.getAgent(
+        process.env.SNS_GOVERNANCE_CANISTER_ID,
+        identityActor,
+        null,
+      );
+
+      const {
+        manageNeuron: governanceManageNeuron,
+        listNeurons: governanceListNeurons,
+      } = SnsGovernanceCanister.create({
+        agent: governanceAgent,
+        canisterId: identityActor,
+      });
+
+      const userNeurons = await governanceListNeurons({
+        principal: identityActor.principal,
+        limit: 10,
+        beforeNeuronId: { id: [] },
+      });
+      if (userNeurons.length > 0) {
+        const jsonString = JSON.stringify(dto);
+
+        const encoder = new TextEncoder();
+        const payload = encoder.encode(jsonString);
+
+        const fn: ExecuteGenericNervousSystemFunction = {
+          function_id: 13000n,
+          payload: payload,
+        };
+
+        let allPlayers = await playerStore.getPlayers(leagueId);
+        let clubs = await clubStore.getClubs(leagueId);
+        let player = allPlayers.find((x) => x.id == playerId);
+        if (player) {
+          let club = clubs.find((x) => x.id == player?.clubId);
+          if (!club) {
+            return;
+          }
+
+          const command: Command = {
+            MakeProposal: {
+              title: `Set Player Injury for ${player.firstName} ${player.lastName}.`,
+              url: "openfpl.xyz/governance",
+              summary: `Set Player Injury for ${player.firstName} ${player.lastName}.`,
+              action: [{ ExecuteGenericNervousSystemFunction: fn }],
+            },
+          };
+
+          const neuronId = userNeurons[0].id[0];
+          if (!neuronId) {
+            return;
+          }
+
+          await governanceManageNeuron({
+            subaccount: neuronId.id,
+            command: [command],
+          });
+        }
+      }
+    } catch (error) {
+      console.error("Error setting player injury:", error);
+      throw error;
+    }
+  }
+
+  async function retirePlayer(
+    leagueId: LeagueId,
+    playerId: PlayerId,
+    retirementDate: string,
+  ): Promise<any> {
+    try {
+      const dateObject = new Date(retirementDate);
+      const timestampMilliseconds = dateObject.getTime();
+      let nanoseconds = BigInt(timestampMilliseconds) * BigInt(1000000);
+
+      let dto: RetirePlayerDTO = {
+        leagueId,
+        playerId,
+        retirementDate: nanoseconds,
+      };
+
+      const identityActor: any = await ActorFactory.createBackendIdentityActor(
+        authStore,
+        process.env.SNS_GOVERNANCE_CANISTER_ID ?? "",
+      );
+
+      const governanceAgent: HttpAgent = ActorFactory.getAgent(
+        process.env.SNS_GOVERNANCE_CANISTER_ID,
+        identityActor,
+        null,
+      );
+
+      const {
+        manageNeuron: governanceManageNeuron,
+        listNeurons: governanceListNeurons,
+      } = SnsGovernanceCanister.create({
+        agent: governanceAgent,
+        canisterId: identityActor,
+      });
+
+      const userNeurons = await governanceListNeurons({
+        principal: identityActor.principal,
+        limit: 10,
+        beforeNeuronId: { id: [] },
+      });
+      if (userNeurons.length > 0) {
+        const jsonString = JSON.stringify(dto);
+
+        const encoder = new TextEncoder();
+        const payload = encoder.encode(jsonString);
+
+        const fn: ExecuteGenericNervousSystemFunction = {
+          function_id: 14000n,
+          payload: payload,
+        };
+
+        let allPlayers = await playerStore.getPlayers(leagueId);
+        let clubs = await clubStore.getClubs(leagueId);
+        let player = allPlayers.find((x) => x.id == playerId);
+        if (player) {
+          let club = clubs.find((x) => x.id == player?.clubId);
+          if (!club) {
+            return;
+          }
+
+          const command: Command = {
+            MakeProposal: {
+              title: `Retire ${player.firstName} ${player.lastName}.`,
+              url: "openfpl.xyz/governance",
+              summary: `Retire ${player.firstName} ${player.lastName}.`,
+              action: [{ ExecuteGenericNervousSystemFunction: fn }],
+            },
+          };
+
+          const neuronId = userNeurons[0].id[0];
+          if (!neuronId) {
+            return;
+          }
+
+          await governanceManageNeuron({
+            subaccount: neuronId.id,
+            command: [command],
+          });
+        }
+      }
+    } catch (error) {
+      console.error("Error retiring player:", error);
+      throw error;
+    }
+  }
+
+  async function unretirePlayer(
+    leagueId: LeagueId,
+    playerId: PlayerId,
+  ): Promise<any> {
+    try {
+      let dto: UnretirePlayerDTO = {
+        leagueId,
+        playerId,
+      };
+
+      const identityActor: any = await ActorFactory.createBackendIdentityActor(
+        authStore,
+        process.env.SNS_GOVERNANCE_CANISTER_ID ?? "",
+      );
+
+      const governanceAgent: HttpAgent = ActorFactory.getAgent(
+        process.env.SNS_GOVERNANCE_CANISTER_ID,
+        identityActor,
+        null,
+      );
+
+      const {
+        manageNeuron: governanceManageNeuron,
+        listNeurons: governanceListNeurons,
+      } = SnsGovernanceCanister.create({
+        agent: governanceAgent,
+        canisterId: identityActor,
+      });
+
+      const userNeurons = await governanceListNeurons({
+        principal: identityActor.principal,
+        limit: 10,
+        beforeNeuronId: { id: [] },
+      });
+      if (userNeurons.length > 0) {
+        const jsonString = JSON.stringify(dto);
+
+        const encoder = new TextEncoder();
+        const payload = encoder.encode(jsonString);
+
+        const fn: ExecuteGenericNervousSystemFunction = {
+          function_id: 15000n,
+          payload: payload,
+        };
+
+        let allPlayers = await playerStore.getPlayers(leagueId);
+        let clubs = await clubStore.getClubs(leagueId);
+        let player = allPlayers.find((x) => x.id == playerId);
+        if (player) {
+          let club = clubs.find((x) => x.id == player?.clubId);
+          if (!club) {
+            return;
+          }
+
+          const command: Command = {
+            MakeProposal: {
+              title: `Unretire ${player.firstName} ${player.lastName}.`,
+              url: "openfpl.xyz/governance",
+              summary: `Unretire ${player.firstName} ${player.lastName}.`,
+              action: [{ ExecuteGenericNervousSystemFunction: fn }],
+            },
+          };
+
+          const neuronId = userNeurons[0].id[0];
+          if (!neuronId) {
+            return;
+          }
+
+          await governanceManageNeuron({
+            subaccount: neuronId.id,
+            command: [command],
+          });
+        }
+      }
+    } catch (error) {
+      console.error("Error unretiring player:", error);
+      throw error;
+    }
+  }
+
+  async function createClub(dto: CreateClubDTO): Promise<any> {
+    try {
+      const identityActor: any = await ActorFactory.createBackendIdentityActor(
+        authStore,
+        process.env.SNS_GOVERNANCE_CANISTER_ID ?? "",
+      );
+
+      const governanceAgent: HttpAgent = ActorFactory.getAgent(
+        process.env.SNS_GOVERNANCE_CANISTER_ID,
+        identityActor,
+        null,
+      );
+
+      const {
+        manageNeuron: governanceManageNeuron,
+        listNeurons: governanceListNeurons,
+      } = SnsGovernanceCanister.create({
+        agent: governanceAgent,
+        canisterId: identityActor,
+      });
+
+      const userNeurons = await governanceListNeurons({
+        principal: identityActor.principal,
+        limit: 10,
+        beforeNeuronId: { id: [] },
+      });
+      if (userNeurons.length > 0) {
+        const jsonString = JSON.stringify(dto);
+
+        const encoder = new TextEncoder();
+        const payload = encoder.encode(jsonString);
+
+        const fn: ExecuteGenericNervousSystemFunction = {
+          function_id: 18000n,
+          payload: payload,
+        };
+
+        let league = await leagueStore.getLeagueById(dto.leagueId);
+        const command: Command = {
+          MakeProposal: {
+            title: `Create ${league!.name} club (${dto.friendlyName}).`,
+            url: "openfpl.xyz/governance",
+            summary: `Create ${league!.name} club (${dto.friendlyName}).`,
+            action: [{ ExecuteGenericNervousSystemFunction: fn }],
+          },
+        };
+
+        const neuronId = userNeurons[0].id[0];
+        if (!neuronId) {
+          return;
+        }
+
+        await governanceManageNeuron({
+          subaccount: neuronId.id,
+          command: [command],
+        });
+      }
+    } catch (error) {
+      console.error("Error updating club:", error);
+      throw error;
+    }
+  }
+
+  async function promoteClub(
+    leagueId: LeagueId,
+    toLeagueId: LeagueId,
+    clubId: ClubId,
+  ): Promise<any> {
+    try {
+      let dto: PromoteClubDTO = {
+        leagueId,
+        clubId,
+        toLeagueId,
+      };
+
+      const identityActor: any = await ActorFactory.createBackendIdentityActor(
+        authStore,
+        process.env.SNS_GOVERNANCE_CANISTER_ID ?? "",
+      );
+
+      const governanceAgent: HttpAgent = ActorFactory.getAgent(
+        process.env.SNS_GOVERNANCE_CANISTER_ID,
+        identityActor,
+        null,
+      );
+
+      const {
+        manageNeuron: governanceManageNeuron,
+        listNeurons: governanceListNeurons,
+      } = SnsGovernanceCanister.create({
+        agent: governanceAgent,
+        canisterId: identityActor,
+      });
+
+      const userNeurons = await governanceListNeurons({
+        principal: identityActor.principal,
+        limit: 10,
+        beforeNeuronId: { id: [] },
+      });
+      if (userNeurons.length > 0) {
+        const jsonString = JSON.stringify(dto);
+
+        const encoder = new TextEncoder();
+        const payload = encoder.encode(jsonString);
+
+        const fn: ExecuteGenericNervousSystemFunction = {
+          function_id: 16000n,
+          payload: payload,
+        };
+
+        let clubs = await clubStore.getClubs(leagueId);
+        let club = clubs.find((x) => x.id == clubId);
+        if (!club) {
+          return;
+        }
+
+        const command: Command = {
+          MakeProposal: {
+            title: `Promote ${club.friendlyName}.`,
+            url: "openfpl.xyz/governance",
+            summary: `Promote ${club.friendlyName}.`,
+            action: [{ ExecuteGenericNervousSystemFunction: fn }],
+          },
+        };
+
+        const neuronId = userNeurons[0].id[0];
+        if (!neuronId) {
+          return;
+        }
+
+        await governanceManageNeuron({
+          subaccount: neuronId.id,
+          command: [command],
+        });
+      }
+    } catch (error) {
+      console.error("Error promoting former club:", error);
+      throw error;
+    }
+  }
+
+  async function updateClub(
+    leagueId: LeagueId,
+    clubId: ClubId,
+    name: string,
+    friendlyName: string,
+    primaryColourHex: string,
+    secondaryColourHex: string,
+    thirdColourHex: string,
+    abbreviatedName: string,
+    shirtType: ShirtType,
+  ): Promise<any> {
+    try {
+      let dto: UpdateClubDTO = {
+        leagueId,
+        clubId,
+        name,
+        friendlyName,
+        primaryColourHex,
+        secondaryColourHex,
+        thirdColourHex,
+        abbreviatedName,
+        shirtType,
+      };
+
+      const identityActor: any = await ActorFactory.createBackendIdentityActor(
+        authStore,
+        process.env.SNS_GOVERNANCE_CANISTER_ID ?? "",
+      );
+
+      const governanceAgent: HttpAgent = ActorFactory.getAgent(
+        process.env.SNS_GOVERNANCE_CANISTER_ID,
+        identityActor,
+        null,
+      );
+
+      const {
+        manageNeuron: governanceManageNeuron,
+        listNeurons: governanceListNeurons,
+      } = SnsGovernanceCanister.create({
+        agent: governanceAgent,
+        canisterId: identityActor,
+      });
+
+      const userNeurons = await governanceListNeurons({
+        principal: identityActor.principal,
+        limit: 10,
+        beforeNeuronId: { id: [] },
+      });
+      if (userNeurons.length > 0) {
+        const jsonString = JSON.stringify(dto);
+
+        const encoder = new TextEncoder();
+        const payload = encoder.encode(jsonString);
+
+        const fn: ExecuteGenericNervousSystemFunction = {
+          function_id: 18000n,
+          payload: payload,
+        };
+
+        let clubs = await clubStore.getClubs(leagueId);
+        let club = clubs.find((x) => x.id == clubId);
+        if (!club) {
+          return;
+        }
+
+        const command: Command = {
+          MakeProposal: {
+            title: `Update ${club.friendlyName} club details.`,
+            url: "openfpl.xyz/governance",
+            summary: `Update ${club.friendlyName} club details.`,
+            action: [{ ExecuteGenericNervousSystemFunction: fn }],
+          },
+        };
+
+        const neuronId = userNeurons[0].id[0];
+        if (!neuronId) {
+          return;
+        }
+
+        await governanceManageNeuron({
+          subaccount: neuronId.id,
+          command: [command],
+        });
+      }
+    } catch (error) {
+      console.error("Error updating club:", error);
+      throw error;
+    }
+  }
+
   return {
     revaluePlayerUp,
     revaluePlayerDown,
@@ -1078,11 +1612,10 @@ function createGovernanceStore() {
     setPlayerInjury,
     retirePlayer,
     unretirePlayer,
-    promoteNewClub,
+    createClub,
+    promoteClub,
     updateClub,
   };
 }
 
 export const governanceStore = createGovernanceStore();
- */
-//TODO DELETE

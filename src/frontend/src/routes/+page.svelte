@@ -31,12 +31,10 @@
     ClubDTO,
     FixtureId,
     LeagueId,
-    GameweekNumber,
-    Category,
-    SelectionDetail
+    GameweekNumber
   } from "../../../declarations/data_canister/data_canister.did";
 
-  import type { HomePageFixtureDTO } from "../../../declarations/backend/backend.did";
+  import type { Category, HomePageFixtureDTO, SelectionDetail } from "../../../declarations/backend/backend.did";
   import { betSlipDataStore } from "$lib/stores/bet-slip-data-store";
   import { buildBetUiDescription } from "$lib/utils/buildBetUiDescription";
 

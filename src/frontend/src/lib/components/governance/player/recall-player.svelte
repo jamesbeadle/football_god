@@ -3,7 +3,7 @@
   import LocalSpinner from "$lib/components/shared/local-spinner.svelte";
   import Modal from "$lib/components/shared/modal.svelte";
   import { playerStore } from "$lib/stores/player-store";
-  import type { LoanedPlayerDTO } from "../../../../../../declarations/data_canister/data_canister.did";
+  import type { LoanedPlayerDTO, RecallPlayerDTO } from "../../../../../../declarations/data_canister/data_canister.did";
 
   export let visible: boolean;
   export let closeModal: () => void;
@@ -29,7 +29,11 @@
 
   async function confirmProposal() {
     isLoading = true;
-    await playerStore.recallLoan(selectedPlayer.parentLeagueId, selectedPlayer.id);
+    let dto: RecallPlayerDTO = {
+      leagueId: selectedPlayer.leagueId,
+      playerId: selectedPlayer.id
+    };
+    await playerStore.recallLoan(selectedPlayer.parentLeagueId, dto);
     /*
     let result = await governanceStore.recallPlayer(selectedPlayerId);
     if (isError(result)) {

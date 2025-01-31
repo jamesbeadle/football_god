@@ -10,8 +10,8 @@ import type { ExtendedSelection } from "$lib/types/extended-selection";
 import type {
   Category,
   SelectionDetail,
-} from "../../../../declarations/data_canister/data_canister.did";
-import type { ClubDTO } from "../../../../declarations/backend/backend.did";
+} from "../../../../declarations/backend/backend.did";
+import type { ClubDTO } from "../../../../declarations/data_canister/data_canister.did";
 
 export interface BetSlipState {
   bets: ExtendedSelection[];

@@ -28,9 +28,9 @@
 
   async function confirmVote() {
     isLoading = true;
-    const identityActor: any = await ActorFactory.createIdentityActor(
+    const identityActor: any = await ActorFactory.createActor(
       authStore,
-      process.env.CANISTER_ID_SNS_GOVERNANCE ?? ""
+      process.env.SNS_GOVERNANCE_CANISTER_ID ?? ""
     );
 
     const { listNeurons, registerVote } =

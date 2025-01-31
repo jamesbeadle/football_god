@@ -10,7 +10,8 @@
     import { SHUFTI_CLIENT_ID, SHUFTI_SECRET_KEY } from "$lib/environment/environment";
     import { kycStore } from "$lib/stores/kyc-store";
     import type { ProfileDTO } from "../../../../../declarations/backend/backend.did";
-
+    import { toasts } from "$lib/stores/toasts-store";
+   
   let isLoading = true;
   let loadingBalances = true;
 
@@ -38,6 +39,7 @@
         }
         profile = value;
       });
+      unsubscribeUserProfile();
       isLoading = false;
       await fetchBalances();
     } catch (error) {
@@ -93,9 +95,14 @@
     showUsernameModal = false;
   }
 
-  async function copyAndShowToast(textToCopy: string) {
+  async function copyTextAndShowToast(text: string) {
     try {
-      await navigator.clipboard.writeText(textToCopy);
+      await navigator.clipboard.writeText(text);
+      toasts.addToast({
+        type: "success",
+        message: "Copied to clipboard.",
+        duration: 2000,
+      });
     } catch (err) {
       console.error("Failed to copy:", err);
     }
@@ -210,7 +217,7 @@
           <div class="flex items-center">
             <button
               class="flex items-center text-left text-xxs break-all"
-              on:click={() => copyAndShowToast(principalId)}
+              on:click={() => copyTextAndShowToast(principalId)}
             >
               <span>{ principalId }</span>
               <CopyIcon className="w-7 xs:w-6 text-left" fill="#FFFFFF" />
@@ -244,7 +251,7 @@
                 <div class="flex items-center text-xs">
                   <button
                     class="flex items-center text-left break-all"
-                    on:click={() => copyAndShowToast(principalId)}
+                    on:click={() => copyTextAndShowToast(principalId)}
                   >
                     <span>{principalId}</span>
                     <CopyIcon className="w-7 xs:w-6 text-left" fill="#FFFFFF" />

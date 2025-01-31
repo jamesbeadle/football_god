@@ -6,7 +6,6 @@ import Result "mo:base/Result";
 import Timer "mo:base/Timer";
 import Nat64 "mo:base/Nat64";
 import Time "mo:base/Time";
-import Debug "mo:base/Debug";
 import Iter "mo:base/Iter";
 
 import T "../types/app_types";

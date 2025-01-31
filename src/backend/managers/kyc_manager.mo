@@ -47,23 +47,17 @@ module {
     };
 
     public func storeVerificationResponse(response: ShuftiTypes.ShuftiResponse) : ?Base.PrincipalId {
-      Debug.print("Storing verification response");
-
+      
       switch(response){
         case (#ShuftiAcceptedResponse accepted){
-      Debug.print("Accepted");
           let reference = extractReference(accepted.reference);
-          Debug.print(reference);
           let profileResult = Array.find<(Base.PrincipalId, AppTypes.KYCProfile)>(kycProfiles, 
             func(entry: (Base.PrincipalId, AppTypes.KYCProfile)) : Bool {
               entry.1.reference == reference;
           });          
-          Debug.print(debug_show profileResult);
-
+      
           switch(profileResult){
             case (?kycProfile){
-              Debug.print("found kyc profile");
-          Debug.print(debug_show kycProfile);
               kycProfiles := Array.map<(Base.PrincipalId, AppTypes.KYCProfile), (Base.PrincipalId, AppTypes.KYCProfile)>(kycProfiles, func(entry: (Base.PrincipalId, AppTypes.KYCProfile)) {
                 if(entry.0 == kycProfile.0 and entry.1.reference == reference){
                   return (kycProfile.0, {

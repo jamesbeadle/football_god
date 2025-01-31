@@ -249,6 +249,4 @@ module ResponseDTOs {
     kycRef: Text;
   }
   
-
-
 };

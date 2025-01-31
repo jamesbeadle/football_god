@@ -1,22 +1,14 @@
 import { authStore } from "../stores/auth-store";
-import { idlFactory } from "../../../../declarations/backend";
 import { ActorFactory } from "../utils/ActorFactory";
 import { isError } from "../utils/helpers";
 import type {
   SystemStateDTO,
-  TimerInfo,
   UpdateAppStatusDTO,
 } from "../../../../declarations/backend/backend.did";
+import type { TimerInfo } from "../../../../declarations/data_canister/data_canister.did";
 
 export class AdminService {
-  private actor: any;
-
-  constructor() {
-    this.actor = ActorFactory.createActor(
-      idlFactory,
-      process.env.BACKEND_CANISTER_ID,
-    );
-  }
+  constructor() {}
 
   async isDataManager(): Promise<boolean> {
     await authStore.sync();
@@ -27,7 +19,7 @@ export class AdminService {
     if (!isLoggedIn) {
       return false;
     }
-    const identityActor = await ActorFactory.createIdentityActor(
+    const identityActor = await ActorFactory.createBackendIdentityActor(
       authStore,
       process.env.BACKEND_CANISTER_ID ?? "",
     );
@@ -39,7 +31,7 @@ export class AdminService {
   }
 
   async isAdmin(): Promise<boolean> {
-    const identityActor = await ActorFactory.createIdentityActor(
+    const identityActor = await ActorFactory.createBackendIdentityActor(
       authStore,
       process.env.BACKEND_CANISTER_ID ?? "",
     );
@@ -51,7 +43,7 @@ export class AdminService {
   }
 
   async isAuditor(): Promise<boolean> {
-    const identityActor = await ActorFactory.createIdentityActor(
+    const identityActor = await ActorFactory.createBackendIdentityActor(
       authStore,
       process.env.BACKEND_CANISTER_ID ?? "",
     );
@@ -65,7 +57,7 @@ export class AdminService {
   async getSystemState(
     applicationName: string,
   ): Promise<SystemStateDTO | undefined> {
-    const identityActor: any = await ActorFactory.createIdentityActor(
+    const identityActor: any = await ActorFactory.createBackendIdentityActor(
       authStore,
       process.env.BACKEND_CANISTER_ID ?? "",
     );
@@ -79,7 +71,7 @@ export class AdminService {
     applicationName: string,
     dto: UpdateAppStatusDTO,
   ): Promise<void> {
-    const identityActor: any = await ActorFactory.createIdentityActor(
+    const identityActor: any = await ActorFactory.createBackendIdentityActor(
       authStore,
       process.env.BACKEND_CANISTER_ID ?? "",
     );
@@ -89,7 +81,7 @@ export class AdminService {
   }
 
   async snapshotManagers(applicationName: string): Promise<void> {
-    const identityActor: any = await ActorFactory.createIdentityActor(
+    const identityActor: any = await ActorFactory.createBackendIdentityActor(
       authStore,
       process.env.BACKEND_CANISTER_ID ?? "",
     );
@@ -99,7 +91,7 @@ export class AdminService {
   }
 
   async calculateGameweekScores(applicationName: string): Promise<void> {
-    const identityActor: any = await ActorFactory.createIdentityActor(
+    const identityActor: any = await ActorFactory.createBackendIdentityActor(
       authStore,
       process.env.BACKEND_CANISTER_ID ?? "",
     );
@@ -109,7 +101,7 @@ export class AdminService {
   }
 
   async calculateLeaderboards(applicationName: string): Promise<void> {
-    const identityActor: any = await ActorFactory.createIdentityActor(
+    const identityActor: any = await ActorFactory.createBackendIdentityActor(
       authStore,
       process.env.BACKEND_CANISTER_ID ?? "",
     );
@@ -122,7 +114,7 @@ export class AdminService {
     applicationName: string,
     gameweek: number,
   ): Promise<void> {
-    const identityActor: any = await ActorFactory.createIdentityActor(
+    const identityActor: any = await ActorFactory.createBackendIdentityActor(
       authStore,
       process.env.BACKEND_CANISTER_ID ?? "",
     );
@@ -138,7 +130,7 @@ export class AdminService {
     applicationName: string,
     gameweek: number,
   ): Promise<void> {
-    const identityActor: any = await ActorFactory.createIdentityActor(
+    const identityActor: any = await ActorFactory.createBackendIdentityActor(
       authStore,
       process.env.BACKEND_CANISTER_ID ?? "",
     );
@@ -152,7 +144,12 @@ export class AdminService {
   }
 
   async getTimers(): Promise<TimerInfo[]> {
-    const result = await this.actor.getTimers();
+    const identityActor: any = await ActorFactory.createBackendIdentityActor(
+      authStore,
+      process.env.BACKEND_CANISTER_ID ?? "",
+    );
+
+    const result = await identityActor.getTimers();
     if (isError(result)) throw new Error("Failed to fetch timers");
     return result.ok;
   }

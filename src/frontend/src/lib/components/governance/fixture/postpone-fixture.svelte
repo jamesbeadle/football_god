@@ -4,10 +4,8 @@
   import { fixtureStore } from "$lib/stores/fixture-store";
   //import { governanceStore } from "$lib/stores/governance-store";
   import LocalSpinner from "$lib/components/shared/local-spinner.svelte";
-  import { isError } from "$lib/utils/helpers";
-  import type { ClubDTO, FixtureDTO } from "../../../../../../declarations/backend/backend.did";
     import Modal from "$lib/components/shared/modal.svelte";
-    import type { PostponeFixtureDTO } from "../../../../../../declarations/data_canister/data_canister.did";
+    import type { ClubDTO, FixtureDTO, PostponeFixtureDTO } from "../../../../../../declarations/data_canister/data_canister.did";
     import { leagueStore } from "$lib/stores/league-store";
 
   export let visible: boolean;

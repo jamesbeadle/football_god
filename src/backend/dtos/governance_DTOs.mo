@@ -1,32 +1,30 @@
 import Base "../types/base_types";
 import FootballTypes "../types/football_types";
 
-import RequestDTOs "../dtos/request_DTOs";
 import ResponseDTOs "../dtos/response_DTOs";
 
 module GovernanceDTOs {
 
   public type RevaluePlayerUpDTO = {
-    playerId : FootballTypes.ClubId;
-    seasonId : FootballTypes.SeasonId;
-    gameweek: FootballTypes.GameweekNumber;
+    leagueId: FootballTypes.LeagueId;
+    playerId : FootballTypes.PlayerId;
   };
 
   public type RevaluePlayerDownDTO = {
-    playerId : FootballTypes.ClubId;
-    seasonId : FootballTypes.SeasonId;
-    gameweek: FootballTypes.GameweekNumber;
+    leagueId: FootballTypes.LeagueId;
+    playerId : FootballTypes.PlayerId;
   };
 
   public type SubmitFixtureDataDTO = {
-    seasonId: FootballTypes.SeasonId;
     leagueId: FootballTypes.LeagueId;
+    seasonId: FootballTypes.SeasonId;
     fixtureId : FootballTypes.FixtureId;
     gameweek: FootballTypes.GameweekNumber;
     playerEventData : [FootballTypes.PlayerEventData];
   };
 
   public type AddInitialFixturesDTO = {
+    leagueId: FootballTypes.LeagueId;
     seasonFixtures : [ResponseDTOs.FixtureDTO];
   };
 
@@ -45,12 +43,15 @@ module GovernanceDTOs {
   };
 
   public type RescheduleFixtureDTO = {
-    postponedFixtureId : FootballTypes.FixtureId;
+    leagueId: FootballTypes.LeagueId;
+    seasonId: FootballTypes.SeasonId;
+    fixtureId : FootballTypes.FixtureId;
     updatedFixtureGameweek : FootballTypes.GameweekNumber;
     updatedFixtureDate : Int;
   };
 
   public type LoanPlayerDTO = {
+    leagueId: FootballTypes.LeagueId;
     playerId : FootballTypes.ClubId;
     loanLeagueId: FootballTypes.LeagueId;
     loanClubId : FootballTypes.ClubId;
@@ -72,11 +73,12 @@ module GovernanceDTOs {
   };
 
   public type RecallPlayerDTO = {
-    recallFromLeagueId: FootballTypes.LeagueId;
+    leagueId: FootballTypes.LeagueId;
     playerId : FootballTypes.ClubId;
   };
 
   public type CreatePlayerDTO = {
+    leagueId: FootballTypes.LeagueId;
     clubId : FootballTypes.ClubId;
     position : FootballTypes.PlayerPosition;
     firstName : Text;
@@ -88,6 +90,7 @@ module GovernanceDTOs {
   };
 
   public type UpdatePlayerDTO = {
+    leagueId: FootballTypes.LeagueId;
     playerId : FootballTypes.ClubId;
     position : FootballTypes.PlayerPosition;
     firstName : Text;
@@ -98,12 +101,14 @@ module GovernanceDTOs {
   };
 
   public type SetPlayerInjuryDTO = {
+    leagueId: FootballTypes.LeagueId;
     playerId : FootballTypes.ClubId;
     description : Text;
     expectedEndDate : Int;
   };
 
   public type RetirePlayerDTO = {
+    leagueId: FootballTypes.LeagueId;
     playerId : FootballTypes.ClubId;
     retirementDate : Int;
   };
@@ -114,6 +119,7 @@ module GovernanceDTOs {
   };
 
   public type UpdateClubDTO = {
+    leagueId: FootballTypes.LeagueId;
     clubId : FootballTypes.ClubId;
     name : Text;
     friendlyName : Text;
@@ -125,18 +131,15 @@ module GovernanceDTOs {
   };
 
   public type PromoteClubDTO = {
-    name : Text;
-    friendlyName : Text;
-    primaryColourHex : Text;
-    secondaryColourHex : Text;
-    thirdColourHex : Text;
-    abbreviatedName : Text;
-    shirtType : FootballTypes.ShirtType;
+    leagueId: FootballTypes.LeagueId;
+    clubId: FootballTypes.ClubId;
+    toLeagueId: FootballTypes.LeagueId;
   };
 
   public type RelegateClubDTO = {
     leagueId: FootballTypes.LeagueId;
     clubId: FootballTypes.ClubId;
+    relegatedToLeagueId: FootballTypes.LeagueId;
   };
   
   public type CreateLeagueDTO = {
@@ -172,10 +175,5 @@ module GovernanceDTOs {
     thirdColourHex : Text;
     abbreviatedName : Text;
     shirtType : FootballTypes.ShirtType;
-  };
-
-  public type RemoveClubDTO = {
-    leagueId: FootballTypes.LeagueId;
-    clubId: FootballTypes.ClubId;
   };
 };

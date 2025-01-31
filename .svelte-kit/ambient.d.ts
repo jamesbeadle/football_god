@@ -33,6 +33,7 @@ declare module '$env/static/private' {
 	export const CANISTER_ID_BACKEND: string;
 	export const CANISTER_ID: string;
 	export const CANISTER_CANDID_PATH: string;
+	export const CANISTER_ID_SNS_GOVERNANCE: string;
 	export const VITE_AUTH_PROVIDER_URL: string;
 	export const TERM_PROGRAM: string;
 	export const NODE: string;
@@ -135,6 +136,7 @@ declare module '$env/dynamic/private' {
 		CANISTER_ID_BACKEND: string;
 		CANISTER_ID: string;
 		CANISTER_CANDID_PATH: string;
+		CANISTER_ID_SNS_GOVERNANCE: string;
 		VITE_AUTH_PROVIDER_URL: string;
 		TERM_PROGRAM: string;
 		NODE: string;

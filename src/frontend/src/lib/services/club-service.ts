@@ -1,47 +1,30 @@
+import { ActorFactory } from "../utils/ActorFactory";
+import { isError } from "../utils/helpers";
 import type {
   ClubDTO,
   CreateClubDTO,
   LeagueId,
-  RemoveClubDTO,
-} from "../../../../declarations/backend/backend.did";
-import { idlFactory } from "../../../../declarations/backend";
-import { ActorFactory } from "../utils/ActorFactory";
-import { isError } from "../utils/helpers";
+} from "../../../../declarations/data_canister/data_canister.did";
+import { governanceStore } from "$lib/stores/governance-store";
 import { authStore } from "$lib/stores/auth-store";
 
 export class ClubService {
-  private actor: any;
-
-  constructor() {
-    this.actor = ActorFactory.createActor(
-      idlFactory,
-      process.env.BACKEND_CANISTER_ID,
-    );
-  }
+  constructor() {}
 
   async getClubs(leagueId: LeagueId): Promise<ClubDTO[]> {
-    const result = await this.actor.getLeagueClubs(leagueId);
+    const identityActor: any =
+      await ActorFactory.createDataCanisterIdentityActor(
+        authStore,
+        process.env.DATA_CANISTER_ID ?? "",
+      );
+
+    const result = await identityActor.getClubs(leagueId);
     if (isError(result)) throw new Error("Failed to fetch clubs");
     return result.ok;
   }
 
   async createClub(dto: CreateClubDTO): Promise<void> {
-    const identityActor: any = await ActorFactory.createIdentityActor(
-      authStore,
-      process.env.BACKEND_CANISTER_ID ?? "",
-    );
-
-    const result = await identityActor.executeCreateClub(dto);
+    const result = await governanceStore.createClub(dto);
     if (isError(result)) throw new Error("Failed to create club");
-  }
-
-  async removeClub(dto: RemoveClubDTO): Promise<void> {
-    const identityActor: any = await ActorFactory.createIdentityActor(
-      authStore,
-      process.env.BACKEND_CANISTER_ID ?? "",
-    );
-
-    const result = await identityActor.executeRemoveClub(dto);
-    if (isError(result)) throw new Error("Failed to remove club");
   }
 }

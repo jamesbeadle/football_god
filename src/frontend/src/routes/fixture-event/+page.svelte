@@ -10,7 +10,10 @@
     import ArrowUp from "$lib/icons/ArrowUp.svelte";
     import ArrowDown from "$lib/icons/ArrowDown.svelte";
     import BetSelectedIcon from "$lib/icons/BetSelectedIcon.svelte";
-
+    
+    import { storeManager } from "$lib/managers/store-manager";
+    import { clubStore } from "$lib/stores/club-store";
+    import { leagueStore } from "$lib/stores/league-store";
     import { playerStore } from "$lib/stores/player-store";
     import { bettingStore } from "$lib/stores/betting-store";
     import { betSlipStore } from "$lib/stores/bet-slip-store";
@@ -29,24 +32,15 @@
       MissPenaltyOdds,
       OverUnderSelectionOdds,
       HalfTimeFullTimeOdds,
-      ResultAndYesNoSelectionOdds
-    } from "../../../../declarations/backend/backend.did";
-  
-    import type {
+      ResultAndYesNoSelectionOdds,
       Category,
-      SelectionDetail,
-      ClubDTO,
-      FixtureDTO,
-      PlayerDTO,
-      FootballLeagueDTO,
-      ClubId
-    } from "../../../../declarations/data_canister/data_canister.did";
+      SelectionDetail
+    } from "../../../../declarations/backend/backend.did";
+    import { fixtureWithClubsStore } from "$lib/derived/fixtures-with-clubs.derived";
+    import type { FixtureWithClubs } from "$lib/derived/fixtures-with-clubs.derived";
     import { betSlipDataStore } from "$lib/stores/bet-slip-data-store";
     import { buildBetUiDescription } from "$lib/utils/buildBetUiDescription";
-    import { leagueStore } from "$lib/stores/league-store";
-    import { fixtureWithClubsStore, type FixtureWithClubs } from "$lib/derived/fixtures-with-clubs.derived";
-    import { storeManager } from "$lib/managers/store-manager";
-    import { clubStore } from "$lib/stores/club-store";
+    import type { ClubDTO, ClubId, FixtureDTO, PlayerDTO, FootballLeagueDTO } from "../../../../declarations/data_canister/data_canister.did";
   
     $: leagueId = Number($page.url.searchParams.get("leagueId"));
     $: fixtureId = Number($page.url.searchParams.get("fixtureId"));

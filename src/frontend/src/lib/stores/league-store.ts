@@ -1,15 +1,16 @@
 import { writable } from "svelte/store";
 import { LeagueService } from "../services/league-service";
+import { DataHashService } from "$lib/services/data-hash-service";
+import { serializeData, deserializeData } from "../utils/helpers";
+import { MAX_CACHED_LEAGUES } from "../constants/app.constants";
 import type {
   CreateLeagueDTO,
-  UpdateLeagueDTO,
   FootballLeagueDTO,
   LeagueStatus,
-} from "../../../../declarations/backend/backend.did";
-
-import { mockData } from "../local/mock-data";
+  UpdateLeagueDTO,
+} from "../../../../declarations/data_canister/data_canister.did";
 import { dev } from '$app/environment';
-import { deserializeData } from "../utils/helpers";
+import { mockData } from "../local/mock-data";
 
 function createLeagueStore() {
   const { subscribe, update } = writable<Record<number, FootballLeagueDTO>>({});

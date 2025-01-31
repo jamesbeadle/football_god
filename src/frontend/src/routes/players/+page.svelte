@@ -5,7 +5,6 @@
   import { leagueStore } from "$lib/stores/league-store";
   import { clubStore } from "$lib/stores/club-store";
   import { playerStore } from "$lib/stores/player-store";
-  import type { ClubDTO, CountryDTO, FootballLeagueDTO, PlayerDTO } from "../../../../declarations/backend/backend.did";
   
   import Layout from "../Layout.svelte";
   import CreatePlayer from "$lib/components/governance/player/create-player.svelte";
@@ -14,7 +13,10 @@
   import LoanPlayer from "$lib/components/governance/player/loan-player.svelte";
   import SetFreeAgent from "$lib/components/governance/player/set-free-agent.svelte";
   import LocalSpinner from "$lib/components/shared/local-spinner.svelte";
-    import RecallPlayer from "$lib/components/governance/player/recall-player.svelte";
+  import RecallPlayer from "$lib/components/governance/player/recall-player.svelte";
+  import RevaluePlayerDown from "$lib/components/governance/player/revalue-player-down.svelte";
+    import RevaluePlayerUp from "$lib/components/governance/player/revalue-player-up.svelte";
+    import type { ClubDTO, CountryDTO, FootballLeagueDTO, PlayerDTO } from "../../../../declarations/data_canister/data_canister.did";
 
   let isLoading = true;
   let loadingPlayers = false;
@@ -386,12 +388,21 @@
       {/if}
     
       {#if selectedPlayerId > 0 && showSetFreeAgentModal}
+        <SetFreeAgent visible={showRecallPlayerModal} {closeModal} selectedPlayerId={selectedPlayerId} />
+      {/if}
+    
+      {#if selectedPlayerId > 0 && showRevaluePlayerUpModal}
         {@const selectedPlayer = filteredPlayers.find(x => x.id == selectedPlayerId) }
-        <SetFreeAgent visible={showSetFreeAgentModal} {closeModal} selectedClubId={selectedPlayer ? selectedPlayer.clubId ?? 0 : 0} {selectedPlayerId} {selectedLeagueId} />
+        {@const playerClub = clubs.find(x => x.id == selectedPlayer!.clubId) }
+        <RevaluePlayerUp visible={showRevaluePlayerUpModal} {closeModal} club={playerClub!} player={selectedPlayer!} />
+      {/if}
+    
+      {#if selectedPlayerId > 0 && showRevaluePlayerDownModal}
+        {@const selectedPlayer = filteredPlayers.find(x => x.id == selectedPlayerId) }
+        {@const playerClub = clubs.find(x => x.id == selectedPlayer!.clubId) }
+        <RevaluePlayerDown visible={showRevaluePlayerDownModal} {closeModal} club={playerClub!} player={selectedPlayer!} />
       {/if}
     
     {/if}
   {/if}
 </Layout>
-
-

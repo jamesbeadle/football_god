@@ -10,7 +10,11 @@ return {
 	assets: new Set([".ic-assets.json",".well-known/ic-domains",".well-known/ii-alternative-origins","FPLCoin.png","Gods.png","ICPCoin.png","banner.jpg","favicons/apple-touch-icon.png","favicons/browserconfig.xml","favicons/favicon-16x16.png","favicons/favicon-32x32.png","favicons/favicon.ico","favicons/icon-192x192.png","favicons/icon-512x512.png","favicons/mstile-150x150.png","favicons/safari-pinned-tab.svg","fpl.jpg","manifest.webmanifest","poppins-regular-webfont.woff2","profile_placeholder.png","transferkings.png","whitepaper.jpg","wsl.jpg"]),
 	mimeTypes: {".json":"application/json",".png":"image/png",".jpg":"image/jpeg",".xml":"text/xml",".svg":"image/svg+xml",".webmanifest":"application/manifest+json",".woff2":"font/woff2"},
 	_: {
+<<<<<<< HEAD
 		client: {"start":"_app/immutable/entry/start._MMXRwXM.js","app":"_app/immutable/entry/app.CnIMvihY.js","imports":["_app/immutable/entry/start._MMXRwXM.js","_app/immutable/chunks/index.C2vgwozU.js","_app/immutable/chunks/vendor.5bsCMzrv.js","_app/immutable/entry/app.CnIMvihY.js","_app/immutable/chunks/index.C2vgwozU.js","_app/immutable/chunks/vendor.5bsCMzrv.js"],"stylesheets":["_app/immutable/assets/index.B1BzUtqj.css","_app/immutable/assets/index.B1BzUtqj.css"],"fonts":[],"uses_env_dynamic_public":false},
+=======
+		client: {"start":"_app/immutable/entry/start.01SQchNh.js","app":"_app/immutable/entry/app.BEb_nqSF.js","imports":["_app/immutable/entry/start.01SQchNh.js","_app/immutable/chunks/index.14BV5vw9.js","_app/immutable/chunks/vendor.CLYXhiNu.js","_app/immutable/entry/app.BEb_nqSF.js","_app/immutable/chunks/index.14BV5vw9.js","_app/immutable/chunks/vendor.CLYXhiNu.js"],"stylesheets":["_app/immutable/assets/index.CHWh9d0R.css","_app/immutable/assets/index.CHWh9d0R.css"],"fonts":[],"uses_env_dynamic_public":false},
+>>>>>>> master
 		nodes: [
 			__memo(() => import('./nodes/0.js')),
 			__memo(() => import('./nodes/1.js')),

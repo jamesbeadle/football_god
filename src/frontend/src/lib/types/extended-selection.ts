@@ -1,4 +1,4 @@
-import type { Selection } from "../../../../declarations/data_canister/data_canister.did";
+import type { Selection } from "../../../../declarations/backend/backend.did";
 
 export interface ExtendedSelection extends Selection {
   uiDescription?: string;

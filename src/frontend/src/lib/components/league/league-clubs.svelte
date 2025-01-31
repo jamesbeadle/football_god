@@ -7,7 +7,6 @@
   import type { ClubDTO, FootballLeagueDTO } from "../../../../../declarations/backend/backend.did";
   import BadgeIcon from "$lib/icons/BadgeIcon.svelte";
   import CreateClub from "../governance/club/create-club.svelte";
-  import RemoveClub from "../governance/club/remove-club.svelte";
   import LocalSpinner from "../shared/local-spinner.svelte";
   import PipsIcon from "$lib/icons/pips-icon.svelte";
 
@@ -17,11 +16,9 @@
 
   let league: FootballLeagueDTO | undefined;
   let clubs: ClubDTO[] = [];
-  let selectedClubId = 0;
   let dropdownVisible: number | null = null;
   
   let showAddClub = false;
-  let showRemoveClub = false;
   
   onMount(async () => {
     try {
@@ -61,14 +58,8 @@
       }
   }
 
-  function loadRemoveClub(clubId: number){
-      selectedClubId = clubId;
-      showRemoveClub = true;
-  }
-
   async function closeModal(){
     showAddClub = false;
-    showRemoveClub = false;
   }
 
   function viewClub(clubId: number) {
@@ -111,7 +102,6 @@
                 {#if dropdownVisible === club.id}
                   <div class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg z-10 text-sm dropdown-menu">
                     <button class="dropdown-link" on:click={() => viewClub(club.id)}>View Details</button>
-                    <button class="dropdown-link" on:click={() => loadRemoveClub(club.id)}>Remove Club</button>
                   </div>
                 {/if}
               </div>
@@ -125,8 +115,4 @@
 
 {#if showAddClub}
   <CreateClub visible={showAddClub} {closeModal} selectedLeagueId={leagueId} />
-{/if}
-
-{#if showRemoveClub}
-  <RemoveClub visible={showRemoveClub} {closeModal} selectedLeagueId={leagueId} {selectedClubId} />
 {/if}

@@ -2,9 +2,9 @@
   import { onMount } from "svelte";
   import { countryStore } from "$lib/stores/country-store";
   import { clubStore } from "$lib/stores/club-store";
-  import type { CountryDTO, CreateClubDTO, ShirtType } from "../../../../../../declarations/backend/backend.did";
   import LocalSpinner from "$lib/components/shared/local-spinner.svelte";
   import Modal from "$lib/components/shared/modal.svelte";
+    import type { CountryDTO, CreateClubDTO, ShirtType } from "../../../../../../declarations/data_canister/data_canister.did";
   
   export let visible: boolean;
   export let closeModal: () => void;

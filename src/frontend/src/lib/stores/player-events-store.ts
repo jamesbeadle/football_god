@@ -2,14 +2,8 @@ import { writable } from "svelte/store";
 import type {
   PlayerDetailDTO,
   PlayerPointsDTO,
-  PlayerDTO,
-  LeagueStatus,
-  FixtureDTO,
 } from "../../../../declarations/data_canister/data_canister.did";
 import { PlayerEventsService } from "../services/player-events-service";
-import { playerStore } from "./player-store";
-import { fixtureStore } from "./fixture-store";
-import { leagueStore } from "./league-store";
 
 function createPlayerEventsStore() {
   const { subscribe, set } = writable<PlayerPointsDTO[]>([]);

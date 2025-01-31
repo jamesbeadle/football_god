@@ -1,15 +1,11 @@
 <script lang="ts">
-    import { onDestroy, onMount } from "svelte";
-    import { countryStore } from "$lib/stores/country-store";
-    import { userStore } from "$lib/stores/user-store";
-    import { leagueStore } from "$lib/stores/league-store";
-    import type { TimerInfo } from "../../../../declarations/backend/backend.did";
+    import { onMount } from "svelte";
     
     import Layout from "../Layout.svelte";
     import LocalSpinner from "$lib/components/shared/local-spinner.svelte";
-    import AddLeagueModal from "$lib/components/governance/league/create-league.svelte";
     import { formatUnixDateToSmallReadable, formatUnixTimeToTime } from "$lib/utils/helpers";
     import { adminStore } from "$lib/stores/admin-store";
+    import type { TimerInfo } from "../../../../declarations/data_canister/data_canister.did";
     
     let isLoading = true;
     let timers: TimerInfo[] = [];

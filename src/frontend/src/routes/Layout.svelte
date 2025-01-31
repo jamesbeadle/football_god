@@ -9,6 +9,8 @@
 
   import Dashboard from "$lib/components/shared/dashboard.svelte";
   import FullScreenSpinner from "$lib/components/shared/full-screen-spinner.svelte";
+  import { toasts } from "$lib/stores/toasts-store";
+  import Toasts from "$lib/components/toasts/toasts.svelte";
 
   import "../app.css";
 
@@ -19,17 +21,22 @@
     try {
       await authStore.sync();
     } catch (err: unknown) {
-      console.error(err);
+      toasts.addToast( { message: "Unexpected issue while syncing the status of your authentication.",
+      type: "error" });
     }
   }
 
   const init = async () => {
     await Promise.all([syncAuthStore()]);
     worker = await initAuthWorker();
+<<<<<<< HEAD
     //await userStore.sync();
+=======
+>>>>>>> master
   };
 
   onMount(async () => {
+    await userStore.sync();
   });
 
   $: worker, $authStore, (() => worker?.syncAuthIdle($authStore))();
@@ -51,4 +58,5 @@
   <Dashboard>
     <slot />
   </Dashboard>
+  <Toasts />
 {/await}
