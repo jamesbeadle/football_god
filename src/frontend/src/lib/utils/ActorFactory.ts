@@ -88,7 +88,6 @@ export class ActorFactory {
       });
     }).then((identity) => {
       unsubscribe();
-
       return ActorFactory.createActor(data_canister, canisterId, identity);
     });
   }
