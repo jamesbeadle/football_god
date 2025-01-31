@@ -121,7 +121,12 @@ function createGovernanceStore() {
         if (player) {
           const command: Command = {
             MakeProposal: {
-              title: `Revalue ${player.lastName} value up.`,
+              title: `Revalue ${player.firstName} ${player.lastName} value to £${(
+                (player.valueQuarterMillions + 1) /
+                4
+              )
+                .toFixed(2)
+                .toLocaleString()}m.`,
               url: "openfpl.xyz/governance",
               summary: `Revalue ${player.lastName} value up from £${(
                 player.valueQuarterMillions / 4
@@ -132,7 +137,7 @@ function createGovernanceStore() {
                 4
               )
                 .toFixed(2)
-                .toLocaleString()}m).`,
+                .toLocaleString()}m.`,
               action: [{ ExecuteGenericNervousSystemFunction: fn }],
             },
           };
