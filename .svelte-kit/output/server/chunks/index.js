@@ -4727,7 +4727,7 @@ const options = {
 		<div class="error">
 			<span class="status">` + status + '</span>\n			<div class="message">\n				<h1>' + message + "</h1>\n			</div>\n		</div>\n	</body>\n</html>\n"
   },
-  version_hash: "17arh9z"
+  version_hash: "13g01jw"
 };
 async function get_hooks() {
   return {};
@@ -5678,6 +5678,7 @@ const idlFactory = ({ IDL: IDL2 }) => {
     loanEndDate: IDL2.Int,
     playerId: ClubId,
     loanClubId: ClubId,
+    newValueQuarterMillions: IDL2.Nat16,
     loanLeagueId: LeagueId,
     leagueId: LeagueId
   });
@@ -5749,6 +5750,7 @@ const idlFactory = ({ IDL: IDL2 }) => {
   });
   const RecallPlayerDTO = IDL2.Record({
     playerId: ClubId,
+    newValueQuarterMillions: IDL2.Nat16,
     leagueId: LeagueId
   });
   const RescheduleFixtureDTO = IDL2.Record({
@@ -5773,6 +5775,7 @@ const idlFactory = ({ IDL: IDL2 }) => {
   });
   const SetFreeAgentDTO = IDL2.Record({
     playerId: ClubId,
+    newValueQuarterMillions: IDL2.Nat16,
     leagueId: LeagueId
   });
   const SetPlayerInjuryDTO = IDL2.Record({
@@ -5786,11 +5789,13 @@ const idlFactory = ({ IDL: IDL2 }) => {
     newLeagueId: LeagueId,
     playerId: ClubId,
     newShirtNumber: IDL2.Nat8,
+    newValueQuarterMillions: IDL2.Nat16,
     newClubId: ClubId,
     leagueId: LeagueId
   });
   const UnretirePlayerDTO = IDL2.Record({
     playerId: ClubId,
+    newValueQuarterMillions: IDL2.Nat16,
     leagueId: LeagueId
   });
   const UpdateLeagueDTO = IDL2.Record({

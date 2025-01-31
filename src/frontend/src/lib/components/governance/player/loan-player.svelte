@@ -60,9 +60,11 @@
       loanEndDate: convertDateInputToUnixNano(date),
       playerId: selectedPlayer.id,
       loanClubId: loanClubId,
-      loanLeagueId: loanLeagueId
+      loanLeagueId: loanLeagueId,
+      newValueQuarterMillions: selectedPlayer.valueQuarterMillions //TODO ADD FIELD
     };
-    
+    console.log("loaning player")
+    console.log(dto)
     let result = await governanceStore.loanPlayer(dto);
     if (isError(result)) {
       isLoading = false;
@@ -85,8 +87,8 @@
 </script>
 
 <Modal showModal={visible} onClose={closeModal}>
-  <div class="mx-4 p-4">
-    <div class="flex justify-between items-center my-2">
+  <div class="mx-2 p-2">
+    <div class="flex justify-between items-center mb-2">
       <h3 class="default-header">Loan Player</h3>
       <button class="times-button" on:click={cancelModal}>&times;</button>
     </div>
@@ -95,14 +97,14 @@
       {#if isLoading}
         <LocalSpinner />
       {:else}
-        <div class="w-full flex-col space-y-4 mb-2">
+        <div class="w-full flex-col space-y-4 mb-2 flex space-y-2">
 
-          <p>Loan {selectedPlayer.firstName} {selectedPlayer}</p>
+          <p class="">Loan {selectedPlayer.firstName} {selectedPlayer.lastName}</p>
         
-          <p>Please select the league a player is being loaned to:</p>
+          <p>Please select the league they are being loaned to:</p>
 
           <select
-            class="p-2 brand-dropdown min-w-[100px]"
+            class="brand-dropdown w-full"
             bind:value={loanLeagueId}
           >
             <option value={0}>Select League</option>
@@ -114,7 +116,7 @@
           {#if loanLeagueId > 0}
 
             <select
-              class="p-2 brand-dropdown min-w-[100px]"
+              class="brand-dropdown w-full"
               bind:value={loanClubId}
             >
               <option value={0}>Select Club</option>
@@ -124,24 +126,23 @@
             </select>
 
             {#if loanClubId > 0}
-              <div class="flex flex-row my-2">
-                <p class="mr-2">Select Date:</p>
-                <input type="date" bind:value={date} class="brand-input" />
+              <div class="flex flex-row w-full items-center">
+                <p class="w-1/2">Loan End Date:</p>
+                <input class="w-1/2 brand-input" type="date" bind:value={date} />
               </div>
             {/if}
           {/if}
 
-          <div class="items-center flex space-x-4">
+          <div class="items-center flex flex-row space-x-4 w-full">
             <button
-              class="px-4 py-2 brand-cancel-button min-w-[150px]"
+              class="brand-cancel-button w-1/2"
               type="button"
               on:click={cancelModal}
             >
               Cancel
             </button>
             <button
-              class={`${isSubmitDisabled ? "brand-button-disabled" : "brand-button"} 
-                          px-4 py-2 min-w-[150px]`}
+              class={`${isSubmitDisabled ? "brand-button-disabled" : "brand-button"} w-1/2`}
               on:click={raiseProposal}
               disabled={isSubmitDisabled}
             >

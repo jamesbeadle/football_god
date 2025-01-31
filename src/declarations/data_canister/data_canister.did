@@ -42,6 +42,7 @@ type UpdateClubDTO =
 type UnretirePlayerDTO = 
  record {
    leagueId: LeagueId;
+   newValueQuarterMillions: nat16;
    playerId: ClubId;
  };
 type TransferPlayerDTO = 
@@ -51,6 +52,7 @@ type TransferPlayerDTO =
    newClubId: ClubId;
    newLeagueId: LeagueId;
    newShirtNumber: nat8;
+   newValueQuarterMillions: nat16;
    playerId: ClubId;
  };
 type TransferHistory = 
@@ -91,6 +93,7 @@ type SetPlayerInjuryDTO =
 type SetFreeAgentDTO = 
  record {
    leagueId: LeagueId;
+   newValueQuarterMillions: nat16;
    playerId: ClubId;
  };
 type SeasonId = nat16;
@@ -211,6 +214,7 @@ type RelegateClubDTO =
 type RecallPlayerDTO = 
  record {
    leagueId: LeagueId;
+   newValueQuarterMillions: nat16;
    playerId: ClubId;
  };
 type PromoteClubDTO = 
@@ -398,6 +402,7 @@ type LoanPlayerDTO =
    loanClubId: ClubId;
    loanEndDate: int;
    loanLeagueId: LeagueId;
+   newValueQuarterMillions: nat16;
    playerId: ClubId;
  };
 type List_5 = 

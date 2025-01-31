@@ -143,6 +143,7 @@ export interface LoanPlayerDTO {
   loanEndDate: bigint;
   playerId: ClubId;
   loanClubId: ClubId;
+  newValueQuarterMillions: number;
   loanLeagueId: LeagueId;
   leagueId: LeagueId;
 }
@@ -308,6 +309,7 @@ export interface PromoteClubDTO {
 }
 export interface RecallPlayerDTO {
   playerId: ClubId;
+  newValueQuarterMillions: number;
   leagueId: LeagueId;
 }
 export interface RelegateClubDTO {
@@ -361,6 +363,7 @@ export interface SeasonDTO {
 export type SeasonId = number;
 export interface SetFreeAgentDTO {
   playerId: ClubId;
+  newValueQuarterMillions: number;
   leagueId: LeagueId;
 }
 export interface SetPlayerInjuryDTO {
@@ -395,11 +398,13 @@ export interface TransferPlayerDTO {
   newLeagueId: LeagueId;
   playerId: ClubId;
   newShirtNumber: number;
+  newValueQuarterMillions: number;
   newClubId: ClubId;
   leagueId: LeagueId;
 }
 export interface UnretirePlayerDTO {
   playerId: ClubId;
+  newValueQuarterMillions: number;
   leagueId: LeagueId;
 }
 export interface UpdateClubDTO {

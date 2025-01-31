@@ -294,6 +294,7 @@ export const idlFactory = ({ IDL }) => {
     loanEndDate: IDL.Int,
     playerId: ClubId,
     loanClubId: ClubId,
+    newValueQuarterMillions: IDL.Nat16,
     loanLeagueId: LeagueId,
     leagueId: LeagueId,
   });
@@ -365,6 +366,7 @@ export const idlFactory = ({ IDL }) => {
   });
   const RecallPlayerDTO = IDL.Record({
     playerId: ClubId,
+    newValueQuarterMillions: IDL.Nat16,
     leagueId: LeagueId,
   });
   const RescheduleFixtureDTO = IDL.Record({
@@ -389,6 +391,7 @@ export const idlFactory = ({ IDL }) => {
   });
   const SetFreeAgentDTO = IDL.Record({
     playerId: ClubId,
+    newValueQuarterMillions: IDL.Nat16,
     leagueId: LeagueId,
   });
   const SetPlayerInjuryDTO = IDL.Record({
@@ -402,11 +405,13 @@ export const idlFactory = ({ IDL }) => {
     newLeagueId: LeagueId,
     playerId: ClubId,
     newShirtNumber: IDL.Nat8,
+    newValueQuarterMillions: IDL.Nat16,
     newClubId: ClubId,
     leagueId: LeagueId,
   });
   const UnretirePlayerDTO = IDL.Record({
     playerId: ClubId,
+    newValueQuarterMillions: IDL.Nat16,
     leagueId: LeagueId,
   });
   const UpdateLeagueDTO = IDL.Record({

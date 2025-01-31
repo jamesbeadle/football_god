@@ -62,11 +62,11 @@
 }
 
 .brand-cancel-button {
-  @apply bg-BrandNegative text-white p-2 rounded;
+  @apply bg-BrandNegative text-white px-4 py-2 rounded;
 }
 
 .brand-button-disabled {
-  @apply bg-BrandDisabled text-white p-2 rounded;
+  @apply bg-BrandDisabled text-white px-4 py-2 rounded;
 }
 
 .brand-select {
@@ -78,7 +78,7 @@
 }
 
 .brand-dropdown {
-  @apply text-black rounded;
+  @apply text-black rounded px-2 py-1;
 }
 
 .stake-input {
