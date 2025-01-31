@@ -3,10 +3,11 @@
   import { leagueStore } from "$lib/stores/league-store";
   import { clubStore } from "$lib/stores/club-store";
   import { playerStore } from "$lib/stores/player-store";
-  import { convertDateInputToUnixNano } from "$lib/utils/helpers";
+  import { convertDateInputToUnixNano, isError } from "$lib/utils/helpers";
   import Modal from "$lib/components/shared/modal.svelte";
   import LocalSpinner from "$lib/components/shared/local-spinner.svelte";
     import type { ClubDTO, FootballLeagueDTO, LoanPlayerDTO, PlayerDTO } from "../../../../../../declarations/data_canister/data_canister.did";
+    import { governanceStore } from "$lib/stores/governance-store";
   
   export let visible: boolean;
   export let closeModal: () => void;
@@ -18,8 +19,7 @@
 
   let date = "";
 
-  let leagues: FootballLeagueDTO[] = [];
-  let clubPlayers: PlayerDTO[] = [];
+  let loanLeagues: FootballLeagueDTO[] = [];
   let loanClubs: ClubDTO[] = [];
 
   let isLoading = false;
@@ -31,7 +31,7 @@
   onMount(async () => {
     try {
       isLoading = true;
-      leagues = await leagueStore.getLeagues();
+      loanLeagues = await leagueStore.getLeagues();
       leaguesLoaded = true; 
     } catch (error) {
       console.error("Error mounting loan player modal.", error);
@@ -63,7 +63,14 @@
       loanLeagueId: loanLeagueId
     };
     
-    await playerStore.loanPlayer(selectedPlayer.leagueId, dto);
+    let result = await governanceStore.loanPlayer(dto);
+    if (isError(result)) {
+      isLoading = false;
+      console.error("Error submitting proposal");
+      return;
+    }
+    isLoading = false;
+    resetForm();
     closeModal();
   }
 
@@ -73,7 +80,6 @@
   }
 
   function resetForm() {
-    clubPlayers = [];
     isLoading = false;
   }
 </script>
@@ -93,14 +99,14 @@
 
           <p>Loan {selectedPlayer.firstName} {selectedPlayer}</p>
         
-          <p>Please select players loan club league:</p>
+          <p>Please select the league a player is being loaned to:</p>
 
           <select
             class="p-2 brand-dropdown min-w-[100px]"
             bind:value={loanLeagueId}
           >
             <option value={0}>Select League</option>
-            {#each leagues as league}
+            {#each loanLeagues as league}
               <option value={league.id}>{league.name}</option>
             {/each}
           </select>
