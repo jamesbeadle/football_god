@@ -41,6 +41,7 @@ import { leagueStore } from "./league-store";
 import { Principal } from "@dfinity/principal";
 import type { OptionIdentity } from "$lib/types/identity";
 import { IDL } from "@dfinity/candid";
+import { createAgent } from "@dfinity/utils";
 
 const RevaluePlayerUpDTO_Idl = IDL.Record({
   leagueId: IDL.Nat16,
@@ -62,6 +63,22 @@ const LoanPlayerDTO_Idl = IDL.Record({
 
 function createGovernanceStore() {
   async function revaluePlayerUp(dto: RevaluePlayerUpDTO): Promise<any> {
+    let identity: OptionIdentity;
+
+    authStore.subscribe(async (auth) => {
+      identity = auth.identity;
+    });
+
+    if (!identity) {
+      return 0n;
+    }
+
+    const agent = await createAgent({
+      identity: identity,
+      host: import.meta.env.VITE_AUTH_PROVIDER_URL,
+      fetchRootKey: process.env.DFX_NETWORK === "local",
+    });
+
     try {
       const {
         manageNeuron: governanceManageNeuron,
@@ -70,6 +87,7 @@ function createGovernanceStore() {
         canisterId: Principal.fromText(
           process.env.SNS_GOVERNANCE_CANISTER_ID ?? "",
         ),
+        agent: agent,
       });
 
       let identity: OptionIdentity;

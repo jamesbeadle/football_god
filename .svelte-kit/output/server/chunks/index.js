@@ -4,7 +4,7 @@ import { Buffer } from "buffer";
 import { parse, serialize } from "cookie";
 import * as set_cookie_parser from "set-cookie-parser";
 import { AuthClient } from "@dfinity/auth-client";
-import "@dfinity/utils";
+import { createAgent } from "@dfinity/utils";
 import { HttpAgent, Actor } from "@dfinity/agent";
 import "@dfinity/ledger-icrc";
 import { Principal } from "@dfinity/principal";
@@ -4727,7 +4727,7 @@ const options = {
 		<div class="error">
 			<span class="status">` + status + '</span>\n			<div class="message">\n				<h1>' + message + "</h1>\n			</div>\n		</div>\n	</body>\n</html>\n"
   },
-  version_hash: "d5yv6n"
+  version_hash: "2nh23j"
 };
 async function get_hooks() {
   return {};
@@ -6018,19 +6018,6 @@ class ActorFactory {
       return ActorFactory.createActor(idlFactory$1, canisterId2, identity);
     });
   }
-  static createGovernanceAgent(authStore2, canisterId2) {
-    let unsubscribe;
-    return new Promise((resolve2, reject) => {
-      unsubscribe = authStore2.subscribe((store) => {
-        if (store.identity) {
-          resolve2(store.identity);
-        }
-      });
-    }).then((identity) => {
-      unsubscribe();
-      return ActorFactory.createActor(idlFactory$1, canisterId2, identity);
-    });
-  }
 }
 function replacer(key2, value) {
   if (typeof value === "bigint") {
@@ -6939,6 +6926,18 @@ IDL.Record({
 });
 function createGovernanceStore() {
   async function revaluePlayerUp(dto) {
+    let identity;
+    authStore.subscribe(async (auth) => {
+      identity = auth.identity;
+    });
+    if (!identity) {
+      return 0n;
+    }
+    const agent = await createAgent({
+      identity,
+      host: "https://identity.ic0.app",
+      fetchRootKey: define_process_env_default$1.DFX_NETWORK === "local"
+    });
     try {
       const {
         manageNeuron: governanceManageNeuron,
@@ -6946,16 +6945,17 @@ function createGovernanceStore() {
       } = SnsGovernanceCanister.create({
         canisterId: Principal.fromText(
           define_process_env_default$1.SNS_GOVERNANCE_CANISTER_ID ?? ""
-        )
+        ),
+        agent
       });
-      let identity;
+      let identity2;
       authStore.subscribe(async (auth) => {
-        identity = auth.identity;
+        identity2 = auth.identity;
       });
-      if (!identity) {
+      if (!identity2) {
         return;
       }
-      let principalId = identity.getPrincipal();
+      let principalId = identity2.getPrincipal();
       const userNeurons = await governanceListNeurons({
         principal: principalId,
         limit: 10,

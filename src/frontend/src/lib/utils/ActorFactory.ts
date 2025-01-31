@@ -105,18 +105,4 @@ export class ActorFactory {
       return ActorFactory.createActor(backend_canister, canisterId, identity);
     });
   }
-
-  static createGovernanceAgent(authStore: AuthStore, canisterId: string) {
-    let unsubscribe: Unsubscriber;
-    return new Promise<OptionIdentity>((resolve, reject) => {
-      unsubscribe = authStore.subscribe((store) => {
-        if (store.identity) {
-          resolve(store.identity);
-        }
-      });
-    }).then((identity) => {
-      unsubscribe();
-      return ActorFactory.createActor(backend_canister, canisterId, identity);
-    });
-  }
 }
