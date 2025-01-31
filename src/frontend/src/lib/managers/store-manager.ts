@@ -6,7 +6,6 @@ import { fixtureStore } from "../stores/fixture-store";
 import { seasonStore } from "../stores/season-store";
 import { playerEventsStore } from "../stores/player-events-store";
 
-
 import { DataHashService } from "../services/data-hash-service";
 import { CountryService } from "../services/country-service";
 import { LeagueService } from "../services/league-service";
@@ -111,7 +110,7 @@ export class StoreManager {
       }
 
       let leagues: FootballLeagueDTO[];
-      
+
       const localHash = localStorage.getItem(localHashKey);
       const leagueHash = await this.dataHashService.getLeaguesHash(leagueId);
 
