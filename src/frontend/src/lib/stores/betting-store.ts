@@ -18,7 +18,6 @@ function createBettingStore() {
   async function getMatchOdds(leagueId: LeagueId, fixtureId: FixtureId) {
     if (dev) {
       const matchOddsData = mockData.matchOdds[fixtureId-1];
-      console.log(matchOddsData);
       return matchOddsData?.ok;
     }
     return new BettingService().getMatchOdds(leagueId, fixtureId);

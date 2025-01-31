@@ -10,7 +10,7 @@
     import ArrowUp from "$lib/icons/ArrowUp.svelte";
     import ArrowDown from "$lib/icons/ArrowDown.svelte";
     import BetSelectedIcon from "$lib/icons/BetSelectedIcon.svelte";
- 
+
     import { playerStore } from "$lib/stores/player-store";
     import { bettingStore } from "$lib/stores/betting-store";
     import { betSlipStore } from "$lib/stores/bet-slip-store";
@@ -44,7 +44,7 @@
     import { betSlipDataStore } from "$lib/stores/bet-slip-data-store";
     import { buildBetUiDescription } from "$lib/utils/buildBetUiDescription";
     import { leagueStore } from "$lib/stores/league-store";
-    import { fixtureWithClubsStore } from "$lib/derived/fixtures-with-clubs.derived";
+    import { fixtureWithClubsStore, type FixtureWithClubs } from "$lib/derived/fixtures-with-clubs.derived";
     import { storeManager } from "$lib/managers/store-manager";
     import { clubStore } from "$lib/stores/club-store";
   
@@ -58,11 +58,11 @@
     let matchOdds: MatchOddsDTO;
     let players: PlayerDTO[] = [];
     let clubs: ClubDTO[] = [];
-    let league: FootballLeagueDTO;
+    let league: FootballLeagueDTO | undefined;
     let fixture: FixtureDTO;
     let homeClub: ClubDTO;
     let awayClub: ClubDTO;
-  
+    
     const categoryGroups = {
       Goals: ["goalsOverUnder", "correctScores", "halfTimeScores"],
       Player: [
@@ -85,6 +85,7 @@
     } as const;
   
     const tabs = ["All", "Goals", "Player", "Team", "Half Time"];
+    const allFixturesData: Record<number, FixtureWithClubs> = {};
   
     let expandedCategories = {
       anytimeAssist: false,
@@ -93,7 +94,7 @@
       bothTeamsToScoreAndWinner: false,
       correctResults: false,
       correctScores: false,
-      firstAssisters: false,
+      firstAssist: false,
       firstGoalscorers: false,
       goalsOverUnder: false,
       halfTimeFullTimeResult: false,
@@ -114,7 +115,7 @@
             ? [
                 "correctResults",
                 "correctScores",
-                "goalsOverUnder",
+                // "goalsOverUnder",
                 "bothTeamsToScore",
                 "bothTeamsToScoreAndWinner",
                 "halfTimeScores",
@@ -158,18 +159,50 @@
   
     onMount(async () => {
       try {
+        const existingBets = $betSlipStore.bets;
+        const toggledLeagues = new Set<number>();
+        const toggledFixtures = new Set<number>();
+      
         await storeManager.syncStores(leagueId);
-        matchOdds = await bettingStore.getMatchOdds(leagueId, fixtureId);
+        toggledLeagues.add(leagueId);
+
+        if (existingBets.length > 0) {
+          for (const bet of existingBets) {
+            if (!toggledLeagues.has(bet.leagueId) || !toggledFixtures.has(bet.fixtureId)) {
+              await storeManager.syncStores(bet.leagueId);
+              toggledLeagues.add(bet.leagueId);
+              toggledFixtures.add(bet.fixtureId);
+              const betFixtures = $fixtureStore[bet.leagueId] || [];
+              const betClubs = $clubStore[bet.leagueId] || [];
+              const betFixture = betFixtures.find(f => f.id === bet.fixtureId);
+              if (betFixture) {
+                const betHomeClub = betClubs.find(c => c.id === betFixture.homeClubId);
+                const betAwayClub = betClubs.find(c => c.id === betFixture.awayClubId);
+                allFixturesData[betFixture.id] = {
+                  ...betFixture,
+                  leagueId: bet.leagueId,
+                  homeClub: betHomeClub,
+                  awayClub: betAwayClub
+                };
+              }
+            }
+          }
+        }
 
         const fixtures = $fixtureStore[leagueId] || [];
         const clubs = $clubStore[leagueId] || [];
-        const leagues = $leagueStore || {};
-        
+        players = $playerStore[leagueId] || [];
+
         fixture = fixtures.find((x) => x.id === fixtureId)!;
-        league = leagues[leagueId];
+        league = leagueStore.getLeagueById(leagueId);
+        
         homeClub = clubs.find((x) => x.id === fixture.homeClubId)!;
         awayClub = clubs.find((x) => x.id === fixture.awayClubId)!;
 
+        
+
+        matchOdds = await bettingStore.getMatchOdds(leagueId, fixtureId);
+        
       } catch (error) {
         console.error(error);
       } finally {
@@ -326,6 +359,14 @@
             },
           };
 
+          case "penaltyMissers":
+            return {
+              MissPenalty: {
+                playerId: data.playerId,
+                clubId: data.clubId,
+              },
+            };
+
         case "correctScores":
           return {
             CorrectScore: {
@@ -367,8 +408,8 @@
         case "halfTimeFullTimeResult":
           return {
             HalfTimeFullTimeResult: {
-              halfTimeResult: data.halfTime,
-              fullTimeResult: data.fullTime,
+              halfTimeResult: data.firstHalfResult,
+              fullTimeResult: data.secondHalfResult,
             },
           };
 
@@ -391,51 +432,50 @@
 
   
         
-    function toggleBet(
+    async function toggleBetSelection(
+      leagueId: number,
       fixtureId: number,
       categoryKey: string,
       dataForDetail: any,
-      displayedOdds: number
+      odds: number
     ) {
       const category = mapCategoryKeyToCategory(categoryKey);
       const detail = buildSelectionDetail(categoryKey, dataForDetail);
 
-      const isAlreadySelected = betSlipStore.isSelected(
-        leagueId,
-        fixtureId,
-        category,
-        detail
-      );
-      
-      if (isAlreadySelected) {
+      const isCurrentlySelected = betSlipStore.isSelected(leagueId, fixtureId, category, detail);
+      if (isCurrentlySelected) {
         betSlipStore.removeBet(leagueId, fixtureId, category, detail);
         return;
       }
-      
-      betSlipDataStore.ensureLeagueData(leagueId).then(({ clubs, players }) => {
-        
-        const description = buildBetUiDescription(detail, clubs, players);
 
-        betSlipStore.addBet({
-          leagueId,
-          fixtureId,
-          status: { Unsettled: null },
-          result: { Open: null },
-          selectionType: category,
-          selectionDetail: detail,
-          odds: displayedOdds || 0,
-          stake: 0n,
-          winnings: 0,
-          expectedReturns: 0n,
-          uiDescription: description,
-        });
+      const { clubs, players } = await betSlipDataStore.ensureLeagueData(leagueId);
+      const description = buildBetUiDescription(detail, clubs, players);
+      
+      betSlipStore.addBet({
+        leagueId,
+        fixtureId,
+        status: { Unsettled: null },
+        result: { Open: null },
+        selectionType: category,
+        selectionDetail: detail,
+        odds,
+        stake: 0n,
+        winnings: 0,
+        expectedReturns: 0n,
+        uiDescription: description,
       });
     }
   
     function isBetSelectedByData(fixtureId: number, categoryKey: string, dataForDetail: any) {
       const catObject = mapCategoryKeyToCategory(categoryKey);
       const detail = buildSelectionDetail(categoryKey, dataForDetail);
-      return betSlipStore.isSelected(leagueId, fixtureId, catObject, detail);
+      return $betSlipStore.bets.some(
+        (bet) =>
+          bet.leagueId === leagueId &&
+          bet.fixtureId === fixtureId &&
+          JSON.stringify(bet.selectionType) === JSON.stringify(catObject) &&
+          JSON.stringify(bet.selectionDetail) === JSON.stringify(detail)
+      );
     }
   
     function getOddDisplayText(
@@ -459,6 +499,28 @@
         const club = clubs.find((x) => x.id === odd.clubId);
         return club ? `${club.friendlyName}` : "N/A";
       }
+      
+      if ("isYes" in odd && "result" in odd) {
+        const getResultText = (result: any) => {
+          if ("HomeWin" in result) return "Home Win";
+          if ("Draw" in result) return "Draw";
+          if ("AwayWin" in result) return "Away Win";
+          return "Unknown";
+        };
+        const bttsText = odd.isYes ? "Yes" : "No";
+        return `${getResultText(odd.result)} & BTTS ${bttsText}`;
+      }
+      
+      if ("firstHalfResult" in odd && "secondHalfResult" in odd) {
+        const getResultText = (result: any) => {
+          if ("HomeWin" in result) return "Home Win";
+          if ("Draw" in result) return "Draw";
+          if ("AwayWin" in result) return "Away Win";
+          return "Unknown";
+        };
+        return `Half-Time ${getResultText(odd.firstHalfResult)} / Full-Time ${getResultText(odd.secondHalfResult)}`;
+      }
+      
       if ("odds" in odd) {
         return `Odds: ${odd.odds}`;
       }
@@ -478,7 +540,9 @@
         | ResultAndYesNoSelectionOdds
     ): number {
       if (typeof odd === "number") return odd;
-      if ("odds" in odd) return odd.odds;
+      if ("odds" in odd) {
+        return odd.odds;
+      }
       return 0;
     }
   
@@ -504,8 +568,14 @@
       });
     }
   
-    function addToBetslip(score: ScoreSelectionOdds) {
-      toggleBet(fixtureId, "correctScores", score, score.odds);
+    function addToBetslip(category: string, score: ScoreSelectionOdds) {
+      toggleBetSelection(
+        leagueId,
+        fixtureId,
+        category,
+        score,
+        score.odds
+      );
     }
   
     function formatCategoryName(category: string) {
@@ -519,10 +589,8 @@
 
     function getOddsForCategory(category: keyof MatchOddsDTO) {
         if (!matchOdds) return [];
-        
         const odds = matchOdds[category];
         if (!odds) return [];
-        
         return Array.isArray(odds) ? odds : [odds];
     }
 
@@ -548,42 +616,6 @@
 
         return b.valueQuarterMillions - a.valueQuarterMillions;
       });
-    }
-
-    async function loadFixtureData(fixtureId: number, leagueId: number) {
-      // First try URL params
-      const urlParams = new URLSearchParams(window.location.search);
-      const fixtureParam = urlParams.get('fixture');
-      const leagueParam = urlParams.get('league');
-      
-      if (fixtureParam && leagueParam) {
-        return {
-          fixture: JSON.parse(decodeURIComponent(fixtureParam)),
-          league: JSON.parse(decodeURIComponent(leagueParam))
-        };
-      }
-
-      // If not in URL, try localStorage
-      const storedFixture = localStorage.getItem(`fixture_event_${fixtureId}`);
-      const storedLeague = localStorage.getItem(`fixture_event_league_${leagueId}`);
-      
-      if (storedFixture && storedLeague) {
-        return {
-          fixture: JSON.parse(storedFixture),
-          league: JSON.parse(storedLeague)
-        };
-      }
-
-      // If not in localStorage, fetch from service
-      const fixture = await fixtureStore.getFixtures(leagueId)
-        .then(fixtures => fixtures.find(f => f.id === fixtureId));
-      const league = await leagueStore.getLeagueById(leagueId);
-
-      if (!fixture || !league) {
-        throw new Error('Fixture or league not found');
-      }
-
-      return { fixture, league };
     }
 
   </script>
@@ -657,13 +689,13 @@
               {/each}
             </div>
   
-            <div class="space-y-4">
+            <div class="py-4 space-y-4">
               {#each bettingCategories as category}
                 <div
                   class="
                     {expandedCategories[category]
                       ? 'bg-BrandPurple'
-                      : 'bg-BrandPanelGray'}
+                      : 'bg-BrandLightGray'}
                     rounded shadow
                   "
                 >
@@ -682,8 +714,8 @@
   
                   {#if expandedCategories[category]}
                     {#if category === "correctScores" || category === "halfTimeScores"}
-                      <div class="overflow-hidden text-sm border rounded-b bg-BrandDarkGray border-BrandPurple">
-                        <div class="grid grid-cols-3 font-bold text-center text-black bg-white">
+                      <div class="page-panel-table-container">
+                        <div class="fixture-event-table-header-3">
                           <div class="p-2">Home</div>
                           <div class="p-2">Draw</div>
                           <div class="p-2">Away</div>
@@ -693,13 +725,14 @@
                             {#each getScoresByResult(matchOdds[category], "home").sort(sortByLowestOdds) as score}
                               <button
                                 class="flex items-center justify-between w-full p-4 text-white rounded bg-BrandGray hover:bg-BrandGray/80"
-                                on:click={() => addToBetslip(score)}
+                                on:click={() => addToBetslip(category, score)}
                               >
                                 <span class="text-lg font-bold">{score.homeGoals}-{score.awayGoals}</span>
                                 <div class="flex items-center space-x-2">
-                                  <span class="text-base">{formatOdds(score.odds)}</span>
-                                  {#if isBetSelectedByData(fixtureId, "correctScores", score)}
-                                    <BetSelectedIcon className="w-4 h-4 fill-BrandPurple" />
+                                  {#if isBetSelectedByData(fixtureId, category, score)}
+                                    <BetSelectedIcon className="w-7 h-7 fill-BrandPurple" />
+                                  {:else}
+                                    <span class="text-base">{formatOdds(score.odds)}</span>
                                   {/if}
                                 </div>
                               </button>
@@ -710,13 +743,14 @@
                             {#each getScoresByResult(matchOdds[category], "draw").sort(sortByLowestOdds) as score}
                               <button
                                 class="flex items-center justify-between w-full p-4 text-white rounded bg-BrandGray hover:bg-BrandGray/80"
-                                on:click={() => addToBetslip(score)}
+                                on:click={() => addToBetslip(category, score)}
                               >
                                 <span class="text-lg font-bold">{score.homeGoals}-{score.awayGoals}</span>
                                 <div class="flex items-center space-x-2">
-                                  <span class="text-base">{formatOdds(score.odds)}</span>
-                                  {#if isBetSelectedByData(fixtureId, "correctScores", score)}
-                                    <BetSelectedIcon className="w-4 h-4 fill-BrandPurple" />
+                                  {#if isBetSelectedByData(fixtureId, category, score)}
+                                    <BetSelectedIcon className="w-7 h-7 fill-BrandPurple" />
+                                  {:else}
+                                    <span class="text-base">{formatOdds(score.odds)}</span>
                                   {/if}
                                 </div>
                               </button>
@@ -727,13 +761,14 @@
                             {#each getScoresByResult(matchOdds[category], "away").sort(sortByLowestOdds) as score}
                               <button
                                 class="flex items-center justify-between w-full p-4 text-white rounded bg-BrandGray hover:bg-BrandGray/80"
-                                on:click={() => addToBetslip(score)}
+                                on:click={() => addToBetslip(category, score)}
                               >
                                 <span class="text-lg font-bold">{score.homeGoals}-{score.awayGoals}</span>
                                 <div class="flex items-center space-x-2">
-                                  <span class="text-base">{formatOdds(score.odds)}</span>
-                                  {#if isBetSelectedByData(fixtureId, "correctScores", score)}
-                                    <BetSelectedIcon className="w-4 h-4 fill-BrandPurple" />
+                                  {#if isBetSelectedByData(fixtureId, category, score)}
+                                    <BetSelectedIcon className="w-7 h-7 fill-BrandPurple" />
+                                  {:else}
+                                    <span class="text-base">{formatOdds(score.odds)}</span>
                                   {/if}
                                 </div>
                               </button>
@@ -743,8 +778,8 @@
                       </div>
   
                     {:else if category === "anytimeScorers" }
-                      <div class="overflow-hidden text-sm border rounded-b bg-BrandDarkGray border-BrandPurple">
-                        <div class="grid grid-cols-4 font-bold text-center text-black bg-white">
+                      <div class="page-panel-table-container">
+                        <div class="fixture-event-table-header-4">
                           <div class="p-2">Player</div>
                           <div class="p-2">First</div>
                           <div class="p-2">Last</div>
@@ -758,70 +793,88 @@
   
                           {#if firstGoal || lastGoal || anytimeGoal}
                             <div class="grid grid-cols-4 text-center">
-                              <div class="p-4 text-base text-left border-b border-x border-BrandGray bg-BrandLightGray">
+                              <div class="p-4 text-base text-left border-b border-white border-x">
                                 {player.firstName} {player.lastName}
                               </div>
                               <button
                                 class="flex items-center justify-center gap-2 p-4 text-lg text-white border-b border-r bg-BrandGray border-BrandOddsDivider hover:bg-BrandGray/80"
                                 on:click={() => {
                                   if (firstGoal) {
-                                    toggleBet(
+                                    toggleBetSelection(
+                                      leagueId,
                                       fixtureId,
-                                      category,
+                                      "firstGoalscorer",
                                       { playerId: player.id, timing: "first" },
                                       firstGoal.odds
                                     );
                                   }
                                 }}
                               >
-                                {firstGoal ? formatOdds(firstGoal.odds) : "N/A"}
-                                {#if firstGoal && isBetSelectedByData(fixtureId, category, { playerId: player.id, timing: "first" })}
-                                  <BetSelectedIcon className="w-4 h-4 fill-BrandPurple" />
+                                {#if firstGoal}
+                                  {#if isBetSelectedByData(fixtureId, "firstGoalscorer", { playerId: player.id, timing: "first" })}
+                                    <BetSelectedIcon className="w-7 h-7 fill-BrandPurple" />
+                                  {:else}
+                                    {formatOdds(firstGoal.odds)}
+                                  {/if}
+                                {:else}
+                                  N/A
                                 {/if}
                               </button>
                               <button
                                 class="flex items-center justify-center gap-2 p-4 text-lg text-white border-b border-r bg-BrandGray border-BrandOddsDivider hover:bg-BrandGray/80"
                                 on:click={() => {
                                   if (lastGoal) {
-                                    toggleBet(
+                                    toggleBetSelection(
+                                      leagueId,
                                       fixtureId,
-                                      category,
+                                      "lastGoalscorer",
                                       { playerId: player.id, timing: "last" },
                                       lastGoal.odds
                                     );
                                   }
                                 }}
                               >
-                                {lastGoal ? formatOdds(lastGoal.odds) : "N/A"}
-                                {#if lastGoal && isBetSelectedByData(fixtureId, category, { playerId: player.id, timing: "last" })}
-                                  <BetSelectedIcon className="w-4 h-4 fill-BrandPurple" />
+                                {#if lastGoal}
+                                  {#if isBetSelectedByData(fixtureId, "lastGoalscorer", { playerId: player.id, timing: "last" })}
+                                    <BetSelectedIcon className="w-7 h-7 fill-BrandPurple" />
+                                  {:else}
+                                    {formatOdds(lastGoal.odds)}
+                                  {/if}
+                                {:else}
+                                  N/A
                                 {/if}
                               </button>
                               <button
                                 class="flex items-center justify-center gap-2 p-4 text-lg text-white border-b border-r bg-BrandGray border-BrandOddsDivider hover:bg-BrandGray/80"
                                 on:click={() => {
                                   if (anytimeGoal) {
-                                    toggleBet(
+                                    toggleBetSelection(
+                                      leagueId,
                                       fixtureId,
-                                      category,
+                                      "anytimeScorers",
                                       { playerId: player.id, timing: "anytime" },
                                       anytimeGoal.odds
                                     );
                                   }
                                 }}
                               >
-                                {anytimeGoal ? formatOdds(anytimeGoal.odds) : "N/A"}
-                                {#if anytimeGoal && isBetSelectedByData(fixtureId, category, { playerId: player.id, timing: "anytime" })}
-                                  <BetSelectedIcon className="w-4 h-4 fill-BrandPurple" />
+                                {#if anytimeGoal}
+                                  {#if isBetSelectedByData(fixtureId, "anytimeScorers", { playerId: player.id, timing: "anytime" })}
+                                    <BetSelectedIcon className="w-7 h-7 fill-BrandPurple" />
+                                  {:else}
+                                    {formatOdds(anytimeGoal.odds)}
+                                  {/if}
+                                {:else}
+                                  N/A
                                 {/if}
                               </button>
                             </div>
                           {/if}
                         {/each}
                       </div>
-                      {:else if category === "anytimeAssist"}
-                      <div class="overflow-hidden text-sm border rounded-b bg-BrandDarkGray border-BrandPurple">
-                        <div class="grid grid-cols-4 font-bold text-center text-black bg-white">
+                    {:else if category === "anytimeAssist"}
+                      <div class="page-panel-table-container">
+                        <div class="fixture-event-table-header-4">
                           <div class="p-2">Player</div>
                           <div class="p-2">First</div>
                           <div class="p-2">Last</div>
@@ -835,61 +888,79 @@
   
                           {#if firstAssist || lastAssist || anytimeAssist}
                             <div class="grid grid-cols-4 text-center">
-                              <div class="p-4 text-base text-left border-b border-x border-BrandGray bg-BrandLightGray">
+                              <div class="p-4 text-base text-left border-b border-white border-x">
                                 {player.firstName} {player.lastName}
                               </div>
                               <button
                                 class="flex items-center justify-center gap-2 p-4 text-lg text-white border-b border-r bg-BrandGray border-BrandOddsDivider hover:bg-BrandGray/80"
                                 on:click={() => {
                                   if (firstAssist) {
-                                    toggleBet(
+                                    toggleBetSelection(
+                                      leagueId,
                                       fixtureId,
-                                      category,
+                                      "firstAssist",
                                       { playerId: player.id, timing: "first" },
                                       firstAssist.odds
                                     );
                                   }
                                 }}
                               >
-                                {firstAssist ? formatOdds(firstAssist.odds) : "N/A"}
-                                {#if firstAssist && isBetSelectedByData(fixtureId, category, { playerId: player.id, timing: "first" })}
-                                  <BetSelectedIcon className="w-4 h-4 fill-BrandPurple" />
+                                {#if firstAssist}
+                                  {#if isBetSelectedByData(fixtureId, "firstAssist", { playerId: player.id, timing: "first" })}
+                                    <BetSelectedIcon className="w-7 h-7 fill-BrandPurple" />
+                                  {:else}
+                                    {formatOdds(firstAssist.odds)}
+                                  {/if}
+                                {:else}
+                                  N/A
                                 {/if}
                               </button>
                               <button
                                 class="flex items-center justify-center gap-2 p-4 text-lg text-white border-b border-r bg-BrandGray border-BrandOddsDivider hover:bg-BrandGray/80"
                                 on:click={() => {
                                   if (lastAssist) {
-                                    toggleBet(
+                                    toggleBetSelection(
+                                      leagueId,
                                       fixtureId,
-                                      category,
+                                      "lastAssist",
                                       { playerId: player.id, timing: "last" },
                                       lastAssist.odds
                                     );
                                   }
                                 }}
                               >
-                                {lastAssist ? formatOdds(lastAssist.odds) : "N/A"}
-                                {#if lastAssist && isBetSelectedByData(fixtureId, category, { playerId: player.id, timing: "last" })}
-                                  <BetSelectedIcon className="w-4 h-4 fill-BrandPurple" />
+                                {#if lastAssist}
+                                  {#if isBetSelectedByData(fixtureId, "lastAssist", { playerId: player.id, timing: "last" })}
+                                    <BetSelectedIcon className="w-7 h-7 fill-BrandPurple" />
+                                  {:else}
+                                    {formatOdds(lastAssist.odds)}
+                                  {/if}
+                                {:else}
+                                  N/A
                                 {/if}
                               </button>
                               <button
                                 class="flex items-center justify-center gap-2 p-4 text-lg text-white border-b border-r bg-BrandGray border-BrandOddsDivider hover:bg-BrandGray/80"
                                 on:click={() => {
                                   if (anytimeAssist) {
-                                    toggleBet(
+                                    toggleBetSelection(
+                                      leagueId,
                                       fixtureId,
-                                      category,
+                                      "anytimeAssist",
                                       { playerId: player.id, timing: "anytime" },
                                       anytimeAssist.odds
                                     );
                                   }
                                 }}
                               >
-                                {anytimeAssist ? formatOdds(anytimeAssist.odds) : "N/A"}
-                                {#if anytimeAssist && isBetSelectedByData(fixtureId, category, { playerId: player.id, timing: "anytime" })}
-                                  <BetSelectedIcon className="w-4 h-4 fill-BrandPurple" />
+                                {#if anytimeAssist}
+                                  {#if isBetSelectedByData(fixtureId, "anytimeAssist", { playerId: player.id, timing: "anytime" })}
+                                    <BetSelectedIcon className="w-7 h-7 fill-BrandPurple" />
+                                  {:else}
+                                    {formatOdds(anytimeAssist.odds)}
+                                  {/if}
+                                {:else}
+                                  N/A
                                 {/if}
                               </button>
                             </div>
@@ -897,9 +968,9 @@
                         {/each}
                       </div>
 
-                    {:else if ["scoresBrace"].includes(category)}
-                      <div class="overflow-hidden text-sm border rounded-b bg-BrandDarkGray border-BrandPurple">
-                        <div class="grid grid-cols-4 font-bold text-center text-black bg-white">
+                    {:else if ["halfTimeFullTimeResult", "bothTeamsToScoreAndWinner"].includes(category)}
+                      <div class="page-panel-table-container">
+                        <div class="fixture-event-table-header-4">
                           <div class="col-span-3 p-2">Selection</div>
                           <div class="p-2">Odds</div>
                         </div>
@@ -912,17 +983,19 @@
                               <button
                                 class="flex items-center justify-center gap-2 p-4 text-lg text-white bg-BrandGray hover:bg-BrandGray/80"
                                 on:click={() => {
-                                  toggleBet(
+                                  toggleBetSelection(
+                                    leagueId,
                                     fixtureId,
                                     category,
-                                    odd, //TODO: Need to pass object not odd
+                                    odd,
                                     getOddValue(odd)
                                   );
                                 }}
                               >
-                                <span>{formatOdds(getOddValue(odd))}</span>
                                 {#if isBetSelectedByData(fixtureId, category, odd)}
-                                  <BetSelectedIcon className="w-4 h-4 fill-BrandPurple" />
+                                  <BetSelectedIcon className="w-7 h-7 fill-BrandPurple" />
+                                {:else}
+                                  {formatOdds(getOddValue(odd))}
                                 {/if}
                               </button>
                             </div>
@@ -931,9 +1004,9 @@
                       </div>
 
   
-                    {:else if ["yellowCards", "redCards", "penaltyMissers", "scoresHatTrick", "halfTimeFullTimeResult", "bothTeamsToScoreAndWinner"].includes(category)}
-                      <div class="overflow-hidden text-sm border rounded-b bg-BrandDarkGray border-BrandPurple">
-                        <div class="grid grid-cols-4 font-bold text-center text-black bg-white">
+                    {:else if ["yellowCards", "redCards", "penaltyMissers", "scoresHatTrick", "scoresBrace"].includes(category)}
+                      <div class="page-panel-table-container">
+                        <div class="fixture-event-table-header-4">
                           <div class="col-span-3 p-2">Selection</div>
                           <div class="p-2">Odds</div>
                         </div>
@@ -946,7 +1019,8 @@
                               <button
                                 class="flex items-center justify-center gap-2 p-4 text-lg text-white bg-BrandGray hover:bg-BrandGray/80"
                                 on:click={() => {
-                                  toggleBet(
+                                  toggleBetSelection(
+                                    leagueId,
                                     fixtureId,
                                     category,
                                     odd,
@@ -954,9 +1028,10 @@
                                   );
                                 }}
                               >
-                                <span>{formatOdds(getOddValue(odd))}</span>
                                 {#if isBetSelectedByData(fixtureId, category, odd)}
-                                  <BetSelectedIcon className="w-4 h-4 fill-BrandPurple" />
+                                  <BetSelectedIcon className="w-7 h-7 fill-BrandPurple" />
+                                {:else}
+                                  {formatOdds(getOddValue(odd))}
                                 {/if}
                               </button>
                             </div>
@@ -964,57 +1039,65 @@
                         </div>
                       </div>
   
-                    {:else if category === "bothTeamsToScore"}
-                      <div class="overflow-hidden text-sm border rounded-b bg-BrandDarkGray border-BrandPurple">
-                        <div class="grid grid-cols-4 font-bold text-center text-black bg-white">
-                          <div class="col-span-3 p-2"></div>
+                    {:else if category === "bothTeamsToScore" || category === "penaltyMissed"}
+                      <div class="page-panel-table-container">
+                        <div class="fixture-event-table-header-4">
+                          <div class="col-span-3 p-2">Selection</div>
                           <div class="p-2">Odds</div>
                         </div>
                         <div class="divide-y divide-BrandOddsDivider">
                           <div class="grid grid-cols-4">
-                            <div class="col-span-3 p-4 text-base text-left bg-BrandLightGray">Yes</div>
+                            <div class="col-span-3 p-4 text-base text-left bg-BrandLightGray">
+                              {category === "bothTeamsToScore" ? "Yes" : homeClub.name + " to miss penalty" }
+                            </div>
                             <button
                               class="flex items-center justify-center gap-2 p-4 text-lg text-white bg-BrandGray hover:bg-BrandGray/80"
                               on:click={() => {
-                                toggleBet(
+                                toggleBetSelection(
+                                  leagueId,
                                   fixtureId,
-                                  "bothTeamsToScore",
-                                  { isYes: true },
-                                  matchOdds.bothTeamsToScore.yesOdds
+                                  category,
+                                  category === "bothTeamsToScore" ? { isYes: true } : { clubId: homeClub.id },
+                                  category === "bothTeamsToScore" ? matchOdds.bothTeamsToScore.yesOdds : matchOdds.penaltyMissed.homeTeam
                                 );
                               }}
                             >
-                              <span>{formatOdds(matchOdds.bothTeamsToScore.yesOdds)}</span>
-                              {#if isBetSelectedByData(fixtureId, "bothTeamsToScore", { isYes: true })}
-                                <BetSelectedIcon className="w-4 h-4 fill-BrandPurple" />
+                              {#if isBetSelectedByData(fixtureId, category, category === "bothTeamsToScore" ? { isYes: true } : { clubId: homeClub.id })}
+                                <BetSelectedIcon className="w-7 h-7 fill-BrandPurple" />
+                              {:else}
+                                {formatOdds(category === "bothTeamsToScore" ? matchOdds.bothTeamsToScore.yesOdds : matchOdds.penaltyMissed.homeTeam)}
                               {/if}
                             </button>
                           </div>
   
                           <div class="grid grid-cols-4">
-                            <div class="col-span-3 p-4 text-base text-left bg-BrandLightGray">No</div>
+                            <div class="col-span-3 p-4 text-base text-left bg-BrandLightGray">
+                              {category === "bothTeamsToScore" ? "No" : awayClub.name + " to miss penalty" }
+                            </div>
                             <button
                               class="flex items-center justify-center gap-2 p-4 text-lg text-white bg-BrandGray hover:bg-BrandGray/80"
                               on:click={() => {
-                                toggleBet(
+                                toggleBetSelection(
+                                  leagueId,
                                   fixtureId,
-                                  "bothTeamsToScore",
-                                  { isYes: false },
-                                  matchOdds.bothTeamsToScore.noOdds
+                                  category,
+                                  category === "bothTeamsToScore" ? { isYes: false } : { clubId: awayClub.id },
+                                  category === "bothTeamsToScore" ? matchOdds.bothTeamsToScore.noOdds : matchOdds.penaltyMissed.awayTeam
                                 );
                               }}
                             >
-                              <span>{formatOdds(matchOdds.bothTeamsToScore.noOdds)}</span>
-                              {#if isBetSelectedByData(fixtureId, "bothTeamsToScore", { isYes: false })}
-                                <BetSelectedIcon className="w-4 h-4 fill-BrandPurple" />
+                              {#if isBetSelectedByData(fixtureId, category, category === "bothTeamsToScore" ? { isYes: false } : { clubId: awayClub.id })}
+                                <BetSelectedIcon className="w-7 h-7 fill-BrandPurple" />
+                              {:else}
+                                {formatOdds(category === "bothTeamsToScore" ? matchOdds.bothTeamsToScore.noOdds : matchOdds.penaltyMissed.awayTeam)}
                               {/if}
                             </button>
                           </div>
                         </div>
                       </div>
   
-                    {:else if category === "goalsOverUnder"}
-                      <div class="overflow-hidden text-sm border rounded-b bg-BrandDarkGray border-BrandPurple">
+                    <!-- {:else if category === "goalsOverUnder"}
+                      <div class="page-panel-table-container">
                         <div class="grid grid-cols-3 font-bold text-center text-black bg-white">
                           <div class="p-2">Goals</div>
                           <div class="p-2">Over</div>
@@ -1030,7 +1113,8 @@
                               <button
                                 class="flex items-center justify-center gap-2 p-4 text-lg text-white bg-BrandGray hover:bg-BrandGray/80"
                                 on:click={() => {
-                                  toggleBet(
+                                  toggleBetSelection(
+                                    leagueId,
                                     fixtureId,
                                     "goalsOverUnder",
                                     { margin: overItem.margin, isOver: true },
@@ -1040,7 +1124,7 @@
                               >
                                 <span>{formatOdds(overItem.odds)}</span>
                                 {#if isBetSelectedByData(fixtureId, "goalsOverUnder", { margin: overItem.margin, isOver: true })}
-                                  <BetSelectedIcon className="w-4 h-4 fill-BrandPurple" />
+                                  <BetSelectedIcon className="w-7 h-7 fill-BrandPurple" />
                                 {/if}
                               </button>
   
@@ -1049,7 +1133,8 @@
                                 on:click={() => {
                                   const underObj = matchOdds.goalsOverUnder.underOdds.find((x) => x.margin === overItem.margin);
                                   if (underObj) {
-                                    toggleBet(
+                                    toggleBetSelection(
+                                      leagueId,
                                       fixtureId,
                                       "goalsOverUnder",
                                       { margin: underObj.margin, isOver: false },
@@ -1064,26 +1149,27 @@
                                   )}
                                 </span>
                                 {#if isBetSelectedByData(fixtureId, "goalsOverUnder", { margin: overItem.margin, isOver: false })}
-                                  <BetSelectedIcon className="w-4 h-4 fill-BrandPurple" />
+                                  <BetSelectedIcon className="w-7 h-7 fill-BrandPurple" />
                                 {/if}
                               </button>
                             </div>
                           {/each}
                         </div>
-                      </div>
+                      </div> -->
   
                     {:else if category === "correctResults"}
-                      <div class="overflow-hidden text-sm border rounded-b bg-BrandDarkGray border-BrandPurple">
-                        <div class="grid grid-cols-3 font-bold text-center text-black bg-white">
+                      <div class="page-panel-table-container">
+                        <div class="fixture-event-table-header-3">
                           <div class="p-2">{homeClub.name}</div>
-                          <div class="p-2">Draw</div>
+                          <div class="p-2"></div>
                           <div class="p-2">{awayClub.name}</div>
                         </div>
                         <div class="grid grid-cols-3 p-4">
                           <button
                             class="flex flex-col items-center justify-center p-4 text-white rounded bg-BrandGray hover:bg-BrandGray/80"
                             on:click={() => {
-                              toggleBet(
+                              toggleBetSelection(
+                                leagueId,
                                 fixtureId,
                                 "correctResults",
                                 { matchResult: { HomeWin: null } },
@@ -1092,10 +1178,11 @@
                             }}
                           >
                             <span class="mb-2 font-medium">Win</span>
-                            <div class="flex items-center gap-2">
-                              <span class="text-xl">{formatOdds(matchOdds.correctResults.homeOdds)}</span>
+                            <div class="flex items-center gap-2 text-xl">
                               {#if isBetSelectedByData(fixtureId, "correctResults", { matchResult: { HomeWin: null } })}
-                                <BetSelectedIcon className="w-4 h-4 fill-BrandPurple" />
+                                <BetSelectedIcon className="w-7 h-7 fill-BrandPurple" />
+                              {:else}
+                                {formatOdds(matchOdds.correctResults.homeOdds)}
                               {/if}
                             </div>
                           </button>
@@ -1103,7 +1190,8 @@
                           <button
                             class="flex flex-col items-center justify-center p-4 mx-2 text-white rounded bg-BrandGray hover:bg-BrandGray/80"
                             on:click={() => {
-                              toggleBet(
+                              toggleBetSelection(
+                                leagueId,
                                 fixtureId,
                                 "correctResults",
                                 { matchResult: { Draw: null } },
@@ -1112,10 +1200,11 @@
                             }}
                           >
                             <span class="mb-2 font-medium">Draw</span>
-                            <div class="flex items-center gap-2">
-                              <span class="text-xl">{formatOdds(matchOdds.correctResults.drawOdds)}</span>
+                            <div class="flex items-center gap-2 text-xl">
                               {#if isBetSelectedByData(fixtureId, "correctResults", { matchResult: { Draw: null } })}
-                                <BetSelectedIcon className="w-4 h-4 fill-BrandPurple" />
+                                <BetSelectedIcon className="w-7 h-7 fill-BrandPurple" />
+                              {:else}
+                                {formatOdds(matchOdds.correctResults.drawOdds)}
                               {/if}
                             </div>
                           </button>
@@ -1123,7 +1212,8 @@
                           <button
                             class="flex flex-col items-center justify-center p-4 text-white rounded bg-BrandGray hover:bg-BrandGray/80"
                             on:click={() => {
-                              toggleBet(
+                              toggleBetSelection(
+                                leagueId,
                                 fixtureId,
                                 "correctResults",
                                 { matchResult: { AwayWin: null } },
@@ -1132,10 +1222,11 @@
                             }}
                           >
                             <span class="mb-2 font-medium">Win</span>
-                            <div class="flex items-center gap-2">
-                              <span class="text-xl">{formatOdds(matchOdds.correctResults.awayOdds)}</span>
+                            <div class="flex items-center gap-2 text-xl">
                               {#if isBetSelectedByData(fixtureId, "correctResults", { matchResult: { AwayWin: null } })}
-                                <BetSelectedIcon className="w-4 h-4 fill-BrandPurple" />
+                                <BetSelectedIcon className="w-7 h-7 fill-BrandPurple" />
+                              {:else}
+                                {formatOdds(matchOdds.correctResults.awayOdds)}
                               {/if}
                             </div>
                           </button>
@@ -1150,7 +1241,8 @@
                             <button
                               class="flex items-center justify-center gap-2 px-4 py-2 text-white rounded bg-BrandGray hover:bg-BrandGray/80"
                               on:click={() => {
-                                toggleBet(
+                                toggleBetSelection(
+                                  leagueId,
                                   fixtureId,
                                   category,
                                   odd,
@@ -1158,9 +1250,10 @@
                                 );
                               }}
                             >
-                              {formatOdds(getOddValue(odd))}
                               {#if isBetSelectedByData(fixtureId, category, odd)}
-                                <BetSelectedIcon className="w-4 h-4 fill-BrandPurple" />
+                                <BetSelectedIcon className="w-7 h-7 fill-BrandPurple" />
+                              {:else}
+                                {formatOdds(getOddValue(odd))}
                               {/if}
                             </button>
                           </div>
@@ -1178,9 +1271,19 @@
       <div class="flex-shrink-0 lg:ml-4 lg:w-80">
         <div class="hidden lg:block lg:sticky lg:top-4">
           {#if league && fixture}
+            <!-- Verify league data has name -->
+            {console.log('League data for betslip:', $leagueStore[leagueId])}
             <Betslip
-              leagueData={{ [league.id]: league }}
-              fixtureData={{ [fixture.id]: { ...fixture, leagueId: league.id } }}
+              leagueData={{ [leagueId]: league }}
+              fixtureData={{
+                ...allFixturesData,
+                [fixture.id]: {
+                  ...fixture,
+                  leagueId: leagueId,
+                  homeClub,
+                  awayClub
+                }
+              }}
             />
           {/if}
         </div>
@@ -1210,8 +1313,16 @@
             {#if league && fixture}
               <Betslip
                 bind:isExpanded={isBetSlipExpanded}
-                leagueData={{ [league.id]: league }}
-                fixtureData={{ [fixture.id]: { ...fixture, leagueId: league.id } }}
+                leagueData={{ [leagueId]: league }}
+                fixtureData={{
+                  ...allFixturesData,
+                  [fixture.id]: {
+                    ...fixture,
+                    leagueId: leagueId,
+                    homeClub,
+                    awayClub
+                  }
+                }}
               />
             {/if}
           </div>

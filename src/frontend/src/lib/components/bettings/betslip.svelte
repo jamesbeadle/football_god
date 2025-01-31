@@ -12,6 +12,8 @@
   export let leagueData: Record<number, FootballLeagueDTO>;
   export let fixtureData: Record<number, FixtureWithClubs>;
 
+  $: console.log("Betslip received:", { leagueData, fixtureData });
+
   let showPlaceBet = false;
 
   $: rawSlipState = $betSlipStore;

@@ -156,3 +156,11 @@
 .fixture-event-tab-panel-button-inactive{
   @apply text-white border bg-BrandGray border-BrandDarkGray hover:bg-BrandGray/80;
 }
+
+.fixture-event-table-header-4{
+  @apply grid grid-cols-4 font-bold text-center text-black bg-white;
+}
+
+.fixture-event-table-header-3{
+  @apply grid grid-cols-3 font-bold text-center text-black bg-white;
+}
