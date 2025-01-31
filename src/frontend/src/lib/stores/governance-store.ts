@@ -62,6 +62,7 @@ import {
   UpdatePlayerDTO_Idl,
 } from "$lib/types/idl-types";
 import { formatUnixDateToSmallReadable } from "$lib/utils/helpers";
+import { leagueStore } from "./league-store";
 
 async function createProposal({
   identity,
@@ -214,7 +215,47 @@ function createGovernanceStore() {
     });
   }
 
-  async function transferPlayer(dto: TransferPlayerDTO): Promise<any> {}
+  async function transferPlayer(dto: TransferPlayerDTO): Promise<any> {
+    let userIdentity: OptionIdentity;
+    authStore.subscribe((auth) => (userIdentity = auth.identity));
+    if (!userIdentity) return;
+
+    const allPlayers = await playerStore.getPlayers(dto.leagueId);
+    const player = allPlayers.find((p) => p.id === dto.playerId);
+    if (!player) throw new Error("Player not found.");
+
+    const clubs = await clubStore.getClubs(dto.leagueId);
+    const currentClub = clubs.find((c) => c.id === player.clubId);
+    if (!currentClub) throw new Error("Current club not found.");
+
+    const newLeagueClubs = await clubStore.getClubs(dto.newLeagueId);
+    const newClub = newLeagueClubs.find((c) => c.id === dto.newClubId);
+    if (!newClub) throw new Error("New club not found.");
+
+    const currentLeague = await leagueStore.getLeagueById(dto.leagueId);
+    const transferLeague = await leagueStore.getLeagueById(dto.newLeagueId);
+
+    const newValue = (player.valueQuarterMillions / 4).toFixed(2);
+
+    const { title, summary } = buildTransferPlayerText(
+      `${player.firstName} ${player.lastName}`,
+      currentClub.friendlyName,
+      currentLeague?.name ?? "",
+      newClub.friendlyName,
+      transferLeague?.name ?? "",
+      newValue,
+    );
+
+    const encoded = IDL.encode([TransferPlayerDTO_Idl], [dto]);
+
+    return await createProposal({
+      identity: userIdentity,
+      functionId: 53000n,
+      payload: new Uint8Array(encoded),
+      title,
+      summary,
+    });
+  }
 
   async function createPlayer(dto: CreatePlayerDTO): Promise<any> {}
 

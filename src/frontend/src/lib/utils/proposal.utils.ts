@@ -81,7 +81,7 @@ export function buildTransferPlayerText(
   currentLeagueName: string,
   transferClubName: string,
   transferLeagueName: string,
-  newValue: string, // optional if you want to highlight the new value
+  newValue: string,
 ) {
   return {
     title: `Transfer ${playerName} from ${currentClubName} to ${transferClubName}`,

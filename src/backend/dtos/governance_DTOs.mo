@@ -56,6 +56,7 @@ module GovernanceDTOs {
     loanLeagueId: FootballTypes.LeagueId;
     loanClubId : FootballTypes.ClubId;
     loanEndDate : Int;
+    newValueQuarterMillions : Nat16;
   };
 
   public type TransferPlayerDTO = {
@@ -65,16 +66,19 @@ module GovernanceDTOs {
     newLeagueId: FootballTypes.LeagueId;
     newClubId : FootballTypes.ClubId;
     newShirtNumber: Nat8;
+    newValueQuarterMillions : Nat16;
   };
 
   public type SetFreeAgentDTO = {
     leagueId: FootballTypes.LeagueId;
     playerId : FootballTypes.ClubId;
+    newValueQuarterMillions : Nat16;
   };
 
   public type RecallPlayerDTO = {
     leagueId: FootballTypes.LeagueId;
     playerId : FootballTypes.ClubId;
+    newValueQuarterMillions : Nat16;
   };
 
   public type CreatePlayerDTO = {
@@ -116,6 +120,7 @@ module GovernanceDTOs {
   public type UnretirePlayerDTO = {
     leagueId: FootballTypes.LeagueId;
     playerId : FootballTypes.ClubId;
+    newValueQuarterMillions : Nat16;
   };
 
   public type UpdateClubDTO = {
@@ -152,7 +157,6 @@ module GovernanceDTOs {
     countryId: Base.CountryId;
     logo: Blob;
   };
-
 
   public type UpdateLeagueDTO = {
     leagueId: FootballTypes.LeagueId;
