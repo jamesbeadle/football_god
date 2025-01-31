@@ -1,12 +1,16 @@
 import { browser } from "$app/environment";
 import { get, writable } from "svelte/store";
 import { replacer } from "$lib/utils/helpers";
+import { clubStore } from "./club-store";
+import { leagueStore } from "./league-store";
+import { fixtureStore } from "./fixture-store";
 
 import type { ExtendedSelection } from "$lib/types/extended-selection";
 import type {
   Category,
   SelectionDetail,
 } from "../../../../declarations/backend/backend.did";
+import type { ClubDTO } from "../../../../declarations/data_canister/data_canister.did";
 
 export interface BetSlipState {
   bets: ExtendedSelection[];
@@ -16,6 +20,30 @@ export interface BetSlipState {
 }
 
 const STORAGE_KEY = "global-bet-slip-state";
+
+async function loadFixtureData(leagueId: number, fixtureId: number) {
+  try {
+    const fixtures = await fixtureStore.getFixtures(leagueId);
+    const fixture = fixtures.find((f) => f.id === fixtureId);
+    if (!fixture) return null;
+
+    const clubs = await clubStore.getClubs(leagueId);
+    const homeClub = clubs.find((c: ClubDTO) => c.id === fixture.homeClubId);
+    const awayClub = clubs.find((c: ClubDTO) => c.id === fixture.awayClubId);
+
+    return {
+      fixture: {
+        ...fixture,
+        homeClub,
+        awayClub,
+      },
+      league: leagueStore.getLeagueById(leagueId),
+    };
+  } catch (error) {
+    console.error("Error loading fixture data:", error);
+    return null;
+  }
+}
 
 function loadInitial(): BetSlipState {
   if (!browser) {
@@ -36,7 +64,19 @@ function loadInitial(): BetSlipState {
         multipleStakes: {},
       };
     }
-    return JSON.parse(stored) as BetSlipState;
+    const state = JSON.parse(stored) as BetSlipState;
+    state.bets.forEach(async (bet) => {
+      try {
+        const fixtureData = await loadFixtureData(bet.leagueId, bet.fixtureId);
+        if (fixtureData) {
+          bet.fixtureDetails = `${fixtureData.fixture.homeClub?.name} v ${fixtureData.fixture.awayClub?.name}`;
+          bet.leagueName = fixtureData.league?.name;
+        }
+      } catch (error) {
+        console.error(`Error loading fixture data for bet:`, error);
+      }
+    });
+    return state;
   } catch {
     return {
       bets: [],

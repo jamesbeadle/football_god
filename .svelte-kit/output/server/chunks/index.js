@@ -4,7 +4,7 @@ import { Buffer } from "buffer";
 import { parse, serialize } from "cookie";
 import * as set_cookie_parser from "set-cookie-parser";
 import { AuthClient } from "@dfinity/auth-client";
-import { createAgent } from "@dfinity/utils";
+import "@dfinity/utils";
 import { HttpAgent, Actor } from "@dfinity/agent";
 import "@dfinity/ledger-icrc";
 import { Principal } from "@dfinity/principal";
@@ -5947,6 +5947,14 @@ const createActor = (canisterId2, options2 = {}) => {
       "Detected both agent and agentOptions passed to createActor. Ignoring agentOptions and proceeding with the provided agent."
     );
   }
+  {
+    agent.fetchRootKey().catch((err) => {
+      console.warn(
+        "Unable to fetch root key. Check to ensure that your local replica is running"
+      );
+      console.error(err);
+    });
+  }
   return Actor.createActor(idlFactory, {
     agent,
     canisterId: canisterId2,
@@ -5957,7 +5965,7 @@ canisterId ? createActor(canisterId) : void 0;
 class ActorFactory {
   static createActor(idlFactory2, canisterId2 = "", identity = null, options2 = null) {
     const hostOptions = {
-      host: `https://${canisterId2}.icp-api.io`,
+      host: `http://localhost:8080/?canisterId=qhbym-qaaaa-aaaaa-aaafq-cai`,
       identity
     };
     if (!options2) {
@@ -5970,6 +5978,14 @@ class ActorFactory {
       options2.agentOptions.host = hostOptions.host;
     }
     const agent = new HttpAgent({ ...options2.agentOptions });
+    {
+      agent.fetchRootKey().catch((err) => {
+        console.warn(
+          "Unable to fetch root key. Ensure your local replica is running"
+        );
+        console.error(err);
+      });
+    }
     return Actor.createActor(idlFactory2, {
       agent,
       canisterId: canisterId2,
@@ -5978,7 +5994,7 @@ class ActorFactory {
   }
   static getAgent(canisterId2 = "", identity = null, options2 = null) {
     const hostOptions = {
-      host: `https://${canisterId2}.icp-api.io`,
+      host: `http://localhost:8080/?canisterId=qhbym-qaaaa-aaaaa-aaafq-cai`,
       identity
     };
     if (!options2) {
@@ -7390,6 +7406,9 @@ async function ensureLeagueData(leagueId) {
 });
 function _page$a($$payload, $$props) {
   push();
+  var $$store_subs;
+  store_get($$store_subs ??= {}, "$fixtureWithClubsStore", fixtureWithClubsStore);
+  store_get($$store_subs ??= {}, "$fixtureWithClubsStore", fixtureWithClubsStore);
   let $$settled = true;
   let $$inner_payload;
   function $$render_inner($$payload2) {
@@ -7401,6 +7420,7 @@ function _page$a($$payload, $$props) {
     $$render_inner($$inner_payload);
   } while (!$$settled);
   assign_payload($$payload, $$inner_payload);
+  if ($$store_subs) unsubscribe_stores($$store_subs);
   pop();
 }
 function Confirm_fixture_data_modal($$payload, $$props) {
@@ -7512,6 +7532,7 @@ function _page$7($$payload, $$props) {
 function _page$6($$payload, $$props) {
   push();
   var $$store_subs;
+  let fixtureId, currentFixture;
   function buildSelectionDetail(categoryKey, data) {
     switch (categoryKey) {
       case "anytimeScorers":
@@ -7607,7 +7628,32 @@ function _page$6($$payload, $$props) {
     }
   }
   Number(store_get($$store_subs ??= {}, "$page", page).url.searchParams.get("leagueId"));
-  Number(store_get($$store_subs ??= {}, "$page", page).url.searchParams.get("fixtureId"));
+  fixtureId = Number(store_get($$store_subs ??= {}, "$page", page).url.searchParams.get("fixtureId"));
+  JSON.parse(decodeURIComponent(store_get($$store_subs ??= {}, "$page", page).url.searchParams.get("league") || ""));
+  JSON.parse(decodeURIComponent(store_get($$store_subs ??= {}, "$page", page).url.searchParams.get("fixture") || ""));
+  currentFixture = store_get($$store_subs ??= {}, "$fixtureWithClubsStore", fixtureWithClubsStore).find((f) => f.id === fixtureId);
+  currentFixture?.homeClub ?? {
+    id: 0,
+    name: "Unknown",
+    friendlyName: "Unknown",
+    abbreviatedName: "UNK",
+    primaryColourHex: "",
+    secondaryColourHex: "",
+    thirdColourHex: "",
+    shirtType: { Filled: null },
+    status: { Active: null }
+  };
+  currentFixture?.awayClub ?? {
+    id: 0,
+    name: "Unknown",
+    friendlyName: "Unknown",
+    abbreviatedName: "UNK",
+    primaryColourHex: "",
+    secondaryColourHex: "",
+    thirdColourHex: "",
+    shirtType: { Filled: null },
+    status: { Active: null }
+  };
   let $$settled = true;
   let $$inner_payload;
   function $$render_inner($$payload2) {
