@@ -163,7 +163,7 @@ actor Self {
     switch(profileResult){
       case (#ok profile){
         assert not profile.accountOnPause;
-        assert profile.kycComplete;
+        assert profile.kycComplete; 
         assert profile.accountBalance >= dto.totalStake;
         assert profile.maxBetLimit >= dto.totalStake;
         assert profile.monthlyBetTotal + dto.totalStake <= profile.monthlyBetLimit;
