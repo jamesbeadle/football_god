@@ -1,13 +1,22 @@
 <script lang="ts">
   import OpenFPLIcon from "../../icons/OpenFPLIcon.svelte";
   import EmptyBetSlipIcon from "$lib/icons/EmptyBetSlipIcon.svelte";
+  import type { FootballLeagueDTO } from "../../../../../declarations/data_canister/data_canister.did";
+  import type { FixtureDTO, ClubDTO } from "../../../../../declarations/data_canister/data_canister.did";
 
   import { betSlipStore } from "$lib/stores/bet-slip-store";
   import { availableMultiplesStore, calculateMultipleOdds, calculateMultipleOddsForType } from "$lib/derived/bets.derived";
-    import BetPlaceholder from "./bet-placeholder.svelte";
+  import BetPlaceholder from "./bet-placeholder.svelte";
+
+  interface ExtendedFixtureDTO extends FixtureDTO {
+    leagueId: number;
+  }
 
   export let isExpanded: boolean = false;
-
+  export let leagueData: Record<number, FootballLeagueDTO>;
+  export let fixtureData: Record<number, ExtendedFixtureDTO>;
+  export let clubsData: Record<number, Record<number, ClubDTO>>;
+  
   let showPlaceBet = false;
 
   $: rawSlipState = $betSlipStore;
@@ -94,6 +103,22 @@
   function closePlaceBet(){
     showPlaceBet = false;
   }
+
+  function getLeagueAndFixtureDetails(bet: any) {
+    const league = leagueData[bet.leagueId];
+    const fixture = fixtureData[bet.fixtureId];
+
+    return {
+      leagueName: league?.name || `League ${bet.leagueId}`,
+      fixtureDetails: fixture ? 
+        `${getClub(fixture.leagueId, fixture.homeClubId)?.name ?? 'Unknown'} vs ${getClub(fixture.leagueId, fixture.awayClubId)?.name ?? 'Unknown'}` : 
+        `Fixture ${bet.fixtureId}`
+    };
+  }
+
+  function getClub(leagueId: number, clubId: number): ClubDTO | undefined {
+    return clubsData[leagueId]?.[clubId];
+  }
 </script>
 
 {#if isExpanded}
@@ -106,7 +131,7 @@
 >
   <div class="flex items-center justify-between p-4 border-b border-gray-100 md:px-4 md:py-2 md:bg-gray-100">
     <div class="flex items-center">
-      <span class="flex items-center justify-center w-8 h-7 text-lg font-medium text-white rounded-full bg-BrandPurple">
+      <span class="flex items-center justify-center w-8 text-lg font-medium text-white rounded-full h-7 bg-BrandPurple">
         {bets.length}
       </span>
       <span class="px-3 text-xl font-bold text-black">Bet Slip</span>
@@ -140,12 +165,13 @@
 
       <div class="flex-1 p-4 space-y-2">
         {#each bets as bet, index}
-          <div class="p-2 border border-gray-300 rounded flex flex-col gap-2">
+          {@const details = getLeagueAndFixtureDetails(bet)}
+          <div class="flex flex-col gap-2 p-2 border border-gray-300 rounded">
             <div class="flex justify-between">
               <div>
-                <p class="text-sm text-black font-medium">{bet.uiDescription}</p>
+                <p class="text-sm font-medium text-black">{bet.uiDescription}</p>
                 <p class="text-xs text-gray-500">
-                  League: {bet.leagueId}, Fixture: {bet.fixtureId}
+                  {details.leagueName} - {details.fixtureDetails}
                 </p>
               </div>
               <button
@@ -191,7 +217,7 @@
           <span class="text-white">Multiple Bet</span>
         </div>
 
-        <div class="p-4 flex items-center space-x-2">
+        <div class="flex items-center p-4 space-x-2">
           <label class="flex items-center space-x-2">
             <input
               type="checkbox"
@@ -203,13 +229,13 @@
         </div>
 
         {#if slipState.isMultiple}
-          <div class="px-4 pb-4 flex flex-col space-y-2">
+          <div class="flex flex-col px-4 pb-4 space-y-2">
             {#each possibleMultiples as multi}
             {#each Object.keys(multi) as mKey}
               {#if slipState.isMultiple}
               
                 {@const multiOdds = calculateMultipleOddsForType(bets, multi)}
-                <div class="border border-gray-300 rounded p-2 flex flex-col gap-1">
+                <div class="flex flex-col gap-1 p-2 border border-gray-300 rounded">
                   <div class="flex items-center justify-between">
                     <p class="text-sm font-medium text-black">
                       {mKey}

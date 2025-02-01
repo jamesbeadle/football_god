@@ -4655,7 +4655,7 @@ const options = {
   root,
   service_worker: false,
   templates: {
-    app: ({ head, body: body2, assets: assets2, nonce, env }) => '<!doctype html>\n<html lang="en">\n  <head>\n    <meta charset="utf-8" />\n    <meta content="width=device-width, initial-scale=1" name="viewport" />\n\n    <title>FootballGod</title>\n    <link href="https://footballgod.xyz" rel="canonical" />\n    <meta\n      content="FootballGod is a tokenised betting platform on the Internet Computer blockchain."\n      name="description"\n    />\n    <meta content="FootballGod" property="og:title" />\n    <meta\n      content="FootballGod is a tokenised betting platform on the Internet Computer blockchain."\n      property="og:description"\n    />\n    <meta content="website" property="og:type" />\n    <meta content="https://footballgod.xyz" property="og:url" />\n    <meta\n      content="https://footballgod.xyz/meta-share.jpg"\n      property="og:image"\n    />\n    <meta content="summary_large_image" name="twitter:card" />\n    <meta content="FootballGod" name="twitter:title" />\n    <meta\n      content="FootballGod is a tokenised betting platform on the Internet Computer blockchain."\n      name="twitter:description"\n    />\n    <meta\n      content="https://footballgod.xyz/meta-share.jpg"\n      name="twitter:image"\n    />\n    <meta content="@beadle1989" name="twitter:creator" />\n\n    <link crossorigin="anonymous" href="/manifest.webmanifest" rel="manifest" />\n\n    <link\n      rel="icon"\n      type="image/png"\n      sizes="32x32"\n      href="' + assets2 + '/favicons/favicon-32x32.png"\n    />\n    <link\n      rel="icon"\n      type="image/png"\n      sizes="16x16"\n      href="' + assets2 + '/favicons/favicon-16x16.png"\n    />\n    <link rel="shortcut icon" href="' + assets2 + '/favicons/favicon.ico" />\n\n    <meta name="apple-mobile-web-app-capable" content="yes" />\n    <meta name="apple-mobile-web-app-status-bar-style" content="#7F56F1" />\n    <meta name="apple-mobile-web-app-title" content="FootballGod" />\n    <link\n      rel="apple-touch-icon"\n      href="' + assets2 + '/favicons/apple-touch-icon.png"\n    />\n    <link\n      rel="mask-icon"\n      href="' + assets2 + '/favicons/safari-pinned-tab.svg"\n      color="#7F56F1"\n    />\n\n    <meta name="msapplication-TileColor" content="#7F56F1" />\n    <meta\n      name="msapplication-config"\n      content="' + assets2 + '/favicons/browserconfig.xml"\n    />\n\n    <meta content="#7F56F1" name="theme-color" />\n    ' + head + '\n\n    <style>\n      html,\n      body {\n        height: 100%;\n        margin: 0;\n      }\n\n      @font-face {\n        font-display: swap;\n        font-family: "Poppins";\n        font-style: normal;\n        font-weight: 400;\n        src: url("' + assets2 + '/poppins-regular-webfont.woff2")\n          format("woff2");\n      }\n\n      @font-face {\n        font-display: swap;\n        font-family: "Manrope";\n        font-style: normal;\n        font-weight: 400;\n        src: url("' + assets2 + '/Manrope-Regular.woff2") format("woff2");\n      }\n      body {\n        font-family: "Poppins", sans-serif !important;\n        color: white !important;\n        background-color: #1a1a1d;\n        height: 100vh;\n        margin: 0;\n      }\n\n      #app-spinner {\n        --spinner-size: 30px;\n\n        width: var(--spinner-size);\n        height: var(--spinner-size);\n\n        animation: app-spinner-linear-rotate 2000ms linear infinite;\n\n        position: absolute;\n        top: calc(50% - (var(--spinner-size) / 2));\n        left: calc(50% - (var(--spinner-size) / 2));\n\n        --radius: 45px;\n        --circumference: calc(3.14159265359 * var(--radius) * 2);\n\n        --start: calc((1 - 0.05) * var(--circumference));\n        --end: calc((1 - 0.8) * var(--circumference));\n      }\n\n      #app-spinner circle {\n        stroke-dasharray: var(--circumference);\n        stroke-width: 10%;\n        transform-origin: 50% 50% 0;\n\n        transition-property: stroke;\n\n        animation-name: app-spinner-stroke-rotate-100;\n        animation-duration: 4000ms;\n        animation-timing-function: cubic-bezier(0.35, 0, 0.25, 1);\n        animation-iteration-count: infinite;\n\n        fill: transparent;\n        stroke: currentColor;\n\n        transition: stroke-dashoffset 225ms linear;\n      }\n\n      @keyframes app-spinner-linear-rotate {\n        0% {\n          transform: rotate(0deg);\n        }\n        100% {\n          transform: rotate(360deg);\n        }\n      }\n\n      @keyframes app-spinner-stroke-rotate-100 {\n        0% {\n          stroke-dashoffset: var(--start);\n          transform: rotate(0);\n        }\n        12.5% {\n          stroke-dashoffset: var(--end);\n          transform: rotate(0);\n        }\n        12.5001% {\n          stroke-dashoffset: var(--end);\n          transform: rotateX(180deg) rotate(72.5deg);\n        }\n        25% {\n          stroke-dashoffset: var(--start);\n          transform: rotateX(180deg) rotate(72.5deg);\n        }\n\n        25.0001% {\n          stroke-dashoffset: var(--start);\n          transform: rotate(270deg);\n        }\n        37.5% {\n          stroke-dashoffset: var(--end);\n          transform: rotate(270deg);\n        }\n        37.5001% {\n          stroke-dashoffset: var(--end);\n          transform: rotateX(180deg) rotate(161.5deg);\n        }\n        50% {\n          stroke-dashoffset: var(--start);\n          transform: rotateX(180deg) rotate(161.5deg);\n        }\n\n        50.0001% {\n          stroke-dashoffset: var(--start);\n          transform: rotate(180deg);\n        }\n        62.5% {\n          stroke-dashoffset: var(--end);\n          transform: rotate(180deg);\n        }\n        62.5001% {\n          stroke-dashoffset: var(--end);\n          transform: rotateX(180deg) rotate(251.5deg);\n        }\n        75% {\n          stroke-dashoffset: var(--start);\n          transform: rotateX(180deg) rotate(251.5deg);\n        }\n\n        75.0001% {\n          stroke-dashoffset: var(--start);\n          transform: rotate(90deg);\n        }\n        87.5% {\n          stroke-dashoffset: var(--end);\n          transform: rotate(90deg);\n        }\n        87.5001% {\n          stroke-dashoffset: var(--end);\n          transform: rotateX(180deg) rotate(341.5deg);\n        }\n        100% {\n          stroke-dashoffset: var(--start);\n          transform: rotateX(180deg) rotate(341.5deg);\n        }\n      }\n    </style>\n  </head>\n  <body data-sveltekit-preload-data="hover">\n    <div style="display: contents">' + body2 + '</div>\n\n    <svg\n      id="app-spinner"\n      preserveAspectRatio="xMidYMid meet"\n      focusable="false"\n      aria-hidden="true"\n      data-tid="spinner"\n      viewBox="0 0 100 100"\n    >\n      <circle cx="50%" cy="50%" r="45" />\n    </svg>\n  </body>\n</html>\n',
+    app: ({ head, body: body2, assets: assets2, nonce, env }) => '<!doctype html>\n<html lang="en">\n  <head>\n    <meta charset="utf-8" />\n    <meta content="width=device-width, initial-scale=1" name="viewport" />\n\n    <title>FootballGod</title>\n    <link href="https://footballgod.xyz" rel="canonical" />\n    <meta\n      content="FootballGod is a tokenised betting platform on the Internet Computer blockchain."\n      name="description"\n    />\n    <meta content="FootballGod" property="og:title" />\n    <meta\n      content="FootballGod is a tokenised betting platform on the Internet Computer blockchain."\n      property="og:description"\n    />\n    <meta content="website" property="og:type" />\n    <meta content="https://footballgod.xyz" property="og:url" />\n    <meta\n      content="https://footballgod.xyz/meta-share.jpg"\n      property="og:image"\n    />\n    <meta content="summary_large_image" name="twitter:card" />\n    <meta content="FootballGod" name="twitter:title" />\n    <meta\n      content="FootballGod is a tokenised betting platform on the Internet Computer blockchain."\n      name="twitter:description"\n    />\n    <meta\n      content="https://footballgod.xyz/meta-share.jpg"\n      name="twitter:image"\n    />\n    <meta content="@beadle1989" name="twitter:creator" />\n\n    <link crossorigin="anonymous" href="/manifest.webmanifest" rel="manifest" />\n\n    <link\n      rel="icon"\n      type="image/png"\n      sizes="32x32"\n      href="' + assets2 + '/favicons/favicon-32x32.png"\n    />\n    <link\n      rel="icon"\n      type="image/png"\n      sizes="16x16"\n      href="' + assets2 + '/favicons/favicon-16x16.png"\n    />\n    <link rel="shortcut icon" href="' + assets2 + '/favicons/favicon.ico" />\n\n    <meta name="apple-mobile-web-app-capable" content="yes" />\n    <meta name="apple-mobile-web-app-status-bar-style" content="#7F56F1" />\n    <meta name="apple-mobile-web-app-title" content="FootballGod" />\n    <link\n      rel="apple-touch-icon"\n      href="' + assets2 + '/favicons/apple-touch-icon.png"\n    />\n    <link\n      rel="mask-icon"\n      href="' + assets2 + '/favicons/safari-pinned-tab.svg"\n      color="#7F56F1"\n    />\n\n    <meta name="msapplication-TileColor" content="#7F56F1" />\n    <meta\n      name="msapplication-config"\n      content="' + assets2 + '/favicons/browserconfig.xml"\n    />\n\n    <meta content="#7F56F1" name="theme-color" />\n    ' + head + '\n\n    <style>\n      html,\n      body {\n        height: 100%;\n        margin: 0;\n      }\n\n      @font-face {\n        font-display: swap;\n        font-family: "Poppins";\n        font-style: normal;\n        font-weight: 400;\n        src: url("' + assets2 + '/poppins-regular-webfont.woff2")\n          format("woff2");\n      }\n\n      @font-face {\n        font-display: swap;\n        font-family: "Manrope";\n        font-style: normal;\n        font-weight: 400;\n        src: url("' + assets2 + '/Manrope-Regular.woff2") format("woff2");\n      }\n      body {\n        font-family: "Poppins", sans-serif !important;\n        color: white !important;\n        background-color: #101111;\n        height: 100vh;\n        margin: 0;\n      }\n\n      #app-spinner {\n        --spinner-size: 30px;\n\n        width: var(--spinner-size);\n        height: var(--spinner-size);\n\n        animation: app-spinner-linear-rotate 2000ms linear infinite;\n\n        position: absolute;\n        top: calc(50% - (var(--spinner-size) / 2));\n        left: calc(50% - (var(--spinner-size) / 2));\n\n        --radius: 45px;\n        --circumference: calc(3.14159265359 * var(--radius) * 2);\n\n        --start: calc((1 - 0.05) * var(--circumference));\n        --end: calc((1 - 0.8) * var(--circumference));\n      }\n\n      #app-spinner circle {\n        stroke-dasharray: var(--circumference);\n        stroke-width: 10%;\n        transform-origin: 50% 50% 0;\n\n        transition-property: stroke;\n\n        animation-name: app-spinner-stroke-rotate-100;\n        animation-duration: 4000ms;\n        animation-timing-function: cubic-bezier(0.35, 0, 0.25, 1);\n        animation-iteration-count: infinite;\n\n        fill: transparent;\n        stroke: currentColor;\n\n        transition: stroke-dashoffset 225ms linear;\n      }\n\n      @keyframes app-spinner-linear-rotate {\n        0% {\n          transform: rotate(0deg);\n        }\n        100% {\n          transform: rotate(360deg);\n        }\n      }\n\n      @keyframes app-spinner-stroke-rotate-100 {\n        0% {\n          stroke-dashoffset: var(--start);\n          transform: rotate(0);\n        }\n        12.5% {\n          stroke-dashoffset: var(--end);\n          transform: rotate(0);\n        }\n        12.5001% {\n          stroke-dashoffset: var(--end);\n          transform: rotateX(180deg) rotate(72.5deg);\n        }\n        25% {\n          stroke-dashoffset: var(--start);\n          transform: rotateX(180deg) rotate(72.5deg);\n        }\n\n        25.0001% {\n          stroke-dashoffset: var(--start);\n          transform: rotate(270deg);\n        }\n        37.5% {\n          stroke-dashoffset: var(--end);\n          transform: rotate(270deg);\n        }\n        37.5001% {\n          stroke-dashoffset: var(--end);\n          transform: rotateX(180deg) rotate(161.5deg);\n        }\n        50% {\n          stroke-dashoffset: var(--start);\n          transform: rotateX(180deg) rotate(161.5deg);\n        }\n\n        50.0001% {\n          stroke-dashoffset: var(--start);\n          transform: rotate(180deg);\n        }\n        62.5% {\n          stroke-dashoffset: var(--end);\n          transform: rotate(180deg);\n        }\n        62.5001% {\n          stroke-dashoffset: var(--end);\n          transform: rotateX(180deg) rotate(251.5deg);\n        }\n        75% {\n          stroke-dashoffset: var(--start);\n          transform: rotateX(180deg) rotate(251.5deg);\n        }\n\n        75.0001% {\n          stroke-dashoffset: var(--start);\n          transform: rotate(90deg);\n        }\n        87.5% {\n          stroke-dashoffset: var(--end);\n          transform: rotate(90deg);\n        }\n        87.5001% {\n          stroke-dashoffset: var(--end);\n          transform: rotateX(180deg) rotate(341.5deg);\n        }\n        100% {\n          stroke-dashoffset: var(--start);\n          transform: rotateX(180deg) rotate(341.5deg);\n        }\n      }\n    </style>\n  </head>\n  <body data-sveltekit-preload-data="hover">\n    <div style="display: contents">' + body2 + '</div>\n\n    <svg\n      id="app-spinner"\n      preserveAspectRatio="xMidYMid meet"\n      focusable="false"\n      aria-hidden="true"\n      data-tid="spinner"\n      viewBox="0 0 100 100"\n    >\n      <circle cx="50%" cy="50%" r="45" />\n    </svg>\n  </body>\n</html>\n',
     error: ({ status, message }) => '<!doctype html>\n<html lang="en">\n	<head>\n		<meta charset="utf-8" />\n		<title>' + message + `</title>
 
 		<style>
@@ -4727,7 +4727,7 @@ const options = {
 		<div class="error">
 			<span class="status">` + status + '</span>\n			<div class="message">\n				<h1>' + message + "</h1>\n			</div>\n		</div>\n	</body>\n</html>\n"
   },
-  version_hash: "13g01jw"
+  version_hash: "d2tgke"
 };
 async function get_hooks() {
   return {};
@@ -6185,213 +6185,75 @@ function Layout($$payload, $$props) {
   if ($$store_subs) unsubscribe_stores($$store_subs);
   pop();
 }
-function loadInitial() {
-  {
-    return {
-      bets: [],
-      isMultiple: false,
-      singleStakes: {},
-      multipleStakes: {}
-    };
-  }
-}
-const initial = loadInitial();
-const _betSlipStore = writable(initial);
-_betSlipStore.subscribe((val) => {
-});
-function addBet(bet) {
-  _betSlipStore.update((state) => {
-    const exists = state.bets.some(
-      (b) => b.leagueId === bet.leagueId && b.fixtureId === bet.fixtureId && categoryEquals(b.selectionType, bet.selectionType) && detailEquals(b.selectionDetail, bet.selectionDetail)
-    );
-    if (!exists) {
-      state.bets = [...state.bets, bet];
-    }
-    return state;
-  });
-}
-function removeBet(leagueId, fixtureId, category, detail) {
-  _betSlipStore.update((state) => {
-    const idx = state.bets.findIndex(
-      (b) => b.leagueId === leagueId && b.fixtureId === fixtureId && categoryEquals(b.selectionType, category) && detailEquals(b.selectionDetail, detail)
-    );
-    if (idx === -1) return state;
-    state.bets.splice(idx, 1);
-    const oldStakes = { ...state.singleStakes };
-    const newStakes = {};
-    state.bets.forEach((_, newIndex) => {
-      if (newIndex < idx) {
-        newStakes[newIndex] = oldStakes[newIndex] ?? 0;
-      } else {
-        newStakes[newIndex] = oldStakes[newIndex + 1] ?? 0;
-      }
-    });
-    state.singleStakes = newStakes;
-    if (state.bets.length === 0) {
-      state.isMultiple = false;
-      state.multipleStakes = {};
-    }
-    if (state.bets.length < 2) {
-      state.isMultiple = false;
-      state.multipleStakes = {};
-    }
-    return state;
-  });
-}
-function isSelected(leagueId, fixtureId, category, detail) {
-  const state = get$1(_betSlipStore);
-  return state.bets.some(
-    (b) => b.leagueId === leagueId && b.fixtureId === fixtureId && categoryEquals(b.selectionType, category) && detailEquals(b.selectionDetail, detail)
-  );
-}
-function setIsMultiple(value) {
-  _betSlipStore.update((state) => {
-    state.isMultiple = value;
-    return state;
-  });
-}
-function setSingleStake(index, stake) {
-  _betSlipStore.update((state) => {
-    state.singleStakes[index] = stake;
-    return state;
-  });
-}
-function setMultipleStake(multipleName, stake) {
-  _betSlipStore.update((state) => {
-    state.multipleStakes[multipleName] = stake;
-    return state;
-  });
-}
-const betSlipStore = {
-  subscribe: _betSlipStore.subscribe,
-  addBet,
-  removeBet,
-  isSelected,
-  setIsMultiple,
-  setSingleStake,
-  setMultipleStake
-};
-function categoryEquals(c1, c2) {
-  return JSON.stringify(c1, replacer) === JSON.stringify(c2, replacer);
-}
-function detailEquals(d1, d2) {
-  return JSON.stringify(d1, replacer) === JSON.stringify(d2, replacer);
-}
-const possibleBetTypesByCount = {
-  1: [],
-  2: [{ Double: null }],
-  3: [
-    {
-      Treble: null
-    }
-  ],
-  4: [
-    {
-      FourFold: null
-    }
-  ],
-  5: [
-    {
-      FiveFold: null
-    }
-  ],
-  6: [
-    {
-      SixFold: null
-    }
-  ],
-  7: [
-    { SevenFold: null }
-  ],
-  8: [
-    { EightFold: null }
-    /* //TODO ROMOVED ACCA ROLLUPS, { Goliath: null }*/
-  ],
-  9: [{ NineFold: null }],
-  10: [{ TenFold: null }]
-};
-function getPossibleBetTypes(count) {
-  return possibleBetTypesByCount[count] || [];
-}
-derived(betSlipStore, ($state) => {
-  const { bets } = $state;
-  const count = bets.length;
-  if (count === 0) {
-    return [];
-  }
-  const uniqueFixtures = new Set(bets.map((b) => b.fixtureId));
-  const allUnique = uniqueFixtures.size === count;
-  if (!allUnique && count > 1) {
-    return [];
-  }
-  return getPossibleBetTypes(count);
-});
-function Modal($$payload, $$props) {
-  push();
-  let showModal = $$props["showModal"];
-  let onClose = $$props["onClose"];
-  const handleKeydown = (e) => {
-    if (e.key === "Escape" && showModal) {
-      onClose();
-    }
-  };
-  if (typeof window !== "undefined") {
-    window.addEventListener("keydown", handleKeydown);
-  }
-  onDestroy(() => {
-    if (typeof window !== "undefined") {
-      window.removeEventListener("keydown", handleKeydown);
-    }
-  });
-  if (showModal) {
-    $$payload.out += "<!--[-->";
-    $$payload.out += `<div class="fixed inset-0 z-40 bg-black bg-opacity-50 flex items-center justify-center overflow-y-auto"${attr("aria-hidden", showModal ? "false" : "true")}><div class="bg-BrandLightGray rounded-lg shadow-lg max-w-lg w-full mx-auto relative overflow-y-auto max-h-[90vh] px-6 py-4" role="dialog" aria-modal="true" tabindex="-1"><!---->`;
-    slot($$payload, $$props, "default", {});
-    $$payload.out += `<!----></div></div>`;
-  } else {
-    $$payload.out += "<!--[!-->";
-  }
-  $$payload.out += `<!--]-->`;
-  bind_props($$props, { showModal, onClose });
-  pop();
-}
 var define_process_env_default$5 = { BACKEND_CANISTER_ID: "44kin-waaaa-aaaal-qbxra-cai", FRONTEND_CANISTER_ID: "43loz-3yaaa-aaaal-qbxrq-cai", DATA_CANISTER_CANISTER_ID: "52fzd-2aaaa-aaaal-qmzsa-cai", DFX_NETWORK: "ic", SNS_GOVERNANCE_CANISTER_ID: "detjl-sqaaa-aaaaq-aacqa-cai", DATA_CANISTER_ID: "52fzd-2aaaa-aaaal-qmzsa-cai" };
-class LeagueService {
+class PlayerService {
   constructor() {
   }
-  async getLeagues() {
+  async getPlayers(leagueId) {
     const identityActor = await ActorFactory.createDataCanisterIdentityActor(
       authStore,
       define_process_env_default$5.DATA_CANISTER_CANISTER_ID
     );
-    const result = await identityActor.getLeagues();
-    if (isError(result)) throw new Error("Failed to fetch leagues");
+    const result = await identityActor.getPlayers(leagueId);
+    if (isError(result)) throw new Error("Failed to fetch players");
     return result.ok;
   }
-  async createLeague(dto) {
+  async getLoanedPlayers(leagueId) {
     const identityActor = await ActorFactory.createDataCanisterIdentityActor(
       authStore,
       define_process_env_default$5.DATA_CANISTER_CANISTER_ID
     );
-    const result = await identityActor.executeCreateLeague(dto);
-    if (isError(result)) throw new Error("Failed to create league");
-  }
-  async updateLeague(dto) {
-    const identityActor = await ActorFactory.createDataCanisterIdentityActor(
-      authStore,
-      define_process_env_default$5.BACKEND_CANISTER_ID
-    );
-    const result = await identityActor.executeUpdateLeague(dto);
-    if (isError(result)) throw new Error("Failed to update league");
-  }
-  async getLeagueStatus(leagueId) {
-    const identityActor = await ActorFactory.createDataCanisterIdentityActor(
-      authStore,
-      define_process_env_default$5.DATA_CANISTER_CANISTER_ID
-    );
-    const result = await identityActor.getLeagueStatus(leagueId);
-    if (isError(result)) throw new Error("Failed to fetch league status");
+    const result = await identityActor.getLoanedPlayers(leagueId);
+    if (isError(result)) throw new Error("Failed to fetch players");
     return result.ok;
+  }
+  async transferPlayer(leagueId, dto) {
+    const identityActor = await ActorFactory.createDataCanisterIdentityActor(
+      authStore,
+      define_process_env_default$5.DATA_CANISTER_CANISTER_ID
+    );
+    const result = await identityActor.executeTransferPlayer(leagueId, dto);
+    if (isError(result)) throw new Error("Failed to transfer player");
+  }
+  async setFreeAgent(leagueId, dto) {
+    const identityActor = await ActorFactory.createDataCanisterIdentityActor(
+      authStore,
+      define_process_env_default$5.DATA_CANISTER_CANISTER_ID
+    );
+    const result = await identityActor.executeSetFreeAgent(leagueId, dto);
+    if (isError(result)) throw new Error("Failed to set player as free agent");
+  }
+  async loanPlayer(leagueId, dto) {
+    const identityActor = await ActorFactory.createDataCanisterIdentityActor(
+      authStore,
+      define_process_env_default$5.DATA_CANISTER_CANISTER_ID
+    );
+    const result = await identityActor.executeLoanPlayer(leagueId, dto);
+    if (isError(result)) throw new Error("Failed to loan player");
+  }
+  async createPlayer(leagueId, dto) {
+    const identityActor = await ActorFactory.createDataCanisterIdentityActor(
+      authStore,
+      define_process_env_default$5.DATA_CANISTER_CANISTER_ID
+    );
+    const result = await identityActor.executeCreatePlayer(leagueId, dto);
+    if (isError(result)) throw new Error("Failed to creaete player");
+  }
+  async updatePlayer(leagueId, dto) {
+    const identityActor = await ActorFactory.createDataCanisterIdentityActor(
+      authStore,
+      define_process_env_default$5.DATA_CANISTER_CANISTER_ID
+    );
+    const result = await identityActor.executeUpdatePlayer(leagueId, dto);
+    if (isError(result)) throw new Error("Failed to update player");
+  }
+  async recallLoan(leagueId, dto) {
+    const identityActor = await ActorFactory.createDataCanisterIdentityActor(
+      authStore,
+      define_process_env_default$5.DATA_CANISTER_CANISTER_ID
+    );
+    const result = await identityActor.executeRecallPlayer(dto);
+    if (isError(result)) throw new Error("Failed to recall player");
   }
 }
 var define_process_env_default$4 = { BACKEND_CANISTER_ID: "44kin-waaaa-aaaal-qbxra-cai", FRONTEND_CANISTER_ID: "43loz-3yaaa-aaaal-qbxrq-cai", DATA_CANISTER_CANISTER_ID: "52fzd-2aaaa-aaaal-qmzsa-cai", DFX_NETWORK: "ic", SNS_GOVERNANCE_CANISTER_ID: "detjl-sqaaa-aaaaq-aacqa-cai", DATA_CANISTER_ID: "52fzd-2aaaa-aaaal-qmzsa-cai" };
@@ -6433,256 +6295,6 @@ class DataHashService {
       );
       return null;
     }
-  }
-}
-function createLeagueStore() {
-  const { subscribe, update } = writable({});
-  const { subscribe: subscribeLeagueStatus, update: updateLeagueStatus } = writable({});
-  let leagueCacheOrder = [];
-  async function syncLeagues(toggledLeagueId) {
-    try {
-      const localHashKey = "leagues_hash";
-      const localLeaguesKey = "leagues";
-      const localHash = localStorage.getItem(localHashKey);
-      const leagueHash = await new DataHashService().getLeaguesHash();
-      let leagues;
-      if (!localHash || leagueHash !== localHash) {
-        leagues = await getLeagues();
-        localStorage.setItem(localLeaguesKey, serializeData(leagues));
-        localStorage.setItem(localHashKey, leagueHash || "");
-      } else {
-        const cached = localStorage.getItem(localLeaguesKey);
-        if (cached) {
-          const cachedLeagues = deserializeData(cached);
-          const serverLeagues = await getLeagues();
-          const cachedLeagueMap = new Map(
-            cachedLeagues.map((league) => [league.id, league])
-          );
-          serverLeagues.forEach((serverLeague) => {
-            cachedLeagueMap.set(serverLeague.id, serverLeague);
-          });
-          leagues = Array.from(
-            new Map(
-              serverLeagues.map((league) => [league.id, league])
-            ).values()
-          );
-        } else {
-          leagues = await getLeagues();
-          localStorage.setItem(localLeaguesKey, serializeData(leagues));
-        }
-      }
-      if (toggledLeagueId !== void 0) {
-        if (!leagueCacheOrder.includes(toggledLeagueId)) {
-          leagueCacheOrder.push(toggledLeagueId);
-        } else {
-          leagueCacheOrder = leagueCacheOrder.filter(
-            (id) => id !== toggledLeagueId
-          );
-          leagueCacheOrder.push(toggledLeagueId);
-        }
-      }
-      const excessLeagues = leagueCacheOrder.slice(
-        0,
-        leagueCacheOrder.length - MAX_CACHED_LEAGUES
-      );
-      const filteredLeagues = leagueCacheOrder.slice(-MAX_CACHED_LEAGUES).map((id) => leagues.find((league) => league.id === id)).filter((league) => league !== void 0);
-      localStorage.setItem(localLeaguesKey, serializeData(filteredLeagues));
-      excessLeagues.forEach((excessLeagueId) => {
-        leagueCacheOrder = leagueCacheOrder.filter(
-          (id) => id !== excessLeagueId
-        );
-      });
-      update(
-        (current) => filteredLeagues.reduce(
-          (acc, league) => {
-            acc[league.id] = league;
-            return acc;
-          },
-          {}
-        )
-      );
-    } catch (error) {
-      console.error("Error syncing leagues:", error);
-      const cached = localStorage.getItem("leagues");
-      if (cached) {
-        const leagues = deserializeData(cached);
-        update(
-          (current) => leagues.reduce(
-            (acc, league) => {
-              acc[league.id] = league;
-              return acc;
-            },
-            {}
-          )
-        );
-      }
-    }
-  }
-  async function syncLeagueStatus(leagueId) {
-    try {
-      const localHashKey = `league_status_hash_${leagueId}`;
-      const localLeagueStatusKey = `league_status_${leagueId}`;
-      const localHash = localStorage.getItem(localHashKey);
-      const leagueStatusHash = await new DataHashService().getCategoryHash(
-        "league_status",
-        leagueId
-      );
-      let leagueStatus;
-      if (!localHash || leagueStatusHash !== localHash) {
-        leagueStatus = await getLeagueStatus(leagueId);
-        localStorage.setItem(localLeagueStatusKey, serializeData(leagueStatus));
-        localStorage.setItem(localHashKey, leagueStatusHash || "");
-      } else {
-        const cached = localStorage.getItem(localLeagueStatusKey);
-        if (cached) {
-          leagueStatus = deserializeData(cached);
-        } else {
-          leagueStatus = await getLeagueStatus(leagueId);
-          localStorage.setItem(
-            localLeagueStatusKey,
-            serializeData(leagueStatus)
-          );
-        }
-      }
-      let currentStatuses = {};
-      const unsubscribe = subscribeLeagueStatus((value) => {
-        currentStatuses = value;
-      });
-      unsubscribe();
-      updateLeagueStatus((currentStatuses2) => ({
-        ...currentStatuses2,
-        [leagueId]: leagueStatus
-      }));
-      if (!leagueCacheOrder.includes(leagueId)) {
-        leagueCacheOrder.push(leagueId);
-      } else {
-        leagueCacheOrder = leagueCacheOrder.filter((id) => id !== leagueId);
-        leagueCacheOrder.push(leagueId);
-      }
-      if (leagueCacheOrder.length > MAX_CACHED_LEAGUES) {
-        const leastUsedLeagueId = leagueCacheOrder.shift();
-        if (leastUsedLeagueId !== void 0) {
-          localStorage.removeItem(`league_status_${leastUsedLeagueId}`);
-          localStorage.removeItem(`league_status_hash_${leastUsedLeagueId}`);
-        }
-      }
-    } catch (error) {
-      console.error(
-        `Error syncing league status for league ${leagueId}:`,
-        error
-      );
-      const cached = localStorage.getItem(`league_status_${leagueId}`);
-      if (cached) {
-        const leagueStatus = deserializeData(cached);
-        updateLeagueStatus((currentStatuses) => ({
-          ...currentStatuses,
-          [leagueId]: leagueStatus
-        }));
-      }
-    }
-  }
-  async function getLeagues() {
-    return new LeagueService().getLeagues();
-  }
-  async function createLeague(dto) {
-    return new LeagueService().createLeague(dto);
-  }
-  async function updateLeague(dto) {
-    return new LeagueService().updateLeague(dto);
-  }
-  async function getLeagueStatus(leagueId) {
-    return new LeagueService().getLeagueStatus(leagueId);
-  }
-  function getLeagueById(leagueId) {
-    let data = {};
-    const unsubscribe = subscribe((value) => {
-      data = value;
-    });
-    unsubscribe();
-    return data[leagueId];
-  }
-  return {
-    subscribe,
-    syncLeagues,
-    getLeagues,
-    createLeague,
-    updateLeague,
-    getLeagueStatus,
-    getLeagueById,
-    syncLeagueStatus,
-    subscribeLeagueStatus
-  };
-}
-const leagueStore = createLeagueStore();
-var define_process_env_default$3 = { BACKEND_CANISTER_ID: "44kin-waaaa-aaaal-qbxra-cai", FRONTEND_CANISTER_ID: "43loz-3yaaa-aaaal-qbxrq-cai", DATA_CANISTER_CANISTER_ID: "52fzd-2aaaa-aaaal-qmzsa-cai", DFX_NETWORK: "ic", SNS_GOVERNANCE_CANISTER_ID: "detjl-sqaaa-aaaaq-aacqa-cai", DATA_CANISTER_ID: "52fzd-2aaaa-aaaal-qmzsa-cai" };
-class PlayerService {
-  constructor() {
-  }
-  async getPlayers(leagueId) {
-    const identityActor = await ActorFactory.createDataCanisterIdentityActor(
-      authStore,
-      define_process_env_default$3.DATA_CANISTER_CANISTER_ID
-    );
-    const result = await identityActor.getPlayers(leagueId);
-    if (isError(result)) throw new Error("Failed to fetch players");
-    return result.ok;
-  }
-  async getLoanedPlayers(leagueId) {
-    const identityActor = await ActorFactory.createDataCanisterIdentityActor(
-      authStore,
-      define_process_env_default$3.DATA_CANISTER_CANISTER_ID
-    );
-    const result = await identityActor.getLoanedPlayers(leagueId);
-    if (isError(result)) throw new Error("Failed to fetch players");
-    return result.ok;
-  }
-  async transferPlayer(leagueId, dto) {
-    const identityActor = await ActorFactory.createDataCanisterIdentityActor(
-      authStore,
-      define_process_env_default$3.DATA_CANISTER_CANISTER_ID
-    );
-    const result = await identityActor.executeTransferPlayer(leagueId, dto);
-    if (isError(result)) throw new Error("Failed to transfer player");
-  }
-  async setFreeAgent(leagueId, dto) {
-    const identityActor = await ActorFactory.createDataCanisterIdentityActor(
-      authStore,
-      define_process_env_default$3.DATA_CANISTER_CANISTER_ID
-    );
-    const result = await identityActor.executeSetFreeAgent(leagueId, dto);
-    if (isError(result)) throw new Error("Failed to set player as free agent");
-  }
-  async loanPlayer(leagueId, dto) {
-    const identityActor = await ActorFactory.createDataCanisterIdentityActor(
-      authStore,
-      define_process_env_default$3.DATA_CANISTER_CANISTER_ID
-    );
-    const result = await identityActor.executeLoanPlayer(leagueId, dto);
-    if (isError(result)) throw new Error("Failed to loan player");
-  }
-  async createPlayer(leagueId, dto) {
-    const identityActor = await ActorFactory.createDataCanisterIdentityActor(
-      authStore,
-      define_process_env_default$3.DATA_CANISTER_CANISTER_ID
-    );
-    const result = await identityActor.executeCreatePlayer(leagueId, dto);
-    if (isError(result)) throw new Error("Failed to creaete player");
-  }
-  async updatePlayer(leagueId, dto) {
-    const identityActor = await ActorFactory.createDataCanisterIdentityActor(
-      authStore,
-      define_process_env_default$3.DATA_CANISTER_CANISTER_ID
-    );
-    const result = await identityActor.executeUpdatePlayer(leagueId, dto);
-    if (isError(result)) throw new Error("Failed to update player");
-  }
-  async recallLoan(leagueId, dto) {
-    const identityActor = await ActorFactory.createDataCanisterIdentityActor(
-      authStore,
-      define_process_env_default$3.DATA_CANISTER_CANISTER_ID
-    );
-    const result = await identityActor.executeRecallPlayer(dto);
-    if (isError(result)) throw new Error("Failed to recall player");
   }
 }
 function createPlayerStore() {
@@ -6934,6 +6546,224 @@ IDL.Record({
   seasonId: IDL.Nat16,
   fixtureId: IDL.Nat16
 });
+var define_process_env_default$3 = { BACKEND_CANISTER_ID: "44kin-waaaa-aaaal-qbxra-cai", FRONTEND_CANISTER_ID: "43loz-3yaaa-aaaal-qbxrq-cai", DATA_CANISTER_CANISTER_ID: "52fzd-2aaaa-aaaal-qmzsa-cai", DFX_NETWORK: "ic", SNS_GOVERNANCE_CANISTER_ID: "detjl-sqaaa-aaaaq-aacqa-cai", DATA_CANISTER_ID: "52fzd-2aaaa-aaaal-qmzsa-cai" };
+class LeagueService {
+  constructor() {
+  }
+  async getLeagues() {
+    const identityActor = await ActorFactory.createDataCanisterIdentityActor(
+      authStore,
+      define_process_env_default$3.DATA_CANISTER_CANISTER_ID
+    );
+    const result = await identityActor.getLeagues();
+    if (isError(result)) throw new Error("Failed to fetch leagues");
+    return result.ok;
+  }
+  async createLeague(dto) {
+    const identityActor = await ActorFactory.createDataCanisterIdentityActor(
+      authStore,
+      define_process_env_default$3.DATA_CANISTER_CANISTER_ID
+    );
+    const result = await identityActor.executeCreateLeague(dto);
+    if (isError(result)) throw new Error("Failed to create league");
+  }
+  async updateLeague(dto) {
+    const identityActor = await ActorFactory.createDataCanisterIdentityActor(
+      authStore,
+      define_process_env_default$3.BACKEND_CANISTER_ID
+    );
+    const result = await identityActor.executeUpdateLeague(dto);
+    if (isError(result)) throw new Error("Failed to update league");
+  }
+  async getLeagueStatus(leagueId) {
+    const identityActor = await ActorFactory.createDataCanisterIdentityActor(
+      authStore,
+      define_process_env_default$3.DATA_CANISTER_CANISTER_ID
+    );
+    const result = await identityActor.getLeagueStatus(leagueId);
+    if (isError(result)) throw new Error("Failed to fetch league status");
+    return result.ok;
+  }
+}
+function createLeagueStore() {
+  const { subscribe, update } = writable({});
+  const { subscribe: subscribeLeagueStatus, update: updateLeagueStatus } = writable({});
+  let leagueCacheOrder = [];
+  async function syncLeagues(toggledLeagueId) {
+    try {
+      const localHashKey = "leagues_hash";
+      const localLeaguesKey = "leagues";
+      const localHash = localStorage.getItem(localHashKey);
+      const leagueHash = await new DataHashService().getLeaguesHash();
+      let leagues;
+      if (!localHash || leagueHash !== localHash) {
+        leagues = await getLeagues();
+        localStorage.setItem(localLeaguesKey, serializeData(leagues));
+        localStorage.setItem(localHashKey, leagueHash || "");
+      } else {
+        const cached = localStorage.getItem(localLeaguesKey);
+        if (cached) {
+          const cachedLeagues = deserializeData(cached);
+          const serverLeagues = await getLeagues();
+          const cachedLeagueMap = new Map(
+            cachedLeagues.map((league) => [league.id, league])
+          );
+          serverLeagues.forEach((serverLeague) => {
+            cachedLeagueMap.set(serverLeague.id, serverLeague);
+          });
+          leagues = Array.from(
+            new Map(
+              serverLeagues.map((league) => [league.id, league])
+            ).values()
+          );
+        } else {
+          leagues = await getLeagues();
+          localStorage.setItem(localLeaguesKey, serializeData(leagues));
+        }
+      }
+      if (toggledLeagueId !== void 0) {
+        if (!leagueCacheOrder.includes(toggledLeagueId)) {
+          leagueCacheOrder.push(toggledLeagueId);
+        } else {
+          leagueCacheOrder = leagueCacheOrder.filter(
+            (id) => id !== toggledLeagueId
+          );
+          leagueCacheOrder.push(toggledLeagueId);
+        }
+      }
+      const excessLeagues = leagueCacheOrder.slice(
+        0,
+        leagueCacheOrder.length - MAX_CACHED_LEAGUES
+      );
+      const filteredLeagues = leagueCacheOrder.slice(-MAX_CACHED_LEAGUES).map((id) => leagues.find((league) => league.id === id)).filter((league) => league !== void 0);
+      localStorage.setItem(localLeaguesKey, serializeData(filteredLeagues));
+      excessLeagues.forEach((excessLeagueId) => {
+        leagueCacheOrder = leagueCacheOrder.filter(
+          (id) => id !== excessLeagueId
+        );
+      });
+      update(
+        (current) => filteredLeagues.reduce(
+          (acc, league) => {
+            acc[league.id] = league;
+            return acc;
+          },
+          {}
+        )
+      );
+    } catch (error) {
+      console.error("Error syncing leagues:", error);
+      const cached = localStorage.getItem("leagues");
+      if (cached) {
+        const leagues = deserializeData(cached);
+        update(
+          (current) => leagues.reduce(
+            (acc, league) => {
+              acc[league.id] = league;
+              return acc;
+            },
+            {}
+          )
+        );
+      }
+    }
+  }
+  async function syncLeagueStatus(leagueId) {
+    try {
+      const localHashKey = `league_status_hash_${leagueId}`;
+      const localLeagueStatusKey = `league_status_${leagueId}`;
+      const localHash = localStorage.getItem(localHashKey);
+      const leagueStatusHash = await new DataHashService().getCategoryHash(
+        "league_status",
+        leagueId
+      );
+      let leagueStatus;
+      if (!localHash || leagueStatusHash !== localHash) {
+        leagueStatus = await getLeagueStatus(leagueId);
+        localStorage.setItem(localLeagueStatusKey, serializeData(leagueStatus));
+        localStorage.setItem(localHashKey, leagueStatusHash || "");
+      } else {
+        const cached = localStorage.getItem(localLeagueStatusKey);
+        if (cached) {
+          leagueStatus = deserializeData(cached);
+        } else {
+          leagueStatus = await getLeagueStatus(leagueId);
+          localStorage.setItem(
+            localLeagueStatusKey,
+            serializeData(leagueStatus)
+          );
+        }
+      }
+      let currentStatuses = {};
+      const unsubscribe = subscribeLeagueStatus((value) => {
+        currentStatuses = value;
+      });
+      unsubscribe();
+      updateLeagueStatus((currentStatuses2) => ({
+        ...currentStatuses2,
+        [leagueId]: leagueStatus
+      }));
+      if (!leagueCacheOrder.includes(leagueId)) {
+        leagueCacheOrder.push(leagueId);
+      } else {
+        leagueCacheOrder = leagueCacheOrder.filter((id) => id !== leagueId);
+        leagueCacheOrder.push(leagueId);
+      }
+      if (leagueCacheOrder.length > MAX_CACHED_LEAGUES) {
+        const leastUsedLeagueId = leagueCacheOrder.shift();
+        if (leastUsedLeagueId !== void 0) {
+          localStorage.removeItem(`league_status_${leastUsedLeagueId}`);
+          localStorage.removeItem(`league_status_hash_${leastUsedLeagueId}`);
+        }
+      }
+    } catch (error) {
+      console.error(
+        `Error syncing league status for league ${leagueId}:`,
+        error
+      );
+      const cached = localStorage.getItem(`league_status_${leagueId}`);
+      if (cached) {
+        const leagueStatus = deserializeData(cached);
+        updateLeagueStatus((currentStatuses) => ({
+          ...currentStatuses,
+          [leagueId]: leagueStatus
+        }));
+      }
+    }
+  }
+  async function getLeagues() {
+    return new LeagueService().getLeagues();
+  }
+  async function createLeague(dto) {
+    return new LeagueService().createLeague(dto);
+  }
+  async function updateLeague(dto) {
+    return new LeagueService().updateLeague(dto);
+  }
+  async function getLeagueStatus(leagueId) {
+    return new LeagueService().getLeagueStatus(leagueId);
+  }
+  function getLeagueById(leagueId) {
+    let data = {};
+    const unsubscribe = subscribe((value) => {
+      data = value;
+    });
+    unsubscribe();
+    return data[leagueId];
+  }
+  return {
+    subscribe,
+    syncLeagues,
+    getLeagues,
+    createLeague,
+    updateLeague,
+    getLeagueStatus,
+    getLeagueById,
+    syncLeagueStatus,
+    subscribeLeagueStatus
+  };
+}
+const leagueStore = createLeagueStore();
 var define_process_env_default$2 = { BACKEND_CANISTER_ID: "44kin-waaaa-aaaal-qbxra-cai", FRONTEND_CANISTER_ID: "43loz-3yaaa-aaaal-qbxrq-cai", DATA_CANISTER_CANISTER_ID: "52fzd-2aaaa-aaaal-qmzsa-cai", DFX_NETWORK: "ic", SNS_GOVERNANCE_CANISTER_ID: "detjl-sqaaa-aaaaq-aacqa-cai", DATA_CANISTER_ID: "52fzd-2aaaa-aaaal-qmzsa-cai" };
 async function createProposal({
   identity,
@@ -7367,6 +7197,176 @@ function createFixtureStore() {
   };
 }
 const fixtureStore = createFixtureStore();
+function loadInitial() {
+  {
+    return {
+      bets: [],
+      isMultiple: false,
+      singleStakes: {},
+      multipleStakes: {}
+    };
+  }
+}
+const initial = loadInitial();
+const _betSlipStore = writable(initial);
+_betSlipStore.subscribe((val) => {
+});
+function addBet(bet) {
+  _betSlipStore.update((state) => {
+    const exists = state.bets.some(
+      (b) => b.leagueId === bet.leagueId && b.fixtureId === bet.fixtureId && categoryEquals(b.selectionType, bet.selectionType) && detailEquals(b.selectionDetail, bet.selectionDetail)
+    );
+    if (!exists) {
+      state.bets = [...state.bets, bet];
+    }
+    return state;
+  });
+}
+function removeBet(leagueId, fixtureId, category, detail) {
+  _betSlipStore.update((state) => {
+    const idx = state.bets.findIndex(
+      (b) => b.leagueId === leagueId && b.fixtureId === fixtureId && categoryEquals(b.selectionType, category) && detailEquals(b.selectionDetail, detail)
+    );
+    if (idx === -1) return state;
+    state.bets.splice(idx, 1);
+    const oldStakes = { ...state.singleStakes };
+    const newStakes = {};
+    state.bets.forEach((_, newIndex) => {
+      if (newIndex < idx) {
+        newStakes[newIndex] = oldStakes[newIndex] ?? 0;
+      } else {
+        newStakes[newIndex] = oldStakes[newIndex + 1] ?? 0;
+      }
+    });
+    state.singleStakes = newStakes;
+    if (state.bets.length === 0) {
+      state.isMultiple = false;
+      state.multipleStakes = {};
+    }
+    if (state.bets.length < 2) {
+      state.isMultiple = false;
+      state.multipleStakes = {};
+    }
+    return state;
+  });
+}
+function isSelected(leagueId, fixtureId, category, detail) {
+  const state = get$1(_betSlipStore);
+  return state.bets.some(
+    (b) => b.leagueId === leagueId && b.fixtureId === fixtureId && categoryEquals(b.selectionType, category) && detailEquals(b.selectionDetail, detail)
+  );
+}
+function setIsMultiple(value) {
+  _betSlipStore.update((state) => {
+    state.isMultiple = value;
+    return state;
+  });
+}
+function setSingleStake(index, stake) {
+  _betSlipStore.update((state) => {
+    state.singleStakes[index] = stake;
+    return state;
+  });
+}
+function setMultipleStake(multipleName, stake) {
+  _betSlipStore.update((state) => {
+    state.multipleStakes[multipleName] = stake;
+    return state;
+  });
+}
+const betSlipStore = {
+  subscribe: _betSlipStore.subscribe,
+  addBet,
+  removeBet,
+  isSelected,
+  setIsMultiple,
+  setSingleStake,
+  setMultipleStake
+};
+function categoryEquals(c1, c2) {
+  return JSON.stringify(c1, replacer) === JSON.stringify(c2, replacer);
+}
+function detailEquals(d1, d2) {
+  return JSON.stringify(d1, replacer) === JSON.stringify(d2, replacer);
+}
+const possibleBetTypesByCount = {
+  1: [],
+  2: [{ Double: null }],
+  3: [
+    {
+      Treble: null
+    }
+  ],
+  4: [
+    {
+      FourFold: null
+    }
+  ],
+  5: [
+    {
+      FiveFold: null
+    }
+  ],
+  6: [
+    {
+      SixFold: null
+    }
+  ],
+  7: [
+    { SevenFold: null }
+  ],
+  8: [
+    { EightFold: null }
+    /* //TODO ROMOVED ACCA ROLLUPS, { Goliath: null }*/
+  ],
+  9: [{ NineFold: null }],
+  10: [{ TenFold: null }]
+};
+function getPossibleBetTypes(count) {
+  return possibleBetTypesByCount[count] || [];
+}
+derived(betSlipStore, ($state) => {
+  const { bets } = $state;
+  const count = bets.length;
+  if (count === 0) {
+    return [];
+  }
+  const uniqueFixtures = new Set(bets.map((b) => b.fixtureId));
+  const allUnique = uniqueFixtures.size === count;
+  if (!allUnique && count > 1) {
+    return [];
+  }
+  return getPossibleBetTypes(count);
+});
+function Modal($$payload, $$props) {
+  push();
+  let showModal = $$props["showModal"];
+  let onClose = $$props["onClose"];
+  const handleKeydown = (e) => {
+    if (e.key === "Escape" && showModal) {
+      onClose();
+    }
+  };
+  if (typeof window !== "undefined") {
+    window.addEventListener("keydown", handleKeydown);
+  }
+  onDestroy(() => {
+    if (typeof window !== "undefined") {
+      window.removeEventListener("keydown", handleKeydown);
+    }
+  });
+  if (showModal) {
+    $$payload.out += "<!--[-->";
+    $$payload.out += `<div class="fixed inset-0 z-40 bg-black bg-opacity-50 flex items-center justify-center overflow-y-auto"${attr("aria-hidden", showModal ? "false" : "true")}><div class="bg-BrandLightGray rounded-lg shadow-lg max-w-lg w-full mx-auto relative overflow-y-auto max-h-[90vh] px-6 py-4" role="dialog" aria-modal="true" tabindex="-1"><!---->`;
+    slot($$payload, $$props, "default", {});
+    $$payload.out += `<!----></div></div>`;
+  } else {
+    $$payload.out += "<!--[!-->";
+  }
+  $$payload.out += `<!--]-->`;
+  bind_props($$props, { showModal, onClose });
+  pop();
+}
 const dataStore = writable({});
 async function ensureLeagueData(leagueId) {
   const current = get$1(dataStore);
@@ -7395,6 +7395,8 @@ async function ensureLeagueData(leagueId) {
 });
 function _page$a($$payload, $$props) {
   push();
+  var $$store_subs;
+  store_get($$store_subs ??= {}, "$betSlipStore", betSlipStore).bets;
   let $$settled = true;
   let $$inner_payload;
   function $$render_inner($$payload2) {
@@ -7406,6 +7408,7 @@ function _page$a($$payload, $$props) {
     $$render_inner($$inner_payload);
   } while (!$$settled);
   assign_payload($$payload, $$inner_payload);
+  if ($$store_subs) unsubscribe_stores($$store_subs);
   pop();
 }
 function Confirm_fixture_data_modal($$payload, $$props) {
@@ -7565,6 +7568,10 @@ function _page$6($$payload, $$props) {
         };
       case "penaltyMissed":
         return { PenaltyMissed: { clubId: data.clubId } };
+      case "penaltyMissers":
+        return {
+          MissPenalty: { playerId: data.playerId, clubId: data.clubId }
+        };
       case "correctScores":
         return {
           CorrectScore: {
@@ -7597,8 +7604,8 @@ function _page$6($$payload, $$props) {
       case "halfTimeFullTimeResult":
         return {
           HalfTimeFullTimeResult: {
-            halfTimeResult: data.halfTime,
-            fullTimeResult: data.fullTime
+            halfTimeResult: data.firstHalfResult,
+            fullTimeResult: data.secondHalfResult
           }
         };
       case "goalsOverUnder":
