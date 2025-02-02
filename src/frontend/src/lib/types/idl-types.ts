@@ -16,6 +16,7 @@ export const LoanPlayerDTO_Idl = IDL.Record({
   loanLeagueId: IDL.Nat16,
   loanClubId: IDL.Nat16,
   loanEndDate: IDL.Int,
+  newValueQuarterMillions: IDL.Nat16,
 });
 
 export const TransferPlayerDTO_Idl = IDL.Record({

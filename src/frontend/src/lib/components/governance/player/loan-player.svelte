@@ -6,8 +6,8 @@
   import { convertDateInputToUnixNano, isError } from "$lib/utils/helpers";
   import Modal from "$lib/components/shared/modal.svelte";
   import LocalSpinner from "$lib/components/shared/local-spinner.svelte";
-    import type { ClubDTO, FootballLeagueDTO, LoanPlayerDTO, PlayerDTO } from "../../../../../../declarations/data_canister/data_canister.did";
-    import { governanceStore } from "$lib/stores/governance-store";
+  import type { ClubDTO, FootballLeagueDTO, LoanPlayerDTO, PlayerDTO } from "../../../../../../declarations/data_canister/data_canister.did";
+  import { governanceStore } from "$lib/stores/governance-store";
   
   export let visible: boolean;
   export let closeModal: () => void;
@@ -16,6 +16,7 @@
   
   let loanLeagueId: number = 0;
   let loanClubId: number = 0;
+  let newValueMillions: number = 0;
 
   let date = "";
 
@@ -31,6 +32,7 @@
   onMount(async () => {
     try {
       isLoading = true;
+      newValueMillions = selectedPlayer.valueQuarterMillions / 4;
       loanLeagues = await leagueStore.getLeagues();
       leaguesLoaded = true; 
     } catch (error) {
@@ -61,7 +63,7 @@
       playerId: selectedPlayer.id,
       loanClubId: loanClubId,
       loanLeagueId: loanLeagueId,
-      newValueQuarterMillions: selectedPlayer.valueQuarterMillions //TODO ADD FIELD
+      newValueQuarterMillions: newValueMillions * 4
     };
     console.log("loaning player")
     console.log(dto)
@@ -130,6 +132,12 @@
                 <p class="w-1/2">Loan End Date:</p>
                 <input class="w-1/2 brand-input" type="date" bind:value={date} />
               </div>
+
+              <div class="flex flex-row w-full items-center">
+                <p class="w-1/2">New Value (£ millions):</p>
+                <input class="w-1/2 brand-input" type="number" step="0.25" min="0.25" max="250" bind:value={newValueMillions} />
+              </div>
+
             {/if}
           {/if}
 
