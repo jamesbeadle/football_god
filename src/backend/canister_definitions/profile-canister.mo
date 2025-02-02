@@ -566,6 +566,7 @@ actor class _ProfileCanister() {
   
   public shared ({caller }) func placeBet(dto: RequestDTOs.SubmitBetslipDTO) : async Result.Result<BettingTypes.BetSlip, T.Error>{
     assert Principal.toText(caller) == Environment.BACKEND_CANISTER_ID;
+    
     //private function to update monthly bet totals should be added when a bet is placed
     //take the money
     //ensure they have the money

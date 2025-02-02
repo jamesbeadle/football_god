@@ -3,6 +3,7 @@ import type {
   HomePageFixtureDTO,
   LeagueId,
   MatchOddsDTO,
+  SubmitBetslipDTO,
 } from "../../../../declarations/backend/backend.did";
 import { isError } from "$lib/utils/helpers";
 import { authStore } from "$lib/stores/auth-store";
@@ -34,6 +35,16 @@ export class BettingService {
     );
     const result = await identityActor.getMatchOdds(leagueId, fixtureId);
     if (isError(result)) throw new Error("Failed to fetch match odds");
+    return result.ok;
+  }
+
+  async placeBet(dto: SubmitBetslipDTO): Promise<any> {
+    const identityActor: any = await ActorFactory.createBackendIdentityActor(
+      authStore,
+      process.env.BACKEND_CANISTER_ID ?? "",
+    );
+    const result = await identityActor.placeBet(dto);
+    if (isError(result)) throw new Error("Failed to submit betslip");
     return result.ok;
   }
 }

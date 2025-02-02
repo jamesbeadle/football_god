@@ -16,4 +16,4 @@ dist/
 
 .mops
 
-./svelte-kit
+.svelte-kit/
