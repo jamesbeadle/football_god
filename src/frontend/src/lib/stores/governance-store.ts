@@ -49,6 +49,7 @@ import {
   buildRevaluePlayerDownText,
   buildRevaluePlayerUpText,
   buildSetPlayerInjuryText,
+  buildSubmitFixtureDataText,
   buildTransferPlayerText,
 } from "$lib/utils/proposal.utils";
 import {
@@ -58,11 +59,13 @@ import {
   RevaluePlayerDownDTO_Idl,
   RevaluePlayerUpDTO_Idl,
   SetPlayerInjuryDTO_Idl,
+  SubmitFixtureDataDTO_Idl,
   TransferPlayerDTO_Idl,
   UpdatePlayerDTO_Idl,
 } from "$lib/types/idl-types";
 import { formatUnixDateToSmallReadable } from "$lib/utils/helpers";
 import { leagueStore } from "./league-store";
+import { toasts } from "./toasts-store";
 
 async function createProposal({
   identity,
@@ -257,6 +260,50 @@ function createGovernanceStore() {
     });
   }
 
+  async function submitFixtureData(dto: SubmitFixtureDataDTO): Promise<any> {
+    let userIdentity: OptionIdentity;
+    authStore.subscribe((auth) => (userIdentity = auth.identity));
+    if (!userIdentity) return;
+
+    if (dto.playerEventData.length <= 0) {
+      return toasts.addToast({
+        type: "error",
+        message: "Player event data not found.",
+      });
+    }
+
+    if (dto.playerEventData.length <= 0) {
+      return toasts.addToast({
+        type: "error",
+        message: "Player event data not found.",
+      });
+    }
+
+    const encoded = IDL.encode([SubmitFixtureDataDTO_Idl], [dto]);
+    let vsString = "";
+    let kickOff = "";
+    let score = "";
+    let totalPlayers = 0;
+
+    const { title, summary } = buildSubmitFixtureDataText(
+      vsString,
+      dto.gameweek,
+      kickOff,
+      score,
+      totalPlayers,
+      dto.fixtureId,
+      dto.playerEventData,
+    );
+
+    return await createProposal({
+      identity: userIdentity,
+      functionId: 54000n,
+      payload: new Uint8Array(encoded),
+      title,
+      summary,
+    });
+  }
+
   async function createPlayer(dto: CreatePlayerDTO): Promise<any> {}
 
   async function updatePlayer(dto: UpdatePlayerDTO): Promise<any> {}
@@ -280,8 +327,6 @@ function createGovernanceStore() {
   async function moveFixture(dto: MoveFixtureDTO): Promise<any> {}
 
   async function postponeFixture(dto: PostponeFixtureDTO): Promise<any> {}
-
-  async function submitFixtureData(dto: SubmitFixtureDataDTO): Promise<any> {}
 
   return {
     revaluePlayerUp,

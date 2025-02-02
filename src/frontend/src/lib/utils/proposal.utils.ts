@@ -1,3 +1,5 @@
+import type { PlayerEventData } from "../../../../declarations/data_canister/data_canister.did";
+
 export function buildRevaluePlayerUpText(
   playerName: string,
   oldValue: string,
@@ -177,6 +179,7 @@ export function buildSubmitFixtureDataText(
   score: string,
   totalPlayers: number,
   fixtureId: number,
+  playerEventData: PlayerEventData[],
 ) {
   return {
     title: `Add Fixture Data for ${clubsVs} (GW${gameweek})`,

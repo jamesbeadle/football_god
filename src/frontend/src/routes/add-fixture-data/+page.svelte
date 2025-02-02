@@ -17,6 +17,7 @@
   import { convertEvent, replacer } from "$lib/utils/helpers";
     import SelectedPlayerList from "$lib/components/fixture-validation/selected-player-list.svelte";
     import type { ClubDTO, FixtureDTO, PlayerDTO, PlayerEventData, SubmitFixtureDataDTO } from "../../../../declarations/data_canister/data_canister.did";
+    import { governanceStore } from "$lib/stores/governance-store";
   
   let clubs: ClubDTO[] = [];
   let players: PlayerDTO[] = [];
@@ -116,9 +117,11 @@
       };
 
 
-      await fixtureStore.submitFixtureData(dto);
+      let result = await governanceStore.submitFixtureData(dto);
+
+      console.log(result)
       
-      localStorage.removeItem(`fixtureDraft_${fixtureId}`);
+      //localStorage.removeItem(`fixtureDraft_${fixtureId}`);
     } catch (error) {
       console.error("Error saving fixture data: ", error);
     } finally {

@@ -2,47 +2,33 @@
   import { onMount } from "svelte";
   import { leagueStore } from "$lib/stores/league-store";
   import { clubStore } from "$lib/stores/club-store";
-  import { playerStore } from "$lib/stores/player-store";
-  import type { ClubDTO, FootballLeagueDTO, PlayerDTO, TransferPlayerDTO } from "../../../../../../declarations/backend/backend.did";
   import LocalSpinner from "$lib/components/shared/local-spinner.svelte";
   import Modal from "$lib/components/shared/modal.svelte";
+  import type { ClubDTO, ClubId, FootballLeagueDTO, PlayerDTO, TransferPlayerDTO } from "../../../../../../declarations/data_canister/data_canister.did";
+  import { governanceStore } from "$lib/stores/governance-store";
   
   export let visible: boolean;
   export let closeModal: () => void;
 
-  export let selectedLeagueId: number = 0;
-  export let selectedClubId: number = 0;
-  export let selectedPlayerId: number = 0;
+  export let player: PlayerDTO;
+  let playerClub: ClubDTO;
 
-  let currentLeagues: FootballLeagueDTO[] = [];
-  let currentClubs: ClubDTO[] = [];
-  let currentPlayers: PlayerDTO[] = [];
-  
-  let transferToLeagues: FootballLeagueDTO[] = [];
-  let transferToClubs: ClubDTO[] = [];
+  let leagues: FootballLeagueDTO[] = [];
+  let clubs: ClubDTO[] = [];
   
   let transferToLeagueId: number = 0;
   let transferToClubId: number = 0;
   
   let shirtNumber: number = 0;
+  let newValueMillions: number = 0;
   
   let isLoading = false;
   let showConfirm = false;
 
-  $: isSubmitDisabled =
-  selectedLeagueId <= 0 || selectedClubId <= 0 || selectedPlayerId <= 0 ||
-  transferToLeagueId <= 0 || transferToClubId <= 0
-
-  $: if(selectedLeagueId) {
-    getCurrentLeagueClubs();
-  }
-
-  $: if (selectedClubId) {
-    getCurrentPlayers();
-  }
+  $: isSubmitDisabled = transferToLeagueId <= 0 || transferToClubId <= 0 || newValueMillions == 0
 
   $: if(transferToLeagueId && transferToLeagueId > 0) {
-    getToLeagueClubs();
+    getLeagueClubs();
   };
   
   $: if (isSubmitDisabled && showConfirm) {
@@ -51,8 +37,12 @@
 
   onMount(async () => {
     try {
-      currentLeagues = await leagueStore.getLeagues();
-      transferToLeagues = currentLeagues;
+      let playerLeagueClubs = await clubStore.getClubs(player.leagueId);
+      let playerClubResult = playerLeagueClubs.find(x => x.id == player.clubId);
+      if(playerClubResult){
+        playerClub = playerClubResult;
+      }
+      leagues = await leagueStore.getLeagues();
       isLoading = false;
     } catch (error) {
       console.error("Error syncing proposal data.", error);
@@ -61,16 +51,8 @@
     }
   });
 
-  async function getCurrentLeagueClubs() {
-    currentClubs = await clubStore.getClubs(selectedLeagueId);
-  }
-
-  async function getCurrentPlayers() {
-    currentPlayers = (await playerStore.getPlayers(selectedLeagueId)).filter(x => x.clubId == selectedClubId);
-  }
-
-  async function getToLeagueClubs() {
-    transferToClubs = await clubStore.getClubs(transferToLeagueId);
+  async function getLeagueClubs() {
+    clubs = await clubStore.getClubs(transferToLeagueId);
   }
 
   function raiseProposal() {
@@ -80,31 +62,27 @@
   async function confirmProposal() {
     isLoading = true;
     let dto: TransferPlayerDTO = {
-      leagueId: selectedLeagueId,
-      clubId: selectedClubId,
+      leagueId: player.leagueId,
+      clubId: player.clubId,
       newLeagueId: transferToLeagueId,
-      playerId: selectedPlayerId,
+      playerId: player.id,
       newClubId: transferToClubId,
-      newShirtNumber: shirtNumber
+      newShirtNumber: shirtNumber,
+      newValueQuarterMillions: newValueMillions * 4
     };
-    await playerStore.transferPlayer(selectedLeagueId, dto);
+    await governanceStore.transferPlayer(dto);
     isLoading = false;
     resetForm();
     closeModal();
   }
 
   function resetForm() {
-    currentLeagues = [];
-    currentClubs = [];
-    currentPlayers = [];
-    transferToLeagues = [];
-    transferToClubs = [];
-    selectedLeagueId = 0;
-    selectedClubId = 0;
-    selectedPlayerId = 0;
+    leagues = [];
+    clubs = [];
     transferToLeagueId = 0;
     transferToClubId = 0;
     shirtNumber = 0;
+    newValueMillions = 0;
   }
 
   function cancelModal() {
@@ -122,90 +100,50 @@
 
     <div class="flex justify-start items-center w-full">
       <div class="w-full flex-col space-y-4 mb-2">
-        <p>Select the player's league:</p>
 
-        <select
-          class="p-2 brand-dropdown min-w-[100px]"
-          bind:value={selectedLeagueId}
-        >
+        <p>
+          Transfer {player.firstName} {player.lastName}
+        </p>
+
+        <p>
+          Currnet Club: {playerClub.name}
+        </p>
+
+        <p>
+          Current Value: £{(player.valueQuarterMillions / 4).toFixed(2)}
+        </p>
+
+        <p>Please select players new league:</p>
+
+        <select class="p-2 brand-dropdown min-w-[100px]" bind:value={transferToLeagueId}>
           <option value={0}>Select League</option>
-          {#each currentLeagues as league}
-            <option value={league.id}>{league.name}</option>
-          {/each}
-        </select>
-
-        {#if selectedLeagueId > 0}
-          <p>Select the player's club:</p>
-
-          <select
-            class="p-2 brand-dropdown min-w-[100px]"
-            bind:value={selectedClubId}
-          >
-            <option value={0}>Select Club</option>
-            {#each currentClubs as club}
-              <option value={club.id}>{club.friendlyName}</option>
-            {/each}
-          </select>
-        {/if}
-
-        {#if selectedClubId > 0}
-          <p>Select a player to transfer:</p>
-
-          <select
-            class="p-2 brand-dropdown my-4 min-w-[100px]"
-            bind:value={selectedPlayerId}
-          >
-            <option value={0}>Select Player</option>
-            {#each currentPlayers as player}
-              <option value={player.id}
-                >{player.firstName} {player.lastName}</option
-              >
+            {#each leagues as league}
+              <option value={league.id}>{league.name}</option>
             {/each}
           </select>
 
-          {#if selectedPlayerId > 0}
-            <p>Please select players new league:</p>
-
-            <select
-              class="p-2 brand-dropdown min-w-[100px]"
-              bind:value={transferToLeagueId}
-            >
-              <option value={0}>Select League</option>
-              {#each transferToLeagues as league}
-                <option value={league.id}>{league.name}</option>
+          {#if transferToLeagueId > 0}
+            <select class="p-2 brand-dropdown min-w-[100px]" bind:value={transferToClubId}>
+              <option value={0}>Select Club</option>
+              {#each clubs as club}
+                <option value={club.id}>{club.friendlyName}</option>
               {/each}
             </select>
 
-            {#if transferToLeagueId > 0}
-  
-              <select
-                class="p-2 brand-dropdown min-w-[100px]"
-                bind:value={transferToClubId}
-              >
-                <option value={0}>Select Club</option>
-                {#each transferToClubs as club}
-                  <option value={club.id}>{club.friendlyName}</option>
-                {/each}
-              </select>
+            {#if transferToClubId > 0}
+              <p class="py-2">Shirt Number:</p>
 
-              {#if transferToClubId > 0}
-                <p class="py-2">Shirt Number:</p>
-
-                <input
-                  type="number"
-                  class="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
-                  placeholder="Shirt Number"
-                  min="1"
-                  max="99"
-                  step="1"
-                  bind:value={shirtNumber}
-                />
-              {/if}
+              <input
+                type="number"
+                class="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
+                placeholder="Shirt Number"
+                min="1"
+                max="99"
+                step="1"
+                bind:value={shirtNumber}
+              />
             {/if}
-
           {/if}
-
-        {/if}
 
         <div class="items-center flex space-x-4">
           <button

@@ -1210,13 +1210,13 @@
       assert Principal.toText(caller) == Environment.SNS_GOVERNANCE_CANISTER_ID;
 
       if(dto.newClubId == 0 and dto.newLeagueId == 0){
-        movePlayerToFreeAgents(dto.leagueId, dto.playerId);
+        movePlayerToFreeAgents(dto.leagueId, dto.playerId, dto.newValueQuarterMillions);
         let _ = await updateDataHash(dto.leagueId, "players");
         return;
       };
 
       if(dto.newLeagueId == dto.leagueId){
-        movePlayerWithinLeague(dto.leagueId, dto.newClubId, dto.playerId, dto.newShirtNumber);
+        movePlayerWithinLeague(dto.leagueId, dto.newClubId, dto.playerId, dto.newShirtNumber, dto.newValueQuarterMillions);
         let _ = await updateDataHash(dto.leagueId, "players");
         return;
       };
@@ -1229,7 +1229,7 @@
     public shared ( {caller} ) func setFreeAgent(dto : GovernanceDTOs.SetFreeAgentDTO) : async (){
       assert Principal.toText(caller) == Environment.SNS_GOVERNANCE_CANISTER_ID;
 
-      movePlayerToFreeAgents(dto.leagueId, dto.playerId);
+      movePlayerToFreeAgents(dto.leagueId, dto.playerId, dto.newValueQuarterMillions);
       let _ = await updateDataHash(dto.leagueId, "players");
       let _ = await notifyAppsOfTransfer(dto.leagueId, dto.playerId);
       
@@ -2609,7 +2609,7 @@
       }
     };
 
-    private func movePlayerToFreeAgents(leagueId: FootballTypes.LeagueId, playerId: FootballTypes.PlayerId){
+    private func movePlayerToFreeAgents(leagueId: FootballTypes.LeagueId, playerId: FootballTypes.PlayerId, updatedValue: Nat16){
 
       let playerToMove = getPlayer(leagueId, playerId);
 
@@ -2661,7 +2661,7 @@
             status = foundPlayer.status;
             transferHistory = List.append<FootballTypes.TransferHistory>(foundPlayer.transferHistory, List.fromArray([newTransferHistoryEntry]));
             valueHistory = foundPlayer.valueHistory;
-            valueQuarterMillions = foundPlayer.valueQuarterMillions;
+            valueQuarterMillions = updatedValue;
           });
           freeAgents := Buffer.toArray(freeAgentsBuffer);
         };
@@ -2669,7 +2669,7 @@
       };
     };
 
-    private func movePlayerWithinLeague(currentLeagueId: FootballTypes.LeagueId, newClubId: FootballTypes.ClubId, playerId: FootballTypes.PlayerId, shirtNumber: Nat8){
+    private func movePlayerWithinLeague(currentLeagueId: FootballTypes.LeagueId, newClubId: FootballTypes.ClubId, playerId: FootballTypes.PlayerId, shirtNumber: Nat8, updatedValue: Nat16){
       
       leaguePlayers := Array.map<(FootballTypes.LeagueId, [FootballTypes.Player]),(FootballTypes.LeagueId, [FootballTypes.Player])>(leaguePlayers, func(leaguePlayersEntry: (FootballTypes.LeagueId, [FootballTypes.Player])){
         if(leaguePlayersEntry.0 == currentLeagueId){
@@ -2706,7 +2706,7 @@
                 status = player.status;
                 transferHistory = List.append<FootballTypes.TransferHistory>(player.transferHistory, List.fromArray([newTransferHistoryEntry]));
                 valueHistory = player.valueHistory;
-                valueQuarterMillions = player.valueQuarterMillions;
+                valueQuarterMillions = updatedValue;
               }
             } else {
               return player;
