@@ -246,8 +246,8 @@ actor class _ProfileCanister() {
               withdrawalAddress = profile.withdrawalAddress;
               joinedDate = profile.joinedDate;
               kycApprovalDate = Time.now();
-              kycRef = profile.kycRef;  //TODO need to set for auditing
-              kycSubmissionDate = profile.kycSubmissionDate;  //TODO need to set for auditing
+              kycRef = profile.kycRef;
+              kycSubmissionDate = profile.kycSubmissionDate;
               kycComplete = true;
             };
             updateProfile(updatedProfile, profileGroup.1);

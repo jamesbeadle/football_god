@@ -587,8 +587,10 @@ type AddInitialFixturesDTO =
  record {
    leagueId: LeagueId;
    seasonFixtures: vec FixtureDTO;
+   seasonId: SeasonId;
  };
 service : {
+  addInitialFixtures: (AddInitialFixturesDTO) -> ();
   createClub: (CreateClubDTO) -> ();
   createLeague: (CreateLeagueDTO) -> ();
   createPlayer: (CreatePlayerDTO) -> ();

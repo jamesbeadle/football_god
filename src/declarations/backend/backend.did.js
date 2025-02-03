@@ -10,7 +10,6 @@ export const idlFactory = ({ IDL }) => {
     CanisterFull: IDL.Null,
   });
   const Result = IDL.Variant({ ok: IDL.Null, err: Error });
-  const GameweekNumber = IDL.Nat8;
   const PrincipalId = IDL.Text;
   const GetBetsDTO = IDL.Record({ principalId: PrincipalId });
   const SelectionStatus = IDL.Variant({
@@ -142,7 +141,8 @@ export const idlFactory = ({ IDL }) => {
     expectedReturns: IDL.Nat64,
     settledOn: IDL.Int,
   });
-  const Result_10 = IDL.Variant({ ok: IDL.Vec(BetSlip), err: Error });
+  const Result_9 = IDL.Variant({ ok: IDL.Vec(BetSlip), err: Error });
+  const GameweekNumber = IDL.Nat8;
   const HomePageFixtureDTO = IDL.Record({
     fixtureId: FixtureId,
     homeOdds: IDL.Float64,
@@ -151,12 +151,12 @@ export const idlFactory = ({ IDL }) => {
     gameweek: GameweekNumber,
     leagueId: LeagueId,
   });
-  const Result_9 = IDL.Variant({
+  const Result_8 = IDL.Variant({
     ok: IDL.Vec(HomePageFixtureDTO),
     err: Error,
   });
   const DataHashDTO = IDL.Record({ hash: IDL.Text, category: IDL.Text });
-  const Result_8 = IDL.Variant({ ok: IDL.Vec(DataHashDTO), err: Error });
+  const Result_7 = IDL.Variant({ ok: IDL.Vec(DataHashDTO), err: Error });
   const PlayerSelectionOdds = IDL.Record({
     playerId: PlayerId,
     odds: IDL.Float64,
@@ -220,7 +220,7 @@ export const idlFactory = ({ IDL }) => {
     halfTimeFullTimeResult: IDL.Vec(HalfTimeFullTimeOdds),
     bothTeamsToScoreAndWinner: IDL.Vec(ResultAndYesNoSelectionOdds),
   });
-  const Result_7 = IDL.Variant({ ok: MatchOddsDTO, err: Error });
+  const Result_6 = IDL.Variant({ ok: MatchOddsDTO, err: Error });
   const SeasonId = IDL.Nat16;
   const GameweekFiltersDTO = IDL.Record({
     seasonId: SeasonId,
@@ -296,7 +296,7 @@ export const idlFactory = ({ IDL }) => {
     lastName: IDL.Text,
     firstName: IDL.Text,
   });
-  const Result_6 = IDL.Variant({ ok: PlayerDetailDTO, err: Error });
+  const Result_5 = IDL.Variant({ ok: PlayerDetailDTO, err: Error });
   const ProfileDTO = IDL.Record({
     username: IDL.Text,
     maxBetLimit: IDL.Nat64,
@@ -315,12 +315,7 @@ export const idlFactory = ({ IDL }) => {
     principalId: PrincipalId,
     monthlyBetTotal: IDL.Nat64,
   });
-  const Result_5 = IDL.Variant({ ok: ProfileDTO, err: Error });
-  const SystemStateDTO = IDL.Record({
-    version: IDL.Text,
-    onHold: IDL.Bool,
-  });
-  const Result_4 = IDL.Variant({ ok: SystemStateDTO, err: Error });
+  const Result_4 = IDL.Variant({ ok: ProfileDTO, err: Error });
   const UserDTO = IDL.Record({
     kycApprovalDate: IDL.Int,
     joinedDate: IDL.Int,
@@ -374,10 +369,6 @@ export const idlFactory = ({ IDL }) => {
     profilePicture: IDL.Vec(IDL.Nat8),
     principalId: PrincipalId,
   });
-  const UpdateAppStatusDTO = IDL.Record({
-    version: IDL.Text,
-    onHold: IDL.Bool,
-  });
   const UpdateUsernameDTO = IDL.Record({
     username: IDL.Text,
     principalId: PrincipalId,
@@ -388,35 +379,26 @@ export const idlFactory = ({ IDL }) => {
   });
   return IDL.Service({
     agreeTerms: IDL.Func([], [Result], []),
-    calculateGameweekScores: IDL.Func([IDL.Text], [Result], []),
-    calculateLeaderboards: IDL.Func([IDL.Text], [Result], []),
-    calculateWeeklyRewards: IDL.Func([IDL.Text, GameweekNumber], [Result], []),
-    getBets: IDL.Func([GetBetsDTO], [Result_10], []),
-    getBettableHomepageFixtures: IDL.Func([LeagueId], [Result_9], ["query"]),
-    getDataHashes: IDL.Func([], [Result_8], ["query"]),
-    getMatchOdds: IDL.Func([LeagueId, FixtureId], [Result_7], ["query"]),
+    getBets: IDL.Func([GetBetsDTO], [Result_9], []),
+    getBettableHomepageFixtures: IDL.Func([LeagueId], [Result_8], ["query"]),
+    getDataHashes: IDL.Func([], [Result_7], ["query"]),
+    getMatchOdds: IDL.Func([LeagueId, FixtureId], [Result_6], ["query"]),
     getPlayerDetailsForGameweek: IDL.Func(
       [LeagueId, GameweekFiltersDTO],
-      [Result_6],
+      [Result_5],
       ["composite_query"],
     ),
-    getProfile: IDL.Func([], [Result_5], []),
-    getSystemState: IDL.Func([IDL.Text], [Result_4], ["composite_query"]),
+    getProfile: IDL.Func([], [Result_4], []),
     getUserAudit: IDL.Func([IDL.Nat], [Result_3], []),
-    isAdmin: IDL.Func([], [Result_2], []),
     isAuditor: IDL.Func([], [Result_2], []),
-    isDataManager: IDL.Func([], [Result_2], []),
     kycVerificationCallback: IDL.Func([ShuftiResponse], [Result], []),
     pauseAccount: IDL.Func([PauseAccountDTO], [Result], []),
-    payWeeklyRewards: IDL.Func([IDL.Text, GameweekNumber], [Result], []),
     placeBet: IDL.Func([SubmitBetslipDTO], [Result_1], []),
     setMaxBetLimit: IDL.Func([SetMaxBetLimit], [Result], []),
     setMonthlyBetLimit: IDL.Func([SetMonthlyBetLimitDTO], [Result], []),
-    snapshotManagers: IDL.Func([IDL.Text], [Result], []),
     storeKYCReference: IDL.Func([IDL.Text], [], []),
     updateBettingOdds: IDL.Func([LeagueId], [Result], []),
     updateProfilePicture: IDL.Func([UpdateProfilePictureDTO], [Result], []),
-    updateSystemState: IDL.Func([IDL.Text, UpdateAppStatusDTO], [Result], []),
     updateUsername: IDL.Func([UpdateUsernameDTO], [Result], []),
     updateWithdrawalAddress: IDL.Func(
       [UpdateWithdrawalAddressDTO],

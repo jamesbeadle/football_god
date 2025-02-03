@@ -129,6 +129,7 @@ export const FixtureDTO_Idl = IDL.Record({
 
 export const AddInitialFixturesDTO_Idl = IDL.Record({
   leagueId: IDL.Nat16,
+  seasonId: IDL.Nat16,
   seasonFixtures: IDL.Vec(FixtureDTO_Idl),
 });
 

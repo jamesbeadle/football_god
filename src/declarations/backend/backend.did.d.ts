@@ -254,15 +254,14 @@ export interface ResultAndYesNoSelectionOdds {
   isYes: boolean;
 }
 export type Result_1 = { ok: BetSlip } | { err: Error };
-export type Result_10 = { ok: Array<BetSlip> } | { err: Error };
 export type Result_2 = { ok: boolean } | { err: Error };
 export type Result_3 = { ok: UserAuditDTO } | { err: Error };
-export type Result_4 = { ok: SystemStateDTO } | { err: Error };
-export type Result_5 = { ok: ProfileDTO } | { err: Error };
-export type Result_6 = { ok: PlayerDetailDTO } | { err: Error };
-export type Result_7 = { ok: MatchOddsDTO } | { err: Error };
-export type Result_8 = { ok: Array<DataHashDTO> } | { err: Error };
-export type Result_9 = { ok: Array<HomePageFixtureDTO> } | { err: Error };
+export type Result_4 = { ok: ProfileDTO } | { err: Error };
+export type Result_5 = { ok: PlayerDetailDTO } | { err: Error };
+export type Result_6 = { ok: MatchOddsDTO } | { err: Error };
+export type Result_7 = { ok: Array<DataHashDTO> } | { err: Error };
+export type Result_8 = { ok: Array<HomePageFixtureDTO> } | { err: Error };
+export type Result_9 = { ok: Array<BetSlip> } | { err: Error };
 export interface ScoreDetail {
   homeGoals: number;
   awayGoals: number;
@@ -336,18 +335,10 @@ export interface SubmitBetslipDTO {
   principalId: PrincipalId;
   leagueId: LeagueId;
 }
-export interface SystemStateDTO {
-  version: string;
-  onHold: boolean;
-}
 export interface TeamSelectionOdds {
   homeOdds: number;
   drawOdds: number;
   awayOdds: number;
-}
-export interface UpdateAppStatusDTO {
-  version: string;
-  onHold: boolean;
 }
 export interface UpdateProfilePictureDTO {
   profilePictureExtension: string;
@@ -387,34 +378,25 @@ export interface YesNoSelectionOdds {
 }
 export interface _SERVICE {
   agreeTerms: ActorMethod<[], Result>;
-  calculateGameweekScores: ActorMethod<[string], Result>;
-  calculateLeaderboards: ActorMethod<[string], Result>;
-  calculateWeeklyRewards: ActorMethod<[string, GameweekNumber], Result>;
-  getBets: ActorMethod<[GetBetsDTO], Result_10>;
-  getBettableHomepageFixtures: ActorMethod<[LeagueId], Result_9>;
-  getDataHashes: ActorMethod<[], Result_8>;
-  getMatchOdds: ActorMethod<[LeagueId, FixtureId], Result_7>;
+  getBets: ActorMethod<[GetBetsDTO], Result_9>;
+  getBettableHomepageFixtures: ActorMethod<[LeagueId], Result_8>;
+  getDataHashes: ActorMethod<[], Result_7>;
+  getMatchOdds: ActorMethod<[LeagueId, FixtureId], Result_6>;
   getPlayerDetailsForGameweek: ActorMethod<
     [LeagueId, GameweekFiltersDTO],
-    Result_6
+    Result_5
   >;
-  getProfile: ActorMethod<[], Result_5>;
-  getSystemState: ActorMethod<[string], Result_4>;
+  getProfile: ActorMethod<[], Result_4>;
   getUserAudit: ActorMethod<[bigint], Result_3>;
-  isAdmin: ActorMethod<[], Result_2>;
   isAuditor: ActorMethod<[], Result_2>;
-  isDataManager: ActorMethod<[], Result_2>;
   kycVerificationCallback: ActorMethod<[ShuftiResponse], Result>;
   pauseAccount: ActorMethod<[PauseAccountDTO], Result>;
-  payWeeklyRewards: ActorMethod<[string, GameweekNumber], Result>;
   placeBet: ActorMethod<[SubmitBetslipDTO], Result_1>;
   setMaxBetLimit: ActorMethod<[SetMaxBetLimit], Result>;
   setMonthlyBetLimit: ActorMethod<[SetMonthlyBetLimitDTO], Result>;
-  snapshotManagers: ActorMethod<[string], Result>;
   storeKYCReference: ActorMethod<[string], undefined>;
   updateBettingOdds: ActorMethod<[LeagueId], Result>;
   updateProfilePicture: ActorMethod<[UpdateProfilePictureDTO], Result>;
-  updateSystemState: ActorMethod<[string, UpdateAppStatusDTO], Result>;
   updateUsername: ActorMethod<[UpdateUsernameDTO], Result>;
   updateWithdrawalAddress: ActorMethod<[UpdateWithdrawalAddressDTO], Result>;
 }

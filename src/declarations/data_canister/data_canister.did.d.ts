@@ -3,6 +3,7 @@ import type { ActorMethod } from "@dfinity/agent";
 import type { IDL } from "@dfinity/candid";
 
 export interface AddInitialFixturesDTO {
+  seasonId: SeasonId;
   seasonFixtures: Array<FixtureDTO>;
   leagueId: LeagueId;
 }
@@ -445,6 +446,7 @@ export interface ValueHistory {
   newValue: number;
 }
 export interface _SERVICE {
+  addInitialFixtures: ActorMethod<[AddInitialFixturesDTO], undefined>;
   createClub: ActorMethod<[CreateClubDTO], undefined>;
   createLeague: ActorMethod<[CreateLeagueDTO], undefined>;
   createPlayer: ActorMethod<[CreatePlayerDTO], undefined>;

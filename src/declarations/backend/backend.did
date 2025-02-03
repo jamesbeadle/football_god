@@ -41,21 +41,11 @@ type UpdateProfilePictureDTO =
    profilePicture: blob;
    profilePictureExtension: text;
  };
-type UpdateAppStatusDTO = 
- record {
-   onHold: bool;
-   version: text;
- };
 type TeamSelectionOdds = 
  record {
    awayOdds: float64;
    drawOdds: float64;
    homeOdds: float64;
- };
-type SystemStateDTO = 
- record {
-   onHold: bool;
-   version: text;
  };
 type SubmitBetslipDTO = 
  record {
@@ -145,32 +135,32 @@ type ScoreDetail =
 type Result_9 = 
  variant {
    err: Error;
-   ok: vec HomePageFixtureDTO;
+   ok: vec BetSlip;
  };
 type Result_8 = 
  variant {
    err: Error;
-   ok: vec DataHashDTO;
+   ok: vec HomePageFixtureDTO;
  };
 type Result_7 = 
  variant {
    err: Error;
-   ok: MatchOddsDTO;
+   ok: vec DataHashDTO;
  };
 type Result_6 = 
  variant {
    err: Error;
-   ok: PlayerDetailDTO;
+   ok: MatchOddsDTO;
  };
 type Result_5 = 
  variant {
    err: Error;
-   ok: ProfileDTO;
+   ok: PlayerDetailDTO;
  };
 type Result_4 = 
  variant {
    err: Error;
-   ok: SystemStateDTO;
+   ok: ProfileDTO;
  };
 type Result_3 = 
  variant {
@@ -181,11 +171,6 @@ type Result_2 =
  variant {
    err: Error;
    ok: bool;
- };
-type Result_10 = 
- variant {
-   err: Error;
-   ok: vec BetSlip;
  };
 type Result_1 = 
  variant {
@@ -481,32 +466,23 @@ type BetResult =
  };
 service : {
   agreeTerms: () -> (Result);
-  calculateGameweekScores: (text) -> (Result);
-  calculateLeaderboards: (text) -> (Result);
-  calculateWeeklyRewards: (text, GameweekNumber) -> (Result);
-  getBets: (GetBetsDTO) -> (Result_10);
-  getBettableHomepageFixtures: (LeagueId) -> (Result_9) query;
-  getDataHashes: () -> (Result_8) query;
-  getMatchOdds: (LeagueId, FixtureId) -> (Result_7) query;
+  getBets: (GetBetsDTO) -> (Result_9);
+  getBettableHomepageFixtures: (LeagueId) -> (Result_8) query;
+  getDataHashes: () -> (Result_7) query;
+  getMatchOdds: (LeagueId, FixtureId) -> (Result_6) query;
   getPlayerDetailsForGameweek: (LeagueId, GameweekFiltersDTO) ->
-   (Result_6) composite_query;
-  getProfile: () -> (Result_5);
-  getSystemState: (text) -> (Result_4) composite_query;
+   (Result_5) composite_query;
+  getProfile: () -> (Result_4);
   getUserAudit: (nat) -> (Result_3);
-  isAdmin: () -> (Result_2);
   isAuditor: () -> (Result_2);
-  isDataManager: () -> (Result_2);
   kycVerificationCallback: (ShuftiResponse) -> (Result);
   pauseAccount: (PauseAccountDTO) -> (Result);
-  payWeeklyRewards: (text, GameweekNumber) -> (Result);
   placeBet: (SubmitBetslipDTO) -> (Result_1);
   setMaxBetLimit: (SetMaxBetLimit) -> (Result);
   setMonthlyBetLimit: (SetMonthlyBetLimitDTO) -> (Result);
-  snapshotManagers: (text) -> (Result);
   storeKYCReference: (text) -> ();
   updateBettingOdds: (LeagueId) -> (Result);
   updateProfilePicture: (UpdateProfilePictureDTO) -> (Result);
-  updateSystemState: (text, UpdateAppStatusDTO) -> (Result);
   updateUsername: (UpdateUsernameDTO) -> (Result);
   updateWithdrawalAddress: (UpdateWithdrawalAddressDTO) -> (Result);
 }

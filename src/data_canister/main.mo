@@ -834,32 +834,84 @@
         return #Err("Error: Formed date in the future.");
       };
 
+      if(dto.teamCount < 4){
+        return #Err("A league must be more than 4 teams.");
+      };
+
       return #Ok("Valid");
     };
 
     public shared ( {caller} ) func validateUpdateLeague(dto : GovernanceDTOs.UpdateLeagueDTO) : async Base.RustResult{
       assert Principal.toText(caller) == Environment.SNS_GOVERNANCE_CANISTER_ID;
       assert leagueExists(dto.leagueId);
-      //TODO (KELLY): Add league detail validation checks
+      assert countryExists(dto.countryId);
+      assert logoSizeValid(dto.logo);
+      
+      if (Text.size(dto.name) > 100) {
+        return #Err("Error: Name greater than 100 characters.");
+      };
+
+      if (Text.size(dto.abbreviation) > 10) {
+        return #Err("Error: Abbreviated Name greater than 10 characters.");
+      };
+
+      if (Text.size(dto.governingBody) > 50) {
+        return #Err("Error: Governing body greater than 10 characters.");
+      };
+
+      if(dto.formed > Time.now()){
+        return #Err("Error: Formed date in the future.");
+      };
+
+      if(dto.teamCount < 4){
+        return #Err("A league must be more than 4 teams.");
+      };
+      
       return #Ok("Valid");
     };
 
     public shared ( {caller} ) func validateAddInitialFixtures(dto : GovernanceDTOs.AddInitialFixturesDTO) : async Base.RustResult{
       assert Principal.toText(caller) == Environment.SNS_GOVERNANCE_CANISTER_ID;
       assert leagueExists(dto.leagueId);
-      //TODO (KELLY): Add validation checks
-        //should equal the number of teams in the related environment file
+      assert not seasonActive(dto.leagueId);
+
+      //TODO: Add validation checks
+      //check that the required number of fixtures based on the teams in the league is provided
+      //clubs for each fixture exist
+      //equal gameweek distribution
+      //no club has same kick off on same date at same time
+
       return #Ok("Valid");
     };
 
     public shared ( {caller} ) func validateMoveFixture(dto : GovernanceDTOs.MoveFixtureDTO) : async Base.RustResult{
       assert Principal.toText(caller) == Environment.SNS_GOVERNANCE_CANISTER_ID;
       assert leagueExists(dto.leagueId);
+      assert seasonExists(dto.leagueId, dto.seasonId);
       assert fixtureExists(dto.leagueId, dto.seasonId, dto.fixtureId);
-      //TODO (KELLY): Add validation checks
-        //valid gameweek but that can go in a data check module in the backend
-        //gameweek in the future
-      return #Ok("Valid");
+
+      if(dto.updatedFixtureDate <= Time.now()){
+        return #Err("Updated fixture date cannot be in the past.");
+      };
+
+      let leagueStatus = Array.find<FootballTypes.LeagueStatus>(leagueStatuses, func(statusEntry: FootballTypes.LeagueStatus) : Bool {
+        return statusEntry.leagueId == dto.leagueId;
+      });
+
+      switch(leagueStatus){
+        case (?foundLeagueStatus){
+
+          if(dto.updatedFixtureGameweek < foundLeagueStatus.unplayedGameweek){
+            return #Err("Fixture must be moved into upcoming gameweek.");
+          };
+
+          return #Ok("Valid");
+
+        };
+        case (null){
+            return #Err("Could not find league status.");
+        }
+      };
     };
 
     public shared ( {caller} ) func validatePostponeFixture(dto : GovernanceDTOs.PostponeFixtureDTO) : async Base.RustResult{
@@ -891,7 +943,62 @@
     public shared ( {caller} ) func validateCreateClub(dto : GovernanceDTOs.CreateClubDTO) : async Base.RustResult{
       assert Principal.toText(caller) == Environment.SNS_GOVERNANCE_CANISTER_ID;
       assert leagueExists(dto.leagueId);
-      //TODO (KELLY): Add validation checks on club details
+      if (Text.size(dto.name) > 100) {
+        return #Err("Error: Name greater than 100 characters.");
+      };
+
+      if (Text.size(dto.friendlyName) > 50) {
+        return #Err("Error: Name greater than 50 characters.");
+      };
+
+      if (Text.size(dto.primaryColourHex) != 7) {
+        return #Err("Error: Primary Hex Colour must equal 7 characters including the hash prefix.");
+      };
+
+      if (Text.size(dto.secondaryColourHex) != 7) {
+        return #Err("Error: Secondary Hex Colour must equal 7 characters including the hash prefix.");
+      };
+
+      if (Text.size(dto.thirdColourHex) != 7) {
+        return #Err("Error: Third Hex Colour must equal 7 characters including the hash prefix.");
+      };
+
+      if (Text.size(dto.secondaryColourHex) != 3) {
+        return #Err("Error: Abbreviated name must equal 3 characters.");
+      };
+
+      return #Ok("Valid");
+    };
+
+    public shared ( {caller} ) func validateUpdateClub(dto : GovernanceDTOs.UpdateClubDTO) : async Base.RustResult{
+      assert Principal.toText(caller) == Environment.SNS_GOVERNANCE_CANISTER_ID;
+      assert leagueExists(dto.leagueId);
+      assert clubExists(dto.leagueId, dto.clubId);
+
+      if (Text.size(dto.name) > 100) {
+        return #Err("Error: Name greater than 100 characters.");
+      };
+
+      if (Text.size(dto.friendlyName) > 50) {
+        return #Err("Error: Name greater than 50 characters.");
+      };
+
+      if (Text.size(dto.primaryColourHex) != 7) {
+        return #Err("Error: Primary Hex Colour must equal 7 characters including the hash prefix.");
+      };
+
+      if (Text.size(dto.secondaryColourHex) != 7) {
+        return #Err("Error: Secondary Hex Colour must equal 7 characters including the hash prefix.");
+      };
+
+      if (Text.size(dto.thirdColourHex) != 7) {
+        return #Err("Error: Third Hex Colour must equal 7 characters including the hash prefix.");
+      };
+
+      if (Text.size(dto.secondaryColourHex) != 3) {
+        return #Err("Error: Abbreviated name must equal 3 characters.");
+      };
+
       return #Ok("Valid");
     };
 
@@ -911,14 +1018,6 @@
       assert leagueExists(dto.leagueId);
       assert leagueExists(dto.relegatedToLeagueId);
       assert clubExists(dto.leagueId, dto.clubId);
-      return #Ok("Valid");
-    };
-
-    public shared ( {caller} ) func validateUpdateClub(dto : GovernanceDTOs.UpdateClubDTO) : async Base.RustResult{
-      assert Principal.toText(caller) == Environment.SNS_GOVERNANCE_CANISTER_ID;
-      assert leagueExists(dto.leagueId);
-      assert clubExists(dto.leagueId, dto.clubId);
-      //TODO (KELLY): Add validation checks on update details
       return #Ok("Valid");
     };
 
@@ -1118,7 +1217,7 @@
                       status = player.status;
                       transferHistory = List.append<FootballTypes.TransferHistory>(player.transferHistory, List.fromArray([newTransferHistoryEntry]));
                       valueHistory = player.valueHistory;
-                      valueQuarterMillions = player.valueQuarterMillions;
+                      valueQuarterMillions = dto.newValueQuarterMillions;
                     }
                   } else {
                     return player;
@@ -1128,6 +1227,7 @@
             });
 
         let _ = await updateDataHash(dto.leagueId, "players");
+        let _ = await notifyAppsOfLoan(dto.loanLeagueId, dto.playerId);
       } else {
 
         let currentLeaguePlayersSet = Array.find<(FootballTypes.LeagueId, [FootballTypes.Player])>(leaguePlayers, func(playersSet: (FootballTypes.LeagueId, [FootballTypes.Player])) : Bool {
@@ -1184,7 +1284,7 @@
                           status = player.status;
                           transferHistory = List.append<FootballTypes.TransferHistory>(player.transferHistory, List.fromArray([newTransferHistoryEntry]));
                           valueHistory = player.valueHistory;
-                          valueQuarterMillions = player.valueQuarterMillions;
+                          valueQuarterMillions = dto.newValueQuarterMillions;
                         });
                         return (entry.0, Buffer.toArray(updatedPlayersBuffer));
                       } else { return entry }
@@ -1598,7 +1698,7 @@
                     status = foundPlayer.status;
                     transferHistory = foundPlayer.transferHistory;
                     valueHistory = foundPlayer.valueHistory;
-                    valueQuarterMillions = foundPlayer.valueQuarterMillions;
+                    valueQuarterMillions = dto.newValueQuarterMillions;
                   });
                   return (leaguePlayersEntry.0, Buffer.toArray(leaguePlayersBuffer));
                 } else {
@@ -1682,6 +1782,46 @@
         case (null){}
       };
     };
+
+    public shared ({ caller }) func addInitialFixtures(dto : GovernanceDTOs.AddInitialFixturesDTO) : async () {
+      assert Principal.toText(caller) == Environment.SNS_GOVERNANCE_CANISTER_ID;
+
+      leagueSeasons := Array.map<(FootballTypes.LeagueId, [FootballTypes.Season]), (FootballTypes.LeagueId, [FootballTypes.Season])>(leagueSeasons, func(leagueSeasonEntry: (FootballTypes.LeagueId, [FootballTypes.Season])){
+        if(leagueSeasonEntry.0 == dto.leagueId){
+          return (leagueSeasonEntry.0, Array.map<FootballTypes.Season, FootballTypes.Season>(leagueSeasonEntry.1, func(seasonEntry: FootballTypes.Season){
+            if(seasonEntry.id == dto.seasonId){
+              return {
+                fixtures = List.fromArray(Array.map<ResponseDTOs.FixtureDTO, FootballTypes.Fixture>(dto.seasonFixtures, func(fixtureEntry: ResponseDTOs.FixtureDTO){
+                  return {
+                    awayClubId = fixtureEntry.awayClubId;
+                    awayGoals = 0;
+                    events = List.nil();
+                    gameweek = fixtureEntry.gameweek;
+                    highestScoringPlayerId = 0;
+                    homeClubId = fixtureEntry.homeClubId;
+                    homeGoals = 0;
+                    id = fixtureEntry.id;
+                    kickOff = fixtureEntry.kickOff;
+                    seasonId = seasonEntry.id;
+                    status = #Unplayed;
+
+                  };
+                }));
+                id = seasonEntry.id;
+                name = seasonEntry.name;
+                postponedFixtures = List.nil();
+                year = seasonEntry.year;
+
+              };
+            } else {
+              return seasonEntry;
+            };
+          }))
+        } else {
+          return leagueSeasonEntry;
+        };
+      });
+    }; 
 
     public shared ({ caller }) func moveFixture(dto : GovernanceDTOs.MoveFixtureDTO) : async () {
       assert Principal.toText(caller) == Environment.SNS_GOVERNANCE_CANISTER_ID;
@@ -2813,6 +2953,25 @@
       return Option.isSome(foundLeague);
     }; 
 
+    private func seasonExists(leagueId: FootballTypes.LeagueId, seasonId: FootballTypes.SeasonId) : Bool {
+      
+      let foundLeagueSeasons = Array.find<(FootballTypes.LeagueId, [FootballTypes.Season])>(leagueSeasons, func(entry: (FootballTypes.LeagueId, [FootballTypes.Season])) : Bool {
+        entry.0 == leagueId
+      });
+      switch(foundLeagueSeasons){
+        case (?foundSeasons){
+          let leagueSeasonResult = Array.find<FootballTypes.Season>(foundSeasons.1, func(seasonEntry: FootballTypes.Season) : Bool {
+            return seasonEntry.id == seasonId;
+          });
+
+          return Option.isSome(leagueSeasonResult);
+        };
+        case (null){
+          return false;
+        }
+      }
+    }; 
+
     private func seasonActive(leagueId: FootballTypes.LeagueId) : Bool {
       let leagueStatusResult = Array.find<FootballTypes.LeagueStatus>(leagueStatuses, func(statusEntry: FootballTypes.LeagueStatus) : Bool {
         statusEntry.leagueId == leagueId;
@@ -3599,7 +3758,38 @@
     };
 
     private func injuryExpiredCallback() : async (){
-      //TODO: Remove the injury status from the player
+      leaguePlayers := Array.map<(FootballTypes.LeagueId, [FootballTypes.Player]), (FootballTypes.LeagueId, [FootballTypes.Player])>(leaguePlayers, func(leaguePlayersEntry: (FootballTypes.LeagueId, [FootballTypes.Player])){
+        return (leaguePlayersEntry.0, Array.map<FootballTypes.Player, FootballTypes.Player>(leaguePlayersEntry.1, func(playersEntry: FootballTypes.Player){
+          if(playersEntry.latestInjuryEndDate <= Time.now()){
+            return {
+              clubId = playersEntry.clubId;
+              currentLoanEndDate = playersEntry.currentLoanEndDate;
+              dateOfBirth = playersEntry.dateOfBirth;
+              firstName = playersEntry.firstName;
+              gender = playersEntry.gender;
+              id = playersEntry.id;
+              injuryHistory = playersEntry.injuryHistory;
+              lastName = playersEntry.lastName;
+              latestInjuryEndDate = 0;
+              leagueId = playersEntry.leagueId;
+              nationality = playersEntry.nationality;
+              parentClubId = playersEntry.parentClubId;
+              parentLeagueId = playersEntry.parentLeagueId;
+              position = playersEntry.position;
+              retirementDate = playersEntry.retirementDate;
+              seasons = playersEntry.seasons;
+              shirtNumber = playersEntry.shirtNumber;
+              status = playersEntry.status;
+              transferHistory = playersEntry.transferHistory;
+              valueHistory = playersEntry.valueHistory;
+              valueQuarterMillions = playersEntry.valueQuarterMillions;
+            }
+          } else {
+            return playersEntry;
+          };
+        }));
+        return leaguePlayersEntry;
+      });
     };
 
     //Timer Set Functions
@@ -3686,48 +3876,6 @@
         await setAndBackupTimer(activeTriggerTime, "setFixtureToActive"); 
         await setAndBackupTimer(completeTriggerTime, "setFixtureToComplete"); 
       };
-    };
-
-    //TODO - Need to implement when last fixture finishes
-    private func setFinishSeasonTimer() : async (){
-
-      for(league in Iter.fromArray(leagueSeasons)){
-        let leagueStatusResult = Array.find<FootballTypes.LeagueStatus>(leagueStatuses, func(statusEntry: FootballTypes.LeagueStatus) : Bool {
-          statusEntry.leagueId == league.0;
-        });
-        switch(leagueStatusResult){
-          case (?leagueStatus){
-
-            let seasonEntry = Array.find<FootballTypes.Season>(league.1, func(seasonEntry: FootballTypes.Season) : Bool {
-              seasonEntry.id == leagueStatus.activeSeasonId;
-            });
-
-            switch(seasonEntry){
-              case (?season){
-                let sortedFixtures = Array.sort<FootballTypes.Fixture>(List.toArray<FootballTypes.Fixture>(season.fixtures), func (a: FootballTypes.Fixture, b: FootballTypes.Fixture) {
-                  if (a.kickOff < b.kickOff) {
-                      return #less;
-                  } else if (a.kickOff > b.kickOff) {
-                      return #greater;
-                  } else {
-                      return #equal;
-                  }
-                });
-
-                if(Array.size(sortedFixtures) == 0){
-                  return;
-                };
-                
-                let lastFixture = sortedFixtures[Array.size(sortedFixtures) - 1];
-                let triggerDuration = #nanoseconds(Int.abs((lastFixture.kickOff - Time.now())));
-                await setAndBackupTimer(triggerDuration, "endOfSeason");
-              };
-              case (null){}
-            };
-          };
-          case (null){}
-        };
-      };    
     };
 
     //Actions

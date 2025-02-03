@@ -25,6 +25,7 @@ module GovernanceDTOs {
 
   public type AddInitialFixturesDTO = {
     leagueId: FootballTypes.LeagueId;
+    seasonId: FootballTypes.SeasonId;
     seasonFixtures : [ResponseDTOs.FixtureDTO];
   };
 
