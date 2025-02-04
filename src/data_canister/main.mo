@@ -14,6 +14,7 @@
   import Time "mo:base/Time";
   import Timer "mo:base/Timer";
   import TrieMap "mo:base/TrieMap";
+import Nat8 "mo:base/Nat8";
   
   import Base "../backend/types/base_types";
   import FootballTypes "../backend/types/football_types";
@@ -877,16 +878,45 @@
 
     public shared ( {caller} ) func validateAddInitialFixtures(dto : GovernanceDTOs.AddInitialFixturesDTO) : async Base.RustResult{
       assert Principal.toText(caller) == Environment.SNS_GOVERNANCE_CANISTER_ID;
-      assert leagueExists(dto.leagueId);
       assert not seasonActive(dto.leagueId);
 
-      //TODO: Add validation checks
-      //check that the required number of fixtures based on the teams in the league is provided
-      //clubs for each fixture exist
-      //equal gameweek distribution
-      //no club has same kick off on same date at same time
+      let leaguesResult = Array.find<FootballTypes.League>(leagues, func(leagueEntry: FootballTypes.League) : Bool {
+        leagueEntry.id == dto.leagueId;
+      });
 
-      return #Ok("Valid");
+      switch(leaguesResult){
+        case (?league){
+
+          let leagueStatusResult = Array.find<FootballTypes.LeagueStatus>(leagueStatuses, func(statusEntry: FootballTypes.LeagueStatus) : Bool {
+            statusEntry.leagueId == dto.leagueId;
+          });
+          switch(leagueStatusResult){
+            case (?leagueStatus){
+
+              let expectedFixtureCount: Nat = Nat8.toNat((league.teamCount * leagueStatus.totalGameweeks)) / 2;
+
+              if(Array.size(dto.seasonFixtures) != expectedFixtureCount){
+                return #Err("Incorrect Fixture Count");
+              };
+
+              //TODO: Add validation checks
+              //clubs for each fixture exist
+              //equal gameweek distribution
+              //no club has same kick off on same date at same time
+
+              return #Ok("Valid");
+
+            };
+            case (null){
+              return #Err("League Status Not Found");
+            }
+          };
+
+        };
+        case (null){
+          return #Err("League Not Found");
+        }
+      };
     };
 
     public shared ( {caller} ) func validateMoveFixture(dto : GovernanceDTOs.MoveFixtureDTO) : async Base.RustResult{
@@ -928,7 +958,6 @@
 
     public shared ( {caller} ) func validateRescheduleFixture(dto : GovernanceDTOs.RescheduleFixtureDTO) : async Base.RustResult{
       assert Principal.toText(caller) == Environment.SNS_GOVERNANCE_CANISTER_ID;
-      assert callerAllowed(caller);
       assert leagueExists(dto.leagueId);
       assert postponedFixtureExists(dto.leagueId, dto.seasonId, dto.fixtureId);
       return #Ok("Valid");
@@ -936,7 +965,6 @@
 
     public shared ( {caller} ) func validateSubmitFixtureData(dto : GovernanceDTOs.SubmitFixtureDataDTO) : async Base.RustResult{
       assert Principal.toText(caller) == Environment.SNS_GOVERNANCE_CANISTER_ID;
-      assert callerAllowed(caller);
       assert leagueExists(dto.leagueId);
       assert fixtureExists(dto.leagueId, dto.seasonId, dto.fixtureId);
       assert validatePlayerEvents(dto.playerEventData);
@@ -1019,7 +1047,6 @@
 
     public shared ( {caller} ) func validateRelegateClub(dto : GovernanceDTOs.RelegateClubDTO) : async Base.RustResult{
       assert Principal.toText(caller) == Environment.SNS_GOVERNANCE_CANISTER_ID;
-      assert callerAllowed(caller);
       assert leagueExists(dto.leagueId);
       assert leagueExists(dto.relegatedToLeagueId);
       assert clubExists(dto.leagueId, dto.clubId);
