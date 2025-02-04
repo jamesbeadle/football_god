@@ -876,48 +876,107 @@ import Nat8 "mo:base/Nat8";
       return #Ok("Valid");
     };
 
-    public shared ( {caller} ) func validateAddInitialFixtures(dto : GovernanceDTOs.AddInitialFixturesDTO) : async Base.RustResult{
-      assert Principal.toText(caller) == Environment.SNS_GOVERNANCE_CANISTER_ID;
-      assert not seasonActive(dto.leagueId);
 
-      let leaguesResult = Array.find<FootballTypes.League>(leagues, func(leagueEntry: FootballTypes.League) : Bool {
-        leagueEntry.id == dto.leagueId;
-      });
+    public shared ({caller}) func validateAddInitialFixtures(
+    dto : GovernanceDTOs.AddInitialFixturesDTO
+) : async Base.RustResult {
+    assert Principal.toText(caller) == Environment.SNS_GOVERNANCE_CANISTER_ID;
+    assert not seasonActive(dto.leagueId);
 
-      switch(leaguesResult){
-        case (?league){
+    let maybeLeague = Array.find<FootballTypes.League>(leagues,
+      func(leagueEntry) { leagueEntry.id == dto.leagueId }
+    );
+    switch (maybeLeague) {
+      case null { return #Err("League Not Found"); };
+      case (?league) {
+        let maybeStatus = Array.find<FootballTypes.LeagueStatus>(
+          leagueStatuses,
+          func(statusEntry) { statusEntry.leagueId == dto.leagueId }
+        );
+        switch (maybeStatus) {
+          case null { return #Err("League Status Not Found"); };
+          case (?leagueStatus) {
+            let teamCountN : Nat = Nat8.toNat(league.teamCount);
+            let totalGWsN : Nat = Nat8.toNat(leagueStatus.totalGameweeks);
 
-          let leagueStatusResult = Array.find<FootballTypes.LeagueStatus>(leagueStatuses, func(statusEntry: FootballTypes.LeagueStatus) : Bool {
-            statusEntry.leagueId == dto.leagueId;
-          });
-          switch(leagueStatusResult){
-            case (?leagueStatus){
+            let expectedFixtureCount = (teamCountN * totalGWsN) / 2;
+            if (Array.size(dto.seasonFixtures) != expectedFixtureCount) {
+              return #Err("Incorrect Fixture Count");
+            };
 
-              let expectedFixtureCount: Nat = Nat8.toNat((league.teamCount * leagueStatus.totalGameweeks)) / 2;
+            for (fixture in Iter.fromArray(dto.seasonFixtures)) {
+              if (
+                not clubExists(dto.leagueId, fixture.homeClubId) or
+                not clubExists(dto.leagueId, fixture.awayClubId)
+              ) {
+                return #Err(
+                  "One or more fixtures refer to clubs not in this league."
+                );
+              };
+            };
 
-              if(Array.size(dto.seasonFixtures) != expectedFixtureCount){
-                return #Err("Incorrect Fixture Count");
+            let matchesPerGameweek = teamCountN / 2;
+            let countsBuf = Buffer.Buffer<Nat>(totalGWsN);
+            var i = 0;
+            while (i < totalGWsN) {
+              countsBuf.add(0);
+              i += 1;
+            };
+
+            for (fixture in Iter.fromArray(dto.seasonFixtures)) {
+              let gwN = Nat8.toNat(fixture.gameweek);
+              if (gwN < 1 or gwN > totalGWsN) {
+                return #Err("Fixture has invalid gameweek number.");
+              };
+              let index = gwN - 1;
+              let oldCount = countsBuf.get(index);
+              countsBuf.put(index, oldCount + 1);
+            };
+
+            var j = 0;
+            while (j < totalGWsN) {
+              let gwCount = countsBuf.get(j);
+              if (gwCount != matchesPerGameweek) {
+                return #Err("Fixtures are not evenly distributed across gameweeks.");
+              };
+              j += 1;
+            };
+
+            let occupied = Buffer.Buffer<(FootballTypes.ClubId, Int)>(0);
+            for (fixture in Iter.fromArray(dto.seasonFixtures)) {
+              let homePair = (fixture.homeClubId, fixture.kickOff);
+              let awayPair = (fixture.awayClubId, fixture.kickOff);
+
+              if (
+                Array.find<(FootballTypes.ClubId, Int)>(
+                  Buffer.toArray(occupied),
+                  func(x) { x.0 == homePair.0 and x.1 == homePair.1 }
+                ) != null
+              ) {
+                return #Err("Home club has multiple fixtures at the same time.");
+              };
+              if (
+                Array.find<(FootballTypes.ClubId, Int)>(
+                  Buffer.toArray(occupied),
+                  func(x) { x.0 == awayPair.0 and x.1 == awayPair.1 }
+                ) != null
+              ) {
+                return #Err("Away club has multiple fixtures at the same time.");
               };
 
-              //TODO: Add validation checks
-              //clubs for each fixture exist
-              //equal gameweek distribution
-              //no club has same kick off on same date at same time
-
-              return #Ok("Valid");
-
+              occupied.add(homePair);
+              occupied.add(awayPair);
             };
-            case (null){
-              return #Err("League Status Not Found");
-            }
-          };
 
+            return #Ok("Valid");
+          };
         };
-        case (null){
-          return #Err("League Not Found");
-        }
       };
     };
+};
+
+
+
 
     public shared ( {caller} ) func validateMoveFixture(dto : GovernanceDTOs.MoveFixtureDTO) : async Base.RustResult{
       assert Principal.toText(caller) == Environment.SNS_GOVERNANCE_CANISTER_ID;
