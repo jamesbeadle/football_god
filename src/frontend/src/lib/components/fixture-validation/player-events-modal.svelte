@@ -270,7 +270,7 @@
           </p>
         </div>
 
-        <div class="border-b border-gray-200" />
+        <div class="border-b border-gray-200"></div>
 
         <div class="flex flex-row space-x-1">
           <div class="flex-col space-y-2 w-1/2">

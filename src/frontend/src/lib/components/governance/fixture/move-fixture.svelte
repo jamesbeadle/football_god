@@ -4,7 +4,6 @@
   import { fixtureStore } from "$lib/stores/fixture-store";
   //import { governanceStore } from "$lib/stores/governance-store";
   import LocalSpinner from "$lib/components/shared/local-spinner.svelte";
-    import { adminStore } from "$lib/stores/admin-store";
     import { leagueStore } from "$lib/stores/league-store";
     import { convertDateTimeInputToUnixNano } from "$lib/utils/helpers";
     import Modal from "$lib/components/shared/modal.svelte";
@@ -216,7 +215,7 @@
             </select>
           </div>
 
-          <div class="border-b border-gray-200" />
+          <div class="border-b border-gray-200"></div>
 
           <div class="items-center flex space-x-4">
             <button

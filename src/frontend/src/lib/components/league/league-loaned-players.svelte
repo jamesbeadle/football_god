@@ -3,11 +3,10 @@
   
   import { clubStore } from "$lib/stores/club-store";
   import { leagueStore } from "$lib/stores/league-store";
-  import type { ClubDTO, FootballLeagueDTO } from "../../../../../declarations/backend/backend.did";
   import BadgeIcon from "$lib/icons/BadgeIcon.svelte";
   import LocalSpinner from "../shared/local-spinner.svelte";
   import PipsIcon from "$lib/icons/pips-icon.svelte";
-  import type { LoanedPlayerDTO } from "../../../../../declarations/data_canister/data_canister.did";
+  import type { ClubDTO, FootballLeagueDTO, LoanedPlayerDTO } from "../../../../../declarations/data_canister/data_canister.did";
   import { playerStore } from "$lib/stores/player-store";
   import RecallPlayer from "../governance/player/recall-player.svelte";
   

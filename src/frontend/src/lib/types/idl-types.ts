@@ -104,6 +104,19 @@ export const CreateClubDTO_Idl = IDL.Record({
   shirtType: IDL.Nat8,
 });
 
+const CountryId = IDL.Nat16;
+const Gender = IDL.Variant({ Male: IDL.Null, Female: IDL.Null });
+export const CreateLeagueDTO_Idl = IDL.Record({
+  logo: IDL.Opt(IDL.Vec(IDL.Nat8)),
+  name: IDL.Text,
+  teamCount: IDL.Nat8,
+  relatedGender: Gender,
+  countryId: CountryId,
+  abbreviation: IDL.Text,
+  governingBody: IDL.Text,
+  formed: IDL.Int,
+});
+
 // Fixtures (Submit / Add / Move / Postpone, etc.)
 /** Example child type for fixture data. */
 export const PlayerEventData_Idl = IDL.Record({

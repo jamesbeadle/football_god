@@ -542,7 +542,7 @@ type CreateLeagueDTO =
    countryId: CountryId;
    formed: int;
    governingBody: text;
-   logo: blob;
+   logo: opt blob;
    name: text;
    relatedGender: Gender;
    teamCount: nat8;

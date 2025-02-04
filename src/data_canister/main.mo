@@ -817,7 +817,12 @@
     public shared ( {caller} ) func validateCreateLeague(dto : GovernanceDTOs.CreateLeagueDTO) : async Base.RustResult{
       assert Principal.toText(caller) == Environment.SNS_GOVERNANCE_CANISTER_ID;
       assert countryExists(dto.countryId);
-      assert logoSizeValid(dto.logo);
+      switch(dto.logo){
+        case (?foundLogo){
+          assert logoSizeValid(foundLogo);
+        };
+        case (null){}
+      };
       if (Text.size(dto.name) > 100) {
         return #Err("Error: Name greater than 100 characters.");
       };
@@ -1722,6 +1727,17 @@
     public shared ({ caller }) func createLeague(dto: GovernanceDTOs.CreateLeagueDTO) : async () {
       assert Principal.toText(caller) == Environment.SNS_GOVERNANCE_CANISTER_ID;
 
+      var logo: Blob = Blob.fromArray([]);
+
+      switch(dto.logo){
+        case (?foundLogo){
+          if(Array.size(Blob.toArray(foundLogo)) > 0){
+            logo := foundLogo
+          };
+        };
+        case (null){}
+      };
+
       let leaguesBuffer = Buffer.fromArray<FootballTypes.League>(leagues);
       leaguesBuffer.add({
         abbreviation = dto.abbreviation;
@@ -1729,7 +1745,7 @@
         formed = dto.formed;
         governingBody = dto.governingBody;
         id = nextLeagueId;
-        logo = dto.logo;
+        logo = logo;
         name = dto.name;
         teamCount = dto.teamCount;
         relatedGender = dto.relatedGender;

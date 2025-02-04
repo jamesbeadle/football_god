@@ -32,5 +32,4 @@ export class LeagueService {
     if (isError(result)) throw new Error("Failed to fetch league status");
     return result.ok;
   }
-  
 }

@@ -156,7 +156,7 @@ module GovernanceDTOs {
     governingBody: Text;
     formed: Int;
     countryId: Base.CountryId;
-    logo: Blob;
+    logo: ?Blob;
   };
 
   public type UpdateLeagueDTO = {

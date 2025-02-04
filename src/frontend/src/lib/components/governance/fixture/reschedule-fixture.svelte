@@ -113,7 +113,8 @@
           </select>
         </div>
 
-        <div class="border-b border-gray-200" />
+        <div class="border-b border-gray-200"></div>
+        
         <p class="mr-2 my-2">Set new date:</p>
         <div class="flex flex-row my-2">
           <p class="mr-2">Select Date:</p>

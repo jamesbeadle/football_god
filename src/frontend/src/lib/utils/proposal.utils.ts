@@ -1,4 +1,8 @@
-import type { CountryId, Gender, PlayerEventData } from "../../../../declarations/data_canister/data_canister.did";
+import type {
+  CountryId,
+  Gender,
+  PlayerEventData,
+} from "../../../../declarations/data_canister/data_canister.did";
 
 export function buildRevaluePlayerUpText(
   playerName: string,
@@ -280,7 +284,7 @@ export function buildCreateLeagueText(
   relatedGender: string,
   governingBody: string,
   formed: string,
-  countryName: string
+  countryName: string,
 ) {
   return {
     title: `Create new league ${name}`,

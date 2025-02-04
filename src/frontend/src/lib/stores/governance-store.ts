@@ -55,6 +55,7 @@ import {
   buildTransferPlayerText,
 } from "$lib/utils/proposal.utils";
 import {
+  CreateLeagueDTO_Idl,
   CreatePlayerDTO_Idl,
   LoanPlayerDTO_Idl,
   RetirePlayerDTO_Idl,
@@ -135,7 +136,6 @@ async function createProposal({
 }
 
 function createGovernanceStore() {
-
   async function revaluePlayerUp(dto: RevaluePlayerUpDTO): Promise<any> {
     let userIdentity: OptionIdentity;
     authStore.subscribe((auth) => (userIdentity = auth.identity));
@@ -326,13 +326,13 @@ function createGovernanceStore() {
     });
   }
 
-  async function createLeague(dto: CreateLeagueDTO) : Promise<any> {
+  async function createLeague(dto: CreateLeagueDTO): Promise<any> {
     let userIdentity: OptionIdentity;
     authStore.subscribe((auth) => (userIdentity = auth.identity));
     if (!userIdentity) return;
 
     let countries = await countryStore.getCountries();
-    let country = countries.find(x => x.id == dto.countryId);
+    let country = countries.find((x) => x.id == dto.countryId);
     if (!country) throw new Error("Country not found.");
 
     const { title, summary } = buildCreateLeagueText(
@@ -342,14 +342,14 @@ function createGovernanceStore() {
       Object.keys(dto.relatedGender)[0],
       dto.governingBody,
       formatUnixDateToSmallReadable(Number(dto.formed)),
-      country.name
+      country.name,
     );
 
-    const encoded = IDL.encode([TransferPlayerDTO_Idl], [dto]);
+    const encoded = IDL.encode([CreateLeagueDTO_Idl], [dto]);
 
     return await createProposal({
       identity: userIdentity,
-      functionId: 54000n,
+      functionId: 55000n,
       payload: new Uint8Array(encoded),
       title,
       summary,
@@ -380,7 +380,6 @@ function createGovernanceStore() {
 
   async function postponeFixture(dto: PostponeFixtureDTO): Promise<any> {}
 
-
   return {
     revaluePlayerUp,
     revaluePlayerDown,
@@ -399,7 +398,7 @@ function createGovernanceStore() {
     moveFixture,
     postponeFixture,
     submitFixtureData,
-    createLeague
+    createLeague,
   };
 }
 

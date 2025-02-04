@@ -17,7 +17,7 @@
   let selectedGender = 0;
   let dateFormed = "";
   let countryId = 0;
-  let logo: Uint8Array | number[];
+  let logo: Uint8Array | number[] = [];
   let fileInput: HTMLInputElement;
   let teamCount: 0;
   let countries: CountryDTO[] = [];
@@ -64,11 +64,6 @@
     }
   }
 
-  function clickFileInput(event: Event) {
-    event.preventDefault();
-    fileInput.click();
-  }
-
   function convertFileToUint8Array(file: Blob): Promise<Uint8Array> {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
@@ -102,7 +97,7 @@
       relatedGender: leagueGender,
       formed: BigInt(new Date(dateFormed).getTime() * 1_000_000),
       countryId,
-      logo: logo ? logo : [],
+      logo: [logo],
       teamCount: teamCount
     };
 

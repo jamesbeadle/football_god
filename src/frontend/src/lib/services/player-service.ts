@@ -4,7 +4,7 @@ import { isError } from "../utils/helpers";
 import { authStore } from "$lib/stores/auth-store";
 import type {
   LoanedPlayerDTO,
-  PlayerDTO
+  PlayerDTO,
 } from "../../../../declarations/data_canister/data_canister.did";
 
 export class PlayerService {

@@ -40,7 +40,7 @@ export interface CreateClubDTO {
   leagueId: LeagueId;
 }
 export interface CreateLeagueDTO {
-  logo: Uint8Array | number[];
+  logo: [] | [Uint8Array | number[]];
   name: string;
   teamCount: number;
   relatedGender: Gender;

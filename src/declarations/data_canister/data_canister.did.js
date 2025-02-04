@@ -70,7 +70,7 @@ export const idlFactory = ({ IDL }) => {
   const Gender = IDL.Variant({ Male: IDL.Null, Female: IDL.Null });
   const CountryId = IDL.Nat16;
   const CreateLeagueDTO = IDL.Record({
-    logo: IDL.Vec(IDL.Nat8),
+    logo: IDL.Opt(IDL.Vec(IDL.Nat8)),
     name: IDL.Text,
     teamCount: IDL.Nat8,
     relatedGender: Gender,
