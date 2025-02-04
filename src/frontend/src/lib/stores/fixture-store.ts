@@ -78,20 +78,8 @@ function createFixtureStore() {
     return new FixtureService().getFixtures(leagueId);
   }
 
-  async function moveFixture(dto: MoveFixtureDTO): Promise<any> {
-    return new FixtureService().moveFixture(dto);
-  }
-
-  async function postponeFixture(dto: PostponeFixtureDTO): Promise<any> {
-    return new FixtureService().postponeFixture(dto);
-  }
-
-  async function submitFixtureData(dto: SubmitFixtureDataDTO): Promise<any> {
-    return new FixtureService().submitFixtureData(dto);
-  }
-
-  async function getPostponedFixtures(): Promise<FixtureDTO[]> {
-    return new FixtureService().getPostponedFixtures();
+  async function getPostponedFixtures(leagueId: number): Promise<FixtureDTO[]> {
+    return new FixtureService().getPostponedFixtures(leagueId);
   }
 
   function getFixturesByLeagueId(leagueId: number): FixtureDTO[] | undefined {
@@ -108,9 +96,6 @@ function createFixtureStore() {
     syncFixtures,
     getFixtures,
     getPostponedFixtures,
-    moveFixture,
-    postponeFixture,
-    submitFixtureData,
     getFixturesByLeagueId,
   };
 }
