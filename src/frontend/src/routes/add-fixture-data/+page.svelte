@@ -14,10 +14,10 @@
   import FullScreenSpinner from "$lib/components/shared/full-screen-spinner.svelte";
   import BadgeIcon from "$lib/icons/BadgeIcon.svelte";
   
-  import { convertEvent, replacer } from "$lib/utils/helpers";
-    import SelectedPlayerList from "$lib/components/fixture-validation/selected-player-list.svelte";
-    import type { ClubDTO, FixtureDTO, PlayerDTO, PlayerEventData, SubmitFixtureDataDTO } from "../../../../declarations/data_canister/data_canister.did";
-    import { governanceStore } from "$lib/stores/governance-store";
+  import { convertEvent, isError, replacer } from "$lib/utils/helpers";
+  import SelectedPlayerList from "$lib/components/fixture-validation/selected-player-list.svelte";
+  import type { ClubDTO, FixtureDTO, PlayerDTO, PlayerEventData, SubmitFixtureDataDTO } from "../../../../declarations/data_canister/data_canister.did";
+  import { governanceStore } from "$lib/stores/governance-store";
   
   let clubs: ClubDTO[] = [];
   let players: PlayerDTO[] = [];
@@ -106,8 +106,8 @@
   }
 
   async function confirmFixtureData() {
-
     try {
+      isLoading = true;
       let dto: SubmitFixtureDataDTO = {
         seasonId,
         leagueId,
@@ -116,12 +116,14 @@
         playerEventData: $playerEventData
       };
 
-
       let result = await governanceStore.submitFixtureData(dto);
-
-      console.log(result)
-      
-      //localStorage.removeItem(`fixtureDraft_${fixtureId}`);
+      if (isError(result)) {
+        isLoading = false;
+        console.error("Error submitting proposal");
+        return;
+      }
+      isLoading = false;
+      localStorage.removeItem(`fixtureDraft_${fixtureId}`);
     } catch (error) {
       console.error("Error saving fixture data: ", error);
     } finally {

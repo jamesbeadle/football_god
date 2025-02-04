@@ -5,7 +5,8 @@
   
   import Modal from "$lib/components/shared/modal.svelte";
   import LocalSpinner from "$lib/components/shared/local-spinner.svelte";
-    import type { CountryDTO, CreateLeagueDTO, Gender } from "../../../../../../declarations/data_canister/data_canister.did";
+  import type { CountryDTO, CreateLeagueDTO, Gender } from "../../../../../../declarations/data_canister/data_canister.did";
+    import { governanceStore } from "$lib/stores/governance-store";
   
   export let visible: boolean;
   export let closeModal: () => void;
@@ -105,7 +106,7 @@
       teamCount: teamCount
     };
 
-    await leagueStore.createLeague(dto);
+    await governanceStore.createLeague(dto);
     isLoading = false;
     resetForm();
     closeModal();
@@ -130,125 +131,112 @@
 </script>
 
 <Modal showModal={visible} onClose={closeModal}>
-  <div class="mx-4 p-4">
-    <div class="flex justify-between items-center my-2">
-      <h3 class="default-header">Create New League</h3>
+  <div class="mx-2 p-2">
+    <div class="flex justify-between items-center mb-2">
+      <h3 class="default-header">Create League</h3>
       <button class="times-button" on:click={cancelModal}>&times;</button>
     </div>
 
     <div class="flex justify-start items-center w-full">
-      <div class="w-full flex-col space-y-4 mb-2">
-        <div class="mt-4">
-          <input
-            type="text"
-            class="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
-            placeholder="League Name"
-            bind:value={leagueName}
-          />
-          <input
-            type="text"
-            class="w-full mt-4 px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
-            placeholder="Abbreviated Name"
-            bind:value={abbreviatedName}
-          />
-          <input
-            type="text"
-            class="w-full mt-4 px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
-            placeholder="Governing Body"
-            bind:value={governingBody}
-          />
-          <div class="mt-4">
-            <label for="gender">Gender</label>
-            <select bind:value={selectedGender} class="brand-dropdown">
+      {#if isLoading}
+        <LocalSpinner />
+      {:else}
+        <div class="w-full flex-col space-y-4 mb-2 flex space-y-2">
+
+
+
+          <div class="flex flex-row w-full items-center">
+            <p class="w-1/2">League Name:</p>
+            <input class="w-1/2 brand-input" placeholder="League Name" type="text" bind:value={leagueName} />
+          </div>
+
+          <div class="flex flex-row w-full items-center">
+            <p class="w-1/2">Abbreviated Name:</p>
+            <input class="w-1/2 brand-input" placeholder="Abbreviated Name" type="text" bind:value={abbreviatedName} />
+          </div>
+
+          <div class="flex flex-row w-full items-center">
+            <p class="w-1/2">Governing Body:</p>
+            <input class="w-1/2 brand-input" placeholder="Governing Body" type="text" bind:value={governingBody} />
+          </div>
+
+          <div class="flex flex-row w-full items-center">
+            <p class="w-1/2">Gender:</p>
+            <select bind:value={selectedGender} class="w-1/2 brand-dropdown">
               <option value="0">Select Gender</option>
               <option value="1">Male</option>
               <option value="2">Female</option>
             </select>
           </div>
-          <div class="mt-4">
-            <label for="date-formed">Team Count</label>
-            <input
-              type="number"
-              class="brand-input"
-              bind:value={teamCount}
-            />
+
+          <div class="flex flex-row w-full items-center">
+            <p class="w-1/2">Team Count:</p>
+            <input class="w-1/2 brand-input" placeholder="Team Count" type="number" bind:value={teamCount} />
           </div>
-          <div class="mt-4">
-            <label for="date-formed">Date Formed</label>
-            <input
-              type="date"
-              class="brand-input"
-              bind:value={dateFormed}
-            />
+
+          <div class="flex flex-row w-full items-center">
+            <p class="w-1/2">Date Formed:</p>
+            <input class="w-1/2 brand-input" placeholder="Date Formed" type="date" bind:value={dateFormed} />
           </div>
-          <div class="mt-4">
-            <label for="country">Country</label>
-            <select
-                class="p-2 brand-dropdown min-w-[100px] mb-2"
-                bind:value={countryId}
-            >
-                <option value={0}>Select League Country</option>
-                {#each countries as country}
-                <option value={country.id}>{country.name}</option>
-                {/each}
+
+          <div class="flex flex-row w-full items-center">
+            <p class="w-1/2">Country:</p>
+            <select bind:value={countryId} class="w-1/2 brand-dropdown">
+              <option value={0}>Select League Country</option>
+              {#each countries as country}
+              <option value={country.id}>{country.name}</option>
+              {/each}
             </select>
           </div>
-          <div class="mt-4">
-            <label for="logo">Logo</label>
-            <button class="btn-file-upload brand-button" on:click={clickFileInput}>
-              Upload Logo
-            </button>
+
+          <div class="flex flex-row w-full items-center">
+            <p class="w-1/2">Logo:</p>
             <input
               type="file"
               id="logo-image"
               accept="image/*"
+              class="w-1/2 p-2"
               bind:this={fileInput}
               on:change={handleFileChange}
-              style="opacity: 0; position: absolute; left: 0; top: 0;"
             />
           </div>
-        </div>
 
-        <div class="items-center flex space-x-4">
-          <button
-            class="px-4 py-2 brand-cancel-button min-w-[150px]"
-            type="button"
-            on:click={cancelModal}
-          >
-            Cancel
-          </button>
-          <button
-            class={`${isSubmitDisabled ? "brand-button-disabled" : "brand-button"} 
-                        px-4 py-2 min-w-[150px]`}
-            on:click={raiseProposal}
-            disabled={isSubmitDisabled}
-          >
-            Raise Proposal
-          </button>
-        </div>
-
-        {#if showConfirm}
-          <div class="items-center flex">
-            <p class="text-orange-400">
-              Failed proposals will cost the proposer 10 $FPL tokens.
-            </p>
-          </div>
-          <div class="items-center flex">
+          <div class="items-center flex flex-row space-x-4 w-full">
             <button
-              class={`${isSubmitDisabled ? "brand-button-disabled" : "brand-button"} 
-                            px-4 py-2 w-full`}
-              on:click={confirmProposal}
+              class="brand-cancel-button w-1/2"
+              type="button"
+              on:click={cancelModal}
+            >
+              Cancel
+            </button>
+            <button
+              class={`${isSubmitDisabled ? "brand-button-disabled" : "brand-button"} w-1/2`}
+              on:click={raiseProposal}
               disabled={isSubmitDisabled}
             >
-              Confirm Submit Proposal
+              Raise Proposal
             </button>
           </div>
-        {/if}
-      </div>
-    </div>
 
-    {#if isLoading}
-      <LocalSpinner />
-    {/if}
+          {#if showConfirm}
+            <div class="items-center flex">
+              <p class="text-orange-400">
+                Failed proposals will cost the proposer 10 $FPL tokens.
+              </p>
+            </div>
+            <div class="items-center flex">
+              <button
+                class={`${isSubmitDisabled ? "brand-button-disabled" : "brand-button"} 
+                              px-4 py-2 w-full`}
+                on:click={confirmProposal}
+                disabled={isSubmitDisabled}
+              >
+                Confirm Submit Proposal
+              </button>
+            </div>
+          {/if}
+        </div>
+      {/if}
+    </div>
   </div>
 </Modal>

@@ -31,6 +31,7 @@ import type {
   AddInitialFixturesDTO,
   MoveFixtureDTO,
   PostponeFixtureDTO,
+  CreateLeagueDTO,
 } from "../../../../declarations/data_canister/data_canister.did";
 
 import type {
@@ -43,6 +44,7 @@ import type {
   PlayerPosition,
 } from "../../../../declarations/data_canister/data_canister.did";
 import {
+  buildCreateLeagueText,
   buildCreatePlayerText,
   buildLoanPlayerText,
   buildRetirePlayerText,
@@ -63,9 +65,15 @@ import {
   TransferPlayerDTO_Idl,
   UpdatePlayerDTO_Idl,
 } from "$lib/types/idl-types";
-import { formatUnixDateToSmallReadable } from "$lib/utils/helpers";
+import {
+  formatUnixDateToReadable,
+  formatUnixDateToSmallReadable,
+} from "$lib/utils/helpers";
 import { leagueStore } from "./league-store";
 import { toasts } from "./toasts-store";
+import { fixtureStore } from "./fixture-store";
+import { seasonStore } from "./season-store";
+import { countryStore } from "./country-store";
 
 async function createProposal({
   identity,
@@ -127,6 +135,7 @@ async function createProposal({
 }
 
 function createGovernanceStore() {
+
   async function revaluePlayerUp(dto: RevaluePlayerUpDTO): Promise<any> {
     let userIdentity: OptionIdentity;
     authStore.subscribe((auth) => (userIdentity = auth.identity));
@@ -236,16 +245,19 @@ function createGovernanceStore() {
     if (!newClub) throw new Error("New club not found.");
 
     const currentLeague = await leagueStore.getLeagueById(dto.leagueId);
+    if (!currentLeague) throw new Error("Current league not found.");
+
     const transferLeague = await leagueStore.getLeagueById(dto.newLeagueId);
+    if (!transferLeague) throw new Error("Transfer league not found.");
 
     const newValue = (player.valueQuarterMillions / 4).toFixed(2);
 
     const { title, summary } = buildTransferPlayerText(
       `${player.firstName} ${player.lastName}`,
       currentClub.friendlyName,
-      currentLeague?.name ?? "",
+      currentLeague.name,
       newClub.friendlyName,
-      transferLeague?.name ?? "",
+      transferLeague.name,
       newValue,
     );
 
@@ -279,21 +291,61 @@ function createGovernanceStore() {
       });
     }
 
+    const leagueFixtures = await fixtureStore.getFixtures(dto.leagueId);
+    let fixture = leagueFixtures.find((x) => x.id == dto.fixtureId);
+    if (!fixture) throw new Error("Fixture not found.");
+
+    const clubs = await clubStore.getClubs(dto.leagueId);
+    const homeClub = clubs.find((c) => c.id === fixture.homeClubId);
+    const awayClub = clubs.find((c) => c.id === fixture.awayClubId);
+    if (!homeClub || !awayClub) throw new Error("Missing home/away club.");
+
+    const allSeasons = await seasonStore.getSeasons(dto.leagueId);
+    const season = allSeasons.find((x) => x.id == dto.seasonId);
+    const seasonName = season?.name ?? "Unknown Season";
+    const clubsVs = `${homeClub.friendlyName} v ${awayClub.friendlyName}`;
+    const kickOff = formatUnixDateToReadable(Number(fixture.kickOff));
+
     const encoded = IDL.encode([SubmitFixtureDataDTO_Idl], [dto]);
-    let vsString = "";
-    let kickOff = "";
-    let score = "";
-    let totalPlayers = 0;
 
     const { title, summary } = buildSubmitFixtureDataText(
-      vsString,
+      clubsVs,
       dto.gameweek,
       kickOff,
-      score,
-      totalPlayers,
+      "",
       dto.fixtureId,
-      dto.playerEventData,
+      seasonName,
     );
+
+    return await createProposal({
+      identity: userIdentity,
+      functionId: 54000n,
+      payload: new Uint8Array(encoded),
+      title,
+      summary,
+    });
+  }
+
+  async function createLeague(dto: CreateLeagueDTO) : Promise<any> {
+    let userIdentity: OptionIdentity;
+    authStore.subscribe((auth) => (userIdentity = auth.identity));
+    if (!userIdentity) return;
+
+    let countries = await countryStore.getCountries();
+    let country = countries.find(x => x.id == dto.countryId);
+    if (!country) throw new Error("Country not found.");
+
+    const { title, summary } = buildCreateLeagueText(
+      dto.name,
+      dto.abbreviation,
+      dto.teamCount,
+      Object.keys(dto.relatedGender)[0],
+      dto.governingBody,
+      formatUnixDateToSmallReadable(Number(dto.formed)),
+      country.name
+    );
+
+    const encoded = IDL.encode([TransferPlayerDTO_Idl], [dto]);
 
     return await createProposal({
       identity: userIdentity,
@@ -328,6 +380,7 @@ function createGovernanceStore() {
 
   async function postponeFixture(dto: PostponeFixtureDTO): Promise<any> {}
 
+
   return {
     revaluePlayerUp,
     revaluePlayerDown,
@@ -346,6 +399,7 @@ function createGovernanceStore() {
     moveFixture,
     postponeFixture,
     submitFixtureData,
+    createLeague
   };
 }
 

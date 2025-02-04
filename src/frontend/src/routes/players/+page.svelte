@@ -379,7 +379,7 @@
     
       {#if selectedPlayerId > 0 && showTransferPlayerModal}
         {@const selectedPlayer = filteredPlayers.find(x => x.id == selectedPlayerId) }
-        <TransferPlayer visible={showTransferPlayerModal} {closeModal} player={selectedPlayer!} />
+        <TransferPlayer visible={showTransferPlayerModal} {closeModal} selectedPlayer={selectedPlayer!} />
       {/if}
     
       {#if selectedPlayerId > 0 && showRecallPlayerModal}

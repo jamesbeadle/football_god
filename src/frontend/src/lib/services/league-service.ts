@@ -22,28 +22,6 @@ export class LeagueService {
     return result.ok;
   }
 
-  async createLeague(dto: CreateLeagueDTO): Promise<void> {
-    const identityActor: any =
-      await ActorFactory.createDataCanisterIdentityActor(
-        authStore,
-        process.env.DATA_CANISTER_CANISTER_ID ?? "",
-      );
-
-    const result = await identityActor.executeCreateLeague(dto);
-    if (isError(result)) throw new Error("Failed to create league");
-  }
-
-  async updateLeague(dto: UpdateLeagueDTO): Promise<void> {
-    const identityActor: any =
-      await ActorFactory.createDataCanisterIdentityActor(
-        authStore,
-        process.env.BACKEND_CANISTER_ID ?? "",
-      );
-
-    const result = await identityActor.executeUpdateLeague(dto);
-    if (isError(result)) throw new Error("Failed to update league");
-  }
-
   async getLeagueStatus(leagueId: number): Promise<LeagueStatus> {
     const identityActor: any =
       await ActorFactory.createDataCanisterIdentityActor(
@@ -54,4 +32,5 @@ export class LeagueService {
     if (isError(result)) throw new Error("Failed to fetch league status");
     return result.ok;
   }
+  
 }

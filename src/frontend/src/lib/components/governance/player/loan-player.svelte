@@ -2,7 +2,6 @@
   import { onMount } from "svelte";
   import { leagueStore } from "$lib/stores/league-store";
   import { clubStore } from "$lib/stores/club-store";
-  import { playerStore } from "$lib/stores/player-store";
   import { convertDateInputToUnixNano, isError } from "$lib/utils/helpers";
   import Modal from "$lib/components/shared/modal.svelte";
   import LocalSpinner from "$lib/components/shared/local-spinner.svelte";
@@ -25,7 +24,6 @@
 
   let isLoading = false;
   let showConfirm = false;
-  let leaguesLoaded = false;
 
   $: isSubmitDisabled = loanLeagueId == 0 || loanClubId == 0 || date == "";
 
@@ -34,7 +32,6 @@
       isLoading = true;
       newValueMillions = selectedPlayer.valueQuarterMillions / 4;
       loanLeagues = await leagueStore.getLeagues();
-      leaguesLoaded = true; 
     } catch (error) {
       console.error("Error mounting loan player modal.", error);
     } finally {
@@ -65,8 +62,6 @@
       loanLeagueId: loanLeagueId,
       newValueQuarterMillions: newValueMillions * 4
     };
-    console.log("loaning player")
-    console.log(dto)
     let result = await governanceStore.loanPlayer(dto);
     if (isError(result)) {
       isLoading = false;
@@ -84,6 +79,7 @@
   }
 
   function resetForm() {
+    newValueMillions = 0;
     isLoading = false;
   }
 </script>

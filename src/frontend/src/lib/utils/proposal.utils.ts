@@ -1,4 +1,4 @@
-import type { PlayerEventData } from "../../../../declarations/data_canister/data_canister.did";
+import type { CountryId, Gender, PlayerEventData } from "../../../../declarations/data_canister/data_canister.did";
 
 export function buildRevaluePlayerUpText(
   playerName: string,
@@ -177,17 +177,18 @@ export function buildSubmitFixtureDataText(
   gameweek: number,
   kickOff: string,
   score: string,
-  totalPlayers: number,
   fixtureId: number,
-  playerEventData: PlayerEventData[],
+  seasonName: string,
 ) {
   return {
     title: `Add Fixture Data for ${clubsVs} (GW${gameweek})`,
     summary:
       `Add Fixture Data for ${clubsVs} (GW${gameweek})\n\n` +
       `Description: Add Fixture Data for ${clubsVs} (GW${gameweek}).\n\n` +
-      `Fixture: ${clubsVs}\nKick Off: ${kickOff}\nScore: ${score}\n` +
-      `Players: ${totalPlayers}\nMatch Detail: footballgod.xyz/fixtures?id=${fixtureId}`,
+      `Season: ${seasonName}\n` +
+      `Fixture: ${clubsVs}\n` +
+      `Kick Off: ${kickOff}\n` +
+      `Match Detail: footballgod.xyz/fixtures?id=${fixtureId}`,
   };
 }
 
@@ -269,5 +270,29 @@ export function buildPromoteClubText(
     summary:
       `Promote ${clubName} from ${fromLeagueName} to ${toLeagueName}\n\n` +
       `Description: Promote ${clubName} from ${fromLeagueName} to ${toLeagueName}`,
+  };
+}
+
+export function buildCreateLeagueText(
+  name: string,
+  abbreviation: string,
+  teamCount: number,
+  relatedGender: string,
+  governingBody: string,
+  formed: string,
+  countryName: string
+) {
+  return {
+    title: `Create new league ${name}`,
+    summary:
+      `Description: Create new league ${name}\n\n` +
+      `League Details\n` +
+      `Name: ${name}\n` +
+      `Abbreviation: ${abbreviation}\n` +
+      `Team Count: ${teamCount}\n` +
+      `Gender: ${relatedGender}\n` +
+      `Governing Body: ${governingBody}\n` +
+      `Formed: ${formed}\n` +
+      `Country: ${countryName}`,
   };
 }

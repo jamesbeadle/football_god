@@ -43,37 +43,4 @@ export class FixtureService {
     if (isError(result)) throw new Error("Failed to fetch fixtures");
     return result.ok;
   }
-
-  async moveFixture(dto: MoveFixtureDTO): Promise<void> {
-    const identityActor: any =
-      await ActorFactory.createDataCanisterIdentityActor(
-        authStore,
-        process.env.DATA_CANISTER_CANISTER_ID ?? "",
-      );
-
-    const result = await identityActor.executeMoveFixture(dto);
-    if (isError(result)) throw new Error("Failed to move fixture");
-  }
-
-  async postponeFixture(dto: PostponeFixtureDTO): Promise<void> {
-    const identityActor: any =
-      await ActorFactory.createDataCanisterIdentityActor(
-        authStore,
-        process.env.DATA_CANISTER_CANISTER_ID ?? "",
-      );
-
-    const result = await identityActor.executePostponeFixture(dto);
-    if (isError(result)) throw new Error("Failed to postpone fixture");
-  }
-
-  async submitFixtureData(dto: SubmitFixtureDataDTO): Promise<void> {
-    const identityActor: any =
-      await ActorFactory.createDataCanisterIdentityActor(
-        authStore,
-        process.env.DATA_CANISTER_CANISTER_ID ?? "",
-      );
-
-    const result = await identityActor.executeSubmitFixtureData(dto);
-    if (isError(result)) throw new Error("Failed to submit fixture data");
-  }
 }

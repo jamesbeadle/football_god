@@ -17,13 +17,15 @@ function createLeagueStore() {
 
   let leagueCacheOrder: number[] = [];
 
-  async function syncLeagues(toggledLeagueId?: number) {
+  async function syncLeagues(toggledLeagueId: number) {
     try {
       const localHashKey = "leagues_hash";
       const localLeaguesKey = "leagues";
 
       const localHash = localStorage.getItem(localHashKey);
-      const leagueHash = await new DataHashService().getLeaguesHash();
+      const leagueHash = await new DataHashService().getLeaguesHash(
+        toggledLeagueId,
+      );
 
       let leagues: FootballLeagueDTO[];
 
@@ -185,14 +187,6 @@ function createLeagueStore() {
     return new LeagueService().getLeagues();
   }
 
-  async function createLeague(dto: CreateLeagueDTO): Promise<any> {
-    return new LeagueService().createLeague(dto);
-  }
-
-  async function updateLeague(dto: UpdateLeagueDTO): Promise<any> {
-    return new LeagueService().updateLeague(dto);
-  }
-
   async function getLeagueStatus(leagueId: number): Promise<LeagueStatus> {
     return new LeagueService().getLeagueStatus(leagueId);
   }
@@ -211,8 +205,6 @@ function createLeagueStore() {
     subscribe,
     syncLeagues,
     getLeagues,
-    createLeague,
-    updateLeague,
     getLeagueStatus,
     getLeagueById,
     syncLeagueStatus,

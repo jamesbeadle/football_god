@@ -26,6 +26,7 @@ export const TransferPlayerDTO_Idl = IDL.Record({
   newLeagueId: IDL.Nat16,
   newClubId: IDL.Nat16,
   newShirtNumber: IDL.Nat8,
+  newValueQuarterMillions: IDL.Nat16,
 });
 
 export const RecallPlayerDTO_Idl = IDL.Record({

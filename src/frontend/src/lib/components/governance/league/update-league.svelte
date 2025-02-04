@@ -64,13 +64,13 @@
     if(league == null){
       return;
     }
-    leagueName = league?.name ?? "";
-    abbreviatedName = league?.abbreviation ?? "";
-    governingBody = league?.governingBody ?? "";
-    gender = league?.relatedGender ?? { "Male" : null };
-    dateFormed = getDateFromBigInt(Number(league?.formed ?? 0n)) ?? 0;
-    countryId = league?.countryId ?? 0;
-    logo =  league?.logo ? league?.logo : [];
+    leagueName = league.name;
+    abbreviatedName = league.abbreviation;
+    governingBody = league.governingBody;
+    gender = league.relatedGender;
+    dateFormed = getDateFromBigInt(Number(league?.formed ?? 0n));
+    countryId = league.countryId;
+    logo =  league.logo;
   }
 
   async function handleFileChange(event: Event) {
