@@ -103,8 +103,6 @@ import Nat8 "mo:base/Nat8";
     private stable var nextClubId: FootballTypes.ClubId = 24;
     private stable var nextPlayerId: FootballTypes.PlayerId = 726;
 
-    private stable var timers : [Base.TimerInfo] = [];
-
     private stable var leagueDataHashes: [(FootballTypes.LeagueId, [Base.DataHash])] = [];
 
     private func callerAllowed(caller: Principal) : Bool {
@@ -3301,116 +3299,112 @@ import Nat8 "mo:base/Nat8";
     };
 
     private func postUpgradeCallback() : async (){
-      await setSystemTimers();
-      await checkCurrentGameweekExpired();
+      await createPickTeamRolloverTimers();
+      await createEndOfSeasonTimers();
+      await createTransferWindowStartTimers();
+      await createTransferWindowEndTimers();
+      await createActivateFixtureTimers();
+      await createCompleteFixtureTimers();
+      await createLoanTimers();
+      await createInjuryExpiredTimers();
     };
 
     //Timer Callback Functions
 
-    private func setAndBackupTimer(duration : Timer.Duration, callbackName : Text) : async () {
-      let jobId : Timer.TimerId = switch (callbackName) {
-        case "checkCurrentGameweek" {
-          Timer.setTimer<system>(duration, checkCurrentGameweekExpired);
+    private func createPickTeamRolloverTimers() : async () {
+      for(leagueSeasonsEntry in Iter.fromArray(leagueSeasons)){
+        let leagueStatusResult = Array.find<FootballTypes.LeagueStatus>(leagueStatuses, func(statusEntry: FootballTypes.LeagueStatus) : Bool {
+          return statusEntry.leagueId == leagueSeasonsEntry.0;
+        });
+
+        switch(leagueStatusResult){
+          case (?leagueState){
+            let activeSeason = Array.find<FootballTypes.Season>(leagueSeasonsEntry.1, func(seasonEntry: FootballTypes.Season) : Bool {
+              seasonEntry.id == leagueState.activeSeasonId;
+            });
+
+            switch(activeSeason){
+              case (?season){
+                let activeFutureFixtures = List.filter<FootballTypes.Fixture>(season.fixtures, func(fixture: FootballTypes.Fixture){
+                  fixture.kickOff - Utilities.getHour() >= Time.now();
+                });
+                for(fixture in Iter.fromList(activeFutureFixtures)){
+
+                  let triggerDuration = #nanoseconds(Int.abs((fixture.kickOff - Utilities.getHour() - Time.now())));
+                  await setTimer(triggerDuration, "rollOverPickTeam");
+                };
+              };
+              case (null){}
+            };
+          };
+          case (null){};
+        };
+      }; 
+    };
+
+    private func createEndOfSeasonTimers() : async () {
+      //add a timer for the end of each leagues current season
+    };
+
+    private func createTransferWindowStartTimers() : async () {
+      //add a timer for the january first transfer window for all leagues
+    };
+
+    private func createTransferWindowEndTimers() : async () {
+      //add a timer for the january 31st timer end date for all leagues
+    };
+
+    private func createActivateFixtureTimers() : async () {
+      //create timers to set fixtures to active based on their state
+    };
+
+    private func createCompleteFixtureTimers() : async () {
+      //create completed fixture timers
+    };
+
+    private func createLoanTimers() : async () {
+      //for each player check loan end date in future and create timer
+    };
+
+    private func createInjuryExpiredTimers() : async () {
+      //for each player check injury end date in future and create timer
+    };
+
+    private func setTimer(duration : Timer.Duration, callbackName : Text) : async () {
+      switch (callbackName) {
+        case "rollOverPickTeam" {
+          ignore Timer.setTimer<system>(duration, checkRollOverPickTeam);
         };
         case "endOfSeason" {
-          Timer.setTimer<system>(duration, endOfSeasonExpired);
+          ignore Timer.setTimer<system>(duration, endOfSeasonExpired);
         };
         case "transferWindowStart" {
-          Timer.setTimer<system>(duration, transferWindowStart);
+          ignore Timer.setTimer<system>(duration, transferWindowStart);
         };
         case "transferWindowEnd" {
-          Timer.setTimer<system>(duration, transferWindowEnd);
+          ignore Timer.setTimer<system>(duration, transferWindowEnd);
         };
         case "setFixtureToActive" {
-          Timer.setTimer<system>(duration, setFixtureToActive);
+          ignore Timer.setTimer<system>(duration, setFixtureToActive);
         };
         case "setFixtureToComplete" {
-          Timer.setTimer<system>(duration, setFixtureToComplete);
+          ignore Timer.setTimer<system>(duration, setFixtureToComplete);
         };
         case "loanExpired" {
-          Timer.setTimer<system>(duration, loanExpiredCallback);
+          ignore Timer.setTimer<system>(duration, loanExpiredCallback);
         };
         case "injuryExpired" {
-          Timer.setTimer<system>(duration, injuryExpiredCallback);
+          ignore Timer.setTimer<system>(duration, injuryExpiredCallback);
         };
         case _ {
-          Timer.setTimer<system>(duration, defaultCallback);
+          ignore Timer.setTimer<system>(duration, defaultCallback);
         }
       };
-
-      let triggerTime = switch (duration) {
-        case (#seconds s) {
-          Time.now() + s * 1_000_000_000;
-        };
-        case (#nanoseconds ns) {
-          Time.now() + ns;
-        };
-      };
-
-      let newTimerInfo : Base.TimerInfo = {
-        id = jobId;
-        triggerTime = triggerTime;
-        callbackName = callbackName;
-      };
-
-      var timerBuffer = Buffer.fromArray<Base.TimerInfo>(timers);
-      timerBuffer.add(newTimerInfo);
-      timers := Buffer.toArray(timerBuffer);
     };
     
-    private func setSystemTimers() : async (){
-      
-      let currentTime = Time.now();
-      for (timerInfo in Iter.fromArray(timers)) {
-        let remainingDuration = timerInfo.triggerTime - currentTime;
-
-        if (remainingDuration > 0) {
-          let duration : Timer.Duration = #nanoseconds(Int.abs(remainingDuration));
-
-          switch (timerInfo.callbackName) {
-            case "checkCurrentGameweek" {
-              ignore Timer.setTimer<system>(duration, checkCurrentGameweekExpired);
-            };
-            case "endOfSeason" {
-              ignore Timer.setTimer<system>(duration, endOfSeasonExpired);
-            };
-            case "transferWindowStart" {
-              ignore Timer.setTimer<system>(duration, transferWindowStart);
-            };
-            case "transferWindowEnd" {
-              ignore Timer.setTimer<system>(duration, transferWindowEnd);
-            };
-            case "setFixtureToActive" {
-              ignore Timer.setTimer<system>(duration, setFixtureToActive);
-            };
-            case "setFixtureToComplete" {
-              ignore Timer.setTimer<system>(duration, setFixtureToComplete);
-            };
-            case "loanExpired" {
-              ignore Timer.setTimer<system>(duration, loanExpiredCallback);
-            };
-            case "injuryExpired" {
-              ignore Timer.setTimer<system>(duration, injuryExpiredCallback);
-            };
-            case _ {};
-          };
-        };
-      };
-    };
-
-    private func removeExpiredTimers() : () {
-      let currentTime = Time.now();
-      timers := Array.filter<Base.TimerInfo>(
-        timers,
-        func(timer : Base.TimerInfo) : Bool {
-          return timer.triggerTime > currentTime;
-        },
-      );
-    };
-
     private func defaultCallback() : async () {};
 
-    private func checkCurrentGameweekExpired() : async () {
+    private func checkRollOverPickTeam() : async () {
       for(league in Iter.fromArray(leagueSeasons)){
         let leagueStatusResult = Array.find<FootballTypes.LeagueStatus>(leagueStatuses, func(statusEntry: FootballTypes.LeagueStatus) : Bool {
           statusEntry.leagueId == league.0;
@@ -3491,7 +3485,6 @@ import Nat8 "mo:base/Nat8";
         };
       };
       await setCheckCurrentGameweekTimer();
-      removeExpiredTimers();
     };
 
     private func endOfSeasonExpired() : async (){
@@ -3591,7 +3584,6 @@ import Nat8 "mo:base/Nat8";
           case (null){}
         };
       };
-      removeExpiredTimers();
     };
 
     private func transferWindowStart () : async (){
@@ -3625,7 +3617,6 @@ import Nat8 "mo:base/Nat8";
           });
         };
       };
-      removeExpiredTimers();
     };
 
     private func transferWindowEnd() : async () {
@@ -3658,7 +3649,6 @@ import Nat8 "mo:base/Nat8";
           });
         };
       };
-      removeExpiredTimers();
     };
 
     private func setFixtureToActive() : async (){
@@ -3715,7 +3705,6 @@ import Nat8 "mo:base/Nat8";
             };
           };
       });
-      removeExpiredTimers();
     };
 
     private func setFixtureToComplete() : async (){
@@ -3772,7 +3761,6 @@ import Nat8 "mo:base/Nat8";
             };
           };
       });
-      removeExpiredTimers();
     };
 
     private func loanExpiredCallback() : async (){
