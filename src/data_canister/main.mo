@@ -3205,7 +3205,7 @@
 
     private func logoSizeValid(logo: Blob) : Bool {
       let sizeInKB = Array.size(Blob.toArray(logo)) / 1024;
-      return (sizeInKB > 0 and sizeInKB <= 500);
+      return (sizeInKB <= 500);
     };
 
     system func preupgrade() { };
