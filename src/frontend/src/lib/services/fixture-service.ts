@@ -22,7 +22,7 @@ export class FixtureService {
     return result.ok;
   }
 
-  async getPostponedFixtures(): Promise<FixtureDTO[]> {
+  async getPostponedFixtures(leagueId: number): Promise<FixtureDTO[]> {
     const identityActor: any =
       await ActorFactory.createDataCanisterIdentityActor(
         authStore,

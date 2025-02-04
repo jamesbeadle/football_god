@@ -121,6 +121,11 @@
           Fixtures
         </button>
         <button 
+          class={`p-2 ${activeTab === "postponed-fixtures" ? "text-white border-b-2 border-white" : "text-BrandDisabled"}`} 
+          on:click={() => setActiveTab("postponed-fixtures")}>
+          Postponed Fixtures
+        </button>
+        <button 
           class={`p-2 ${activeTab === "loaned-players" ? "text-white border-b-2 border-white" : "text-BrandDisabled"}`} 
           on:click={() => setActiveTab("loaned-players")}>
           Loaned Players
@@ -131,6 +136,9 @@
         <LeagueClubs leagueId={league.id} />
       {/if}
       {#if activeTab === "fixtures"}
+        <LeagueFixtures leagueId={league.id} />
+      {/if}
+      {#if activeTab === "postponed-fixtures"}
         <LeagueFixtures leagueId={league.id} />
       {/if}
       {#if activeTab === "loaned-players"}

@@ -43,32 +43,7 @@
       
     private var leagueApplications: [(FootballTypes.LeagueId, Base.CanisterId)] = [(1, Environment.OPENFPL_BACKEND_CANISTER_ID), (2, Environment.OPENWSL_BACKEND_CANISTER_ID)];
 
-    //TODO: Remove the dummy data when complete testing setup:
-    //https://dev.azure.com/WaterwayLabs/FootballGod/_backlogs/backlog/FootballGod%20Team/Stories?workitem=330 
-    private stable var leagues : [FootballTypes.League] = [
-      {
-        id = 1;
-        name = "Premier League";
-        abbreviation = "EPL";
-        teamCount = 20;
-        relatedGender = #Male;
-        governingBody = "FA";
-        countryId = 186;
-        formed = 698544000000000000;
-        logo = Blob.fromArray([]);
-      },
-      {
-        id = 2;
-        name = "Women's Super League";
-        abbreviation = "WSL";
-        teamCount = 12;
-        relatedGender = #Female;
-        governingBody = "FA";
-        countryId = 186;
-        formed = 1269388800000000000;
-        logo = Blob.fromArray([]);
-      }
-    ]; 
+    private stable var leagues : [FootballTypes.League] = []; 
 
     private stable var leagueStatuses: [FootballTypes.LeagueStatus] = [
       {
@@ -135,25 +110,14 @@
       return getPrivatePlayers(leagueId);
     };
 
-    public shared ( {caller} ) func getVerifiedFixtures(dto: RequestDTOs.RequestFixturesDTO) : async Result.Result<[ResponseDTOs.FixtureDTO], T.Error>{
+    public shared ( {caller} ) func getVerifiedFixtures(leagueId: FootballTypes.LeagueId, seasonId: FootballTypes.SeasonId) : async Result.Result<[ResponseDTOs.FixtureDTO], T.Error>{
       assert callerAllowed(caller);
-      return getPrivateFixtures(dto);
+      return getPrivateFixtures(leagueId, seasonId);
     };
 
-    public shared query ( {caller} ) func getFixtures(leagueId: FootballTypes.LeagueId) : async Result.Result<[ResponseDTOs.FixtureDTO], T.Error>{
+    public shared query ( {caller} ) func getFixtures(leagueId: FootballTypes.LeagueId, seasonId: FootballTypes.SeasonId) : async Result.Result<[ResponseDTOs.FixtureDTO], T.Error>{
       assert not Principal.isAnonymous(caller);
-      let seasonResult = Array.find<FootballTypes.LeagueStatus>(leagueStatuses, func(entry: FootballTypes.LeagueStatus) : Bool {
-        entry.leagueId == leagueId;
-      });
-      
-      switch(seasonResult){
-        case (?foundSeason){
-          return getPrivateFixtures({leagueId; seasonId = foundSeason.activeSeasonId});
-        };
-        case (null){
-          return #err(#NotFound);
-        }
-      };
+      return getPrivateFixtures(leagueId, seasonId);
     };
 
     public shared ( {caller} ) func getVerifiedClubs(leagueId: FootballTypes.LeagueId) : async Result.Result<[ResponseDTOs.ClubDTO], T.Error>{
@@ -204,10 +168,10 @@
       };
     };
 
-    private func getPrivateFixtures(dto: RequestDTOs.RequestFixturesDTO) : Result.Result<[ResponseDTOs.FixtureDTO], T.Error> {
+    private func getPrivateFixtures(leagueId: FootballTypes.LeagueId, seasonId: FootballTypes.SeasonId) : Result.Result<[ResponseDTOs.FixtureDTO], T.Error> {
       let filteredLeagueSeasons = Array.find<(FootballTypes.LeagueId, [FootballTypes.Season])>(leagueSeasons, 
         func(leagueSeason: (FootballTypes.LeagueId, [FootballTypes.Season])) : Bool{
-            leagueSeason.0 == dto.leagueId;
+            leagueSeason.0 == leagueId;
       });
 
       switch(filteredLeagueSeasons){
@@ -215,7 +179,7 @@
           
           let filteredSeason = Array.find<FootballTypes.Season>(foundLeagueSeasons.1, 
             func(leagueSeason: FootballTypes.Season) : Bool{
-              leagueSeason.id == dto.seasonId;
+              leagueSeason.id == seasonId;
           });
       
           switch(filteredSeason){
@@ -336,7 +300,7 @@
       };
     };
 
-    public shared query ( {caller} ) func getPostponedFixtures(leagueId: FootballTypes.LeagueId, dto: RequestDTOs.RequestFixturesDTO) : async Result.Result<[ResponseDTOs.FixtureDTO], T.Error>{
+    public shared query ( {caller} ) func getPostponedFixtures(leagueId: FootballTypes.LeagueId) : async Result.Result<[ResponseDTOs.FixtureDTO], T.Error>{
       assert not Principal.isAnonymous(caller);
 
       let filteredLeagueSeasons = Array.find<(FootballTypes.LeagueId, [FootballTypes.Season])>(leagueSeasons, 
@@ -347,28 +311,41 @@
       switch(filteredLeagueSeasons){
         case (?foundLeagueSeasons){          
           
-          let filteredSeason = Array.find<FootballTypes.Season>(foundLeagueSeasons.1, 
-            func(leagueSeason: FootballTypes.Season) : Bool{
-              leagueSeason.id == dto.seasonId;
-          });
 
-          switch(filteredSeason){
-            case (?foundSeason){
-              return #ok(List.toArray(List.map<FootballTypes.Fixture, ResponseDTOs.FixtureDTO>(foundSeason.postponedFixtures, func(fixture: FootballTypes.Fixture){
-                return {
-                  awayClubId = fixture.awayClubId;
-                  awayGoals  = fixture.awayGoals;
-                  events  = List.toArray(fixture.events);
-                  gameweek = fixture.gameweek;
-                  highestScoringPlayerId = fixture.highestScoringPlayerId;
-                  homeClubId = fixture.homeClubId;
-                  homeGoals = fixture.homeGoals;
-                  id = fixture.id;
-                  kickOff = fixture.kickOff;
-                  seasonId = fixture.seasonId;
-                  status = fixture.status
+          let status = Array.find<FootballTypes.LeagueStatus>(leagueStatuses, func(entry: FootballTypes.LeagueStatus) : Bool {
+            entry.leagueId == leagueId
+          });
+          switch(status){
+            case (?foundStatus){
+
+              let filteredSeason = Array.find<FootballTypes.Season>(foundLeagueSeasons.1, 
+                func(leagueSeason: FootballTypes.Season) : Bool{
+                  leagueSeason.id == foundStatus.activeSeasonId;
+              });
+
+              switch(filteredSeason){
+                case (?foundSeason){
+                  return #ok(List.toArray(List.map<FootballTypes.Fixture, ResponseDTOs.FixtureDTO>(foundSeason.postponedFixtures, func(fixture: FootballTypes.Fixture){
+                    return {
+                      awayClubId = fixture.awayClubId;
+                      awayGoals  = fixture.awayGoals;
+                      events  = List.toArray(fixture.events);
+                      gameweek = fixture.gameweek;
+                      highestScoringPlayerId = fixture.highestScoringPlayerId;
+                      homeClubId = fixture.homeClubId;
+                      homeGoals = fixture.homeGoals;
+                      id = fixture.id;
+                      kickOff = fixture.kickOff;
+                      seasonId = fixture.seasonId;
+                      status = fixture.status
+                    }
+                  })));
+                };
+                case (null){
+                  return #err(#NotFound);
                 }
-              })));
+              };
+
             };
             case (null){
               return #err(#NotFound);
@@ -1385,6 +1362,7 @@
 
                 let _ = await updateDataHash(dto.leagueId, "players");
                 let _ = await updateDataHash(dto.loanLeagueId, "players");
+                let _ = await notifyAppsOfLoan(dto.leagueId, dto.playerId);
                 let _ = await notifyAppsOfLoan(dto.loanLeagueId, dto.playerId);
               };
               case (null){ }
@@ -3385,6 +3363,7 @@
       for(timerId in Iter.fromArray(pickTeamRollOverTimerIds)){
         Timer.cancelTimer(timerId);
       };
+      pickTeamRollOverTimerIds := [];
 
       for(leagueSeasonsEntry in Iter.fromArray(leagueSeasons)){
         let leagueStatusResult = Array.find<FootballTypes.LeagueStatus>(leagueStatuses, func(statusEntry: FootballTypes.LeagueStatus) : Bool {
@@ -3403,7 +3382,6 @@
                   fixture.kickOff - Utilities.getHour() >= Time.now();
                 });
                 for(fixture in Iter.fromList(activeFutureFixtures)){
-
                   let triggerDuration = #nanoseconds(Int.abs((fixture.kickOff - Utilities.getHour() - Time.now())));
                   await setTimer(triggerDuration, "rollOverPickTeam");
                 };
@@ -3416,7 +3394,12 @@
       }; 
     };
 
-    private func createTransferWindowStartTimers() : async () {
+    private func createTransferWindowStartTimers() : async () { 
+      for(timerId in Iter.fromArray(transferWindowStartTimerIds)){
+        Timer.cancelTimer(timerId);
+      };
+      transferWindowStartTimerIds := [];
+
       for(leagueSeasonsEntry in Iter.fromArray(leagueSeasons)){
         let leagueStatusResult = Array.find<FootballTypes.LeagueStatus>(leagueStatuses, func(statusEntry: FootballTypes.LeagueStatus) : Bool {
           return statusEntry.leagueId == leagueSeasonsEntry.0;
@@ -3424,19 +3407,15 @@
 
         switch(leagueStatusResult){
           case (?leagueState){
-            let activeSeason = Array.find<FootballTypes.Season>(leagueSeasonsEntry.1, func(seasonEntry: FootballTypes.Season) : Bool {
-              seasonEntry.id == leagueState.activeSeasonId;
-            });
-
-            switch(activeSeason){
-              case (?season){
-                
-
-                //TODO: add a timer for the january first transfer window for all leagues
-                
+            let nextTransferWindowStartDate = Utilities.getNextUnixTimestampForDayMonth(leagueState.transferWindowStartDay, leagueState.transferWindowStartMonth);
+            switch(nextTransferWindowStartDate){
+              case (?foundDate){
+                  let triggerDuration = #nanoseconds(Int.abs((foundDate - Time.now())));
+                  await setTimer(triggerDuration, "transferWindowStart");
               };
-              case (null){}
-            };
+              case (null){};
+            }
+            
           };
           case (null){};
         };
@@ -3444,6 +3423,11 @@
     };
 
     private func createTransferWindowEndTimers() : async () {
+      for(timerId in Iter.fromArray(transferWindowEndTimerIds)){
+        Timer.cancelTimer(timerId);
+      };
+      transferWindowEndTimerIds := [];
+
       for(leagueSeasonsEntry in Iter.fromArray(leagueSeasons)){
         let leagueStatusResult = Array.find<FootballTypes.LeagueStatus>(leagueStatuses, func(statusEntry: FootballTypes.LeagueStatus) : Bool {
           return statusEntry.leagueId == leagueSeasonsEntry.0;
@@ -3451,20 +3435,15 @@
 
         switch(leagueStatusResult){
           case (?leagueState){
-            let activeSeason = Array.find<FootballTypes.Season>(leagueSeasonsEntry.1, func(seasonEntry: FootballTypes.Season) : Bool {
-              seasonEntry.id == leagueState.activeSeasonId;
-            });
-
-            switch(activeSeason){
-              case (?season){
-                
-
-                //TODO: add a timer for the january 31st timer end date for all leagues
-
-                
+            let nextTransferWindowEndDate = Utilities.getNextUnixTimestampForDayMonth(leagueState.transferWindowEndDay, leagueState.transferWindowEndMonth);
+            switch(nextTransferWindowEndDate){
+              case (?foundDate){
+                  let triggerDuration = #nanoseconds(Int.abs((foundDate - Time.now())));
+                  await setTimer(triggerDuration, "transferWindowEnd");
               };
-              case (null){}
-            };
+              case (null){};
+            }
+            
           };
           case (null){};
         };
@@ -3472,6 +3451,10 @@
     };
 
     private func createActivateFixtureTimers() : async () {
+      for(timerId in Iter.fromArray(activateFixtureTimerIds)){
+        Timer.cancelTimer(timerId);
+      };
+      activateFixtureTimerIds := [];
       for(leagueSeasonsEntry in Iter.fromArray(leagueSeasons)){
         let leagueStatusResult = Array.find<FootballTypes.LeagueStatus>(leagueStatuses, func(statusEntry: FootballTypes.LeagueStatus) : Bool {
           return statusEntry.leagueId == leagueSeasonsEntry.0;
@@ -3504,6 +3487,10 @@
     };
 
     private func createCompleteFixtureTimers() : async () {
+      for(timerId in Iter.fromArray(completeFixtureTimerIds)){
+        Timer.cancelTimer(timerId);
+      };
+      completeFixtureTimerIds := [];
       for(leagueSeasonsEntry in Iter.fromArray(leagueSeasons)){
         let leagueStatusResult = Array.find<FootballTypes.LeagueStatus>(leagueStatuses, func(statusEntry: FootballTypes.LeagueStatus) : Bool {
           return statusEntry.leagueId == leagueSeasonsEntry.0;
@@ -3538,6 +3525,10 @@
     //Player Timer Creation Functions
 
     private func createLoanExpiredTimers() : async () {
+      for(timerId in Iter.fromArray(loanExpiredTimerIds)){
+        Timer.cancelTimer(timerId);
+      };
+      loanExpiredTimerIds := [];
       for(leaguePlayersEntry in Iter.fromArray(leaguePlayers)){
         let playersOnLoan = Array.filter<FootballTypes.Player>(leaguePlayersEntry.1, func(entry: FootballTypes.Player){
           entry.currentLoanEndDate > 0 and entry.currentLoanEndDate > Time.now()
@@ -3550,6 +3541,10 @@
     };
 
     private func createInjuryExpiredTimers() : async () {
+      for(timerId in Iter.fromArray(injuryExpiredTimerIds)){
+        Timer.cancelTimer(timerId);
+      };
+      injuryExpiredTimerIds := [];
       for(leaguePlayersEntry in Iter.fromArray(leaguePlayers)){
         let injuredPlayers = Array.filter<FootballTypes.Player>(leaguePlayersEntry.1, func(entry: FootballTypes.Player){
           entry.latestInjuryEndDate > 0 and entry.latestInjuryEndDate > Time.now()
@@ -3791,7 +3786,6 @@
       };
     };
 
-    //TODO: The transfer window start and end are not getting the jan dates?
     private func transferWindowStart () : async (){
       for(league in Iter.fromArray(leagueStatuses)){
         let transferWindowStartDate: Int = 0;
