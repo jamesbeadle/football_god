@@ -14,7 +14,7 @@
   import Time "mo:base/Time";
   import Timer "mo:base/Timer";
   import TrieMap "mo:base/TrieMap";
-import Nat8 "mo:base/Nat8";
+  import Nat8 "mo:base/Nat8";
   
   import Base "../backend/types/base_types";
   import FootballTypes "../backend/types/football_types";
@@ -31,6 +31,15 @@ import Nat8 "mo:base/Nat8";
   import Environment "environment";
   
   actor Self {
+
+    private var pickTeamRollOverTimerIds: [Nat] = [];
+    private var endOfSeasonTimerIds: [Nat] = [];
+    private var activateFixtureTimerIds: [Nat] = [];
+    private var completeFixtureTimerIds: [Nat] = [];
+    private var transferWindowStartTimerIds: [Nat] = [];
+    private var transferWindowEndTimerIds: [Nat] = [];
+    private var loanExpiredTimerIds: [Nat] = [];
+    private var injuryExpiredTimerIds: [Nat] = [];
       
     private var leagueApplications: [(FootballTypes.LeagueId, Base.CanisterId)] = [(1, Environment.OPENFPL_BACKEND_CANISTER_ID), (2, Environment.OPENWSL_BACKEND_CANISTER_ID)];
 
@@ -296,11 +305,6 @@ import Nat8 "mo:base/Nat8";
           return #err(#NotFound);
         }
       };
-    };
-
-    public shared query ( {caller} ) func getTimers() : async Result.Result<[Base.TimerInfo], T.Error>{
-      assert not Principal.isAnonymous(caller);
-      return #ok(timers);
     };
 
     public shared query ( {caller} ) func getSeasons(leagueId: FootballTypes.LeagueId) : async Result.Result<[ResponseDTOs.SeasonDTO], T.Error>{
@@ -1381,7 +1385,7 @@ import Nat8 "mo:base/Nat8";
                 );
 
                 let loanTimerDuration = #nanoseconds(Int.abs((dto.loanEndDate - Time.now())));
-                let _ = setAndBackupTimer(loanTimerDuration, "loanExpired");
+                let _ = setTimer(loanTimerDuration, "loanExpired");
 
                 let _ = await updateDataHash(dto.leagueId, "players");
                 let _ = await updateDataHash(dto.loanLeagueId, "players");
@@ -1700,7 +1704,7 @@ import Nat8 "mo:base/Nat8";
       );
 
       let playerInjuryDuration = #nanoseconds(Int.abs((dto.expectedEndDate - Time.now())));
-      let _ = await setAndBackupTimer(playerInjuryDuration, "injuryExpired");
+      let _ = await setTimer(playerInjuryDuration, "injuryExpired");
       let _ = await updateDataHash(dto.leagueId, "players");
     };
 
@@ -1921,6 +1925,7 @@ import Nat8 "mo:base/Nat8";
           return leagueSeasonEntry;
         };
       });
+      await createFixtureTimers();
     }; 
 
     public shared ({ caller }) func moveFixture(dto : GovernanceDTOs.MoveFixtureDTO) : async () {
@@ -1967,7 +1972,7 @@ import Nat8 "mo:base/Nat8";
           } else { return leagueSeasonEntry}
         }
       );
-      await checkCurrentGameweekExpired();
+      await createFixtureTimers();
       let _ = await updateDataHash(dto.leagueId, "fixtures");
     };
 
@@ -2022,7 +2027,7 @@ import Nat8 "mo:base/Nat8";
           } else { return leagueSeasonEntry}
         }
       );
-      await checkCurrentGameweekExpired();
+      await createFixtureTimers();
       let _ = await updateDataHash(dto.leagueId, "fixtures");
     };
 
@@ -2076,7 +2081,7 @@ import Nat8 "mo:base/Nat8";
           } else { return leagueSeasonEntry}
         }
       );
-      await checkCurrentGameweekExpired();
+      await createFixtureTimers();
       let _ = await updateDataHash(dto.leagueId, "fixtures");
     };
 
@@ -3299,19 +3304,28 @@ import Nat8 "mo:base/Nat8";
     };
 
     private func postUpgradeCallback() : async (){
-      await createPickTeamRolloverTimers();
-      await createEndOfSeasonTimers();
+      await createFixtureTimers();
       await createTransferWindowStartTimers();
       await createTransferWindowEndTimers();
-      await createActivateFixtureTimers();
-      await createCompleteFixtureTimers();
       await createLoanTimers();
       await createInjuryExpiredTimers();
     };
 
     //Timer Callback Functions
 
+    private func createFixtureTimers() : async () {
+      await createPickTeamRolloverTimers();
+      await createEndOfSeasonTimers();
+      await createActivateFixtureTimers();
+      await createCompleteFixtureTimers();
+    };
+
     private func createPickTeamRolloverTimers() : async () {
+      
+      for(timerId in Iter.fromArray(pickTeamRollOverTimerIds)){
+        Timer.cancelTimer(timerId);
+      };
+
       for(leagueSeasonsEntry in Iter.fromArray(leagueSeasons)){
         let leagueStatusResult = Array.find<FootballTypes.LeagueStatus>(leagueStatuses, func(statusEntry: FootballTypes.LeagueStatus) : Bool {
           return statusEntry.leagueId == leagueSeasonsEntry.0;
@@ -3343,61 +3357,249 @@ import Nat8 "mo:base/Nat8";
     };
 
     private func createEndOfSeasonTimers() : async () {
+      for(leagueSeasonsEntry in Iter.fromArray(leagueSeasons)){
+        let leagueStatusResult = Array.find<FootballTypes.LeagueStatus>(leagueStatuses, func(statusEntry: FootballTypes.LeagueStatus) : Bool {
+          return statusEntry.leagueId == leagueSeasonsEntry.0;
+        });
+
+        switch(leagueStatusResult){
+          case (?leagueState){
+            let activeSeason = Array.find<FootballTypes.Season>(leagueSeasonsEntry.1, func(seasonEntry: FootballTypes.Season) : Bool {
+              seasonEntry.id == leagueState.activeSeasonId;
+            });
+
+            switch(activeSeason){
+              case (?season){
+                
+
+                
+              };
+              case (null){}
+            };
+          };
+          case (null){};
+        };
+      }; 
       //add a timer for the end of each leagues current season
     };
 
     private func createTransferWindowStartTimers() : async () {
+      for(leagueSeasonsEntry in Iter.fromArray(leagueSeasons)){
+        let leagueStatusResult = Array.find<FootballTypes.LeagueStatus>(leagueStatuses, func(statusEntry: FootballTypes.LeagueStatus) : Bool {
+          return statusEntry.leagueId == leagueSeasonsEntry.0;
+        });
+
+        switch(leagueStatusResult){
+          case (?leagueState){
+            let activeSeason = Array.find<FootballTypes.Season>(leagueSeasonsEntry.1, func(seasonEntry: FootballTypes.Season) : Bool {
+              seasonEntry.id == leagueState.activeSeasonId;
+            });
+
+            switch(activeSeason){
+              case (?season){
+                
+
+                
+              };
+              case (null){}
+            };
+          };
+          case (null){};
+        };
+      }; 
       //add a timer for the january first transfer window for all leagues
     };
 
     private func createTransferWindowEndTimers() : async () {
+      for(leagueSeasonsEntry in Iter.fromArray(leagueSeasons)){
+        let leagueStatusResult = Array.find<FootballTypes.LeagueStatus>(leagueStatuses, func(statusEntry: FootballTypes.LeagueStatus) : Bool {
+          return statusEntry.leagueId == leagueSeasonsEntry.0;
+        });
+
+        switch(leagueStatusResult){
+          case (?leagueState){
+            let activeSeason = Array.find<FootballTypes.Season>(leagueSeasonsEntry.1, func(seasonEntry: FootballTypes.Season) : Bool {
+              seasonEntry.id == leagueState.activeSeasonId;
+            });
+
+            switch(activeSeason){
+              case (?season){
+                
+
+                
+              };
+              case (null){}
+            };
+          };
+          case (null){};
+        };
+      }; 
       //add a timer for the january 31st timer end date for all leagues
     };
 
     private func createActivateFixtureTimers() : async () {
+      for(leagueSeasonsEntry in Iter.fromArray(leagueSeasons)){
+        let leagueStatusResult = Array.find<FootballTypes.LeagueStatus>(leagueStatuses, func(statusEntry: FootballTypes.LeagueStatus) : Bool {
+          return statusEntry.leagueId == leagueSeasonsEntry.0;
+        });
+
+        switch(leagueStatusResult){
+          case (?leagueState){
+            let activeSeason = Array.find<FootballTypes.Season>(leagueSeasonsEntry.1, func(seasonEntry: FootballTypes.Season) : Bool {
+              seasonEntry.id == leagueState.activeSeasonId;
+            });
+
+            switch(activeSeason){
+              case (?season){
+                
+
+                
+              };
+              case (null){}
+            };
+          };
+          case (null){};
+        };
+      }; 
       //create timers to set fixtures to active based on their state
     };
 
     private func createCompleteFixtureTimers() : async () {
+      for(leagueSeasonsEntry in Iter.fromArray(leagueSeasons)){
+        let leagueStatusResult = Array.find<FootballTypes.LeagueStatus>(leagueStatuses, func(statusEntry: FootballTypes.LeagueStatus) : Bool {
+          return statusEntry.leagueId == leagueSeasonsEntry.0;
+        });
+
+        switch(leagueStatusResult){
+          case (?leagueState){
+            let activeSeason = Array.find<FootballTypes.Season>(leagueSeasonsEntry.1, func(seasonEntry: FootballTypes.Season) : Bool {
+              seasonEntry.id == leagueState.activeSeasonId;
+            });
+
+            switch(activeSeason){
+              case (?season){
+                
+
+                
+              };
+              case (null){}
+            };
+          };
+          case (null){};
+        };
+      }; 
       //create completed fixture timers
     };
 
     private func createLoanTimers() : async () {
+      for(leagueSeasonsEntry in Iter.fromArray(leagueSeasons)){
+        let leagueStatusResult = Array.find<FootballTypes.LeagueStatus>(leagueStatuses, func(statusEntry: FootballTypes.LeagueStatus) : Bool {
+          return statusEntry.leagueId == leagueSeasonsEntry.0;
+        });
+
+        switch(leagueStatusResult){
+          case (?leagueState){
+            let activeSeason = Array.find<FootballTypes.Season>(leagueSeasonsEntry.1, func(seasonEntry: FootballTypes.Season) : Bool {
+              seasonEntry.id == leagueState.activeSeasonId;
+            });
+
+            switch(activeSeason){
+              case (?season){
+                
+
+                
+              };
+              case (null){}
+            };
+          };
+          case (null){};
+        };
+      }; 
       //for each player check loan end date in future and create timer
     };
 
     private func createInjuryExpiredTimers() : async () {
-      //for each player check injury end date in future and create timer
+      for(leagueSeasonsEntry in Iter.fromArray(leagueSeasons)){
+        let leagueStatusResult = Array.find<FootballTypes.LeagueStatus>(leagueStatuses, func(statusEntry: FootballTypes.LeagueStatus) : Bool {
+          return statusEntry.leagueId == leagueSeasonsEntry.0;
+        });
+
+        switch(leagueStatusResult){
+          case (?leagueState){
+            let activeSeason = Array.find<FootballTypes.Season>(leagueSeasonsEntry.1, func(seasonEntry: FootballTypes.Season) : Bool {
+              seasonEntry.id == leagueState.activeSeasonId;
+            });
+
+            switch(activeSeason){
+              case (?season){
+                
+              //for each player check injury end date in future and create timer
+
+                
+              };
+              case (null){}
+            };
+          };
+          case (null){};
+        };
+      };
     };
 
     private func setTimer(duration : Timer.Duration, callbackName : Text) : async () {
       switch (callbackName) {
         case "rollOverPickTeam" {
-          ignore Timer.setTimer<system>(duration, checkRollOverPickTeam);
+          let timerBuffer = Buffer.fromArray<Nat>(pickTeamRollOverTimerIds);
+          let result = Timer.setTimer<system>(duration, checkRollOverPickTeam);
+          timerBuffer.add(result);
+          pickTeamRollOverTimerIds := Buffer.toArray(timerBuffer);
         };
         case "endOfSeason" {
-          ignore Timer.setTimer<system>(duration, endOfSeasonExpired);
+          let timerBuffer = Buffer.fromArray<Nat>(endOfSeasonTimerIds);
+          let result = Timer.setTimer<system>(duration, endOfSeasonExpired);
+          timerBuffer.add(result);
+          endOfSeasonTimerIds := Buffer.toArray(timerBuffer);
         };
         case "transferWindowStart" {
-          ignore Timer.setTimer<system>(duration, transferWindowStart);
+          let timerBuffer = Buffer.fromArray<Nat>(transferWindowStartTimerIds);
+          let result = Timer.setTimer<system>(duration, transferWindowStart);
+          timerBuffer.add(result);
+          transferWindowStartTimerIds := Buffer.toArray(timerBuffer);
         };
         case "transferWindowEnd" {
-          ignore Timer.setTimer<system>(duration, transferWindowEnd);
+          let timerBuffer = Buffer.fromArray<Nat>(transferWindowEndTimerIds);
+          let result = Timer.setTimer<system>(duration, transferWindowEnd);
+          timerBuffer.add(result);
+          transferWindowEndTimerIds := Buffer.toArray(timerBuffer);
         };
         case "setFixtureToActive" {
-          ignore Timer.setTimer<system>(duration, setFixtureToActive);
+          let timerBuffer = Buffer.fromArray<Nat>(activateFixtureTimerIds);
+          let result = Timer.setTimer<system>(duration, setFixtureToActive);
+          timerBuffer.add(result);
+          activateFixtureTimerIds := Buffer.toArray(timerBuffer);
         };
         case "setFixtureToComplete" {
-          ignore Timer.setTimer<system>(duration, setFixtureToComplete);
+          let timerBuffer = Buffer.fromArray<Nat>(completeFixtureTimerIds);
+          let result = Timer.setTimer<system>(duration, setFixtureToComplete);
+          timerBuffer.add(result);
+          completeFixtureTimerIds := Buffer.toArray(timerBuffer);
         };
         case "loanExpired" {
-          ignore Timer.setTimer<system>(duration, loanExpiredCallback);
+          let timerBuffer = Buffer.fromArray<Nat>(loanExpiredTimerIds);
+          let result = Timer.setTimer<system>(duration, loanExpiredCallback);
+          timerBuffer.add(result);
+          loanExpiredTimerIds := Buffer.toArray(timerBuffer);
         };
         case "injuryExpired" {
-          ignore Timer.setTimer<system>(duration, injuryExpiredCallback);
+          let timerBuffer = Buffer.fromArray<Nat>(injuryExpiredTimerIds);
+          let result = Timer.setTimer<system>(duration, injuryExpiredCallback);
+          timerBuffer.add(result);
+          injuryExpiredTimerIds := Buffer.toArray(timerBuffer);
         };
         case _ {
-          ignore Timer.setTimer<system>(duration, defaultCallback);
+          let timerBuffer = Buffer.fromArray<Nat>(pickTeamRollOverTimerIds);
+          let result = Timer.setTimer<system>(duration, defaultCallback);
+          timerBuffer.add(result);
+          pickTeamRollOverTimerIds := Buffer.toArray(timerBuffer);
         }
       };
     };
@@ -3472,9 +3674,7 @@ import Nat8 "mo:base/Nat8";
                   completedGameweek := activeGameweek - 1; 
 
                   let _ = await notifyAppsOfGameweekStarting(leagueStatus.leagueId, season.id, activeGameweek);
-                } else {
-                  await setFixtureTimers(nextFixtureGameweekFixtures);
-                };
+                } else {};
                 
                 setLeagueGameweek(leagueStatus.leagueId, unplayedGameweek, activeGameweek, completedGameweek, nextFixtureGameweekFixtures[0].kickOff);
               };
@@ -3484,7 +3684,6 @@ import Nat8 "mo:base/Nat8";
           case (null){}
         };
       };
-      await setCheckCurrentGameweekTimer();
     };
 
     private func endOfSeasonExpired() : async (){
@@ -3880,92 +4079,6 @@ import Nat8 "mo:base/Nat8";
         }));
         return leaguePlayersEntry;
       });
-    };
-
-    //Timer Set Functions
-
-    private func setCheckCurrentGameweekTimer() : async (){
-      for(league in Iter.fromArray(leagueSeasons)){
-        let leagueStatusResult = Array.find<FootballTypes.LeagueStatus>(leagueStatuses, func(statusEntry: FootballTypes.LeagueStatus) : Bool {
-          statusEntry.leagueId == league.0;
-        });
-        switch(leagueStatusResult){
-          case (?leagueStatus){
-
-            let seasonEntry = Array.find<FootballTypes.Season>(league.1, func(seasonEntry: FootballTypes.Season) : Bool {
-              seasonEntry.id == leagueStatus.activeSeasonId;
-            });
-
-            switch(seasonEntry){
-              case (?season){
-                let sortedFixtures = Array.sort<FootballTypes.Fixture>(List.toArray<FootballTypes.Fixture>(season.fixtures), func (a: FootballTypes.Fixture, b: FootballTypes.Fixture) {
-                  if (a.kickOff < b.kickOff) {
-                      return #less;
-                  } else if (a.kickOff > b.kickOff) {
-                      return #greater;
-                  } else {
-                      return #equal;
-                  }
-                });
-
-                if(Array.size(sortedFixtures) == 0){
-                  return;
-                };
-
-                if(leagueStatus.activeGameweek == 0){
-                  
-                  var firstNextGameweekFixture: ?FootballTypes.Fixture = null;
-
-                  label fixtureLoop for(fixture in Iter.fromArray(sortedFixtures)){
-                    if(fixture.gameweek == (leagueStatus.unplayedGameweek)){
-                      firstNextGameweekFixture := ?fixture;
-                      break fixtureLoop;
-                    };
-                  };
-                  switch(firstNextGameweekFixture){
-                    case (?nextFixture){
-                      let hourBeforeKickOff = nextFixture.kickOff - Utilities.getHour();
-                      let triggerDuration = #nanoseconds(Int.abs((hourBeforeKickOff - Time.now())));
-                       await setAndBackupTimer(triggerDuration, "checkCurrentGameweek"); 
-                    };
-                    case (null){}
-                  };
-                              
-                } else {
-                  
-                  let currentGameweekFixtures = Array.filter<FootballTypes.Fixture>(sortedFixtures, func(fixtureEntry: FootballTypes.Fixture){
-                    fixtureEntry.gameweek == leagueStatus.activeGameweek;
-                  });
-
-                  if(Array.size(currentGameweekFixtures) == 0){
-                    await setAndBackupTimer(#nanoseconds(0), "checkCurrentGameweek");
-                    return;
-                  };
-
-                  let lastGame = currentGameweekFixtures[Array.size(currentGameweekFixtures) - 1];
-                  let triggerDuration = #nanoseconds(Int.abs((lastGame.kickOff + (Utilities.getHour() * 2) - Time.now())));
-                  await setAndBackupTimer(triggerDuration, "checkCurrentGameweek"); 
-                };
-              };
-              case (null){}
-            };
-          };
-          case (null){}
-        };
-      };
-    };
-
-    private func setFixtureTimers(fixtures: [FootballTypes.Fixture]) : async (){
-      for(fixture in Iter.fromArray(fixtures)){
-        let hourBeforeKickOff = fixture.kickOff - Utilities.getHour();
-        let activeTriggerTime = #nanoseconds(Int.abs((hourBeforeKickOff - Time.now())));
-
-        let twoHoursAfterKickOff = fixture.kickOff + (Utilities.getHour() * 2);
-        let completeTriggerTime = #nanoseconds(Int.abs((twoHoursAfterKickOff - Time.now())));
-
-        await setAndBackupTimer(activeTriggerTime, "setFixtureToActive"); 
-        await setAndBackupTimer(completeTriggerTime, "setFixtureToComplete"); 
-      };
     };
 
     //Actions
