@@ -10,12 +10,9 @@ import Buffer "mo:base/Buffer";
 import Float "mo:base/Float";
 import Iter "mo:base/Iter";
 import Time "mo:base/Time";
-import Debug "mo:base/Debug";
-import Nat16 "mo:base/Nat16";
 
 import T "types/app_types";
 import Base "types/base_types";
-import Countries "types/Countries";
 import FootballTypes "types/football_types";
 import Environment "environment";
 

@@ -24,7 +24,7 @@ import Nat8 "mo:base/Nat8";
   import ResponseDTOs "../backend/dtos/response_DTOs";
   import GovernanceDTOs "../backend/dtos/governance_DTOs";
   
-  import Countries "../backend/utilities/Countries";
+  import Countries "../backend/types/Countries";
   import Utilities "../backend/utilities/utilities";
   import SHA224 "../backend/utilities/SHA224";
   
