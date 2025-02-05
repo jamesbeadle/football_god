@@ -28,7 +28,7 @@ export class FixtureService {
         authStore,
         process.env.DATA_CANISTER_CANISTER_ID ?? "",
       );
-    const result = await identityActor.getPostponedFixtures();
+    const result = await identityActor.getPostponedFixtures(leagueId);
     if (isError(result)) throw new Error("Failed to fetch postponed fixtures");
     return result.ok;
   }
