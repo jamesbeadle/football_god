@@ -33,13 +33,13 @@ export class FixtureService {
     return result.ok;
   }
 
-  async getFixtures(leagueId: number): Promise<FixtureDTO[]> {
+  async getFixtures(leagueId: number, seasonId: number): Promise<FixtureDTO[]> {
     const identityActor: any =
       await ActorFactory.createDataCanisterIdentityActor(
         authStore,
         process.env.DATA_CANISTER_CANISTER_ID ?? "",
       );
-    const result = await identityActor.getFixtures(leagueId);
+    const result = await identityActor.getFixtures(leagueId, seasonId);
     if (isError(result)) throw new Error("Failed to fetch fixtures");
     return result.ok;
   }

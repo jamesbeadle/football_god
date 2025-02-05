@@ -9,6 +9,7 @@ import type {
   PostponeFixtureDTO,
   SubmitFixtureDataDTO,
 } from "../../../../declarations/data_canister/data_canister.did";
+import { leagueStore } from "./league-store";
 
 function createFixtureStore() {
   const { subscribe, update } = writable<Record<number, FixtureDTO[]>>({});
@@ -28,8 +29,10 @@ function createFixtureStore() {
 
       let fixtures: FixtureDTO[];
 
+      let leagueStatus = await leagueStore.getLeagueStatus(leagueId);
+
       if (!localHash || fixtureHash !== localHash) {
-        fixtures = await getFixtures(leagueId);
+        fixtures = await getFixtures(leagueId, leagueStatus.activeSeasonId);
         localStorage.setItem(localFixturesKey, serializeData(fixtures));
         localStorage.setItem(localHashKey, fixtureHash || "");
       } else {
@@ -37,7 +40,7 @@ function createFixtureStore() {
         if (cached) {
           fixtures = deserializeData(cached) as FixtureDTO[];
         } else {
-          fixtures = await getFixtures(leagueId);
+          fixtures = await getFixtures(leagueId, leagueStatus.activeSeasonId);
           localStorage.setItem(localFixturesKey, serializeData(fixtures));
         }
       }
@@ -74,8 +77,11 @@ function createFixtureStore() {
     }
   }
 
-  async function getFixtures(leagueId: number): Promise<FixtureDTO[]> {
-    return new FixtureService().getFixtures(leagueId);
+  async function getFixtures(
+    leagueId: number,
+    seasonId: number,
+  ): Promise<FixtureDTO[]> {
+    return new FixtureService().getFixtures(leagueId, seasonId);
   }
 
   async function getPostponedFixtures(leagueId: number): Promise<FixtureDTO[]> {

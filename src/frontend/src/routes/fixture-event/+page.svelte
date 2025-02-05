@@ -156,7 +156,8 @@
         for (const bet of existingBets) {
           if (bet.leagueId !== leagueId) {
             
-            const betFixtures = await fixtureStore.getFixtures(bet.leagueId);
+            let leagueStatus = await leagueStore.getLeagueStatus(leagueId);
+            const betFixtures = await fixtureStore.getFixtures(bet.leagueId, leagueStatus.activeSeasonId);
             const betClubs = await clubStore.getClubs(bet.leagueId);
             
             allClubsData[bet.leagueId] = {};
@@ -172,7 +173,8 @@
         }
       }
 
-      const fixtures = await fixtureStore.getFixtures(leagueId);
+      let leagueStatus = await leagueStore.getLeagueStatus(leagueId);
+      const fixtures = await fixtureStore.getFixtures(leagueId, leagueStatus.activeSeasonId);
       const clubsData = await clubStore.getClubs(leagueId);
       
       allClubsData[leagueId] = {};

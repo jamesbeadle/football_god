@@ -27,7 +27,9 @@
   }
 
   async function loadGameweekFixtures() {
-    let leagueFixtures = await fixtureStore.getFixtures(selectedLeagueId);
+    let leagueStatus = await leagueStore.getLeagueStatus(selectedLeagueId);
+  
+    let leagueFixtures = await fixtureStore.getFixtures(selectedLeagueId, leagueStatus.activeSeasonId);
     gameweekFixtures = leagueFixtures.filter(
       (x) => x.gameweek == selectedGameweek
     );

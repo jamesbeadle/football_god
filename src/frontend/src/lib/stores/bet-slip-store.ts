@@ -23,7 +23,11 @@ const STORAGE_KEY = "global-bet-slip-state";
 
 async function loadFixtureData(leagueId: number, fixtureId: number) {
   try {
-    const fixtures = await fixtureStore.getFixtures(leagueId);
+    const leagueStatus = await leagueStore.getLeagueStatus(leagueId);
+    const fixtures = await fixtureStore.getFixtures(
+      leagueId,
+      leagueStatus.activeSeasonId,
+    );
     const fixture = fixtures.find((f) => f.id === fixtureId);
     if (!fixture) return null;
 

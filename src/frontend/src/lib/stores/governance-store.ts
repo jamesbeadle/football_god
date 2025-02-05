@@ -296,7 +296,10 @@ function createGovernanceStore() {
       });
     }
 
-    const leagueFixtures = await fixtureStore.getFixtures(dto.leagueId);
+    const leagueFixtures = await fixtureStore.getFixtures(
+      dto.leagueId,
+      dto.seasonId,
+    );
     let fixture = leagueFixtures.find((x) => x.id == dto.fixtureId);
     if (!fixture) throw new Error("Fixture not found.");
 
@@ -420,7 +423,10 @@ function createGovernanceStore() {
     authStore.subscribe((auth) => (userIdentity = auth.identity));
     if (!userIdentity) return;
 
-    const leagueFixtures = await fixtureStore.getFixtures(dto.leagueId);
+    const leagueFixtures = await fixtureStore.getFixtures(
+      dto.leagueId,
+      dto.seasonId,
+    );
     let fixture = leagueFixtures.find((x) => x.id == dto.fixtureId);
     if (!fixture) throw new Error("Fixture not found.");
 

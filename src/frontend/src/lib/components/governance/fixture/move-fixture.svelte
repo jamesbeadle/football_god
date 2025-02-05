@@ -40,8 +40,10 @@
   }
 
   async function loadGameweekFixtures() {
+
+    let leagueStatus = await leagueStore.getLeagueStatus(selectedLeagueId);
    
-    var fixtures = await fixtureStore.getFixtures(selectedLeagueId);
+    var fixtures = await fixtureStore.getFixtures(selectedLeagueId, leagueStatus.activeSeasonId);
 
     if(!fixtures){
       return;
