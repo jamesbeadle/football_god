@@ -7,12 +7,13 @@
   import LocalSpinner from "$lib/components/shared/local-spinner.svelte";
     import Modal from "$lib/components/shared/modal.svelte";
     import type { CountryDTO, FootballLeagueDTO, Gender, UpdateLeagueDTO } from "../../../../../../declarations/data_canister/data_canister.did";
+    import { governanceStore } from "$lib/stores/governance-store";
   
   export let visible: boolean;
   export let closeModal: () => void;
+  export let selectedLeagueId: number;
   
   let leagues: FootballLeagueDTO[] = [];
-  let selectedLeagueId: number = 0;
 
   let leagueName = "";
   let abbreviatedName = "";
@@ -122,7 +123,7 @@
         teamCount: teamCount
       };
 
-      await new LeagueService().updateLeague(dto);
+      await governanceStore.updateLeague(dto);
     isLoading = false;
     resetForm();
     closeModal();

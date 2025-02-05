@@ -1,13 +1,15 @@
 <script lang="ts">
   import { onMount } from "svelte";
+  
+  import { leagueStore } from "$lib/stores/league-store";
   import { clubStore } from "$lib/stores/club-store";
   import { fixtureStore } from "$lib/stores/fixture-store";
-  //import { governanceStore } from "$lib/stores/governance-store";
+  import { governanceStore } from "$lib/stores/governance-store";
+  import { isError } from "$lib/utils/helpers";
+  import type { ClubDTO, FixtureDTO, PostponeFixtureDTO } from "../../../../../../declarations/data_canister/data_canister.did";
   import LocalSpinner from "$lib/components/shared/local-spinner.svelte";
-    import Modal from "$lib/components/shared/modal.svelte";
-    import type { ClubDTO, FixtureDTO, PostponeFixtureDTO } from "../../../../../../declarations/data_canister/data_canister.did";
-    import { leagueStore } from "$lib/stores/league-store";
-
+  import Modal from "$lib/components/shared/modal.svelte";
+    
   export let visible: boolean;
   export let closeModal: () => void;
   export let selectedFixtureId: number;
@@ -87,16 +89,12 @@
       seasonId: leagueStatus.activeSeasonId,
       fixtureId : selectedFixtureId
     };
-    await fixtureStore.postponeFixture(dto);
-    
-    /*
-    let result = await governanceStore.postponeFixture(selectedFixtureId);
+    let result = await governanceStore.postponeFixture(dto);
     if (isError(result)) {
       isLoading = false;
       console.error("Error submitting proposal");
       return;
     }
-      */
     isLoading = false;
     resetForm();
     cancelModal();
