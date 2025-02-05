@@ -2,11 +2,11 @@
   import { onMount } from "svelte";
   import { leagueStore } from "$lib/stores/league-store";
   import { clubStore } from "$lib/stores/club-store";
+  import { governanceStore } from "$lib/stores/governance-store";
   import { convertDateInputToUnixNano, isError } from "$lib/utils/helpers";
   import Modal from "$lib/components/shared/modal.svelte";
   import LocalSpinner from "$lib/components/shared/local-spinner.svelte";
   import type { ClubDTO, FootballLeagueDTO, LoanPlayerDTO, PlayerDTO } from "../../../../../../declarations/data_canister/data_canister.did";
-  import { governanceStore } from "$lib/stores/governance-store";
   
   export let visible: boolean;
   export let closeModal: () => void;

@@ -46,6 +46,7 @@ import type {
   PlayerPosition,
 } from "../../../../declarations/data_canister/data_canister.did";
 import {
+  buildCreateClubText,
   buildCreateLeagueText,
   buildCreatePlayerText,
   buildLoanPlayerText,
@@ -59,6 +60,7 @@ import {
   buildUpdateLeagueText,
 } from "$lib/utils/proposal.utils";
 import {
+  CreateClubDTO_Idl,
   CreateLeagueDTO_Idl,
   CreatePlayerDTO_Idl,
   LoanPlayerDTO_Idl,
@@ -446,7 +448,37 @@ function createGovernanceStore() {
 
   async function recallPlayer(dto: RecallPlayerDTO): Promise<any> {}
 
-  async function createClub(dto: CreateClubDTO): Promise<any> {}
+  async function createClub(dto: CreateClubDTO): Promise<any> {
+    let userIdentity: OptionIdentity;
+    authStore.subscribe((auth) => (userIdentity = auth.identity));
+    if (!userIdentity) return;
+
+    let leagues = await leagueStore.getLeagues();
+
+    let league = leagues.find((x) => x.id == dto.leagueId);
+    if (!league) throw new Error("Player league not found.");
+
+    const { title, summary } = buildCreateClubText(
+      dto.name,
+      league.name,
+      dto.friendlyName,
+      dto.primaryColourHex,
+      dto.secondaryColourHex,
+      dto.thirdColourHex,
+      dto.abbreviatedName,
+      Object.keys(dto.shirtType)[0],
+    );
+
+    const encoded = IDL.encode([CreateClubDTO_Idl], [dto]);
+
+    return await createProposal({
+      identity: userIdentity,
+      functionId: 59000n,
+      payload: new Uint8Array(encoded),
+      title,
+      summary,
+    });
+  }
 
   async function updateClub(dto: UpdateClubDTO): Promise<any> {}
 

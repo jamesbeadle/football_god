@@ -28,7 +28,6 @@
         await loadData();
         leagueStatus = await leagueStore.getLeagueStatus(id);
       } catch (error) {
-        console.error("Error fetching league details:", error);
       } finally {
         isLoading = false;
       }

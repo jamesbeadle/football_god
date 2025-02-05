@@ -3,12 +3,11 @@
   import { goto } from "$app/navigation";
   import { clubStore } from "$lib/stores/club-store";
   import { leagueStore } from "$lib/stores/league-store";
-  import { userStore } from "$lib/stores/user-store";
-  import type { ClubDTO, FootballLeagueDTO } from "../../../../../declarations/backend/backend.did";
   import BadgeIcon from "$lib/icons/BadgeIcon.svelte";
   import CreateClub from "../governance/club/create-club.svelte";
   import LocalSpinner from "../shared/local-spinner.svelte";
   import PipsIcon from "$lib/icons/pips-icon.svelte";
+    import type { ClubDTO, FootballLeagueDTO } from "../../../../../declarations/data_canister/data_canister.did";
 
   export let leagueId: number;
 

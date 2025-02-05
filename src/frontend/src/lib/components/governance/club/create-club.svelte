@@ -1,12 +1,11 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import { countryStore } from "$lib/stores/country-store";
-  import { clubStore } from "$lib/stores/club-store";
+  import { governanceStore } from "$lib/stores/governance-store";
   import LocalSpinner from "$lib/components/shared/local-spinner.svelte";
   import Modal from "$lib/components/shared/modal.svelte";
-    import type { CountryDTO, CreateClubDTO, ShirtType } from "../../../../../../declarations/data_canister/data_canister.did";
-    import { governanceStore } from "$lib/stores/governance-store";
-    import { isError } from "$lib/utils/helpers";
+  import type { CountryDTO, CreateClubDTO, ShirtType } from "../../../../../../declarations/data_canister/data_canister.did";
+  import { isError } from "$lib/utils/helpers";
   
   export let visible: boolean;
   export let closeModal: () => void;
@@ -71,30 +70,6 @@
       console.error("Error submitting proposal");
       return;
     }
-    /*
-    let result = await governanceStore.loanPlayer(dto);
-    if (isError(result)) {
-      isLoading = false;
-      console.error("Error submitting proposal");
-      return;
-    }
-
-    let result = await governanceStore.updateClub(
-      selectedClubId,
-      name,
-      friendlyName,
-      primaryColourHex,
-      secondaryColourHex,
-      thirdColourHex,
-      abbreviatedName,
-      shirtType
-    );
-    if (isError(result)) {
-      isLoading = false;
-      console.error("Error submitting proposal");
-      return;
-    }
-      */
     isLoading = false;
     resetForm();
     closeModal();
@@ -133,106 +108,91 @@
 </script>
 
 <Modal showModal={visible} onClose={closeModal}>
-  <div class="mx-4 p-4">
-    <div class="flex justify-between items-center my-2">
+  <div class="mx-2 p-2">
+    <div class="flex justify-between items-center mb-2">
       <h3 class="default-header">Create Club</h3>
       <button class="times-button" on:click={cancelModal}>&times;</button>
     </div>
 
     <div class="flex justify-start items-center w-full">
-      <div class="w-full flex-col space-y-4 mb-2">
-        
-        <input
-          type="text"
-          class="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
-          placeholder="Club Full Name"
-          bind:value={name}
-        />
+      {#if isLoading}
+        <LocalSpinner />
+      {:else}
+        <div class="w-full flex-col space-y-4 mb-2 flex space-y-2">
 
-        <input
-          type="text"
-          class="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
-          placeholder="Club Friendly Name"
-          bind:value={friendlyName}
-        />
 
-        <input
-          type="text"
-          class="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
-          placeholder="Abbreviated Name"
-          bind:value={abbreviatedName}
-        />
-
-        <input
-          type="color"
-          bind:value={primaryColourHex}
-          on:input={handlePrimaryColorChange}
-          class="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
-        />
-
-        <input
-          type="color"
-          bind:value={secondaryColourHex}
-          on:input={handleSecondaryColorChange}
-          class="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
-        />
-
-        <input
-          type="color"
-          bind:value={thirdColourHex}
-          on:input={handleThirdColorChange}
-          class="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
-        />
-
-        <select
-          class="p-2 brand-dropdown my-4 min-w-[100px]"
-          bind:value={shirtType}
-        >
-          {#each shirtTypes as shirt}
-            <option value={shirt}>{Object.keys(shirt)[0]}</option>
-          {/each}
-        </select>
-
-        <div class="items-center flex space-x-4">
-          <button
-            class="px-4 py-2 brand-cancel-button min-w-[150px]"
-            type="button"
-            on:click={cancelModal}
-          >
-            Cancel
-          </button>
-          <button
-            class={`${isSubmitDisabled ? "brand-button-disabled" : "brand-button"} 
-                        px-4 py-2 min-w-[150px]`}
-            on:click={raiseProposal}
-            disabled={isSubmitDisabled}
-          >
-            Raise Proposal
-          </button>
-        </div>
-
-        {#if showConfirm}
-          <div class="items-center flex">
-            <p class="text-orange-400">
-              Failed proposals will cost the proposer 10 $FPL tokens.
-            </p>
+          <div class="flex flex-row w-full items-center">
+            <p class="w-full">Club Full Name:</p>
+            <input class="w-full brand-input" type="text" bind:value={name} placeholder="Club Full Name" />
           </div>
-          <div class="items-center flex">
+
+          <div class="flex flex-row w-full items-center">
+            <p class="w-full">Club Friendly Name:</p>
+            <input class="w-full brand-input" type="text" bind:value={friendlyName} placeholder="Club Friendly Name" />
+          </div>
+
+          <div class="flex flex-row w-full items-center">
+            <p class="w-full">Club Abbreviated Name:</p>
+            <input class="w-full brand-input" type="text" bind:value={abbreviatedName} placeholder="Abbreviated Name" />
+          </div>
+
+          <div class="flex flex-row w-full items-center">
+            <p class="w-full">Primary Club Colour:</p>
+            <input class="w-full brand-input" type="color" on:input={handlePrimaryColorChange} bind:value={primaryColourHex} placeholder="Abbreviated Name" />
+          </div>
+
+          <div class="flex flex-row w-full items-center">
+            <p class="w-full">Secondary Club Colour:</p>
+            <input class="w-full brand-input" type="color" on:input={handleSecondaryColorChange} bind:value={secondaryColourHex} placeholder="Abbreviated Name" />
+          </div>
+
+          <div class="flex flex-row w-full items-center">
+            <p class="w-full">Third Club Colour:</p>
+            <input class="w-full brand-input" type="color" on:input={handleThirdColorChange} bind:value={thirdColourHex} placeholder="Abbreviated Name" />
+          </div>
+
+          <select class="brand-dropdown w-full" bind:value={shirtType}>
+            {#each shirtTypes as shirt}
+              <option value={shirt}>{Object.keys(shirt)[0]}</option>
+            {/each}
+          </select>
+
+          <div class="items-center flex flex-row space-x-4 w-full">
             <button
-              class={`${isSubmitDisabled ? "brand-button-disabled" : "brand-button"} 
-                            px-4 py-2 w-full`}
-              on:click={confirmProposal}
+              class="brand-cancel-button w-1/2"
+              type="button"
+              on:click={cancelModal}
+            >
+              Cancel
+            </button>
+            <button
+              class={`${isSubmitDisabled ? "brand-button-disabled" : "brand-button"} w-1/2`}
+              on:click={raiseProposal}
               disabled={isSubmitDisabled}
             >
-              Confirm Submit Proposal
+              Raise Proposal
             </button>
           </div>
-        {/if}
-      </div>
-    </div>
 
-    {#if isLoading}
-      <LocalSpinner />
-    {/if}
+          {#if showConfirm}
+            <div class="items-center flex">
+              <p class="text-orange-400">
+                Failed proposals will cost the proposer 10 $FPL tokens.
+              </p>
+            </div>
+            <div class="items-center flex">
+              <button
+                class={`${isSubmitDisabled ? "brand-button-disabled" : "brand-button"} 
+                              px-4 py-2 w-full`}
+                on:click={confirmProposal}
+                disabled={isSubmitDisabled}
+              >
+                Confirm Submit Proposal
+              </button>
+            </div>
+          {/if}
+        </div>
+      {/if}
+    </div>
   </div>
 </Modal>
