@@ -1899,6 +1899,7 @@
           return leagueSeasonEntry;
         };
       });
+      let _ = await updateDataHash(dto.leagueId, "fixtures");
       await createFixtureTimers();
     }; 
 
@@ -2092,6 +2093,9 @@
                     }
                   };
                   await finaliseFixture(dto.leagueId, dto.seasonId, dto.gameweek, dto.fixtureId, highestScoringPlayerId);
+                  let _ = await updateDataHash(dto.leagueId, "fixtures");
+                  let _ = await updateDataHash(dto.leagueId, "players");
+                  let _ = await updateDataHash(dto.leagueId, "playerEvents");
                   await checkSeasonComplete(dto.leagueId, dto.seasonId);
                 };
               };
@@ -2135,6 +2139,7 @@
         };
         case (null){}
       };
+      let _ = await updateDataHash(dto.leagueId, "clubs");
     };
 
     public shared ({ caller }) func updateClub(dto: GovernanceDTOs.UpdateClubDTO) : async () {
@@ -2171,6 +2176,7 @@
         };
         case (null){}
       };
+      let _ = await updateDataHash(dto.leagueId, "clubs");
     };
     
     /* Private Functions */
@@ -3609,17 +3615,11 @@
           injuryExpiredTimerIds := Buffer.toArray(timerBuffer);
         };
         case _ {
-          let timerBuffer = Buffer.fromArray<Nat>(pickTeamRollOverTimerIds);
-          let result = Timer.setTimer<system>(duration, defaultCallback);
-          timerBuffer.add(result);
-          pickTeamRollOverTimerIds := Buffer.toArray(timerBuffer);
         }
       };
     };
 
     //Timer Callback Functions
-    
-    private func defaultCallback() : async () {};
 
     private func checkRollOverPickTeam() : async () {
       label leagueLoop for(league in Iter.fromArray(leagueSeasons)){
