@@ -138,17 +138,17 @@
 
           <div class="flex flex-row w-full items-center">
             <p class="w-full">Primary Club Colour:</p>
-            <input class="w-full brand-input" type="color" on:input={handlePrimaryColorChange} bind:value={primaryColourHex} placeholder="Abbreviated Name" />
+            <input class="w-full brand-input" type="color" on:input={handlePrimaryColorChange} bind:value={primaryColourHex} />
           </div>
 
           <div class="flex flex-row w-full items-center">
             <p class="w-full">Secondary Club Colour:</p>
-            <input class="w-full brand-input" type="color" on:input={handleSecondaryColorChange} bind:value={secondaryColourHex} placeholder="Abbreviated Name" />
+            <input class="w-full brand-input" type="color" on:input={handleSecondaryColorChange} bind:value={secondaryColourHex} />
           </div>
 
           <div class="flex flex-row w-full items-center">
             <p class="w-full">Third Club Colour:</p>
-            <input class="w-full brand-input" type="color" on:input={handleThirdColorChange} bind:value={thirdColourHex} placeholder="Abbreviated Name" />
+            <input class="w-full brand-input" type="color" on:input={handleThirdColorChange} bind:value={thirdColourHex} />
           </div>
 
           <select class="brand-dropdown w-full" bind:value={shirtType}>

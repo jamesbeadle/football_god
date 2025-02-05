@@ -1030,7 +1030,7 @@
         return #Err("Error: Third Hex Colour must equal 7 characters including the hash prefix.");
       };
 
-      if (Text.size(dto.secondaryColourHex) != 3) {
+      if (Text.size(dto.abbreviatedName) != 3) {
         return #Err("Error: Abbreviated name must equal 3 characters.");
       };
 
