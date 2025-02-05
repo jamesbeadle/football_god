@@ -2006,7 +2006,7 @@
       let _ = await updateDataHash(dto.leagueId, "fixtures");
     };
 
-    public shared ({ caller }) func rescheduleFixure(dto : GovernanceDTOs.RescheduleFixtureDTO) : async () {
+    public shared ({ caller }) func rescheduleFixture(dto : GovernanceDTOs.RescheduleFixtureDTO) : async () {
       assert Principal.toText(caller) == Environment.SNS_GOVERNANCE_CANISTER_ID;
 
       leagueSeasons := Array.map<(FootballTypes.LeagueId, [FootballTypes.Season]), (FootballTypes.LeagueId, [FootballTypes.Season])>(
@@ -2017,7 +2017,7 @@
               leagueSeasonEntry.0, 
               Array.map<FootballTypes.Season, FootballTypes.Season>(leagueSeasonEntry.1, func(season: FootballTypes.Season){
                 if(season.id == dto.seasonId){
-                  let foundFixture = List.find<FootballTypes.Fixture>(season.fixtures, func(fixture: FootballTypes.Fixture): Bool{
+                  let foundFixture = List.find<FootballTypes.Fixture>(season.postponedFixtures, func(fixture: FootballTypes.Fixture): Bool{
                     fixture.id == dto.fixtureId
                   });
                   switch(foundFixture){

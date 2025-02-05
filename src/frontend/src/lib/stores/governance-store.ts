@@ -62,6 +62,7 @@ import {
   CreateLeagueDTO_Idl,
   CreatePlayerDTO_Idl,
   LoanPlayerDTO_Idl,
+  RescheduleFixtureDTO_Idl,
   RetirePlayerDTO_Idl,
   RevaluePlayerDownDTO_Idl,
   RevaluePlayerUpDTO_Idl,
@@ -423,9 +424,8 @@ function createGovernanceStore() {
     authStore.subscribe((auth) => (userIdentity = auth.identity));
     if (!userIdentity) return;
 
-    const leagueFixtures = await fixtureStore.getFixtures(
+    const leagueFixtures = await fixtureStore.getPostponedFixtures(
       dto.leagueId,
-      dto.seasonId,
     );
     let fixture = leagueFixtures.find((x) => x.id == dto.fixtureId);
     if (!fixture) throw new Error("Fixture not found.");
@@ -441,7 +441,7 @@ function createGovernanceStore() {
       `${formatUnixDateToSmallReadable(Number(dto.updatedFixtureDate))} ${formatUnixTimeToTime(Number(dto.updatedFixtureDate))}`,
     );
 
-    const encoded = IDL.encode([CreateLeagueDTO_Idl], [dto]);
+    const encoded = IDL.encode([RescheduleFixtureDTO_Idl], [dto]);
 
     return await createProposal({
       identity: userIdentity,

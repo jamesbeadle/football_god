@@ -602,7 +602,7 @@ service : {
    (opt vec PlayerEventData);
   postponeFixture: (PostponeFixtureDTO) -> ();
   recallPlayer: (RecallPlayerDTO) -> ();
-  rescheduleFixure: (RescheduleFixtureDTO) -> ();
+  rescheduleFixture: (RescheduleFixtureDTO) -> ();
   retirePlayer: (RetirePlayerDTO) -> ();
   revaluePlayerDown: (RevaluePlayerDownDTO) -> ();
   revaluePlayerUp: (RevaluePlayerUpDTO) -> ();

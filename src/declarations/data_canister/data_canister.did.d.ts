@@ -468,7 +468,7 @@ export interface _SERVICE {
   >;
   postponeFixture: ActorMethod<[PostponeFixtureDTO], undefined>;
   recallPlayer: ActorMethod<[RecallPlayerDTO], undefined>;
-  rescheduleFixure: ActorMethod<[RescheduleFixtureDTO], undefined>;
+  rescheduleFixture: ActorMethod<[RescheduleFixtureDTO], undefined>;
   retirePlayer: ActorMethod<[RetirePlayerDTO], undefined>;
   revaluePlayerDown: ActorMethod<[RevaluePlayerDownDTO], undefined>;
   revaluePlayerUp: ActorMethod<[RevaluePlayerUpDTO], undefined>;

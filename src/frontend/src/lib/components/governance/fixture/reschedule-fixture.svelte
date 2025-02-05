@@ -43,10 +43,9 @@
 
       let leagueStatus = await leagueStore.getLeagueStatus(selectedLeagueId);
       totalGameweeks = leagueStatus.totalGameweeks;
-      nextUnplayedGameweek = leagueStatus.unplayedGameweek;
       gameweeks = Array.from(
-        { length: totalGameweeks - nextUnplayedGameweek + 1 },
-        (_, i) => nextUnplayedGameweek + i
+        { length: totalGameweeks },
+        (_, i) => 1 + i
       );
 
 
@@ -127,7 +126,7 @@
 
           <div class="flex flex-row w-full items-center">
             <p class="w-1/2">New Fixture Time:</p>
-            <input class="w-1/2 brand-input" type="time" bind:value={date} />
+            <input class="w-1/2 brand-input" type="time" bind:value={time} />
           </div>
 
           <select class="brand-dropdown w-full" bind:value={newGameweek}>

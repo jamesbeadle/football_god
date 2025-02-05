@@ -495,7 +495,7 @@ export const idlFactory = ({ IDL }) => {
     ),
     postponeFixture: IDL.Func([PostponeFixtureDTO], [], []),
     recallPlayer: IDL.Func([RecallPlayerDTO], [], []),
-    rescheduleFixure: IDL.Func([RescheduleFixtureDTO], [], []),
+    rescheduleFixture: IDL.Func([RescheduleFixtureDTO], [], []),
     retirePlayer: IDL.Func([RetirePlayerDTO], [], []),
     revaluePlayerDown: IDL.Func([RevaluePlayerDownDTO], [], []),
     revaluePlayerUp: IDL.Func([RevaluePlayerUpDTO], [], []),
