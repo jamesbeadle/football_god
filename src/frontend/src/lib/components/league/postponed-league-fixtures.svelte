@@ -9,12 +9,12 @@
   import MoveFixture from "../governance/fixture/move-fixture.svelte";
   import BadgeIcon from "$lib/icons/BadgeIcon.svelte";
   import LocalSpinner from "../shared/local-spinner.svelte";
-    import PipsIcon from "$lib/icons/pips-icon.svelte";
-    import PostponeFixture from "../governance/fixture/postpone-fixture.svelte";
-    import type { ClubDTO, FixtureDTO, FootballLeagueDTO } from "../../../../../declarations/data_canister/data_canister.did";
+  import PipsIcon from "$lib/icons/pips-icon.svelte";
+  import PostponeFixture from "../governance/fixture/postpone-fixture.svelte";
+  import type { ClubDTO, FixtureDTO, FootballLeagueDTO } from "../../../../../declarations/data_canister/data_canister.did";
+    import RescheduleFixture from "../governance/fixture/reschedule-fixture.svelte";
   
   let isLoading = true;
-
 
   export let leagueId: number;
   let league: FootballLeagueDTO | undefined;
@@ -23,6 +23,7 @@
   let fitleredFixtures: FixtureDTO[] = [];
   let selectedGameweek: number = 1;
   let selectedFixtureId: number = 0;
+  let selectedSeasonId: number = 0;
 
   let showMoveFixtureModal = false;
   let showPostponeFixtureModal = false;
@@ -41,6 +42,9 @@
 
       selectedGameweek = fixtures.find(fixture => Object.keys(fixture.status)[0] === 'Unplayed')?.gameweek ?? 1;
       filterFixtures();
+
+      let leagueStatus = await leagueStore.getLeagueStatus(leagueId);
+      selectedSeasonId = leagueStatus.activeSeasonId;
     } catch (error) {
       console.error("Error fetching league fixtures:", error);
     } finally {
@@ -178,14 +182,8 @@
     </div>
   </div>
 
-  {#if selectedFixtureId > 0 && showMoveFixtureModal}
-    {@const selectedFixture = fixtures.find(x => x.id == selectedFixtureId)}
-    <MoveFixture visible={showMoveFixtureModal} {closeModal} {selectedFixtureId} selectedGameweek={selectedFixture?.gameweek} selectedLeagueId={leagueId}/>
-  {/if}
-
   {#if selectedFixtureId > 0 && showPostponeFixtureModal}
-    {@const selectedFixture = fixtures.find(x => x.id == selectedFixtureId)}
-    <PostponeFixture visible={showPostponeFixtureModal} {closeModal} {selectedFixtureId} selectedGameweek={selectedFixture?.gameweek!} selectedLeagueId={leagueId}/>
+    <RescheduleFixture visible={showPostponeFixtureModal} {closeModal} {selectedFixtureId} {selectedSeasonId}  selectedLeagueId={leagueId}/>
   {/if}
 
 {/if}

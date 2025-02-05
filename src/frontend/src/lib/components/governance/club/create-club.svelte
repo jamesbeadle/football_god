@@ -5,6 +5,8 @@
   import LocalSpinner from "$lib/components/shared/local-spinner.svelte";
   import Modal from "$lib/components/shared/modal.svelte";
     import type { CountryDTO, CreateClubDTO, ShirtType } from "../../../../../../declarations/data_canister/data_canister.did";
+    import { governanceStore } from "$lib/stores/governance-store";
+    import { isError } from "$lib/utils/helpers";
   
   export let visible: boolean;
   export let closeModal: () => void;
@@ -62,8 +64,21 @@
       abbreviatedName,
       shirtType
     }
-    await clubStore.createClub(dto);
+
+    let result = await governanceStore.createClub(dto);
+    if (isError(result)) {
+      isLoading = false;
+      console.error("Error submitting proposal");
+      return;
+    }
     /*
+    let result = await governanceStore.loanPlayer(dto);
+    if (isError(result)) {
+      isLoading = false;
+      console.error("Error submitting proposal");
+      return;
+    }
+
     let result = await governanceStore.updateClub(
       selectedClubId,
       name,

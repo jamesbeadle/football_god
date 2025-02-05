@@ -1,28 +1,30 @@
 <script lang="ts">
   import { onDestroy, onMount } from "svelte";
+  import { goto } from "$app/navigation";
+  import { convertDateToReadable, getImageURL } from "$lib/utils/helpers";
+  import type { CountryDTO, FootballLeagueDTO } from "../../../../declarations/data_canister/data_canister.did";
+    
   import { countryStore } from "$lib/stores/country-store";
-  import { userStore } from "$lib/stores/user-store";
   import { leagueStore } from "$lib/stores/league-store";
-  import { convertDateToReadable, formatUnixDateToSmallReadable, getImageURL } from "$lib/utils/helpers";
-  import type { CountryDTO, FootballLeagueDTO } from "../../../../declarations/backend/backend.did";
   
   import Layout from "../Layout.svelte";
   import LocalSpinner from "$lib/components/shared/local-spinner.svelte";
   import AddLeagueModal from "$lib/components/governance/league/create-league.svelte";
-    import { goto } from "$app/navigation";
-    import PipsIcon from "$lib/icons/pips-icon.svelte";
-  
+  import UpdateLeagueModal from "$lib/components/governance/league/update-league.svelte";
+  import PipsIcon from "$lib/icons/pips-icon.svelte";
+    import UpdateUsernameModal from "$lib/components/profile/update-username-modal.svelte";
+    
   let isLoading = true;
-  let isDataManager = false; 
   let showAddLeague = false;
+  let showUpdateLeague = false;
   let leagues: FootballLeagueDTO[] = [];
   let countries: CountryDTO[] = [];
   let dropdownVisible: number | null = null;
+  let selectedLeagueId = 0;
 
   onMount(async () => {
     document.addEventListener("click", handleClickOutside);
     try {
-      //isDataManager = await userStore.isDataManager();
       leagues = await leagueStore.getLeagues();
       countries = await countryStore.getCountries();
     } catch (error) {
@@ -48,10 +50,16 @@
 
   async function closeModal(){
     showAddLeague = false;
+    showUpdateLeague = false;
   }
 
   function createNewLeague() {
     showAddLeague = true;
+  }
+
+  function updateLeague(leagueId: number) {
+    selectedLeagueId = leagueId;
+    showUpdateLeague = true;
   }
 
   function toggleDropdown(leagueId: number, event: MouseEvent) {
@@ -62,10 +70,6 @@
   function viewLeague(leagueId: number) {
     goto(`/league?id=${leagueId}`);
   } 
-
-  function updateLeague(leagueId: number) {
-    //TODO: Implement with modal
-  }
 
 </script>
 
@@ -132,5 +136,9 @@
 </Layout>
 
 {#if showAddLeague}
-<AddLeagueModal visible={showAddLeague} {closeModal} />
+  <AddLeagueModal visible={showAddLeague} {closeModal} />
+{/if}
+
+{#if showUpdateLeague}
+  <UpdateLeagueModal visible={showUpdateLeague} {closeModal} {selectedLeagueId} />
 {/if}

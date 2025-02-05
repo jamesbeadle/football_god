@@ -8,6 +8,7 @@
     import { convertDateTimeInputToUnixNano } from "$lib/utils/helpers";
     import Modal from "$lib/components/shared/modal.svelte";
     import type { ClubDTO, FixtureDTO, FootballLeagueDTO, MoveFixtureDTO } from "../../../../../../declarations/data_canister/data_canister.did";
+    import { governanceStore } from "$lib/stores/governance-store";
 
   export let visible: boolean;
   export let closeModal: () => void;
@@ -104,7 +105,7 @@
       updatedFixtureGameweek : newGameweek,
       updatedFixtureDate: convertDateTimeInputToUnixNano(dateTime)
     };
-    await fixtureStore.moveFixture(dto);
+    await governanceStore.moveFixture(dto);
     /*
     let result = await governanceStore.moveFixture(
       selectedFixtureId,

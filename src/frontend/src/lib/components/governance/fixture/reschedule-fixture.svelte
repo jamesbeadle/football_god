@@ -1,18 +1,21 @@
 <script lang="ts">
   import { onMount } from "svelte";
-  import { clubStore } from "$lib/stores/club-store";
   import { fixtureStore } from "$lib/stores/fixture-store";
-  //import { governanceStore } from "$lib/stores/governance-store";
   import LocalSpinner from "$lib/components/shared/local-spinner.svelte";
-    import Modal from "$lib/components/shared/modal.svelte";
-    import type { ClubDTO, FixtureDTO } from "../../../../../../declarations/data_canister/data_canister.did";
+  import Modal from "$lib/components/shared/modal.svelte";
+  import type { ClubDTO, FixtureDTO, RescheduleFixtureDTO } from "../../../../../../declarations/data_canister/data_canister.did";
+  import { convertDateInputToUnixNano, isError } from "$lib/utils/helpers";
+  import { governanceStore } from "$lib/stores/governance-store";
 
   export let visible: boolean;
   export let closeModal: () => void;
 
+  export let selectedLeagueId: number;
+  export let selectedSeasonId: number;
+  export let selectedFixtureId: number;
+
   let gameweeks = Array.from({ length: Number(process.env.TOTAL_GAMEWEEKS) }, (_, i) => i + 1);
   let newGameweek: number = 0;
-  let selectedFixtureId: number = 0;
   let clubs: ClubDTO[] = [];
   let postponedFixtures: FixtureDTO[] = [];
 
@@ -31,7 +34,7 @@
 
   onMount(async () => {
     try {
-      postponedFixtures = await fixtureStore.getPostponedFixtures();
+      postponedFixtures = await fixtureStore.getPostponedFixtures(selectedLeagueId);
     } catch (error) {
       console.error("Error fetching postponed fixtures:", error);
     } finally {
@@ -56,18 +59,20 @@
 
   async function confirmProposal() {
     isLoading = true;
-    /*
-    let result = await governanceStore.rescheduleFixture(
-      selectedFixtureId,
-      newGameweek ?? 1,
-      dateTime
-    );
+    let dto: RescheduleFixtureDTO = {
+      leagueId: selectedLeagueId,
+      seasonId: selectedSeasonId,
+      fixtureId: selectedFixtureId,
+      updatedFixtureGameweek: newGameweek ?? 1,
+      updatedFixtureDate: convertDateInputToUnixNano(dateTime)
+    };
+    let result = await governanceStore.rescheduleFixture(dto);
     if (isError(result)) {
       isLoading = false;
       console.error("Error submitting proposal");
       return;
     }
-      */
+
     isLoading = false;
     resetForm();
     cancelModal();
