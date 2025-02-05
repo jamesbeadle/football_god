@@ -3,12 +3,12 @@
   import { countryStore } from "$lib/stores/country-store";
   import { leagueStore } from "$lib/stores/league-store";
   import { clubStore } from "$lib/stores/club-store";
-  import { playerStore } from "$lib/stores/player-store";
   import { convertDateInputToUnixNano } from "$lib/utils/helpers";
 
   import LocalSpinner from "$lib/components/shared/local-spinner.svelte";
   import Modal from "$lib/components/shared/modal.svelte";
     import type { ClubDTO, CountryDTO, CreatePlayerDTO, FootballLeagueDTO, PlayerPosition } from "../../../../../../declarations/data_canister/data_canister.did";
+    import { governanceStore } from "$lib/stores/governance-store";
   
   export let visible: boolean;
   export let closeModal: () => void;
@@ -106,7 +106,7 @@
       nationality: nationalityId
     };
     
-    await playerStore.createPlayer(selectedLeagueId, dto);
+    await governanceStore.createPlayer(dto);
 
     closeModal();
   }

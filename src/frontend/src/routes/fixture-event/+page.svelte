@@ -191,7 +191,8 @@
         ...fixtures.map(f => ({ ...f, leagueId }))
       ];
 
-      league = leagueStore.getLeagueById(leagueId);
+      let leagues = await leagueStore.getLeagues();
+      league = leagues.find(x=>x.id == leagueId);
       players = await playerStore.getPlayers(leagueId);
       matchOdds = await bettingStore.getMatchOdds(leagueId, fixtureId);
     } catch (error) {

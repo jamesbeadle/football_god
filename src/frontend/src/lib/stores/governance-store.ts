@@ -250,10 +250,12 @@ function createGovernanceStore() {
     const newClub = newLeagueClubs.find((c) => c.id === dto.newClubId);
     if (!newClub) throw new Error("New club not found.");
 
-    const currentLeague = await leagueStore.getLeagueById(dto.leagueId);
+    let leagues = await leagueStore.getLeagues();
+
+    const currentLeague = leagues.find((x) => x.id == dto.leagueId);
     if (!currentLeague) throw new Error("Current league not found.");
 
-    const transferLeague = await leagueStore.getLeagueById(dto.newLeagueId);
+    const transferLeague = leagues.find((x) => x.id == dto.newLeagueId);
     if (!transferLeague) throw new Error("Transfer league not found.");
 
     const newValue = (player.valueQuarterMillions / 4).toFixed(2);
@@ -395,7 +397,44 @@ function createGovernanceStore() {
     });
   }
 
-  async function createPlayer(dto: CreatePlayerDTO): Promise<any> {}
+  async function createPlayer(dto: CreatePlayerDTO): Promise<any> {
+    let userIdentity: OptionIdentity;
+    authStore.subscribe((auth) => (userIdentity = auth.identity));
+    if (!userIdentity) return;
+
+    let leagues = await leagueStore.getLeagues();
+
+    let league = leagues.find((x) => x.id == dto.leagueId);
+    if (!league) throw new Error("Player league not found.");
+
+    let leagueClubs = await clubStore.getClubs(dto.leagueId);
+    let playerClub = leagueClubs.find((x) => x.id == dto.clubId);
+    if (!playerClub) throw new Error("Player club not found.");
+
+    let countries = await countryStore.getCountries();
+    let country = countries.find((x) => x.id == dto.nationality);
+    if (!country) throw new Error("Country not found.");
+
+    const { title, summary } = buildCreatePlayerText(
+      `${dto.firstName} ${dto.lastName}`,
+      Object.keys(dto.position)[0],
+      playerClub.name,
+      league.name,
+      (dto.valueQuarterMillions / 4).toFixed(2),
+      formatUnixDateToSmallReadable(Number(dto.dateOfBirth)),
+      country.name,
+    );
+
+    const encoded = IDL.encode([CreatePlayerDTO_Idl], [dto]);
+
+    return await createProposal({
+      identity: userIdentity,
+      functionId: 58000n,
+      payload: new Uint8Array(encoded),
+      title,
+      summary,
+    });
+  }
 
   async function updatePlayer(dto: UpdatePlayerDTO): Promise<any> {}
 

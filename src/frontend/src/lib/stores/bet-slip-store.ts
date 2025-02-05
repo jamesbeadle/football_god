@@ -23,6 +23,8 @@ const STORAGE_KEY = "global-bet-slip-state";
 
 async function loadFixtureData(leagueId: number, fixtureId: number) {
   try {
+    const leagues = await leagueStore.getLeagues();
+    let league = leagues.find((x) => x.id == leagueId);
     const leagueStatus = await leagueStore.getLeagueStatus(leagueId);
     const fixtures = await fixtureStore.getFixtures(
       leagueId,
@@ -41,7 +43,7 @@ async function loadFixtureData(leagueId: number, fixtureId: number) {
         homeClub,
         awayClub,
       },
-      league: leagueStore.getLeagueById(leagueId),
+      league: league,
     };
   } catch (error) {
     console.error("Error loading fixture data:", error);
