@@ -1,13 +1,9 @@
 import Base "../types/base_types";
-import App "../types/app_types";
 import Buffer "mo:base/Buffer";
-import Result "mo:base/Result";
 import Text "mo:base/Text";
 import Array "mo:base/Array";
 import Time "mo:base/Time";
-import Debug "mo:base/Debug";
 import ShuftiTypes "../types/shufti_types";
-import T "../types/app_types";
 import AppTypes "../types/app_types";
 
 module {

@@ -3352,6 +3352,7 @@
       await createTransferWindowEndTimers();
       await createLoanExpiredTimers();
       await createInjuryExpiredTimers();
+      await manuallyAdjustFixtureTimes();
     };
 
     //Timer Creation Functions
@@ -4233,4 +4234,92 @@
         }
       });
     };
+
+    private func manuallyAdjustFixtureTimes() : async () {
+      
+      leagueSeasons := Array.map<(FootballTypes.LeagueId, [FootballTypes.Season]), (FootballTypes.LeagueId, [FootballTypes.Season])>(leagueSeasons, func(entry: (FootballTypes.LeagueId, [FootballTypes.Season])){
+        if(entry.0 == 1){
+          return (entry.0, Array.map<FootballTypes.Season, FootballTypes.Season>(entry.1, func(seasonEntry: FootballTypes.Season){
+            if(seasonEntry.id == 1){
+              return {
+                fixtures = List.map<FootballTypes.Fixture, FootballTypes.Fixture>(seasonEntry.fixtures, func(fixtureEntry: FootballTypes.Fixture){
+                  if(fixtureEntry.id == 242){ return updateFixtureTime(fixtureEntry, 1739563200000000000);
+                  } else if(fixtureEntry.id == 245){ return updateFixtureTime(fixtureEntry, 1739622600000000000);
+                  }	else if(fixtureEntry.id == 243){ return updateFixtureTime(fixtureEntry, 1739640600000000000);
+                  } else if(fixtureEntry.id == 246){	return updateFixtureTime(fixtureEntry, 1739714400000000000);
+                  } else if(fixtureEntry.id == 249){	return updateFixtureTime(fixtureEntry, 1739723400000000000);
+                  } else if(fixtureEntry.id == 254){	return updateFixtureTime(fixtureEntry, 1740227400000000000);
+                  } else if(fixtureEntry.id == 257){	return updateFixtureTime(fixtureEntry, 1740168000000000000);
+                  } else if(fixtureEntry.id == 252){	return updateFixtureTime(fixtureEntry, 1740245400000000000);
+                  } else if(fixtureEntry.id == 258){	return updateFixtureTime(fixtureEntry, 1740328200000000000);
+                  } else if(fixtureEntry.id == 259){	return updateFixtureTime(fixtureEntry, 1740319200000000000);
+                  } else if(fixtureEntry.id == 261){	return updateFixtureTime(fixtureEntry, 1740598200000000000);
+                  } else if(fixtureEntry.id == 263){	return updateFixtureTime(fixtureEntry, 1740598200000000000);
+                  } else if(fixtureEntry.id == 270){	return updateFixtureTime(fixtureEntry, 1740598200000000000);
+                  } else if(fixtureEntry.id == 264){	return updateFixtureTime(fixtureEntry, 1740598200000000000);
+                  } else if(fixtureEntry.id == 262){	return updateFixtureTime(fixtureEntry, 1740511800000000000);
+                  } else if(fixtureEntry.id == 267){	return updateFixtureTime(fixtureEntry, 1740511800000000000);
+                  } else if(fixtureEntry.id == 266){	return updateFixtureTime(fixtureEntry, 1740511800000000000);
+                  } else if(fixtureEntry.id == 268){	return updateFixtureTime(fixtureEntry, 1740514500000000000);
+                  } else if(fixtureEntry.id == 269){	return updateFixtureTime(fixtureEntry, 1740600900000000000);
+                  } else if(fixtureEntry.id == 265){	return updateFixtureTime(fixtureEntry, 1740686400000000000);
+                  } else if(fixtureEntry.id == 271){	return updateFixtureTime(fixtureEntry, 1741455000000000000);
+                  } else if(fixtureEntry.id == 277){	return updateFixtureTime(fixtureEntry, 1741437000000000000);
+                  } else if(fixtureEntry.id == 280){	return updateFixtureTime(fixtureEntry, 1741464000000000000);
+                  } else if(fixtureEntry.id == 273){	return updateFixtureTime(fixtureEntry, 1741528800000000000);
+                  } else if(fixtureEntry.id == 278){	return updateFixtureTime(fixtureEntry, 1741528800000000000);
+                  } else if(fixtureEntry.id == 276){	return updateFixtureTime(fixtureEntry, 1741537800000000000);
+                  } else if(fixtureEntry.id == 279){	return updateFixtureTime(fixtureEntry, 1741636800000000000);
+                  } else if(fixtureEntry.id == 282){	return updateFixtureTime(fixtureEntry, 1742041800000000000);
+                  } else if(fixtureEntry.id == 283){	return updateFixtureTime(fixtureEntry, 1742059800000000000);
+                  } else if(fixtureEntry.id == 287){	return updateFixtureTime(fixtureEntry, 1742151600000000000);
+                  } else if(fixtureEntry.id == 291){	return updateFixtureTime(fixtureEntry, 1743536700000000000);
+                  } else if(fixtureEntry.id == 292){	return updateFixtureTime(fixtureEntry, 1743536700000000000);
+                  } else if(fixtureEntry.id == 295){	return updateFixtureTime(fixtureEntry, 1743536700000000000);
+                  } else if(fixtureEntry.id == 293){	return updateFixtureTime(fixtureEntry, 1743536700000000000);
+                  } else if(fixtureEntry.id == 294){	return updateFixtureTime(fixtureEntry, 1743536700000000000);
+                  } else if(fixtureEntry.id == 299){	return updateFixtureTime(fixtureEntry, 1743623100000000000);
+                  } else if(fixtureEntry.id == 296){	return updateFixtureTime(fixtureEntry, 1743623100000000000);
+                  } else if(fixtureEntry.id == 298){	return updateFixtureTime(fixtureEntry, 1743623100000000000);
+                  } else if(fixtureEntry.id == 297){	return updateFixtureTime(fixtureEntry, 1743623100000000000);
+                  } else if(fixtureEntry.id == 300){	return updateFixtureTime(fixtureEntry, 1743624000000000000);
+                  } else {
+                    return fixtureEntry;
+                  }
+                });
+                id = seasonEntry.id;
+                name = seasonEntry.name;
+                postponedFixtures = seasonEntry.postponedFixtures;
+                year = seasonEntry.year
+              };
+
+
+              return seasonEntry;
+            } else {
+              return seasonEntry;
+            }
+          }));
+        }
+        else {
+          return entry;
+        };
+      });
+    };
+
+    private func updateFixtureTime(fixture: FootballTypes.Fixture, time: Int) : FootballTypes.Fixture {
+      return {
+        awayClubId = fixture.awayClubId;
+        awayGoals = fixture.awayGoals;
+        events = fixture.events;
+        gameweek = fixture.gameweek;
+        highestScoringPlayerId = fixture.highestScoringPlayerId;
+        homeClubId = fixture.homeClubId;
+        homeGoals = fixture.homeGoals;
+        id = fixture.id;
+        kickOff = time;
+        seasonId = fixture.seasonId;
+        status = fixture.status
+      }
+    };
+
   };
