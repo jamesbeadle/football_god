@@ -15,6 +15,7 @@
   import Time "mo:base/Time";
   import Timer "mo:base/Timer";
   import TrieMap "mo:base/TrieMap";
+import Char "mo:base/Char";
   
   import Base "../backend/types/base_types";
   import FootballTypes "../backend/types/football_types";
@@ -2242,6 +2243,7 @@
                 fixture.status == #Finalised;
               });
               if(List.size(finalisedFixtures) == List.size(season.fixtures)){
+                await endSeason(leagueId, seasonId);
                 let _ = await notifyAppsOfSeasonComplete(leagueId, seasonId);
               };
             };
@@ -2249,6 +2251,85 @@
           };
         };
         case (null){}
+      };
+    };
+
+
+
+    private func endSeason(leagueId: FootballTypes.LeagueId, seasonId: FootballTypes.SeasonId) : async (){
+
+      let currentLeagueSeasons = Array.find<(FootballTypes.LeagueId, [FootballTypes.Season])>(leagueSeasons, func (entry: (FootballTypes.LeagueId, [FootballTypes.Season])) : Bool {
+        entry.0 == leagueId
+      });
+
+      switch(currentLeagueSeasons){
+        case (?foundSeasons){
+          let currentSeason = Array.find<FootballTypes.Season>(foundSeasons.1, func(seasonEntry: FootballTypes.Season) : Bool {
+            seasonEntry.id == seasonId;
+          });
+
+          switch(currentSeason){
+            case (?season){
+
+              var nextYear = season.year + 1;
+              let nextYearText = Nat16.toText(nextYear);
+              var newSeasonName = nextYearText # "/";
+              
+              var counter: Int = Text.size(nextYearText);
+              
+              for(c in Text.toIter(nextYearText)){
+                if(counter <= 2){
+                  newSeasonName := newSeasonName # Char.toText(c);
+                };
+                counter -= 1;
+              };
+
+              let newSeason: FootballTypes.Season = {
+                fixtures = List.nil();
+                id = seasonId + 1;
+                name = newSeasonName;
+                postponedFixtures = List.nil();
+                year = nextYear;
+              };
+
+              leagueSeasons := Array.map<(FootballTypes.LeagueId, [FootballTypes.Season]),    (FootballTypes.LeagueId, [FootballTypes.Season])>(leagueSeasons, func(entry: (FootballTypes.LeagueId, [FootballTypes.Season])){
+                if(entry.0 == leagueId){
+                  let seasonsBuffer = Buffer.fromArray<FootballTypes.Season>(entry.1);
+                  seasonsBuffer.add(newSeason);
+                  return (entry.0, Buffer.toArray(seasonsBuffer));
+                } else {
+                  return entry; 
+                };
+              });
+
+              leagueStatuses := Array.map<FootballTypes.LeagueStatus, FootballTypes.LeagueStatus>(leagueStatuses, func(entry: FootballTypes.LeagueStatus){
+                if(entry.leagueId == leagueId){
+                  return {
+                    activeGameweek = 0;
+                    activeMonth = 0;
+                    activeSeasonId = newSeason.id;
+                    completedGameweek = 0;
+                    leagueId = entry.leagueId;
+                    seasonActive = false;
+                    totalGameweeks = entry.totalGameweeks;
+                    transferWindowActive = true;
+                    transferWindowEndDay = entry.transferWindowEndDay;
+                    transferWindowEndMonth = entry.transferWindowEndMonth;
+                    transferWindowStartDay = entry.transferWindowStartDay;
+                    transferWindowStartMonth = entry.transferWindowStartMonth;
+                    unplayedGameweek = 1;
+                  }
+                } else { return entry; };
+              });
+              
+              await createTransferWindowStartTimers();
+              await createTransferWindowEndTimers();
+
+            };
+            case (null){}
+          }
+        };
+        case (null){};
       };
     };
 
@@ -3572,12 +3653,6 @@
           timerBuffer.add(result);
           pickTeamRollOverTimerIds := Buffer.toArray(timerBuffer);
         };
-        case "endOfSeason" {
-          let timerBuffer = Buffer.fromArray<Nat>(endOfSeasonTimerIds);
-          let result = Timer.setTimer<system>(duration, endOfSeasonExpired);
-          timerBuffer.add(result);
-          endOfSeasonTimerIds := Buffer.toArray(timerBuffer);
-        };
         case "transferWindowStart" {
           let timerBuffer = Buffer.fromArray<Nat>(transferWindowStartTimerIds);
           let result = Timer.setTimer<system>(duration, transferWindowStart);
@@ -3677,105 +3752,6 @@
                   completedGameweek := activeGameweek - 1; 
                   let _ = await notifyAppsOfGameweekStarting(leagueStatus.leagueId, season.id, activeGameweek);
                   setLeagueGameweek(leagueStatus.leagueId, unplayedGameweek, activeGameweek, completedGameweek, nextFixtureGameweekFixtures[0].kickOff);
-                };
-              };
-              case (null){}
-            };
-          };
-          case (null){}
-        };
-      };
-    };
-
-    private func endOfSeasonExpired() : async (){
-      for(league in Iter.fromArray(leagueSeasons)){
-        let leagueStatusResult = Array.find<FootballTypes.LeagueStatus>(leagueStatuses, func(statusEntry: FootballTypes.LeagueStatus) : Bool {
-          statusEntry.leagueId == league.0;
-        });
-        switch(leagueStatusResult){
-          case (?leagueStatus){
-
-            let seasonEntry = Array.find<FootballTypes.Season>(league.1, func(seasonEntry: FootballTypes.Season) : Bool {
-              seasonEntry.id == leagueStatus.activeSeasonId;
-            });
-
-            switch(seasonEntry){
-              case (?season){
-                let sortedFixtures = Array.sort<FootballTypes.Fixture>(List.toArray<FootballTypes.Fixture>(season.fixtures), func (a: FootballTypes.Fixture, b: FootballTypes.Fixture) {
-                  if (a.kickOff < b.kickOff) {
-                      return #less;
-                  } else if (a.kickOff > b.kickOff) {
-                      return #greater;
-                  } else {
-                      return #equal;
-                  }
-                });
-
-                if(Array.size(sortedFixtures) == 0){
-                  return;
-                };
-
-                var nextFixtureResult: ?FootballTypes.Fixture = null;
-
-                var seasonComplete = true;
-                label fixtureLoop for(fixture in Iter.fromArray(sortedFixtures)){
-                  if(fixture.kickOff > Time.now()){
-                    seasonComplete := false;
-                    nextFixtureResult := ?fixture;
-                    break fixtureLoop;
-                  };
-                };
-
-                if(seasonComplete){
-
-                  let currentLeague = Array.find<FootballTypes.League>(leagues, func(league: FootballTypes.League) : Bool {
-                    league.id == leagueStatus.leagueId;
-                  });
-
-                  let newSeasonId: FootballTypes.SeasonId = season.id + 1;
-                  let newSeasonYear = season.year + 1;
-                  let chars = Text.toArray(Nat16.toText(newSeasonYear + 1));
-                  let lastTwoChars = Iter.fromArray([chars[chars.size() - 2], chars[chars.size() - 1]]);
-                  let lastTwo = Text.fromIter(lastTwoChars);
-                  let newSeasonName = Nat16.toText(newSeasonYear) # "/" # lastTwo;
-                  
-                  leagueSeasons := Array.map<(FootballTypes.LeagueId, [FootballTypes.Season]), (FootballTypes.LeagueId, [FootballTypes.Season])>(leagueSeasons, func(entry: (FootballTypes.LeagueId, [FootballTypes.Season])){
-                    
-                    let seasonsBuffer = Buffer.fromArray<FootballTypes.Season>(entry.1);
-                    seasonsBuffer.add({
-                      fixtures = List.nil();
-                      id = newSeasonId;
-                      name = newSeasonName;
-                      postponedFixtures = List.nil();
-                      year = newSeasonYear;
-                    });
-                    
-                    return (entry.0, Buffer.toArray(seasonsBuffer));
-                  });
-
-                  leagueStatuses := Array.map<FootballTypes.LeagueStatus, FootballTypes.LeagueStatus>(leagueStatuses, func(updateEntry: FootballTypes.LeagueStatus){
-                    if(updateEntry.leagueId == leagueStatus.leagueId){
-                      return {
-                        activeGameweek = 0;
-                        completedGameweek = 0;
-                        unplayedGameweek = 1;
-                        activeMonth = 1;
-                        activeSeasonId = newSeasonId;
-                        lastConfirmedGameweek = 0;
-                        leagueId = updateEntry.leagueId;
-                        seasonActive = false;
-                        totalGameweeks = updateEntry.totalGameweeks;
-                        transferWindowActive = updateEntry.transferWindowActive;
-                        transferWindowStartDay = updateEntry.transferWindowStartDay;
-                        transferWindowStartMonth = updateEntry.transferWindowStartMonth;
-                        transferWindowEndDay = updateEntry.transferWindowEndDay;
-                        transferWindowEndMonth = updateEntry.transferWindowEndMonth;
-                      };
-                    } else {
-                      return updateEntry;
-                    };
-                  });
-                  return;
                 };
               };
               case (null){}
