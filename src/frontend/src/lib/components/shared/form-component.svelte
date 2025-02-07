@@ -2,6 +2,6 @@
     export let label: string;
 </script>
 <div class="flex-col">
-    <p class="text-xs">{label}</p>
+    <p class="text-xs mb-2">{label}</p>
     <slot></slot>
 </div>
