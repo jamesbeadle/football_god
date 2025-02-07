@@ -295,6 +295,113 @@ module {
       case _ { return 0 };
     };
   };
+  
+  public func getNextUnixTimestampForDayMonth(day : Nat8, month : Nat8) : ?Int {
+  if (day < 1 or day > 31)  { return null };
+  if (month < 1 or month > 12) { return null };
 
+  let currentUnixTime : Int = Time.now();
+  let secondsInADay : Int = 86_400;
+  let nowSeconds : Int = currentUnixTime / 1_000_000_000;
+  let currentDays : Int = nowSeconds / secondsInADay;
+  let currentYear : Int = getYear(currentDays);
+  let currentDayOfYear : Int = getDayOfYear(currentDays, currentYear) + 1; 
+  let maybeDayOfYearTarget = dayOfYear(currentYear, month, day);
+  switch (maybeDayOfYearTarget) {
+    case (null) {
+      return null;
+    };
+    case (?dayOfYearTarget) {
+      if (dayOfYearTarget > currentDayOfYear) {
+        return ?(makeUnixTimestamp(currentYear, dayOfYearTarget));
+      } else if (dayOfYearTarget == currentDayOfYear) {
+        let midnightToday = makeUnixTimestamp(currentYear, dayOfYearTarget);
+        if (midnightToday > currentUnixTime) {
+          return ?midnightToday;
+        } else {
+          let nextYear = currentYear + 1;
+          let maybeNextDayOfYear = dayOfYear(nextYear, month, day);
+          switch(maybeNextDayOfYear){
+            case (?foundNextDayOfYear){
+              return ?(makeUnixTimestamp(nextYear, foundNextDayOfYear));
+            };
+            case (null)  { return null };
+          };
+        };
+      } else {
+        let nextYear = currentYear + 1;
+        let maybeNextDayOfYear = dayOfYear(nextYear, month, day);
+        switch(maybeNextDayOfYear){
+          case (?foundNextDayOfYear){
+            return ?(makeUnixTimestamp(nextYear, foundNextDayOfYear));
+          };
+          case (null)  { return null };
+        };
+      };
+    };
+  };
+};
+
+private func isLeapYear(y : Int) : Bool {
+  if (y % 400 == 0) return true;
+  if (y % 100 == 0) return false;
+  if (y % 4 == 0)   return true;
+  return false;
+};
+
+private func daysInMonth(y : Int, m : Nat8) : Nat8 {
+  switch (m) {
+    case (2) { if (isLeapYear(y)) 29 else 28 };
+    case (4) { 30 };
+    case (6) { 30 };
+    case (9) { 30 };
+    case (11) { 30 };
+    case _ { 31 };
+  }
+};
+
+private func dayOfYear(year : Int, month : Nat8, day : Nat8) : ?Int {
+  if (day > daysInMonth(year, month)) return null;
+
+  var total : Int = 0;
+  var m : Nat8 = 1;
+  while (m < month) {
+    total += natToInt(Nat8.toNat(daysInMonth(year, m)));
+    m += 1;
+  };
+  let result = total + natToInt(Nat8.toNat(day));
+  return ?result;
+};
+
+private func makeUnixTimestamp(year : Int, dayOfYear : Int) : Int {
+  let epochDays = daysSince1970(year, dayOfYear);
+  let epochSeconds = epochDays * 86_400;
+  return epochSeconds * 1_000_000_000;
+};
+
+private func daysSince1970(year : Int, dayOfYear : Int) : Int {
+  var daysCount = 0;
+  var y = 1970;
+
+  while (y < year) {
+    if (isLeapYear(y)) {
+      daysCount += 366;
+    } else {
+      daysCount += 365;
+    };
+    y += 1;
+  };
+  daysCount += (intToNat(dayOfYear) - 1);
+  return daysCount;
+};
+
+
+public func intToNat(input: Int) : Nat {
+  return Nat64.toNat(Int64.toNat64(Int64.fromInt(input)))
+};
+
+public func natToInt(input: Nat) : Int {
+  return Int64.toInt(Int64.fromNat64(Nat64.fromNat(input)));
+};
 
 };

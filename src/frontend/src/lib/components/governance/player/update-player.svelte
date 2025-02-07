@@ -2,12 +2,13 @@
   import { onMount } from "svelte";
   import { clubStore } from "$lib/stores/club-store";
   import LocalSpinner from "$lib/components/shared/local-spinner.svelte";
-  import type { ClubDTO, CountryDTO, PlayerDTO, UpdatePlayerDTO, FootballLeagueDTO, PlayerPosition } from "../../../../../../declarations/backend/backend.did";
   import { convertDateInputToUnixNano, formatUnixToDateInputValue } from "$lib/utils/helpers";
   import { leagueStore } from "$lib/stores/league-store";
   import { countryStore } from "$lib/stores/country-store";
   import { playerStore } from "$lib/stores/player-store";
   import Modal from "$lib/components/shared/modal.svelte";
+    import type { ClubDTO, CountryDTO, FootballLeagueDTO, PlayerDTO, UpdatePlayerDTO } from "../../../../../../declarations/data_canister/data_canister.did";
+    import type { PlayerPosition } from "../../../../../../declarations/backend/backend.did";
 
   export let visible: boolean;
   export let closeModal: () => void;
@@ -140,6 +141,7 @@
     }
     
     let dto: UpdatePlayerDTO = {
+      leagueId: selectedLeagueId,
       playerId: selectedPlayerId,
       position,
       firstName,
@@ -259,7 +261,7 @@
               <input
                 type="text"
                 class="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
-                placeholder="First Name"
+                placeholder="Last Name"
                 bind:value={lastName}
               />
             </div>

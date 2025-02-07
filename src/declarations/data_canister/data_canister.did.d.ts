@@ -318,10 +318,6 @@ export interface RelegateClubDTO {
   relegatedToLeagueId: LeagueId;
   leagueId: LeagueId;
 }
-export interface RequestFixturesDTO {
-  seasonId: SeasonId;
-  leagueId: LeagueId;
-}
 export interface RescheduleFixtureDTO {
   fixtureId: FixtureId;
   updatedFixtureGameweek: GameweekNumber;
@@ -331,17 +327,16 @@ export interface RescheduleFixtureDTO {
 }
 export type Result = { ok: Array<PlayerDTO> } | { err: Error };
 export type Result_1 = { ok: Array<FixtureDTO> } | { err: Error };
-export type Result_10 = { ok: LeagueStatus } | { err: Error };
-export type Result_11 = { ok: Array<DataHashDTO> } | { err: Error };
-export type Result_12 = { ok: Array<CountryDTO> } | { err: Error };
+export type Result_10 = { ok: Array<DataHashDTO> } | { err: Error };
+export type Result_11 = { ok: Array<CountryDTO> } | { err: Error };
 export type Result_2 = { ok: Array<ClubDTO> } | { err: Error };
-export type Result_3 = { ok: Array<TimerInfo> } | { err: Error };
-export type Result_4 = { ok: Array<SeasonDTO> } | { err: Error };
-export type Result_5 = { ok: Array<[number, PlayerScoreDTO]> } | { err: Error };
-export type Result_6 = { ok: Array<PlayerPointsDTO> } | { err: Error };
-export type Result_7 = { ok: PlayerDetailDTO } | { err: Error };
-export type Result_8 = { ok: Array<LoanedPlayerDTO> } | { err: Error };
-export type Result_9 = { ok: Array<FootballLeagueDTO> } | { err: Error };
+export type Result_3 = { ok: Array<SeasonDTO> } | { err: Error };
+export type Result_4 = { ok: Array<[number, PlayerScoreDTO]> } | { err: Error };
+export type Result_5 = { ok: Array<PlayerPointsDTO> } | { err: Error };
+export type Result_6 = { ok: PlayerDetailDTO } | { err: Error };
+export type Result_7 = { ok: Array<LoanedPlayerDTO> } | { err: Error };
+export type Result_8 = { ok: Array<FootballLeagueDTO> } | { err: Error };
+export type Result_9 = { ok: LeagueStatus } | { err: Error };
 export interface RetirePlayerDTO {
   playerId: ClubId;
   retirementDate: bigint;
@@ -380,11 +375,6 @@ export interface SubmitFixtureDataDTO {
   gameweek: GameweekNumber;
   playerEventData: Array<PlayerEventData>;
   leagueId: LeagueId;
-}
-export interface TimerInfo {
-  id: bigint;
-  callbackName: string;
-  triggerTime: bigint;
 }
 export interface TransferHistory {
   transferDate: bigint;
@@ -451,25 +441,24 @@ export interface _SERVICE {
   createLeague: ActorMethod<[CreateLeagueDTO], undefined>;
   createPlayer: ActorMethod<[CreatePlayerDTO], undefined>;
   getClubs: ActorMethod<[LeagueId], Result_2>;
-  getCountries: ActorMethod<[], Result_12>;
-  getDataHashes: ActorMethod<[LeagueId], Result_11>;
-  getFixtures: ActorMethod<[LeagueId], Result_1>;
-  getLeagueStatus: ActorMethod<[LeagueId], Result_10>;
-  getLeagues: ActorMethod<[], Result_9>;
-  getLoanedPlayers: ActorMethod<[LeagueId], Result_8>;
-  getPlayerDetails: ActorMethod<[LeagueId, GetPlayerDetailsDTO], Result_7>;
+  getCountries: ActorMethod<[], Result_11>;
+  getDataHashes: ActorMethod<[LeagueId], Result_10>;
+  getFixtures: ActorMethod<[LeagueId, SeasonId], Result_1>;
+  getLeagueStatus: ActorMethod<[LeagueId], Result_9>;
+  getLeagues: ActorMethod<[], Result_8>;
+  getLoanedPlayers: ActorMethod<[LeagueId], Result_7>;
+  getPlayerDetails: ActorMethod<[LeagueId, GetPlayerDetailsDTO], Result_6>;
   getPlayerDetailsForGameweek: ActorMethod<
     [LeagueId, GameweekFiltersDTO],
-    Result_6
+    Result_5
   >;
   getPlayers: ActorMethod<[LeagueId], Result>;
-  getPlayersMap: ActorMethod<[LeagueId, GameweekFiltersDTO], Result_5>;
-  getPostponedFixtures: ActorMethod<[LeagueId, RequestFixturesDTO], Result_1>;
+  getPlayersMap: ActorMethod<[LeagueId, GameweekFiltersDTO], Result_4>;
+  getPostponedFixtures: ActorMethod<[LeagueId], Result_1>;
   getRetiredPlayers: ActorMethod<[LeagueId, ClubFilterDTO], Result>;
-  getSeasons: ActorMethod<[LeagueId], Result_4>;
-  getTimers: ActorMethod<[], Result_3>;
+  getSeasons: ActorMethod<[LeagueId], Result_3>;
   getVerifiedClubs: ActorMethod<[LeagueId], Result_2>;
-  getVerifiedFixtures: ActorMethod<[RequestFixturesDTO], Result_1>;
+  getVerifiedFixtures: ActorMethod<[LeagueId, SeasonId], Result_1>;
   getVerifiedPlayers: ActorMethod<[LeagueId], Result>;
   loanPlayer: ActorMethod<[LoanPlayerDTO], undefined>;
   moveFixture: ActorMethod<[MoveFixtureDTO], undefined>;
@@ -479,7 +468,7 @@ export interface _SERVICE {
   >;
   postponeFixture: ActorMethod<[PostponeFixtureDTO], undefined>;
   recallPlayer: ActorMethod<[RecallPlayerDTO], undefined>;
-  rescheduleFixure: ActorMethod<[RescheduleFixtureDTO], undefined>;
+  rescheduleFixture: ActorMethod<[RescheduleFixtureDTO], undefined>;
   retirePlayer: ActorMethod<[RetirePlayerDTO], undefined>;
   revaluePlayerDown: ActorMethod<[RevaluePlayerDownDTO], undefined>;
   revaluePlayerUp: ActorMethod<[RevaluePlayerUpDTO], undefined>;
@@ -488,6 +477,7 @@ export interface _SERVICE {
   submitFixtureData: ActorMethod<[SubmitFixtureDataDTO], undefined>;
   transferPlayer: ActorMethod<[TransferPlayerDTO], undefined>;
   unretirePlayer: ActorMethod<[UnretirePlayerDTO], undefined>;
+  updateClub: ActorMethod<[UpdateClubDTO], undefined>;
   updateLeague: ActorMethod<[UpdateLeagueDTO], undefined>;
   updatePlayer: ActorMethod<[UpdatePlayerDTO], undefined>;
   validateAddInitialFixtures: ActorMethod<[AddInitialFixturesDTO], RustResult>;

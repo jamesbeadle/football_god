@@ -77,9 +77,10 @@
   async function fetchLeagueData(leagueId: LeagueId) {
     loadingFixtures[leagueId] = true;
     try {
-      leagueFixtures[leagueId] = await fixtureStore.getFixtures(leagueId);
-      await fetchClubs(leagueId);
+      
       const leagueStatus = await leagueStore.getLeagueStatus(leagueId);
+      leagueFixtures[leagueId] = await fixtureStore.getFixtures(leagueId, leagueStatus.activeSeasonId);
+      await fetchClubs(leagueId);
       selectedGameweeks[leagueId] = leagueStatus.unplayedGameweek;
       leagueTotalGameweeks[leagueId] = leagueStatus.totalGameweeks;
       const bettingFixtures = await bettingStore.getBettableHomepageFixtures(leagueId);

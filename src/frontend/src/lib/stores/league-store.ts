@@ -191,22 +191,11 @@ function createLeagueStore() {
     return new LeagueService().getLeagueStatus(leagueId);
   }
 
-  function getLeagueById(leagueId: number): FootballLeagueDTO | undefined {
-    let data: Record<number, FootballLeagueDTO> = {};
-    const unsubscribe = subscribe((value) => {
-      data = value;
-    });
-    unsubscribe();
-
-    return data[leagueId]; // Directly access the league by its id
-  }
-
   return {
     subscribe,
     syncLeagues,
     getLeagues,
     getLeagueStatus,
-    getLeagueById,
     syncLeagueStatus,
     subscribeLeagueStatus,
   };

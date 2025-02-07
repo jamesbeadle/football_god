@@ -369,7 +369,7 @@
       {/if}
     
       {#if showCreatePlayerModal}
-      <CreatePlayer visible={showCreatePlayerModal} {closeModal} />
+        <CreatePlayer visible={showCreatePlayerModal} {closeModal} />
       {/if}
     
       {#if selectedPlayerId > 0 && showUpdatePlayerModal}

@@ -78,11 +78,6 @@ module RequestDTOs {
     selections: [BettingTypes.Selection];
   };
 
-  public type RequestFixturesDTO = {
-    leagueId: FootballTypes.LeagueId;
-    seasonId: FootballTypes.SeasonId;
-  };
-
   public type GetSnapshotPlayers = {
     seasonId: FootballTypes.SeasonId;
     leagueId: FootballTypes.LeagueId;

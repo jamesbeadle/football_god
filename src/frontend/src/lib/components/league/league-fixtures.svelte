@@ -34,7 +34,9 @@
       let leagues = await leagueStore.getLeagues();
       league = leagues.find(x => x.id == leagueId);
       clubs = await clubStore.getClubs(leagueId);
-      fixtures = await fixtureStore.getFixtures(leagueId);
+      let leagueStatus = await leagueStore.getLeagueStatus(leagueId);
+  
+      fixtures = await fixtureStore.getFixtures(leagueId, leagueStatus.activeSeasonId);
 
       const highestGameweek = fixtures.reduce((max, fixture) => Math.max(max, fixture.gameweek), 0);
       gameweeks = Array.from({ length: Number(highestGameweek) }, (_, i) => i + 1);

@@ -12,6 +12,7 @@
     import FullScreenSpinner from "$lib/components/shared/full-screen-spinner.svelte";
     import type { CountryDTO, FootballLeagueDTO, LeagueStatus } from "../../../../declarations/data_canister/data_canister.did";
     import LeagueLoanedPlayers from "$lib/components/league/league-loaned-players.svelte";
+    import PostponedLeagueFixtures from "$lib/components/league/postponed-league-fixtures.svelte";
     
     let isLoading = true;
     let countries: CountryDTO[] = [];
@@ -27,7 +28,6 @@
         await loadData();
         leagueStatus = await leagueStore.getLeagueStatus(id);
       } catch (error) {
-        console.error("Error fetching league details:", error);
       } finally {
         isLoading = false;
       }
@@ -121,6 +121,11 @@
           Fixtures
         </button>
         <button 
+          class={`p-2 ${activeTab === "postponed-fixtures" ? "text-white border-b-2 border-white" : "text-BrandDisabled"}`} 
+          on:click={() => setActiveTab("postponed-fixtures")}>
+          Postponed Fixtures
+        </button>
+        <button 
           class={`p-2 ${activeTab === "loaned-players" ? "text-white border-b-2 border-white" : "text-BrandDisabled"}`} 
           on:click={() => setActiveTab("loaned-players")}>
           Loaned Players
@@ -132,6 +137,9 @@
       {/if}
       {#if activeTab === "fixtures"}
         <LeagueFixtures leagueId={league.id} />
+      {/if}
+      {#if activeTab === "postponed-fixtures"}
+        <PostponedLeagueFixtures leagueId={league.id} />
       {/if}
       {#if activeTab === "loaned-players"}
         <LeagueLoanedPlayers leagueId={league.id} />

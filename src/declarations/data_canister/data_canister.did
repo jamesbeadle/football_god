@@ -64,12 +64,6 @@ type TransferHistory =
    toLeagueId: LeagueId;
    transferDate: int;
  };
-type TimerInfo = 
- record {
-   callbackName: text;
-   id: int;
-   triggerTime: int;
- };
 type SubmitFixtureDataDTO = 
  record {
    fixtureId: FixtureId;
@@ -127,24 +121,29 @@ type RetirePlayerDTO =
 type Result_9 = 
  variant {
    err: Error;
-   ok: vec FootballLeagueDTO;
+   ok: LeagueStatus;
  };
 type Result_8 = 
  variant {
    err: Error;
-   ok: vec LoanedPlayerDTO;
+   ok: vec FootballLeagueDTO;
  };
 type Result_7 = 
  variant {
    err: Error;
-   ok: PlayerDetailDTO;
+   ok: vec LoanedPlayerDTO;
  };
 type Result_6 = 
  variant {
    err: Error;
-   ok: vec PlayerPointsDTO;
+   ok: PlayerDetailDTO;
  };
 type Result_5 = 
+ variant {
+   err: Error;
+   ok: vec PlayerPointsDTO;
+ };
+type Result_4 = 
  variant {
    err: Error;
    ok: vec record {
@@ -152,35 +151,25 @@ type Result_5 =
              PlayerScoreDTO;
            };
  };
-type Result_4 = 
- variant {
-   err: Error;
-   ok: vec SeasonDTO;
- };
 type Result_3 = 
  variant {
    err: Error;
-   ok: vec TimerInfo;
+   ok: vec SeasonDTO;
  };
 type Result_2 = 
  variant {
    err: Error;
    ok: vec ClubDTO;
  };
-type Result_12 = 
+type Result_11 = 
  variant {
    err: Error;
    ok: vec CountryDTO;
  };
-type Result_11 = 
- variant {
-   err: Error;
-   ok: vec DataHashDTO;
- };
 type Result_10 = 
  variant {
    err: Error;
-   ok: LeagueStatus;
+   ok: vec DataHashDTO;
  };
 type Result_1 = 
  variant {
@@ -199,11 +188,6 @@ type RescheduleFixtureDTO =
    seasonId: SeasonId;
    updatedFixtureDate: int;
    updatedFixtureGameweek: GameweekNumber;
- };
-type RequestFixturesDTO = 
- record {
-   leagueId: LeagueId;
-   seasonId: SeasonId;
  };
 type RelegateClubDTO = 
  record {
@@ -595,23 +579,22 @@ service : {
   createLeague: (CreateLeagueDTO) -> ();
   createPlayer: (CreatePlayerDTO) -> ();
   getClubs: (LeagueId) -> (Result_2) query;
-  getCountries: () -> (Result_12) query;
-  getDataHashes: (LeagueId) -> (Result_11) query;
-  getFixtures: (LeagueId) -> (Result_1) query;
-  getLeagueStatus: (LeagueId) -> (Result_10) query;
-  getLeagues: () -> (Result_9) query;
-  getLoanedPlayers: (LeagueId) -> (Result_8) query;
-  getPlayerDetails: (LeagueId, GetPlayerDetailsDTO) -> (Result_7) query;
+  getCountries: () -> (Result_11) query;
+  getDataHashes: (LeagueId) -> (Result_10) query;
+  getFixtures: (LeagueId, SeasonId) -> (Result_1) query;
+  getLeagueStatus: (LeagueId) -> (Result_9) query;
+  getLeagues: () -> (Result_8) query;
+  getLoanedPlayers: (LeagueId) -> (Result_7) query;
+  getPlayerDetails: (LeagueId, GetPlayerDetailsDTO) -> (Result_6) query;
   getPlayerDetailsForGameweek: (LeagueId, GameweekFiltersDTO) ->
-   (Result_6) query;
+   (Result_5) query;
   getPlayers: (LeagueId) -> (Result) query;
-  getPlayersMap: (LeagueId, GameweekFiltersDTO) -> (Result_5) query;
-  getPostponedFixtures: (LeagueId, RequestFixturesDTO) -> (Result_1) query;
+  getPlayersMap: (LeagueId, GameweekFiltersDTO) -> (Result_4) query;
+  getPostponedFixtures: (LeagueId) -> (Result_1) query;
   getRetiredPlayers: (LeagueId, ClubFilterDTO) -> (Result) query;
-  getSeasons: (LeagueId) -> (Result_4) query;
-  getTimers: () -> (Result_3) query;
+  getSeasons: (LeagueId) -> (Result_3) query;
   getVerifiedClubs: (LeagueId) -> (Result_2);
-  getVerifiedFixtures: (RequestFixturesDTO) -> (Result_1);
+  getVerifiedFixtures: (LeagueId, SeasonId) -> (Result_1);
   getVerifiedPlayers: (LeagueId) -> (Result);
   loanPlayer: (LoanPlayerDTO) -> ();
   moveFixture: (MoveFixtureDTO) -> ();
@@ -619,7 +602,7 @@ service : {
    (opt vec PlayerEventData);
   postponeFixture: (PostponeFixtureDTO) -> ();
   recallPlayer: (RecallPlayerDTO) -> ();
-  rescheduleFixure: (RescheduleFixtureDTO) -> ();
+  rescheduleFixture: (RescheduleFixtureDTO) -> ();
   retirePlayer: (RetirePlayerDTO) -> ();
   revaluePlayerDown: (RevaluePlayerDownDTO) -> ();
   revaluePlayerUp: (RevaluePlayerUpDTO) -> ();
@@ -628,6 +611,7 @@ service : {
   submitFixtureData: (SubmitFixtureDataDTO) -> ();
   transferPlayer: (TransferPlayerDTO) -> ();
   unretirePlayer: (UnretirePlayerDTO) -> ();
+  updateClub: (UpdateClubDTO) -> ();
   updateLeague: (UpdateLeagueDTO) -> ();
   updatePlayer: (UpdatePlayerDTO) -> ();
   validateAddInitialFixtures: (AddInitialFixturesDTO) -> (RustResult);

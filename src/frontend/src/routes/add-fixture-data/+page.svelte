@@ -18,6 +18,7 @@
   import SelectedPlayerList from "$lib/components/fixture-validation/selected-player-list.svelte";
   import type { ClubDTO, FixtureDTO, PlayerDTO, PlayerEventData, SubmitFixtureDataDTO } from "../../../../declarations/data_canister/data_canister.did";
   import { governanceStore } from "$lib/stores/governance-store";
+    import { leagueStore } from "$lib/stores/league-store";
   
   let clubs: ClubDTO[] = [];
   let players: PlayerDTO[] = [];
@@ -59,7 +60,9 @@
     try {
       clubs = await clubStore.getClubs(leagueId);      
       players = await playerStore.getPlayers(leagueId);
-      let fixtures = await fixtureStore.getFixtures(leagueId);
+
+      let leagueStatus = await leagueStore.getLeagueStatus(leagueId);
+      const fixtures = await fixtureStore.getFixtures(leagueId, leagueStatus.activeSeasonId);
       
       if (clubs.length == 0 || players.length == 0 || !fixtures) {
         return;

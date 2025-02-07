@@ -1,5 +1,6 @@
 import type {
   CountryId,
+  GameweekNumber,
   Gender,
   PlayerEventData,
 } from "../../../../declarations/data_canister/data_canister.did";
@@ -298,5 +299,44 @@ export function buildCreateLeagueText(
       `Governing Body: ${governingBody}\n` +
       `Formed: ${formed}\n` +
       `Country: ${countryName}`,
+  };
+}
+
+export function buildUpdateLeagueText(
+  name: string,
+  abbreviation: string,
+  teamCount: number,
+  relatedGender: string,
+  governingBody: string,
+  formed: string,
+  countryName: string,
+) {
+  return {
+    title: `Update league: ${name}`,
+    summary:
+      `Description: Update League: ${name}\n\n` +
+      `League Details\n` +
+      `Name: ${name}\n` +
+      `Abbreviation: ${abbreviation}\n` +
+      `Team Count: ${teamCount}\n` +
+      `Gender: ${relatedGender}\n` +
+      `Governing Body: ${governingBody}\n` +
+      `Formed: ${formed}\n` +
+      `Country: ${countryName}`,
+  };
+}
+
+export function buildRescheduleFixtureText(
+  vsString: string,
+  gameweek: GameweekNumber,
+  fixtureDate: string,
+) {
+  return {
+    title: `Reschedule ${vsString}`,
+    summary:
+      `Reschedule ${vsString}` +
+      `Details\n` +
+      `New Gameweek: ${gameweek}\n` +
+      `New Fixture Date: ${fixtureDate}\n`,
   };
 }
