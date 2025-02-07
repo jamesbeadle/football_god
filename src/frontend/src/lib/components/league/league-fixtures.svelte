@@ -125,7 +125,7 @@
         <div class="flex flex-col md:flex-row my-2 items-center">
           <p>Select a gameweek:</p>
           <select
-            class="p-1 brand-dropdown w-full md:w-auto mx-auto md:ml-2"
+            class="brand-dropdown"
             bind:value={selectedGameweek}
           >
             <option value={0}>Select Gameweek</option>
@@ -187,7 +187,7 @@
 
   {#if selectedFixtureId > 0 && showPostponeFixtureModal}
     {@const selectedFixture = fixtures.find(x => x.id == selectedFixtureId)}
-    <PostponeFixture visible={showPostponeFixtureModal} {closeModal} {selectedFixtureId} selectedGameweek={selectedFixture?.gameweek!} selectedLeagueId={leagueId}/>
+    <PostponeFixture visible={showPostponeFixtureModal} {closeModal} selectedFixture={selectedFixture!} selectedLeagueId={leagueId}/>
   {/if}
 
 {/if}

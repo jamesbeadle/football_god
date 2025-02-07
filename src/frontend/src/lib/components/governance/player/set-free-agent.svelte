@@ -1,44 +1,24 @@
 <script lang="ts">
   import { onMount } from "svelte";
-  import { leagueStore } from "$lib/stores/league-store";
-  import { clubStore } from "$lib/stores/club-store";
   import { playerStore } from "$lib/stores/player-store";
-  import type { ClubDTO, FootballLeagueDTO, PlayerDTO, SetFreeAgentDTO } from "../../../../../../declarations/backend/backend.did";
-  import LocalSpinner from "$lib/components/shared/local-spinner.svelte";
+  import type { PlayerDTO, SetFreeAgentDTO } from "../../../../../../declarations/data_canister/data_canister.did";
   import Modal from "$lib/components/shared/modal.svelte";
+  import GovernanceModal from "../governance-modal.svelte";
+  import FormComponent from "$lib/components/shared/form-component.svelte";
 
   export let visible: boolean;
-  export let closeModal: () => void;
-
-  export let selectedLeagueId: number = 0;
-  export let selectedClubId: number = 0;
-  export let selectedPlayerId: number = 0;
-
-  let currentLeagues: FootballLeagueDTO[] = [];
-  let currentClubs: ClubDTO[] = [];
-  let currentPlayers: PlayerDTO[] = [];
+  export let closeModal: () => void
+  export let selectedPlayer: PlayerDTO;
   
   let isLoading = false;
-  let showConfirm = false;
+  let newValueMillions: number = 0;
 
-  $: isSubmitDisabled =
-  selectedLeagueId <= 0 || selectedClubId <= 0 || selectedPlayerId <= 0
+  $: isSubmitDisabled = selectedPlayer == null || newValueMillions == 0
 
-  $: if(selectedLeagueId) {
-    getCurrentLeagueClubs();
-  }
-
-  $: if (selectedClubId) {
-    getCurrentPlayers();
-  }
-  
-  $: if (isSubmitDisabled && showConfirm) {
-    showConfirm = false;
-  }
 
   onMount(async () => {
     try {
-      currentLeagues = await leagueStore.getLeagues();
+      newValueMillions = selectedPlayer.valueQuarterMillions / 4;
       isLoading = false;
     } catch (error) {
       console.error("Error syncing proposal data.", error);
@@ -47,37 +27,20 @@
     }
   });
 
-  async function getCurrentLeagueClubs() {
-    currentClubs = await clubStore.getClubs(selectedLeagueId);
-  }
-
-  async function getCurrentPlayers() {
-    currentPlayers = (await playerStore.getPlayers(selectedLeagueId)).filter(x => x.clubId == selectedClubId);
-  }
-
-  function raiseProposal() {
-    showConfirm = true;
-  }
-
   async function confirmProposal() {
     isLoading = true;
     let dto: SetFreeAgentDTO = {
-      leagueId: selectedLeagueId,
-      playerId: selectedPlayerId
+      leagueId: selectedPlayer.leagueId,
+      playerId: selectedPlayer.id,
+      newValueQuarterMillions: newValueMillions * 4
     };
-    await playerStore.setFreeAgent(selectedLeagueId, dto);
+    await playerStore.setFreeAgent(selectedPlayer.leagueId, dto);
     isLoading = false;
     resetForm();
     closeModal();
   }
 
   function resetForm() {
-    currentLeagues = [];
-    currentClubs = [];
-    currentPlayers = [];
-    selectedLeagueId = 0;
-    selectedClubId = 0;
-    selectedPlayerId = 0;
   }
 
   function cancelModal() {
@@ -87,97 +50,12 @@
 </script>
 
 <Modal showModal={visible} onClose={closeModal}>
-  <div class="mx-4 p-4">
-    <div class="flex justify-between items-center my-2">
-      <h3 class="default-header">Set Player as Free Agent</h3>
-      <button class="times-button" on:click={cancelModal}>&times;</button>
-    </div>
-
-    <div class="flex justify-start items-center w-full">
-      <div class="w-full flex-col space-y-4 mb-2">
-        <p>Select the player's league:</p>
-
-        <select
-          class="p-2 brand-dropdown min-w-[100px]"
-          bind:value={selectedLeagueId}
-        >
-          <option value={0}>Select League</option>
-          {#each currentLeagues as league}
-            <option value={league.id}>{league.name}</option>
-          {/each}
-        </select>
-
-        {#if selectedLeagueId > 0}
-          <p>Select the player's club:</p>
-
-          <select
-            class="p-2 brand-dropdown min-w-[100px]"
-            bind:value={selectedClubId}
-          >
-            <option value={0}>Select Club</option>
-            {#each currentClubs as club}
-              <option value={club.id}>{club.friendlyName}</option>
-            {/each}
-          </select>
-        {/if}
-
-        {#if selectedClubId > 0}
-          <p>Select player to set as free agent:</p>
-
-          <select
-            class="p-2 brand-dropdown my-4 min-w-[100px]"
-            bind:value={selectedPlayerId}
-          >
-            <option value={0}>Select Player</option>
-            {#each currentPlayers as player}
-              <option value={player.id}
-                >{player.firstName} {player.lastName}</option
-              >
-            {/each}
-          </select>
-
-        {/if}
-
-        <div class="items-center flex space-x-4">
-          <button
-            class="px-4 py-2 brand-cancel-button min-w-[150px]"
-            type="button"
-            on:click={cancelModal}
-          >
-            Cancel
-          </button>
-          <button
-            class={`${isSubmitDisabled ? "brand-button-disabled" : "brand-button"} 
-                        px-4 py-2 min-w-[150px]`}
-            on:click={raiseProposal}
-            disabled={isSubmitDisabled}
-          >
-            Raise Proposal
-          </button>
-        </div>
-
-        {#if showConfirm}
-          <div class="items-center flex">
-            <p class="text-orange-400">
-              Failed proposals will cost the proposer 10 $FPL tokens.
-            </p>
-          </div>
-          <div class="items-center flex">
-            <button
-              class={`${isSubmitDisabled ? "brand-button-disabled" : "brand-button"} 
-                            px-4 py-2 w-full`}
-              on:click={confirmProposal}
-              disabled={isSubmitDisabled}
-            >
-              Confirm Submit Proposal
-            </button>
-          </div>
-        {/if}
+  <GovernanceModal title={"Set Free Agent"} {cancelModal} {confirmProposal} {isLoading} {isSubmitDisabled}><p>Select the player's league:</p>
+    <p>Set {selectedPlayer.firstName} {selectedPlayer.lastName} as a free agent:</p>
+    <FormComponent label="New Value (£ millions):">
+      <div class="flex flex-row w-full items-center">
+        <input class="brand-input" type="number" step="0.25" min="0.25" max="250" bind:value={newValueMillions} />
       </div>
-    </div>
-
-    {#if isLoading}
-      <LocalSpinner />
-    {/if}
-  </div>
+    </FormComponent>
+  </GovernanceModal>
 </Modal>

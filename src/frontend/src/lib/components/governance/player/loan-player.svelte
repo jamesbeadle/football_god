@@ -4,26 +4,22 @@
   import { clubStore } from "$lib/stores/club-store";
   import { governanceStore } from "$lib/stores/governance-store";
   import { convertDateInputToUnixNano, isError } from "$lib/utils/helpers";
-  import Modal from "$lib/components/shared/modal.svelte";
-  import LocalSpinner from "$lib/components/shared/local-spinner.svelte";
   import type { ClubDTO, FootballLeagueDTO, LoanPlayerDTO, PlayerDTO } from "../../../../../../declarations/data_canister/data_canister.did";
+  import Modal from "$lib/components/shared/modal.svelte";
+  import GovernanceModal from "../governance-modal.svelte";
+  import FormComponent from "$lib/components/shared/form-component.svelte";
   
   export let visible: boolean;
   export let closeModal: () => void;
-
   export let selectedPlayer: PlayerDTO;
   
   let loanLeagueId: number = 0;
   let loanClubId: number = 0;
   let newValueMillions: number = 0;
-
   let date = "";
-
   let loanLeagues: FootballLeagueDTO[] = [];
   let loanClubs: ClubDTO[] = [];
-
   let isLoading = false;
-  let showConfirm = false;
 
   $: isSubmitDisabled = loanLeagueId == 0 || loanClubId == 0 || date == "";
 
@@ -45,10 +41,6 @@
   
   async function getLoanClubs() {
     loanClubs = await clubStore.getClubs(loanLeagueId);
-  }
-
-  function raiseProposal() {
-    showConfirm = true;
   }
 
   async function confirmProposal() {
@@ -85,96 +77,47 @@
 </script>
 
 <Modal showModal={visible} onClose={closeModal}>
-  <div class="mx-2 p-2">
-    <div class="flex justify-between items-center mb-2">
-      <h3 class="default-header">Loan Player</h3>
-      <button class="times-button" on:click={cancelModal}>&times;</button>
-    </div>
+  <GovernanceModal title={"Loan Player"} {cancelModal} {confirmProposal} {isLoading} {isSubmitDisabled}>
 
-    <div class="flex justify-start items-center w-full">
-      {#if isLoading}
-        <LocalSpinner />
-      {:else}
-        <div class="w-full flex-col space-y-4 mb-2 flex space-y-2">
+    <p class="my-2">Loan {selectedPlayer.firstName} {selectedPlayer.lastName}</p>
 
-          <p class="">Loan {selectedPlayer.firstName} {selectedPlayer.lastName}</p>
+    <FormComponent label="Select loan league:">
+      <select
+        class="brand-dropdown"
+        bind:value={loanLeagueId}
+      >
+        <option value={0}>Select League</option>
+        {#each loanLeagues as league}
+          <option value={league.id}>{league.name}</option>
+        {/each}
+      </select>
+
+    </FormComponent>
         
-          <p>Please select the league they are being loaned to:</p>
+    {#if loanLeagueId > 0}
+      <FormComponent label="Select loan club:">
+        <select
+          class="brand-dropdown"
+          bind:value={loanClubId}
+        >
+          <option value={0}>Select Club</option>
+          {#each loanClubs as club}
+            <option value={club.id}>{club.friendlyName}</option>
+          {/each}
+        </select>
+      </FormComponent>
 
-          <select
-            class="brand-dropdown w-full"
-            bind:value={loanLeagueId}
-          >
-            <option value={0}>Select League</option>
-            {#each loanLeagues as league}
-              <option value={league.id}>{league.name}</option>
-            {/each}
-          </select>
+      {#if loanClubId > 0}
+        <FormComponent label="Loan End Date:">
+          <input class="brand-input" type="date" bind:value={date} />
+        </FormComponent>
 
-          {#if loanLeagueId > 0}
-
-            <select
-              class="brand-dropdown w-full"
-              bind:value={loanClubId}
-            >
-              <option value={0}>Select Club</option>
-              {#each loanClubs as club}
-                <option value={club.id}>{club.friendlyName}</option>
-              {/each}
-            </select>
-
-            {#if loanClubId > 0}
-              <div class="flex flex-row w-full items-center">
-                <p class="w-1/2">Loan End Date:</p>
-                <input class="w-1/2 brand-input" type="date" bind:value={date} />
-              </div>
-
-              <div class="flex flex-row w-full items-center">
-                <p class="w-1/2">New Value (£ millions):</p>
-                <input class="w-1/2 brand-input" type="number" step="0.25" min="0.25" max="250" bind:value={newValueMillions} />
-              </div>
-
-            {/if}
-          {/if}
-
-          <div class="items-center flex flex-row space-x-4 w-full">
-            <button
-              class="brand-cancel-button w-1/2"
-              type="button"
-              on:click={cancelModal}
-            >
-              Cancel
-            </button>
-            <button
-              class={`${isSubmitDisabled ? "brand-button-disabled" : "brand-button"} w-1/2`}
-              on:click={raiseProposal}
-              disabled={isSubmitDisabled}
-            >
-              Raise Proposal
-            </button>
-          </div>
-
-          {#if showConfirm}
-            <div class="items-center flex">
-              <p class="text-orange-400">
-                Failed proposals will cost the proposer 10 $FPL tokens.
-              </p>
-            </div>
-            <div class="items-center flex">
-              <button
-                class={`${isSubmitDisabled ? "brand-button-disabled" : "brand-button"} 
-                              px-4 py-2 w-full`}
-                on:click={confirmProposal}
-                disabled={isSubmitDisabled}
-              >
-                Confirm Submit Proposal
-              </button>
-            </div>
-          {/if}
-        </div>
+        <FormComponent label="New Value (£ millions):">
+          <input class="brand-input" type="number" step="0.25" min="0.25" max="250" bind:value={newValueMillions} />
+        </FormComponent>
       {/if}
-    </div>
-  </div>
+    {/if}
+  </GovernanceModal>
 </Modal>
 
 

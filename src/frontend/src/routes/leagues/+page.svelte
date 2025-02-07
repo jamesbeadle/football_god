@@ -1,24 +1,19 @@
 <script lang="ts">
   import { onDestroy, onMount } from "svelte";
   import { goto } from "$app/navigation";
-  import { convertDateToReadable, getImageURL } from "$lib/utils/helpers";
-  import type { CountryDTO, FootballLeagueDTO } from "../../../../declarations/data_canister/data_canister.did";
-    
-  import { countryStore } from "$lib/stores/country-store";
   import { leagueStore } from "$lib/stores/league-store";
-  
+  import { convertDateToReadable, getImageURL } from "$lib/utils/helpers";
+  import type { FootballLeagueDTO } from "../../../../declarations/data_canister/data_canister.did";
   import Layout from "../Layout.svelte";
   import LocalSpinner from "$lib/components/shared/local-spinner.svelte";
   import AddLeagueModal from "$lib/components/governance/league/create-league.svelte";
   import UpdateLeagueModal from "$lib/components/governance/league/update-league.svelte";
   import PipsIcon from "$lib/icons/pips-icon.svelte";
-    import UpdateUsernameModal from "$lib/components/profile/update-username-modal.svelte";
     
   let isLoading = true;
   let showAddLeague = false;
   let showUpdateLeague = false;
   let leagues: FootballLeagueDTO[] = [];
-  let countries: CountryDTO[] = [];
   let dropdownVisible: number | null = null;
   let selectedLeagueId = 0;
 
@@ -26,7 +21,6 @@
     document.addEventListener("click", handleClickOutside);
     try {
       leagues = await leagueStore.getLeagues();
-      countries = await countryStore.getCountries();
     } catch (error) {
       console.error("Error fetching leagues:", error);
     } finally {

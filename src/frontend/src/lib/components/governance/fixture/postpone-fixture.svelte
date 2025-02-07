@@ -1,46 +1,26 @@
 <script lang="ts">
   import { onMount } from "svelte";
-  
   import { leagueStore } from "$lib/stores/league-store";
   import { clubStore } from "$lib/stores/club-store";
-  import { fixtureStore } from "$lib/stores/fixture-store";
   import { governanceStore } from "$lib/stores/governance-store";
   import { isError } from "$lib/utils/helpers";
   import type { ClubDTO, FixtureDTO, PostponeFixtureDTO } from "../../../../../../declarations/data_canister/data_canister.did";
-  import LocalSpinner from "$lib/components/shared/local-spinner.svelte";
   import Modal from "$lib/components/shared/modal.svelte";
+  import GovernanceModal from "../governance-modal.svelte";
     
   export let visible: boolean;
   export let closeModal: () => void;
-  export let selectedFixtureId: number;
+  export let selectedFixture: FixtureDTO;
   export let selectedLeagueId: number;
-  export let selectedGameweek: number;
 
   let gameweeks = Array.from({ length: Number(process.env.TOTAL_GAMEWEEKS) }, (_, i) => i + 1);
-  let gameweekFixtures: FixtureDTO[] = [];
   let clubs: ClubDTO[] = [];
-
-  $: isSubmitDisabled = !selectedFixtureId || selectedFixtureId <= 0;
-
-  $: if (selectedGameweek) {
-    loadGameweekFixtures();
-  }
-
-  async function loadGameweekFixtures() {
-    let leagueStatus = await leagueStore.getLeagueStatus(selectedLeagueId);
+  let homeClub: ClubDTO;
+  let awayClub: ClubDTO;
   
-    let leagueFixtures = await fixtureStore.getFixtures(selectedLeagueId, leagueStatus.activeSeasonId);
-    gameweekFixtures = leagueFixtures.filter(
-      (x) => x.gameweek == selectedGameweek
-    );
-  }
+  $: isSubmitDisabled = false;
 
   let isLoading = true;
-  let showConfirm = false;
-
-  $: if (isSubmitDisabled && showConfirm) {
-    showConfirm = false;
-  }
 
   onMount(async () => {
     try {
@@ -49,21 +29,14 @@
       if(selectedLeagueId > 0){
           clubs = await clubStore.getClubs(selectedLeagueId);
       }
-      await loadGameweekFixtures();
+      homeClub = clubs.find(x => x.id == selectedFixture.homeClubId)!;
+      awayClub = clubs.find(x => x.id == selectedFixture.awayClubId)!;
     } catch (error) {
       console.error("Error syncing proposal data.", error);
     } finally {
       isLoading = false;
     }
   });
-
-  function getTeamById(teamId: number): ClubDTO {
-    return clubs.find((x) => x.id === teamId)!;
-  }
-
-  function raiseProposal() {
-    showConfirm = true;
-  }
 
   async function confirmProposal() {
     isLoading = true;
@@ -89,7 +62,7 @@
     let dto: PostponeFixtureDTO = {
       leagueId: selectedLeagueId,
       seasonId: leagueStatus.activeSeasonId,
-      fixtureId : selectedFixtureId
+      fixtureId : selectedFixture.id
     };
     let result = await governanceStore.postponeFixture(dto);
     if (isError(result)) {
@@ -103,7 +76,6 @@
   }
 
   function resetForm() {
-    showConfirm = false;
   }
 
   function cancelModal() {
@@ -113,87 +85,7 @@
 </script>
 
 <Modal showModal={visible} onClose={closeModal}>
-  <div class="mx-4 p-4">
-    <div class="flex justify-between items-center my-2">
-      <h3 class="default-header">Postpone Fixture</h3>
-      <button class="times-button" on:click={cancelModal}>&times;</button>
-    </div>
-
-    {#if isLoading}
-      <LocalSpinner />
-    {:else}
-    <div class="flex justify-start items-center w-full">
-      <div class="w-full flex-col space-y-4 mb-2">
-        <div class="flex-col space-y-2">
-          <p>Select Gameweek:</p>
-          <select
-            class="p-2 brand-dropdown my-4 min-w-[100px]"
-            bind:value={selectedGameweek}
-          >
-            <option value={0}>Select Gameweek</option>
-            {#each gameweeks as gameweek}
-              <option value={gameweek}>Gameweek {gameweek}</option>
-            {/each}
-          </select>
-        </div>
-
-        <div class="flex-col space-y-2">
-          <p>Select Fixture:</p>
-          <select
-            class="p-2 brand-dropdown my-4 min-w-[100px]"
-            bind:value={selectedFixtureId}
-          >
-            <option value={0}>Select Fixture</option>
-            {#each gameweekFixtures as fixture}
-              {@const homeTeam = getTeamById(fixture.homeClubId)}
-              {@const awayTeam = getTeamById(fixture.awayClubId)}
-              <option value={fixture.id}
-                >{homeTeam.friendlyName} v {awayTeam.friendlyName}</option
-              >
-            {/each}
-          </select>
-        </div>
-
-        <div class="border-b border-gray-200"></div>
-
-        <div class="items-center flex space-x-4">
-          <button
-            class="px-4 py-2 brand-cancel-button min-w-[150px]"
-            type="button"
-            on:click={cancelModal}
-          >
-            Cancel
-          </button>
-          <button
-            class={`${isSubmitDisabled ? "brand-button-disabled" : "brand-button"} 
-                        px-4 py-2 min-w-[150px]`}
-            on:click={raiseProposal}
-            disabled={isSubmitDisabled}
-          >
-            Raise Proposal
-          </button>
-        </div>
-
-        {#if showConfirm}
-          <div class="items-center flex">
-            <p class="text-orange-400">
-              Failed proposals will cost the proposer 10 $FPL tokens.
-            </p>
-          </div>
-          <div class="items-center flex">
-            <button
-              class={`${isSubmitDisabled ? "brand-button-disabled" : "brand-button"} 
-                            px-4 py-2 w-full`}
-              on:click={confirmProposal}
-              disabled={isSubmitDisabled}
-            >
-              Confirm Submit Proposal
-            </button>
-          </div>
-        {/if}
-      </div>
-    </div>
-
-    {/if}
-  </div>
+  <GovernanceModal title={"Postpone Fixture"} {cancelModal} {confirmProposal} {isLoading} {isSubmitDisabled}>
+    <p>Postpone {homeClub.friendlyName} v {awayClub.friendlyName} - Gameweek {selectedFixture.gameweek}</p>
+  </GovernanceModal>
 </Modal>

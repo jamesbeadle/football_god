@@ -1,13 +1,13 @@
 <script lang="ts">
   import { onMount } from "svelte";
-  import { fixtureStore } from "$lib/stores/fixture-store";
-  import LocalSpinner from "$lib/components/shared/local-spinner.svelte";
   import Modal from "$lib/components/shared/modal.svelte";
   import type { ClubDTO, FixtureDTO, GameweekNumber, RescheduleFixtureDTO } from "../../../../../../declarations/data_canister/data_canister.did";
   import { convertDateInputToUnixNano, isError } from "$lib/utils/helpers";
   import { governanceStore } from "$lib/stores/governance-store";
   import { clubStore } from "$lib/stores/club-store";
     import { leagueStore } from "$lib/stores/league-store";
+    import GovernanceModal from "../governance-modal.svelte";
+    import FormComponent from "$lib/components/shared/form-component.svelte";
 
   export let visible: boolean;
   export let closeModal: () => void;
@@ -57,15 +57,6 @@
   });
 
   let isLoading = true;
-  let showConfirm = false;
-
-  $: if (isSubmitDisabled && showConfirm) {
-    showConfirm = false;
-  }
-
-  function raiseProposal() {
-    showConfirm = true;
-  }
 
   async function confirmProposal() {
     isLoading = true;
@@ -93,7 +84,6 @@
     time = "";
     dateTime = "";
     newGameweek = 0;
-    showConfirm = false;
   }
 
   function cancelModal() {
@@ -103,75 +93,25 @@
 </script>
 
 <Modal showModal={visible} onClose={closeModal}>
-  <div class="mx-2 p-2">
-    <div class="flex justify-between items-center mb-2">
-      <h3 class="default-header">Reschedule Fixture</h3>
-      <button class="times-button" on:click={cancelModal}>&times;</button>
-    </div>
+  <GovernanceModal title={"Reschedule Fixture"} {cancelModal} {confirmProposal} {isLoading} {isSubmitDisabled}>
+    
+    <p class="">Reschedule {homeTeam.friendlyName} v {awayTeam.friendlyName}</p>
+    
+    <FormComponent label="New Fixture Date:">
+      <input class="brand-input" type="date" bind:value={date} />
+    </FormComponent>
 
-    <div class="flex justify-start items-center w-full">
-      {#if isLoading}
-        <LocalSpinner />
-      {:else}
-        <div class="w-full flex-col space-y-4 mb-2 flex space-y-2">
-
-          <p class="">Reschedule {homeTeam.friendlyName} v {awayTeam.friendlyName}</p>
-        
-          <p>Please select the league they are being loaned to:</p>
-
-          <div class="flex flex-row w-full items-center">
-            <p class="w-1/2">New Fixture Date:</p>
-            <input class="w-1/2 brand-input" type="date" bind:value={date} />
-          </div>
-
-          <div class="flex flex-row w-full items-center">
-            <p class="w-1/2">New Fixture Time:</p>
-            <input class="w-1/2 brand-input" type="time" bind:value={time} />
-          </div>
-
-          <select class="brand-dropdown w-full" bind:value={newGameweek}>
-            <option value={0}>Select New Gameweek</option>
-            {#each gameweeks as gameweek}
-              <option value={gameweek}>Gameweek {gameweek}</option>
-            {/each}
-          </select>
-        
-          <div class="items-center flex flex-row space-x-4 w-full">
-            <button
-              class="brand-cancel-button w-1/2"
-              type="button"
-              on:click={cancelModal}
-            >
-              Cancel
-            </button>
-            <button
-              class={`${isSubmitDisabled ? "brand-button-disabled" : "brand-button"} w-1/2`}
-              on:click={raiseProposal}
-              disabled={isSubmitDisabled}
-            >
-              Raise Proposal
-            </button>
-          </div>
-
-          {#if showConfirm}
-            <div class="items-center flex">
-              <p class="text-orange-400">
-                Failed proposals will cost the proposer 10 $FPL tokens.
-              </p>
-            </div>
-            <div class="items-center flex">
-              <button
-                class={`${isSubmitDisabled ? "brand-button-disabled" : "brand-button"} 
-                              px-4 py-2 w-full`}
-                on:click={confirmProposal}
-                disabled={isSubmitDisabled}
-              >
-                Confirm Submit Proposal
-              </button>
-            </div>
-          {/if}
-        </div>
-      {/if}
-    </div>
-  </div>
+    <FormComponent label="New Fixture Time:">
+      <input class="brand-input" type="time" bind:value={time} />
+    </FormComponent>
+    
+    <FormComponent label="Select New Gameweek:">
+      <select class="brand-dropdown" bind:value={newGameweek}>
+        <option value={0}>Select New Gameweek</option>
+        {#each gameweeks as gameweek}
+          <option value={gameweek}>Gameweek {gameweek}</option>
+        {/each}
+      </select>
+    </FormComponent>
+  </GovernanceModal>
 </Modal>

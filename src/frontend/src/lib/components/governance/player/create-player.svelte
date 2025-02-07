@@ -1,18 +1,18 @@
 <script lang="ts">
   import { onMount } from "svelte";
+  import { governanceStore } from "$lib/stores/governance-store";
   import { countryStore } from "$lib/stores/country-store";
   import { leagueStore } from "$lib/stores/league-store";
   import { clubStore } from "$lib/stores/club-store";
   import { convertDateInputToUnixNano } from "$lib/utils/helpers";
-
-  import LocalSpinner from "$lib/components/shared/local-spinner.svelte";
+  import type { ClubDTO, CountryDTO, CreatePlayerDTO, FootballLeagueDTO, PlayerPosition } from "../../../../../../declarations/data_canister/data_canister.did";
+  
   import Modal from "$lib/components/shared/modal.svelte";
-    import type { ClubDTO, CountryDTO, CreatePlayerDTO, FootballLeagueDTO, PlayerPosition } from "../../../../../../declarations/data_canister/data_canister.did";
-    import { governanceStore } from "$lib/stores/governance-store";
+  import GovernanceModal from "../governance-modal.svelte";
+  import FormComponent from "$lib/components/shared/form-component.svelte";
   
   export let visible: boolean;
   export let closeModal: () => void;
-
   export let selectedLeagueId: number = 0;
   export let selectedClubId: number = 0;
   
@@ -29,7 +29,6 @@
   let nationalityId = 0;
   
   let isLoading = false;
-  let showConfirm = false;
   let leaguesLoaded = false;
 
   $: isSubmitDisabled =
@@ -45,7 +44,6 @@
     value <= 0 ||
     value > 200 ||
     nationalityId == 0;
-
 
   onMount(async () => {
     try {
@@ -70,10 +68,6 @@
 
   async function getClubs() {
     clubs = await clubStore.getClubs(selectedLeagueId);
-  }
-
-  function raiseProposal() {
-    showConfirm = true;
   }
 
   async function confirmProposal() {
@@ -132,166 +126,88 @@
 </script>
 
 <Modal showModal={visible} onClose={closeModal}>
-  <div class="mx-4 p-4">
-    <div class="flex justify-between items-center my-2">
-      <h3 class="default-header">Create Player</h3>
-      <button class="times-button" on:click={cancelModal}>&times;</button>
-    </div>
+  <GovernanceModal title={"Create Player"} {cancelModal} {confirmProposal} {isLoading} {isSubmitDisabled}>
+    <FormComponent label="Select the player's league:">
+      <select class="brand-dropdown" bind:value={selectedLeagueId}>
+        <option value={0}>Select League</option>
+        {#each leagues as league}
+          <option value={league.id}>{league.name}</option>
+        {/each}
+      </select>
+    </FormComponent>
+    
+    {#if selectedLeagueId > 0}
+      <FormComponent label="Select the player's club:">
+        <select class="brand-dropdown" bind:value={selectedClubId}>
+          <option value={0}>Select Club</option>
+          {#each clubs as club}
+            <option value={club.id}>{club.friendlyName}</option>
+          {/each}
+        </select>
+      </FormComponent>
+    {/if}
 
-    <div class="flex justify-start items-center w-full">
-      {#if isLoading}
-        <LocalSpinner />
-      {:else}
-        <div class="w-full flex-col space-y-4 mb-2">
-          <p>Select the player's league:</p>
-
-          <select
-            class="p-2 brand-dropdown min-w-[100px]"
-            bind:value={selectedLeagueId}
-          >
-            <option value={0}>Select League</option>
-            {#each leagues as league}
-              <option value={league.id}>{league.name}</option>
-            {/each}
-          </select>
-
-          {#if selectedLeagueId > 0}
-            <p>Select the player's club:</p>
-
-            <select
-              class="p-2 brand-dropdown min-w-[100px]"
-              bind:value={selectedClubId}
-            >
-              <option value={0}>Select Club</option>
-              {#each clubs as club}
-                <option value={club.id}>{club.friendlyName}</option>
-              {/each}
-            </select>
-          {/if}
-
-          {#if selectedClubId > 0}
-           
-          <div class="flex-col space-y-2">
-            <p>Select Position:</p>
-            <select
-              class="p-2 brand-dropdown my-4 min-w-[100px]"
-              bind:value={selectedPosition}
-            >
-              <option value={0}>Select Position</option>
-              <option value={1}>Goalkeeper</option>
-              <option value={2}>Defender</option>
-              <option value={3}>Midfielder</option>
-              <option value={4}>Forward</option>
-            </select>
-          </div>
-          <div class="flex-col space-y-2">
-            <p class="py-2">First Name:</p>
-  
-            <input
-              type="text"
-              class="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
-              placeholder="First Name"
-              bind:value={firstName}
-            />
-          </div>
-          <div class="flex-col space-y-2">
-            <p class="py-2">Last Name:</p>
-  
-            <input
-              type="text"
-              class="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
-              placeholder="Last Name"
-              bind:value={lastName}
-            />
-          </div>
-          <div class="flex-col space-y-2">
-            <p class="py-2">Shirt Number:</p>
-  
-            <input
-              type="number"
-              class="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
-              placeholder="Shirt Number"
-              min="1"
-              max="99"
-              step="1"
-              bind:value={shirtNumber}
-            />
-          </div>
-          <div class="flex-col space-y-2">
-            <p class="py-2">Value (£m):</p>
-  
-            <input
-              type="number"
-              step="0.25"
-              class="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
-              placeholder="Value"
-              bind:value
-            />
-          </div>
-          <div class="flex-col space-y-2">
-            <p class="py-2">Date of Birth:</p>
-  
-            <input
-              type="date"
-              bind:value={dateOfBirth}
-              class="brand-input"
-            />
-          </div>
-          <div class="flex-col space-y-2">
-            <p class="py-2">Nationality:</p>
-  
-            <select
-              class="p-2 brand-dropdown min-w-[100px] mb-2"
-              bind:value={nationalityId}
-            >
-              <option value={0}>Select Nationality</option>
-              {#each countries as country}
-                <option value={country.id}>{country.name}</option>
-              {/each}
-            </select>
-          </div>
-
-          {/if}
-
-          <div class="items-center flex space-x-4">
-            <button
-              class="px-4 py-2 brand-cancel-button min-w-[150px]"
-              type="button"
-              on:click={cancelModal}
-            >
-              Cancel
-            </button>
-            <button
-              class={`${isSubmitDisabled ? "brand-button-disabled" : "brand-button"} 
-                          px-4 py-2 min-w-[150px]`}
-              on:click={raiseProposal}
-              disabled={isSubmitDisabled}
-            >
-              Raise Proposal
-            </button>
-          </div>
-
-          {#if showConfirm}
-            <div class="items-center flex">
-              <p class="text-orange-400">
-                Failed proposals will cost the proposer 10 $FPL tokens.
-              </p>
-            </div>
-            <div class="items-center flex">
-              <button
-                class={`${isSubmitDisabled ? "brand-button-disabled" : "brand-button"} 
-                              px-4 py-2 w-full`}
-                on:click={confirmProposal}
-                disabled={isSubmitDisabled}
-              >
-                Confirm Submit Proposal
-              </button>
-            </div>
-          {/if}
-        </div>
-      {/if}
-    </div>
-  </div>
+    {#if selectedClubId > 0}
+      <FormComponent label="Select Position:">
+        <select class="brand-dropdown" bind:value={selectedPosition}>
+          <option value={0}>Select Position</option>
+          <option value={1}>Goalkeeper</option>
+          <option value={2}>Defender</option>
+          <option value={3}>Midfielder</option>
+          <option value={4}>Forward</option>
+        </select>
+      </FormComponent>
+      
+      <FormComponent label="First Name:">
+        <input type="text" class="brand-input" placeholder="First Name" bind:value={firstName} />
+      </FormComponent>
+      
+      <FormComponent label="Last Name:">
+        <input type="text" class="brand-input" placeholder="Last Name" bind:value={lastName} />
+      </FormComponent>
+      
+      <FormComponent label="Shirt Number:">
+        <input
+          type="number"
+          class="brand-input"
+          placeholder="Shirt Number"
+          min="1"
+          max="99"
+          step="1"
+          bind:value={shirtNumber} />
+      </FormComponent>
+      
+      <FormComponent label="Value (£m):">
+        <input
+        type="number"
+        step="0.25"
+        class="brand-input"
+        placeholder="Value"
+        bind:value
+      />
+      </FormComponent>
+      
+      <FormComponent label="Date of Birth:">
+        <input
+          type="date"
+          bind:value={dateOfBirth}
+          class="brand-input"
+        />
+      </FormComponent>
+      
+      <FormComponent label="Nationality:">
+        <select
+          class="brand-dropdown"
+          bind:value={nationalityId}
+        >
+          <option value={0}>Select Nationality</option>
+          {#each countries as country}
+            <option value={country.id}>{country.name}</option>
+          {/each}
+        </select>
+      </FormComponent>
+    {/if}
+  </GovernanceModal>
 </Modal>
 
 

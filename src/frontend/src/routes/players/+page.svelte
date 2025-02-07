@@ -261,7 +261,7 @@
           <select class="block w-full md:w-1/2 brand-select" bind:value={selectedClubId} on:change={filterPlayers}>
             <option value={0}>Select Club</option>
             {#each clubs as club}
-              <option value={club.id}>{club.name}</option>
+              <option value={club.id}>{club.friendlyName}</option>
             {/each}
           </select>
 
@@ -291,7 +291,7 @@
               id="minValue"
               bind:value={minValue}
               step="0.25"
-              class="brand-input w-full"
+              class="brand-input"
               on:input={filterPlayers}
             />
           </div>
@@ -303,7 +303,7 @@
               id="maxValue"
               bind:value={maxValue}
               step="0.25"
-              class="brand-input w-full"
+              class="brand-input"
               on:input={filterPlayers}
             />
           </div>
@@ -374,7 +374,7 @@
     
       {#if selectedPlayerId > 0 && showUpdatePlayerModal}
         {@const selectedPlayer = filteredPlayers.find(x => x.id == selectedPlayerId) }
-        <UpdatePlayer visible={showUpdatePlayerModal} {closeModal} selectedClubId={selectedPlayer ? selectedPlayer.clubId ?? 0 : 0} {selectedPlayerId} {selectedLeagueId} />
+        <UpdatePlayer visible={showUpdatePlayerModal} {closeModal} selectedPlayer={selectedPlayer!} />
       {/if}
     
       {#if selectedPlayerId > 0 && showTransferPlayerModal}
@@ -388,7 +388,8 @@
       {/if}
     
       {#if selectedPlayerId > 0 && showSetFreeAgentModal}
-        <SetFreeAgent visible={showRecallPlayerModal} {closeModal} selectedPlayerId={selectedPlayerId} />
+      {@const selectedPlayer = filteredPlayers.find(x => x.id == selectedPlayerId) }
+        <SetFreeAgent visible={showRecallPlayerModal} {closeModal} selectedPlayer={selectedPlayer!} />
       {/if}
     
       {#if selectedPlayerId > 0 && showRevaluePlayerUpModal}

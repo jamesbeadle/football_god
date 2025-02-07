@@ -74,11 +74,11 @@
 }
 
 .brand-input {
-  @apply bg-BrandDarkGray text-white border border-BrandDarkGray rounded-lg focus:ring focus:ring-BrandLightGray text-sm p-2;
+  @apply w-full bg-BrandDarkGray text-white border border-BrandDarkGray rounded-lg focus:ring focus:ring-BrandLightGray text-sm p-2;
 }
 
 .brand-dropdown {
-  @apply text-black rounded px-2 py-1;
+  @apply text-black rounded px-2 py-1 w-full;
 }
 
 .stake-input {

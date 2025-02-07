@@ -1,11 +1,11 @@
 <script lang="ts">
   import { onMount } from "svelte";
-  import { countryStore } from "$lib/stores/country-store";
   import { governanceStore } from "$lib/stores/governance-store";
-  import LocalSpinner from "$lib/components/shared/local-spinner.svelte";
-  import Modal from "$lib/components/shared/modal.svelte";
-  import type { CountryDTO, CreateClubDTO, ShirtType } from "../../../../../../declarations/data_canister/data_canister.did";
   import { isError } from "$lib/utils/helpers";
+  import type { CreateClubDTO, ShirtType } from "../../../../../../declarations/data_canister/data_canister.did";
+  import Modal from "$lib/components/shared/modal.svelte";
+  import GovernanceModal from "../governance-modal.svelte";
+  import FormComponent from "$lib/components/shared/form-component.svelte";
   
   export let visible: boolean;
   export let closeModal: () => void;
@@ -20,9 +20,6 @@
   let secondaryColourHex = "";
   let thirdColourHex = "";
   let shirtType: ShirtType = { Filled: null };
-  let countries: CountryDTO[] = [];
-
-  let showConfirm = false;
 
   $: isSubmitDisabled =
     name.length <= 0 ||
@@ -31,25 +28,16 @@
     friendlyName.length > 50 ||
     abbreviatedName.length != 3;
 
-  $: if (isSubmitDisabled && showConfirm) {
-    showConfirm = false;
-  }
-
   let shirtTypes: ShirtType[] = [{ Filled: null }, { Striped: null }];
 
   onMount(async () => {
     try {
-      countries = await countryStore.getCountries();
     } catch (error) {
       console.error("Error syncing proposal data.", error);
     } finally {
       isLoading = false;
     }
   });
-
-  function raiseProposal() {
-    showConfirm = true;
-  }
 
   async function confirmProposal() {
     isLoading = true;
@@ -108,91 +96,37 @@
 </script>
 
 <Modal showModal={visible} onClose={closeModal}>
-  <div class="mx-2 p-2">
-    <div class="flex justify-between items-center mb-2">
-      <h3 class="default-header">Create Club</h3>
-      <button class="times-button" on:click={cancelModal}>&times;</button>
-    </div>
+  <GovernanceModal title={"Create Club"} {cancelModal} {confirmProposal} {isLoading} {isSubmitDisabled}>
+    <FormComponent label="Club Full Name:">
+      <input class="brand-input" type="text" bind:value={name} placeholder="Club Full Name" />
+    </FormComponent>
 
-    <div class="flex justify-start items-center w-full">
-      {#if isLoading}
-        <LocalSpinner />
-      {:else}
-        <div class="w-full flex-col space-y-4 mb-2 flex space-y-2">
+    <FormComponent label="Club Friendly Name:">
+      <input class="brand-input" type="text" bind:value={friendlyName} placeholder="Club Friendly Name" />
+    </FormComponent>
 
+    <FormComponent label="Club Abbreviated Name:">
+      <input class="brand-input" type="text" bind:value={abbreviatedName} placeholder="Abbreviated Name" />
+    </FormComponent>
 
-          <div class="flex flex-row w-full items-center">
-            <p class="w-full">Club Full Name:</p>
-            <input class="w-full brand-input" type="text" bind:value={name} placeholder="Club Full Name" />
-          </div>
+    <FormComponent label="Primary Club Colour:">
+      <input class="brand-input" type="color" on:input={handlePrimaryColorChange} bind:value={primaryColourHex} />
+    </FormComponent>
 
-          <div class="flex flex-row w-full items-center">
-            <p class="w-full">Club Friendly Name:</p>
-            <input class="w-full brand-input" type="text" bind:value={friendlyName} placeholder="Club Friendly Name" />
-          </div>
+    <FormComponent label="Secondary Club Colour:">
+      <input class="brand-input" type="color" on:input={handleSecondaryColorChange} bind:value={secondaryColourHex} />
+    </FormComponent>
 
-          <div class="flex flex-row w-full items-center">
-            <p class="w-full">Club Abbreviated Name:</p>
-            <input class="w-full brand-input" type="text" bind:value={abbreviatedName} placeholder="Abbreviated Name" />
-          </div>
+    <FormComponent label="Third Club Colour:">
+      <input class="brand-input" type="color" on:input={handleThirdColorChange} bind:value={thirdColourHex} />
+    </FormComponent>
 
-          <div class="flex flex-row w-full items-center">
-            <p class="w-full">Primary Club Colour:</p>
-            <input class="w-full brand-input" type="color" on:input={handlePrimaryColorChange} bind:value={primaryColourHex} />
-          </div>
-
-          <div class="flex flex-row w-full items-center">
-            <p class="w-full">Secondary Club Colour:</p>
-            <input class="w-full brand-input" type="color" on:input={handleSecondaryColorChange} bind:value={secondaryColourHex} />
-          </div>
-
-          <div class="flex flex-row w-full items-center">
-            <p class="w-full">Third Club Colour:</p>
-            <input class="w-full brand-input" type="color" on:input={handleThirdColorChange} bind:value={thirdColourHex} />
-          </div>
-
-          <select class="brand-dropdown w-full" bind:value={shirtType}>
-            {#each shirtTypes as shirt}
-              <option value={shirt}>{Object.keys(shirt)[0]}</option>
-            {/each}
-          </select>
-
-          <div class="items-center flex flex-row space-x-4 w-full">
-            <button
-              class="brand-cancel-button w-1/2"
-              type="button"
-              on:click={cancelModal}
-            >
-              Cancel
-            </button>
-            <button
-              class={`${isSubmitDisabled ? "brand-button-disabled" : "brand-button"} w-1/2`}
-              on:click={raiseProposal}
-              disabled={isSubmitDisabled}
-            >
-              Raise Proposal
-            </button>
-          </div>
-
-          {#if showConfirm}
-            <div class="items-center flex">
-              <p class="text-orange-400">
-                Failed proposals will cost the proposer 10 $FPL tokens.
-              </p>
-            </div>
-            <div class="items-center flex">
-              <button
-                class={`${isSubmitDisabled ? "brand-button-disabled" : "brand-button"} 
-                              px-4 py-2 w-full`}
-                on:click={confirmProposal}
-                disabled={isSubmitDisabled}
-              >
-                Confirm Submit Proposal
-              </button>
-            </div>
-          {/if}
-        </div>
-      {/if}
-    </div>
-  </div>
+    <FormComponent label="Shirt Type:">
+      <select class="brand-dropdown" bind:value={shirtType}>
+        {#each shirtTypes as shirt}
+          <option value={shirt}>{Object.keys(shirt)[0]}</option>
+        {/each}
+      </select>
+    </FormComponent>
+  </GovernanceModal>
 </Modal>
