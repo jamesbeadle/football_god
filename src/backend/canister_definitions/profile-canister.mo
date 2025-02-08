@@ -581,17 +581,12 @@ actor class _ProfileCanister() {
   public shared ({caller }) func updateSettledBet(principalId: Base.PrincipalId, betslip: BettingTypes.BetSlip) : async (){
     assert Principal.toText(caller) == Environment.BACKEND_CANISTER_ID;
     
-    //Update the users totals for months etc
+    //TODO: Update the users totals for months etc
   };
   
   public shared ({caller }) func canisterFull() : async Bool{
     assert Principal.toText(caller) == Environment.BACKEND_CANISTER_ID;
-    return false; //TODO
-  };
-  
-  public shared ({caller }) func voidBet(betslip: BettingTypes.BetSlip) : async (){
-    assert Principal.toText(caller) == Environment.BACKEND_CANISTER_ID;
-    
+    return profileCount >= MAX_PROFILES_PER_CANISTER;
   };
 
   private func getProfileFromGroup(principalId: Base.PrincipalId, groupNumber: Nat) : ?T.Profile {

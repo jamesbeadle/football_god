@@ -4064,9 +4064,9 @@ import Char "mo:base/Char";
       for(leagueApplication in Iter.fromArray(leagueApplications)){
         if(leagueApplication.0 == leagueId){
           let application_canister = actor (leagueApplication.1) : actor {
-            notifyAppsOfLoan : (leagueId: FootballTypes.LeagueId, playerId: FootballTypes.PlayerId) -> async Result.Result<(), T.Error>;
+            notifyAppsOfLoan : (playerId: FootballTypes.PlayerId) -> async Result.Result<(), T.Error>;
           };
-          let _ = await application_canister.notifyAppsOfLoan(leagueId, playerId);
+          let _ = await application_canister.notifyAppsOfLoan(playerId);
         };
       };
       return #ok();
@@ -4076,9 +4076,9 @@ import Char "mo:base/Char";
       for(leagueApplication in Iter.fromArray(leagueApplications)){
         if(leagueApplication.0 == leagueId){
           let application_canister = actor (leagueApplication.1) : actor {
-            notifyAppsOfLoanExpired : (leagueId: FootballTypes.LeagueId, playerId: FootballTypes.PlayerId) -> async Result.Result<(), T.Error>;
+            notifyAppsOfLoanExpired : (playerId: FootballTypes.PlayerId) -> async Result.Result<(), T.Error>;
           };
-          let _ = await application_canister.notifyAppsOfLoanExpired(leagueId, playerId);
+          let _ = await application_canister.notifyAppsOfLoanExpired(playerId);
         };
       };
       return #ok();
@@ -4088,9 +4088,9 @@ import Char "mo:base/Char";
       for(leagueApplication in Iter.fromArray(leagueApplications)){
         if(leagueApplication.0 == leagueId){
           let application_canister = actor (leagueApplication.1) : actor {
-            notifyAppsOfTransfer : (leagueId: FootballTypes.LeagueId, playerId: FootballTypes.PlayerId) -> async Result.Result<(), T.Error>;
+            notifyAppsOfTransfer : (playerId: FootballTypes.PlayerId) -> async Result.Result<(), T.Error>;
           };
-          let _ = await application_canister.notifyAppsOfTransfer(leagueId, playerId);
+          let _ = await application_canister.notifyAppsOfTransfer(playerId);
         };
       };
       return #ok();
@@ -4100,9 +4100,9 @@ import Char "mo:base/Char";
       for(leagueApplication in Iter.fromArray(leagueApplications)){
         if(leagueApplication.0 == leagueId){
           let application_canister = actor (leagueApplication.1) : actor {
-            notifyAppsOfRetirement : (leagueId: FootballTypes.LeagueId, playerId: FootballTypes.PlayerId) -> async Result.Result<(), T.Error>;
+            notifyAppsOfRetirement : (playerId: FootballTypes.PlayerId) -> async Result.Result<(), T.Error>;
           };
-          let _ = await application_canister.notifyAppsOfRetirement(leagueId, playerId);
+          let _ = await application_canister.notifyAppsOfRetirement(playerId);
         };
       };
       return #ok();

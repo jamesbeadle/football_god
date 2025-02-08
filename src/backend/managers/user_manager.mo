@@ -709,122 +709,72 @@ module {
 
           switch(betslip.betType){
             case (#Single){
-              if(Array.size(betslip.selections) != 1){
-                await voidBet(betslip);
-                return;
-              };
               if(perfectBetResult == #Won){
                 totalWinnings := BettingUtilities.getCumulativeSelectionWinnings(betslip);
                 betResult := #Won;
               };
             };
             case (#Double){
-              if(Array.size(betslip.selections) != 2){
-                await voidBet(betslip);
-                return;
-              };
               if(perfectBetResult == #Won){
                 totalWinnings := BettingUtilities.getCumulativeSelectionWinnings(betslip);
                 betResult := #Won;
               };
             };
             case (#Treble){
-              if(Array.size(betslip.selections) != 3){
-                await voidBet(betslip);
-                return;
-              };
               if(perfectBetResult == #Won){
                 totalWinnings := BettingUtilities.getCumulativeSelectionWinnings(betslip);
                 betResult := #Won;
               };
             };
             case (#FourFold){
-              if(Array.size(betslip.selections) != 4){
-                await voidBet(betslip);
-                return;
-              };
               if(perfectBetResult == #Won){
                 totalWinnings := BettingUtilities.getCumulativeSelectionWinnings(betslip);
                 betResult := #Won;
               };
             };
             case (#FiveFold){
-              if(Array.size(betslip.selections) != 5){
-                await voidBet(betslip);
-                return;
-              };
               if(perfectBetResult == #Won){
                 totalWinnings := BettingUtilities.getCumulativeSelectionWinnings(betslip);
                 betResult := #Won;
               };
             };
             case (#SixFold){
-              if(Array.size(betslip.selections) != 6){
-                await voidBet(betslip);
-                return;
-              };
               if(perfectBetResult == #Won){
                 totalWinnings := BettingUtilities.getCumulativeSelectionWinnings(betslip);
                 betResult := #Won;
               };
             };
             case (#SevenFold){
-              if(Array.size(betslip.selections) != 7){
-                await voidBet(betslip);
-                return;
-              };
               if(perfectBetResult == #Won){
                 totalWinnings := BettingUtilities.getCumulativeSelectionWinnings(betslip);
                 betResult := #Won;
               };
             };
             case (#EightFold){
-              if(Array.size(betslip.selections) != 8){
-                await voidBet(betslip);
-                return;
-              };
               if(perfectBetResult == #Won){
                 totalWinnings := BettingUtilities.getCumulativeSelectionWinnings(betslip);
                 betResult := #Won;
               };
             };
             case (#NineFold){
-              if(Array.size(betslip.selections) != 9){
-                await voidBet(betslip);
-                return;
-              };
               if(perfectBetResult == #Won){
                 totalWinnings := BettingUtilities.getCumulativeSelectionWinnings(betslip);
                 betResult := #Won;
               };
             };
             case (#TenFold){
-              if(Array.size(betslip.selections) != 10){
-                await voidBet(betslip);
-                return;
-              };
               if(perfectBetResult == #Won){
                 totalWinnings := BettingUtilities.getCumulativeSelectionWinnings(betslip);
                 betResult := #Won;
               };
             };
             case (#Patent){
-              if(Array.size(betslip.selections) != 3){
-                await voidBet(betslip);
-                return;
-              };
-
               totalWinnings := BettingUtilities.getPatentSelectionWinnings(betslip);
-
               if(totalWinnings > 0){
                 betResult := #Won;
               };
             };
             case (#Trixie){
-              if(Array.size(betslip.selections) != 3){
-                await voidBet(betslip);
-                return;
-              };
 
               totalWinnings := BettingUtilities.getTrixieSelectionWinnings(betslip);
 
@@ -833,10 +783,6 @@ module {
               };
             };
             case (#Yankee){
-              if(Array.size(betslip.selections) != 4){
-                await voidBet(betslip);
-                return;
-              };
 
               totalWinnings := BettingUtilities.getYankeeSelectionWinnings(betslip);
 
@@ -845,10 +791,6 @@ module {
               };
             };
             case (#Lucky15){
-              if(Array.size(betslip.selections) != 4){
-                await voidBet(betslip);
-                return;
-              };
 
               totalWinnings := BettingUtilities.getLucky15SelectionWinnings(betslip);
 
@@ -857,10 +799,6 @@ module {
               };
             };
             case (#Lucky31){
-              if(Array.size(betslip.selections) != 5){
-                await voidBet(betslip);
-                return;
-              };
 
               totalWinnings := BettingUtilities.getLucky31SelectionWinnings(betslip);
 
@@ -869,10 +807,6 @@ module {
               };
             };
             case (#Lucky63){
-              if(Array.size(betslip.selections) != 6){
-                await voidBet(betslip);
-                return;
-              };
 
               totalWinnings := BettingUtilities.getLucky63SelectionWinnings(betslip);
 
@@ -881,10 +815,6 @@ module {
               };
             };
             case (#Canadian){
-              if(Array.size(betslip.selections) != 5){
-                await voidBet(betslip);
-                return;
-              };
 
               totalWinnings := BettingUtilities.getCanadianSelectionWinnings(betslip);
 
@@ -893,10 +823,6 @@ module {
               };
             };
             case (#Heinz){
-              if(Array.size(betslip.selections) != 6){
-                await voidBet(betslip);
-                return;
-              };
 
               totalWinnings := BettingUtilities.getHeinzSelectionWinnings(betslip);
 
@@ -905,10 +831,6 @@ module {
               };
             };
             case (#SuperHeinz){
-              if(Array.size(betslip.selections) != 7){
-                await voidBet(betslip);
-                return;
-              };
 
               totalWinnings := BettingUtilities.getSuperHeinzSelectionWinnings(betslip);
 
@@ -917,10 +839,6 @@ module {
               };
             };
             case (#Goliath){
-              if(Array.size(betslip.selections) != 8){
-                await voidBet(betslip);
-                return;
-              };
 
               totalWinnings := BettingUtilities.getGoliathSelectionWinnings(betslip);
 
@@ -1051,24 +969,6 @@ module {
 
 
       return true;
-    };
-    
-    private func voidBet(betslip: BettingTypes.BetSlip) : async (){
-      let profileCanisterId = Array.find(profileCanisterIds, func(profileCanisterEntry: (Base.PrincipalId, Base.CanisterId)) : Bool {
-        profileCanisterEntry.0 == betslip.placedBy;
-      });
-
-      switch(profileCanisterId){
-        case (?foundCanisterId){
-          
-          let profile_canister = actor (foundCanisterId.1) : actor {
-            voidBet : (betslip: BettingTypes.BetSlip) -> async ();
-          };
-          return await profile_canister.voidBet(betslip);
-        };
-        case (null){ }
-      };
-      
     };
 
     private func payWinnings(winnerPrincipalId: Base.PrincipalId, totalWinnings: Nat64) : async () {
