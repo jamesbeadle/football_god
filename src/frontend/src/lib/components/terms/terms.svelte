@@ -22,7 +22,7 @@
       <h1 class="text-3xl font-bold mb-6">Terms and Conditions</h1>
       
       <p class="text-sm mb-6">
-        <strong>Last Updated:</strong> 2nd January 2025
+        <strong>Last Updated:</strong> 8th February 2025
       </p>
     
       <h2 class="text-2xl font-semibold mb-4">1. Introduction</h2>
@@ -43,20 +43,12 @@
       <h2 class="text-2xl font-semibold mb-4">2. Eligibility</h2>
       <ol class="list-decimal list-inside mb-4 space-y-2">
         <li>
-          <strong>Legal Age:</strong> You must be of legal age to gamble in your jurisdiction.
-        </li>
-        <li>
-          <strong>Legal Compliance:</strong> You are solely responsible for ensuring that online gambling is 
-          legal in your jurisdiction and that you comply with all applicable laws.
+          <strong>Legal Requirements:</strong> You must be legally allowed to hold crypto currency tokens within your legal jurisdiction.
         </li>
       </ol>
     
       <h2 class="text-2xl font-semibold mb-4">3. Nature of Services</h2>
       <ol class="list-decimal list-inside mb-4 space-y-2">
-        <li>
-          <strong>Gambling Activities:</strong> We offer gambling opportunities where Users can place bets 
-          on events or outcomes (the “Games”).
-        </li>
         <li>
           <strong>DAO Determination:</strong> Outcomes are determined by a vote of the Decentralised 
           Autonomous Organisation (“DAO”), <em>not</em> necessarily by real-world verified results. The DAO’s 
@@ -77,23 +69,6 @@
         <li>
           <strong>Account Security:</strong> You are responsible for maintaining the confidentiality of your 
           login credentials. Any activity or transaction under your account will be your sole responsibility.
-        </li>
-      </ol>
-    
-      <h2 class="text-2xl font-semibold mb-4">5. Placing Bets</h2>
-      <ol class="list-decimal list-inside mb-4 space-y-2">
-        <li>
-          <strong>Bet Placement:</strong> When you place a bet, you agree to the staking requirements, potential 
-          winnings, and other details displayed on the Site.
-        </li>
-        <li>
-          <strong>Transaction Irreversibility:</strong> Once a bet is confirmed on the blockchain or through 
-          our platform, it cannot be reversed.
-        </li>
-        <li>
-          <strong>DAO-Driven Outcome:</strong> The final settlement is determined by a DAO vote. Your acceptance 
-          of these T&amp;Cs means you accept the DAO’s decision as final, even if it conflicts with verifiable 
-          real-world facts.
         </li>
       </ol>
     

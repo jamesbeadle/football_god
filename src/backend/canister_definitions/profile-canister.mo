@@ -10,7 +10,6 @@ import Iter "mo:base/Iter";
 
 import T "../types/app_types";
 import Base "../types/base_types";
-import BettingTypes "../types/betting_types";
 import ResponseDTOs "../dtos/response_DTOs";
 import RequestDTOs "../dtos/request_DTOs";
 import Environment "../environment";
@@ -114,47 +113,16 @@ actor class _ProfileCanister() {
             
             let currentYear = Utilities.getCurrentYear();
             let currentMonth = Utilities.getCurrentMonth();
-
-            let currentYearMonthlyTotals = Array.find<(Nat16, [(Base.CalendarMonth, Nat64)])>(
-              profile.monthlyBetTotals,
-              func(yearEntry: (Nat16, [(Base.CalendarMonth, Nat64)])) : Bool {
-                yearEntry.0 == currentYear;
-              }
-            ); 
-
-            var currentMonthBetTotal: Nat64 = 0;
-            switch(currentYearMonthlyTotals){
-              case (?foundYearTotals){
-                let currentMonthTotal = Array.find<(Base.CalendarMonth, Nat64)>(foundYearTotals.1, func(entry: (Base.CalendarMonth, Nat64)) : Bool {
-                  entry.0 == currentMonth;
-                });
-                switch(currentMonthTotal){
-                  case (?foundTotal){
-                    currentMonthBetTotal := foundTotal.1;  
-                  };
-                  case (null){ }
-                };
-              };
-              case (null){ };
-            };
             
             var accountBalance: Nat64 = Nat64.fromNat(tokens);
             let response: ResponseDTOs.ProfileDTO = {
               accountBalance = accountBalance;
-              accountOnPause = profile.accountOnPause;
-              maxBetLimit = profile.maxBetLimit;
-              monthlyBetLimit = profile.monthlyBetLimit;
-              monthlyBetTotal = currentMonthBetTotal;
               principalId = profile.principalId;
               profilePicture = profile.profilePicture;
               profilePictureExtension = profile.profilePictureExtension;
               username = profile.username;
               withdrawalAddress = profile.withdrawalAddress;
-              kycComplete = profile.kycComplete;
               joinedDate = profile.joinedDate;
-              kycApprovalDate = profile.kycApprovalDate;
-              kycRef = profile.kycRef;
-              kycSubmissionDate = profile.kycSubmissionDate;
               termsAcceptedDate = profile.termsAcceptedDate;
             };
             return #ok(response);
@@ -182,15 +150,6 @@ actor class _ProfileCanister() {
         switch(profileResult){
           case (?profile){
             let updatedProfile: T.Profile = {
-              accountOnPause = profile.accountOnPause;
-              bets = profile.bets;
-              maxBetLimit = profile.maxBetLimit;
-              maxBetLimitSet = profile.maxBetLimitSet;
-              monthlyBetLimit = profile.monthlyBetLimit;
-              monthlyBetLimitSet = profile.monthlyBetLimitSet;
-              monthlyBetTotals = profile.monthlyBetTotals;
-              monthlyProfitLoss = profile.monthlyProfitLoss;
-              pauseEndDate = profile.pauseEndDate;
               principalId = profile.principalId;
               profilePicture = profile.profilePicture;
               profilePictureExtension = profile.profilePictureExtension;
@@ -198,57 +157,6 @@ actor class _ProfileCanister() {
               username = profile.username;
               withdrawalAddress = profile.withdrawalAddress;
               joinedDate = profile.joinedDate;
-              kycApprovalDate = profile.kycApprovalDate;
-              kycRef = profile.kycRef;
-              kycSubmissionDate = profile.kycSubmissionDate;
-              kycComplete = profile.kycComplete;
-            };
-            updateProfile(updatedProfile, profileGroup.1);
-            return #ok();
-          };
-          case (null){
-            return #err(#NotFound);
-          }
-        };
-      };
-      case (null){
-        return #err(#NotFound);
-      }
-    };
-  };
-
-  public shared ({ caller }) func verifyBettingAccount(principalId: Base.PrincipalId) : async Result.Result<(), T.Error>{
-    assert Principal.toText(caller) == Environment.BACKEND_CANISTER_ID;
-    let profileGroupEntry = Array.find<(Base.PrincipalId, Nat)>(profileGroupDictionary, 
-      func(groupEntry: (Base.PrincipalId, Nat)) : Bool {
-        groupEntry.0 == principalId;
-    });
-    switch(profileGroupEntry){
-      case (?profileGroup){
-        let profileResult = getProfileFromGroup(principalId, profileGroup.1);
-        switch(profileResult){
-          case (?profile){
-            let updatedProfile: T.Profile = {
-              accountOnPause = profile.accountOnPause;
-              bets = profile.bets;
-              maxBetLimit = profile.maxBetLimit;
-              maxBetLimitSet = profile.maxBetLimitSet;
-              monthlyBetLimit = profile.monthlyBetLimit;
-              monthlyBetLimitSet = profile.monthlyBetLimitSet;
-              monthlyBetTotals = profile.monthlyBetTotals;
-              monthlyProfitLoss = profile.monthlyProfitLoss;
-              pauseEndDate = profile.pauseEndDate;
-              principalId = profile.principalId;
-              profilePicture = profile.profilePicture;
-              profilePictureExtension = profile.profilePictureExtension;
-              termsAcceptedDate = profile.termsAcceptedDate;
-              username = profile.username;
-              withdrawalAddress = profile.withdrawalAddress;
-              joinedDate = profile.joinedDate;
-              kycApprovalDate = Time.now();
-              kycRef = profile.kycRef;
-              kycSubmissionDate = profile.kycSubmissionDate;
-              kycComplete = true;
             };
             updateProfile(updatedProfile, profileGroup.1);
             return #ok();
@@ -277,15 +185,6 @@ actor class _ProfileCanister() {
           case (?profile){
 
             let updatedProfile: T.Profile = {
-              accountOnPause = profile.accountOnPause;
-              bets = profile.bets;
-              maxBetLimit = profile.maxBetLimit;
-              maxBetLimitSet = profile.maxBetLimitSet;
-              monthlyBetLimit = profile.monthlyBetLimit;
-              monthlyBetLimitSet = profile.monthlyBetLimitSet;
-              monthlyBetTotals = profile.monthlyBetTotals;
-              monthlyProfitLoss = profile.monthlyProfitLoss;
-              pauseEndDate = profile.pauseEndDate;
               principalId = profile.principalId;
               profilePicture = profile.profilePicture;
               profilePictureExtension = profile.profilePictureExtension;
@@ -293,10 +192,6 @@ actor class _ProfileCanister() {
               username = dto.username;
               withdrawalAddress = profile.withdrawalAddress;
               joinedDate = profile.joinedDate;
-              kycApprovalDate = profile.kycApprovalDate;
-              kycRef = profile.kycRef;
-              kycSubmissionDate = profile.kycSubmissionDate;
-              kycComplete = profile.kycComplete;
             };
             updateProfile(updatedProfile, profileGroup.1);
             return #ok();
@@ -325,15 +220,6 @@ actor class _ProfileCanister() {
           case (?profile){
 
             let updatedProfile: T.Profile = {
-              accountOnPause = profile.accountOnPause;
-              bets = profile.bets;
-              maxBetLimit = profile.maxBetLimit;
-              maxBetLimitSet = profile.maxBetLimitSet;
-              monthlyBetLimit = profile.monthlyBetLimit;
-              monthlyBetLimitSet = profile.monthlyBetLimitSet;
-              monthlyBetTotals = profile.monthlyBetTotals;
-              monthlyProfitLoss = profile.monthlyProfitLoss;
-              pauseEndDate = profile.pauseEndDate;
               principalId = profile.principalId;
               profilePicture = ?dto.profilePicture;
               profilePictureExtension = dto.profilePictureExtension;
@@ -341,10 +227,6 @@ actor class _ProfileCanister() {
               username = profile.username;
               withdrawalAddress = profile.withdrawalAddress;
               joinedDate = profile.joinedDate;
-              kycApprovalDate = profile.kycApprovalDate;
-              kycRef = profile.kycRef;
-              kycSubmissionDate = profile.kycSubmissionDate;
-              kycComplete = profile.kycComplete;
             };
             updateProfile(updatedProfile, profileGroup.1);
             return #ok();
@@ -373,26 +255,13 @@ actor class _ProfileCanister() {
           case (?profile){
 
             let updatedProfile: T.Profile = {
-              accountOnPause = profile.accountOnPause;
-              bets = profile.bets;
-              maxBetLimit = profile.maxBetLimit;
-              maxBetLimitSet = profile.maxBetLimitSet;
-              monthlyBetLimit = profile.monthlyBetLimit;
-              monthlyBetLimitSet = profile.monthlyBetLimitSet;
-              monthlyBetTotals = profile.monthlyBetTotals;
-              monthlyProfitLoss = profile.monthlyProfitLoss;
-              pauseEndDate = profile.pauseEndDate;
-              principalId = profile.principalId;
+             principalId = profile.principalId;
               profilePicture = profile.profilePicture;
               profilePictureExtension = profile.profilePictureExtension;
               termsAcceptedDate = profile.termsAcceptedDate;
               username = profile.username;
               withdrawalAddress = dto.withdrawalAddress;
               joinedDate = profile.joinedDate;
-              kycApprovalDate = profile.kycApprovalDate;
-              kycRef = profile.kycRef;
-              kycSubmissionDate = profile.kycSubmissionDate;
-              kycComplete = profile.kycComplete;
             };
             updateProfile(updatedProfile, profileGroup.1);
             return #ok();
@@ -406,182 +275,6 @@ actor class _ProfileCanister() {
         return #err(#NotFound);
       }
     };
-  };
-  
-  public shared ({caller }) func pauseAccount(dto: RequestDTOs.PauseAccountDTO) : async Result.Result<(), T.Error>{
-    assert Principal.toText(caller) == Environment.BACKEND_CANISTER_ID;
-    let profileGroupEntry = Array.find<(Base.PrincipalId, Nat)>(profileGroupDictionary, 
-      func(groupEntry: (Base.PrincipalId, Nat)) : Bool {
-        groupEntry.0 == dto.principalId;
-    });
-    switch(profileGroupEntry){
-      case (?profileGroup){
-        let profileResult = getProfileFromGroup(dto.principalId, profileGroup.1);
-        switch(profileResult){
-          case (?profile){
-
-            if(profile.accountOnPause){
-              return #err(#NotAllowed);
-            };
-
-            let updatedProfile: T.Profile = {
-              accountOnPause = true;
-              bets = profile.bets;
-              maxBetLimit = profile.maxBetLimit;
-              maxBetLimitSet = profile.maxBetLimitSet;
-              monthlyBetLimit = profile.monthlyBetLimit;
-              monthlyBetLimitSet = profile.monthlyBetLimitSet;
-              monthlyBetTotals = profile.monthlyBetTotals;
-              monthlyProfitLoss = profile.monthlyProfitLoss;
-              pauseEndDate = Time.now() + Utilities.convertDaysToNanosecondsInt(dto.pauseDays);
-              principalId = profile.principalId;
-              profilePicture = profile.profilePicture;
-              profilePictureExtension = profile.profilePictureExtension;
-              termsAcceptedDate = profile.termsAcceptedDate;
-              username = profile.username;
-              withdrawalAddress = profile.withdrawalAddress;
-              joinedDate = profile.joinedDate;
-              kycApprovalDate = profile.kycApprovalDate;
-              kycRef = profile.kycRef;
-              kycSubmissionDate = profile.kycSubmissionDate;
-              kycComplete = profile.kycComplete;
-            };
-            updateProfile(updatedProfile, profileGroup.1);
-            return #ok();
-          };
-          case (null){
-            return #err(#NotFound);
-          }
-        };
-      };
-      case (null){
-        return #err(#NotFound);
-      }
-    };
-  };
-  
-  public shared ({caller }) func setMaxBetLimit(dto: RequestDTOs.SetMaxBetLimit) : async Result.Result<(), T.Error>{
-    assert Principal.toText(caller) == Environment.BACKEND_CANISTER_ID;
-    let profileGroupEntry = Array.find<(Base.PrincipalId, Nat)>(profileGroupDictionary, 
-      func(groupEntry: (Base.PrincipalId, Nat)) : Bool {
-        groupEntry.0 == dto.principalId;
-    });
-    switch(profileGroupEntry){
-      case (?profileGroup){
-        let profileResult = getProfileFromGroup(dto.principalId, profileGroup.1);
-        switch(profileResult){
-          case (?profile){
-
-            if(Time.now() < (profile.maxBetLimitSet + (Utilities.getDay() * 30))){
-              return #err(#NotAllowed);
-            };
-
-            let updatedProfile: T.Profile = {
-              accountOnPause = true;
-              bets = profile.bets;
-              maxBetLimit = dto.maxBetLimit;
-              maxBetLimitSet = Time.now();
-              monthlyBetLimit = profile.monthlyBetLimit;
-              monthlyBetLimitSet = profile.monthlyBetLimitSet;
-              monthlyBetTotals = profile.monthlyBetTotals;
-              monthlyProfitLoss = profile.monthlyProfitLoss;
-              pauseEndDate = profile.pauseEndDate;
-              principalId = profile.principalId;
-              profilePicture = profile.profilePicture;
-              profilePictureExtension = profile.profilePictureExtension;
-              termsAcceptedDate = profile.termsAcceptedDate;
-              username = profile.username;
-              withdrawalAddress = profile.withdrawalAddress;
-              joinedDate = profile.joinedDate;
-              kycApprovalDate = profile.kycApprovalDate;
-              kycRef = profile.kycRef;
-              kycSubmissionDate = profile.kycSubmissionDate;
-              kycComplete = profile.kycComplete;
-            };
-            updateProfile(updatedProfile, profileGroup.1);
-            return #ok();
-          };
-          case (null){
-            return #err(#NotFound);
-          }
-        };
-      };
-      case (null){
-        return #err(#NotFound);
-      }
-    };
-  };
-  
-  public shared ({caller }) func setMonthlyBetLimit(dto: RequestDTOs.SetMonthlyBetLimitDTO) : async Result.Result<(), T.Error>{
-    assert Principal.toText(caller) == Environment.BACKEND_CANISTER_ID;
-    let profileGroupEntry = Array.find<(Base.PrincipalId, Nat)>(profileGroupDictionary, 
-      func(groupEntry: (Base.PrincipalId, Nat)) : Bool {
-        groupEntry.0 == dto.principalId;
-    });
-    switch(profileGroupEntry){
-      case (?profileGroup){
-        let profileResult = getProfileFromGroup(dto.principalId, profileGroup.1);
-        switch(profileResult){
-          case (?profile){
-
-            if(Time.now() < (profile.maxBetLimitSet + (Utilities.getDay() * 30))){
-              return #err(#NotAllowed);
-            };
-
-            let updatedProfile: T.Profile = {
-              accountOnPause = true;
-              bets = profile.bets;
-              maxBetLimit = profile.maxBetLimit;
-              maxBetLimitSet = profile.maxBetLimitSet;
-              monthlyBetLimit = dto.monthlyBetLimit;
-              monthlyBetLimitSet = Time.now();
-              monthlyBetTotals = profile.monthlyBetTotals;
-              monthlyProfitLoss = profile.monthlyProfitLoss;
-              pauseEndDate = profile.pauseEndDate;
-              principalId = profile.principalId;
-              profilePicture = profile.profilePicture;
-              profilePictureExtension = profile.profilePictureExtension;
-              termsAcceptedDate = profile.termsAcceptedDate;
-              username = profile.username;
-              withdrawalAddress = profile.withdrawalAddress;
-              joinedDate = profile.joinedDate;
-              kycApprovalDate = profile.kycApprovalDate;
-              kycRef = profile.kycRef;
-              kycSubmissionDate = profile.kycSubmissionDate;
-              kycComplete = profile.kycComplete;
-            };
-            updateProfile(updatedProfile, profileGroup.1);
-            return #ok();
-          };
-          case (null){
-            return #err(#NotFound);
-          }
-        };
-      };
-      case (null){
-        return #err(#NotFound);
-      }
-    };
-  };
-  
-  public shared ({caller }) func placeBet(dto: RequestDTOs.SubmitBetslipDTO) : async Result.Result<BettingTypes.BetSlip, T.Error>{
-    assert Principal.toText(caller) == Environment.BACKEND_CANISTER_ID;
-    
-    //private function to update monthly bet totals should be added when a bet is placed
-    //take the money
-    //ensure they have the money
-    return #err(#NotFound);
-  };
-  
-  public shared ({caller }) func getBets(dto: RequestDTOs.GetBetsDTO) : async Result.Result<[BettingTypes.BetSlip], T.Error>{
-    assert Principal.toText(caller) == Environment.BACKEND_CANISTER_ID;
-    return #err(#NotFound);
-  };
-  
-  public shared ({caller }) func updateSettledBet(principalId: Base.PrincipalId, betslip: BettingTypes.BetSlip) : async (){
-    assert Principal.toText(caller) == Environment.BACKEND_CANISTER_ID;
-    
-    //TODO: Update the users totals for months etc
   };
   
   public shared ({caller }) func canisterFull() : async Bool{
@@ -913,16 +606,6 @@ actor class _ProfileCanister() {
 
   private func buildEmptyProfile(principalId: Base.PrincipalId) : T.Profile {
     return {
-      accountOnPause = false;
-      bets = [];
-      completedKYC = false;
-      maxBetLimit = 0;
-      maxBetLimitSet = 0;
-      monthlyBetLimit = 0;
-      monthlyBetLimitSet = 0;
-      monthlyBetTotals = [];
-      monthlyProfitLoss = [];
-      pauseEndDate = 0;
       principalId = principalId;
       profilePicture = null;
       profilePictureExtension = "";
@@ -930,10 +613,6 @@ actor class _ProfileCanister() {
       username = "";
       withdrawalAddress = "";
       joinedDate = Time.now();
-      kycApprovalDate = 0;
-      kycRef = "";
-      kycSubmissionDate = 0;
-      kycComplete = false;
     };
   };
 
@@ -1417,20 +1096,7 @@ actor class _ProfileCanister() {
     updatedProfiles := Array.map<T.Profile, T.Profile>(updatedProfiles, func(profile: T.Profile){
       if(profile.principalId == updatedProfile.principalId){
         return {
-          accountOnPause = updatedProfile.accountOnPause;
-          bets = updatedProfile.bets;
           joinedDate = updatedProfile.joinedDate;
-          kycApprovalDate = updatedProfile.kycApprovalDate;
-          kycComplete = updatedProfile.kycComplete;
-          kycRef = updatedProfile.kycRef;
-          kycSubmissionDate = updatedProfile.kycSubmissionDate;
-          maxBetLimit = updatedProfile.maxBetLimit;
-          maxBetLimitSet = updatedProfile.maxBetLimitSet;
-          monthlyBetLimit = updatedProfile.monthlyBetLimit;
-          monthlyBetLimitSet = updatedProfile.monthlyBetLimitSet;
-          monthlyBetTotals = updatedProfile.monthlyBetTotals;
-          monthlyProfitLoss = updatedProfile.monthlyProfitLoss;
-          pauseEndDate = updatedProfile.pauseEndDate;
           principalId = updatedProfile.principalId;
           profilePicture = updatedProfile.profilePicture;
           profilePictureExtension = updatedProfile.profilePictureExtension;
@@ -1606,36 +1272,4 @@ actor class _ProfileCanister() {
   
   private func postUpgradeCallback() : async (){ };
 
-
-
-  public shared ({caller }) func getAllAuditUsers () : async [ResponseDTOs.UserDTO] {
-    assert Principal.toText(caller) == Environment.BACKEND_CANISTER_ID;
-    let allProfilesBuffer = Buffer.fromArray<ResponseDTOs.UserDTO>([]);
-
-    for(i in Iter.range(1,50)){
-      var currentProfiles: [T.Profile] = [];
-      switch(i){
-        case 1{
-          currentProfiles := profileGroup1;
-        };
-        case _ {
-
-        };
-      };
-
-      for(profile in Iter.fromArray(currentProfiles)){
-        allProfilesBuffer.add({
-          joinedDate = profile.joinedDate;
-          kycApprovalDate = profile.kycApprovalDate;
-          kycComplete = profile.kycComplete;
-          kycRef = profile.kycRef;
-          kycSubmissionDate = profile.kycSubmissionDate;
-          principalId = profile.principalId;
-          termsAcceptedDate = profile.termsAcceptedDate
-        });
-      };
-    };
-
-    return Buffer.toArray(allProfilesBuffer);
-  };
 };

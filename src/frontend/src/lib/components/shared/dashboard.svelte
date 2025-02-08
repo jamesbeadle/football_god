@@ -375,7 +375,7 @@
                 FootballGod
             </h1>
             <p class="mb-6 text-gray-300">
-                Football betting controlled by the fans.
+                Football data, owned by the fans.
             </p>
             <button 
                 class="brand-button"

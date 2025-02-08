@@ -1,6 +1,5 @@
 import FootballTypes "../types/football_types";
 import Base "../types/base_types";
-import BettingTypes "../types/betting_types";
 
 module ResponseDTOs {
 
@@ -26,15 +25,6 @@ module ResponseDTOs {
     profilePicture: ?Blob;
     profilePictureExtension: Text;
     withdrawalAddress: Text;
-    accountOnPause: Bool;
-    maxBetLimit: Nat64;
-    monthlyBetLimit: Nat64;
-    monthlyBetTotal: Nat64;
-    accountBalance: Nat64;
-    kycComplete: Bool;
-    kycSubmissionDate: Int;
-    kycApprovalDate: Int;
-    kycRef: Text;
   };
 
   public type PlayerDTO = {
@@ -199,30 +189,6 @@ module ResponseDTOs {
     category : Text;
     hash : Text;
   };
-  
-  public type MatchOddsDTO = {
-    leagueId: FootballTypes.LeagueId;
-    fixtureId: FootballTypes.FixtureId;
-    correctResults: BettingTypes.TeamSelectionOdds;
-    correctScores: [BettingTypes.ScoreSelectionOdds];
-    halfTimeScores: [BettingTypes.ScoreSelectionOdds];
-    firstGoalscorers: [BettingTypes.PlayerSelectionOdds];
-    lastGoalscorers: [BettingTypes.PlayerSelectionOdds];
-    anytimeScorers: [BettingTypes.PlayerSelectionOdds];
-    yellowCards: [BettingTypes.PlayerSelectionOdds];
-    redCards: [BettingTypes.PlayerSelectionOdds];
-    penaltyMissed: BettingTypes.MissPenaltyOdds;
-    penaltyMissers: [BettingTypes.PlayerSelectionOdds];
-    firstAssisters: [BettingTypes.PlayerSelectionOdds];
-    lastAssist: [BettingTypes.PlayerSelectionOdds];
-    anytimeAssist: [BettingTypes.PlayerSelectionOdds];
-    scoresBrace: [BettingTypes.PlayerSelectionOdds];
-    scoresHatTrick: [BettingTypes.PlayerSelectionOdds];
-    goalsOverUnder: BettingTypes.OverUnderSelectionOdds;
-    bothTeamsToScore: BettingTypes.YesNoSelectionOdds;
-    halfTimeFullTimeResult: [BettingTypes.HalfTimeFullTimeOdds];
-    bothTeamsToScoreAndWinner: [BettingTypes.ResultAndYesNoSelectionOdds];
-  };
 
   public type HomePageFixtureDTO = {
     leagueId: FootballTypes.LeagueId;
@@ -243,10 +209,6 @@ module ResponseDTOs {
     principalId: Base.PrincipalId;
     joinedDate: Int;
     termsAcceptedDate: Int;
-    kycComplete: Bool;
-    kycSubmissionDate: Int;
-    kycApprovalDate: Int;
-    kycRef: Text;
   }
   
 };

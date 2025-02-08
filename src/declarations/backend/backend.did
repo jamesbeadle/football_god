@@ -1,29 +1,8 @@
-type YesNoSelectionOdds = 
- record {
-   noOdds: float64;
-   yesOdds: float64;
- };
 type ValueHistory = 
  record {
    changedOn: int;
    newValue: nat16;
    oldValue: nat16;
- };
-type UserDTO = 
- record {
-   joinedDate: int;
-   kycApprovalDate: int;
-   kycComplete: bool;
-   kycRef: text;
-   kycSubmissionDate: int;
-   principalId: PrincipalId;
-   termsAcceptedDate: int;
- };
-type UserAuditDTO = 
- record {
-   date: int;
-   offset: nat;
-   users: vec UserDTO;
  };
 type UpdateWithdrawalAddressDTO = 
  record {
@@ -41,147 +20,16 @@ type UpdateProfilePictureDTO =
    profilePicture: blob;
    profilePictureExtension: text;
  };
-type TeamSelectionOdds = 
- record {
-   awayOdds: float64;
-   drawOdds: float64;
-   homeOdds: float64;
- };
-type SubmitBetslipDTO = 
- record {
-   expectedReturn: nat64;
-   leagueId: LeagueId;
-   principalId: PrincipalId;
-   seasonId: SeasonId;
-   totalStake: nat64;
- };
-type ShuftiResponse = 
- variant {
-   ShuftiAcceptedResponse: ShuftiAcceptedResponse;
-   ShuftiRejectedResponse: ShuftiRejectedResponse;
- };
-type ShuftiRejectedResponse = 
- record {
-   event: text;
-   reference: text;
- };
-type ShuftiAcceptedResponse = 
- record {
-   event: text;
-   reference: text;
- };
-type SetMonthlyBetLimitDTO = 
- record {
-   monthlyBetLimit: nat64;
-   principalId: PrincipalId;
- };
-type SetMaxBetLimit = 
- record {
-   maxBetLimit: nat64;
-   principalId: PrincipalId;
- };
-type SelectionStatus = 
- variant {
-   Settled;
-   Unsettled;
-   Void;
- };
-type SelectionDetail = 
- variant {
-   AnytimeAssist: PlayerEventDetail;
-   AnytimeGoalscorer: PlayerEventDetail;
-   BothTeamsToScore: BothTeamsToScoreDetail;
-   BothTeamsToScoreAndWinner: BothTeamsToScoreAndWinnerDetail;
-   CorrectResult: CorrectResultDetail;
-   CorrectScore: ScoreDetail;
-   FirstAssist: PlayerEventDetail;
-   FirstGoalscorer: PlayerEventDetail;
-   HalfTimeFullTimeResult: HalfTimeFullTimeResultDetail;
-   HalfTimeScore: ScoreDetail;
-   LastAssist: PlayerEventDetail;
-   LastGoalscorer: PlayerEventDetail;
-   MissPenalty: PlayerEventDetail;
-   PenaltyMissed: ClubEventDetail;
-   RedCard: PlayerEventDetail;
-   ScoreBrace: PlayerGroupEventDetail;
-   ScoreHatrick: PlayerGroupEventDetail;
-   YellowCard: PlayerEventDetail;
- };
-type Selection = 
- record {
-   expectedReturns: nat64;
-   fixtureId: FixtureId;
-   leagueId: LeagueId;
-   odds: float64;
-   result: BetResult;
-   selectionDetail: SelectionDetail;
-   selectionType: Category;
-   stake: nat64;
-   status: SelectionStatus;
-   winnings: float64;
- };
 type SeasonId = nat16;
-type ScoreSelectionOdds = 
- record {
-   awayGoals: nat8;
-   homeGoals: nat8;
-   odds: float64;
- };
-type ScoreDetail = 
- record {
-   awayGoals: nat8;
-   homeGoals: nat8;
- };
-type Result_9 = 
- variant {
-   err: Error;
-   ok: vec BetSlip;
- };
-type Result_8 = 
- variant {
-   err: Error;
-   ok: vec HomePageFixtureDTO;
- };
-type Result_7 = 
- variant {
-   err: Error;
-   ok: vec DataHashDTO;
- };
-type Result_6 = 
- variant {
-   err: Error;
-   ok: MatchOddsDTO;
- };
-type Result_5 = 
+type Result_2 = 
  variant {
    err: Error;
    ok: PlayerDetailDTO;
  };
-type Result_4 = 
- variant {
-   err: Error;
-   ok: ProfileDTO;
- };
-type Result_3 = 
- variant {
-   err: Error;
-   ok: UserAuditDTO;
- };
-type Result_2 = 
- variant {
-   err: Error;
-   ok: bool;
- };
 type Result_1 = 
  variant {
    err: Error;
-   ok: BetSlip;
- };
-type ResultAndYesNoSelectionOdds = 
- record {
-   isYes: bool;
-   odds: float64;
-   result: MatchResult;
+   ok: ProfileDTO;
  };
 type Result = 
  variant {
@@ -190,16 +38,7 @@ type Result =
  };
 type ProfileDTO = 
  record {
-   accountBalance: nat64;
-   accountOnPause: bool;
    joinedDate: int;
-   kycApprovalDate: int;
-   kycComplete: bool;
-   kycRef: text;
-   kycSubmissionDate: int;
-   maxBetLimit: nat64;
-   monthlyBetLimit: nat64;
-   monthlyBetTotal: nat64;
    principalId: PrincipalId;
    profilePicture: opt blob;
    profilePictureExtension: text;
@@ -215,11 +54,6 @@ type PlayerStatus =
    OnLoan;
    Retired;
  };
-type PlayerSelectionOdds = 
- record {
-   odds: float64;
-   playerId: PlayerId;
- };
 type PlayerPosition = 
  variant {
    Defender;
@@ -228,11 +62,6 @@ type PlayerPosition =
    Midfielder;
  };
 type PlayerId = nat16;
-type PlayerGroupEventDetail = 
- record {
-   clubId: ClubId;
-   playerId: PlayerId;
- };
 type PlayerGameweekDTO = 
  record {
    events: vec PlayerEventData;
@@ -254,11 +83,6 @@ type PlayerEventType =
    PenaltySaved;
    RedCard;
    YellowCard;
- };
-type PlayerEventDetail = 
- record {
-   clubId: ClubId;
-   playerId: PlayerId;
  };
 type PlayerEventData = 
  record {
@@ -294,51 +118,6 @@ type PauseAccountDTO =
    pauseDays: nat;
    principalId: PrincipalId;
  };
-type OverUnderSelectionOdds = 
- record {
-   overOdds: vec OverUnderSelection;
-   underOdds: vec OverUnderSelection;
- };
-type OverUnderSelection = 
- record {
-   margin: float64;
-   odds: float64;
- };
-type MissPenaltyOdds = 
- record {
-   awayTeam: float64;
-   homeTeam: float64;
- };
-type MatchResult = 
- variant {
-   AwayWin;
-   Draw;
-   HomeWin;
- };
-type MatchOddsDTO = 
- record {
-   anytimeAssist: vec PlayerSelectionOdds;
-   anytimeScorers: vec PlayerSelectionOdds;
-   bothTeamsToScore: YesNoSelectionOdds;
-   bothTeamsToScoreAndWinner: vec ResultAndYesNoSelectionOdds;
-   correctResults: TeamSelectionOdds;
-   correctScores: vec ScoreSelectionOdds;
-   firstAssisters: vec PlayerSelectionOdds;
-   firstGoalscorers: vec PlayerSelectionOdds;
-   fixtureId: FixtureId;
-   goalsOverUnder: OverUnderSelectionOdds;
-   halfTimeFullTimeResult: vec HalfTimeFullTimeOdds;
-   halfTimeScores: vec ScoreSelectionOdds;
-   lastAssist: vec PlayerSelectionOdds;
-   lastGoalscorers: vec PlayerSelectionOdds;
-   leagueId: LeagueId;
-   penaltyMissed: MissPenaltyOdds;
-   penaltyMissers: vec PlayerSelectionOdds;
-   redCards: vec PlayerSelectionOdds;
-   scoresBrace: vec PlayerSelectionOdds;
-   scoresHatTrick: vec PlayerSelectionOdds;
-   yellowCards: vec PlayerSelectionOdds;
- };
 type LeagueId = nat16;
 type InjuryHistory = 
  record {
@@ -346,27 +125,6 @@ type InjuryHistory =
    expectedEndDate: int;
    injuryStartDate: int;
  };
-type HomePageFixtureDTO = 
- record {
-   awayOdds: float64;
-   drawOdds: float64;
-   fixtureId: FixtureId;
-   gameweek: GameweekNumber;
-   homeOdds: float64;
-   leagueId: LeagueId;
- };
-type HalfTimeFullTimeResultDetail = 
- record {
-   fullTimeResult: MatchResult;
-   halfTimeResult: MatchResult;
- };
-type HalfTimeFullTimeOdds = 
- record {
-   firstHalfResult: MatchResult;
-   odds: float64;
-   secondHalfResult: MatchResult;
- };
-type GetBetsDTO = record {principalId: PrincipalId;};
 type GameweekNumber = nat8;
 type GameweekFiltersDTO = 
  record {
@@ -385,103 +143,14 @@ type Error =
    NotAuthorized;
    NotFound;
  };
-type DataHashDTO = 
- record {
-   category: text;
-   hash: text;
- };
 type CountryId = nat16;
-type CorrectResultDetail = record {matchResult: MatchResult;};
 type ClubId = nat16;
-type ClubEventDetail = record {clubId: ClubId;};
-type Category = 
- variant {
-   AnytimeAssist;
-   AnytimeGoalscorer;
-   BothTeamsToScore;
-   BothTeamsToScoreAndWinner;
-   CorrectResult;
-   CorrectScore;
-   FirstAssist;
-   FirstGoalscorer;
-   HalfTimeFullTimeResult;
-   HalfTimeScore;
-   LastAssist;
-   LastGoalscorer;
-   MissPenalty;
-   PenaltyMissed;
-   RedCard;
-   ScoreBrace;
-   ScoreHatrick;
-   YellowCard;
- };
-type BothTeamsToScoreDetail = record {bothTeamsToScore: bool;};
-type BothTeamsToScoreAndWinnerDetail = 
- record {
-   bothTeamsToScore: bool;
-   matchResult: MatchResult;
- };
-type BetType = 
- variant {
-   Canadian;
-   Double;
-   EightFold;
-   FiveFold;
-   FourFold;
-   Goliath;
-   Heinz;
-   Lucky15;
-   Lucky31;
-   Lucky63;
-   NineFold;
-   Patent;
-   SevenFold;
-   Single;
-   SixFold;
-   SuperHeinz;
-   TenFold;
-   Treble;
-   Trixie;
-   Yankee;
- };
-type BetSlip = 
- record {
-   betType: BetType;
-   expectedReturns: nat64;
-   id: nat;
-   placedBy: PrincipalId;
-   placedOn: int;
-   result: BetResult;
-   selections: vec Selection;
-   settledOn: int;
-   status: SelectionStatus;
-   totalStake: nat64;
-   totalWinnings: nat64;
- };
-type BetResult = 
- variant {
-   Lost;
-   Open;
-   Won;
- };
 service : {
   agreeTerms: () -> (Result);
-  getBets: (GetBetsDTO) -> (Result_9);
-  getBettableHomepageFixtures: (LeagueId) -> (Result_8) query;
-  getDataHashes: () -> (Result_7) query;
-  getMatchOdds: (LeagueId, FixtureId) -> (Result_6) query;
   getPlayerDetailsForGameweek: (LeagueId, GameweekFiltersDTO) ->
-   (Result_5) composite_query;
-  getProfile: () -> (Result_4);
-  getUserAudit: (nat) -> (Result_3);
-  isAuditor: () -> (Result_2);
-  kycVerificationCallback: (ShuftiResponse) -> (Result);
+   (Result_2) composite_query;
+  getProfile: () -> (Result_1);
   pauseAccount: (PauseAccountDTO) -> (Result);
-  placeBet: (SubmitBetslipDTO) -> (Result_1);
-  setMaxBetLimit: (SetMaxBetLimit) -> (Result);
-  setMonthlyBetLimit: (SetMonthlyBetLimitDTO) -> (Result);
-  storeKYCReference: (text) -> ();
-  updateBettingOdds: (LeagueId) -> (Result);
   updateProfilePicture: (UpdateProfilePictureDTO) -> (Result);
   updateUsername: (UpdateUsernameDTO) -> (Result);
   updateWithdrawalAddress: (UpdateWithdrawalAddressDTO) -> (Result);

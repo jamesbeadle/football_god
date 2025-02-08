@@ -5,12 +5,10 @@
   import CopyIcon from "$lib/icons/CopyIcon.svelte";
   import { writable } from "svelte/store";
   import WithdrawFplModal from "./withdraw-fpl-modal.svelte";
-    import { authStore } from "$lib/stores/auth-store";
-    import FullScreenSpinner from "../shared/full-screen-spinner.svelte";
-    import { SHUFTI_CLIENT_ID, SHUFTI_SECRET_KEY } from "$lib/environment/environment";
-    import { kycStore } from "$lib/stores/kyc-store";
-    import type { ProfileDTO } from "../../../../../declarations/backend/backend.did";
-    import { toasts } from "$lib/stores/toasts-store";
+  import { authStore } from "$lib/stores/auth-store";
+  import FullScreenSpinner from "../shared/full-screen-spinner.svelte";
+  import type { ProfileDTO } from "../../../../../declarations/backend/backend.did";
+  import { toasts } from "$lib/stores/toasts-store";
    
   let isLoading = true;
   let loadingBalances = true;
@@ -24,8 +22,6 @@
 
   let showUsernameModal = false;
   let showFPLModal = false;
-
-  let loadingKYC = false;
 
   onMount(async () => {
     try {
@@ -107,82 +103,10 @@
       console.error("Failed to copy:", err);
     }
   }
-   
-  async function beginKYC() {
-    try {
-      loadingKYC = true;
-      let reference = crypto.randomUUID();
-      await kycStore.storeKYCReference(reference);
-      const payload = {
-        reference: `SP_REQUEST_${reference}`,
-        callback_url: "https://us-central1-openfpl1.cloudfunctions.net/api/forwardKYCResponse",
-        redirect_url: "https://footballgod.xyz/profile",
-        country: "GB",
-        language: "EN",
-        verification_mode: "any",
-        ttl: 60,
-        document: {
-          supported_types: ["id_card", "passport"],
-          allow_offline: "1",
-          allow_online: "1",
-        },
-        address: {
-          full_address: "48 Clare Crescent, Leatherhead, Surrey, KT22 7QZ",
-          address_fuzzy_match: "1",
-          supported_types: ["utility_bill", "passport", "bank_statement"],
-        },
-      };
 
-      const token = btoa(`${SHUFTI_CLIENT_ID}:${SHUFTI_SECRET_KEY}`);
-      const response = await fetch("https://api.shuftipro.com/", {
-        method: "POST",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-          Authorization: `Basic ${token}`,
-        },
-        body: JSON.stringify(payload),
-      });
-
-      const data = await response.json();
-      if (data.event === "request.pending") {
-        let verificationUrl = data.verification_url;
-        createIframe(verificationUrl);
-      } else {
-        console.error("Unexpected response:", data);
-      }
-    } catch (error) {
-      console.error("Error starting KYC:", error);
-    } finally {
-      loadingKYC = false;
-    }
-  }
-
-  function createIframe(src: string) {
-    const iframe = document.createElement("iframe");
-    iframe.style.position = "fixed";
-    iframe.id = "shuftipro-iframe";
-    iframe.name = "shuftipro-iframe";
-    iframe.allow = "camera";
-    iframe.src = src;
-    iframe.style.top = "0";
-    iframe.style.left = "0";
-    iframe.style.bottom = "0";
-    iframe.style.right = "0";
-    iframe.style.margin = "0";
-    iframe.style.padding = "0";
-    iframe.style.overflow = "hidden";
-    iframe.style.border = "none";
-    iframe.style.zIndex = "2147483647";
-    iframe.width = "100%";
-    iframe.height = "100%";
-    iframe.dataset.removable = "true";
-
-    document.body.appendChild(iframe);
-  }
 </script>
 
-{#if isLoading || loadingKYC}
+{#if isLoading}
   <FullScreenSpinner />
 {:else}
   <UpdateUsernameModal
@@ -268,23 +192,6 @@
                     Withdraw
                   </button>
                 </div>
-                {/if}
-                
-                {#if profile}
-                  {#if profile.kycComplete}
-                    <p class="mt-2 text-sm">KYC Verification Complete</p>
-                  {:else}
-                    <div class="flex items-center mt-2">
-                      <div class="flex items-center text-xs mt-2">
-                        <button
-                        class="text-sm md:text-sm p-1 md:p-2 px-2 md:px-4 rounded fg-button button-hover"
-                          on:click={beginKYC}
-                        >
-                          KYC Verification
-                        </button>
-                      </div>
-                    </div>
-                  {/if}
                 {/if}
               </div>
             </div>

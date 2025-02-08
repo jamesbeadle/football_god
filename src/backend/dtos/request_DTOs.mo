@@ -1,8 +1,6 @@
 
 import FootballTypes "../types/football_types";
 import Base "../types/base_types";
-import BettingTypes "../types/betting_types";
-
 module RequestDTOs {
 
   public type UpdateAppStatusDTO = {
@@ -23,19 +21,6 @@ module RequestDTOs {
   public type PaginationFiltersDTO = {
     limit : Nat;
     offset : Nat;
-  };
-
-
-  public type SubmitBetslipDTO = {
-    principalId: Base.PrincipalId;
-    leagueId: FootballTypes.LeagueId;
-    seasonId: FootballTypes.SeasonId;
-    totalStake: Nat64;
-    expectedReturn: Nat64;
-  };
-
-  public type GetBetsDTO = {
-    principalId: Base.PrincipalId;
   };
 
   public type UpdateUsernameDTO = {
@@ -59,23 +44,9 @@ module RequestDTOs {
     pauseDays: Nat;
   };
 
-  public type SetMaxBetLimit = {
-    principalId: Base.PrincipalId;
-    maxBetLimit: Nat64;
-  };
-
-  public type SetMonthlyBetLimitDTO = {
-    principalId: Base.PrincipalId;
-    monthlyBetLimit: Nat64;
-  };
-
   public type WithdrawDTO = {
     principalId: Base.PrincipalId;
     amount: Nat64;
-  };
-
-  public type GetBetslipFixturesDTO = {
-    selections: [BettingTypes.Selection];
   };
 
   public type GetSnapshotPlayers = {
