@@ -3945,7 +3945,7 @@ import Char "mo:base/Char";
         let playersToRecall = Array.filter<FootballTypes.Player>(
           leaguePlayersEntry.1,
           func(currentPlayer : FootballTypes.Player) : Bool {
-            return currentPlayer.status == #OnLoan and currentPlayer.currentLoanEndDate <= Time.now();
+            return currentPlayer.status == #OnLoan and currentPlayer.currentLoanEndDate <= Time.now() and currentPlayer.currentLoanEndDate != 0;
           },
         );
         

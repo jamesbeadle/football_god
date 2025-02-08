@@ -9,6 +9,8 @@
   import type { ClubDTO, FootballLeagueDTO, LoanedPlayerDTO } from "../../../../../declarations/data_canister/data_canister.did";
   import { playerStore } from "$lib/stores/player-store";
   import RecallPlayer from "../governance/player/recall-player.svelte";
+    import DataRow from "../shared/data-row.svelte";
+    import { formatUnixDateToReadable } from "$lib/utils/helpers";
   
   let isLoading = true;
 
@@ -94,20 +96,30 @@
               {#each loanedPlayers.sort((a, b) => Number(a.clubId) - Number(b.clubId)) as player}
                 {@const club = clubs.find(x => x.id == player.clubId)}
                 {@const parentClub = clubs.find(x => x.id == player.parentClubId)}
-                <div class="bg-BrandDarkGray p-4 rounded shadow-md flex flex-col md:flex-row items-center space-y-2 md:space-y-0 md:justify-between">
-                  
-                  <p>{player.firstName} {player.lastName}</p>
-                  <span class="flex flex-row space-x-2">
-                    <BadgeIcon primaryColour={club?.primaryColourHex} secondaryColour={club?.secondaryColourHex} className="w-6 h-6" />
-                    <span class="text-white text-sm">{club?.friendlyName}</span>  
-                  </span>
-                  <p>Parent Club:</p>
-                  <span class="flex flex-row space-x-2">
-                    <BadgeIcon primaryColour={parentClub?.primaryColourHex} secondaryColour={parentClub?.secondaryColourHex} className="w-6 h-6" />
-                    <span class="text-white text-sm">{parentClub?.friendlyName}</span>  
-                  </span>
-                  
-                  <div class="flex items-center space-x-2">
+                <DataRow>
+                  <div class="flex-1 truncate">
+                    <div class="flex flex-col w-full">
+                      <p>{player.firstName} {player.lastName}</p>
+                      <p>Loan End Date: {formatUnixDateToReadable(Number(player.currentLoanEndDate))}</p>
+                      <div class="flex flex-row w-full">
+                        <div class="flex flex-col w-auto">
+                          <p>Current Club:</p>
+                          <span class="flex flex-row space-x-2">
+                            <BadgeIcon primaryColour={club?.primaryColourHex} secondaryColour={club?.secondaryColourHex} className="w-6 h-6" />
+                            <span class="text-white text-sm">{club?.friendlyName}</span>  
+                          </span>
+                        </div>
+                        <div class="flex flex-col w-auto">
+                          <p>Parent Club:</p>
+                          <span class="flex flex-row space-x-2">
+                            <BadgeIcon primaryColour={parentClub?.primaryColourHex} secondaryColour={parentClub?.secondaryColourHex} className="w-6 h-6" />
+                            <span class="text-white text-sm">{parentClub?.friendlyName}</span>  
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="ml-2 flex-shrink-0">
                     <button
                       class="p-2"
                       on:click={(event) => toggleDropdown(player.id, event)}
@@ -119,9 +131,8 @@
                         <button class="dropdown-link" on:click={() => loadRecallLoan(player.id)}>Recall Loan</button>
                       </div>
                     {/if}
-                  </div>
-                </div>
-          
+                  </div>              
+                </DataRow>
               {/each}
           {/if}
         </div>
