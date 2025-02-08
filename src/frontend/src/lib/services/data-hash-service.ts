@@ -1,7 +1,9 @@
 import { ActorFactory } from "../utils/ActorFactory";
-import type { DataHashDTO } from "../../../../declarations/backend/backend.did";
 import { isError } from "../utils/helpers";
-import type { LeagueId } from "../../../../declarations/data_canister/data_canister.did";
+import type {
+  DataHashDTO,
+  LeagueId,
+} from "../../../../declarations/data_canister/data_canister.did";
 import { authStore } from "$lib/stores/auth-store";
 
 export class DataHashService {

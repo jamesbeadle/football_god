@@ -1,4 +1,3 @@
-import { idlFactory } from "../../../../declarations/backend";
 import { ActorFactory } from "$lib/utils/ActorFactory";
 import { isError } from "$lib/utils/helpers";
 import type { SeasonDTO } from "../../../../declarations/data_canister/data_canister.did";

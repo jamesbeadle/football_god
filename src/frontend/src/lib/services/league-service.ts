@@ -2,10 +2,8 @@ import { authStore } from "../stores/auth-store";
 import { ActorFactory } from "../utils/ActorFactory";
 import { isError } from "../utils/helpers";
 import type {
-  CreateLeagueDTO,
   FootballLeagueDTO,
   LeagueStatus,
-  UpdateLeagueDTO,
 } from "../../../../declarations/data_canister/data_canister.did";
 
 export class LeagueService {
