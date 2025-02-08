@@ -85,58 +85,10 @@ function createPlayerStore() {
     return new PlayerService().getLoanedPlayers(leagueId);
   }
 
-  async function transferPlayer(
-    leagueId: LeagueId,
-    dto: TransferPlayerDTO,
-  ): Promise<any> {
-    return new PlayerService().transferPlayer(leagueId, dto);
-  }
-
-  async function setFreeAgent(
-    leagueId: LeagueId,
-    dto: SetFreeAgentDTO,
-  ): Promise<any> {
-    return new PlayerService().setFreeAgent(leagueId, dto);
-  }
-
-  async function loanPlayer(
-    leagueId: LeagueId,
-    dto: LoanPlayerDTO,
-  ): Promise<any> {
-    return new PlayerService().loanPlayer(leagueId, dto);
-  }
-
-  async function createPlayer(
-    leagueId: LeagueId,
-    dto: CreatePlayerDTO,
-  ): Promise<any> {
-    return new PlayerService().createPlayer(leagueId, dto);
-  }
-
-  async function updatePlayer(
-    leagueId: LeagueId,
-    dto: UpdatePlayerDTO,
-  ): Promise<any> {
-    return new PlayerService().updatePlayer(leagueId, dto);
-  }
-
-  async function recallLoan(
-    leagueId: LeagueId,
-    dto: RecallPlayerDTO,
-  ): Promise<any> {
-    return new PlayerService().recallLoan(leagueId, dto);
-  }
-
   return {
     getPlayers,
-    transferPlayer,
-    setFreeAgent,
-    loanPlayer,
-    createPlayer,
-    updatePlayer,
     syncPlayers,
     getLoanedPlayers,
-    recallLoan,
   };
 }
 

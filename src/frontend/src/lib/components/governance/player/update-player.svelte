@@ -8,6 +8,7 @@
   import Modal from "$lib/components/shared/modal.svelte";
   import GovernanceModal from "../governance-modal.svelte";
   import FormComponent from "$lib/components/shared/form-component.svelte";
+    import { governanceStore } from "$lib/stores/governance-store";
 
   export let visible: boolean;
   export let closeModal: () => void;
@@ -64,7 +65,7 @@
       shirtNumber = selectedPlayer?.shirtNumber ?? 0;
       nationalityId = selectedPlayer?.nationality ?? 0;
     } catch (error) {
-      console.error("Error mounting create player modal.", error);
+      console.error("Error mounting update player modal.", error);
     } finally {
       isLoading = false;
     }
@@ -99,7 +100,7 @@
       nationality: nationalityId
     };
     
-    await playerStore.updatePlayer(selectedPlayer.leagueId, dto);
+    await governanceStore.updatePlayer(dto);
 
     closeModal();
   }

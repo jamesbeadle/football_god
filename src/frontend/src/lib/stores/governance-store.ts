@@ -58,6 +58,7 @@ import {
   buildSubmitFixtureDataText,
   buildTransferPlayerText,
   buildUpdateLeagueText,
+  buildUpdatePlayerText,
 } from "$lib/utils/proposal.utils";
 import {
   CreateClubDTO_Idl,
@@ -438,7 +439,47 @@ function createGovernanceStore() {
     });
   }
 
-  async function updatePlayer(dto: UpdatePlayerDTO): Promise<any> {}
+  async function updatePlayer(dto: UpdatePlayerDTO): Promise<any> {
+    let userIdentity: OptionIdentity;
+    authStore.subscribe((auth) => (userIdentity = auth.identity));
+    if (!userIdentity) return;
+
+    let leagues = await leagueStore.getLeagues();
+
+    let league = leagues.find((x) => x.id == dto.leagueId);
+    if (!league) throw new Error("Player league not found.");
+
+    let leagueClubs = await clubStore.getClubs(dto.leagueId);
+    let players = await playerStore.getPlayers(dto.leagueId);
+    let player = players.find((x) => x.id == dto.playerId);
+    if (!player) throw new Error("Player not found.");
+
+    let playerClub = leagueClubs.find((x) => x.id == player.clubId);
+    if (!playerClub) throw new Error("Player club not found.");
+
+    let countries = await countryStore.getCountries();
+    let country = countries.find((x) => x.id == dto.nationality);
+    if (!country) throw new Error("Country not found.");
+
+    const { title, summary } = buildUpdatePlayerText(
+      `${dto.firstName} ${dto.lastName}`,
+      Object.keys(dto.position)[0],
+      playerClub.name,
+      league.name,
+      formatUnixDateToSmallReadable(Number(dto.dateOfBirth)),
+      country.name,
+    );
+
+    const encoded = IDL.encode([UpdatePlayerDTO_Idl], [dto]);
+
+    return await createProposal({
+      identity: userIdentity,
+      functionId: 60000n,
+      payload: new Uint8Array(encoded),
+      title,
+      summary,
+    });
+  }
 
   async function setPlayerInjury(dto: SetPlayerInjuryDTO): Promise<any> {}
 

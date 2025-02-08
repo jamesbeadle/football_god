@@ -101,15 +101,24 @@ export function buildTransferPlayerText(
 }
 
 export function buildUpdatePlayerText(
-  playerName: string,
-  propertyName: string,
-  newValue: string,
+  fullName: string,
+  position: string,
+  clubName: string,
+  leagueName: string,
+  dateOfBirth: string,
+  nationalityName: string,
 ) {
   return {
-    title: `Update ${playerName} ${propertyName} to ${newValue}`,
+    title: `Update ${fullName} (${clubName})`,
     summary:
-      `Update ${playerName} ${propertyName} to ${newValue}\n\n` +
-      `Description: Update ${playerName} ${propertyName} to ${newValue}.`,
+      `Update ${fullName} (${position}) - ${clubName}.\n\n` +
+      `Description: Update ${fullName} (${position}) - ${clubName} (${leagueName}).\n\n` +
+      `Full Player Details:\n` +
+      `League: ${leagueName}\n` +
+      `Club: ${clubName}\n` +
+      `Position: ${position}\n` +
+      `Name: ${fullName}\n` +
+      `DOB: ${dateOfBirth}\nNationality: ${nationalityName}`,
   };
 }
 
