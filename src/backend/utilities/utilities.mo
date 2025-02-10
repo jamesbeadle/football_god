@@ -15,120 +15,120 @@ import Nat8 "mo:base/Nat8";
 import Nat16 "mo:base/Nat16";
 import Int16 "mo:base/Int16";
 import Management "./Management";
-import Base "../types/base_types";
-import FootballTypes "../types/football_types";
+import Base "mo:waterway-mops/BaseTypes";
+import FootballTypes "mo:waterway-mops/FootballTypes";
 
 module {
 
-    public func convertNat64ToFloat(input: Nat64) : Float {
-        return Float.fromInt64(Int64.fromNat64(input));
-    };
+  public func convertNat64ToFloat(input : Nat64) : Float {
+    return Float.fromInt64(Int64.fromNat64(input));
+  };
 
-    public func convertFloatToNat64(input: Float) : Nat64 {
-        return Nat64.fromIntWrap(Int64.toInt(Float.toInt64(input)));
-    };
+  public func convertFloatToNat64(input : Float) : Nat64 {
+    return Nat64.fromIntWrap(Int64.toInt(Float.toInt64(input)));
+  };
 
-    public func convertNatToInt(input: Nat) : Int {
-        return Int64.toInt(Int64.fromNat64(Nat64.fromNat(input)));
-    };
+  public func convertNatToInt(input : Nat) : Int {
+    return Int64.toInt(Int64.fromNat64(Nat64.fromNat(input)));
+  };
 
-    public func updateCanister_(a : actor {}, backendCanisterController : ?Principal, IC : Management.Management) : async () {
-        let cid = { canister_id = Principal.fromActor(a) };
-        switch (backendCanisterController) {
-        case (null) {};
-        case (?controller) {
-            await (
-            IC.update_settings({
-                canister_id = cid.canister_id;
-                settings = {
-                controllers = ?[controller];
-                compute_allocation = ?1;
-                memory_allocation = null;
-                freezing_threshold = ?2_592_000;
-                reserved_cycles_limit = null
-                };
-                sender_canister_version = null
-            }),
-            );
-        };
-        };
-    };
-
-    public func validUsername(username : Text) : Bool {
-
-      if (Text.size(username) < 3 or Text.size(username) > 20) {
-        return false;
+  public func updateCanister_(a : actor {}, backendCanisterController : ?Principal, IC : Management.Management) : async () {
+    let cid = { canister_id = Principal.fromActor(a) };
+    switch (backendCanisterController) {
+      case (null) {};
+      case (?controller) {
+        await (
+          IC.update_settings({
+            canister_id = cid.canister_id;
+            settings = {
+              controllers = ?[controller];
+              compute_allocation = ?1;
+              memory_allocation = null;
+              freezing_threshold = ?2_592_000;
+              reserved_cycles_limit = null;
+            };
+            sender_canister_version = null;
+          })
+        );
       };
+    };
+  };
 
-      let isAlphanumeric = func(s : Text) : Bool {
-        let chars = Text.toIter(s);
-        for (c in chars) {
-          if (not ((c >= 'a' and c <= 'z') or (c >= 'A' and c <= 'Z') or (c >= '0' and c <= '9'))) {
-            return false;
-          };
+  public func validUsername(username : Text) : Bool {
+
+    if (Text.size(username) < 3 or Text.size(username) > 20) {
+      return false;
+    };
+
+    let isAlphanumeric = func(s : Text) : Bool {
+      let chars = Text.toIter(s);
+      for (c in chars) {
+        if (not ((c >= 'a' and c <= 'z') or (c >= 'A' and c <= 'Z') or (c >= '0' and c <= '9'))) {
+          return false;
         };
-        return true;
       };
-
-      if (not isAlphanumeric(username)) {
-        return false;
-      };
-
       return true;
     };
 
-    public func validProfilePicture(profilePicture : Blob) : Bool {
-      let sizeInKB = Array.size(Blob.toArray(profilePicture)) / 1024;
-      return (sizeInKB > 0 and sizeInKB <= 500);
+    if (not isAlphanumeric(username)) {
+      return false;
     };
 
-    public func getCurrentYear() : Nat16 {
-      return 0;
+    return true;
+  };
+
+  public func validProfilePicture(profilePicture : Blob) : Bool {
+    let sizeInKB = Array.size(Blob.toArray(profilePicture)) / 1024;
+    return (sizeInKB > 0 and sizeInKB <= 500);
+  };
+
+  public func getCurrentYear() : Nat16 {
+    return 0;
+  };
+
+  public func getCurrentMonth() : Base.CalendarMonth {
+    return 0;
+  };
+
+  public func convertDaysToNanosecondsInt(pauseDays : Nat) : Int {
+    let secondsPerDay : Int = 24 * 60 * 60;
+    let nanosecondsPerSecond : Int = 1_000_000_000;
+    return convertNatToInt(pauseDays) * secondsPerDay * nanosecondsPerSecond;
+  };
+
+  public func getDay() : Int {
+    let secondsPerDay : Int = 24 * 60 * 60;
+    let nanosecondsPerSecond : Int = 1_000_000_000;
+    return secondsPerDay * nanosecondsPerSecond;
+  };
+
+  public func getHour() : Int {
+    let secondsPerHour : Int = 60 * 60;
+    let nanosecondsPerSecond : Int = 1_000_000_000;
+    return secondsPerHour * nanosecondsPerSecond;
+  };
+
+  public func calculateAgeFromUnix(dobUnix : Int) : Nat {
+    let secondsInADay : Int = 86_400;
+    let currentUnixTime : Int = Time.now();
+
+    let currentDays : Int = currentUnixTime / (1_000_000_000 * secondsInADay);
+    let dobDays : Int = dobUnix / (1_000_000_000 * secondsInADay);
+
+    let currentYear : Int = getYear(currentDays);
+    let dobYear : Int = getYear(dobDays);
+
+    let currentDayOfYear : Int = getDayOfYear(currentDays, currentYear);
+    let dobDayOfYear : Int = getDayOfYear(dobDays, dobYear);
+
+    var age : Int = currentYear - dobYear;
+    if (currentDayOfYear < dobDayOfYear) {
+      age := age - 1;
     };
 
-    public func getCurrentMonth() : Base.CalendarMonth {
-      return 0;
-    };
+    return Nat64.toNat(Int64.toNat64(Int64.fromInt(age)));
 
-    public func convertDaysToNanosecondsInt(pauseDays: Nat): Int {
-      let secondsPerDay: Int = 24 * 60 * 60;
-      let nanosecondsPerSecond: Int = 1_000_000_000;
-      return convertNatToInt(pauseDays) * secondsPerDay * nanosecondsPerSecond;
-    };
-
-    public func getDay(): Int {
-      let secondsPerDay: Int = 24 * 60 * 60;
-      let nanosecondsPerSecond: Int = 1_000_000_000;
-      return secondsPerDay * nanosecondsPerSecond;
-    };
-
-    public func getHour(): Int {
-      let secondsPerHour: Int = 60 * 60;
-      let nanosecondsPerSecond: Int = 1_000_000_000;
-      return secondsPerHour * nanosecondsPerSecond;
-    };
-
-    public func calculateAgeFromUnix(dobUnix : Int) : Nat {
-      let secondsInADay : Int = 86_400;
-      let currentUnixTime : Int = Time.now();
-
-      let currentDays : Int = currentUnixTime / (1_000_000_000 * secondsInADay);
-      let dobDays : Int = dobUnix / (1_000_000_000 * secondsInADay);
-
-      let currentYear : Int = getYear(currentDays);
-      let dobYear : Int = getYear(dobDays);
-
-      let currentDayOfYear : Int = getDayOfYear(currentDays, currentYear);
-      let dobDayOfYear : Int = getDayOfYear(dobDays, dobYear);
-
-      var age : Int = currentYear - dobYear;
-      if (currentDayOfYear < dobDayOfYear) {
-        age := age - 1;
-      };
-
-      return Nat64.toNat(Int64.toNat64(Int64.fromInt(age)));
-
-    };
+  };
 
   private func getYear(days : Int) : Int {
     var years = 1970;
@@ -161,7 +161,7 @@ module {
   };
 
   public let hashNat8 = func(key : Nat8) : Hash.Hash {
-    Nat32.fromNat(Nat8.toNat(key) % (2 ** 32 -1));
+    Nat32.fromNat(Nat8.toNat(key) % (2 ** 32 - 1));
   };
 
   public let eqNat16 = func(a : Nat16, b : Nat16) : Bool {
@@ -169,7 +169,7 @@ module {
   };
 
   public let hashNat16 = func(key : Nat16) : Hash.Hash {
-    Nat32.fromNat(Nat16.toNat(key) % (2 ** 32 -1));
+    Nat32.fromNat(Nat16.toNat(key) % (2 ** 32 - 1));
   };
 
   public let eqNat32 = func(a : Nat32, b : Nat32) : Bool {
@@ -177,7 +177,7 @@ module {
   };
 
   public let hashNat32 = func(key : Nat32) : Hash.Hash {
-    Nat32.fromNat(Nat32.toNat(key) % (2 ** 32 -1));
+    Nat32.fromNat(Nat32.toNat(key) % (2 ** 32 - 1));
   };
 
   public func unixTimeToMonth(unixTime : Int) : Nat8 {
@@ -295,113 +295,112 @@ module {
       case _ { return 0 };
     };
   };
-  
-  public func getNextUnixTimestampForDayMonth(day : Nat8, month : Nat8) : ?Int {
-  if (day < 1 or day > 31)  { return null };
-  if (month < 1 or month > 12) { return null };
 
-  let currentUnixTime : Int = Time.now();
-  let secondsInADay : Int = 86_400;
-  let nowSeconds : Int = currentUnixTime / 1_000_000_000;
-  let currentDays : Int = nowSeconds / secondsInADay;
-  let currentYear : Int = getYear(currentDays);
-  let currentDayOfYear : Int = getDayOfYear(currentDays, currentYear) + 1; 
-  let maybeDayOfYearTarget = dayOfYear(currentYear, month, day);
-  switch (maybeDayOfYearTarget) {
-    case (null) {
-      return null;
-    };
-    case (?dayOfYearTarget) {
-      if (dayOfYearTarget > currentDayOfYear) {
-        return ?(makeUnixTimestamp(currentYear, dayOfYearTarget));
-      } else if (dayOfYearTarget == currentDayOfYear) {
-        let midnightToday = makeUnixTimestamp(currentYear, dayOfYearTarget);
-        if (midnightToday > currentUnixTime) {
-          return ?midnightToday;
+  public func getNextUnixTimestampForDayMonth(day : Nat8, month : Nat8) : ?Int {
+    if (day < 1 or day > 31) { return null };
+    if (month < 1 or month > 12) { return null };
+
+    let currentUnixTime : Int = Time.now();
+    let secondsInADay : Int = 86_400;
+    let nowSeconds : Int = currentUnixTime / 1_000_000_000;
+    let currentDays : Int = nowSeconds / secondsInADay;
+    let currentYear : Int = getYear(currentDays);
+    let currentDayOfYear : Int = getDayOfYear(currentDays, currentYear) + 1;
+    let maybeDayOfYearTarget = dayOfYear(currentYear, month, day);
+    switch (maybeDayOfYearTarget) {
+      case (null) {
+        return null;
+      };
+      case (?dayOfYearTarget) {
+        if (dayOfYearTarget > currentDayOfYear) {
+          return ?(makeUnixTimestamp(currentYear, dayOfYearTarget));
+        } else if (dayOfYearTarget == currentDayOfYear) {
+          let midnightToday = makeUnixTimestamp(currentYear, dayOfYearTarget);
+          if (midnightToday > currentUnixTime) {
+            return ?midnightToday;
+          } else {
+            let nextYear = currentYear + 1;
+            let maybeNextDayOfYear = dayOfYear(nextYear, month, day);
+            switch (maybeNextDayOfYear) {
+              case (?foundNextDayOfYear) {
+                return ?(makeUnixTimestamp(nextYear, foundNextDayOfYear));
+              };
+              case (null) { return null };
+            };
+          };
         } else {
           let nextYear = currentYear + 1;
           let maybeNextDayOfYear = dayOfYear(nextYear, month, day);
-          switch(maybeNextDayOfYear){
-            case (?foundNextDayOfYear){
+          switch (maybeNextDayOfYear) {
+            case (?foundNextDayOfYear) {
               return ?(makeUnixTimestamp(nextYear, foundNextDayOfYear));
             };
-            case (null)  { return null };
+            case (null) { return null };
           };
-        };
-      } else {
-        let nextYear = currentYear + 1;
-        let maybeNextDayOfYear = dayOfYear(nextYear, month, day);
-        switch(maybeNextDayOfYear){
-          case (?foundNextDayOfYear){
-            return ?(makeUnixTimestamp(nextYear, foundNextDayOfYear));
-          };
-          case (null)  { return null };
         };
       };
     };
   };
-};
 
-private func isLeapYear(y : Int) : Bool {
-  if (y % 400 == 0) return true;
-  if (y % 100 == 0) return false;
-  if (y % 4 == 0)   return true;
-  return false;
-};
-
-private func daysInMonth(y : Int, m : Nat8) : Nat8 {
-  switch (m) {
-    case (2) { if (isLeapYear(y)) 29 else 28 };
-    case (4) { 30 };
-    case (6) { 30 };
-    case (9) { 30 };
-    case (11) { 30 };
-    case _ { 31 };
-  }
-};
-
-private func dayOfYear(year : Int, month : Nat8, day : Nat8) : ?Int {
-  if (day > daysInMonth(year, month)) return null;
-
-  var total : Int = 0;
-  var m : Nat8 = 1;
-  while (m < month) {
-    total += natToInt(Nat8.toNat(daysInMonth(year, m)));
-    m += 1;
+  private func isLeapYear(y : Int) : Bool {
+    if (y % 400 == 0) return true;
+    if (y % 100 == 0) return false;
+    if (y % 4 == 0) return true;
+    return false;
   };
-  let result = total + natToInt(Nat8.toNat(day));
-  return ?result;
-};
 
-private func makeUnixTimestamp(year : Int, dayOfYear : Int) : Int {
-  let epochDays = daysSince1970(year, dayOfYear);
-  let epochSeconds = epochDays * 86_400;
-  return epochSeconds * 1_000_000_000;
-};
-
-private func daysSince1970(year : Int, dayOfYear : Int) : Int {
-  var daysCount = 0;
-  var y = 1970;
-
-  while (y < year) {
-    if (isLeapYear(y)) {
-      daysCount += 366;
-    } else {
-      daysCount += 365;
+  private func daysInMonth(y : Int, m : Nat8) : Nat8 {
+    switch (m) {
+      case (2) { if (isLeapYear(y)) 29 else 28 };
+      case (4) { 30 };
+      case (6) { 30 };
+      case (9) { 30 };
+      case (11) { 30 };
+      case _ { 31 };
     };
-    y += 1;
   };
-  daysCount += (intToNat(dayOfYear) - 1);
-  return daysCount;
-};
 
+  private func dayOfYear(year : Int, month : Nat8, day : Nat8) : ?Int {
+    if (day > daysInMonth(year, month)) return null;
 
-public func intToNat(input: Int) : Nat {
-  return Nat64.toNat(Int64.toNat64(Int64.fromInt(input)))
-};
+    var total : Int = 0;
+    var m : Nat8 = 1;
+    while (m < month) {
+      total += natToInt(Nat8.toNat(daysInMonth(year, m)));
+      m += 1;
+    };
+    let result = total + natToInt(Nat8.toNat(day));
+    return ?result;
+  };
 
-public func natToInt(input: Nat) : Int {
-  return Int64.toInt(Int64.fromNat64(Nat64.fromNat(input)));
-};
+  private func makeUnixTimestamp(year : Int, dayOfYear : Int) : Int {
+    let epochDays = daysSince1970(year, dayOfYear);
+    let epochSeconds = epochDays * 86_400;
+    return epochSeconds * 1_000_000_000;
+  };
+
+  private func daysSince1970(year : Int, dayOfYear : Int) : Int {
+    var daysCount = 0;
+    var y = 1970;
+
+    while (y < year) {
+      if (isLeapYear(y)) {
+        daysCount += 366;
+      } else {
+        daysCount += 365;
+      };
+      y += 1;
+    };
+    daysCount += (intToNat(dayOfYear) - 1);
+    return daysCount;
+  };
+
+  public func intToNat(input : Int) : Nat {
+    return Nat64.toNat(Int64.toNat64(Int64.fromInt(input)));
+  };
+
+  public func natToInt(input : Nat) : Int {
+    return Int64.toInt(Int64.fromNat64(Nat64.fromNat(input)));
+  };
 
 };

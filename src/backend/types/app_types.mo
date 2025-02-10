@@ -1,4 +1,4 @@
-import Base "base_types";
+import Base "mo:waterway-mops/BaseTypes";
 import BettingTypes "betting_types";
 import Text "mo:base/Text";
 import ShuftiTypes "shufti_types";

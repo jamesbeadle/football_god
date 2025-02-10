@@ -6,7 +6,7 @@ import Array "mo:base/Array";
 import Buffer "mo:base/Buffer";
 import Iter "mo:base/Iter";
 import Debug "mo:base/Debug";
-import FootballTypes "../types/football_types";
+import FootballTypes "mo:waterway-mops/FootballTypes";
 
 module {
 

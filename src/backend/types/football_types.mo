@@ -1,4 +1,4 @@
-import Base "base_types";
+import Base "mo:waterway-mops/BaseTypes";
 import List "mo:base/List";
 module FootballTypes {
 

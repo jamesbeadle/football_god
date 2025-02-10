@@ -15,10 +15,10 @@
   import Time "mo:base/Time";
   import Timer "mo:base/Timer";
   import TrieMap "mo:base/TrieMap";
-import Char "mo:base/Char";
+  import Char "mo:base/Char";
   
-  import Base "../backend/types/base_types";
-  import FootballTypes "../backend/types/football_types";
+  import Base "mo:waterway-mops/BaseTypes";
+  import FootballTypes "mo:waterway-mops/FootballTypes";
   import T "../backend/types/app_types";
 
   import RequestDTOs "../backend/dtos/request_DTOs";

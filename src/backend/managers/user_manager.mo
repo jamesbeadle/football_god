@@ -17,7 +17,7 @@ import Debug "mo:base/Debug";
 import List "mo:base/List";
 
 import T "../types/app_types";
-import Base "../types/base_types";
+import Base "mo:waterway-mops/BaseTypes";
 import BettingTypes "../types/betting_types";
 import FootballTypes "../types/football_types";
 import RequestDTOs "../dtos/request_DTOs";

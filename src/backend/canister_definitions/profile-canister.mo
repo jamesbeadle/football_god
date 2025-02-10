@@ -9,7 +9,7 @@ import Time "mo:base/Time";
 import Iter "mo:base/Iter";
 
 import T "../types/app_types";
-import Base "../types/base_types";
+import Base "mo:waterway-mops/BaseTypes";
 import BettingTypes "../types/betting_types";
 import ResponseDTOs "../dtos/response_DTOs";
 import RequestDTOs "../dtos/request_DTOs";
