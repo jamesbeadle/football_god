@@ -46,6 +46,8 @@
   let gameweek = 0;
 
   let isLoading = true;
+  let submitting = false;
+  let submitted = false;
 
   $: fixtureId = Number($page.url.searchParams.get("id"));
   $: leagueId = Number($page.url.searchParams.get("league-id"));
@@ -109,6 +111,9 @@
   }
 
   async function confirmFixtureData() {
+    if(submitted || submitting){
+      return;
+    }
     try {
       isLoading = true;
       let dto: SubmitFixtureDataDTO = {
@@ -118,18 +123,23 @@
         gameweek,
         playerEventData: $playerEventData
       };
-
+      
+      submitting = true;
       let result = await governanceStore.submitFixtureData(dto);
+
       if (isError(result)) {
         isLoading = false;
+        submitting = false;
         console.error("Error submitting proposal");
         return;
       }
-      isLoading = false;
+      submitted = true;
+      submitting = false;
       localStorage.removeItem(`fixtureDraft_${fixtureId}`);
     } catch (error) {
       console.error("Error saving fixture data: ", error);
     } finally {
+      isLoading = false;
       showConfirmDataModal = false;
     }
   }

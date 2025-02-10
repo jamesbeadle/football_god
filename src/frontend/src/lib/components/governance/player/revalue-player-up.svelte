@@ -12,6 +12,8 @@
   export let club: ClubDTO;
 
   let isLoading = false;
+  let submitting = false;
+  let submitted = false;
 
   $: isSubmitDisabled = false;
 
@@ -26,20 +28,36 @@
   });
 
   async function confirmProposal() {
-    isLoading = true;
-    var dto: RevaluePlayerUpDTO = {
+    
+    if(submitted || submitting){
+      return;
+    }
+
+    try {
+      isLoading = true;
+      var dto: RevaluePlayerUpDTO = {
         leagueId: player.leagueId,
         playerId: player.id,
       };
-    let result = await governanceStore.revaluePlayerUp(dto);
-    if (isError(result)) {
+      submitting = true;
+
+      let result = await governanceStore.revaluePlayerUp(dto);
+      if (isError(result)) {
+        isLoading = false;
+        console.error("Error submitting proposal");
+        return;
+      }
+
+      submitted = true;
+      submitting = false;
+    } catch (error) {
+      console.error("Error raising proposal: ", error);
+    } finally {
       isLoading = false;
-      console.error("Error submitting proposal");
-      return;
+      visible = false;
+      resetForm();
+      closeModal();
     }
-    isLoading = false;
-    resetForm();
-    closeModal();
   }
 
   function resetForm() {

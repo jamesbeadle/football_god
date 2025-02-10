@@ -22,6 +22,8 @@
   let transferClubs: ClubDTO[] = [];
   
   let isLoading = false;
+  let submitting = false;
+  let submitted = false;
 
   $: isSubmitDisabled = transferLeagueId == 0 || transferClubId == 0 || newValueMillions == 0;
 
@@ -46,26 +48,41 @@
   }
 
   async function confirmProposal() {
-    isLoading = true;
-    let dto: TransferPlayerDTO = {
-      leagueId: selectedPlayer.leagueId,
-      clubId: selectedPlayer.clubId,
-      newLeagueId: transferLeagueId,
-      playerId: selectedPlayer.id,
-      newClubId: transferClubId,
-      newShirtNumber: shirtNumber,
-      newValueQuarterMillions: newValueMillions * 4
-    };
-
-    let result = await governanceStore.transferPlayer(dto);
-    if (isError(result)) {
-      isLoading = false;
-      console.error("Error submitting proposal");
+    
+    if(submitted || submitting){
       return;
     }
-    isLoading = false;
-    resetForm();
-    closeModal();
+
+    try {
+      isLoading = true;
+      let dto: TransferPlayerDTO = {
+        leagueId: selectedPlayer.leagueId,
+        clubId: selectedPlayer.clubId,
+        newLeagueId: transferLeagueId,
+        playerId: selectedPlayer.id,
+        newClubId: transferClubId,
+        newShirtNumber: shirtNumber,
+        newValueQuarterMillions: newValueMillions * 4
+      };
+      submitting = true;
+
+      let result = await governanceStore.transferPlayer(dto);
+      if (isError(result)) {
+        isLoading = false;
+        console.error("Error submitting proposal");
+        return;
+      }
+
+      submitted = true;
+      submitting = false;
+    } catch (error) {
+      console.error("Error raising proposal: ", error);
+    } finally {
+      isLoading = false;
+      visible = false;
+      resetForm();
+      closeModal();
+    }
   }
 
   function resetForm() {

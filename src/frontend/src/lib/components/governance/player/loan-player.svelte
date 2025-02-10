@@ -20,6 +20,8 @@
   let loanLeagues: FootballLeagueDTO[] = [];
   let loanClubs: ClubDTO[] = [];
   let isLoading = false;
+  let submitting = false;
+  let submitted = false;
 
   $: isSubmitDisabled = loanLeagueId == 0 || loanClubId == 0 || date == "";
 
@@ -44,25 +46,41 @@
   }
 
   async function confirmProposal() {
-    isLoading = true;
     
-    let dto: LoanPlayerDTO = {
-      leagueId: selectedPlayer.leagueId,
-      loanEndDate: convertDateInputToUnixNano(date),
-      playerId: selectedPlayer.id,
-      loanClubId: loanClubId,
-      loanLeagueId: loanLeagueId,
-      newValueQuarterMillions: newValueMillions * 4
-    };
-    let result = await governanceStore.loanPlayer(dto);
-    if (isError(result)) {
-      isLoading = false;
-      console.error("Error submitting proposal");
+    if(submitted || submitting){
       return;
     }
-    isLoading = false;
-    resetForm();
-    closeModal();
+
+    try {
+      isLoading = true;
+    
+      let dto: LoanPlayerDTO = {
+        leagueId: selectedPlayer.leagueId,
+        loanEndDate: convertDateInputToUnixNano(date),
+        playerId: selectedPlayer.id,
+        loanClubId: loanClubId,
+        loanLeagueId: loanLeagueId,
+        newValueQuarterMillions: newValueMillions * 4
+      };
+      submitting = true;
+
+      let result = await governanceStore.loanPlayer(dto);
+      if (isError(result)) {
+        isLoading = false;
+        console.error("Error submitting proposal");
+        return;
+      }
+
+      submitted = true;
+      submitting = false;
+    } catch (error) {
+      console.error("Error raising proposal: ", error);
+    } finally {
+      isLoading = false;
+      visible = false;
+      resetForm();
+      closeModal();
+    }
   }
 
   function cancelModal() {

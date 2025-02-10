@@ -21,6 +21,8 @@
   $: isSubmitDisabled = false;
 
   let isLoading = true;
+  let submitting = false;
+  let submitted = false;
 
   onMount(async () => {
     try {
@@ -39,40 +41,45 @@
   });
 
   async function confirmProposal() {
-    isLoading = true;
-
-    let applicationName = "";
-
-    switch(selectedLeagueId){
-      case 1:
-        applicationName = "OpenFPL";
-        break;
-      case 2:
-        applicationName = "OpenWSL";
-        break;
-      default: 
-        return;
-    }
     
-    let leagueStatus = await leagueStore.getLeagueStatus(selectedLeagueId);
-    if(!leagueStatus){
-      return
-    }
-
-    let dto: PostponeFixtureDTO = {
-      leagueId: selectedLeagueId,
-      seasonId: leagueStatus.activeSeasonId,
-      fixtureId : selectedFixture.id
-    };
-    let result = await governanceStore.postponeFixture(dto);
-    if (isError(result)) {
-      isLoading = false;
-      console.error("Error submitting proposal");
+    if(submitted || submitting){
       return;
     }
-    isLoading = false;
-    resetForm();
-    cancelModal();
+
+
+    try {
+      
+      isLoading = true;
+
+      let leagueStatus = await leagueStore.getLeagueStatus(selectedLeagueId);
+      if(!leagueStatus){
+        return
+      }
+
+      let dto: PostponeFixtureDTO = {
+        leagueId: selectedLeagueId,
+        seasonId: leagueStatus.activeSeasonId,
+        fixtureId : selectedFixture.id
+      };
+      submitting = true;
+
+      let result = await governanceStore.postponeFixture(dto);
+      if (isError(result)) {
+        isLoading = false;
+        console.error("Error submitting proposal");
+        return;
+      }
+
+      submitted = true;
+      submitting = false;
+    } catch (error) {
+      console.error("Error raising proposal: ", error);
+    } finally {
+      isLoading = false;
+      visible = false;
+      resetForm();
+      closeModal();
+    }
   }
 
   function resetForm() {

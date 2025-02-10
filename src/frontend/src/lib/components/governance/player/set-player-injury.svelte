@@ -15,6 +15,8 @@
   let injuryEndDate = "";
   
   let isLoading = true;
+  let submitting = false;
+  let submitted = false;
 
   $: isSubmitDisabled = injuryEndDate == "" || description.length == 0;
 
@@ -30,23 +32,37 @@
   });
 
   async function confirmProposal() {
-    isLoading = true;
-    let dto: SetPlayerInjuryDTO = {
-      leagueId: selectedPlayer.leagueId,
-      playerId: selectedPlayer.id,
-      description,
-      expectedEndDate: convertDateInputToUnixNano(injuryEndDate)
-    };
-    let result = await governanceStore.setPlayerInjury(dto);
     
-    if (isError(result)) {
-      isLoading = false;
-      console.error("Error submitting proposal");
+    if(submitted || submitting){
       return;
     }
-    isLoading = false;
-    resetForm();
-    closeModal();
+
+    try {
+      isLoading = true;
+      let dto: SetPlayerInjuryDTO = {
+        leagueId: selectedPlayer.leagueId,
+        playerId: selectedPlayer.id,
+        description,
+        expectedEndDate: convertDateInputToUnixNano(injuryEndDate)
+      };
+      submitting = true;
+
+      let result = await governanceStore.setPlayerInjury(dto);
+      if (isError(result)) {
+        isLoading = false;
+        console.error("Error submitting proposal");
+        return;
+      }
+      submitted = true;
+      submitting = false;
+    } catch (error) {
+      console.error("Error raising proposal: ", error);
+    } finally {
+      isLoading = false;
+      visible = false;
+      resetForm();
+      closeModal();
+    }
   }
 
   function resetForm() {

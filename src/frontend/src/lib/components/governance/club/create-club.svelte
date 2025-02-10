@@ -12,6 +12,8 @@
   export let selectedLeagueId: number;
 
   let isLoading = true;
+  let submitting = false;
+  let submitted = false;
   
   let name = "";
   let friendlyName = "";
@@ -40,27 +42,43 @@
   });
 
   async function confirmProposal() {
-    isLoading = true;
-    let dto: CreateClubDTO = {
-      leagueId: selectedLeagueId,
-      name,
-      friendlyName,
-      primaryColourHex,
-      secondaryColourHex,
-      thirdColourHex,
-      abbreviatedName,
-      shirtType
-    }
-
-    let result = await governanceStore.createClub(dto);
-    if (isError(result)) {
-      isLoading = false;
-      console.error("Error submitting proposal");
+    
+    if(submitted || submitting){
       return;
     }
-    isLoading = false;
-    resetForm();
-    closeModal();
+
+
+    try {
+      isLoading = true;
+      let dto: CreateClubDTO = {
+        leagueId: selectedLeagueId,
+        name,
+        friendlyName,
+        primaryColourHex,
+        secondaryColourHex,
+        thirdColourHex,
+        abbreviatedName,
+        shirtType
+      }
+      submitting = true;
+
+      let result = await governanceStore.createClub(dto);
+      if (isError(result)) {
+        isLoading = false;
+        console.error("Error submitting proposal");
+        return;
+      }
+      
+      submitted = true;
+      submitting = false;
+    } catch (error) {
+      console.error("Error raising proposal: ", error);
+    } finally {
+      isLoading = false;
+      visible = false;
+      resetForm();
+      closeModal();
+    }
   }
 
   function resetForm() {

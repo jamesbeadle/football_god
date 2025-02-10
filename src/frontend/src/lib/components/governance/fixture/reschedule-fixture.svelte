@@ -57,22 +57,51 @@
   });
 
   let isLoading = true;
+  let submitting = false;
+  let submitted = false;
 
   async function confirmProposal() {
-    isLoading = true;
-    let dto: RescheduleFixtureDTO = {
-      leagueId: selectedLeagueId,
-      seasonId: selectedSeasonId,
-      fixtureId: selectedFixture.id,
-      updatedFixtureGameweek: newGameweek ?? 1,
-      updatedFixtureDate: convertDateInputToUnixNano(dateTime)
-    };
-    let result = await governanceStore.rescheduleFixture(dto);
-    if (isError(result)) {
-      isLoading = false;
-      console.error("Error submitting proposal");
+    
+    if(submitted || submitting){
       return;
     }
+
+
+    try {
+      isLoading = true;
+      let dto: RescheduleFixtureDTO = {
+        leagueId: selectedLeagueId,
+        seasonId: selectedSeasonId,
+        fixtureId: selectedFixture.id,
+        updatedFixtureGameweek: newGameweek ?? 1,
+        updatedFixtureDate: convertDateInputToUnixNano(dateTime)
+      };
+      submitting = true;
+
+      let result = await governanceStore.rescheduleFixture(dto);
+      if (isError(result)) {
+        isLoading = false;
+        console.error("Error submitting proposal");
+        return;
+      }
+
+submitted = true;
+submitting = false;
+
+//clear local storage
+
+
+    } catch (error) {
+      console.error("Error raising proposal: ", error);
+    } finally {
+      isLoading = false;
+      visible = false;
+      resetForm();
+      closeModal();
+    }
+
+    
+    
 
     isLoading = false;
     resetForm();

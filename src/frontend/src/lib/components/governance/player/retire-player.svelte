@@ -13,6 +13,8 @@
 
   let retirementDate: string = "";
   let isLoading = false;
+  let submitting = false;
+  let submitted = false;
 
   $: isSubmitDisabled = selectedPlayer == null || retirementDate == "";
 
@@ -27,22 +29,37 @@
   });
 
   async function confirmProposal() {
-    isLoading = true;
-    let dto: RetirePlayerDTO = {
-      playerId: selectedPlayer.id,
-      retirementDate: convertDateInputToUnixNano(retirementDate),
-      leagueId: selectedPlayer.leagueId
-    };
-    let result = await governanceStore.retirePlayer(dto);
-    if (isError(result)) {
-      isLoading = false;
-      console.error("Error submitting proposal");
+    
+    if(submitted || submitting){
       return;
     }
-    
-    isLoading = false;
-    resetForm();
-    closeModal();
+
+    try {
+      isLoading = true;
+      let dto: RetirePlayerDTO = {
+        playerId: selectedPlayer.id,
+        retirementDate: convertDateInputToUnixNano(retirementDate),
+        leagueId: selectedPlayer.leagueId
+      };
+      submitting = true;
+
+      let result = await governanceStore.retirePlayer(dto);
+      if (isError(result)) {
+        isLoading = false;
+        console.error("Error submitting proposal");
+        return;
+      }
+
+      submitted = true;
+      submitting = false;
+    } catch (error) {
+      console.error("Error raising proposal: ", error);
+    } finally {
+      isLoading = false;
+      visible = false;
+      resetForm();
+      closeModal();
+    }
   }
 
   function resetForm() {

@@ -21,6 +21,8 @@
   let shirtType: ShirtType = { Filled: null };
 
   let isLoading = true;
+  let submitting = false;
+  let submitted = false;
 
   $: isSubmitDisabled =
     selectedClub == null ||
@@ -33,6 +35,7 @@
   let shirtTypes: ShirtType[] = [{ Filled: null }, { Striped: null }];
 
   onMount(async () => {
+    
     try {
       name = selectedClub.name;
       friendlyName = selectedClub.friendlyName;
@@ -48,27 +51,43 @@
   });
 
   async function confirmProposal() {
-    isLoading = true;
-    let dto: UpdateClubDTO = {
-      leagueId: selectedLeagueId,
-      clubId: selectedClub.id,
-      name,
-      friendlyName,
-      primaryColourHex,
-      secondaryColourHex,
-      thirdColourHex,
-      abbreviatedName,
-      shirtType
-    }
-    let result = await governanceStore.updateClub(dto);
-    if (isError(result)) {
-      isLoading = false;
-      console.error("Error submitting proposal");
+    
+    if(submitted || submitting){
       return;
     }
-    isLoading = false;
-    resetForm();
-    closeModal();
+
+
+    try {
+      isLoading = true;
+      let dto: UpdateClubDTO = {
+        leagueId: selectedLeagueId,
+        clubId: selectedClub.id,
+        name,
+        friendlyName,
+        primaryColourHex,
+        secondaryColourHex,
+        thirdColourHex,
+        abbreviatedName,
+        shirtType
+      }
+      submitting = true;
+
+      let result = await governanceStore.updateClub(dto);
+      if (isError(result)) {
+        isLoading = false;
+        console.error("Error submitting proposal");
+        return;
+      }
+      submitted = true;
+      submitting = false;
+    } catch (error) {
+      console.error("Error raising proposal: ", error);
+    } finally {
+      isLoading = false;
+      visible = false;
+      resetForm();
+      closeModal();
+    }
   }
 
   function resetForm() {

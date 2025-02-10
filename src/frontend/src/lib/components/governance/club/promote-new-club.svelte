@@ -12,6 +12,8 @@
   export let selectedLeagueId: LeagueId;
     
   let isLoading = false;
+  let submitting = false;
+  let submitted = false;
   let promotionLeagues: FootballLeagueDTO[] = []
 
   let newLeagueId: LeagueId = 0;
@@ -19,21 +21,37 @@
   $: isSubmitDisabled = false;
 
   async function confirmProposal() {
-    isLoading = true;
-      let dto: PromoteClubDTO = {
-      clubId: selectedClub.id,
-      toLeagueId: newLeagueId,
-      leagueId: selectedLeagueId,
-    };
-    let result = await governanceStore.promoteClub(dto);
-    if (isError(result)) {
-      isLoading = false;
-      console.error("Error submitting proposal");
+    
+    if(submitted || submitting){
       return;
     }
-    isLoading = false;
-    resetForm();
-    closeModal();
+
+    try {
+      isLoading = true;
+      let dto: PromoteClubDTO = {
+        clubId: selectedClub.id,
+        toLeagueId: newLeagueId,
+        leagueId: selectedLeagueId,
+      };
+      submitting = true;
+
+      let result = await governanceStore.promoteClub(dto);
+      if (isError(result)) {
+        isLoading = false;
+        console.error("Error submitting proposal");
+        return;
+      }
+
+      submitted = true;
+      submitting = false;
+    } catch (error) {
+      console.error("Error raising proposal: ", error);
+    } finally {
+      isLoading = false;
+      visible = false;
+      resetForm();
+      closeModal();
+    }
   }
 
   function resetForm() {
