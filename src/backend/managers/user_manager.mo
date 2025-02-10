@@ -19,7 +19,7 @@ import List "mo:base/List";
 import T "../types/app_types";
 import Base "mo:waterway-mops/BaseTypes";
 import BettingTypes "../types/betting_types";
-import FootballTypes "../types/football_types";
+import FootballTypes "mo:waterway-mops/FootballTypes";
 import RequestDTOs "../dtos/request_DTOs";
 import ResponseDTOs "../dtos/response_DTOs";
 import ProfileCanister "../canister_definitions/profile-canister";
