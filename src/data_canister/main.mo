@@ -4236,6 +4236,7 @@ import Char "mo:base/Char";
         if(leagueHasApplications){
           let leagueDataHashBuffer = Buffer.fromArray<(FootballTypes.LeagueId, [Base.DataHash])>(leagueDataHashes);
           leagueDataHashBuffer.add((leagueId, [{ category = category; hash = randomHash }]));
+          leagueDataHashes := Buffer.toArray(leagueDataHashBuffer);
         }
       }
 
