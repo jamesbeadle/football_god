@@ -59,12 +59,14 @@ export function buildLoanPlayerText(
   currentClubName: string,
   loanClubName: string,
   loanEndDateString: string,
+  value: string,
 ) {
   return {
     title: `Loan ${playerName} from ${currentClubName} to ${loanClubName}`,
     summary:
       `Loan ${playerName} from ${currentClubName} to ${loanClubName} until ${loanEndDateString}.\n\n` +
-      `Description: Loan ${playerName} from ${currentClubName} to ${loanClubName} until ${loanEndDateString}.`,
+      `Description: Loan ${playerName} from ${currentClubName} to ${loanClubName} until ${loanEndDateString}.\n` +
+      `New Value: £${value}m.`,
   };
 }
 

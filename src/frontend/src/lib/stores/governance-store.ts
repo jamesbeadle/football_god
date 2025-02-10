@@ -218,11 +218,14 @@ function createGovernanceStore() {
     const newClub = loanClubs.find((c) => c.id === dto.loanClubId);
     if (!newClub) throw new Error("Loan club not found.");
 
+    const newValue = (dto.newValueQuarterMillions / 4).toFixed(2);
+
     const { title, summary } = buildLoanPlayerText(
       `${player.firstName} ${player.lastName}`,
       currentClub.friendlyName,
       newClub.friendlyName,
       formatUnixDateToSmallReadable(Number(dto.loanEndDate)),
+      newValue,
     );
 
     const encoded = IDL.encode([LoanPlayerDTO_Idl], [dto]);
