@@ -2096,7 +2096,7 @@
                   await finaliseFixture(dto.leagueId, dto.seasonId, dto.gameweek, dto.fixtureId, highestScoringPlayerId);
                   let _ = await updateDataHash(dto.leagueId, "fixtures");
                   let _ = await updateDataHash(dto.leagueId, "players");
-                  let _ = await updateDataHash(dto.leagueId, "playerEvents");
+                  let _ = await updateDataHash(dto.leagueId, "player_events");
                   await checkSeasonComplete(dto.leagueId, dto.seasonId);
                 };
               };
@@ -3433,6 +3433,23 @@
       await createTransferWindowEndTimers();
       await createLoanExpiredTimers();
       await createInjuryExpiredTimers();
+
+      //Create the initial required data hashes
+
+      //premier league
+      let _ = await updateDataHash(1, "clubs");
+      let _ = await updateDataHash(1, "seasons");
+      let _ = await updateDataHash(1, "fixtures");
+      let _ = await updateDataHash(1, "players");
+      let _ = await updateDataHash(1, "player_events");
+
+      //wsl
+      let _ = await updateDataHash(1, "clubs");
+      let _ = await updateDataHash(1, "seasons");
+      let _ = await updateDataHash(1, "fixtures");
+      let _ = await updateDataHash(1, "players");
+      let _ = await updateDataHash(1, "player_events");
+
     };
 
     //Timer Creation Functions
@@ -4190,10 +4207,12 @@
 
     private func updateDataHash(leagueId: FootballTypes.LeagueId, category : Text) : async () {
       let randomHash = await SHA224.getRandomHash();
+
+      var updated = false;
+
       leagueDataHashes := Array.map<(FootballTypes.LeagueId, [Base.DataHash]), (FootballTypes.LeagueId, [Base.DataHash])>(leagueDataHashes, func(entry: (FootballTypes.LeagueId, [Base.DataHash])){
         if(entry.0 == leagueId){
           let hashBuffer = Buffer.fromArray<Base.DataHash>([]);
-          var updated = false;
           for (hashObj in Iter.fromArray(entry.1)) {
             if (hashObj.category == category) {
               hashBuffer.add({ category = hashObj.category; hash = randomHash });
@@ -4202,12 +4221,25 @@
           };
           if(not updated){
               hashBuffer.add({ category = category; hash = randomHash });
+              updated := true;
           };
           return (entry.0, entry.1);
         } else {
           return entry;
         }
       });
+
+      if(not updated){
+        let leagueHasApplications = Option.isSome(Array.find<(FootballTypes.LeagueId, Base.CanisterId)>(leagueApplications, func(entry: (FootballTypes.LeagueId, Base.CanisterId)) : Bool {
+          entry.0 == leagueId
+        })); 
+        if(leagueHasApplications){
+          let leagueDataHashBuffer = Buffer.fromArray<(FootballTypes.LeagueId, [Base.DataHash])>(leagueDataHashes);
+          leagueDataHashBuffer.add((leagueId, [{ category = category; hash = randomHash }]));
+          leagueDataHashes := Buffer.toArray(leagueDataHashBuffer);
+        }
+      }
+
     };
 
   };
