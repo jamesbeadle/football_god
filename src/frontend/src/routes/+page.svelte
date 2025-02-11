@@ -1,24 +1,9 @@
 <script lang="ts">
   import { onMount } from "svelte";
-  import { goto } from "$app/navigation";
 
   import Layout from "./Layout.svelte";
-  import LocalSpinner from "$lib/components/shared/local-spinner.svelte";
   import FullScreenSpinner from "$lib/components/shared/full-screen-spinner.svelte";
-  
-  import ArrowDown from "$lib/icons/ArrowDown.svelte";
-  import ArrowUp from "$lib/icons/ArrowUp.svelte";
-
-  import { leagueStore } from "$lib/stores/league-store";
-  import { clubStore } from "$lib/stores/club-store";
-  import { fixtureStore } from "$lib/stores/fixture-store";
-
-  import type {
-    ClubDTO,
-    LeagueId,
-  } from "../../../declarations/data_canister/data_canister.did";
-
-  import type { Category, SelectionDetail } from "../../../declarations/backend/backend.did";
+    import ProposalsList from "$lib/components/governance/proposals-list.svelte";
 
   let isLoading = true;
 
@@ -42,10 +27,7 @@
         <FullScreenSpinner />
       {:else}
         <div class="page-panel">
-          <div class="page-panel-header">Home</div>
-          <div class="page-panel-bar-format">
-            <p>FootballGod</p>
-          </div>
+          <ProposalsList />
         </div>
       {/if}
     </div>

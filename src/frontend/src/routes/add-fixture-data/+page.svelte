@@ -19,6 +19,7 @@
   import type { ClubDTO, FixtureDTO, PlayerDTO, PlayerEventData, SubmitFixtureDataDTO } from "../../../../declarations/data_canister/data_canister.did";
   import { governanceStore } from "$lib/stores/governance-store";
     import { leagueStore } from "$lib/stores/league-store";
+    import { goto } from "$app/navigation";
   
   let clubs: ClubDTO[] = [];
   let players: PlayerDTO[] = [];
@@ -136,6 +137,7 @@
       submitted = true;
       submitting = false;
       localStorage.removeItem(`fixtureDraft_${fixtureId}`);
+      goto(`/`)
     } catch (error) {
       console.error("Error saving fixture data: ", error);
     } finally {
