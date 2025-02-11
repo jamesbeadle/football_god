@@ -21,19 +21,19 @@
 }
 
 .times-button {
-  @apply text-white text-3xl;
+  @apply text-3xl text-white;
 }
 
 .selection-panel {
-  @apply flex-1 w-full rounded-md sm:text-sm shadow-sm hover:text-BrandGray focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 flex items-center justify-center;
+  @apply flex items-center justify-center flex-1 w-full rounded-md shadow-sm sm:text-sm hover:text-BrandGray focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500;
 }
 
 .selected-panel {
-  @apply bg-BrandPositive hover:bg-BrandPositive px-3 py-2;
+  @apply px-3 py-2 bg-BrandPositive hover:bg-BrandPositive;
 }
 
 .select-panel {
-  @apply bg-BrandPurple hover:bg-BrandPurple p-3 text-white;
+  @apply p-3 text-white bg-BrandPurple hover:bg-BrandPurple;
 }
 
 .fg-button {
@@ -42,51 +42,51 @@
 }
 
 .button-hover {
-  @apply bg-white text-black hover:bg-BrandPositive hover:text-BrandGray;
+  @apply text-black bg-white hover:bg-BrandPositive hover:text-BrandGray;
 }
 
 .bg-panel {
-  @apply bg-panel-color w-full;
+  @apply w-full bg-panel-color;
 }
 
 .bg-panel-color {
-  @apply bg-BrandDarkGray rounded border-BrandGray;
+  @apply rounded bg-BrandDarkGray border-BrandGray;
 }
 
 .active-tab {
-  @apply border-b border-b-BrandPositive;
+  @apply border-b border-b-BrandPurple;
 }
 
 .brand-button {
-  @apply bg-BrandPurple hover:bg-BrandPurpleDark disabled:opacity-50 disabled:bg-gray-300 text-white px-2 py-1 rounded;
+  @apply px-2 py-1 text-white rounded bg-BrandPurple hover:bg-BrandPurpleDark disabled:opacity-50 disabled:bg-gray-300;
 }
 
 .brand-cancel-button {
-  @apply bg-BrandNegative text-white px-4 py-2 rounded;
+  @apply px-4 py-2 text-white rounded bg-BrandNegative;
 }
 
 .brand-button-disabled {
-  @apply bg-BrandDisabled text-white px-4 py-2 rounded;
+  @apply px-4 py-2 text-white rounded bg-BrandDisabled;
 }
 
 .brand-select {
-  @apply bg-BrandDarkGray text-white border border-BrandDarkGray rounded-lg focus:ring focus:ring-BrandLightGray text-sm p-2;
+  @apply p-2 text-sm text-white border rounded-lg bg-BrandDarkGray border-BrandDarkGray focus:ring focus:ring-BrandLightGray;
 }
 
 .brand-input {
-  @apply w-full bg-BrandDarkGray text-white border border-BrandDarkGray rounded-lg focus:ring focus:ring-BrandLightGray text-sm p-2;
+  @apply w-full p-2 text-sm text-white border rounded-lg bg-BrandDarkGray border-BrandDarkGray focus:ring focus:ring-BrandLightGray;
 }
 
 .brand-dropdown {
-  @apply text-black rounded px-2 py-1 w-full;
+  @apply w-full px-2 py-1 text-black rounded;
 }
 
 .stake-input {
-  @apply text-sm w-20 p-1 text-black border rounded;
+  @apply w-20 p-1 text-sm text-black border rounded;
 }
 
 .dropdown-link {
-  @apply block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100;
+  @apply block w-full px-4 py-2 text-left text-gray-800 hover:bg-gray-100;
 }
 
 .bg-info {

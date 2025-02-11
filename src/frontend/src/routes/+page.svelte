@@ -3,7 +3,7 @@
 
   import Layout from "./Layout.svelte";
   import FullScreenSpinner from "$lib/components/shared/full-screen-spinner.svelte";
-    import ProposalsList from "$lib/components/governance/proposals-list.svelte";
+  import ProposalsList from "$lib/components/governance/proposals-list.svelte";
 
   let isLoading = true;
 

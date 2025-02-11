@@ -47,6 +47,10 @@ export default {
         BrandLightGray: "#2F3035",
         BrandDisabled: "#919191",
         BrandActive: "#FFFFFF",
+        BrandInactive: "#5A5A5A",
+        BrandGreen: "#2CE3A6",
+        BrandRed: "#CF5D43",
+        BrandBlack: "#161819"
       },
     },
   },
