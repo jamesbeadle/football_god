@@ -11,6 +11,7 @@
   import DislikeButton from "$lib/icons/DislikeButton.svelte";
   import Checkmark from "$lib/icons/Checkmark.svelte";
   import LocalSpinner from "$lib/components/shared/local-spinner.svelte";
+    import { formatUnixDateToSmallReadable } from "$lib/utils/helpers";
 
   let isLoading = true;
   let filterType: string = "all";
@@ -182,7 +183,6 @@
                   <TabContainer {filterType} {setActiveTab} {tabs} />
               </div>
           </div>
-          <button class="px-4 py-2 text-white rounded bg-BrandPurple">New Proposal</button>
       </div>
       {#if isLoading}
         <LocalSpinner />
@@ -218,9 +218,9 @@
                                             color={proposal.executed_timestamp_seconds > 0n ? '#2CE3A6' : '#CF5D43'} 
                                         />
                                         <span class="text-gray-400">
-                                            {formatDate(proposal.executed_timestamp_seconds > 0n 
+                                            {formatUnixDateToSmallReadable(Number(proposal.executed_timestamp_seconds > 0n 
                                                 ? proposal.executed_timestamp_seconds 
-                                                : proposal.failed_timestamp_seconds)}
+                                                : proposal.failed_timestamp_seconds))}
                                         </span>
                                     </div>
                                 {:else}
