@@ -21,6 +21,11 @@ type UpdateProfilePictureDTO =
    profilePictureExtension: text;
  };
 type SeasonId = nat16;
+type Result_3 = 
+ variant {
+   err: Error;
+   ok: AppStatusDTO;
+ };
 type Result_2 = 
  variant {
    err: Error;
@@ -145,8 +150,14 @@ type Error =
  };
 type CountryId = nat16;
 type ClubId = nat16;
+type AppStatusDTO = 
+ record {
+   onHold: bool;
+   version: text;
+ };
 service : {
   agreeTerms: () -> (Result);
+  getAppStatus: () -> (Result_3) query;
   getPlayerDetailsForGameweek: (LeagueId, GameweekFiltersDTO) ->
    (Result_2) composite_query;
   getProfile: () -> (Result_1);

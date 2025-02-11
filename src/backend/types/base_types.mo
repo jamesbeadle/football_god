@@ -54,4 +54,9 @@ module BaseTypes {
         triggerTime : Int;
         callbackName : Text;
     };
+
+    public type AppStatus = {
+        onHold : Bool;
+        version : Text;
+    };
 };

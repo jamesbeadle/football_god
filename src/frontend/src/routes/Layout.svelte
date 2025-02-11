@@ -13,6 +13,7 @@
   import Toasts from "$lib/components/toasts/toasts.svelte";
 
   import "../app.css";
+    import { appStore } from "$lib/stores/app-store";
 
   let worker: { syncAuthIdle: (auth: AuthStoreData) => void } | undefined;
 
@@ -33,6 +34,7 @@
 
   onMount(async () => {
     await userStore.sync();
+    await appStore.checkServerVersion();
   });
 
   $: worker, $authStore, (() => worker?.syncAuthIdle($authStore))();

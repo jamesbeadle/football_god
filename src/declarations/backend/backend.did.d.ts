@@ -2,6 +2,10 @@ import type { Principal } from "@dfinity/principal";
 import type { ActorMethod } from "@dfinity/agent";
 import type { IDL } from "@dfinity/candid";
 
+export interface AppStatusDTO {
+  version: string;
+  onHold: boolean;
+}
 export type ClubId = number;
 export type CountryId = number;
 export type Error =
@@ -99,6 +103,7 @@ export interface ProfileDTO {
 export type Result = { ok: null } | { err: Error };
 export type Result_1 = { ok: ProfileDTO } | { err: Error };
 export type Result_2 = { ok: PlayerDetailDTO } | { err: Error };
+export type Result_3 = { ok: AppStatusDTO } | { err: Error };
 export type SeasonId = number;
 export interface UpdateProfilePictureDTO {
   profilePictureExtension: string;
@@ -120,6 +125,7 @@ export interface ValueHistory {
 }
 export interface _SERVICE {
   agreeTerms: ActorMethod<[], Result>;
+  getAppStatus: ActorMethod<[], Result_3>;
   getPlayerDetailsForGameweek: ActorMethod<
     [LeagueId, GameweekFiltersDTO],
     Result_2

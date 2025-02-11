@@ -5,7 +5,6 @@ import { serializeData, deserializeData } from "../utils/helpers";
 import { MAX_CACHED_LEAGUES } from "../constants/app.constants";
 import type {
   ClubDTO,
-  CreateClubDTO,
   LeagueId,
 } from "../../../../declarations/data_canister/data_canister.did";
 
@@ -76,14 +75,8 @@ function createClubStore() {
   async function getClubs(leagueId: LeagueId) {
     return new ClubService().getClubs(leagueId);
   }
-
-  async function createClub(dto: CreateClubDTO): Promise<any> {
-    return new ClubService().createClub(dto);
-  }
-
   return {
     getClubs,
-    createClub,
     syncClubs,
   };
 }

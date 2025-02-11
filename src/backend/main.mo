@@ -13,7 +13,6 @@ import Environment "environment";
 import RequestDTOs "dtos/request_DTOs";
 import ResponseDTOs "dtos/response_DTOs";
 
-import FPLLedger "managers/fpl_ledger_manager";
 import UserManager "managers/user_manager";
 import Management "utilities/Management";
 import ProfileCanister "canister_definitions/profile-canister";
@@ -22,6 +21,15 @@ actor Self {
 
   private let userManager = UserManager.UserManager(); 
   
+  private var appStatus: Base.AppStatus = { 
+    onHold = false;
+    version = "0.0.1";
+  };  
+  
+  public shared query func getAppStatus() : async Result.Result<ResponseDTOs.AppStatusDTO, T.Error> {
+    return #ok(appStatus);
+  };
+
   /* User management functions */
 
   public shared ({ caller }) func getProfile() : async Result.Result<ResponseDTOs.ProfileDTO, T.Error> {

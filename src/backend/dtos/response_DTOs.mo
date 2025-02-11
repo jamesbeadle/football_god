@@ -8,6 +8,11 @@ module ResponseDTOs {
     version: Text;
   };
 
+  public type AppStatusDTO = {
+      onHold : Bool;
+      version : Text;
+  };
+
   public type LeagueStatusDTO = {
     leagueId: FootballTypes.LeagueId;
     activeSeasonId: FootballTypes.SeasonId;

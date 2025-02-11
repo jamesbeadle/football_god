@@ -10,6 +10,11 @@ export const idlFactory = ({ IDL }) => {
     CanisterFull: IDL.Null,
   });
   const Result = IDL.Variant({ ok: IDL.Null, err: Error });
+  const AppStatusDTO = IDL.Record({
+    version: IDL.Text,
+    onHold: IDL.Bool,
+  });
+  const Result_3 = IDL.Variant({ ok: AppStatusDTO, err: Error });
   const LeagueId = IDL.Nat16;
   const SeasonId = IDL.Nat16;
   const GameweekNumber = IDL.Nat8;
@@ -121,6 +126,7 @@ export const idlFactory = ({ IDL }) => {
   });
   return IDL.Service({
     agreeTerms: IDL.Func([], [Result], []),
+    getAppStatus: IDL.Func([], [Result_3], ["query"]),
     getPlayerDetailsForGameweek: IDL.Func(
       [LeagueId, GameweekFiltersDTO],
       [Result_2],
