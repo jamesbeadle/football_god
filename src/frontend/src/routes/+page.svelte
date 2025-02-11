@@ -3,14 +3,15 @@
 
   import Layout from "./Layout.svelte";
   import FullScreenSpinner from "$lib/components/shared/full-screen-spinner.svelte";
-  import ProposalsList from "$lib/components/governance/proposals-list.svelte";
+    import ProposalsList from "$lib/components/governance/proposals-list.svelte";
+    import { appStore } from "$lib/stores/app-store";
 
   let isLoading = true;
 
 
   onMount(async () => {
     try {
-      
+      await appStore.checkServerVersion();
     } catch (error) {
       console.error("Error loading:", error);
     } finally {
