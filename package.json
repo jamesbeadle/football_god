@@ -17,7 +17,8 @@
     "lint": "prettier --plugin-search-dir . --check . && eslint .",
     "format": "prettier --plugin-search-dir . --write .",
     "prebuild": "npm run generate",
-    "generate": "dfx generate && node ./update.types.mjs && npm run format"
+    "generate": "dfx generate && node ./update.types.mjs && npm run format",
+    "test": "vitest"
   },
   "devDependencies": {
     "@esbuild-plugins/node-modules-polyfill": "^0.2.2",
@@ -50,12 +51,14 @@
     "@dfinity/sns": "^3.2.2",
     "@dfinity/utils": "^2.5.2",
     "@esbuild-plugins/node-modules-polyfill": "^0.2.2",
+    "@types/isomorphic-fetch": "^0.0.39",
     "dompurify": "^3.1.7",
     "dotenv": "^16.4.5",
     "esbuild": "^0.24.0",
     "js-sha256": "^0.11.0",
     "postcss": "^8.4.47",
     "svelte-flag-icons": "^1.0.3",
-    "tailwindcss": "^3.4.14"
+    "tailwindcss": "^3.4.14",
+    "vitest": "^3.0.5"
   }
 }
