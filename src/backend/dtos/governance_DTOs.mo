@@ -1,5 +1,5 @@
-import Base "../types/base_types";
-import FootballTypes "../types/football_types";
+import Base "mo:waterway-mops/BaseTypes";
+import FootballTypes "mo:waterway-mops/FootballTypes";
 
 import ResponseDTOs "../dtos/response_DTOs";
 

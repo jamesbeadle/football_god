@@ -15,8 +15,8 @@ import Nat8 "mo:base/Nat8";
 import Nat16 "mo:base/Nat16";
 import Int16 "mo:base/Int16";
 import Management "./Management";
-import Base "../types/base_types";
-import FootballTypes "../types/football_types";
+import Base "mo:waterway-mops/BaseTypes";
+import FootballTypes "mo:waterway-mops/FootballTypes";
 
 module {
 

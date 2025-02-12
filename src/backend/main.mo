@@ -6,8 +6,8 @@ import Timer "mo:base/Timer";
 import Iter "mo:base/Iter";
 
 import T "types/app_types";
-import Base "types/base_types";
-import FootballTypes "types/football_types";
+import Base "mo:waterway-mops/BaseTypes";
+import FootballTypes "mo:waterway-mops/FootballTypes";
 import Environment "environment";
 
 import RequestDTOs "dtos/request_DTOs";
