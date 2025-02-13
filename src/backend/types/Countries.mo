@@ -202,5 +202,6 @@ module Countries {
     { id = 197; name = "Scotland"; code = "Sco" },
     { id = 198; name = "Wales"; code = "Wal" },
     { id = 199; name = "Northern Ireland"; code = "Nor" },
+    { id = 200; name = "Bermuda"; code = "Ber" },
   ];
 };
