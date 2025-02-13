@@ -751,18 +751,60 @@ actor Self {
 
   /* Player */
 
+  private func isValidValueChange(player : FootballTypes.Player) : Bool {
+    let currentTimestamp = Time.now();
+    let oneYearAgo = currentTimestamp - (365 * 24 * 60 * 60);
+
+    let relevantHistory = List.filter<FootballTypes.ValueHistory>(player.valueHistory, func(entry) = entry.changedOn >= oneYearAgo);
+
+    switch (List.last(relevantHistory)) {
+      case (null) {
+        return true;
+      };
+      case (?lastEntry) {
+        let oldVal = lastEntry.oldValue;
+        let newVal = lastEntry.newValue;
+
+        let decreaseLimit = oldVal / 2;
+        let increaseLimit = oldVal * 4;
+
+        return (newVal >= decreaseLimit) and (newVal <= increaseLimit);
+      };
+    };
+  };
+
   public shared ({ caller }) func validateRevaluePlayerUp(dto : GovernanceDTOs.RevaluePlayerUpDTO) : async Base.RustResult {
     assert Principal.toText(caller) == Environment.SNS_GOVERNANCE_CANISTER_ID;
     assert leagueExists(dto.leagueId);
-    assert checkPlayerExists(dto.leagueId, dto.playerId);
-    return #Ok("Valid");
+    switch (checkPlayerExists(dto.leagueId, dto.playerId)) {
+      case (?player) {
+        if (isValidValueChange(player)) {
+          return #Ok("Valid");
+        } else {
+          return #Err("Invalid value change: New value exceeeds the allowed limit");
+        };
+      };
+      case (null) {
+        return #Err("Player not found");
+      };
+    };
   };
 
   public shared ({ caller }) func validateRevaluePlayerDown(dto : GovernanceDTOs.RevaluePlayerDownDTO) : async Base.RustResult {
     assert Principal.toText(caller) == Environment.SNS_GOVERNANCE_CANISTER_ID;
     assert leagueExists(dto.leagueId);
-    assert checkPlayerExists(dto.leagueId, dto.playerId);
-    return #Ok("Valid");
+    switch (checkPlayerExists(dto.leagueId, dto.playerId)) {
+      case (?player) {
+        if (isValidValueChange(player)) {
+          return #Ok("Valid");
+        } else {
+          return #Err("Invalid value change: New value exceeeds the allowed limit");
+        };
+      };
+      case (null) {
+        return #Err("Player not found");
+      };
+    };
   };
 
   public shared ({ caller }) func validateLoanPlayer(dto : GovernanceDTOs.LoanPlayerDTO) : async Base.RustResult {
@@ -770,7 +812,7 @@ actor Self {
     assert leagueExists(dto.leagueId);
     assert leagueExists(dto.loanLeagueId);
     assert clubExists(dto.loanLeagueId, dto.loanClubId);
-    assert checkPlayerExists(dto.leagueId, dto.playerId);
+    assert Option.isSome(checkPlayerExists(dto.leagueId, dto.playerId));
     assert dto.loanEndDate > Time.now();
     return #Ok("Valid");
   };
@@ -781,21 +823,21 @@ actor Self {
     assert leagueExists(dto.newLeagueId);
     assert clubExists(dto.leagueId, dto.clubId);
     assert clubExists(dto.newLeagueId, dto.newClubId);
-    assert checkPlayerExists(dto.leagueId, dto.playerId);
+    assert Option.isSome(checkPlayerExists(dto.leagueId, dto.playerId));
     return #Ok("Valid");
   };
 
   public shared ({ caller }) func validateSetFreeAgent(dto : GovernanceDTOs.SetFreeAgentDTO) : async Base.RustResult {
     assert Principal.toText(caller) == Environment.SNS_GOVERNANCE_CANISTER_ID;
     assert leagueExists(dto.leagueId);
-    assert checkPlayerExists(dto.leagueId, dto.playerId);
+    assert Option.isSome(checkPlayerExists(dto.leagueId, dto.playerId));
     return #Ok("Valid");
   };
 
   public shared ({ caller }) func validateRecallPlayer(dto : GovernanceDTOs.RecallPlayerDTO) : async Base.RustResult {
     assert Principal.toText(caller) == Environment.SNS_GOVERNANCE_CANISTER_ID;
     assert leagueExists(dto.leagueId);
-    assert checkPlayerExists(dto.leagueId, dto.playerId);
+    assert Option.isSome(checkPlayerExists(dto.leagueId, dto.playerId));
     return #Ok("Valid");
   };
 
@@ -825,7 +867,7 @@ actor Self {
   public shared ({ caller }) func validateUpdatePlayer(dto : GovernanceDTOs.UpdatePlayerDTO) : async Base.RustResult {
     assert Principal.toText(caller) == Environment.SNS_GOVERNANCE_CANISTER_ID;
     assert leagueExists(dto.leagueId);
-    assert checkPlayerExists(dto.leagueId, dto.playerId);
+    assert Option.isSome(checkPlayerExists(dto.leagueId, dto.playerId));
 
     if (Text.size(dto.firstName) > 50) {
       return #Err("Invalid Data");
@@ -852,21 +894,21 @@ actor Self {
   public shared ({ caller }) func validateSetPlayerInjury(dto : GovernanceDTOs.SetPlayerInjuryDTO) : async Base.RustResult {
     assert Principal.toText(caller) == Environment.SNS_GOVERNANCE_CANISTER_ID;
     assert leagueExists(dto.leagueId);
-    assert checkPlayerExists(dto.leagueId, dto.playerId);
+    assert Option.isSome(checkPlayerExists(dto.leagueId, dto.playerId));
     return #Ok("Valid");
   };
 
   public shared ({ caller }) func validateRetirePlayer(dto : GovernanceDTOs.RetirePlayerDTO) : async Base.RustResult {
     assert Principal.toText(caller) == Environment.SNS_GOVERNANCE_CANISTER_ID;
     assert leagueExists(dto.leagueId);
-    assert checkPlayerExists(dto.leagueId, dto.playerId);
+    assert Option.isSome(checkPlayerExists(dto.leagueId, dto.playerId));
     return #Ok("Valid");
   };
 
   public shared ({ caller }) func validateUnretirePlayer(dto : GovernanceDTOs.UnretirePlayerDTO) : async Base.RustResult {
     assert Principal.toText(caller) == Environment.SNS_GOVERNANCE_CANISTER_ID;
     assert leagueExists(dto.leagueId);
-    assert checkPlayerExists(dto.leagueId, dto.playerId);
+    assert Option.isSome(checkPlayerExists(dto.leagueId, dto.playerId));
     return #Ok("Valid");
   };
 
@@ -3625,7 +3667,7 @@ actor Self {
     };
   };
 
-  private func checkPlayerExists(leagueId : FootballTypes.LeagueId, playerId : FootballTypes.PlayerId) : Bool {
+  private func checkPlayerExists(leagueId : FootballTypes.LeagueId, playerId : FootballTypes.PlayerId) : ?FootballTypes.Player {
     let playersInLeague = Array.find<(FootballTypes.LeagueId, [FootballTypes.Player])>(
       leaguePlayers,
       func(foundLeaguePlayers : (FootballTypes.LeagueId, [FootballTypes.Player])) : Bool {
@@ -3641,15 +3683,12 @@ actor Self {
             player.id == playerId;
           },
         );
-        if (Option.isNull(foundPlayer)) {
-          return false;
-        };
+        return foundPlayer;
       };
       case (null) {
-        return false;
+        return null;
       };
     };
-    return true;
   };
 
   private func validatePlayerEvents(playerEvents : [FootballTypes.PlayerEventData]) : Bool {
