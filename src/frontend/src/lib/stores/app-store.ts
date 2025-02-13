@@ -14,7 +14,7 @@ function createAppStore() {
 
     if (status.version !== localStorage.getItem("version")) {
       toasts.addToast({
-        message: `FootballGod V${status.version} is now available. Click here to reload:`,
+        message: `Jeff Bets V${status.version} is now available. Click here to reload:`,
         type: "frontend-update",
       });
     }

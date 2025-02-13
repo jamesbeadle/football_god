@@ -805,6 +805,8 @@ actor Self {
     assert clubExists(dto.leagueId, dto.clubId);
     assert countryExists(dto.nationality);
 
+    //TODO: Check if player already added
+
     if (Text.size(dto.firstName) > 50) {
       return #Err("Invalid Data");
     };
