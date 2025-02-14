@@ -92,7 +92,10 @@
                 thirdColour={club.thirdColourHex}
                 className="w-8"
               />
-              <p class="flex-grow text-lg md:text-sm">{club.friendlyName}</p>
+              <div class="flex flex-grow flex-col">
+                <p class="text-lg md:text-sm">{club.friendlyName}</p>
+                <p class="text-xs">ID: {club.id}</p>
+              </div>
               
               <div class="relative">
                 <button on:click={(event) => toggleDropdown(club.id, event)}>

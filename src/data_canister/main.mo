@@ -32,7 +32,6 @@ import SHA224 "../backend/utilities/SHA224";
 import Environment "environment";
 
 actor Self {
-
   private var pickTeamRollOverTimerIds : [Nat] = [];
   private var activateFixtureTimerIds : [Nat] = [];
   private var completeFixtureTimerIds : [Nat] = [];
@@ -90,6 +89,10 @@ actor Self {
   private stable var nextPlayerId : FootballTypes.PlayerId = 0;
 
   private stable var leagueDataHashes : [(FootballTypes.LeagueId, [Base.DataHash])] = [];
+
+  private stable var leagueTables : [FootballTypes.LeagueTable] = [];
+
+  private stable var leagueRelegationPairs : [(FootballTypes.LeagueId, FootballTypes.LeagueId)] = [];
 
   private func callerAllowed(caller : Principal) : Bool {
     let foundCaller = Array.find<Base.PrincipalId>(
@@ -300,6 +303,29 @@ actor Self {
       };
     };
   };
+
+  //get league table
+
+  public shared query ({ caller }) func getLeagueTable(leagueId: FootballTypes.LeagueId, seasonId: FootballTypes.SeasonId) : async Result.Result<FootballTypes.LeagueTable, T.Error> {
+    assert not Principal.isAnonymous(caller);
+    let leagueTable = Array.find(leagueTables, func(entry: FootballTypes.LeagueTable) : Bool {
+      entry.leagueId == leagueId and entry.seasonId == seasonId;
+    });
+    switch(leagueTable){
+      case (?table){
+        return #ok(table);
+      };
+      case (null){
+        return #err(#NotFound);
+      }
+    };
+  };
+
+  public shared query ({ caller }) func getLeagueRelegationPairs() : async Result.Result<[(FootballTypes.LeagueId, FootballTypes.LeagueId)], T.Error> {
+    assert not Principal.isAnonymous(caller);
+    return #ok(leagueRelegationPairs);
+  };
+  //get league relegation pairs
 
   public shared query ({ caller }) func getSeasons(leagueId : FootballTypes.LeagueId) : async Result.Result<[ResponseDTOs.SeasonDTO], T.Error> {
     assert not Principal.isAnonymous(caller);
@@ -3819,9 +3845,10 @@ actor Self {
     await createTransferWindowEndTimers();
     await createLoanExpiredTimers();
     await createInjuryExpiredTimers();
-
-    //Create the initial required data hashes
-
+    await createInitialHashes();
+    
+    leagueRelegationPairs := [(1,3)];
+    
   };
 
   private func createInitialHashes() : async (){

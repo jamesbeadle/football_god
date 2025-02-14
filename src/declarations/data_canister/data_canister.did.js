@@ -122,10 +122,14 @@ export const idlFactory = ({ IDL }) => {
     code: IDL.Text,
     name: IDL.Text,
   });
-  const Result_11 = IDL.Variant({ ok: IDL.Vec(CountryDTO), err: Error });
+  const Result_13 = IDL.Variant({ ok: IDL.Vec(CountryDTO), err: Error });
   const DataHashDTO = IDL.Record({ hash: IDL.Text, category: IDL.Text });
-  const Result_10 = IDL.Variant({ ok: IDL.Vec(DataHashDTO), err: Error });
+  const Result_12 = IDL.Variant({ ok: IDL.Vec(DataHashDTO), err: Error });
   const Result_1 = IDL.Variant({ ok: IDL.Vec(FixtureDTO), err: Error });
+  const Result_11 = IDL.Variant({
+    ok: IDL.Vec(IDL.Tuple(LeagueId, LeagueId)),
+    err: Error,
+  });
   const CalendarMonth = IDL.Nat8;
   const LeagueStatus = IDL.Record({
     transferWindowEndMonth: IDL.Nat8,
@@ -142,7 +146,38 @@ export const idlFactory = ({ IDL }) => {
     leagueId: LeagueId,
     seasonActive: IDL.Bool,
   });
-  const Result_9 = IDL.Variant({ ok: LeagueStatus, err: Error });
+  const Result_10 = IDL.Variant({ ok: LeagueStatus, err: Error });
+  const LeagueTableEntry = IDL.Record({
+    won: IDL.Nat,
+    homeDrawn: IDL.Nat,
+    clubId: ClubId,
+    awayDrawn: IDL.Nat,
+    homeLost: IDL.Nat,
+    played: IDL.Nat,
+    scored: IDL.Nat,
+    lost: IDL.Nat,
+    homeWon: IDL.Nat,
+    conceded: IDL.Nat,
+    awayPoints: IDL.Nat,
+    awayWon: IDL.Nat,
+    homePoints: IDL.Nat,
+    awayConceded: IDL.Nat,
+    awayLost: IDL.Nat,
+    awayPlayed: IDL.Nat,
+    awayScored: IDL.Nat,
+    homePlayed: IDL.Nat,
+    position: IDL.Nat,
+    homeScored: IDL.Nat,
+    drawn: IDL.Nat,
+    homeConceded: IDL.Nat,
+    points: IDL.Nat,
+  });
+  const LeagueTable = IDL.Record({
+    seasonId: SeasonId,
+    entries: IDL.Vec(LeagueTableEntry),
+    leagueId: LeagueId,
+  });
+  const Result_9 = IDL.Variant({ ok: LeagueTable, err: Error });
   const FootballLeagueDTO = IDL.Record({
     id: LeagueId,
     logo: IDL.Vec(IDL.Nat8),
@@ -458,10 +493,12 @@ export const idlFactory = ({ IDL }) => {
     createLeague: IDL.Func([CreateLeagueDTO], [], []),
     createPlayer: IDL.Func([CreatePlayerDTO], [], []),
     getClubs: IDL.Func([LeagueId], [Result_2], ["query"]),
-    getCountries: IDL.Func([], [Result_11], ["query"]),
-    getDataHashes: IDL.Func([LeagueId], [Result_10], ["query"]),
+    getCountries: IDL.Func([], [Result_13], ["query"]),
+    getDataHashes: IDL.Func([LeagueId], [Result_12], ["query"]),
     getFixtures: IDL.Func([LeagueId, SeasonId], [Result_1], ["query"]),
-    getLeagueStatus: IDL.Func([LeagueId], [Result_9], ["query"]),
+    getLeagueRelegationPairs: IDL.Func([], [Result_11], ["query"]),
+    getLeagueStatus: IDL.Func([LeagueId], [Result_10], ["query"]),
+    getLeagueTable: IDL.Func([LeagueId, SeasonId], [Result_9], ["query"]),
     getLeagues: IDL.Func([], [Result_8], ["query"]),
     getLoanedPlayers: IDL.Func([LeagueId], [Result_7], ["query"]),
     getPlayerDetails: IDL.Func(

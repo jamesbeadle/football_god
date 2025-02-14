@@ -121,7 +121,7 @@ type RetirePlayerDTO =
 type Result_9 = 
  variant {
    err: Error;
-   ok: LeagueStatus;
+   ok: LeagueTable;
  };
 type Result_8 = 
  variant {
@@ -161,15 +161,28 @@ type Result_2 =
    err: Error;
    ok: vec ClubDTO;
  };
-type Result_11 = 
+type Result_13 = 
  variant {
    err: Error;
    ok: vec CountryDTO;
  };
-type Result_10 = 
+type Result_12 = 
  variant {
    err: Error;
    ok: vec DataHashDTO;
+ };
+type Result_11 = 
+ variant {
+   err: Error;
+   ok: vec record {
+             LeagueId;
+             LeagueId;
+           };
+ };
+type Result_10 = 
+ variant {
+   err: Error;
+   ok: LeagueStatus;
  };
 type Result_1 = 
  variant {
@@ -419,6 +432,38 @@ type List =
        InjuryHistory;
        List;
      };
+type LeagueTableEntry = 
+ record {
+   awayConceded: nat;
+   awayDrawn: nat;
+   awayLost: nat;
+   awayPlayed: nat;
+   awayPoints: nat;
+   awayScored: nat;
+   awayWon: nat;
+   clubId: ClubId;
+   conceded: nat;
+   drawn: nat;
+   homeConceded: nat;
+   homeDrawn: nat;
+   homeLost: nat;
+   homePlayed: nat;
+   homePoints: nat;
+   homeScored: nat;
+   homeWon: nat;
+   lost: nat;
+   played: nat;
+   points: nat;
+   position: nat;
+   scored: nat;
+   won: nat;
+ };
+type LeagueTable = 
+ record {
+   entries: vec LeagueTableEntry;
+   leagueId: LeagueId;
+   seasonId: SeasonId;
+ };
 type LeagueStatus = 
  record {
    activeGameweek: GameweekNumber;
@@ -579,10 +624,12 @@ service : {
   createLeague: (CreateLeagueDTO) -> ();
   createPlayer: (CreatePlayerDTO) -> ();
   getClubs: (LeagueId) -> (Result_2) query;
-  getCountries: () -> (Result_11) query;
-  getDataHashes: (LeagueId) -> (Result_10) query;
+  getCountries: () -> (Result_13) query;
+  getDataHashes: (LeagueId) -> (Result_12) query;
   getFixtures: (LeagueId, SeasonId) -> (Result_1) query;
-  getLeagueStatus: (LeagueId) -> (Result_9) query;
+  getLeagueRelegationPairs: () -> (Result_11) query;
+  getLeagueStatus: (LeagueId) -> (Result_10) query;
+  getLeagueTable: (LeagueId, SeasonId) -> (Result_9) query;
   getLeagues: () -> (Result_8) query;
   getLoanedPlayers: (LeagueId) -> (Result_7) query;
   getPlayerDetails: (LeagueId, GetPlayerDetailsDTO) -> (Result_6) query;
