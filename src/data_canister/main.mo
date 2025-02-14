@@ -34,7 +34,6 @@ import Environment "environment";
 actor Self {
 
   private var pickTeamRollOverTimerIds : [Nat] = [];
-  private var endOfSeasonTimerIds : [Nat] = [];
   private var activateFixtureTimerIds : [Nat] = [];
   private var completeFixtureTimerIds : [Nat] = [];
   private var transferWindowStartTimerIds : [Nat] = [];
@@ -3814,6 +3813,7 @@ actor Self {
   };
 
   private func postUpgradeCallback() : async () {
+    await createInitialHashes();
     await createFixtureTimers();
     await createTransferWindowStartTimers();
     await createTransferWindowEndTimers();
@@ -3822,19 +3822,17 @@ actor Self {
 
     //Create the initial required data hashes
 
-    //premier league
-    let _ = await updateDataHash(1, "clubs");
-    let _ = await updateDataHash(1, "seasons");
-    let _ = await updateDataHash(1, "fixtures");
-    let _ = await updateDataHash(1, "players");
-    let _ = await updateDataHash(1, "player_events");
+  };
 
-    //wsl
-    let _ = await updateDataHash(1, "clubs");
-    let _ = await updateDataHash(1, "seasons");
-    let _ = await updateDataHash(1, "fixtures");
-    let _ = await updateDataHash(1, "players");
-    let _ = await updateDataHash(1, "player_events");
+  private func createInitialHashes() : async (){
+
+    for(league in Iter.fromArray(leagueStatuses)){
+      let _ = await updateDataHash(league.leagueId, "clubs");
+      let _ = await updateDataHash(league.leagueId, "seasons");
+      let _ = await updateDataHash(league.leagueId, "fixtures");
+      let _ = await updateDataHash(league.leagueId, "players");
+      let _ = await updateDataHash(league.leagueId, "player_events");
+    };
 
   };
 
@@ -4724,28 +4722,12 @@ actor Self {
             hashBuffer.add({ category = category; hash = randomHash });
             updated := true;
           };
-          return (entry.0, entry.1);
+          return (entry.0, Buffer.toArray(hashBuffer));
         } else {
           return entry;
         };
       },
     );
-
-    if (not updated) {
-      let leagueHasApplications = Option.isSome(
-        Array.find<(FootballTypes.LeagueId, Base.CanisterId)>(
-          leagueApplications,
-          func(entry : (FootballTypes.LeagueId, Base.CanisterId)) : Bool {
-            entry.0 == leagueId;
-          },
-        )
-      );
-      if (leagueHasApplications) {
-        let leagueDataHashBuffer = Buffer.fromArray<(FootballTypes.LeagueId, [Base.DataHash])>(leagueDataHashes);
-        leagueDataHashBuffer.add((leagueId, [{ category = category; hash = randomHash }]));
-        leagueDataHashes := Buffer.toArray(leagueDataHashBuffer);
-      };
-    }
 
   };
 
