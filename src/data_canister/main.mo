@@ -3845,10 +3845,7 @@ actor Self {
     await createTransferWindowEndTimers();
     await createLoanExpiredTimers();
     await createInjuryExpiredTimers();
-    await createInitialHashes();
-    
-    leagueRelegationPairs := [(1,3)];
-    
+    await createInitialHashes(); 
   };
 
   private func createInitialHashes() : async (){
@@ -3859,6 +3856,8 @@ actor Self {
       let _ = await updateDataHash(league.leagueId, "fixtures");
       let _ = await updateDataHash(league.leagueId, "players");
       let _ = await updateDataHash(league.leagueId, "player_events");
+      let _ = await updateDataHash(league.leagueId, "countries");
+      let _ = await updateDataHash(league.leagueId, "league_statuses");
     };
 
   };
