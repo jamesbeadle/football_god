@@ -50,6 +50,7 @@ import {
   buildCreateLeagueText,
   buildCreatePlayerText,
   buildLoanPlayerText,
+  buildMoveFixtureText,
   buildRescheduleFixtureText,
   buildRetirePlayerText,
   buildRevaluePlayerDownText,
@@ -65,6 +66,7 @@ import {
   CreateLeagueDTO_Idl,
   CreatePlayerDTO_Idl,
   LoanPlayerDTO_Idl,
+  MoveFixtureDTO_Idl,
   RescheduleFixtureDTO_Idl,
   RetirePlayerDTO_Idl,
   RevaluePlayerDownDTO_Idl,
@@ -530,7 +532,40 @@ function createGovernanceStore() {
 
   async function addInitialFixtures(dto: AddInitialFixturesDTO): Promise<any> {}
 
-  async function moveFixture(dto: MoveFixtureDTO): Promise<any> {}
+  async function moveFixture(dto: MoveFixtureDTO): Promise<any> {
+    let userIdentity: OptionIdentity;
+    authStore.subscribe((auth) => (userIdentity = auth.identity));
+    if (!userIdentity) return;
+
+    const leagueFixtures = await fixtureStore.getFixtures(
+      dto.leagueId,
+      dto.seasonId,
+    );
+    let fixture = leagueFixtures.find((x) => x.id == dto.fixtureId);
+    if (!fixture) throw new Error("Fixture not found.");
+
+    const clubs = await clubStore.getClubs(dto.leagueId);
+    const homeClub = clubs.find((c) => c.id === fixture.homeClubId);
+    const awayClub = clubs.find((c) => c.id === fixture.awayClubId);
+    if (!homeClub || !awayClub) throw new Error("Missing home/away club.");
+
+    const { title, summary } = buildMoveFixtureText(
+      `${homeClub.name} v ${awayClub.name}`,
+      fixture.gameweek,
+      dto.updatedFixtureGameweek,
+      `${formatUnixDateToSmallReadable(Number(dto.updatedFixtureDate))} ${formatUnixTimeToTime(Number(dto.updatedFixtureDate))}`,
+    );
+
+    const encoded = IDL.encode([MoveFixtureDTO_Idl], [dto]);
+
+    return await createProposal({
+      identity: userIdentity,
+      functionId: 61000n,
+      payload: new Uint8Array(encoded),
+      title,
+      summary,
+    });
+  }
 
   async function postponeFixture(dto: PostponeFixtureDTO): Promise<any> {}
 

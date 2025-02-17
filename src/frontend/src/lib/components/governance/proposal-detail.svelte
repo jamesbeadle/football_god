@@ -100,7 +100,7 @@
   const totalVotes = Number(proposal.latest_tally[0]?.total ?? 0n);
 </script>
 
-<Modal showModal={visible} onClose={closeModal} title={`Proposal ${proposal.id[0]?.id} Details`}>
+<Modal showModal={visible} onClose={closeModal}>
   {#if isLoading}
     <LocalSpinner />
     <p class="pb-4 mb-4 text-center">Submitting vote...</p>
