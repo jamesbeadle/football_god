@@ -5,6 +5,7 @@
   import { leagueStore } from "$lib/stores/league-store";
   import { clubStore } from "$lib/stores/club-store";
   import { playerStore } from "$lib/stores/player-store";
+  import type { ClubDTO, CountryDTO, FootballLeagueDTO, PlayerDTO } from "../../../../declarations/data_canister/data_canister.did";
   
   import Layout from "../Layout.svelte";
   import CreatePlayer from "$lib/components/governance/player/create-player.svelte";
@@ -15,8 +16,10 @@
   import LocalSpinner from "$lib/components/shared/local-spinner.svelte";
   import RecallPlayer from "$lib/components/governance/player/recall-player.svelte";
   import RevaluePlayerDown from "$lib/components/governance/player/revalue-player-down.svelte";
-    import RevaluePlayerUp from "$lib/components/governance/player/revalue-player-up.svelte";
-    import type { ClubDTO, CountryDTO, FootballLeagueDTO, PlayerDTO } from "../../../../declarations/data_canister/data_canister.did";
+  import RevaluePlayerUp from "$lib/components/governance/player/revalue-player-up.svelte";
+  import PlayersHeaderDisplay from "$lib/components/governance/player/players-header-display.svelte";
+  import PlayerDisplay from "$lib/components/player/player-display.svelte";
+    
 
   let isLoading = true;
   let loadingPlayers = false;
@@ -58,6 +61,26 @@
   let showUpdatePlayerModal = false;
   let showSetPlayerInjuryModal = false;
   let showSetFreeAgentModal = false;
+
+  $: leagueOptions = leagues.map(league => ({
+    id: league.id,
+    label: league.name
+  }));
+
+  $: clubOptions = clubs.map(club => ({
+    id: club.id,
+    label: club.friendlyName
+  }));
+
+  $: positionOptions = positions.map(pos => ({
+    id: pos.id,
+    label: pos.positionName
+  }));
+
+  $: nationalityOptions = countries.map(country => ({
+    id: country.id,
+    label: country.name
+  }));
 
   onMount(async () => {
     try {
@@ -115,13 +138,18 @@
             break;
     }
 
+    const minValueNum = Number(minValue) || 0;
+    const maxValueNum = Number(maxValue) || 150;
+    const searchTerm = searchSurname?.toLowerCase() || "";
+
     filteredPlayers = leaguePlayers
       .filter(player =>
         (selectedPositionId == 0 || Object.keys(player.position).includes(filterPosition)) &&
         (selectedClubId == 0 || player.clubId === selectedClubId) &&
         (selectedNationalityId == 0 || player.nationality === selectedNationalityId) &&
-        (player.valueQuarterMillions / 4) >= minValue && (player.valueQuarterMillions / 4) <= maxValue &&
-        (searchSurname === "" || player.lastName.toLowerCase().includes(searchSurname.toLowerCase()))
+        (player.valueQuarterMillions / 4) >= minValueNum && 
+        (player.valueQuarterMillions / 4) <= maxValueNum &&
+        (searchTerm === "" || player.lastName.toLowerCase().includes(searchTerm))
       );
   }
 
@@ -231,6 +259,26 @@
     }
   }
 
+  function handleLeagueChange(value: string | number) {
+    selectedLeagueId = Number(value);
+    filterPlayers();
+  }
+
+  function handleClubChange(value: string | number) {
+    selectedClubId = Number(value);
+    filterPlayers();
+  }
+
+  function handlePositionChange(value: string | number) {
+    selectedPositionId = Number(value);
+    filterPlayers();
+  }
+
+  function handleNationalityChange(value: string | number) {
+    selectedNationalityId = Number(value);
+    filterPlayers();
+  }
+
 </script>
 
 <Layout>
@@ -238,8 +286,8 @@
     <LocalSpinner />
   {:else}
 
-    <div class="flex justify-between items-center w-full mb-4">
-      <p class="text-lg">Player Explorer</p>
+    <div class="page-title-header">
+      <p class="text-lg xxs:text-xl">Player Explorer</p>
       <button class="brand-button" on:click={createNewPlayer}>+ New Player</button>
     </div>
 
@@ -247,119 +295,48 @@
     {#if loadingPlayers || loadingClubs}
       <LocalSpinner />
     {:else}
-      <div>
-
-        <div class="flex flex-col md:flex-row md:space-x-2 mb-2">
-
-          <select class="block w-full md:w-1/2 brand-select mb-2 md:mb-0" bind:value={selectedLeagueId} on:change={filterPlayers}>
-            <option value={0}>Select League</option>
-            {#each leagues as league}
-              <option value={league.id}>{league.name}</option>
-            {/each}
-          </select>
-
-          <select class="block w-full md:w-1/2 brand-select" bind:value={selectedClubId} on:change={filterPlayers}>
-            <option value={0}>Select Club</option>
-            {#each clubs as club}
-              <option value={club.id}>{club.friendlyName}</option>
-            {/each}
-          </select>
-
-        </div>
-        
-        <div class="flex flex-col md:flex-row md:space-x-2 mb-2">
-          <select class="block w-full md:w-1/2 brand-select mb-2 md:mb-0" bind:value={selectedPositionId} on:change={filterPlayers}>
-            <option value={0}>Select Position</option>
-            {#each positions as position}
-              <option value={position.id}>{position.positionName}</option>
-            {/each}
-          </select>
-
-          <select class="block w-full md:w-1/2 brand-select" bind:value={selectedNationalityId} on:change={filterPlayers}>
-            <option value={0}>Select Nationality</option>
-            {#each countries as country}
-              <option value={country.id}>{country.name}</option>
-            {/each}
-          </select>
-        </div>  
-
-        <div class="flex flex-col md:flex-row md:space-x-2 my-2">
-          <div class="flex flex-col w-full md:w-1/2 mb-2 md:mb-0">
-            <label for="minValue" class="text-xs text-white mb-1">Min Value (M):</label>
-            <input
-              type="number"
-              id="minValue"
-              bind:value={minValue}
-              step="0.25"
-              class="brand-input"
-              on:input={filterPlayers}
-            />
-          </div>
-        
-          <div class="flex flex-col w-full md:w-1/2">
-            <label for="maxValue" class="text-xs text-white mb-1">Max Value (M):</label>
-            <input
-              type="number"
-              id="maxValue"
-              bind:value={maxValue}
-              step="0.25"
-              class="brand-input"
-              on:input={filterPlayers}
-            />
-          </div>
-        </div>
-        
-        <div class="flex flex-col mb-2">
-          <label for="searchSurname" class="text-xs text-white mb-1">Search by Surname:</label>
-          <div class="flex">
-            <input
-              type="text"
-              id="searchSurname"
-              bind:value={searchSurname}
-              class="brand-input flex-grow"
-              on:keypress={handleKeyPress}
-            />
-            <button
-              class="brand-button ml-2 text-sm"
-              on:click={filterPlayers}
-            >
-              Search
-            </button>
-          </div>
-        </div>
-        
-        
+      <div class="mb-4">
+        <PlayersHeaderDisplay
+          leagues={leagueOptions}
+          clubs={clubOptions}
+          positions={positionOptions}
+          nationalities={nationalityOptions}
+          bind:selectedLeagueId
+          bind:selectedClubId
+          bind:selectedPositionId
+          bind:selectedNationalityId
+          bind:minValue
+          bind:maxValue
+          bind:searchSurname
+          onLeagueChange={handleLeagueChange}
+          onClubChange={handleClubChange}
+          onPositionChange={handlePositionChange}
+          onNationalityChange={handleNationalityChange}
+          onValueChange={filterPlayers}
+          onSearch={filterPlayers}
+          onKeyPress={handleKeyPress}
+        />     
       </div>
 
-      <div class="mt-4">
+      <div class="px-3 mt-4 mb-4 space-y-4 md:px-0">
         {#each filteredPlayers.sort((a, b) => b.valueQuarterMillions - a.valueQuarterMillions) as player}
-          <div class="flex flex-row items-center bg-BrandDarkGray rounded-lg shadow p-4 w-full my-2 transition hover:bg-gray-700">
-            <div class="flex items-center space-x-4 w-full">
-              <p class="flex-grow text-lg md:text-sm text-white">
-                {player.firstName} {player.lastName} <br />
-                Player ID: {player.id} <br />
-                Value: £{(player.valueQuarterMillions / 4)}M <br />
-                Status: {Object.keys(player.status)[0]}
-              </p>
-              <div class="relative">
-                <button class="text-white brand-button" on:click={(event) => toggleDropdown(player.id, event)}>Actions</button>
-                {#if dropdownVisible === player.id}
-                  <div class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg z-10 text-sm dropdown-menu">
-                    <button class="block w-full text-left px-4 py-2 text-BrandDarkGray hover:bg-BrandLightGray" on:click={() => loadUpdatePlayer(player.id)}>Update Player</button>
-                    <button class="block w-full text-left px-4 py-2 text-BrandDarkGray hover:bg-BrandLightGray" on:click={() => loadSetPlayerInjury(player.id)}>Set Player Injury</button>
-                    <button class="block w-full text-left px-4 py-2 text-BrandDarkGray hover:bg-BrandLightGray" on:click={() => loadTransferPlayer(player.id)}>Transfer Player</button>
-                    <button class="block w-full text-left px-4 py-2 text-BrandDarkGray hover:bg-BrandLightGray" on:click={() => loadLoanPlayer(player.id)}>Loan Player</button>
-                    <button class="block w-full text-left px-4 py-2 text-BrandDarkGray hover:bg-BrandLightGray" on:click={() => loadRecallPlayer(player.id)}>Recall Player</button>
-                    <button class="block w-full text-left px-4 py-2 text-BrandDarkGray hover:bg-BrandLightGray" on:click={() => loadRevaluePlayerUp(player.id)}>Revalue Player Up</button>
-                    <button class="block w-full text-left px-4 py-2 text-BrandDarkGray hover:bg-BrandLightGray" on:click={() => loadRevaluePlayerDown(player.id)}>Revalue Player Down</button>
-                    <button class="block w-full text-left px-4 py-2 text-BrandDarkGray hover:bg-BrandLightGray" on:click={() => loadRetirePlayer(player.id)}>Retire Player</button>
-                    <button class="block w-full text-left px-4 py-2 text-BrandDarkGray hover:bg-BrandLightGray" on:click={() => loadUnretirePlayer(player.id)}>Unretire Player</button>
-                    <button class="block w-full text-left px-4 py-2 text-BrandDarkGray hover:bg-BrandLightGray" on:click={() => loadSetFreeAgent(player.id)}>Set Player As Free Agent</button>
-                  </div>
-                {/if}
-              </div>
-            </div>
-          </div>
+          {@const playerClub = clubs.find(x => x.id == player.clubId)}
+          <PlayerDisplay
+            {player}
+            club={playerClub!}
+            {dropdownVisible}
+            onDropdownClick={toggleDropdown}
+            onUpdatePlayer={loadUpdatePlayer}
+            onSetPlayerInjury={loadSetPlayerInjury}
+            onTransferPlayer={loadTransferPlayer}
+            onLoanPlayer={loadLoanPlayer}
+            onRecallPlayer={loadRecallPlayer}
+            onRevaluePlayerUp={loadRevaluePlayerUp}
+            onRevaluePlayerDown={loadRevaluePlayerDown}
+            onRetirePlayer={loadRetirePlayer}
+            onUnretirePlayer={loadUnretirePlayer}
+            onSetFreeAgent={loadSetFreeAgent}
+          />
         {/each}
       </div>
 

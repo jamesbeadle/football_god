@@ -3,8 +3,8 @@
 
   import Layout from "./Layout.svelte";
   import FullScreenSpinner from "$lib/components/shared/full-screen-spinner.svelte";
-    import ProposalsList from "$lib/components/governance/proposals-list.svelte";
-    import { appStore } from "$lib/stores/app-store";
+  import ProposalsList from "$lib/components/governance/proposals-list.svelte";
+  import { appStore } from "$lib/stores/app-store";
 
   let isLoading = true;
 
@@ -22,15 +22,17 @@
 </script>
 
 <Layout>
-  <div class="flex flex-col md:flex-row">
-    <div class="flex-1 md:block">
-      {#if isLoading}
-        <FullScreenSpinner />
-      {:else}
-        <div class="page-panel">
-          <ProposalsList />
-        </div>
-      {/if}
+  <div class="relative min-h-screen">
+    <div class="flex flex-col md:flex-row">
+      <div class="flex-1 md:block">
+        {#if isLoading}
+          <FullScreenSpinner />
+        {:else}
+          <div class="page-panel">
+            <ProposalsList />
+          </div>
+        {/if}
+      </div>
     </div>
   </div>
 </Layout>

@@ -5,9 +5,10 @@
   import { convertDateInputToUnixNano, isError } from "$lib/utils/helpers";
   import { governanceStore } from "$lib/stores/governance-store";
   import { clubStore } from "$lib/stores/club-store";
-    import { leagueStore } from "$lib/stores/league-store";
-    import GovernanceModal from "../governance-modal.svelte";
-    import FormComponent from "$lib/components/shared/form-component.svelte";
+  import { leagueStore } from "$lib/stores/league-store";
+  import GovernanceModal from "../governance-modal.svelte";
+  import FormComponent from "$lib/components/shared/form-component.svelte";
+  import DropdownSelect from "$lib/components/shared/dropdown-select.svelte";
 
   export let visible: boolean;
   export let closeModal: () => void;
@@ -20,6 +21,7 @@
   let nextUnplayedGameweek: number = 0;
   let totalGameweeks: number = 0;
   let newGameweek: number = 0;
+  let gameweekOptions: { id: number; label: string }[] = [];
   let clubs: ClubDTO[] = [];
   let homeTeam: ClubDTO;
   let awayTeam: ClubDTO;
@@ -48,6 +50,14 @@
         (_, i) => 1 + i
       );
 
+      gameweekOptions = [
+        { id: 0, label: "Select Gameweek" },
+        ...gameweeks.map(week => ({
+          id: week,
+          label: `Gameweek: ${week}`
+        }))
+      ];
+
 
     } catch (error) {
       console.error("Error fetching postponed fixtures:", error);
@@ -60,12 +70,15 @@
   let submitting = false;
   let submitted = false;
 
+  function handleGameweekChange(value: string | number) {
+    newGameweek = Number(value);
+  }
+
   async function confirmProposal() {
     
     if(submitted || submitting){
       return;
     }
-
 
     try {
       isLoading = true;
@@ -85,10 +98,10 @@
         return;
       }
 
-submitted = true;
-submitting = false;
+      submitted = true;
+      submitting = false;
 
-//clear local storage
+      //clear local storage
 
 
     } catch (error) {
@@ -99,9 +112,6 @@ submitting = false;
       resetForm();
       closeModal();
     }
-
-    
-    
 
     isLoading = false;
     resetForm();
@@ -135,12 +145,13 @@ submitting = false;
     </FormComponent>
     
     <FormComponent label="Select New Gameweek:">
-      <select class="brand-dropdown" bind:value={newGameweek}>
-        <option value={0}>Select New Gameweek</option>
-        {#each gameweeks as gameweek}
-          <option value={gameweek}>Gameweek {gameweek}</option>
-        {/each}
-      </select>
+      <DropdownSelect 
+        value={newGameweek}
+        options={gameweekOptions}
+        onChange={handleGameweekChange}
+        placeholder="Select Gameweek"
+        compact={true}
+      />
     </FormComponent>
   </GovernanceModal>
 </Modal>

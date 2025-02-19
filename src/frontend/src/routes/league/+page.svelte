@@ -1,8 +1,7 @@
 <script lang="ts">
     import { onMount } from "svelte";
     import { page } from "$app/stores";
-    
-    import { formatUnixDateToSmallReadable, getImageURL } from "$lib/utils/helpers";
+
     import { countryStore } from "$lib/stores/country-store"; 
     import { leagueStore } from "$lib/stores/league-store";
     
@@ -13,21 +12,30 @@
     import type { CountryDTO, FootballLeagueDTO, LeagueStatus } from "../../../../declarations/data_canister/data_canister.did";
     import LeagueLoanedPlayers from "$lib/components/league/league-loaned-players.svelte";
     import PostponedLeagueFixtures from "$lib/components/league/postponed-league-fixtures.svelte";
+    import TabContainer from "$lib/components/shared/tab-container.svelte";
+    import LeagueGridDisplay from "$lib/components/league/league-grid-display.svelte";
+
+    const tabs = [
+        { id: 'clubs', label: 'Clubs' },
+        { id: 'fixtures', label: 'Fixtures' },
+        { id: 'postponed-fixtures', label: 'Postponed Fixtures' },
+        { id: 'loaned-players', label: 'Loaned Players' },
+    ]
     
     let isLoading = true;
     let countries: CountryDTO[] = [];
     let league: FootballLeagueDTO | null = null;
     let leagueStatus: LeagueStatus | null = null;
     
-    let activeTab: string = "clubs";
+    let filterType: string = "clubs";
     
     $: id = Number($page.url.searchParams.get("id"));
   
     onMount(async () => {
       try {
         await loadData();
-        leagueStatus = await leagueStore.getLeagueStatus(id);
       } catch (error) {
+        console.error(error);
       } finally {
         isLoading = false;
       }
@@ -37,10 +45,11 @@
       countries = await countryStore.getCountries();
       let leagues = await leagueStore.getLeagues();      
       league = leagues.find((x) => x.id == id) ?? null;
+      leagueStatus = await leagueStore.getLeagueStatus(id);
     };
-  
-    function setActiveTab(tab: string): void {
-      activeTab = tab;
+
+    async function setActiveTab(tab: string): Promise<void> {
+      filterType = tab;
     }
 </script>
 
@@ -49,103 +58,26 @@
     <FullScreenSpinner />
   {:else}
     {#if league}
+      <LeagueGridDisplay {league} {leagueStatus} {countries} />
 
-      <div class="flex flex-col space-y-4 p-4 mb-4">
-        <div class="flex items-center space-x-4">
-          <img src={getImageURL(league.logo)} alt="logo" class="w-8 h-8" />
-          <h1 class="text-xl">{league.name}</h1>
-        </div>
-        <div class="grid grid-cols-2 gap-4">
-          <div>
-            <label for="abbreviated-name" class="block text-xs">Abbreviated Name</label>
-            <p>{league.abbreviation}</p>
-          </div>
-          <div>
-            <label for="governing-body" class="block text-xs">Governing Body</label>
-            <p>{league.governingBody}</p>
-          </div>
-          <div>
-            <label for="related-gender" class="block text-xs">Gender</label>
-            <p>{Object.keys(league.relatedGender)[0]}</p>
-          </div>
-          <div>
-            <label for="formed" class="block text-xs">Date Formed</label>
-            <p>{formatUnixDateToSmallReadable(Number(league.formed))}</p>
-          </div>
-          <div>
-            <label for="country" class="block text-xs">Country</label>
-            <p>{ countries.find(x => x.id == league?.countryId)?.name }</p>
-          </div>
-          {#if leagueStatus}
-            <div>
-              <label for="active-season" class="block text-xs">Active Season</label>
-              <p>{leagueStatus.activeSeasonId}</p>
-            </div>
-            <div>
-              <label for="active-month" class="block text-xs">Active Month</label>
-              <p>{leagueStatus.activeMonth}</p>
-            </div>
-            <div>
-              <label for="unplayed-gameweek" class="block text-xs">Unplayed Gameweek</label>
-              <p>{leagueStatus.unplayedGameweek}</p>
-            </div>
-            <div>
-              <label for="active-gameweek" class="block text-xs">Active Gameweek</label>
-              <p>{leagueStatus.activeGameweek}</p>
-            </div>
-            <div>
-              <label for="completed-gameweek" class="block text-xs">Completed Gameweek</label>
-              <p>{leagueStatus.completedGameweek}</p>
-            </div>
-            <div>
-              <label for="transfer-window-active" class="block text-xs">Transfer Window Active</label>
-              <p>{leagueStatus.transferWindowActive ? "Yes" : "No"}</p>
-            </div>
-            <div>
-              <label for="season-active" class="block text-xs">Season Active</label>
-              <p>{leagueStatus.seasonActive ? "Yes" : "No"}</p>
-            </div>
-          {/if}
-        </div>
+      <div class="flex mb-6 md:px-1">
+        <TabContainer {filterType} {setActiveTab} {tabs} compact={true} />
       </div>
 
-      <div class="flex space-x-4 px-2 mb-4">
-        <button 
-          class={`p-2 ${activeTab === "clubs" ? "text-white border-b-2 border-white" : "text-BrandDisabled"}`} 
-          on:click={() => setActiveTab("clubs")}>
-          Clubs
-        </button>
-        <button 
-          class={`p-2 ${activeTab === "fixtures" ? "text-white border-b-2 border-white" : "text-BrandDisabled"}`} 
-          on:click={() => setActiveTab("fixtures")}>
-          Fixtures
-        </button>
-        <button 
-          class={`p-2 ${activeTab === "postponed-fixtures" ? "text-white border-b-2 border-white" : "text-BrandDisabled"}`} 
-          on:click={() => setActiveTab("postponed-fixtures")}>
-          Postponed Fixtures
-        </button>
-        <button 
-          class={`p-2 ${activeTab === "loaned-players" ? "text-white border-b-2 border-white" : "text-BrandDisabled"}`} 
-          on:click={() => setActiveTab("loaned-players")}>
-          Loaned Players
-        </button>
-      </div>
-
-      {#if activeTab === "clubs"}
+      {#if filterType === "clubs"}
         <LeagueClubs leagueId={league.id} />
       {/if}
-      {#if activeTab === "fixtures"}
+      {#if filterType === "fixtures"}
         <LeagueFixtures leagueId={league.id} />
       {/if}
-      {#if activeTab === "postponed-fixtures"}
+      {#if filterType === "postponed-fixtures"}
         <PostponedLeagueFixtures leagueId={league.id} />
       {/if}
-      {#if activeTab === "loaned-players"}
+      {#if filterType === "loaned-players"}
         <LeagueLoanedPlayers leagueId={league.id} />
       {/if}
     {:else}
-      <p>League not found.</p>
+      <p>Leagues not found.</p>
     {/if}
   {/if}
 

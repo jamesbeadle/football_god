@@ -3,6 +3,17 @@ import type {
   PlayerEventType,
   PlayerPosition,
 } from "../../../../declarations/backend/backend.did";
+import Eng from "$lib/components/flags/eng.svelte";
+import Sco from "$lib/components/flags/sco.svelte";
+import Wal from "$lib/components/flags/wal.svelte";
+import Noi from "$lib/components/flags/noi.svelte";
+import type {
+  ClubDTO,
+  FixtureDTO,
+  FixtureStatusType,
+} from "../../../../declarations/data_canister/data_canister.did";
+import type { FixtureWithClubs } from "$lib/types/fixture-with-clubs";
+import type { TeamStats } from "$lib/types/team-stats";
 
 export function uint8ArrayToBase64(bytes: Uint8Array): string {
   const binary = Array.from(bytes)
@@ -11,8 +22,8 @@ export function uint8ArrayToBase64(bytes: Uint8Array): string {
   return btoa(binary);
 }
 
-export function formatUnixDateToReadable(unixNano: number) {
-  const date = new Date(unixNano / 1000000);
+export function formatUnixDateToReadable(unixNano: bigint) {
+  const date = new Date(Number(unixNano) * 1000);
   const options: Intl.DateTimeFormatOptions = {
     weekday: "long",
     year: "numeric",
@@ -23,8 +34,19 @@ export function formatUnixDateToReadable(unixNano: number) {
   return new Intl.DateTimeFormat("en-UK", options).format(date);
 }
 
-export function formatUnixDateToSmallReadable(unixNano: number) {
-  const date = new Date(unixNano / 1000000);
+export function formatUnixDateToSmallReadable(unixSeconds: bigint) {
+  const date = new Date(Number(unixSeconds) * 1000);
+  const options: Intl.DateTimeFormatOptions = {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+  };
+
+  return new Intl.DateTimeFormat("en-UK", options).format(date);
+}
+
+export function formatUnixDateToSmallReadableDate(unixSeconds: bigint) {
+  const date = new Date(Number(unixSeconds) / 1000000);
   const options: Intl.DateTimeFormatOptions = {
     year: "numeric",
     month: "short",
@@ -58,18 +80,18 @@ export function replacer(key: string, value: bigint) {
   }
 }
 
-export function formatUnixTimeToTime(unixTimeNano: number): string {
-  const unixTimeMillis = unixTimeNano / 1000000;
+export function formatUnixTimeToTime(unixNano: bigint): string {
+  const unixTimeMillis = Number(unixNano) / 1000000;
   const date = new Date(unixTimeMillis);
 
-  let hours = date.getHours();
-  const minutes = date.getMinutes();
-  const ampm = hours >= 12 ? "PM" : "AM";
-  hours = hours % 12;
-  hours = hours ? hours : 12;
-  const minutesStr = minutes < 10 ? "0" + minutes : minutes;
+  const options: Intl.DateTimeFormatOptions = {
+    hour: "numeric",
+    minute: "numeric",
+    hour12: true,
+    timeZone: "Europe/London",
+  };
 
-  return `${hours}:${minutesStr} ${ampm}`;
+  return new Intl.DateTimeFormat("en-GB", options).format(date);
 }
 
 export function formatUnixToDateInputValue(unixNano: number) {
@@ -522,7 +544,7 @@ export function getFlagComponent(countryId: number) {
     case 185:
       return FlagIcons.Ae;
     case 186:
-      return FlagIcons.Gb;
+      return Eng;
     case 187:
       return FlagIcons.Us;
     case 188:
@@ -543,6 +565,12 @@ export function getFlagComponent(countryId: number) {
       return FlagIcons.Zm;
     case 196:
       return FlagIcons.Zw;
+    case 197:
+      return Sco;
+    case 198:
+      return Wal;
+    case 199:
+      return Noi;
     default:
       return null;
   }
@@ -648,21 +676,49 @@ export function convertEvent(playerEvent: PlayerEventType): PlayerEvent {
   return PlayerEvent.Appearance;
 }
 
-enum Position {
+export enum Position {
   GOALKEEPER,
   DEFENDER,
   MIDFIELDER,
   FORWARD,
 }
 
-export function convertPlayerPosition(
-  playerPosition: PlayerPosition,
-): Position {
-  if ("Goalkeeper" in playerPosition) return Position.GOALKEEPER;
-  if ("Defender" in playerPosition) return Position.DEFENDER;
-  if ("Midfielder" in playerPosition) return Position.MIDFIELDER;
-  if ("Forward" in playerPosition) return Position.FORWARD;
-  return Position.GOALKEEPER;
+export function convertPositionToIndex(playerPosition: PlayerPosition): number {
+  if ("Goalkeeper" in playerPosition) return 0;
+  if ("Defender" in playerPosition) return 1;
+  if ("Midfielder" in playerPosition) return 2;
+  if ("Forward" in playerPosition) return 3;
+  return 0;
+}
+
+export function getPositionAbbreviation(position: number): string {
+  switch (position) {
+    case 0:
+      return "GK";
+    case 1:
+      return "DF";
+    case 2:
+      return "MF";
+    case 3:
+      return "FW";
+    default:
+      return "-";
+  }
+}
+
+export function getPositionIndexToText(position: number): string {
+  switch (position) {
+    case 0:
+      return "Goalkeeper";
+    case 1:
+      return "Defender";
+    case 2:
+      return "Midfielder";
+    case 3:
+      return "Forward";
+    default:
+      return "Unknown position";
+  }
 }
 
 export function getImageURL(blob: any): string {
@@ -705,4 +761,106 @@ export function deserializeData(data: string): any {
     }
     return value;
   });
+}
+
+export function getFixturesWithTeams(
+  clubs: ClubDTO[],
+  fixtures: FixtureDTO[],
+): FixtureWithClubs[] {
+  return fixtures
+    .sort((a, b) => Number(a.kickOff) - Number(b.kickOff))
+    .map((fixture) => ({
+      fixture,
+      homeClub: clubs.find((club) => club.id === fixture.homeClubId),
+      awayClub: clubs.find((club) => club.id === fixture.awayClubId),
+    }));
+}
+
+export function updateTableData(
+  fixtures: FixtureWithClubs[],
+  teams: ClubDTO[],
+  selectedGameweek: number,
+): TeamStats[] {
+  let tempTable: Record<number, TeamStats> = {};
+
+  teams.forEach((team) => initTeamData(team.id, tempTable, teams));
+
+  const relevantFixtures = fixtures.filter(
+    (fixture) =>
+      convertFixtureStatus(fixture.fixture.status) === 3 &&
+      fixture.fixture.gameweek <= selectedGameweek,
+  );
+
+  relevantFixtures.forEach(({ fixture, homeClub, awayClub }) => {
+    if (!homeClub || !awayClub) return;
+
+    initTeamData(homeClub.id, tempTable, teams);
+    initTeamData(awayClub.id, tempTable, teams);
+
+    const homeStats = tempTable[homeClub.id];
+    const awayStats = tempTable[awayClub.id];
+
+    homeStats.played++;
+    awayStats.played++;
+
+    homeStats.goalsFor += fixture.homeGoals;
+    homeStats.goalsAgainst += fixture.awayGoals;
+    awayStats.goalsFor += fixture.awayGoals;
+    awayStats.goalsAgainst += fixture.homeGoals;
+
+    if (fixture.homeGoals > fixture.awayGoals) {
+      homeStats.wins++;
+      homeStats.points += 3;
+      awayStats.losses++;
+    } else if (fixture.homeGoals === fixture.awayGoals) {
+      homeStats.draws++;
+      awayStats.draws++;
+      homeStats.points += 1;
+      awayStats.points += 1;
+    } else {
+      awayStats.wins++;
+      awayStats.points += 3;
+      homeStats.losses++;
+    }
+  });
+
+  return Object.values(tempTable).sort((a, b) => {
+    const goalDiffA = a.goalsFor - a.goalsAgainst;
+    const goalDiffB = b.goalsFor - b.goalsAgainst;
+
+    if (b.points !== a.points) return b.points - a.points;
+    if (goalDiffB !== goalDiffA) return goalDiffB - goalDiffA;
+    if (b.goalsFor !== a.goalsFor) return b.goalsFor - a.goalsFor;
+    return a.goalsAgainst - b.goalsAgainst;
+  });
+}
+
+function initTeamData(
+  teamId: number,
+  table: Record<number, TeamStats>,
+  teams: ClubDTO[],
+) {
+  if (!table[teamId]) {
+    const team = teams.find((t) => t.id === teamId);
+    if (team) {
+      table[teamId] = {
+        ...team,
+        played: 0,
+        wins: 0,
+        draws: 0,
+        losses: 0,
+        goalsFor: 0,
+        goalsAgainst: 0,
+        points: 0,
+      };
+    }
+  }
+}
+
+export function convertFixtureStatus(fixtureStatus: FixtureStatusType): number {
+  if ("Unplayed" in fixtureStatus) return 0;
+  if ("Active" in fixtureStatus) return 1;
+  if ("Complete" in fixtureStatus) return 2;
+  if ("Finalised" in fixtureStatus) return 3;
+  return 0;
 }

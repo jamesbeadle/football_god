@@ -1,6 +1,4 @@
 <script lang="ts">
-  import ArrowUp from "$lib/icons/ArrowUp.svelte";
-  import ArrowDown from "$lib/icons/ArrowDown.svelte";
   import LikeButton from "$lib/icons/LikeButton.svelte";
   import DislikeButton from "$lib/icons/DislikeButton.svelte";
   import type { ProposalData } from "@dfinity/sns/dist/candid/sns_governance";
@@ -31,12 +29,11 @@
     return `${days} days, ${hours} hours remaining`;
   })();
   
-  let showRules = false;
+  $: minimumYesExercised = Number(proposal.minimum_yes_proportion_of_exercised[0]?.basis_points ?? 5000n);
+  $: minimumYesTotal = Number(proposal.minimum_yes_proportion_of_total[0]?.basis_points ?? 300n);
 </script>
   
 <div class="space-y-4">
-  <h2 class="text-2xl">Voting Results</h2>
-  
   <div class="flex items-center gap-4">
     <div class="flex flex-col items-center gap-1">
       <div class="text-BrandGreen">Adopt</div>
@@ -53,8 +50,8 @@
     <div class="flex-1">
       <div class="relative w-full h-8 overflow-hidden rounded-lg bg-BrandInactive">
         <div class="absolute inset-0 z-20">
-          <div class="absolute left-[3%] h-full w-[3px] bg-yellow-400"></div>
-          <div class="absolute left-[50%] h-full w-[3px] bg-BrandPurple"></div>
+          <div class="absolute h-full w-[3px] bg-yellow-400" style="left: {minimumYesTotal/100}%"></div>
+          <div class="absolute h-full w-[3px] bg-BrandPurple" style="left: {minimumYesExercised/100}%"></div>
         </div>
 
         <div class="absolute inset-0 z-10">
@@ -80,48 +77,4 @@
   </div>
   
   <div class="text-center text-gray-400">Expiration date<br/>{expirationDate}</div>
-  
-  <div class="mt-2 text-gray-400">
-    <button 
-      class="flex items-center justify-between w-full gap-2 text-xl transition-colors hover:text-white"
-      on:click={() => showRules = !showRules}
-    >
-      <span>Voting Rules</span>
-      {#if showRules}
-        <ArrowUp className="w-6 h-6" />
-      {:else}
-        <ArrowDown className="w-6 h-6" />
-      {/if}
-    </button>
-    
-    {#if showRules}
-      <div class="mt-4 space-y-4 transition-all">
-        <div class="space-y-2">
-          <div class="flex items-center gap-2">
-            <span>1.</span>
-            <span>Immediate majority decision</span>
-          </div>
-          <p class="pl-6">
-            A proposal is immediately adopted or rejected if, before the voting period ends, 
-            more than half of the total voting power votes Yes, or at least half votes No, 
-            respectively (indicated by the purple line).
-          </p>
-        </div>
-        
-        <div class="space-y-2">
-          <div class="flex items-center gap-2">
-            <span>2.</span>
-            <span>Standard majority decision</span>
-          </div>
-          <p class="pl-6">
-            At the end of the voting period, a proposal is adopted if more than half of the votes cast are Yes votes, 
-            provided these votes represent at least 3% of the total voting power 
-            (indicated by the yellow line). 
-            Otherwise, it is rejected. Before a proposal is decided, the voting period can be extended in order to "wait for quiet". 
-            Such voting period extensions occur when a proposal's voting results turn from either a Yes majority to a No majority or vice versa.
-          </p>
-        </div>
-      </div>
-    {/if}
-  </div>
 </div>

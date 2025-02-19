@@ -2,7 +2,7 @@
   import { countryStore } from "$lib/stores/country-store";
   import { onMount } from "svelte";
   import { governanceStore } from "$lib/stores/governance-store";
-  import { getDateFromBigInt } from "$lib/utils/helpers";
+  import { getDateFromBigInt, getImageURL } from "$lib/utils/helpers";
   import type { CountryDTO, FootballLeagueDTO, Gender, UpdateLeagueDTO } from "../../../../../../declarations/data_canister/data_canister.did";
   import Modal from "$lib/components/shared/modal.svelte";
   import GovernanceModal from "../governance-modal.svelte";
@@ -16,11 +16,12 @@
   let abbreviatedName = "";
   let governingBody = "";
   let gender: Gender = { "Male" : null };
+  let genderString = "Male";
   let dateFormed = "";
   let countryId = 0;
   let logo: Uint8Array | number[];
   let fileInput: HTMLInputElement;
-  let teamCount: 0;
+  let teamCount = 0;
   let countries: CountryDTO[] = [];
 
   let isLoading = true;
@@ -38,14 +39,16 @@
 
   onMount(async () => {
     try {
-
       leagueName = selectedLeague.name;
       abbreviatedName = selectedLeague.abbreviation;
       governingBody = selectedLeague.governingBody;
       gender = selectedLeague.relatedGender;
-      dateFormed = getDateFromBigInt(Number(selectedLeague.formed));
+      genderString = getGender(gender);
+      const date = new Date(Number(selectedLeague.formed) / 1_000_000);
+      dateFormed = date.toISOString().split('T')[0];
       countryId = selectedLeague.countryId;
-      logo =  selectedLeague.logo;
+      logo = selectedLeague.logo;
+      teamCount = selectedLeague.teamCount;
       countries = await countryStore.getCountries();
     } catch (error) {
       console.error("Error syncing proposal data.", error);
@@ -85,6 +88,14 @@
     });
   }
 
+  function getGender(gender: Gender) {
+    return "Male" in gender ? "Male" : "Female";
+  }
+
+  function getGenderFromValue(value: string) {
+    return value === "Male" ? { "Male": null } : { "Female": null };
+  }
+
   async function confirmProposal() {
     isLoading = true;
     const dto: UpdateLeagueDTO = {
@@ -92,12 +103,12 @@
         name: leagueName,
         abbreviation: abbreviatedName,
         governingBody,
-        relatedGender: gender,
+        relatedGender: getGenderFromValue(genderString),
         formed: BigInt(new Date(dateFormed).getTime() * 1_000_000),
         countryId,
         logo: logo,
         teamCount: teamCount
-      };
+    };
 
       await governanceStore.updateLeague(dto);
     isLoading = false;
@@ -109,7 +120,7 @@
     leagueName = "";
     abbreviatedName = "";
     governingBody = "";
-    gender = { "Male" : null };
+    gender = { "Male": null };
     dateFormed = "";
     countryId = 0;
     logo = [];
@@ -124,7 +135,7 @@
 
 <Modal showModal={visible} onClose={closeModal}>
   <GovernanceModal title={"Update League"} {cancelModal} {confirmProposal} {isLoading} {isSubmitDisabled}>
-   
+    
     <FormComponent label="League Name:">
       <input
         type="text"
@@ -153,9 +164,12 @@
     </FormComponent>
         
     <FormComponent label="Gender:">
-      <select bind:value={gender} class="brand-dropdown">
-        <option value="1">Male</option>
-        <option value="2">Female</option>
+      <select 
+        class="brand-dropdown" 
+        bind:value={genderString}
+      >
+        <option value="Male">Male</option>
+        <option value="Female">Female</option>
       </select>
     </FormComponent>
 
@@ -180,16 +194,25 @@
           class="brand-dropdown"
           bind:value={countryId}
       >
-          <option value={0}>Select League Country</option>
+          <option value={0} disabled selected>Select League Country</option>
           {#each countries as country}
-          <option value={country.id}>{country.name}</option>
+            <option value={country.id}>{country.name}</option>
           {/each}
       </select>
     </FormComponent>
 
     <FormComponent label="Logo:">
+      {#if logo && Object.keys(logo).length > 0}
+        <div class="mb-2">
+          <img 
+            src={getImageURL(logo)} 
+            alt="Current logo" 
+            class="object-contain w-16 h-16 my-4"
+          />
+        </div>
+      {/if}
       <button class="btn-file-upload brand-button" on:click={clickFileInput}>
-        Upload Logo
+        Change Logo
       </button>
       <input
         type="file"

@@ -5,29 +5,29 @@
   import { clubStore } from "$lib/stores/club-store";
   import { fixtureStore } from "$lib/stores/fixture-store";
   import { leagueStore } from "$lib/stores/league-store";
-  import { formatUnixTimeToTime } from "$lib/utils/helpers";
+  import type { ClubDTO, FixtureDTO, FootballLeagueDTO } from "../../../../../declarations/data_canister/data_canister.did";
+
   import MoveFixture from "../governance/fixture/move-fixture.svelte";
-  import BadgeIcon from "$lib/icons/BadgeIcon.svelte";
   import LocalSpinner from "../shared/local-spinner.svelte";
-    import PipsIcon from "$lib/icons/pips-icon.svelte";
-    import PostponeFixture from "../governance/fixture/postpone-fixture.svelte";
-    import type { ClubDTO, FixtureDTO, FootballLeagueDTO } from "../../../../../declarations/data_canister/data_canister.did";
+  import PostponeFixture from "../governance/fixture/postpone-fixture.svelte";
+  import DropdownSelect from "$lib/components/shared/dropdown-select.svelte";
+  import FixtureDisplay from "./fixture-display.svelte";
   
-  let isLoading = true;
-
-
   export let leagueId: number;
+
+  let isLoading = true;
   let league: FootballLeagueDTO | undefined;
   let clubs: ClubDTO[] = [];
   let fixtures: FixtureDTO[] = [];
   let fitleredFixtures: FixtureDTO[] = [];
   let selectedGameweek: number = 1;
   let selectedFixtureId: number = 0;
+  let dropdownVisible: number | null = null;
+  let gameweeks: number[] = [];
+  let gameweekOptions: { id: number; label: string }[] = [];
 
   let showMoveFixtureModal = false;
   let showPostponeFixtureModal = false;
-  let dropdownVisible: number | null = null;
-  let gameweeks: number[] = [];
   
   onMount(async () => {
     try {
@@ -40,8 +40,20 @@
 
       const highestGameweek = fixtures.reduce((max, fixture) => Math.max(max, fixture.gameweek), 0);
       gameweeks = Array.from({ length: Number(highestGameweek) }, (_, i) => i + 1);
-
-      selectedGameweek = fixtures.find(fixture => Object.keys(fixture.status)[0] === 'Unplayed')?.gameweek ?? 1;
+      
+      gameweekOptions = [
+        { id: 0, label: "Select Gameweek" },
+        ...gameweeks.map(week => ({
+          id: week,
+          label: `Gameweek: ${week}`
+        }))
+      ];
+      if(leagueStatus.activeGameweek > 0){
+        selectedGameweek = leagueStatus.activeGameweek;
+      }
+      if(leagueStatus.activeGameweek == 0){
+        selectedGameweek = leagueStatus.unplayedGameweek;
+      }
       filterFixtures();
     } catch (error) {
       console.error("Error fetching league fixtures:", error);
@@ -100,12 +112,15 @@
     showPostponeFixtureModal = false;
   }
 
-  $: if(selectedGameweek > 0){
-    filterFixtures();
+  function filterFixtures(){
+    isLoading = true;
+    fitleredFixtures = fixtures.filter(x => x.gameweek == selectedGameweek);
+    isLoading = false;
   }
 
-  function filterFixtures(){
-    fitleredFixtures = fixtures.filter(x => x.gameweek == selectedGameweek);
+  function handleGameweekChange(value: string | number) {
+    selectedGameweek = Number(value);
+    filterFixtures();
   }
 </script>
 
@@ -114,68 +129,46 @@
 {:else}
   
   <div class="flex w-full">
-    <div class="w-full flex flex-col rounded-lg shadow-lg">
-      
+    <div class="flex flex-col w-full rounded-lg shadow-lg">     
       {#if league}
-      
-        <div class="flex justify-between items-center w-full mb-4">
-            <h1>{league.name} Fixtures</h1>
+        <div class="flex items-center justify-between w-full mb-6">
+          <p class="px-4 md:px-2">{league.name} Fixtures</p>
         </div>
 
-        <div class="flex flex-col md:flex-row my-2 items-center">
-          <p>Select a gameweek:</p>
-          <select
-            class="brand-dropdown"
-            bind:value={selectedGameweek}
-          >
-            <option value={0}>Select Gameweek</option>
-            {#each gameweeks as gameweek}
-              <option value={gameweek}>Gameweek: {gameweek}</option>
-            {/each}
-          </select>
+        <div class="flex mb-4">
+          <DropdownSelect 
+            value={selectedGameweek}
+            options={gameweekOptions}
+            onChange={handleGameweekChange}
+            placeholder="Select Gameweek"
+            compact={true}
+          />
         </div>
 
-        
-
-
-      
-        
-      <div class="space-y-4">
-        {#if fixtures}
-            {#each fitleredFixtures.sort((a, b) => Number(a.kickOff) - Number(b.kickOff)) as fixture}
-              {@const homeClub = clubs.find(x => x.id == fixture.homeClubId)}
-              {@const awayClub = clubs.find(x => x.id == fixture.awayClubId)}
-              <div class="bg-BrandDarkGray p-4 rounded shadow-md flex flex-col md:flex-row items-center space-y-2 md:space-y-0 md:justify-between">
-                <div class="flex items-center space-x-4">
-                  <BadgeIcon primaryColour={homeClub?.primaryColourHex} secondaryColour={homeClub?.secondaryColourHex} className="w-6 h-6" />
-                  <span class="text-white text-sm">{homeClub?.friendlyName}</span>
-                  <span class="text-white font-semibold text-xs">vs</span>
-                  <BadgeIcon primaryColour={awayClub?.primaryColourHex} secondaryColour={awayClub?.secondaryColourHex} className="w-6 h-6" />
-                  <span class="text-white text-sm">{awayClub?.friendlyName}</span>
-                </div>
-                <div class="text-BrandLightGray text-xs text-right md:text-left">{formatUnixTimeToTime(Number(fixture.kickOff))}</div>
-                <div class="flex items-center space-x-2">
-                  <button
-                    class="p-2"
-                    on:click={(event) => toggleDropdown(fixture.id, event)}
-                  >
-                    <PipsIcon className="w-6" />
-                  </button>
-                  {#if dropdownVisible === fixture.id}
-                    <div class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-10">
-                      <button class="dropdown-link" on:click={() => loadAddFixtureData(fixture.id)}>Add Fixture Data</button>
-                      <button class="dropdown-link" on:click={() => loadMoveFixture(fixture.id)}>Move Fixture</button>
-                      <button class="dropdown-link" on:click={() => loadPostponeFixture(fixture.id)}>Postpone Fixture</button>
-                    </div>
-                  {/if}
-                </div>
-              </div>
-        
-            {/each}
+        <div class="px-3 mb-4 md:px-0 md:space-y-4">
+          {#if selectedGameweek > 0}
+            {#if fixtures}
+              {#each fitleredFixtures.sort((a, b) => Number(a.kickOff) - Number(b.kickOff)) as fixture}
+                {@const homeClub = clubs.find(x => x.id == fixture.homeClubId)}
+                {@const awayClub = clubs.find(x => x.id == fixture.awayClubId)}
+                <FixtureDisplay
+                  {fixture}
+                  homeClub={homeClub!}
+                  awayClub={awayClub!}
+                  {dropdownVisible}
+                  onDropdownClick={toggleDropdown}
+                  onAddFixtureData={loadAddFixtureData}
+                  onMoveFixture={loadMoveFixture}
+                  onPostponeFixture={loadPostponeFixture}
+                />
+              {/each}
+            {/if}
+          {:else}
+            <div class="flex justify-center p-4">
+              <p class="text-gray-400">Select a gameweek to view fixtures</p>
+            </div>
           {/if}
         </div>
-
-
       {/if}
     </div>
   </div>
