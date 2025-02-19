@@ -392,9 +392,20 @@ actor Self {
 
       switch(leagueClubsRequiringDataResult){
         case (?leagueClubsRequiringDataEntry){
-          if(Array.size(leagueClubsRequiringDataEntry.1) == 0){
-            upToDateLeaguesBuffer.add(league);
-          }
+          let foundLeagueClubs = Array.find<(FootballTypes.LeagueId, [FootballTypes.Club])>(leagueClubs, func(entry: (FootballTypes.LeagueId, [FootballTypes.Club])) : Bool{
+            entry.0 == league.id
+          });
+
+          switch(foundLeagueClubs){
+            case (?leagueClubsResult){
+
+              if(Array.size(leagueClubsRequiringDataEntry.1) < Array.size(leagueClubsResult.1)){
+                upToDateLeaguesBuffer.add(league);
+              }
+
+            };
+            case (null){}
+          };
         };
         case (null){}
       }
@@ -3977,6 +3988,7 @@ actor Self {
         return entry.id
       }));
     };
+    leagueClubsRequiringData := Buffer.toArray(leagueClubsRequiringDataBuffer);
   };
 
   private func createInitialHashes() : async (){
