@@ -276,12 +276,13 @@ actor Self {
               case (?foundClubIds){
 
                 let fixturesWithoutIncompleteClubs = List.filter<FootballTypes.Fixture>(foundSeason.fixtures, func(fixtureEntry: FootballTypes.Fixture){
-                  return not Option.isSome(Array.find<FootballTypes.ClubId>(foundClubIds.1, func(incompleteClubId: FootballTypes.ClubId) : Bool {
+                  return fixtureEntry.status != #Finalised and not Option.isSome(Array.find<FootballTypes.ClubId>(foundClubIds.1, func(incompleteClubId: FootballTypes.ClubId) : Bool {
                     fixtureEntry.homeClubId == incompleteClubId or fixtureEntry.awayClubId == incompleteClubId;
                   }));
                 });
 
-                return #ok(List.toArray<ResponseDTOs.FixtureDTO>(List.map<FootballTypes.Fixture, ResponseDTOs.FixtureDTO>(fixturesWithoutIncompleteClubs, func(fixtureEntry: FootballTypes.Fixture){
+                return #ok(List.toArray<ResponseDTOs.FixtureDTO>(List.map<FootballTypes.Fixture, ResponseDTOs.FixtureDTO>(fixturesWithoutIncompleteClubs, 
+                  func(fixtureEntry: FootballTypes.Fixture){
                   return {
                     awayClubId = fixtureEntry.awayClubId;
                     awayGoals = fixtureEntry.awayGoals;
@@ -3977,14 +3978,15 @@ actor Self {
     await createLoanExpiredTimers();
     await createInjuryExpiredTimers();
     await createInitialHashes(); 
-    addDefaultClubsToRequiredStatus();
-    checkRequiredStatus(1); //TODO - ONLY SHOW LEAGUES ON BETTING FOR LEAGUES WITH NO CLUBS THAT REQUIRE DATA
+    //addDefaultClubsToRequiredStatus();
+    //checkRequiredStatus(1); //TODO - ONLY SHOW LEAGUES ON BETTING FOR LEAGUES WITH NO CLUBS THAT REQUIRE DATA
   };
 
   private func addDefaultClubsToRequiredStatus(){
     let leagueClubsRequiringDataBuffer = Buffer.fromArray<(FootballTypes.LeagueId, [FootballTypes.ClubId])>([]);
     for(league in Iter.fromArray(leagueClubs)){
-      leagueClubsRequiringDataBuffer.add(league.0, Array.map<FootballTypes.Club, FootballTypes.ClubId>(league.1, func(entry: FootballTypes.Club){
+      leagueClubsRequiringDataBuffer.add(league.0, 
+        Array.map<FootballTypes.Club, FootballTypes.ClubId>(league.1, func(entry: FootballTypes.Club){
         return entry.id
       }));
     };
@@ -4649,7 +4651,6 @@ actor Self {
                   clubIdBuffer.add(fixture.homeClubId);
                   clubIdBuffer.add(fixture.awayClubId);
                 };              
-
                 
                 leagueClubsRequiringData := Array.map<(FootballTypes.LeagueId, [FootballTypes.ClubId]), 
                   (FootballTypes.LeagueId, [FootballTypes.ClubId])>(leagueClubsRequiringData, 
