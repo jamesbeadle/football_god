@@ -3,6 +3,7 @@
   import { fade } from "svelte/transition";
   import { browser } from "$app/environment";
 
+  import { appStore } from "$lib/stores/app-store";
   import { userStore } from "$lib/stores/user-store";
   import { initAuthWorker } from "$lib/services/worker.auth.services";
   import { authStore, type AuthStoreData } from "$lib/stores/auth-store";
@@ -13,7 +14,6 @@
   import Toasts from "$lib/components/toasts/toasts.svelte";
 
   import "../app.css";
-    import { appStore } from "$lib/stores/app-store";
 
   let worker: { syncAuthIdle: (auth: AuthStoreData) => void } | undefined;
 

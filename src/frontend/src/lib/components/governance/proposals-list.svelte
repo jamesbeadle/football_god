@@ -5,13 +5,12 @@
   import { Principal } from "@dfinity/principal";
   import type { ListProposalsResponse, ProposalData, ProposalId } from "@dfinity/sns/dist/candid/sns_governance";
   import ProposalDetail from "$lib/components/governance/proposal-detail.svelte";
-  import { HttpAgent } from "@dfinity/agent";
   import TabContainer from "$lib/components/shared/tab-container.svelte";
   import LikeButton from "$lib/icons/LikeButton.svelte";
   import DislikeButton from "$lib/icons/DislikeButton.svelte";
   import Checkmark from "$lib/icons/Checkmark.svelte";
   import LocalSpinner from "$lib/components/shared/local-spinner.svelte";
-    import { formatUnixDateToSmallReadable } from "$lib/utils/helpers";
+  import { formatUnixDateToSmallReadable } from "$lib/utils/helpers";
 
   let isLoading = true;
   let filterType: string = "all";
@@ -53,6 +52,8 @@
     }
     
     const principal: Principal = Principal.fromText(process.env.SNS_GOVERNANCE_CANISTER_ID ?? "");
+    
+    
     const { listProposals: governanceListProposals } = SnsGovernanceCanister.create({
       agent,
       canisterId: principal
@@ -98,7 +99,6 @@
         return true;
       });
     }
-
     totalPages = Math.ceil(filteredProposals.length / itemsPerPage);
     if (currentPage > totalPages) {
       currentPage = 1;
@@ -149,10 +149,15 @@
   }
 
   function getAdoptPercentage(proposal: ProposalData): number {
-      const yes = Number(proposal.latest_tally[0]?.yes) || 0;
-      const no = Number(proposal.latest_tally[0]?.no) || 0;
-      const total = yes + no;
-      return total > 0 ? Number((yes / total * 100).toFixed(3)) : 0;
+      const yesVotes = Number(proposal.latest_tally[0]?.yes ?? 0n);
+      const totalVotes = Number(proposal.latest_tally[0]?.total ?? 0n);
+      return totalVotes > 0 ? Number((yesVotes / totalVotes * 100).toFixed(3)) : 0;
+  }
+
+  function getRejectPercentage(proposal: ProposalData): number {
+    const noVotes = Number(proposal.latest_tally[0]?.no ?? 0n);
+    const totalVotes = Number(proposal.latest_tally[0]?.total ?? 0n);
+    return totalVotes > 0 ? Number((noVotes / totalVotes * 100).toFixed(3)) : 0;
   }
   
   function formatVotingPower(power: number): string {
@@ -163,24 +168,15 @@
       const myBallot = proposal.ballots.find(([voter, _]) => voter === 'YOUR_PRINCIPAL_ID');
       return myBallot?.[1]?.vote;
   }
-
-  function formatDate(timestamp: bigint): string {
-      const date = new Date(Number(timestamp) / 1_000_000);
-      return date.toLocaleDateString('en-US', { 
-          weekday: 'short',
-          month: 'short', 
-          day: '2-digit'
-      });
-  }
 </script>
 
 <div class="m-4">
   <div class="rounded-md bg-panel">
-      <div class="flex justify-between p-4 border-b border-gray-700">
-          <div class="flex items-center">
-              <span class="text-gray-400">Filter Proposals:</span>
-              <div>
-                  <TabContainer {filterType} {setActiveTab} {tabs} />
+      <div class="flex justify-center p-4 border-b border-gray-700 md:justify-between">
+          <div class="flex flex-row items-center w-full">
+              <span class="mr-2 text-gray-400 whitespace-nowrap">Proposal Filters: </span>
+              <div class="w-full md:px-3">
+                <TabContainer {filterType} {setActiveTab} {tabs} />
               </div>
           </div>
       </div>
@@ -191,11 +187,11 @@
         <div class="overflow-x-auto">
             <table class="w-full">
                 <thead>
-                    <tr class="text-left border-b border-gray-700">
-                        <th class="p-4 text-gray-400">ID</th>
-                        <th class="p-4 text-gray-400">Proposal Type</th>
-                        <th class="p-4 text-gray-400">Details</th>
-                        <th class="p-4 text-gray-400">Voting</th>
+                    <tr class="border-b border-gray-700">
+                        <th class="hidden px-6 py-3 text-left md:table-cell">ID</th>
+                        <th class="hidden px-6 py-3 text-left md:table-cell">Proposal Type</th>
+                        <th class="px-6 py-3 text-center lg:text-left">Proposal Title</th>
+                        <th class="hidden px-6 py-3 text-left lg:table-cell">Voting</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -204,12 +200,19 @@
                             class="h-16 border-b border-gray-700 cursor-pointer hover:bg-BrandGray/50" 
                             on:click={() => viewProposal(proposal)}
                         >
-                            <td class="p-4">{proposal.id[0]?.id}</td>
-                            <td class="p-4">{getProposalType(proposal)}</td>
-                            <td class="max-w-xl p-4 truncate">{proposal.proposal[0]?.title}</td>
+                            <td class="hidden px-6 py-4 md:table-cell">{proposal.id[0]?.id}</td>
+                            <td class="hidden px-6 py-4 md:table-cell">{getProposalType(proposal)}</td>
                             <td class="p-4">
+                                <div class="mb-1 text-xs text-gray-400 md:hidden">
+                                    {getProposalType(proposal)}
+                                </div>
+                                <div class="line-clamp-2 lg:text-left lg:truncate">
+                                    {proposal.proposal[0]?.title}
+                                </div>
+                            </td>
+                            <td class="hidden p-4 lg:table-cell">
                                 {#if proposal.executed_timestamp_seconds > 0n || proposal.failed_timestamp_seconds > 0n}
-                                    <div class="flex items-center justify-end gap-2 pr-2">
+                                    <div class="flex items-center gap-2 pr-2">
                                         <span class={proposal.executed_timestamp_seconds > 0n ? 'text-BrandGreen' : 'text-BrandRed'}>
                                             {proposal.executed_timestamp_seconds > 0n ? 'Adopted' : 'Rejected'}
                                         </span>
@@ -218,13 +221,15 @@
                                             color={proposal.executed_timestamp_seconds > 0n ? '#2CE3A6' : '#CF5D43'} 
                                         />
                                         <span class="text-gray-400">
-                                            {formatUnixDateToSmallReadable(Number(proposal.executed_timestamp_seconds > 0n 
-                                                ? proposal.executed_timestamp_seconds 
-                                                : proposal.failed_timestamp_seconds))}
+                                            {#if proposal.executed_timestamp_seconds > 0n}
+                                                {formatUnixDateToSmallReadable((proposal.executed_timestamp_seconds))}
+                                            {:else}
+                                                {formatUnixDateToSmallReadable((proposal.failed_timestamp_seconds))}
+                                            {/if}
                                         </span>
                                     </div>
                                 {:else}
-                                    <div class="flex items-center gap-4">
+                                    <div class="flex items-center justify-center gap-4">
                                         <div class="flex items-center gap-2">
                                           <span class="text-BrandGreen">Adopt</span>
                                             <div class="p-1 rounded-full">
@@ -254,7 +259,7 @@
                                                 />
                                             </div>
                                             <div class="flex flex-col">
-                                                <span class="text-BrandRed">{(100 - getAdoptPercentage(proposal)).toFixed(3)}%</span>
+                                                <span class="text-BrandRed">{getRejectPercentage(proposal).toFixed(3)}%</span>
                                             </div>
                                         </div>
                                     </div>
@@ -267,12 +272,12 @@
         </div>
 
         <div class="flex items-center justify-between p-4 border-t border-gray-700">
-            <div class="text-gray-400">
+            <div class="hidden text-gray-400 md:block">
                 Showing {(currentPage - 1) * itemsPerPage + 1} to {Math.min(currentPage * itemsPerPage, filteredProposals.length)} of {filteredProposals.length}
             </div>
-            <div class="flex gap-2">
+            <div class="flex justify-center w-full gap-2 md:w-auto md:justify-start">
                 <button 
-                    class="px-3 py-1 rounded bg-BrandGray disabled:opacity-50"
+                    class="hidden px-3 py-1 rounded xxs:block bg-BrandGray disabled:opacity-50"
                     disabled={currentPage === 1}
                     on:click={() => currentPage--}
                 >
@@ -287,7 +292,7 @@
                     </button>
                 {/each}
                 <button 
-                    class="px-3 py-1 rounded bg-BrandGray disabled:opacity-50"
+                    class="hidden px-3 py-1 rounded xxs:block bg-BrandGray disabled:opacity-50"
                     disabled={currentPage === totalPages}
                     on:click={() => currentPage++}
                 >

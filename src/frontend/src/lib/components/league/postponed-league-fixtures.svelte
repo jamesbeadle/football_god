@@ -1,19 +1,20 @@
 <script lang="ts">
   import { onDestroy, onMount } from "svelte";
   import { goto } from "$app/navigation";
+
   import { clubStore } from "$lib/stores/club-store";
   import { fixtureStore } from "$lib/stores/fixture-store";
   import { leagueStore } from "$lib/stores/league-store";
-  import { formatUnixTimeToTime } from "$lib/utils/helpers";
   import type { ClubDTO, FixtureDTO, FootballLeagueDTO } from "../../../../../declarations/data_canister/data_canister.did";
+  
   import RescheduleFixture from "../governance/fixture/reschedule-fixture.svelte";
-  import BadgeIcon from "$lib/icons/BadgeIcon.svelte";
+  import FixtureDisplay from "./fixture-display.svelte";
   import LocalSpinner from "../shared/local-spinner.svelte";
-  import PipsIcon from "$lib/icons/pips-icon.svelte";
+  
+  export let leagueId: number;
   
   let isLoading = true;
-
-  export let leagueId: number;
+  
   let league: FootballLeagueDTO | undefined;
   let clubs: ClubDTO[] = [];
   let fixtures: FixtureDTO[] = [];
@@ -64,8 +65,8 @@
       }
   }
 
-  function loadRescheduleFixture(fixture: FixtureDTO) {
-    selectedFixture = fixture;
+  function loadRescheduleFixture(fixtureId: number) {
+    selectedFixture = fixtures.find(f => f.id === fixtureId);
     showRescheduleFixture = true;
   }
 
@@ -78,56 +79,39 @@
 {#if isLoading}
   <LocalSpinner />
 {:else}
-  
+  {#if fixtures.length > 0}
   <div class="flex w-full">
-    <div class="w-full flex flex-col rounded-lg shadow-lg">
-      
+    <div class="flex flex-col w-full rounded-lg shadow-lg">
       {#if league}
-      
-        <div class="flex justify-between items-center w-full mb-4">
-            <h1>{league.name} Fixtures</h1>
+        <div class="flex items-center justify-between w-full mb-6">
+          <p class="px-4 md:px-2">{league.name} Postponed Fixtures</p>
         </div>
-
-        <div class="space-y-4">
+        <div class="px-3 mb-4 md:px-0 md:space-y-4">
           {#if fixtures}
               {#each fixtures.sort((a, b) => Number(a.kickOff) - Number(b.kickOff)) as fixture}
                 {@const homeClub = clubs.find(x => x.id == fixture.homeClubId)}
                 {@const awayClub = clubs.find(x => x.id == fixture.awayClubId)}
-                <div class="bg-BrandDarkGray p-4 rounded shadow-md flex flex-col md:flex-row items-center space-y-2 md:space-y-0 md:justify-between">
-                  <div class="flex items-center space-x-4">
-                    <BadgeIcon primaryColour={homeClub?.primaryColourHex} secondaryColour={homeClub?.secondaryColourHex} className="w-6 h-6" />
-                    <span class="text-white text-sm">{homeClub?.friendlyName}</span>
-                    <span class="text-white font-semibold text-xs">vs</span>
-                    <BadgeIcon primaryColour={awayClub?.primaryColourHex} secondaryColour={awayClub?.secondaryColourHex} className="w-6 h-6" />
-                    <span class="text-white text-sm">{awayClub?.friendlyName}</span>
-                  </div>
-                  <div class="text-BrandLightGray text-xs text-right md:text-left">{formatUnixTimeToTime(Number(fixture.kickOff))}</div>
-                  <div class="flex items-center space-x-2">
-                    <button
-                      class="p-2"
-                      on:click={(event) => toggleDropdown(fixture.id, event)}
-                    >
-                      <PipsIcon className="w-6" />
-                    </button>
-                    {#if dropdownVisible === fixture.id}
-                      <div class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-10">
-                        <button class="dropdown-link" on:click={() => loadRescheduleFixture(fixture)}>Reschedule Fixture</button>
-                      </div>
-                    {/if}
-                  </div>
-                </div>
-          
+                
+                <FixtureDisplay
+                  {fixture}
+                  homeClub={homeClub!}
+                  awayClub={awayClub!}
+                  {dropdownVisible}
+                  onDropdownClick={toggleDropdown}
+                  onRescheduleFixture={loadRescheduleFixture}
+                />          
               {/each}
           {/if}
-          </div>
-
-
+        </div>
       {/if}
     </div>
-  </div>
-
+    </div>
+  {:else}
+    <div class="flex justify-center p-4">
+      <p class="text-gray-400">Currently there are no postponed fixtures</p>
+    </div>
+  {/if}
   {#if selectedFixture && showRescheduleFixture}
     <RescheduleFixture visible={showRescheduleFixture} {closeModal} {selectedFixture} {selectedSeasonId}  selectedLeagueId={leagueId}/>
   {/if}
-
 {/if}

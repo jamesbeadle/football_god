@@ -21,7 +21,7 @@
 }
 
 .times-button {
-  @apply text-3xl text-white;
+  @apply text-2xl leading-none text-gray-400 hover:text-white;
 }
 
 .selection-panel {
@@ -81,12 +81,24 @@
   @apply w-full px-2 py-1 text-black rounded;
 }
 
+.content-panel {
+  @apply flex items-center justify-start flex-grow p-2 mb-4 space-x-2 text-white rounded-lg bg-panel sm:space-x-3 md:space-x-4 xs:p-3 sm:p-4;
+}
+
+.content-panel-header {
+  @apply text-gray-300 text-xxs xs:text-sm sm:text-base lg:text-sm;
+}
+
+.content-panel-stat {
+  @apply mt-2 mb-2 text-xs font-bold xs:text-sm sm:text-2xl md:text-3xl lg:text-2xl;
+}
+
 .stake-input {
   @apply w-20 p-1 text-sm text-black border rounded;
 }
 
 .dropdown-link {
-  @apply block w-full px-4 py-2 text-left text-gray-800 hover:bg-gray-100;
+  @apply block w-full px-4 py-2 text-left text-gray-400 rounded-lg hover:text-white bg-BrandGray hover:bg-BrandPurple/50;
 }
 
 .bg-info {
@@ -133,6 +145,9 @@
   @apply flex flex-row w-full font-bold text-black bg-white;
 }
 
+.page-title-header {
+  @apply flex items-center justify-between w-full p-4 my-3 md:p-0 md:px-2 md:my-0 md:mb-4;
+}
 .fixture-event-panel {
   @apply flex flex-col items-center p-6 space-y-4 rounded-t-lg bg-BrandLightGray;
 }
@@ -175,4 +190,15 @@
 
 .fixture-event-table-header-3 {
   @apply grid grid-cols-3 font-bold text-center text-black bg-white;
+}
+
+.header-badge {
+  @apply h-6 m-2 sm:h-7 md:h-8 xl:h-10 sm:my-4;
+}
+
+.vertical-divider {
+  min-width: 1px;
+  min-height: 50px;
+  background-color: white;
+  @apply self-stretch flex-shrink-0 w-px mx-2;
 }

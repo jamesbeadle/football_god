@@ -3,19 +3,17 @@
   
   import { clubStore } from "$lib/stores/club-store";
   import { leagueStore } from "$lib/stores/league-store";
-  import BadgeIcon from "$lib/icons/BadgeIcon.svelte";
-  import LocalSpinner from "../shared/local-spinner.svelte";
-  import PipsIcon from "$lib/icons/pips-icon.svelte";
   import type { ClubDTO, FootballLeagueDTO, LoanedPlayerDTO } from "../../../../../declarations/data_canister/data_canister.did";
   import { playerStore } from "$lib/stores/player-store";
+
+  import LocalSpinner from "../shared/local-spinner.svelte";
   import RecallPlayer from "../governance/player/recall-player.svelte";
-    import DataRow from "../shared/data-row.svelte";
-    import { formatUnixDateToReadable } from "$lib/utils/helpers";
+  import LoanedPlayerDisplay from "./loaned-player-display.svelte";
   
+  export let leagueId: number;
+
   let isLoading = true;
 
-
-  export let leagueId: number;
   let league: FootballLeagueDTO | undefined;
   let clubs: ClubDTO[] = [];
   let loanedPlayers: LoanedPlayerDTO[] = [];
@@ -29,7 +27,7 @@
       let leagues = await leagueStore.getLeagues();
       league = leagues.find(x => x.id == leagueId);
       clubs = await clubStore.getClubs(leagueId);
-      await getLoanedPlayers();
+      loanedPlayers = await playerStore.getLoanedPlayers(leagueId);
     } catch (error) {
       console.error("Error fetching league fixtures:", error);
     } finally {
@@ -73,9 +71,6 @@
     showRecallLoanModal = false;
   }
 
-  async function getLoanedPlayers(){
-    loanedPlayers = await playerStore.getLoanedPlayers(1);
-  }
 </script>
 
 {#if isLoading}
@@ -83,60 +78,28 @@
 {:else}
   
   <div class="flex w-full">
-    <div class="w-full flex flex-col rounded-lg shadow-lg">
-      
-      {#if league}
-      
-        <div class="flex justify-between items-center w-full mb-4">
-            <h1>{league.name} Loaned Players</h1>
+    <div class="flex flex-col w-full rounded-lg shadow-lg">
+      {#if league}      
+        <div class="flex items-center justify-between w-full mb-6">
+          <p class="px-4 md:px-2">{league.name} Loaned Players</p>
         </div>
         
-        <div class="space-y-4">
+        <div class="px-3 mb-4 space-y-4 md:px-0">
           {#if loanedPlayers}
-              {#each loanedPlayers.sort((a, b) => Number(a.clubId) - Number(b.clubId)) as player}
-                {@const club = clubs.find(x => x.id == player.clubId)}
-                {@const parentClub = clubs.find(x => x.id == player.parentClubId)}
-                <DataRow>
-                  <div class="flex-1 truncate">
-                    <div class="flex flex-col w-full">
-                      <p>{player.firstName} {player.lastName}</p>
-                      <p>Loan End Date: {formatUnixDateToReadable(Number(player.currentLoanEndDate))}</p>
-                      <div class="flex flex-row w-full">
-                        <div class="flex flex-col w-auto">
-                          <p>Current Club:</p>
-                          <span class="flex flex-row space-x-2">
-                            <BadgeIcon primaryColour={club?.primaryColourHex} secondaryColour={club?.secondaryColourHex} className="w-6 h-6" />
-                            <span class="text-white text-sm">{club?.friendlyName}</span>  
-                          </span>
-                        </div>
-                        <div class="flex flex-col w-auto">
-                          <p>Parent Club:</p>
-                          <span class="flex flex-row space-x-2">
-                            <BadgeIcon primaryColour={parentClub?.primaryColourHex} secondaryColour={parentClub?.secondaryColourHex} className="w-6 h-6" />
-                            <span class="text-white text-sm">{parentClub?.friendlyName}</span>  
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="ml-2 flex-shrink-0">
-                    <button
-                      class="p-2"
-                      on:click={(event) => toggleDropdown(player.id, event)}
-                    >
-                      <PipsIcon className="w-6" />
-                    </button>
-                    {#if dropdownVisible === player.id}
-                      <div class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-10">
-                        <button class="dropdown-link" on:click={() => loadRecallLoan(player.id)}>Recall Loan</button>
-                      </div>
-                    {/if}
-                  </div>              
-                </DataRow>
-              {/each}
+            {#each loanedPlayers.sort((a, b) => Number(a.clubId) - Number(b.clubId)) as player}
+              {@const currentClub = clubs.find(x => x.id == player.clubId)}
+              {@const parentClub = clubs.find(x => x.id == player.parentClubId)}
+              <LoanedPlayerDisplay
+                {player}
+                currentClub={currentClub!}
+                parentClub={parentClub!}
+                {dropdownVisible}
+                onDropdownClick={toggleDropdown}
+                onRecallLoan={loadRecallLoan}
+              />
+            {/each}
           {/if}
         </div>
-
       {/if}
     </div>
   </div>
@@ -144,5 +107,4 @@
   {#if selectedPlayerId > 0 && showRecallLoanModal}
     <RecallPlayer visible={showRecallLoanModal} {closeModal} selectedPlayer={loanedPlayers.find(x=>x.id == selectedPlayerId)!} />
   {/if}
-
 {/if}

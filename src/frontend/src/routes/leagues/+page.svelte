@@ -15,7 +15,7 @@
   let showUpdateLeague = false;
   let leagues: FootballLeagueDTO[] = [];
   let dropdownVisible: number | null = null;
-  let selectedLeagueId = 0;
+  let selectedLeague: FootballLeagueDTO;
 
   onMount(async () => {
     document.addEventListener("click", handleClickOutside);
@@ -52,8 +52,12 @@
   }
 
   function updateLeague(leagueId: number) {
-    selectedLeagueId = leagueId;
+    selectedLeague = getLeagueById(leagueId);
     showUpdateLeague = true;
+  }
+
+  function getLeagueById(leagueId: number) {
+    return leagues.find(league => league.id === leagueId) as FootballLeagueDTO;
   }
 
   function toggleDropdown(leagueId: number, event: MouseEvent) {
@@ -71,16 +75,14 @@
   {#if isLoading}
     <LocalSpinner />
   {:else}
-    <div class="flex items-center justify-between w-full mb-4">
-      <p class="text-lg">League Explorer</p>
+    <div class="page-title-header">
+      <p class="text-lg xxs:text-xl">League Explorer</p>
       <button class="brand-button" on:click={createNewLeague}>+ New League</button>
     </div>
     
-    <div class="space-y-4">
+    <div class="px-2 pb-4 space-y-4 mb:px-0">
       {#each leagues.sort((a, b) => Number(a.id) - Number(b.id)) as league}
-        <div
-          class="flex flex-row items-center justify-between w-full p-4 transition rounded-lg shadow bg-BrandGray hover:bg-BrandLightGray"
-        >
+        <div class="flex flex-row items-center justify-between w-full p-4 transition rounded-lg shadow bg-BrandGray hover:bg-BrandLightGray">
           <div class="flex items-center space-x-4">
             <img
               src={getImageURL(league.logo)}
@@ -134,5 +136,5 @@
 {/if}
 
 {#if showUpdateLeague}
-  <UpdateLeagueModal visible={showUpdateLeague} {closeModal} {selectedLeagueId} />
+  <UpdateLeagueModal visible={showUpdateLeague} {closeModal} {selectedLeague} />
 {/if}

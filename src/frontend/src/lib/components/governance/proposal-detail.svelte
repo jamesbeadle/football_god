@@ -1,18 +1,24 @@
 <script lang="ts">
-  import LocalSpinner from "$lib/components/shared/local-spinner.svelte";
+  import { toasts } from "$lib/stores/toasts-store";
   import { authStore } from "$lib/stores/auth-store";
   import { ActorFactory } from "../../utils/ActorFactory";
   import { SnsGovernanceCanister, SnsVote } from "@dfinity/sns";
   import type { ProposalData } from "@dfinity/sns/dist/candid/sns_governance";
-  import VotingBar from './voting-bar.svelte';
-  import Modal from "../shared/modal.svelte";
-  import { toasts } from "$lib/stores/toasts-store";
-  
 
+  import VotingBar from './voting-bar.svelte';
+  import VotingRules from "./voting-rules.svelte";
+  import Modal from "../shared/modal.svelte";
+  import LocalSpinner from "$lib/components/shared/local-spinner.svelte";
+  
   export let visible: boolean;
   export let closeModal: () => void;
-
   export let proposal: ProposalData;
+
+  const yesVotes = Number(proposal.latest_tally[0]?.yes ?? 0n);
+  const noVotes = Number(proposal.latest_tally[0]?.no ?? 0n);
+  const totalVotes = Number(proposal.latest_tally[0]?.total ?? 0n);
+  const minimumYesExercised = Number(proposal.minimum_yes_proportion_of_exercised[0]?.basis_points ?? 5000n);
+  const minimumYesTotal = Number(proposal.minimum_yes_proportion_of_total[0]?.basis_points ?? 300n);
 
   let isLoading = false;
   let showConfirm = false;
@@ -94,10 +100,6 @@
     resetForm();
     closeModal();
   }
-  
-  const yesVotes = Number(proposal.latest_tally[0]?.yes ?? 0n);
-  const noVotes = Number(proposal.latest_tally[0]?.no ?? 0n);
-  const totalVotes = Number(proposal.latest_tally[0]?.total ?? 0n);
 </script>
 
 <Modal showModal={visible} onClose={closeModal}>
@@ -105,28 +107,34 @@
     <LocalSpinner />
     <p class="pb-4 mb-4 text-center">Submitting vote...</p>
   {:else}
-    <div class="p-4 mx-4">
-      <div class="flex items-center justify-between mb-6">
-        <h1 class="text-2xl">{proposal.proposal[0]?.title}</h1>
-        <div class={`px-3 py-1 rounded-full text-sm font-medium whitespace-nowrap ml-4
-          ${proposal.executed_timestamp_seconds > 0n 
-            ? 'bg-BrandGreen/10 text-BrandGreen' 
-            : proposal.failed_timestamp_seconds > 0n 
-              ? 'bg-BrandRed/10 text-BrandRed' 
-              : 'bg-BrandPurple/10 text-BrandPurple'}`}
-        >
-          {proposal.executed_timestamp_seconds > 0n 
-            ? 'Adopted' 
-            : proposal.failed_timestamp_seconds > 0n 
-              ? 'Rejected' 
-              : 'In Voting'}
+    <div class="p-6">
+      <div class="flex justify-between mb-4">
+        <div class="flex-1">
+          <h1 class="pr-4 break-words default-header">{proposal.proposal[0]?.title}</h1>
         </div>
+        <button class="times-button" on:click={cancelModal}>&times;</button>
+      </div>
+      <div class={`inline-block px-3 py-1 mb-4 rounded-full text-sm font-medium
+        ${proposal.executed_timestamp_seconds > 0n 
+          ? 'bg-BrandGreen/10 text-BrandGreen' 
+          : proposal.failed_timestamp_seconds > 0n 
+            ? 'bg-BrandRed/10 text-BrandRed' 
+            : 'bg-BrandPurple text-white'}`}
+      >
+        #{proposal.id[0]?.id} •
+        {proposal.executed_timestamp_seconds > 0n 
+          ? 'Adopted'
+          : proposal.failed_timestamp_seconds > 0n 
+            ? 'Rejected' 
+            : 'In Voting'}
       </div>
       <div class="space-y-6">
         <div>
           <div class="mb-1 text-lg text-gray-400">Details</div>
-          <div class="text-base">{proposal.proposal[0]?.summary}</div>
+          <div class="mt-3 text-base break-words">{proposal.proposal[0]?.summary}</div>
         </div>
+
+        <h2 class="text-2xl">Voting Results</h2>
             
         <VotingBar 
           {yesVotes} 
@@ -136,6 +144,11 @@
           onVoteYes={voteYes}
           onVoteNo={voteNo}
           {isExecuted}
+        />
+
+        <VotingRules 
+          {minimumYesExercised} 
+          {minimumYesTotal} 
         />
 
         {#if showConfirm}
