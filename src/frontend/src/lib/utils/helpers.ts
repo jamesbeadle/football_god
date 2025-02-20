@@ -864,3 +864,13 @@ export function convertFixtureStatus(fixtureStatus: FixtureStatusType): number {
   if ("Finalised" in fixtureStatus) return 3;
   return 0;
 }
+
+export function convertPlayerPosition(
+  playerPosition: PlayerPosition,
+): Position {
+  if ("Goalkeeper" in playerPosition) return Position.GOALKEEPER;
+  if ("Defender" in playerPosition) return Position.DEFENDER;
+  if ("Midfielder" in playerPosition) return Position.MIDFIELDER;
+  if ("Forward" in playerPosition) return Position.FORWARD;
+  return Position.GOALKEEPER;
+}

@@ -1,4 +1,7 @@
-import type { FixtureDTO, ClubDTO} from "../../../../declarations/data_canister/data_canister.did";
+import type {
+  FixtureDTO,
+  ClubDTO,
+} from "../../../../declarations/data_canister/data_canister.did";
 
 export type FixtureWithClubs = {
   fixture: FixtureDTO;

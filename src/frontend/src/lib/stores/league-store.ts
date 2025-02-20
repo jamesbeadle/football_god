@@ -1,5 +1,8 @@
 import { writable } from "svelte/store";
-import type { FootballLeagueDTO, LeagueStatus } from "../../../../declarations/data_canister/data_canister.did";
+import type {
+  FootballLeagueDTO,
+  LeagueStatus,
+} from "../../../../declarations/data_canister/data_canister.did";
 import { LeagueService } from "$lib/services/league-service";
 
 function createLeagueStore() {

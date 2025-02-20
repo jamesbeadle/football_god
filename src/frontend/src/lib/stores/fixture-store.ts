@@ -1,11 +1,14 @@
 import { writable } from "svelte/store";
 import { FixtureService } from "../services/fixture-service";
-import type { FixtureDTO} from "../../../../declarations/data_canister/data_canister.did";
+import type { FixtureDTO } from "../../../../declarations/data_canister/data_canister.did";
 
 function createFixtureStore() {
   const { subscribe, set } = writable<FixtureDTO[]>([]);
 
-  async function getFixtures(leagueId: number, seasonId: number): Promise<FixtureDTO[]> {
+  async function getFixtures(
+    leagueId: number,
+    seasonId: number,
+  ): Promise<FixtureDTO[]> {
     return new FixtureService().getFixtures(leagueId, seasonId);
   }
 
