@@ -7,6 +7,7 @@
   import type { ClubDTO, FixtureDTO, PostponeFixtureDTO } from "../../../../../../declarations/data_canister/data_canister.did";
   import Modal from "$lib/components/shared/modal.svelte";
   import GovernanceModal from "../governance-modal.svelte";
+  import { toasts } from "$lib/stores/toasts-store";
     
   export let visible: boolean;
   export let closeModal: () => void;
@@ -72,6 +73,11 @@
 
       submitted = true;
       submitting = false;
+      toasts.addToast({
+        message: "Proposal submitted successfully",
+        type: "success",
+        duration: 3000,
+      });
     } catch (error) {
       console.error("Error raising proposal: ", error);
     } finally {

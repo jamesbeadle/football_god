@@ -7,14 +7,14 @@
 </script>
 
 <Modal showModal={visible} onClose={closeModal}>
-  <div class="mx-4 p-4">
-    <div class="flex justify-between items-center my-2">
+  <div class="p-4 mx-4">
+    <div class="flex items-center justify-between my-2">
       <h4>Confirm Fixture Data</h4>
       <button class="text-black" on:click={closeModal}>✕</button>
     </div>
-    <div class="my-5">
-      <h1>Please confirm your fixture data.</h1>
-      <p class="text-gray-600">
+    <div class="my-5 space-y-2">
+      <h1 class="text-lg text-white">Please confirm your fixture data.</h1>
+      <p class="text-base text-white/70">
         You will not be able to edit your submission and entries that differ
         from the accepted consensus data will not receive $FPL rewards. If
         consensus has already been reached for the fixture your submission will

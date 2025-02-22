@@ -3,9 +3,11 @@
 
   export let showModal: boolean;
   export let onClose: () => void;
+  export let useFixedPosition = false;
 
   let scrollY: number;
   let isMobile: boolean;
+  let isDragging = false;
 
   $: if (typeof window !== 'undefined' && showModal) {
     scrollY = window.scrollY;
@@ -43,24 +45,43 @@
 
   const handleBackdropClick = (e: MouseEvent) => {
     const modalContent = document.querySelector('[role="dialog"]');
-    if (!modalContent?.contains(e.target as Node)) {
+    const target = e.target as HTMLElement;
+    if (!modalContent?.contains(target) && !isDragging) {
       onClose();
     }
+  };
+
+  const handleMouseDown = () => {
+    isDragging = false;
+  };
+
+  const handleMouseMove = () => {
+    isDragging = true;
+  };
+
+  const handleMouseUp = () => {
+    setTimeout(() => {
+      isDragging = false;
+    }, 0);
   };
 </script>
 
 {#if showModal}
 <div
-  class="fixed inset-0 z-40 bg-black bg-opacity-50 shadow-lg"
+  class="fixed inset-0 z-50 bg-black bg-opacity-50 shadow-lg modal-backdrop"
   aria-hidden="true"
   on:click={handleBackdropClick}
+  on:mousedown={handleMouseDown}
+  on:mousemove={handleMouseMove}
+  on:mouseup={handleMouseUp}
 >
   <div 
-    class="absolute w-full max-w-lg px-4 left-1/2 md:px-0"
-    style="top: {modalTop}px; transform: translate(-50%, -50%);"
+    class="{!useFixedPosition ? 'fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2' : 'absolute'} 
+           w-full max-w-lg px-4 md:px-0"
+    style={useFixedPosition ? `top: ${modalTop}px; transform: translate(-50%, -50%); left: 50%;` : ''}
   >
     <div
-      class="bg-BrandLightGray rounded-lg w-full overflow-y-auto max-h-[80vh] md:max-h-[90vh] px-4 py-4 md:px-6"
+      class="bg-BrandLightGray rounded-lg w-full overflow-y-auto max-h-[90vh] px-4 py-4 md:px-6"
       role="dialog"
       aria-modal="true"
     >

@@ -38,7 +38,7 @@ export default {
     extend: {
       colors: {
         BrandNegative: "#FF403C",
-        BrandPositive: "#66E094",
+        BrandPositive: "#64AD54",
         BrandPurple: "#7F56F1",
         BrandPurpleDark: "#462F84",
         BrandDarkGray: "#32353F",
@@ -54,5 +54,5 @@ export default {
       },
     },
   },
-  plugins: [],
+  plugins: [require("@tailwindcss/forms")],
 };

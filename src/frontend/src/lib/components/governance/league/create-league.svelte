@@ -6,7 +6,9 @@
   import { governanceStore } from "$lib/stores/governance-store";
   import GovernanceModal from "../governance-modal.svelte";
   import FormComponent from "$lib/components/shared/form-component.svelte";
-  
+  import DropdownSelect from "$lib/components/shared/dropdown-select.svelte";
+  import { toasts } from "$lib/stores/toasts-store";
+
   export let visible: boolean;
   export let closeModal: () => void;
   
@@ -22,6 +24,25 @@
   let countries: CountryDTO[] = [];
 
   let isLoading = true;
+
+  const genderOptions = [
+    { id: 0, label: "Select a Gender" },
+    { id: 1, label: "Male" },
+    { id: 2, label: "Female" }
+  ];
+  
+  let countryOptions = countries.map(country => ({
+    id: country.id,
+    label: country.name
+  }));
+
+  function handleGenderChange(value: string | number) {
+    selectedGender = Number(value);
+  }
+
+  function handleCountryChange(value: string | number) {
+    countryId = Number(value);
+  }
 
   $: isSubmitDisabled =
     leagueName.length <= 0 ||
@@ -39,6 +60,10 @@
   onMount(async () => {
     try { 
       countries = await countryStore.getCountries();
+      countryOptions = countries.map(country => ({
+        id: country.id,
+        label: country.name
+      }));
     } catch (error) {
       console.error("Error syncing proposal data.", error);
     } finally {
@@ -92,7 +117,13 @@
     };
 
     await governanceStore.createLeague(dto);
+    
     isLoading = false;
+    toasts.addToast({
+      message: "League created successfully",
+      type: "success",
+      duration: 3000,
+    });
     resetForm();
     closeModal();
   }
@@ -124,8 +155,7 @@
     <FormComponent label="League Name:">
       <input
         type="text"
-        class="brand-input"
-        placeholder="League Name"
+        class="modal-input-box"
         bind:value={leagueName}
       />
     </FormComponent>
@@ -133,8 +163,7 @@
     <FormComponent label="Abbreviated Name:">
       <input
         type="text"
-        class="brand-input"
-        placeholder="Abbreviated Name"
+        class="modal-input-box"
         bind:value={abbreviatedName}
       />
     </FormComponent>
@@ -142,24 +171,21 @@
     <FormComponent label="Governing Body:">
       <input
         type="text"
-        class="brand-input"
-        placeholder="Governing Body"
+        class="modal-input-box"
         bind:value={governingBody}
       />
     </FormComponent>
 
-    <FormComponent label="Gender:">
-      <select bind:value={selectedGender} class="brand-dropdown">
-        <option value="0">Select Gender</option>
-        <option value="1">Male</option>
-        <option value="2">Female</option>
-      </select>
-    </FormComponent>
+    <DropdownSelect
+      value={selectedGender}
+      options={genderOptions}
+      onChange={handleGenderChange}
+    />
 
     <FormComponent label="Team Count:">
       <input
         type="number"
-        class="brand-input"
+        class="modal-input-box"
         bind:value={teamCount}
       />
     </FormComponent>
@@ -167,21 +193,17 @@
     <FormComponent label="Date Formed:">
       <input
         type="date"
-        class="brand-input"
+        class="modal-input-box"
         bind:value={dateFormed}
       />
     </FormComponent>
 
     <FormComponent label="Country:">
-      <select
-          class="brand-dropdown"
-          bind:value={countryId}
-      >
-          <option value={0}>Select League Country</option>
-          {#each countries as country}
-          <option value={country.id}>{country.name}</option>
-          {/each}
-      </select>
+      <DropdownSelect
+        value={countryId}
+        options={[{ id: 0, label: "Select League Country" }, ...countryOptions]}
+        onChange={handleCountryChange}
+      />
     </FormComponent>
 
     <FormComponent label="Logo:">

@@ -33,31 +33,29 @@
 </script>
 
 <Modal showModal={visible} onClose={closeModal}>
-  <div class="mx-4 p-4">
-    <div class="flex justify-between items-center my-2">
-      <h3 class="default-header">Select Players</h3>
+  <div class="p-4 mx-4">
+    <div class="flex items-center justify-between mb-4">
+      <div class="flex items-center space-x-3">
+        <BadgeIcon
+          className="h-8"
+          primaryColour={selectedTeam?.primaryColourHex}
+          secondaryColour={selectedTeam?.secondaryColourHex}
+          thirdColour={selectedTeam?.thirdColourHex}
+        />
+        <h3 class="text-xl font-medium">Select {selectedTeam?.friendlyName} Players</h3>
+      </div>
       <button class="times-button" on:click={closeModal}>&times;</button>
     </div>
-    <div class="flex-row flex items-center mb-4">
-      <BadgeIcon
-        className="h-6 mr-2"
-        primaryColour={selectedTeam?.primaryColourHex}
-        secondaryColour={selectedTeam?.secondaryColourHex}
-        thirdColour={selectedTeam?.thirdColourHex}
-      />
-      <p class="text-center">{selectedTeam?.friendlyName}</p>
-    </div>
-    <div class="my-2 grid grid-cols-1 sm:grid-cols-2 gap-x-2">
+    <div class="mb-4 border-b border-gray-700"></div>
+    <div class="grid grid-cols-1 my-2 gap-y-2 sm:grid-cols-2 gap-x-2">
       {#each teamPlayers.sort((a, b) => convertPlayerPosition(a.position) - convertPlayerPosition(b.position)) as player}
         {@const selected = $selectedPlayers.some((p) => p.id === player.id)}
-        <div
-          class="flex flex-row justify-between items-center p-2 border border-gray-600 text-xs"
-        >
-          <div class="form-checkbox w-1/12">
+        <div class="flex flex-row items-center justify-between p-2 space-x-1 text-xs border rounded-md border-BrandPurple/60 hover:bg-BrandPurple/10">
+          <div class="w-1/12">
             <label class="inline-flex items-center">
               <input
                 type="checkbox"
-                class="form-checkbox h-5 w-5"
+                class="w-5 h-5 mr-2 rounded-sm border-white/50 bg-BrandDarkGray text-BrandPurple/60 focus:ring-BrandPurple/60 focus:ring-offset-0"
                 checked={selected}
                 on:change={(e) => {
                   handlePlayerSelection(e, player);
@@ -65,7 +63,7 @@
               />
             </label>
           </div>
-          <div class="flex w-2/12 justify-center">
+          <div class="flex justify-center w-2/12 font-medium text-gray-400">
             <span>
               {#if Object.keys(player.position)[0] == "Goalkeeper"}GK{/if}
               {#if Object.keys(player.position)[0] == "Defender"}DF{/if}
@@ -73,7 +71,7 @@
               {#if Object.keys(player.position)[0] == "Forward"}FW{/if}
             </span>
           </div>
-          <div class="flex flex-grow">
+          <div class="flex flex-grow font-medium">
             <span>
               {`${
                 player.firstName.length > 0
@@ -86,7 +84,7 @@
       {/each}
     </div>
 
-    <div class="items-center py-3 flex space-x-4 flex justify-end">
+    <div class="flex items-center justify-end py-3 space-x-4">
       <button
         class="brand-cancel-button"
         type="button"
