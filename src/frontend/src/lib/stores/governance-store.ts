@@ -231,7 +231,6 @@ function createGovernanceStore() {
       newValue,
     );
 
-
     const encoded = IDL.encode([LoanPlayerDTO_Idl], [dto]);
     return await createProposal({
       identity: userIdentity,
