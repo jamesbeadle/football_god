@@ -3971,13 +3971,12 @@ actor Self {
   };
 
   private func postUpgradeCallback() : async () {
-    await createInitialHashes();
     await createFixtureTimers();
     await createTransferWindowStartTimers();
     await createTransferWindowEndTimers();
     await createLoanExpiredTimers();
     await createInjuryExpiredTimers();
-    await createInitialHashes(); 
+    //await createInitialHashes(); 
     //addDefaultClubsToRequiredStatus();
     //checkRequiredStatus(1); //TODO - ONLY SHOW LEAGUES ON BETTING FOR LEAGUES WITH NO CLUBS THAT REQUIRE DATA
   };
