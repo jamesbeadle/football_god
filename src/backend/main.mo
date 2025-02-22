@@ -23,7 +23,7 @@ actor Self {
   
   private var appStatus: Base.AppStatus = { 
     onHold = false;
-    version = "0.0.1";
+    version = "0.0.2";
   };  
   
   public shared query func getAppStatus() : async Result.Result<ResponseDTOs.AppStatusDTO, T.Error> {
@@ -109,7 +109,7 @@ actor Self {
   };
 
   private func postUpgradeCallback() : async (){
-    await updateProfileCanisterWasms();
+    //await updateProfileCanisterWasms();
   };
 
   private func updateProfileCanisterWasms() : async (){
