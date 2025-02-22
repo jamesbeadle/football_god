@@ -226,7 +226,7 @@ function createGovernanceStore() {
       `${player.firstName} ${player.lastName}`,
       currentClub.friendlyName,
       newClub.friendlyName,
-      formatUnixDateToSmallReadable(Number(dto.loanEndDate)),
+      formatUnixDateToSmallReadable(dto.loanEndDate),
       newValue,
     );
 
@@ -323,7 +323,7 @@ function createGovernanceStore() {
     const season = allSeasons.find((x) => x.id == dto.seasonId);
     const seasonName = season?.name ?? "Unknown Season";
     const clubsVs = `${homeClub.friendlyName} v ${awayClub.friendlyName}`;
-    const kickOff = formatUnixDateToReadable(Number(fixture.kickOff));
+    const kickOff = formatUnixDateToReadable(fixture.kickOff);
 
     const encoded = IDL.encode([SubmitFixtureDataDTO_Idl], [dto]);
 
@@ -360,7 +360,7 @@ function createGovernanceStore() {
       dto.teamCount,
       Object.keys(dto.relatedGender)[0],
       dto.governingBody,
-      formatUnixDateToSmallReadable(Number(dto.formed)),
+      formatUnixDateToSmallReadable(dto.formed),
       country.name,
     );
 
@@ -390,7 +390,7 @@ function createGovernanceStore() {
       dto.teamCount,
       Object.keys(dto.relatedGender)[0],
       dto.governingBody,
-      formatUnixDateToSmallReadable(Number(dto.formed)),
+      formatUnixDateToSmallReadable(dto.formed),
       country.name,
     );
 
@@ -429,7 +429,7 @@ function createGovernanceStore() {
       playerClub.name,
       league.name,
       (dto.valueQuarterMillions / 4).toFixed(2),
-      formatUnixDateToSmallReadable(Number(dto.dateOfBirth)),
+      formatUnixDateToSmallReadable(dto.dateOfBirth),
       country.name,
     );
 
@@ -471,7 +471,7 @@ function createGovernanceStore() {
       Object.keys(dto.position)[0],
       playerClub.name,
       league.name,
-      formatUnixDateToSmallReadable(Number(dto.dateOfBirth)),
+      formatUnixDateToSmallReadable(dto.dateOfBirth),
       country.name,
     );
 
@@ -553,7 +553,7 @@ function createGovernanceStore() {
       `${homeClub.name} v ${awayClub.name}`,
       fixture.gameweek,
       dto.updatedFixtureGameweek,
-      `${formatUnixDateToSmallReadable(Number(dto.updatedFixtureDate))} ${formatUnixTimeToTime(Number(dto.updatedFixtureDate))}`,
+      `${formatUnixDateToSmallReadable(dto.updatedFixtureDate)} ${formatUnixTimeToTime(dto.updatedFixtureDate)}`,
     );
 
     const encoded = IDL.encode([MoveFixtureDTO_Idl], [dto]);
@@ -588,7 +588,7 @@ function createGovernanceStore() {
     const { title, summary } = buildRescheduleFixtureText(
       `${homeClub.name} v ${awayClub.name}`,
       dto.updatedFixtureGameweek,
-      `${formatUnixDateToSmallReadable(Number(dto.updatedFixtureDate))} ${formatUnixTimeToTime(Number(dto.updatedFixtureDate))}`,
+      `${formatUnixDateToSmallReadable(dto.updatedFixtureDate)} ${formatUnixTimeToTime(dto.updatedFixtureDate)}`,
     );
 
     const encoded = IDL.encode([RescheduleFixtureDTO_Idl], [dto]);
