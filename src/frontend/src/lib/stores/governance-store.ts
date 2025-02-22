@@ -79,6 +79,7 @@ import {
 import {
   formatUnixDateToReadable,
   formatUnixDateToSmallReadable,
+  formatUnixDateToSmallReadableDate,
   formatUnixTimeToTime,
 } from "$lib/utils/helpers";
 import { leagueStore } from "./league-store";
@@ -226,12 +227,12 @@ function createGovernanceStore() {
       `${player.firstName} ${player.lastName}`,
       currentClub.friendlyName,
       newClub.friendlyName,
-      formatUnixDateToSmallReadable(dto.loanEndDate),
+      formatUnixDateToSmallReadableDate(dto.loanEndDate),
       newValue,
     );
 
-    const encoded = IDL.encode([LoanPlayerDTO_Idl], [dto]);
 
+    const encoded = IDL.encode([LoanPlayerDTO_Idl], [dto]);
     return await createProposal({
       identity: userIdentity,
       functionId: 52000n,

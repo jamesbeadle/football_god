@@ -33,8 +33,6 @@
           if($selectedFixtureType == 1 && fixture.awayClubId === club.id) { return true; }
         } 
       ).sort((a, b) => a.fixture.gameweek - b.fixture.gameweek)
-
-      $: console.log(filteredFixtures);
   
     onMount(async () => {
         //await storeManager.syncStores();

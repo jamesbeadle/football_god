@@ -4373,7 +4373,6 @@ actor Self {
               if (Array.size(nextFixtureGameweekFixturesBeforeNow) > 0) {
                 activeGameweek := nextFixture.gameweek;
                 unplayedGameweek := activeGameweek + 1;
-                completedGameweek := activeGameweek - 1;
                 let _ = await notifyAppsOfGameweekStarting(leagueStatus.leagueId, season.id, activeGameweek);
                 setLeagueGameweek(leagueStatus.leagueId, unplayedGameweek, activeGameweek, completedGameweek, nextFixtureGameweekFixtures[0].kickOff);
               };
