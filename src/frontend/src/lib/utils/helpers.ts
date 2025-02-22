@@ -56,6 +56,29 @@ export function formatUnixDateToSmallReadableDate(unixSeconds: bigint) {
   return new Intl.DateTimeFormat("en-UK", options).format(date);
 }
 
+export function formatUnixDateToReadableNumber(unixNano: number) {
+  const date = new Date(unixNano / 1000000);
+  const options: Intl.DateTimeFormatOptions = {
+    weekday: "long",
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  };
+
+  return new Intl.DateTimeFormat("en-UK", options).format(date);
+}
+
+export function formatUnixDateToSmallReadableNumber(unixNano: number) {
+  const date = new Date(unixNano / 1000000);
+  const options: Intl.DateTimeFormatOptions = {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+  };
+
+  return new Intl.DateTimeFormat("en-UK", options).format(date);
+}
+
 export function getCountdownTime(unixNano: number) {
   const targetDate = new Date(unixNano / 1000000);
   const now = new Date();
@@ -92,6 +115,20 @@ export function formatUnixTimeToTime(unixNano: bigint): string {
   };
 
   return new Intl.DateTimeFormat("en-GB", options).format(date);
+}
+
+export function formatUnixTimeToTimeNumber(unixTimeNano: number): string {
+  const unixTimeMillis = unixTimeNano / 1000000;
+  const date = new Date(unixTimeMillis);
+
+  let hours = date.getHours();
+  const minutes = date.getMinutes();
+  const ampm = hours >= 12 ? "PM" : "AM";
+  hours = hours % 12;
+  hours = hours ? hours : 12;
+  const minutesStr = minutes < 10 ? "0" + minutes : minutes;
+
+  return `${hours}:${minutesStr} ${ampm}`;
 }
 
 export function formatUnixToDateInputValue(unixNano: number) {

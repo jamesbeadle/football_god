@@ -102,7 +102,7 @@
   }
 </script>
 
-<Modal showModal={visible} onClose={closeModal}>
+<Modal showModal={visible} onClose={closeModal} useFixedPosition={true}>
   {#if isLoading}
     <LocalSpinner />
     <p class="pb-4 mb-4 text-center">Submitting vote...</p>

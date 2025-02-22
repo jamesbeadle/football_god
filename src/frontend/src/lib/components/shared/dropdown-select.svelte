@@ -19,11 +19,13 @@
         : options;
     $: selectedOption = allOptions.find(opt => opt.id === value);
 
-    function toggleDropdown() {
+    function toggleDropdown(e: MouseEvent) {
+        e.stopPropagation();
         isDropdownOpen = !isDropdownOpen;
     }
 
-    function selectOption(optionId: string | number) {
+    function selectOption(optionId: string | number, e: MouseEvent) {
+        e.stopPropagation();
         onChange(optionId);
         isDropdownOpen = false;
     }
@@ -46,7 +48,7 @@
 <div class="relative w-full px-3 mt-1 md:px-0" bind:this={dropdownElement}>
     <button
         class="flex items-center justify-between w-full rounded-lg {compact ? 'p-3 bg-BrandGray  hover:bg-BrandGray/50' : 'px-2 py-3 hover:bg-BrandLightGray'}"
-        on:click={toggleDropdown}
+        on:click={e => toggleDropdown(e)}
     >
         <span class="text-white">{selectedOption?.label ?? placeholder}</span>
         <span class="w-4 h-4">
@@ -64,7 +66,7 @@
                 <li class="mb-1">
                     <button 
                         class={`w-full px-4 py-2 text-left rounded-lg flex items-center justify-between ${value === option.id ? "text-white" : "text-gray-400 hover:text-white hover:bg-BrandPurple"}`}
-                        on:click={() => selectOption(option.id)}
+                        on:click={e => selectOption(option.id, e)}
                     >
                         {option.label}
                         {#if value === option.id}

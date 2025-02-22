@@ -2,12 +2,16 @@
   import { countryStore } from "$lib/stores/country-store";
   import { onMount } from "svelte";
   import { governanceStore } from "$lib/stores/governance-store";
-  import { getDateFromBigInt, getImageURL } from "$lib/utils/helpers";
+  import {getImageURL } from "$lib/utils/helpers";
   import type { CountryDTO, FootballLeagueDTO, Gender, UpdateLeagueDTO } from "../../../../../../declarations/data_canister/data_canister.did";
+  import { toasts } from "$lib/stores/toasts-store";
+  
   import Modal from "$lib/components/shared/modal.svelte";
   import GovernanceModal from "../governance-modal.svelte";
   import FormComponent from "$lib/components/shared/form-component.svelte";
-  
+  import DropdownSelect from "$lib/components/shared/dropdown-select.svelte";
+
+
   export let visible: boolean;
   export let closeModal: () => void;
   export let selectedLeague: FootballLeagueDTO;
@@ -15,8 +19,7 @@
   let leagueName = "";
   let abbreviatedName = "";
   let governingBody = "";
-  let gender: Gender = { "Male" : null };
-  let genderString = "Male";
+  let selectedGender = 1;
   let dateFormed = "";
   let countryId = 0;
   let logo: Uint8Array | number[];
@@ -42,20 +45,42 @@
       leagueName = selectedLeague.name;
       abbreviatedName = selectedLeague.abbreviation;
       governingBody = selectedLeague.governingBody;
-      gender = selectedLeague.relatedGender;
-      genderString = getGender(gender);
+      selectedGender = "Male" in selectedLeague.relatedGender ? 1 : 2;
       const date = new Date(Number(selectedLeague.formed) / 1_000_000);
       dateFormed = date.toISOString().split('T')[0];
       countryId = selectedLeague.countryId;
       logo = selectedLeague.logo;
       teamCount = selectedLeague.teamCount;
       countries = await countryStore.getCountries();
+      countryOptions = countries.map(country => ({
+        id: country.id,
+        label: country.name
+      }));
     } catch (error) {
       console.error("Error syncing proposal data.", error);
     } finally {
       isLoading = false;
     }
   });
+
+  const genderOptions = [
+    { id: 0, label: "Select a Gender" },
+    { id: 1, label: "Male" },
+    { id: 2, label: "Female" }
+  ];
+  
+  let countryOptions = countries.map(country => ({
+    id: country.id,
+    label: country.name
+  }));
+
+  function handleGenderChange(value: string | number) {
+    selectedGender = Number(value);
+  }
+
+  function handleCountryChange(value: string | number) {
+    countryId = Number(value);
+  }
 
   async function handleFileChange(event: Event) {
     const input = event.target as HTMLInputElement;
@@ -74,7 +99,7 @@
     fileInput.click();
   }
 
-  function convertFileToUint8Array(file: Blob): Promise<Uint8Array> {
+  async function convertFileToUint8Array(file: Blob): Promise<Uint8Array> {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
       reader.onloadend = () => {
@@ -88,12 +113,8 @@
     });
   }
 
-  function getGender(gender: Gender) {
-    return "Male" in gender ? "Male" : "Female";
-  }
-
-  function getGenderFromValue(value: string) {
-    return value === "Male" ? { "Male": null } : { "Female": null };
+  function getGenderFromValue(value: number): Gender {
+    return value === 1 ? { "Male": null } : { "Female": null };
   }
 
   async function confirmProposal() {
@@ -103,10 +124,10 @@
         name: leagueName,
         abbreviation: abbreviatedName,
         governingBody,
-        relatedGender: getGenderFromValue(genderString),
+        relatedGender: getGenderFromValue(selectedGender),
         formed: BigInt(new Date(dateFormed).getTime() * 1_000_000),
         countryId,
-        logo: logo,
+        logo: Array.isArray(logo) ? logo : Array.from(logo),
         teamCount: teamCount
     };
 
@@ -120,7 +141,7 @@
     leagueName = "";
     abbreviatedName = "";
     governingBody = "";
-    gender = { "Male": null };
+    selectedGender = 1;
     dateFormed = "";
     countryId = 0;
     logo = [];
@@ -139,8 +160,7 @@
     <FormComponent label="League Name:">
       <input
         type="text"
-        class="brand-input"
-        placeholder="League Name"
+        class="modal-input-box"
         bind:value={leagueName}
       />
     </FormComponent>
@@ -148,8 +168,7 @@
     <FormComponent label="Abbreviated Name:">
       <input
         type="text"
-        class="brand-input"
-        placeholder="Abbreviated Name"
+        class="modal-input-box"
         bind:value={abbreviatedName}
       />
     </FormComponent>
@@ -157,26 +176,21 @@
     <FormComponent label="Governing Body:">
       <input
         type="text"
-        class="brand-input"
-        placeholder="Governing Body"
+        class="modal-input-box"
         bind:value={governingBody}
       />
     </FormComponent>
         
-    <FormComponent label="Gender:">
-      <select 
-        class="brand-dropdown" 
-        bind:value={genderString}
-      >
-        <option value="Male">Male</option>
-        <option value="Female">Female</option>
-      </select>
-    </FormComponent>
+    <DropdownSelect
+      value={selectedGender}
+      options={genderOptions}
+      onChange={handleGenderChange}
+    />
 
     <FormComponent label="Team Count:">
       <input
         type="number"
-        class="brand-input"
+        class="modal-input-box"
         bind:value={teamCount}
       />
     </FormComponent>
@@ -184,21 +198,17 @@
     <FormComponent label="Date Formed:">
       <input
         type="date"
-        class="brand-input"
+        class="modal-input-box"
         bind:value={dateFormed}
       />
     </FormComponent>
 
     <FormComponent label="Country:">
-      <select
-          class="brand-dropdown"
-          bind:value={countryId}
-      >
-          <option value={0} disabled selected>Select League Country</option>
-          {#each countries as country}
-            <option value={country.id}>{country.name}</option>
-          {/each}
-      </select>
+      <DropdownSelect
+        value={countryId}
+        options={[{ id: 0, label: "Select League Country" }, ...countryOptions]}
+        onChange={handleCountryChange}
+      />
     </FormComponent>
 
     <FormComponent label="Logo:">

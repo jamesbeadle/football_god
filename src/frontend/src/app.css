@@ -50,7 +50,7 @@
 }
 
 .bg-panel-color {
-  @apply rounded bg-BrandDarkGray border-BrandGray;
+  @apply rounded bg-BrandDarkGray border-BrandPurple/60;
 }
 
 .active-tab {
@@ -194,6 +194,10 @@
 
 .header-badge {
   @apply h-6 m-2 sm:h-7 md:h-8 xl:h-10 sm:my-4;
+}
+
+.modal-input-box {
+  @apply w-full px-4 py-2 mt-2 transition-colors duration-200 border rounded-md border-white/50 bg-BrandDarkGray focus:ring-0 focus:border-BrandPurple/60;
 }
 
 .vertical-divider {
