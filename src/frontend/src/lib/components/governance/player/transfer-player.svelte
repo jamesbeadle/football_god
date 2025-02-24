@@ -8,6 +8,8 @@
   import Modal from "$lib/components/shared/modal.svelte";
   import GovernanceModal from "../governance-modal.svelte";
   import FormComponent from "$lib/components/shared/form-component.svelte";
+  import DropdownSelect from "$lib/components/shared/dropdown-select.svelte";
+  import { toasts } from "$lib/stores/toasts-store";
   
   export let visible: boolean;
   export let closeModal: () => void;
@@ -75,8 +77,17 @@
 
       submitted = true;
       submitting = false;
+      toasts.addToast({
+        message: "Transfer player proposal created successfully",
+        type: "success",
+        duration: 3000
+      });
     } catch (error) {
       console.error("Error raising proposal: ", error);
+      toasts.addToast({
+        message: "Error submitting proposal",
+        type: "error",
+      });
     } finally {
       isLoading = false;
       visible = false;
@@ -100,39 +111,37 @@
   <GovernanceModal title={"Transfer Player"} {cancelModal} {confirmProposal} {isLoading} {isSubmitDisabled}>
     <p class="my-2">Transfer {selectedPlayer.firstName} {selectedPlayer.lastName}</p>
     <FormComponent label="Transfer to league:">
-      <select
-        class="brand-dropdown"
-        bind:value={transferLeagueId}
-      >
-        <option value={0}>Select League</option>
-        {#each transferLeagues as league}
-          <option value={league.id}>{league.name}</option>
-        {/each}
-      </select>
+      <DropdownSelect
+        options={transferLeagues.map((league: FootballLeagueDTO) => ({ id: league.id, label: league.name }))}
+        value={transferLeagueId}
+        onChange={(value: string | number) => {
+          transferLeagueId = Number(value);
+        }}
+        scrollOnOpen={true}
+      />
     </FormComponent>
         
     {#if transferLeagueId > 0}
       <FormComponent label="Transfer to club:">
-        <select
-          class="brand-dropdown"
-          bind:value={transferClubId}
-        >
-          <option value={0}>Select Club</option>
-          {#each transferClubs as club}
-            <option value={club.id}>{club.friendlyName}</option>
-          {/each}
-        </select>
+        <DropdownSelect
+          options={transferClubs.map((club: ClubDTO) => ({ id: club.id, label: club.friendlyName }))}
+          value={transferClubId}
+          onChange={(value: string | number) => {
+            transferClubId = Number(value);
+          }}
+          scrollOnOpen={true}
+        />
       </FormComponent>
 
       {#if transferClubId > 0}
         <FormComponent label="New Value (£ millions):">
-          <input class="brand-input" type="number" step="0.25" min="0.25" max="250" bind:value={newValueMillions} />    
+          <input class="modal-input-box" type="number" step="0.25" min="0.25" max="250" bind:value={newValueMillions} />    
         </FormComponent>
 
         <FormComponent label="New Shirt Number:">
           <input
             type="number"
-            class="brand-input"
+            class="modal-input-box"
             placeholder="Shirt Number"
             min="1"
             max="99"

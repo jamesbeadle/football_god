@@ -5,9 +5,11 @@
   import { governanceStore } from "$lib/stores/governance-store";
   import { convertDateInputToUnixNano, isError } from "$lib/utils/helpers";
   import type { ClubDTO, FootballLeagueDTO, LoanPlayerDTO, PlayerDTO } from "../../../../../../declarations/data_canister/data_canister.did";
+  import { toasts } from "$lib/stores/toasts-store";
   import Modal from "$lib/components/shared/modal.svelte";
   import GovernanceModal from "../governance-modal.svelte";
   import FormComponent from "$lib/components/shared/form-component.svelte";
+  import DropdownSelect from "$lib/components/shared/dropdown-select.svelte";
   
   export let visible: boolean;
   export let closeModal: () => void;
@@ -73,8 +75,17 @@
 
       submitted = true;
       submitting = false;
+      toasts.addToast({
+        message: "Loan player proposal submitted successfully",
+        type: "success",
+        duration: 3000
+      });
     } catch (error) {
       console.error("Error raising proposal: ", error);
+      toasts.addToast({
+        message: "Error submitting proposal",
+        type: "error",
+      });
     } finally {
       isLoading = false;
       visible = false;
@@ -100,40 +111,41 @@
     <p class="my-2">Loan {selectedPlayer.firstName} {selectedPlayer.lastName}</p>
 
     <FormComponent label="Select loan league:">
-      <select
-        class="brand-dropdown"
-        bind:value={loanLeagueId}
-      >
-        <option value={0}>Select League</option>
-        {#each loanLeagues as league}
-          <option value={league.id}>{league.name}</option>
-        {/each}
-      </select>
-
-    </FormComponent>
-        
+    <div class="z-20">
+        <DropdownSelect
+          options={loanLeagues.map(league => ({ id: league.id, label: league.name }))}
+          value={loanLeagueId}
+          onChange={(value: string | number) => {
+            loanLeagueId = Number(value);
+          }}
+          scrollOnOpen={true}
+        />
+    </div>
+  </FormComponent>
+    
     {#if loanLeagueId > 0}
-      <FormComponent label="Select loan club:">
-        <select
-          class="brand-dropdown"
-          bind:value={loanClubId}
-        >
-          <option value={0}>Select Club</option>
-          {#each loanClubs as club}
-            <option value={club.id}>{club.friendlyName}</option>
-          {/each}
-        </select>
-      </FormComponent>
+        <div class="z-10 space-y-3">
+          <FormComponent label="Select loan club:">
+            <DropdownSelect
+              options={loanClubs.map(club => ({ id: club.id, label: club.friendlyName }))}
+              value={loanClubId}
+              onChange={(value: string | number) => {
+                loanClubId = Number(value);
+              }}
+              scrollOnOpen={true}
+            />
+          </FormComponent>
 
-      {#if loanClubId > 0}
-        <FormComponent label="Loan End Date:">
-          <input class="brand-input" type="date" bind:value={date} />
-        </FormComponent>
+          {#if loanClubId > 0}
+            <FormComponent label="Loan End Date:">
+              <input class="modal-input-box" type="date" bind:value={date} />
+            </FormComponent>
 
-        <FormComponent label="New Value (£ millions):">
-          <input class="brand-input" type="number" step="0.25" min="0.25" max="250" bind:value={newValueMillions} />
-        </FormComponent>
-      {/if}
+            <FormComponent label="New Value (£ millions):">
+              <input class="modal-input-box" type="number" step="0.25" min="0.25" max="250" bind:value={newValueMillions} />
+            </FormComponent>
+          {/if}
+        </div>
     {/if}
   </GovernanceModal>
 </Modal>

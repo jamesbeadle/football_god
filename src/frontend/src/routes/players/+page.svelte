@@ -88,6 +88,9 @@
       leagues = await leagueStore.getLeagues();
       clubs = await clubStore.getClubs(selectedLeagueId);
       await fetchPlayersForLeague(selectedLeagueId);
+      if (typeof window !== 'undefined') {
+        document.addEventListener('click', handleClickOutside);
+      }
     } catch (error) {
       console.error("Error fetching data:", error);
     } finally {
@@ -96,15 +99,15 @@
   });
 
   onMount(() => {
+    if (typeof window !== 'undefined') {
       document.addEventListener('click', handleClickOutside);
-
-      return () => {
-          document.removeEventListener('click', handleClickOutside);
-      };
+    }
   });
 
   onDestroy(() => {
-    document.removeEventListener('click', handleClickOutside);
+    if (typeof window !== 'undefined') {
+      document.removeEventListener('click', handleClickOutside);
+    }
   });
 
   async function fetchPlayersForLeague(leagueId: number) {
