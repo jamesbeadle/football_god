@@ -8,7 +8,10 @@
   import Modal from "$lib/components/shared/modal.svelte";
   import GovernanceModal from "../governance-modal.svelte";
   import FormComponent from "$lib/components/shared/form-component.svelte";
-    import { governanceStore } from "$lib/stores/governance-store";
+  import { governanceStore } from "$lib/stores/governance-store";
+  import DropdownSelect from "$lib/components/shared/dropdown-select.svelte";
+  import { toasts } from "$lib/stores/toasts-store";
+  import { isError } from "$lib/utils/helpers";
 
   export let visible: boolean;
   export let closeModal: () => void;
@@ -24,6 +27,12 @@
   let nationalityId = 0;
   
   let isLoading = false;
+  let positions = [
+    { id: 1, name: "Goalkeeper" },
+    { id: 2, name: "Defender" },
+    { id: 3, name: "Midfielder" },
+    { id: 4, name: "Forward" }
+  ];
 
   $: isSubmitDisabled =
     nationalityId <= 0 ||
@@ -88,21 +97,41 @@
         break;
 
     }
-    
-    let dto: UpdatePlayerDTO = {
-      leagueId: selectedPlayer.leagueId,
-      playerId: selectedPlayer.id,
-      position,
-      firstName,
-      lastName,
-      shirtNumber,
-      dateOfBirth: convertDateInputToUnixNano(dateOfBirth),
-      nationality: nationalityId
-    };
-    
-    await governanceStore.updatePlayer(dto);
+    try{
+      let dto: UpdatePlayerDTO = {
+        leagueId: selectedPlayer.leagueId,
+        playerId: selectedPlayer.id,
+        position,
+        firstName,
+        lastName,
+        shirtNumber,
+        dateOfBirth: convertDateInputToUnixNano(dateOfBirth),
+        nationality: nationalityId
+      };
 
-    closeModal();
+      let result = await governanceStore.updatePlayer(dto);
+      if (isError(result)) {
+        isLoading = false;
+        console.error("Error submitting proposal");
+        return;
+      }
+
+      toasts.addToast({
+        message: "Update player proposal created successfully",
+        type: "success",
+        duration: 3000
+      });
+    } catch (error) {
+      console.error("Error submitting proposal", error);
+      toasts.addToast({
+        message: "Error submitting proposal",
+        type: "error",
+      });
+    } finally {
+      isLoading = false;
+      visible = false;
+      closeModal();
+    }
   }
 
   function cancelModal() {
@@ -125,22 +154,19 @@
   <GovernanceModal title={"Update Player"} {cancelModal} {confirmProposal} {isLoading} {isSubmitDisabled}>
 
     <FormComponent label="Select Position:">
-      <select
-        class="brand-dropdown"
-        bind:value={selectedPosition}
-      >
-        <option value={0}>Select Position</option>
-        <option value={1}>Goalkeeper</option>
-        <option value={2}>Defender</option>
-        <option value={3}>Midfielder</option>
-        <option value={4}>Forward</option>
-      </select>
+      <DropdownSelect
+        options={positions.map((position: any) => ({ id: position.id, label: position.name }))}
+        value={selectedPosition}
+        onChange={(value: string | number) => {
+          selectedPosition = Number(value);
+        }}
+      />
     </FormComponent>
 
     <FormComponent label="First Name:">
       <input
         type="text"
-        class="brand-input"
+        class="modal-input-box"
         placeholder="First Name"
         bind:value={firstName}
       />
@@ -149,7 +175,7 @@
     <FormComponent label="Last Name:">
       <input
         type="text"
-        class="brand-input"
+        class="modal-input-box"
         placeholder="Last Name"
         bind:value={lastName}
       />
@@ -158,7 +184,7 @@
     <FormComponent label="Shirt Number:">
       <input
         type="number"
-        class="brand-input"
+        class="modal-input-box"
         placeholder="Shirt Number"
         min="1"
         max="99"
@@ -171,20 +197,18 @@
       <input
         type="date"
         bind:value={dateOfBirth}
-        class="brand-input"
+        class="modal-input-box"
       />
     </FormComponent>
 
     <FormComponent label="Nationality:">
-      <select
-        class="brand-dropdown"
-        bind:value={nationalityId}
-      >
-        <option value={0}>Select Nationality</option>
-        {#each countries as country}
-          <option value={country.id}>{country.name}</option>
-        {/each}
-      </select>
+      <DropdownSelect
+        options={countries.map((country: CountryDTO) => ({ id: country.id, label: country.name }))}
+        value={nationalityId}
+        onChange={(value: string | number) => {
+          nationalityId = Number(value);
+        }}
+      />
     </FormComponent>
   </GovernanceModal>
 </Modal>

@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { ClubDTO, LoanedPlayerDTO } from "../../../../../declarations/data_canister/data_canister.did";
-  import { formatUnixDateToReadable, formatUnixDateToSmallReadable } from "$lib/utils/helpers";
+  import { formatUnixDateToReadableNumber, formatUnixDateToSmallReadableDate } from "$lib/utils/helpers";
   import PlayerDisplay from "../player/player-display.svelte";
   import BadgeIcon from "$lib/icons/BadgeIcon.svelte";
 
@@ -22,10 +22,10 @@
   <div class="flex flex-col" slot="additional-info">
     <span class="text-xs text-white">Loan Expires</span>
     <span class="text-sm font-medium text-white md:hidden">
-      {formatUnixDateToSmallReadable(player.currentLoanEndDate)}
+      {formatUnixDateToSmallReadableDate(player.currentLoanEndDate)}
     </span>
     <span class="hidden text-sm font-medium text-white md:block">
-      {formatUnixDateToReadable(player.currentLoanEndDate)}
+      {formatUnixDateToReadableNumber(Number(player.currentLoanEndDate))}
     </span>
   </div>
 

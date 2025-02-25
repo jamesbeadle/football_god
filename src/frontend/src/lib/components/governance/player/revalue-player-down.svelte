@@ -5,6 +5,7 @@
   import { governanceStore } from "$lib/stores/governance-store";
   import { isError } from "$lib/utils/helpers";
   import GovernanceModal from "../governance-modal.svelte";
+  import { toasts } from "$lib/stores/toasts-store";
 
   export let visible: boolean;
   export let closeModal: () => void;
@@ -50,10 +51,17 @@
 
       submitted = true;
       submitting = false;
-
-
+      toasts.addToast({
+        message: "Revalue player proposal created successfully",
+        type: "success",
+        duration: 3000
+      });
     } catch (error) {
       console.error("Error raising proposal: ", error);
+      toasts.addToast({
+        message: "Error submitting proposal",
+        type: "error",
+      });
     } finally {
       isLoading = false;
       visible = false;

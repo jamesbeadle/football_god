@@ -81,7 +81,7 @@
                     id="minValue"
                     bind:value={minValue}
                     step="0.25"
-                    class="w-full p-3 text-white transition-colors rounded-lg bg-BrandGray hover:bg-BrandGray/50 focus:outline-none focus:ring-2 focus:ring-BrandPurple"
+                    class="w-full p-3 text-white transition-colors rounded-lg bg-BrandGray hover:bg-BrandGray/50 focus:outline-none focus:ring-0 focus:border-BrandPurple/60"
                     placeholder="0"
                     on:input={onValueChange}
                 />
@@ -96,7 +96,7 @@
                     id="maxValue"
                     bind:value={maxValue}
                     step="0.25"
-                    class="w-full p-3 text-white transition-colors rounded-lg bg-BrandGray hover:bg-BrandGray/50 focus:outline-none focus:ring-2 focus:ring-BrandPurple"
+                    class="w-full p-3 text-white transition-colors rounded-lg bg-BrandGray hover:bg-BrandGray/50 focus:outline-none focus:ring-0 focus:border-BrandPurple/60"
                     placeholder="150"
                     on:input={onValueChange}
                 />
@@ -112,7 +112,7 @@
                     type="text"
                     id="searchSurname"
                     bind:value={searchSurname}
-                    class="w-full p-3 text-white transition-colors rounded-lg bg-BrandGray hover:bg-BrandGray/50 focus:outline-none focus:ring-2 focus:ring-BrandPurple"
+                    class="w-full p-3 text-white transition-colors rounded-lg bg-BrandGray hover:bg-BrandGray/50 focus:outline-none focus:ring-0 focus:border-BrandPurple/60"
                     placeholder="Enter surname"
                     on:input={onSearch}
                     on:keypress={onKeyPress}

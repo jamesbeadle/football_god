@@ -36,7 +36,7 @@
       playerId: selectedPlayer.id,
       newValueQuarterMillions: newValueMillions * 4
     };
-    await playerStore.recallLoan(selectedPlayer.parentLeagueId, dto);
+    //await playerStore.recallLoan(selectedPlayer.parentLeagueId, dto);
     let result = await governanceStore.recallPlayer(dto);
     if (isError(result)) {
       isLoading = false;
@@ -61,7 +61,7 @@
   <GovernanceModal title={"Recall Player"} {cancelModal} {confirmProposal} {isLoading} {isSubmitDisabled}>
     <p>Recall loan for {selectedPlayer.firstName} {selectedPlayer.lastName}</p>
     <FormComponent label="New Value (£ millions):">
-      <input class="brand-input" type="number" step="0.25" min="0.25" max="250" bind:value={newValueMillions} />
+      <input class="modal-input-box" type="number" step="0.25" min="0.25" max="250" bind:value={newValueMillions} />
     </FormComponent>
   </GovernanceModal>
 </Modal>

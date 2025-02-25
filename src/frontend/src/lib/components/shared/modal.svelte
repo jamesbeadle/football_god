@@ -68,7 +68,7 @@
 
 {#if showModal}
 <div
-  class="fixed inset-0 z-50 bg-black bg-opacity-50 shadow-lg modal-backdrop"
+  class="fixed inset-0 z-50 overflow-visible bg-black bg-opacity-50 shadow-lg modal-backdrop"
   aria-hidden="true"
   on:click={handleBackdropClick}
   on:mousedown={handleMouseDown}
