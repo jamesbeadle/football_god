@@ -11,6 +11,7 @@ module AppTypes {
         #CanisterCreateError;
         #CanisterFull;
         #InvalidData;
+        #FailedInterCanisterCall;
     };
 
     public type Profile = {

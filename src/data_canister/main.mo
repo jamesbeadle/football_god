@@ -94,7 +94,7 @@ actor Self {
 
   private stable var leagueRelegationPairs : [(FootballTypes.LeagueId, FootballTypes.LeagueId)] = [];
 
-  private stable var leagueClubsRequiringData: [(FootballTypes.LeagueId, [FootballTypes.ClubId])] = [];
+  private stable var leagueClubsRequiringData : [(FootballTypes.LeagueId, [FootballTypes.ClubId])] = [];
 
   private func callerAllowed(caller : Principal) : Bool {
     let foundCaller = Array.find<Base.PrincipalId>(
@@ -132,7 +132,6 @@ actor Self {
     assert not Principal.isAnonymous(caller);
     return getPrivateBettableFixtures(leagueId, seasonId);
   };
-
 
   public shared ({ caller }) func getVerifiedClubs(leagueId : FootballTypes.LeagueId) : async Result.Result<[ResponseDTOs.ClubDTO], T.Error> {
     assert callerAllowed(caller);
@@ -248,7 +247,7 @@ actor Self {
   };
 
   private func getPrivateBettableFixtures(leagueId : FootballTypes.LeagueId, seasonId : FootballTypes.SeasonId) : Result.Result<[ResponseDTOs.FixtureDTO], T.Error> {
-    
+
     let filteredLeagueSeasons = Array.find<(FootballTypes.LeagueId, [FootballTypes.Season])>(
       leagueSeasons,
       func(leagueSeason : (FootballTypes.LeagueId, [FootballTypes.Season])) : Bool {
@@ -268,37 +267,54 @@ actor Self {
 
         switch (filteredSeason) {
           case (?foundSeason) {
-            let foundIncompleteLeagueClubIds = Array.find<(FootballTypes.LeagueId, [FootballTypes.ClubId])>(leagueClubsRequiringData, func(entry: (FootballTypes.LeagueId, [FootballTypes.ClubId])){
-              entry.0 == leagueId
-            });
-            
-            switch(foundIncompleteLeagueClubIds){
-              case (?foundClubIds){
+            let foundIncompleteLeagueClubIds = Array.find<(FootballTypes.LeagueId, [FootballTypes.ClubId])>(
+              leagueClubsRequiringData,
+              func(entry : (FootballTypes.LeagueId, [FootballTypes.ClubId])) {
+                entry.0 == leagueId;
+              },
+            );
 
-                let fixturesWithoutIncompleteClubs = List.filter<FootballTypes.Fixture>(foundSeason.fixtures, func(fixtureEntry: FootballTypes.Fixture){
-                  return fixtureEntry.status != #Finalised and not Option.isSome(Array.find<FootballTypes.ClubId>(foundClubIds.1, func(incompleteClubId: FootballTypes.ClubId) : Bool {
-                    fixtureEntry.homeClubId == incompleteClubId or fixtureEntry.awayClubId == incompleteClubId;
-                  }));
-                });
+            switch (foundIncompleteLeagueClubIds) {
+              case (?foundClubIds) {
 
-                return #ok(List.toArray<ResponseDTOs.FixtureDTO>(List.map<FootballTypes.Fixture, ResponseDTOs.FixtureDTO>(fixturesWithoutIncompleteClubs, 
-                  func(fixtureEntry: FootballTypes.Fixture){
-                  return {
-                    awayClubId = fixtureEntry.awayClubId;
-                    awayGoals = fixtureEntry.awayGoals;
-                    events = List.toArray(fixtureEntry.events);
-                    gameweek = fixtureEntry.gameweek;
-                    highestScoringPlayerId = fixtureEntry.highestScoringPlayerId;
-                    homeClubId = fixtureEntry.homeClubId;
-                    homeGoals = fixtureEntry.homeGoals;
-                    id = fixtureEntry.id;
-                    kickOff = fixtureEntry.kickOff;
-                    seasonId = fixtureEntry.seasonId;
-                    status = fixtureEntry.status;
-                  }
-                })));
+                let fixturesWithoutIncompleteClubs = List.filter<FootballTypes.Fixture>(
+                  foundSeason.fixtures,
+                  func(fixtureEntry : FootballTypes.Fixture) {
+                    return fixtureEntry.status != #Finalised and not Option.isSome(
+                      Array.find<FootballTypes.ClubId>(
+                        foundClubIds.1,
+                        func(incompleteClubId : FootballTypes.ClubId) : Bool {
+                          fixtureEntry.homeClubId == incompleteClubId or fixtureEntry.awayClubId == incompleteClubId;
+                        },
+                      )
+                    );
+                  },
+                );
+
+                return #ok(
+                  List.toArray<ResponseDTOs.FixtureDTO>(
+                    List.map<FootballTypes.Fixture, ResponseDTOs.FixtureDTO>(
+                      fixturesWithoutIncompleteClubs,
+                      func(fixtureEntry : FootballTypes.Fixture) {
+                        return {
+                          awayClubId = fixtureEntry.awayClubId;
+                          awayGoals = fixtureEntry.awayGoals;
+                          events = List.toArray(fixtureEntry.events);
+                          gameweek = fixtureEntry.gameweek;
+                          highestScoringPlayerId = fixtureEntry.highestScoringPlayerId;
+                          homeClubId = fixtureEntry.homeClubId;
+                          homeGoals = fixtureEntry.homeGoals;
+                          id = fixtureEntry.id;
+                          kickOff = fixtureEntry.kickOff;
+                          seasonId = fixtureEntry.seasonId;
+                          status = fixtureEntry.status;
+                        };
+                      },
+                    )
+                  )
+                );
               };
-              case (null){}
+              case (null) {};
             };
           };
           case (null) {};
@@ -385,31 +401,36 @@ actor Self {
 
     let upToDateLeaguesBuffer = Buffer.fromArray<ResponseDTOs.FootballLeagueDTO>([]);
 
-    for(league in Iter.fromArray(leagues)){
-      let leagueClubsRequiringDataResult = Array.find(leagueClubsRequiringData, 
-        func(entry: (FootballTypes.LeagueId, [FootballTypes.ClubId])):Bool{
-        entry.0 == league.id;
-      });
+    for (league in Iter.fromArray(leagues)) {
+      let leagueClubsRequiringDataResult = Array.find(
+        leagueClubsRequiringData,
+        func(entry : (FootballTypes.LeagueId, [FootballTypes.ClubId])) : Bool {
+          entry.0 == league.id;
+        },
+      );
 
-      switch(leagueClubsRequiringDataResult){
-        case (?leagueClubsRequiringDataEntry){
-          let foundLeagueClubs = Array.find<(FootballTypes.LeagueId, [FootballTypes.Club])>(leagueClubs, func(entry: (FootballTypes.LeagueId, [FootballTypes.Club])) : Bool{
-            entry.0 == league.id
-          });
+      switch (leagueClubsRequiringDataResult) {
+        case (?leagueClubsRequiringDataEntry) {
+          let foundLeagueClubs = Array.find<(FootballTypes.LeagueId, [FootballTypes.Club])>(
+            leagueClubs,
+            func(entry : (FootballTypes.LeagueId, [FootballTypes.Club])) : Bool {
+              entry.0 == league.id;
+            },
+          );
 
-          switch(foundLeagueClubs){
-            case (?leagueClubsResult){
+          switch (foundLeagueClubs) {
+            case (?leagueClubsResult) {
 
-              if(Array.size(leagueClubsRequiringDataEntry.1) < Array.size(leagueClubsResult.1)){
+              if (Array.size(leagueClubsRequiringDataEntry.1) < Array.size(leagueClubsResult.1)) {
                 upToDateLeaguesBuffer.add(league);
               }
 
             };
-            case (null){}
+            case (null) {};
           };
         };
-        case (null){}
-      }
+        case (null) {};
+      };
     };
 
     return #ok(Buffer.toArray(upToDateLeaguesBuffer));
@@ -435,18 +456,21 @@ actor Self {
 
   //get league table
 
-  public shared query ({ caller }) func getLeagueTable(leagueId: FootballTypes.LeagueId, seasonId: FootballTypes.SeasonId) : async Result.Result<FootballTypes.LeagueTable, T.Error> {
+  public shared query ({ caller }) func getLeagueTable(leagueId : FootballTypes.LeagueId, seasonId : FootballTypes.SeasonId) : async Result.Result<FootballTypes.LeagueTable, T.Error> {
     assert not Principal.isAnonymous(caller);
-    let leagueTable = Array.find(leagueTables, func(entry: FootballTypes.LeagueTable) : Bool {
-      entry.leagueId == leagueId and entry.seasonId == seasonId;
-    });
-    switch(leagueTable){
-      case (?table){
+    let leagueTable = Array.find(
+      leagueTables,
+      func(entry : FootballTypes.LeagueTable) : Bool {
+        entry.leagueId == leagueId and entry.seasonId == seasonId;
+      },
+    );
+    switch (leagueTable) {
+      case (?table) {
         return #ok(table);
       };
-      case (null){
+      case (null) {
         return #err(#NotFound);
-      }
+      };
     };
   };
 
@@ -3977,25 +4001,30 @@ actor Self {
     await createLoanExpiredTimers();
     await createInjuryExpiredTimers();
     await checkRollOverPickTeam();
-    //await createInitialHashes(); 
+    //await createInitialHashes();
     //addDefaultClubsToRequiredStatus();
     //checkRequiredStatus(1); //TODO - ONLY SHOW LEAGUES ON BETTING FOR LEAGUES WITH NO CLUBS THAT REQUIRE DATA
   };
 
-  private func addDefaultClubsToRequiredStatus(){
+  private func addDefaultClubsToRequiredStatus() {
     let leagueClubsRequiringDataBuffer = Buffer.fromArray<(FootballTypes.LeagueId, [FootballTypes.ClubId])>([]);
-    for(league in Iter.fromArray(leagueClubs)){
-      leagueClubsRequiringDataBuffer.add(league.0, 
-        Array.map<FootballTypes.Club, FootballTypes.ClubId>(league.1, func(entry: FootballTypes.Club){
-        return entry.id
-      }));
+    for (league in Iter.fromArray(leagueClubs)) {
+      leagueClubsRequiringDataBuffer.add(
+        league.0,
+        Array.map<FootballTypes.Club, FootballTypes.ClubId>(
+          league.1,
+          func(entry : FootballTypes.Club) {
+            return entry.id;
+          },
+        ),
+      );
     };
     leagueClubsRequiringData := Buffer.toArray(leagueClubsRequiringDataBuffer);
   };
 
-  private func createInitialHashes() : async (){
+  private func createInitialHashes() : async () {
 
-    for(league in Iter.fromArray(leagueStatuses)){
+    for (league in Iter.fromArray(leagueStatuses)) {
       let _ = await updateDataHash(league.leagueId, "clubs");
       let _ = await updateDataHash(league.leagueId, "seasons");
       let _ = await updateDataHash(league.leagueId, "fixtures");
@@ -4529,9 +4558,9 @@ actor Self {
   };
 
   private func setFixtureToComplete() : async () {
-    var completedFixtureLeagueId: Nat16 = 0;
-    var completeFixtureSeasonId: Nat16 = 0;
-    var compeltedFixtureGameweek: Nat8 = 0;
+    var completedFixtureLeagueId : Nat16 = 0;
+    var completeFixtureSeasonId : Nat16 = 0;
+    var compeltedFixtureGameweek : Nat8 = 0;
 
     leagueSeasons := Array.map<(FootballTypes.LeagueId, [FootballTypes.Season]), (FootballTypes.LeagueId, [FootballTypes.Season])>(
       leagueSeasons,
@@ -4605,12 +4634,12 @@ actor Self {
       },
     );
 
-    if(completedFixtureLeagueId > 0 and completeFixtureSeasonId > 0 and compeltedFixtureGameweek > 0){
+    if (completedFixtureLeagueId > 0 and completeFixtureSeasonId > 0 and compeltedFixtureGameweek > 0) {
       let _ = await notifyAppsOfFixtureComplete(completedFixtureLeagueId, completeFixtureSeasonId, compeltedFixtureGameweek);
     };
   };
 
-  private func checkRequiredStatus(leagueId: FootballTypes.LeagueId){
+  private func checkRequiredStatus(leagueId : FootballTypes.LeagueId) {
     let filteredLeagueSeasons = Array.find<(FootballTypes.LeagueId, [FootballTypes.Season])>(
       leagueSeasons,
       func(currentLeagueSeason : (FootballTypes.LeagueId, [FootballTypes.Season])) : Bool {
@@ -4640,28 +4669,32 @@ actor Self {
             switch (filteredSeason) {
               case (?foundSeason) {
 
-                let unfinalisedFixturesInPast = List.filter<FootballTypes.Fixture>(foundSeason.fixtures, func(entry: FootballTypes.Fixture){
-                  entry.kickOff < Time.now() and entry.status != #Finalised;
-                });
+                let unfinalisedFixturesInPast = List.filter<FootballTypes.Fixture>(
+                  foundSeason.fixtures,
+                  func(entry : FootballTypes.Fixture) {
+                    entry.kickOff < Time.now() and entry.status != #Finalised;
+                  },
+                );
 
                 let clubIdBuffer = Buffer.fromArray<FootballTypes.ClubId>([]);
 
-                for(fixture in Iter.fromList(unfinalisedFixturesInPast)){
+                for (fixture in Iter.fromList(unfinalisedFixturesInPast)) {
                   clubIdBuffer.add(fixture.homeClubId);
                   clubIdBuffer.add(fixture.awayClubId);
-                };              
-                
-                leagueClubsRequiringData := Array.map<(FootballTypes.LeagueId, [FootballTypes.ClubId]), 
-                  (FootballTypes.LeagueId, [FootballTypes.ClubId])>(leagueClubsRequiringData, 
-                    func(entry: (FootballTypes.LeagueId, [FootballTypes.ClubId])){
-                      if(entry.0 == leagueId){
-                        Buffer.removeDuplicates<FootballTypes.ClubId>(clubIdBuffer, Nat16.compare);
-                        let clubIds = Buffer.toArray<FootballTypes.ClubId>(clubIdBuffer);
-                        return (entry.0, clubIds)
-                      } else {
-                        return entry;
-                      }
-                });
+                };
+
+                leagueClubsRequiringData := Array.map<(FootballTypes.LeagueId, [FootballTypes.ClubId]), (FootballTypes.LeagueId, [FootballTypes.ClubId])>(
+                  leagueClubsRequiringData,
+                  func(entry : (FootballTypes.LeagueId, [FootballTypes.ClubId])) {
+                    if (entry.0 == leagueId) {
+                      Buffer.removeDuplicates<FootballTypes.ClubId>(clubIdBuffer, Nat16.compare);
+                      let clubIds = Buffer.toArray<FootballTypes.ClubId>(clubIdBuffer);
+                      return (entry.0, clubIds);
+                    } else {
+                      return entry;
+                    };
+                  },
+                );
               };
               case (null) {};
             };
@@ -4673,19 +4706,20 @@ actor Self {
     };
   };
 
-  private func addRequireStatusToClub(leagueId: FootballTypes.LeagueId, nextClubId: FootballTypes.LeagueId){
-    leagueClubsRequiringData := Array.map<(FootballTypes.LeagueId, [FootballTypes.ClubId]), 
-      (FootballTypes.LeagueId, [FootballTypes.ClubId])>(leagueClubsRequiringData, 
-        func(entry: (FootballTypes.LeagueId, [FootballTypes.ClubId])){
-          if(entry.0 == leagueId){
-            let clubIdBuffer = Buffer.fromArray<FootballTypes.ClubId>([]);
-            clubIdBuffer.add(nextClubId);
-            return (entry.0, Buffer.toArray(clubIdBuffer));
-          } else {
-            return entry;
-          }
-    });
-    
+  private func addRequireStatusToClub(leagueId : FootballTypes.LeagueId, nextClubId : FootballTypes.LeagueId) {
+    leagueClubsRequiringData := Array.map<(FootballTypes.LeagueId, [FootballTypes.ClubId]), (FootballTypes.LeagueId, [FootballTypes.ClubId])>(
+      leagueClubsRequiringData,
+      func(entry : (FootballTypes.LeagueId, [FootballTypes.ClubId])) {
+        if (entry.0 == leagueId) {
+          let clubIdBuffer = Buffer.fromArray<FootballTypes.ClubId>([]);
+          clubIdBuffer.add(nextClubId);
+          return (entry.0, Buffer.toArray(clubIdBuffer));
+        } else {
+          return entry;
+        };
+      },
+    );
+
     let filteredLeagueSeasons = Array.find<(FootballTypes.LeagueId, [FootballTypes.Season])>(
       leagueSeasons,
       func(currentLeagueSeason : (FootballTypes.LeagueId, [FootballTypes.Season])) : Bool {
@@ -4715,19 +4749,20 @@ actor Self {
             switch (filteredSeason) {
               case (?foundSeason) {
 
-                let unfinalisedFixturesInPast = List.filter<FootballTypes.Fixture>(foundSeason.fixtures, func(entry: FootballTypes.Fixture){
-                  entry.kickOff < Time.now() and entry.status != #Finalised;
-                });
+                let unfinalisedFixturesInPast = List.filter<FootballTypes.Fixture>(
+                  foundSeason.fixtures,
+                  func(entry : FootballTypes.Fixture) {
+                    entry.kickOff < Time.now() and entry.status != #Finalised;
+                  },
+                );
 
                 let clubIdBuffer = Buffer.fromArray<FootballTypes.ClubId>([]);
 
-                for(fixture in Iter.fromList(unfinalisedFixturesInPast)){
+                for (fixture in Iter.fromList(unfinalisedFixturesInPast)) {
                   clubIdBuffer.add(fixture.homeClubId);
                   clubIdBuffer.add(fixture.awayClubId);
-                };              
+                };
 
-                
-                
               };
               case (null) {};
             };
@@ -4882,14 +4917,20 @@ actor Self {
   };
 
   //Application Notification Functions
-
   private func notifyAppsOfLoan(leagueId : FootballTypes.LeagueId, playerId : FootballTypes.PlayerId) : async Result.Result<(), T.Error> {
     for (leagueApplication in Iter.fromArray(leagueApplications)) {
       if (leagueApplication.0 == leagueId) {
         let application_canister = actor (leagueApplication.1) : actor {
-          notifyAppsOfLoan : (leagueId: FootballTypes.LeagueId, playerId : FootballTypes.PlayerId) -> async Result.Result<(), T.Error>;
+          notifyAppsOfLoan : (leagueId : FootballTypes.LeagueId, playerId : FootballTypes.PlayerId) -> async Result.Result<(), T.Error>;
         };
-        let _ = await application_canister.notifyAppsOfLoan(leagueId, playerId);
+
+        try {
+          let _ = await application_canister.notifyAppsOfLoan(leagueId, playerId);
+
+        } catch _ {
+
+          return #err(#FailedInterCanisterCall);
+        };
       };
     };
     return #ok();
@@ -4899,9 +4940,13 @@ actor Self {
     for (leagueApplication in Iter.fromArray(leagueApplications)) {
       if (leagueApplication.0 == leagueId) {
         let application_canister = actor (leagueApplication.1) : actor {
-          notifyAppsOfLoanExpired : (leagueId: FootballTypes.LeagueId, playerId : FootballTypes.PlayerId) -> async Result.Result<(), T.Error>;
+          notifyAppsOfLoanExpired : (leagueId : FootballTypes.LeagueId, playerId : FootballTypes.PlayerId) -> async Result.Result<(), T.Error>;
         };
-        let _ = await application_canister.notifyAppsOfLoanExpired(leagueId, playerId);
+        try {
+          let _ = await application_canister.notifyAppsOfLoanExpired(leagueId, playerId);
+        } catch _ {
+          return #err(#FailedInterCanisterCall);
+        };
       };
     };
     return #ok();
@@ -4911,9 +4956,13 @@ actor Self {
     for (leagueApplication in Iter.fromArray(leagueApplications)) {
       if (leagueApplication.0 == leagueId) {
         let application_canister = actor (leagueApplication.1) : actor {
-          notifyAppsOfTransfer : (leagueId: FootballTypes.LeagueId, playerId : FootballTypes.PlayerId) -> async Result.Result<(), T.Error>;
+          notifyAppsOfTransfer : (leagueId : FootballTypes.LeagueId, playerId : FootballTypes.PlayerId) -> async Result.Result<(), T.Error>;
         };
-        let _ = await application_canister.notifyAppsOfTransfer(leagueId, playerId);
+        try {
+          let _ = await application_canister.notifyAppsOfTransfer(leagueId, playerId);
+        } catch _ {
+          return #err(#FailedInterCanisterCall);
+        };
       };
     };
     return #ok();
@@ -4923,9 +4972,13 @@ actor Self {
     for (leagueApplication in Iter.fromArray(leagueApplications)) {
       if (leagueApplication.0 == leagueId) {
         let application_canister = actor (leagueApplication.1) : actor {
-          notifyAppsOfRetirement : (leagueId: FootballTypes.LeagueId, playerId : FootballTypes.PlayerId) -> async Result.Result<(), T.Error>;
+          notifyAppsOfRetirement : (leagueId : FootballTypes.LeagueId, playerId : FootballTypes.PlayerId) -> async Result.Result<(), T.Error>;
         };
-        let _ = await application_canister.notifyAppsOfRetirement(leagueId, playerId);
+        try {
+          let _ = await application_canister.notifyAppsOfRetirement(leagueId, playerId);
+        } catch _ {
+          return #err(#FailedInterCanisterCall);
+        };
       };
     };
     return #ok();
@@ -4935,9 +4988,13 @@ actor Self {
     for (leagueApplication in Iter.fromArray(leagueApplications)) {
       if (leagueApplication.0 == leagueId) {
         let application_canister = actor (leagueApplication.1) : actor {
-          notifyAppsOfPositionChange : (leagueId: FootballTypes.LeagueId, playerId : FootballTypes.PlayerId) -> async Result.Result<(), T.Error>;
+          notifyAppsOfPositionChange : (leagueId : FootballTypes.LeagueId, playerId : FootballTypes.PlayerId) -> async Result.Result<(), T.Error>;
         };
-        let _ = await application_canister.notifyAppsOfPositionChange(leagueId, playerId);
+        try {
+          let _ = await application_canister.notifyAppsOfPositionChange(leagueId, playerId);
+        } catch _ {
+          return #err(#FailedInterCanisterCall);
+        };
       };
     };
     return #ok();
@@ -4949,9 +5006,13 @@ actor Self {
     for (leagueApplication in Iter.fromArray(leagueApplications)) {
       if (leagueApplication.0 == leagueId) {
         let application_canister = actor (leagueApplication.1) : actor {
-          notifyAppsOfGameweekStarting : (leagueId: FootballTypes.LeagueId, seasonId : FootballTypes.SeasonId, gameweek : FootballTypes.GameweekNumber) -> async Result.Result<(), T.Error>;
+          notifyAppsOfGameweekStarting : (leagueId : FootballTypes.LeagueId, seasonId : FootballTypes.SeasonId, gameweek : FootballTypes.GameweekNumber) -> async Result.Result<(), T.Error>;
         };
-        let _ = await application_canister.notifyAppsOfGameweekStarting(leagueId, seasonId, gameweek);
+        try {
+          let _ = await application_canister.notifyAppsOfGameweekStarting(leagueId, seasonId, gameweek);
+        } catch _ {
+          return #err(#FailedInterCanisterCall);
+        };
       };
     };
     return #ok();
@@ -4961,9 +5022,13 @@ actor Self {
     for (leagueApplication in Iter.fromArray(leagueApplications)) {
       if (leagueApplication.0 == leagueId) {
         let application_canister = actor (leagueApplication.1) : actor {
-          notifyAppsOfFixtureComplete : (leagueId: FootballTypes.LeagueId, seasonId : FootballTypes.SeasonId, gameweek : FootballTypes.GameweekNumber) -> async Result.Result<(), T.Error>;
+          notifyAppsOfFixtureComplete : (leagueId : FootballTypes.LeagueId, seasonId : FootballTypes.SeasonId, gameweek : FootballTypes.GameweekNumber) -> async Result.Result<(), T.Error>;
         };
-        let _ = await application_canister.notifyAppsOfFixtureComplete(leagueId, seasonId, gameweek);
+        try {
+          let _ = await application_canister.notifyAppsOfFixtureComplete(leagueId, seasonId, gameweek);
+        } catch _ {
+          return #err(#FailedInterCanisterCall);
+        };
       };
     };
     return #ok();
@@ -4973,9 +5038,13 @@ actor Self {
     for (leagueApplication in Iter.fromArray(leagueApplications)) {
       if (leagueApplication.0 == leagueId) {
         let application_canister = actor (leagueApplication.1) : actor {
-          notifyAppsOfFixtureFinalised : (leagueId: FootballTypes.LeagueId, seasonId : FootballTypes.SeasonId, gameweek : FootballTypes.GameweekNumber) -> async Result.Result<(), T.Error>;
+          notifyAppsOfFixtureFinalised : (leagueId : FootballTypes.LeagueId, seasonId : FootballTypes.SeasonId, gameweek : FootballTypes.GameweekNumber) -> async Result.Result<(), T.Error>;
         };
-        let _ = await application_canister.notifyAppsOfFixtureFinalised(leagueId, seasonId, gameweek);
+        try {
+          let _ = await application_canister.notifyAppsOfFixtureFinalised(leagueId, seasonId, gameweek);
+        } catch _ {
+          return #err(#FailedInterCanisterCall);
+        };
       };
     };
     return #ok();
@@ -4985,9 +5054,13 @@ actor Self {
     for (leagueApplication in Iter.fromArray(leagueApplications)) {
       if (leagueApplication.0 == leagueId) {
         let application_canister = actor (leagueApplication.1) : actor {
-          notifyAppsOfSeasonComplete : (leagueId: FootballTypes.LeagueId, seasonId : FootballTypes.SeasonId) -> async Result.Result<(), T.Error>;
+          notifyAppsOfSeasonComplete : (leagueId : FootballTypes.LeagueId, seasonId : FootballTypes.SeasonId) -> async Result.Result<(), T.Error>;
         };
-        let _ = await application_canister.notifyAppsOfSeasonComplete(leagueId, seasonId);
+        try {
+          let _ = await application_canister.notifyAppsOfSeasonComplete(leagueId, seasonId);
+        } catch _ {
+          return #err(#FailedInterCanisterCall);
+        };
       };
     };
     return #ok();
