@@ -1,9 +1,11 @@
 <script lang="ts">
   import { toasts } from "$lib/stores/toasts-store";
   import { authStore } from "$lib/stores/auth-store";
-  import { ActorFactory } from "../../utils/ActorFactory";
   import { SnsGovernanceCanister, SnsVote } from "@dfinity/sns";
   import type { ProposalData } from "@dfinity/sns/dist/candid/sns_governance";
+  import { createAgent } from "@dfinity/utils";
+  import { Principal } from "@dfinity/principal";
+  import type { OptionIdentity } from "$lib/types/identity";
 
   import VotingBar from './voting-bar.svelte';
   import VotingRules from "./voting-rules.svelte";
@@ -23,6 +25,7 @@
   let isLoading = false;
   let showConfirm = false;
   let vote = "";
+  let identity: OptionIdentity
   $: isExecuted = Number(proposal.executed_timestamp_seconds) > 0 || Number(proposal.failed_timestamp_seconds) > 0;
 
   function voteYes() {
@@ -40,19 +43,34 @@
   async function confirmVote() {
     isLoading = true;
     try {
-      const identityActor: any = await ActorFactory.createActor(
-        authStore,
-        process.env.SNS_GOVERNANCE_CANISTER_ID ?? ""
-      );
+      authStore.subscribe((auth) => (identity = auth.identity));
+      if (!identity) return;
+      const agent = await createAgent({
+        identity,
+        host: import.meta.env.VITE_AUTH_PROVIDER_URL,
+        fetchRootKey: process.env.DFX_NETWORK === "local",
+      });
 
-      const { listNeurons, registerVote } =
-        SnsGovernanceCanister.create(identityActor);
-      let neurons = await listNeurons({ certified: false });
+      const { listNeurons, registerVote } = SnsGovernanceCanister.create({
+          canisterId: Principal.fromText(
+          process.env.SNS_GOVERNANCE_CANISTER_ID ?? "",
+        ),
+        agent,
+      });
 
-      neurons.forEach((neuron) => {
+      const userNeurons = await listNeurons({
+        principal: identity.getPrincipal(),
+        limit: 10,
+        beforeNeuronId: { id: [] },
+      });
+      userNeurons.forEach((neuron) => {
         const neuronId = neuron.id[0];
 
         if (!neuronId) {
+          toasts.addToast({
+            type: "error",
+            message: "No neurons found for this principal; cannot vote",
+          });
           return;
         }
 
