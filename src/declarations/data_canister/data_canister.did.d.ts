@@ -72,6 +72,7 @@ export type Error =
   | { InvalidData: null }
   | { AlreadyExists: null }
   | { CanisterCreateError: null }
+  | { FailedInterCanisterCall: null }
   | { CanisterFull: null };
 export interface FixtureDTO {
   id: number;

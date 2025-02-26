@@ -7,6 +7,7 @@ export const idlFactory = ({ IDL }) => {
     InvalidData: IDL.Null,
     AlreadyExists: IDL.Null,
     CanisterCreateError: IDL.Null,
+    FailedInterCanisterCall: IDL.Null,
     CanisterFull: IDL.Null,
   });
   const Result = IDL.Variant({ ok: IDL.Null, err: Error });

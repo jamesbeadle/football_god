@@ -551,6 +551,7 @@ type Error =
    CanisterCreateError;
    CanisterFull;
    DecodeError;
+   FailedInterCanisterCall;
    InvalidData;
    NotAllowed;
    NotAuthorized;
