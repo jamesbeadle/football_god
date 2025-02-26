@@ -11,10 +11,13 @@
   import VotingRules from "./voting-rules.svelte";
   import Modal from "../shared/modal.svelte";
   import LocalSpinner from "$lib/components/shared/local-spinner.svelte";
+  import ArrowUp from "$lib/icons/ArrowUp.svelte";
+  import ArrowDown from "$lib/icons/ArrowDown.svelte";
   
   export let visible: boolean;
   export let closeModal: () => void;
   export let proposal: ProposalData;
+  export let onVoteComplete: () => void = () => {};
 
   const yesVotes = Number(proposal.latest_tally[0]?.yes ?? 0n);
   const noVotes = Number(proposal.latest_tally[0]?.no ?? 0n);
@@ -26,6 +29,8 @@
   let showConfirm = false;
   let vote = "";
   let identity: OptionIdentity
+  let showDetails = true;
+  
   $: isExecuted = Number(proposal.executed_timestamp_seconds) > 0 || Number(proposal.failed_timestamp_seconds) > 0;
 
   function voteYes() {
@@ -63,12 +68,12 @@
         limit: 10,
         beforeNeuronId: { id: [] },
       });
-      userNeurons.forEach((neuron) => {
+       userNeurons.forEach((neuron) => {
         const neuronId = neuron.id[0];
 
         if (!neuronId) {
           toasts.addToast({
-            type: "error",
+            type: "info",
             message: "No neurons found for this principal; cannot vote",
           });
           return;
@@ -94,7 +99,7 @@
       toasts.addToast({
         message: `Successfully voted ${vote}`,
         type: "success",
-        duration: 2000,
+        duration: 5000,
       });
     } catch (error) {
       console.error(error);
@@ -107,6 +112,7 @@
     isLoading = false;
     resetForm();
     closeModal();
+    onVoteComplete();
   }
 
   function resetForm() {
@@ -148,8 +154,20 @@
       </div>
       <div class="space-y-6">
         <div>
-          <div class="mb-1 text-lg text-gray-400">Details</div>
-          <div class="mt-3 text-base break-words">{proposal.proposal[0]?.summary}</div>
+          <button 
+            class="flex items-center justify-between w-full gap-2 text-xl transition-colors {!showDetails ? 'text-gray-400 hover:text-white' : 'text-white hover:text-gray-400'} "
+            on:click|stopPropagation={() => showDetails = !showDetails}
+          >
+            <span>Details</span>
+            {#if showDetails}
+              <ArrowUp className="w-6 h-6 {showDetails ? 'fill-white hover:fill-gray-400' : 'fill-gray-400 hover:fill-white'}" />
+            {:else}
+              <ArrowDown className="w-6 h-6 {showDetails ? 'fill-white hover:fill-gray-400' : 'fill-gray-400 hover:fill-white'}" />
+            {/if}
+          </button>
+          {#if showDetails}
+            <div class="mt-3 text-base break-words">{proposal.proposal[0]?.summary}</div>
+          {/if}
         </div>
 
         <h2 class="text-2xl">Voting Results</h2>
@@ -170,15 +188,15 @@
         />
 
         {#if showConfirm}
-          <div class="absolute inset-0 z-[60] flex items-center justify-center bg-black/50">
-            <div class="p-6 rounded-lg bg-BrandBlack">
+          <div class="absolute inset-0 z-[60] flex items-center justify-center bg-black/40 backdrop-blur-sm">
+            <div class="p-6 border-2 rounded-lg shadow-lg bg-BrandGray border-BrandPurple/60">
               <p class="mb-4 text-xl text-white">
                 Are you sure you want to vote {vote} on proposal {proposal.id[0]?.id}?
               </p>
               <div class="flex justify-center gap-4">
                 <button
-                  class="px-4 py-2 rounded bg-BrandRed hover:opacity-90"
-                  on:click={cancelModal}
+                  class="px-4 py-2 rounded bg-BrandError hover:bg-BrandError/80"
+                  on:click|stopPropagation={resetForm}
                 >
                   Cancel
                 </button>
