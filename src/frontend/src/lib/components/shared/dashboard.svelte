@@ -1,5 +1,10 @@
 <script lang="ts">
     import { onMount } from "svelte";
+    import { page } from "$app/stores";
+    import { authStore, type AuthSignInParams } from "$lib/stores/auth-store";
+    import { goto } from "$app/navigation";
+    import { userStore } from "$lib/stores/user-store";
+
     import GovernanceIcon from "$lib/icons/side-nav/governance-icon.svelte";
     import HomeIcon from "$lib/icons/side-nav/home-icon.svelte";
     import PlayersIcon from "$lib/icons/side-nav/players-icon.svelte";
@@ -10,11 +15,10 @@
     import MenuIcon from "$lib/icons/MenuIcon.svelte";
     import XIcon from "$lib/icons/XIcon.svelte";
     import GithubIcon from "$lib/icons/GithubIcon.svelte";
-    import { page } from "$app/stores";
-    import { authStore, type AuthSignInParams } from "$lib/stores/auth-store";
+    import IcpLogo from "$lib/icons/IcpLogo.svelte";
+    
     import Disconnect from "$lib/icons/Disconnect.svelte";
-    import { goto } from "$app/navigation";
-    import { userStore } from "$lib/stores/user-store";
+    
     import Terms from "../terms/terms.svelte";
     import FullScreenSpinner from "./full-screen-spinner.svelte";
     import ProfileIcon from "$lib/icons/ProfileIcon.svelte";
@@ -369,20 +373,35 @@
 
         {/if}
     {:else}
-        <div class="flex flex-col items-center justify-center min-h-screen px-4 bg-black">
-            <LogoIcon className="w-24 h-24 mb-6" />
-            <h1 class="mb-2 text-4xl font-bold text-white">
-                FootballGod
-            </h1>
-            <p class="mb-6 text-gray-300">
-                Football data, owned by the fans.
-            </p>
-            <button 
-                class="brand-button"
-                on:click={handleLogin}
-            >
-                Connect Internet Indentity
-            </button>
+        <div class="flex flex-col w-full min-h-screen p-1 md:flex-row bg-BrandGrayBg">
+            <div class="w-full bg-center bg-cover md:w-1/2" style="background-image: url('background.jpg')">
+                <div class="flex items-end h-full p-4 bg-gradient-to-t from-black/70 to-transparent">
+                    <h1 class="w-full py-32 text-2xl font-bold text-center text-white md:py-1">
+                        A Fully Decentralised Dataset Owned By The Fans
+                    </h1>
+                </div>
+            </div>
+            <div class="flex flex-col items-center justify-center w-full p-4 text-white md:w-1/2 bg-BrandGrayBg">
+                <div class="items-center w-full max-w-sm">
+                    <div class="flex items-center justify-center mb-6">
+                        <LogoIcon className="w-24 h-24" />
+                    </div>
+                    <h2 class="mb-4 text-2xl text-center cta-text">
+                        FootballGod
+                    </h2>
+                    <p class="mb-6 text-center text-BrandGrayShade6">
+                        Football data, owned by the fans.
+                    </p>
+                    <div class="space-y-4">
+                        <button 
+                            class="flex items-center justify-center w-full py-2 text-white rounded bg-BrandGrayShade1 hover:bg-BrandGrayShade3"
+                            on:click={handleLogin}
+                        >
+                          <span class="mr-2"><IcpLogo /></span> Internet Identity
+                        </button>
+                    </div>
+                </div>
+            </div>
         </div>
     {/if}
 {/if}

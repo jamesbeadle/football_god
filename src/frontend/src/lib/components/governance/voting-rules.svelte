@@ -11,18 +11,18 @@
 <div class="mt-2 text-gray-400">
   <button 
     class="flex items-center justify-between w-full gap-2 text-xl transition-colors hover:text-white"
-    on:click={() => showRules = !showRules}
+    on:click|stopPropagation={() => showRules = !showRules}
   >
-    <span>Voting Rules</span>
+    <span class="{!showRules ? 'text-gray-400 hover:text-white' : 'text-white hover:text-gray-400'}">Voting Rules</span>
     {#if showRules}
-      <ArrowUp className="w-6 h-6" />
+      <ArrowUp className="w-6 h-6 {showRules ? 'fill-white hover:fill-gray-400' : 'fill-gray-400 hover:fill-white'}" />
     {:else}
-      <ArrowDown className="w-6 h-6" />
+      <ArrowDown className="w-6 h-6 {showRules ? 'fill-white hover:fill-gray-400' : 'fill-gray-400 hover:fill-white'}" />
     {/if}
   </button>
   
   {#if showRules}
-    <div class="mt-4 space-y-4 transition-all">
+    <div class="mt-4 space-y-4 transition-all transition-duration-1000">
       <div class="space-y-2">
         <div class="flex items-center gap-2">
           <span>1.</span>

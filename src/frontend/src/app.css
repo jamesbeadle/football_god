@@ -29,7 +29,7 @@
 }
 
 .selected-panel {
-  @apply px-3 py-2 bg-BrandPositive hover:bg-BrandPositive;
+  @apply px-3 py-2 bg-BrandSuccess hover:bg-BrandSuccess/80;
 }
 
 .select-panel {
@@ -42,7 +42,7 @@
 }
 
 .button-hover {
-  @apply text-black bg-white hover:bg-BrandPositive hover:text-BrandGray;
+  @apply text-black bg-white hover:bg-BrandSuccess hover:text-BrandGray;
 }
 
 .bg-panel {
@@ -62,7 +62,7 @@
 }
 
 .brand-cancel-button {
-  @apply px-4 py-2 text-white rounded bg-BrandNegative;
+  @apply px-4 py-2 text-white rounded bg-BrandError;
 }
 
 .brand-button-disabled {
@@ -102,15 +102,15 @@
 }
 
 .bg-info {
-  @apply bg-BrandDarkGray;
+  @apply bg-BrandInfo;
 }
 
 .bg-success {
-  @apply bg-BrandPositive;
+  @apply bg-BrandSuccess;
 }
 
 .bg-error {
-  @apply bg-BrandNegative;
+  @apply bg-BrandError;
 }
 
 .page-panel {
