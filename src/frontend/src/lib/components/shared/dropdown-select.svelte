@@ -80,9 +80,9 @@
         <span class="text-white">{selectedOption?.label ?? placeholder}</span>
         <span class="w-4 h-4">
             {#if isDropdownOpen}
-                <ArrowUp />
+                <ArrowUp fill="white" />
             {:else}
-                <ArrowDown />
+                <ArrowDown fill="white" />
             {/if}
         </span>
     </button>

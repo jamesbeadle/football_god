@@ -381,7 +381,7 @@
                 class="brand-button"
                 on:click={handleLogin}
             >
-                Connect Internet Indentity
+                Connect Internet Identity
             </button>
         </div>
     {/if}

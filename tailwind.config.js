@@ -37,8 +37,9 @@ export default {
     },
     extend: {
       colors: {
-        BrandNegative: "#FF403C",
-        BrandPositive: "#64AD54",
+        BrandError: "#FF403C",
+        BrandSuccess: "#66E094",
+        BrandInfo: "#3CA1FF",
         BrandPurple: "#7F56F1",
         BrandPurpleDark: "#462F84",
         BrandDarkGray: "#32353F",

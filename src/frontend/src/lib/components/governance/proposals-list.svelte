@@ -11,7 +11,7 @@
   import Checkmark from "$lib/icons/Checkmark.svelte";
   import LocalSpinner from "$lib/components/shared/local-spinner.svelte";
   import { formatUnixDateToSmallReadable } from "$lib/utils/helpers";
-
+  
   let isLoading = true;
   let filterType: string = "all";
   let selectedProposalStatus = [0,1,2,3,4,5];
@@ -52,7 +52,6 @@
     }
     
     const principal: Principal = Principal.fromText(process.env.SNS_GOVERNANCE_CANISTER_ID ?? "");
-    
     
     const { listProposals: governanceListProposals } = SnsGovernanceCanister.create({
       agent,
@@ -245,7 +244,7 @@
 
                                         <div class="w-32 h-2 mx-2 bg-gray-700 rounded-full">
                                             <div 
-                                                class="h-full rounded-full {getAdoptPercentage(proposal) >= 50 ? 'bg-BrandGreen' : 'bg-BrandRed'}" 
+                                                class="h-full rounded-full {getAdoptPercentage(proposal) > getRejectPercentage(proposal) ? 'bg-BrandGreen' : 'bg-BrandRed'}" 
                                                 style="width: {getAdoptPercentage(proposal)}%"
                                             ></div>
                                         </div>
@@ -305,5 +304,5 @@
 </div>
 
 {#if showProposal}
-  <ProposalDetail visible={showProposal} {closeModal} proposal={selectedProposal} />
+  <ProposalDetail visible={showProposal} {closeModal} proposal={selectedProposal} onVoteComplete={listProposals} />
 {/if}

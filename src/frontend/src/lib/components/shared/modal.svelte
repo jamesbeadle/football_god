@@ -1,5 +1,6 @@
 <script lang="ts">
   import { onDestroy } from "svelte";
+  import { fade, scale } from "svelte/transition";
 
   export let showModal: boolean;
   export let onClose: () => void;
@@ -74,9 +75,11 @@
   on:mousedown={handleMouseDown}
   on:mousemove={handleMouseMove}
   on:mouseup={handleMouseUp}
+  in:fade={{ duration: 2000 }}
+  out:fade={{ duration: 2000 }}
 >
   <div 
-    class="{!useFixedPosition ? 'fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2' : 'absolute'} 
+    class="border-2 shadow-md rounded-lg border-BrandPurple/50 {!useFixedPosition ? 'fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2' : 'absolute'} 
            w-full max-w-lg px-4 md:px-0"
     style={useFixedPosition ? `top: ${modalTop}px; transform: translate(-50%, -50%); left: 50%;` : ''}
   >
@@ -84,6 +87,8 @@
       class="bg-BrandLightGray rounded-lg w-full overflow-y-auto max-h-[90vh] px-4 py-4 md:px-6"
       role="dialog"
       aria-modal="true"
+      in:scale={{ duration: 2000 }}
+      out:scale={{ duration: 2000 }}
     >
       <slot />
     </div>
