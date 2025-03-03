@@ -16,6 +16,7 @@ export type Error =
   | { InvalidData: null }
   | { AlreadyExists: null }
   | { CanisterCreateError: null }
+  | { FailedInterCanisterCall: null }
   | { CanisterFull: null };
 export type FixtureId = number;
 export interface GameweekFiltersDTO {

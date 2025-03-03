@@ -104,6 +104,7 @@ export const idlFactory = ({ IDL }) => {
     InvalidData: IDL.Null,
     AlreadyExists: IDL.Null,
     CanisterCreateError: IDL.Null,
+    FailedInterCanisterCall: IDL.Null,
     CanisterFull: IDL.Null,
   });
   const Result_1 = IDL.Variant({ ok: IDL.Vec(FixtureDTO), err: Error });
