@@ -143,7 +143,8 @@
       return;
     }
     try {
-      isLoading = true;
+      showConfirmDataModal = false;
+      submitting = true;
       let dto: SubmitFixtureDataDTO = {
         seasonId,
         leagueId,
@@ -151,12 +152,9 @@
         gameweek,
         playerEventData: $playerEventData
       };
-      
-      submitting = true;
       let result = await governanceStore.submitFixtureData(dto);
 
       if (isError(result)) {
-        isLoading = false;
         submitting = false;
         console.error("Error submitting proposal");
         return;
@@ -164,6 +162,13 @@
       submitted = true;
       submitting = false;
       localStorage.removeItem(`fixtureDraft_${fixtureId}`);
+      if(submitted){
+        toasts.addToast({
+          message: `Successfully submitted proposal`,
+          type: "success",
+          duration: 3000,
+        });
+      }
       goto(`/`)
     } catch (error) {
       console.error("Error saving fixture data: ", error);
@@ -284,6 +289,13 @@
       <div class="flex-1 md:block">  
         {#if isLoading}
           <FullScreenSpinner />
+        {:else if submitting}
+          <div class="flex flex-col items-center justify-center min-h-screen space-y-4">
+            <div class="pb-12">
+              <FullScreenSpinner />
+            </div>
+            <p class="pt-12 text-xl text-center">Submitting proposal...</p>
+          </div>
         {:else}
           <div class="flex flex-col w-full min-h-screen rounded-xl backdrop-blur ">
             <div class="flex flex-col p-3 my-2 space-y-4 md:my-0 md:mb-4 md:p-0 md:flex-row md:space-y-0 md:space-x-4">
