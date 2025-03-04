@@ -2,14 +2,15 @@
   import { convertPlayerPosition } from "$lib/utils/helpers";
   import BadgeIcon from "$lib/icons/BadgeIcon.svelte";
   import { type Writable } from "svelte/store";
-    import Modal from "../shared/modal.svelte";
-    import type { ClubDTO, PlayerDTO, PlayerEventData } from "../../../../../declarations/data_canister/data_canister.did";
+  import Modal from "../shared/modal.svelte";
+  import type { ClubDTO, PlayerDTO, PlayerEventData } from "../../../../../declarations/data_canister/data_canister.did";
   
   export let selectedTeam: ClubDTO;
   export let teamPlayers: PlayerDTO[];
   export let selectedPlayers: Writable<PlayerDTO[]>;
   export let playerEventData: Writable<PlayerEventData[]>;
   export let visible = false;
+  export let closeModal: () => void;
 
   function handlePlayerSelection(event: Event, player: PlayerDTO) {
     const input = event.target as HTMLInputElement;
@@ -28,8 +29,6 @@
     $selectedPlayers = allSelectedPlayers;
     
   }
-
-  export let closeModal: () => void;
 </script>
 
 <Modal showModal={visible} onClose={closeModal}>

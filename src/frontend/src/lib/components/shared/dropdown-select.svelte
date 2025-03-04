@@ -74,7 +74,7 @@
 
 <div class="relative w-full px-3 mt-1 md:px-0" bind:this={dropdownElement}>
     <button
-        class="flex items-center justify-between w-full rounded-lg {compact ? 'p-3 bg-BrandGray  hover:bg-BrandGray/50' : 'px-2 py-3 hover:bg-BrandLightGray'}"
+        class="flex items-center justify-between w-full rounded-lg {compact ? 'p-3 bg-BrandGray  hover:bg-BrandGray/50' : 'px-2 py-3 hover:bg-BrandGray'}"
         on:click={e => toggleDropdown(e)}
     >
         <span class="text-white">{selectedOption?.label ?? placeholder}</span>

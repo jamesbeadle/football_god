@@ -83,10 +83,25 @@
         </div>
         {#if $playerEventData?.filter(e => e.playerId === player.id).length > 0}
             <div class="flex flex-wrap gap-2 px-4 pb-4">
+                {#if $playerEventData.filter(e => e.playerId === player.id && "KeeperSave" in e.eventType).length > 0}
+                    <div class="items-center inline-block px-3 py-1 text-sm font-medium text-white rounded-lg bg-BrandPurple/50 hover:bg-BrandPurple/70">
+                        {$playerEventData.filter(e => e.playerId === player.id && "KeeperSave" in e.eventType).length} Keeper Saves
+                        <button 
+                                class="items-center p-1 text-gray-400 hover:text-white" 
+                                on:click|stopPropagation={() => {
+                                    playerEventData.update(events => 
+                                        events.filter(e => e.playerId !== player.id)
+                                    );
+                                }}
+                            >
+                                x
+                            </button>
+                    </div>
+                {/if}
                 {#each $playerEventData.filter(e => e.playerId === player.id).sort((a, b) => a.eventStartMinute - b.eventStartMinute) as event}
                     {#if getEventName(event.eventType) !== ""}
-                        <div class="items-center inline-block px-3 py-1 text-sm font-medium text-white rounded-full bg-BrandPurple/50 hover:bg-BrandPurple/70">
-                            {event.eventStartMinute}th Min {getEventName(event.eventType)}
+                        <div class="items-center inline-block px-3 py-1 text-sm font-medium text-white rounded-lg bg-BrandPurple/50 hover:bg-BrandPurple/70">
+                            {event.eventStartMinute}{event.eventStartMinute == 1 ? "st" : event.eventStartMinute == 2 ? "nd" : event.eventStartMinute == 3 ? "rd" : "th"} Min {getEventName(event.eventType)}
                             {#if "RedCard" in event.eventType && $playerEventData.filter(e => 
                                 e.playerId === player.id && 
                                 "YellowCard" in e.eventType

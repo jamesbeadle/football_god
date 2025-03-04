@@ -177,12 +177,6 @@
     let uniquePlayers = new Set<PlayerDTO>();
     $playerEventData.forEach((event) => {
       uniquePlayers.add(players.find(x => x.id == event.playerId)!);
-
-    toasts.addToast({
-      message: `Successfully saved draft`,
-      type: "success",
-      duration: 2000,
-    });
   });
 
 
@@ -198,6 +192,11 @@
     };
     const draftKey = `fixtureDraft_${fixtureId}`;
     localStorage.setItem(draftKey, JSON.stringify(draftData, replacer));
+    toasts.addToast({
+      message: `Successfully saved draft`,
+      type: "success",
+      duration: 2000,
+    });
   }
 
   function clearDraft() {
@@ -205,6 +204,11 @@
     selectedPlayers = writable<PlayerDTO[]>([]);
     localStorage.removeItem(`fixtureDraft_${fixtureId}`);
     closeConfirmClearDraftModal();
+    toasts.addToast({
+      message: `Successfully cleared draft`,
+      type: "success",
+      duration: 2000,
+    });
   }
 
   async function setActiveTab(tab: string) {
@@ -225,7 +229,6 @@
 
   function closeEventPlayerEventsModal(): void {
     showPlayerEventModal = false;
-    selectedPlayer = null;
   }
 
   function showSelectPlayersModal(): void {
@@ -250,6 +253,10 @@
 
   function closeConfirmDataModal(): void {
     showConfirmDataModal = false;
+  }
+
+  function handleModalClosed(): void {
+    selectedPlayer = null;
   }
 
   function calculateHomeScore(events: PlayerEventData[]) {
@@ -466,6 +473,7 @@
     player={selectedPlayer}
     {fixtureId}
     {playerEventData}
+    on:closed={handleModalClosed}
     closeModal={closeEventPlayerEventsModal}
   />
 {/if}
