@@ -44,7 +44,7 @@
       >
         <LikeButton className="w-6 h-6" color="#2CE3A6" />
       </button>
-      <div class="text-2xl text-BrandGreen">{yesPercentage.toFixed(3)}%</div>
+      <div class="text-BrandGreen">{yesPercentage.toFixed(3)}%</div>
     </div>
     
     <div class="flex-1">
@@ -56,8 +56,13 @@
 
         <div class="absolute inset-0 z-10">
           <div class="relative flex h-full">
-            <div class="h-full bg-BrandGreen" style="width: {yesPercentage}%"></div>
-            <div class="h-full bg-BrandInactive" style="width: {100 - yesPercentage}%"></div>
+            {#if yesPercentage >= noPercentage}
+              <div class="h-full bg-BrandGreen" style="width: {yesPercentage}%"></div>
+              <div class="h-full bg-BrandInactive" style="width: {100 - yesPercentage}%"></div>
+            {:else}
+              <div class="h-full bg-BrandInactive" style="width: {100 - noPercentage}%"></div>
+              <div class="h-full bg-BrandRed" style="width: {noPercentage}%"></div>
+            {/if}
           </div>
         </div>
       </div>
@@ -72,7 +77,7 @@
       >
         <DislikeButton className="w-6 h-6" color="#CF5D43" />
       </button>
-      <div class="text-2xl text-BrandRed">{noPercentage.toFixed(3)}%</div>
+      <div class="text-BrandRed">{noPercentage.toFixed(3)}%</div>
     </div>
   </div>
   
