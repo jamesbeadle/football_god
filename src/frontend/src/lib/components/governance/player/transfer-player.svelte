@@ -66,22 +66,23 @@
         newShirtNumber: shirtNumber,
         newValueQuarterMillions: newValueMillions * 4
       };
+      
       submitting = true;
-
       let result = await governanceStore.transferPlayer(dto);
       if (isError(result)) {
         isLoading = false;
         console.error("Error submitting proposal");
         return;
       }
-
+      else {
+        toasts.addToast({
+          message: "Transfer player proposal created successfully",
+          type: "success",
+          duration: 3000
+        });
+      }
       submitted = true;
       submitting = false;
-      toasts.addToast({
-        message: "Transfer player proposal created successfully",
-        type: "success",
-        duration: 3000
-      });
     } catch (error) {
       console.error("Error raising proposal: ", error);
       toasts.addToast({
@@ -92,7 +93,6 @@
       isLoading = false;
       visible = false;
       resetForm();
-      closeModal();
     }
   }
 
@@ -103,13 +103,12 @@
   }
 
   function cancelModal() {
-    resetForm();
     closeModal();
+    resetForm();
   }
 </script>
 <Modal showModal={visible} onClose={closeModal}>
-  <GovernanceModal title={"Transfer Player"} {cancelModal} {confirmProposal} {isLoading} {isSubmitDisabled}>
-    <p class="my-2">Transfer {selectedPlayer.firstName} {selectedPlayer.lastName}</p>
+  <GovernanceModal title={"Transfer " + selectedPlayer.firstName + " " + selectedPlayer.lastName} {cancelModal} {confirmProposal} {isLoading} {isSubmitDisabled}>
     <FormComponent label="Transfer to league:">
       <DropdownSelect
         options={transferLeagues.map((league: FootballLeagueDTO) => ({ id: league.id, label: league.name }))}
@@ -135,7 +134,7 @@
 
       {#if transferClubId > 0}
         <FormComponent label="New Value (£ millions):">
-          <input class="modal-input-box" type="number" step="0.25" min="0.25" max="250" bind:value={newValueMillions} />    
+          <input class="modal-input-box z-100" type="number" step="0.25" min="0.25" max="250" bind:value={newValueMillions} />    
         </FormComponent>
 
         <FormComponent label="New Shirt Number:">
@@ -151,6 +150,5 @@
         </FormComponent>
       {/if}
     {/if}
-
   </GovernanceModal>
 </Modal>

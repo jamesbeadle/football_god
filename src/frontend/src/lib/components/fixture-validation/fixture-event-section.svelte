@@ -42,7 +42,7 @@
   </div>
   <div class="flex flex-wrap space-x-2">
     {#each eventMinutes as minute, i (minute)}
-      <div class="items-center inline-block px-3 py-1 text-sm font-medium text-white rounded-full bg-BrandPurple/50 event-tag">
+      <div class="items-center inline-block px-3 py-1 text-sm font-medium text-white rounded-md bg-BrandPurple/50 event-tag">
         {minute} Min
         <button 
           class="items-center p-1 text-gray-400 event-tag hover:text-white" 
