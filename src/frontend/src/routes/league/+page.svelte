@@ -45,7 +45,12 @@
       countries = await countryStore.getCountries();
       let leagues = await leagueStore.getLeagues();      
       league = leagues.find((x) => x.id == id) ?? null;
-      leagueStatus = await leagueStore.getLeagueStatus(id);
+      
+      try {
+        leagueStatus = await leagueStore.getLeagueStatus(id);
+      } catch (error) {
+        leagueStatus = null;
+      }
     };
 
     async function setActiveTab(tab: string): Promise<void> {
