@@ -36,7 +36,7 @@
       clubs = await clubStore.getClubs(leagueId);
       let leagueStatus = await leagueStore.getLeagueStatus(leagueId);
   
-      fixtures = await fixtureStore.getFixtures(leagueId, leagueStatus.activeSeasonId);
+      fixtures = await fixtureStore.getFixtures(leagueId, leagueStatus?.activeSeasonId ?? 1);
 
       const highestGameweek = fixtures.reduce((max, fixture) => Math.max(max, fixture.gameweek), 0);
       gameweeks = Array.from({ length: Number(highestGameweek) }, (_, i) => i + 1);
@@ -48,12 +48,18 @@
           label: `Gameweek: ${week}`
         }))
       ];
-      if(leagueStatus.activeGameweek > 0){
-        selectedGameweek = leagueStatus.activeGameweek;
+      
+      if (leagueStatus) {
+        if(leagueStatus.activeGameweek > 0){
+          selectedGameweek = leagueStatus.activeGameweek;
+        }
+        if(leagueStatus.activeGameweek == 0){
+          selectedGameweek = leagueStatus.unplayedGameweek;
+        }
+      } else {
+        selectedGameweek = 0;
       }
-      if(leagueStatus.activeGameweek == 0){
-        selectedGameweek = leagueStatus.unplayedGameweek;
-      }
+
       filterFixtures();
     } catch (error) {
       console.error("Error fetching league fixtures:", error);
@@ -165,7 +171,7 @@
             {/if}
           {:else}
             <div class="flex justify-center p-4">
-              <p class="text-gray-400">Select a gameweek to view fixtures</p>
+              <p class="text-gray-400">Fixtures Have Not Been Added For This League</p>
             </div>
           {/if}
         </div>

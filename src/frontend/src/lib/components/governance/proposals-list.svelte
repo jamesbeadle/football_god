@@ -167,6 +167,7 @@
       const myBallot = proposal.ballots.find(([voter, _]) => voter === 'YOUR_PRINCIPAL_ID');
       return myBallot?.[1]?.vote;
   }
+
 </script>
 
 <div class="m-4">
@@ -228,24 +229,24 @@
                                         </span>
                                     </div>
                                 {:else}
-                                    <div class="flex items-center justify-center gap-4">
+                                    <div class="flex items-center gap-2 pr-2">
                                         <div class="flex items-center gap-2">
                                           <span class="text-BrandGreen">Adopt</span>
-                                            <div class="p-1 rounded-full">
+                                            <div class="rounded-full">
                                                 <LikeButton 
                                                     className="w-4 h-4" 
                                                     color={getMyVote(proposal) === 1 ? '#2CE3A6' : '#5A5A5A'}
                                                 />
                                             </div>
-                                            <div class="flex flex-col">
+                                            <div class="flex">
                                                 <span class="text-BrandGreen">{getAdoptPercentage(proposal).toFixed(3)}%</span>
                                             </div>
                                         </div>
 
                                         <div class="w-32 h-2 mx-2 bg-gray-700 rounded-full">
                                             <div 
-                                                class="h-full rounded-full {getAdoptPercentage(proposal) > getRejectPercentage(proposal) ? 'bg-BrandGreen' : 'bg-BrandRed'}" 
-                                                style="width: {getAdoptPercentage(proposal)}%"
+                                                class="h-full rounded-full {getAdoptPercentage(proposal) > getRejectPercentage(proposal) ? 'bg-BrandGreen ml-0' : 'bg-BrandRed ml-auto'}" 
+                                                style="width: {getAdoptPercentage(proposal) > getRejectPercentage(proposal) ? getAdoptPercentage(proposal) : getRejectPercentage(proposal)}%"
                                             ></div>
                                         </div>
 
