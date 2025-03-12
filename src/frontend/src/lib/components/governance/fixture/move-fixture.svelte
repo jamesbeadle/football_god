@@ -71,6 +71,7 @@
       };
       submitting = true;
 
+      console.log("moving fixture")
       let result = await governanceStore.moveFixture(dto);
       if (isError(result)) {
         isLoading = false;
@@ -83,6 +84,7 @@
     } catch (error) {
       console.error("Error raising proposal: ", error);
     } finally {
+      console.log("finally")
       isLoading = false;
       visible = false;
       resetForm();
@@ -91,12 +93,14 @@
   }
 
   function resetForm() {
+    console.log("resetting")
     date = "";
     time = "";
     dateTime = "";
   }
 
   function cancelModal() {
+    console.log("cancelling")
     resetForm();
     closeModal();
   }
