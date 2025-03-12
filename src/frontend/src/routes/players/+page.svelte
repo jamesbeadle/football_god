@@ -369,7 +369,7 @@
     
       {#if selectedPlayerId > 0 && showSetFreeAgentModal}
       {@const selectedPlayer = filteredPlayers.find(x => x.id == selectedPlayerId) }
-        <SetFreeAgent visible={showRecallPlayerModal} {closeModal} selectedPlayer={selectedPlayer!} />
+        <SetFreeAgent visible={showSetFreeAgentModal} {closeModal} selectedPlayer={selectedPlayer!} />
       {/if}
     
       {#if selectedPlayerId > 0 && showRevaluePlayerUpModal}
