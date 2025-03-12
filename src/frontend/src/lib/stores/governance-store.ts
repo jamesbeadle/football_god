@@ -534,6 +534,8 @@ function createGovernanceStore() {
   async function addInitialFixtures(dto: AddInitialFixturesDTO): Promise<any> {}
 
   async function moveFixture(dto: MoveFixtureDTO): Promise<any> {
+    console.log("moving fixture");
+    console.log(dto);
     let userIdentity: OptionIdentity;
     authStore.subscribe((auth) => (userIdentity = auth.identity));
     if (!userIdentity) return;

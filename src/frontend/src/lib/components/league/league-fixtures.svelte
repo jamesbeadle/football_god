@@ -181,7 +181,9 @@
 
   {#if selectedFixtureId > 0 && showMoveFixtureModal}
     {@const selectedFixture = fixtures.find(x => x.id == selectedFixtureId)}
-    <MoveFixture visible={showMoveFixtureModal} {closeModal} {selectedFixtureId} selectedGameweek={selectedFixture?.gameweek} selectedLeagueId={leagueId}/>
+    {@const homeClub = clubs.find(x => x.id == selectedFixture!.homeClubId)}
+    {@const awayClub = clubs.find(x => x.id == selectedFixture!.awayClubId)}
+    <MoveFixture visible={showMoveFixtureModal} {closeModal} {selectedFixtureId} homeClub={homeClub!} awayClub={awayClub!} selectedGameweek={selectedFixture?.gameweek!} selectedLeagueId={leagueId}/>
   {/if}
 
   {#if selectedFixtureId > 0 && showPostponeFixtureModal}
