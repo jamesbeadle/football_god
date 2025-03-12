@@ -125,92 +125,93 @@
     closeModal();
   }
 </script>
-
-<Modal showModal={visible} onClose={closeModal} useFixedPosition={true}>
-  {#if isLoading}
-    <LocalSpinner />
-    <p class="pb-4 mb-4 text-center">Submitting vote...</p>
-  {:else}
-    <div class="p-6">
-      <div class="flex justify-between mb-4">
-        <div class="flex-1">
-          <h1 class="pr-4 break-words default-header">{proposal.proposal[0]?.title}</h1>
+{#if visible}
+  <Modal onClose={closeModal}>
+    {#if isLoading}
+      <LocalSpinner />
+      <p class="pb-4 mb-4 text-center">Submitting vote...</p>
+    {:else}
+      <div class="p-6">
+        <div class="flex justify-between mb-4">
+          <div class="flex-1">
+            <h1 class="pr-4 break-words default-header">{proposal.proposal[0]?.title}</h1>
+          </div>
+          <button class="times-button" on:click={cancelModal}>&times;</button>
         </div>
-        <button class="times-button" on:click={cancelModal}>&times;</button>
-      </div>
-      <div class={`inline-block px-3 py-1 mb-4 rounded-full text-sm font-medium
-        ${proposal.executed_timestamp_seconds > 0n 
-          ? 'bg-BrandGreen/10 text-BrandGreen' 
-          : proposal.failed_timestamp_seconds > 0n 
-            ? 'bg-BrandRed/10 text-BrandRed' 
-            : 'bg-BrandPurple text-white'}`}
-      >
-        #{proposal.id[0]?.id} •
-        {proposal.executed_timestamp_seconds > 0n 
-          ? 'Adopted'
-          : proposal.failed_timestamp_seconds > 0n 
-            ? 'Rejected' 
-            : 'In Voting'}
-      </div>
-      <div class="space-y-6">
-        <div>
-          <button 
-            class="flex items-center justify-between w-full gap-2 text-xl transition-colors {!showDetails ? 'text-gray-400 hover:text-white' : 'text-white hover:text-gray-400'} "
-            on:click|stopPropagation={() => showDetails = !showDetails}
-          >
-            <span>Details</span>
+        <div class={`inline-block px-3 py-1 mb-4 rounded-full text-sm font-medium
+          ${proposal.executed_timestamp_seconds > 0n 
+            ? 'bg-BrandGreen/10 text-BrandGreen' 
+            : proposal.failed_timestamp_seconds > 0n 
+              ? 'bg-BrandRed/10 text-BrandRed' 
+              : 'bg-BrandPurple text-white'}`}
+        >
+          #{proposal.id[0]?.id} •
+          {proposal.executed_timestamp_seconds > 0n 
+            ? 'Adopted'
+            : proposal.failed_timestamp_seconds > 0n 
+              ? 'Rejected' 
+              : 'In Voting'}
+        </div>
+        <div class="space-y-6">
+          <div>
+            <button 
+              class="flex items-center justify-between w-full gap-2 text-xl transition-colors {!showDetails ? 'text-gray-400 hover:text-white' : 'text-white hover:text-gray-400'} "
+              on:click|stopPropagation={() => showDetails = !showDetails}
+            >
+              <span>Details</span>
+              {#if showDetails}
+                <ArrowUp className="w-6 h-6 {showDetails ? 'fill-white hover:fill-gray-400' : 'fill-gray-400 hover:fill-white'}" />
+              {:else}
+                <ArrowDown className="w-6 h-6 {showDetails ? 'fill-white hover:fill-gray-400' : 'fill-gray-400 hover:fill-white'}" />
+              {/if}
+            </button>
             {#if showDetails}
-              <ArrowUp className="w-6 h-6 {showDetails ? 'fill-white hover:fill-gray-400' : 'fill-gray-400 hover:fill-white'}" />
-            {:else}
-              <ArrowDown className="w-6 h-6 {showDetails ? 'fill-white hover:fill-gray-400' : 'fill-gray-400 hover:fill-white'}" />
+              <div class="mt-3 text-base break-words">{proposal.proposal[0]?.summary}</div>
             {/if}
-          </button>
-          {#if showDetails}
-            <div class="mt-3 text-base break-words">{proposal.proposal[0]?.summary}</div>
-          {/if}
-        </div>
+          </div>
 
-        <h2 class="text-2xl">Voting Results</h2>
-            
-        <VotingBar 
-          {yesVotes} 
-          {noVotes} 
-          {totalVotes}
-          {proposal}
-          onVoteYes={voteYes}
-          onVoteNo={voteNo}
-          {isExecuted}
-        />
+          <h2 class="text-2xl">Voting Results</h2>
+              
+          <VotingBar 
+            {yesVotes} 
+            {noVotes} 
+            {totalVotes}
+            {proposal}
+            onVoteYes={voteYes}
+            onVoteNo={voteNo}
+            {isExecuted}
+          />
 
-        <VotingRules 
-          {minimumYesExercised} 
-          {minimumYesTotal} 
-        />
+          <VotingRules 
+            {minimumYesExercised} 
+            {minimumYesTotal} 
+          />
 
-        {#if showConfirm}
-          <div class="absolute inset-0 z-[60] flex items-center justify-center bg-black/40 backdrop-blur-sm">
-            <div class="p-6 border-2 rounded-lg shadow-lg bg-BrandGray border-BrandPurple/60">
-              <p class="mb-4 text-xl text-white">
-                Are you sure you want to vote {vote} on proposal {proposal.id[0]?.id}?
-              </p>
-              <div class="flex justify-center gap-4">
-                <button
-                  class="px-4 py-2 rounded bg-BrandError hover:bg-BrandError/80"
-                  on:click|stopPropagation={resetForm}
-                >
-                  Cancel
-                </button>
-                <button
-                  class="px-4 py-2 rounded bg-BrandPurple hover:bg-BrandPurpleDark"
-                  on:click={confirmVote}
-                >
-                  Confirm
-                </button>
+          {#if showConfirm}
+            <div class="absolute inset-0 z-[60] flex items-center justify-center bg-black/40 backdrop-blur-sm">
+              <div class="p-6 border-2 rounded-lg shadow-lg bg-BrandGray border-BrandPurple/60">
+                <p class="mb-4 text-xl text-white">
+                  Are you sure you want to vote {vote} on proposal {proposal.id[0]?.id}?
+                </p>
+                <div class="flex justify-center gap-4">
+                  <button
+                    class="px-4 py-2 rounded bg-BrandError hover:bg-BrandError/80"
+                    on:click|stopPropagation={resetForm}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    class="px-4 py-2 rounded bg-BrandPurple hover:bg-BrandPurpleDark"
+                    on:click={confirmVote}
+                  >
+                    Confirm
+                  </button>
+                </div>
               </div>
             </div>
-          </div>
-        {/if}
+          {/if}
+        </div>
       </div>
-    </div>
-  {/if}
-</Modal>
+    {/if}
+  </Modal>
+{/if}

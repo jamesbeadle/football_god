@@ -1,99 +1,66 @@
 <script lang="ts">
-  import { onDestroy } from "svelte";
-  import { fade, scale } from "svelte/transition";
+  import Portal from 'svelte-portal';
+	import type { Snippet } from 'svelte';
+	import { quintOut } from 'svelte/easing';
+	import { fade, scale } from 'svelte/transition';
+  import { isBusy } from '$lib/stores/busy-store';
+  import { handleKeyPress } from '$lib/utils/keyboard.utils';
+  import { onMount, onDestroy } from 'svelte';
   
-  export let showModal: boolean;
-  export let onClose: () => void;
-  export let useFixedPosition = false;
+  interface Props {
+    onClose: () => void;
+		children: Snippet;
+	}
 
-  let scrollY: number;
-  let isMobile: boolean;
-  let isDragging = false;
-  let modalEl: HTMLElement;
+  let { children, onClose}: Props = $props();
 
-  $: if (typeof window !== 'undefined' && showModal) {
-    scrollY = window.scrollY;
-    isMobile = window.innerWidth < 768;
+  let visible = $state(true);
+
+  const close = () => {
+    if ($isBusy) return;
+    visible = false;
+    onClose(); 
   }
 
-  $: modalTop = isMobile 
-    ? scrollY + (window.innerHeight * 0.45) 
-    : scrollY + (window.innerHeight / 2);
-
-  $: if (typeof window !== 'undefined') {
-    document.body.style.overflow = showModal ? 'hidden' : 'auto';
-  }
-
-  const handleKeydown = (e: KeyboardEvent) => {
-    if (e.key === 'Escape' && showModal) {
-      onClose();
-    }
+  const onCloseHandler = ($event: MouseEvent | TouchEvent) => {
+    $event.stopPropagation();
+    close();
   };
 
-  if (typeof window !== "undefined") {
-    window.addEventListener("keydown", handleKeydown);
-  }
-
-  onDestroy(() => {
-    if (typeof window !== "undefined") {
-      window.removeEventListener("keydown", handleKeydown);
-      document.body.style.overflow = 'auto';
-    }
+  onMount(() => {
+    document.body.style.overflow = 'hidden';
   });
 
-  const handleBackdropClick = (e: MouseEvent) => {
-    if (modalEl && !modalEl.contains(e.target as Node) && !isDragging) {
-      onClose();
-    }
-  };
+  onDestroy(() => {
+    document.body.style.overflow = '';
+  });
 
-  const handleMouseDown = () => {
-    isDragging = false;
-  };
-
-  const handleMouseMove = () => {
-    isDragging = true;
-  };
-
-  const handleMouseUp = () => {
-    setTimeout(() => {
-      isDragging = false;
-    }, 0);
-  };
 </script>
 
-{#if showModal}
-  <div
-    class="fixed inset-0 z-50 overflow-visible bg-black bg-opacity-50 shadow-lg modal-backdrop"
-    aria-hidden="true"
-    on:click={handleBackdropClick}
-    on:mousedown={handleMouseDown}
-    on:mousemove={handleMouseMove}
-    on:mouseup={handleMouseUp}
-    in:fade={{ duration: 400 }}
-    out:fade={{ duration: 400 }}
-    on:outroend={() => modalEl.dispatchEvent(new CustomEvent("closed"))}
-    on:outroend={() => console.log("Backdrop transition ended", new Date())}
-  >
-    <div 
-      bind:this={modalEl}
-      class="border-2 shadow-md rounded-lg border-BrandPurple/50 
-             {!useFixedPosition 
-                ? 'fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2' 
-                : 'absolute'} 
-             w-full max-w-lg px-4 md:px-0"
-      style={useFixedPosition ? `top: ${modalTop}px; transform: translate(-50%, -50%); left: 50%;` : ''}
-      in:scale={{ duration: 400 }}
-      out:scale={{ duration: 400 }}
-      on:outroend={() => modalEl.dispatchEvent(new CustomEvent("closed"))}
+{#if visible}
+  <Portal>
+    <div
+      class="fixed inset-0 z-[calc(var(--z-index)+998)] flex items-center justify-center"
+      out:fade
+      role="dialog"
+      aria-labelledby="modalTitle"
+      aria-describedby="modalContent"
     >
       <div
-        class="bg-BrandLightGray rounded-lg w-full overflow-y-auto max-h-[90vh] px-4 py-4 md:px-6"
-        role="dialog"
-        aria-modal="true"
+        class="absolute inset-0 bg-black bg-opacity-50 cursor-pointer"
+        onclick={onCloseHandler}
+        onkeypress={($event) => handleKeyPress({ $event, callback: close })}
+        role="button"
+        tabindex="-1"
+      ></div>
+      <div 
+        transition:scale={{ delay: 25, duration: 150, easing: quintOut }} 
+        class="relative w-full max-w-xl p-6 shadow-xl"
       >
-        <slot />
+        <div class="relative max-h-screen px-12 py-4 overflow-auto rounded shadow bg-BrandGray">
+          {@render children()}
+        </div>
       </div>
     </div>
-  </div>
+  </Portal>
 {/if}
