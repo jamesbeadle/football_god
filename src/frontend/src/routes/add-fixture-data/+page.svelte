@@ -23,7 +23,6 @@
   
   import type { ClubDTO, FixtureDTO, PlayerDTO, PlayerEventData, SubmitFixtureDataDTO } from "../../../../declarations/data_canister/data_canister.did";
   
-  
   let clubs: ClubDTO[] = [];
   let players: PlayerDTO[] = [];
   let fixture: FixtureDTO | undefined;
@@ -468,7 +467,7 @@
   </div>
 </Layout>
 
-{#if selectedTeam}
+{#if showPlayerSelectionModal && selectedTeam}
   <SelectPlayersModal
     visible={showPlayerSelectionModal}
     teamPlayers={$teamPlayers}
@@ -479,7 +478,7 @@
   />
 {/if}
 
-{#if selectedPlayer}
+{#if showPlayerEventModal && selectedPlayer}
   <PlayerEventsModal
     visible={showPlayerEventModal}
     player={selectedPlayer}

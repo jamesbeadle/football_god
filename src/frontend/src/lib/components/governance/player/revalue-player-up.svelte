@@ -81,6 +81,6 @@
 
 <Modal showModal={visible} onClose={closeModal}>
   <GovernanceModal title={"Revalue Player"} {cancelModal} {confirmProposal} {isLoading} {isSubmitDisabled}>
-    <p>Raise proposal to decrease the value of {player.firstName} {player.lastName} ({club.friendlyName}) by £0.25?</p>
+    <p>Raise proposal to increase the value of {player.firstName} {player.lastName} ({club.friendlyName}) by £0.25?</p>
   </GovernanceModal>
 </Modal>

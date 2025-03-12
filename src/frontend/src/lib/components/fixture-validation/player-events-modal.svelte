@@ -46,6 +46,8 @@
 
 
   onMount(() => {
+    console.log("loading")
+    console.log(player)
     const cardEvents = $playerEventData.filter(
       event =>
         ("YellowCard" in event.eventType || "RedCard" in event.eventType) &&
@@ -231,7 +233,7 @@
 
     playerEventData.set($playerEventData.filter(x => x.playerId != player.id));
     playerEventData.set([...$playerEventData, ...newEvents]);
-    closeModal();
+    exitModal();
   }
 
   function addGoalEvent() {
@@ -304,13 +306,18 @@
     ownGoalMinutes = ownGoalMinutes.filter((_, i) => i !== index);
   }
 
+  function exitModal(){
+    console.log("exit")
+    closeModal();
+  }
+
 </script>
 
-<Modal showModal={visible} onClose={closeModal} useFixedPosition={false}>
+<Modal showModal={visible} onClose={exitModal}>
   <div class="p-4 mx-4">
     <div class="flex items-center justify-between my-2">
       <h3 class="default-header">Add Events</h3>
-      <button class="times-button" on:click={closeModal}>&times;</button>
+      <button class="times-button" on:click={exitModal}>&times;</button>
     </div>
 
     <div class="mt-6">

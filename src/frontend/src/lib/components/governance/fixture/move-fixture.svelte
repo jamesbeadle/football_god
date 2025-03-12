@@ -107,7 +107,7 @@
 </script>
 
 <Modal showModal={visible} onClose={closeModal}>
-  <GovernanceModal title={`Move Fixture: ${homeClub.friendlyName} v $${awayClub.friendlyName}`} {cancelModal} {confirmProposal} {isLoading} {isSubmitDisabled}>
+  <GovernanceModal title={`Move Fixture: ${homeClub.friendlyName} v ${awayClub.friendlyName}`} {cancelModal} {confirmProposal} {isLoading} {isSubmitDisabled}>
     <FormComponent label="Set new date:">
       <input type="date" bind:value={date} class="brand-input" />
     </FormComponent>
