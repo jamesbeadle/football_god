@@ -131,27 +131,29 @@
   }
 </script>
 
-<Modal showModal={visible} onClose={closeModal}>
-  <GovernanceModal title={"Reschedule Fixture"} {cancelModal} {confirmProposal} {isLoading} {isSubmitDisabled}>
-    
-    <p class="">Reschedule {homeTeam.friendlyName} v {awayTeam.friendlyName}</p>
-    
-    <FormComponent label="New Fixture Date:">
-      <input class="brand-input" type="date" bind:value={date} />
-    </FormComponent>
+{#if visible}
+  <Modal onClose={closeModal}>
+    <GovernanceModal title={"Reschedule Fixture"} {cancelModal} {confirmProposal} {isLoading} {isSubmitDisabled}>
+      
+      <p class="">Reschedule {homeTeam.friendlyName} v {awayTeam.friendlyName}</p>
+      
+      <FormComponent label="New Fixture Date:">
+        <input class="brand-input" type="date" bind:value={date} />
+      </FormComponent>
 
-    <FormComponent label="New Fixture Time:">
-      <input class="brand-input" type="time" bind:value={time} />
-    </FormComponent>
-    
-    <FormComponent label="Select New Gameweek:">
-      <DropdownSelect 
-        value={newGameweek}
-        options={gameweekOptions}
-        onChange={handleGameweekChange}
-        placeholder="Select Gameweek"
-        compact={true}
-      />
-    </FormComponent>
-  </GovernanceModal>
-</Modal>
+      <FormComponent label="New Fixture Time:">
+        <input class="brand-input" type="time" bind:value={time} />
+      </FormComponent>
+      
+      <FormComponent label="Select New Gameweek:">
+        <DropdownSelect 
+          value={newGameweek}
+          options={gameweekOptions}
+          onChange={handleGameweekChange}
+          placeholder="Select Gameweek"
+          compact={true}
+        />
+      </FormComponent>
+    </GovernanceModal>
+  </Modal>
+{/if}

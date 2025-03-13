@@ -37,7 +37,6 @@
 
   onMount(async () => {
     try {
-      console.log(selectedFixtureId)
       let leagueStatus = await leagueStore.getLeagueStatus(selectedLeagueId);
       gameweeks = Array.from({ length: leagueStatus.totalGameweeks }, (_, i) => i + 1);
     } catch (error) {
@@ -48,15 +47,12 @@
   });
 
   async function confirmProposal() {
-    
     if(submitted || submitting){
       return;
     }
 
     try {
-      
       isLoading = true;
-
       let leagueStatus = await leagueStore.getLeagueStatus(selectedLeagueId);
       if(!leagueStatus){
         return
@@ -69,8 +65,8 @@
         updatedFixtureGameweek : selectedGameweek,
         updatedFixtureDate: convertDateTimeInputToUnixNano(dateTime)
       };
-      submitting = true;
 
+      submitting = true;
       let result = await governanceStore.moveFixture(dto);
       if (isError(result)) {
         isLoading = false;
@@ -91,36 +87,40 @@
   }
 
   function resetForm() {
+    console.log("resetting")
     date = "";
     time = "";
     dateTime = "";
   }
 
   function cancelModal() {
+    console.log("cancelling")
     resetForm();
     closeModal();
   }
 </script>
 
-<Modal showModal={visible} onClose={closeModal}>
-  <GovernanceModal title={`Move Fixture: ${homeClub.friendlyName} v $${awayClub.friendlyName}`} {cancelModal} {confirmProposal} {isLoading} {isSubmitDisabled}>
-    <FormComponent label="Set new date:">
-      <input type="date" bind:value={date} class="brand-input" />
-    </FormComponent>
+{#if visible}
+  <Modal onClose={closeModal}>
+    <GovernanceModal title={`Move Fixture: ${homeClub.friendlyName} v ${awayClub.friendlyName}`} {cancelModal} {confirmProposal} {isLoading} {isSubmitDisabled}>
+      <FormComponent label="Set new date:">
+        <input type="date" bind:value={date} class="brand-input" />
+      </FormComponent>
 
-    <FormComponent label="Select Time:">
-      <input type="time" bind:value={time} class="brand-input" />
-    </FormComponent>
+      <FormComponent label="Select Time:">
+        <input type="time" bind:value={time} class="brand-input" />
+      </FormComponent>
 
-    <FormComponent label="Select Gameweek:">
-      <select
-        class="brand-dropdown"
-        bind:value={selectedGameweek}
-      >
-        {#each gameweeks as gameweek}
-          <option value={gameweek}>Gameweek {gameweek}</option>
-        {/each}
-      </select>
-    </FormComponent>
-  </GovernanceModal>
-</Modal>
+      <FormComponent label="Select Gameweek:">
+        <select
+          class="brand-dropdown"
+          bind:value={selectedGameweek}
+        >
+          {#each gameweeks as gameweek}
+            <option value={gameweek}>Gameweek {gameweek}</option>
+          {/each}
+        </select>
+      </FormComponent>
+    </GovernanceModal>
+  </Modal>
+{/if}

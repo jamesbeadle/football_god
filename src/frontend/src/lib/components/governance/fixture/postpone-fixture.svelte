@@ -97,8 +97,10 @@
   }
 </script>
 
-<Modal showModal={visible} onClose={closeModal}>
-  <GovernanceModal title={"Postpone Fixture"} {cancelModal} {confirmProposal} {isLoading} {isSubmitDisabled}>
-    <p>Postpone {homeClub.friendlyName} v {awayClub.friendlyName} - Gameweek {selectedFixture.gameweek}</p>
-  </GovernanceModal>
-</Modal>
+{#if visible}
+  <Modal onClose={closeModal}>
+    <GovernanceModal title={"Postpone Fixture"} {cancelModal} {confirmProposal} {isLoading} {isSubmitDisabled}>
+      <p>Postpone {homeClub.friendlyName} v {awayClub.friendlyName} - Gameweek {selectedFixture.gameweek}</p>
+    </GovernanceModal>
+  </Modal>
+{/if}

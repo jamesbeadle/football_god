@@ -1,5 +1,6 @@
 <script lang="ts">
     import LocalSpinner from "$lib/components/shared/local-spinner.svelte";
+    import { isBusy } from "$lib/stores/busy-store";
 
     export let cancelModal: () => void;
     export let confirmProposal: () => void;
@@ -22,7 +23,7 @@
     <div class="m-2">
       <div class="flex items-center justify-between my-2">
         <h3 class="default-header">{title}</h3>
-        <button class="times-button" on:click={cancelModal}>&times;</button>
+        <button class="times-button" on:click={cancelModal} disabled={$isBusy}>&times;</button>
       </div>
   
       <div class="flex items-center justify-start w-full">
@@ -36,13 +37,14 @@
                     class="px-4 py-2 brand-cancel-button min-w-[150px]"
                     type="button"
                     on:click={cancelModal}
+                    disabled={$isBusy}
                 >
                     Cancel
                 </button>
                 <button
-                    class={`${isSubmitDisabled ? "brand-button-disabled" : "brand-button"} px-4 py-2 min-w-[150px]`}
-                    on:click={raiseProposal}
-                    disabled={isSubmitDisabled}
+                  class={`${$isBusy || isSubmitDisabled ? "brand-button-disabled" : "brand-button"} px-4 py-2 min-w-[150px]`}
+                  on:click={raiseProposal}
+                  disabled={$isBusy || isSubmitDisabled}
                 >
                     Raise Proposal
                 </button>
@@ -56,9 +58,9 @@
                 </div>
                 <div class="flex items-center">
                     <button
-                    class={`${isSubmitDisabled ? "brand-button-disabled" : "brand-button"} px-4 py-2 w-full`}
-                    on:click={confirmProposal}
-                    disabled={isSubmitDisabled}
+                      class={`${$isBusy || isSubmitDisabled ? "brand-button-disabled" : "brand-button"} px-4 py-2 min-w-[150px]`}
+                      on:click={confirmProposal}
+                      disabled={$isBusy || isSubmitDisabled}
                     >
                     Confirm Submit Proposal
                     </button>

@@ -1,6 +1,6 @@
 <script lang="ts">
   import { userStore } from "$lib/stores/user-store";
-    import Modal from "../shared/modal.svelte";
+  import Modal from "../shared/modal.svelte";
 
   export let visible: boolean;
   export let closeModal: () => void;
@@ -66,58 +66,60 @@
   }
 </script>
 
-<Modal showModal={visible} onClose={closeModal}>
-  <div class="mx-4 p-4">
-    <div class="flex justify-between items-center my-2">
-      <h3 class="default-header">Withdraw FPL</h3>
-      <button class="times-button" on:click={cancelModal}>&times;</button>
+{#if visible}
+  <Modal onClose={closeModal}>
+    <div class="p-4 mx-4">
+      <div class="flex items-center justify-between my-2">
+        <h3 class="default-header">Withdraw FPL</h3>
+        <button class="times-button" on:click={cancelModal}>&times;</button>
+      </div>
+      <form on:submit|preventDefault={withdrawFPL}>
+        <p>FPL Balance: {fplBalanceFormatted}</p>
+        <div class="mt-4">
+          <input
+            type="text"
+            class="w-full px-4 py-2 text-black border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            placeholder="Withdrawal Address"
+            bind:value={withdrawalAddress}
+          />
+        </div>
+        <div class="flex items-center mt-4">
+          <input
+            type="text"
+            class="w-full px-4 py-2 mr-2 text-black border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            placeholder="Withdrawal Amount"
+            bind:value={withdrawalInputAmount}
+          />
+          <button
+            type="button"
+            class="p-1 px-2 text-sm rounded md:text-sm md:p-2 md:px-4 brand-button"
+            on:click={setMaxWithdrawAmount}
+          >
+            Max
+          </button>
+        </div>
+        {#if errorMessage}
+          <div class="mt-2 text-red-600">{errorMessage}</div>
+        {/if}
+        <div class="flex flex-row items-center py-3 space-x-4">
+          <button
+            class="px-4 py-2 brand-cancel-button"
+            type="button"
+            on:click={cancelModal}
+          >
+            Cancel
+          </button>
+          <button
+            class={`px-4 py-2 ${
+              isSubmitDisabled ? "brand-button-disabled" : "brand-button"
+            }`}
+            type="submit"
+            disabled={isSubmitDisabled}
+          >
+            Withdraw
+          </button>
+        </div>
+      </form>
     </div>
-    <form on:submit|preventDefault={withdrawFPL}>
-      <p>FPL Balance: {fplBalanceFormatted}</p>
-      <div class="mt-4">
-        <input
-          type="text"
-          class="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
-          placeholder="Withdrawal Address"
-          bind:value={withdrawalAddress}
-        />
-      </div>
-      <div class="mt-4 flex items-center">
-        <input
-          type="text"
-          class="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-black mr-2"
-          placeholder="Withdrawal Amount"
-          bind:value={withdrawalInputAmount}
-        />
-        <button
-          type="button"
-          class="text-sm md:text-sm p-1 md:p-2 px-2 md:px-4 rounded brand-button"
-          on:click={setMaxWithdrawAmount}
-        >
-          Max
-        </button>
-      </div>
-      {#if errorMessage}
-        <div class="mt-2 text-red-600">{errorMessage}</div>
-      {/if}
-      <div class="items-center py-3 flex space-x-4 flex-row">
-        <button
-          class="px-4 py-2 brand-cancel-button"
-          type="button"
-          on:click={cancelModal}
-        >
-          Cancel
-        </button>
-        <button
-          class={`px-4 py-2 ${
-            isSubmitDisabled ? "brand-button-disabled" : "brand-button"
-          }`}
-          type="submit"
-          disabled={isSubmitDisabled}
-        >
-          Withdraw
-        </button>
-      </div>
-    </form>
-  </div>
-</Modal>
+  </Modal>
+{/if}

@@ -231,7 +231,7 @@
 
     playerEventData.set($playerEventData.filter(x => x.playerId != player.id));
     playerEventData.set([...$playerEventData, ...newEvents]);
-    closeModal();
+    exitModal();
   }
 
   function addGoalEvent() {
@@ -304,153 +304,159 @@
     ownGoalMinutes = ownGoalMinutes.filter((_, i) => i !== index);
   }
 
+  function exitModal(){
+    closeModal();
+  }
+
 </script>
 
-<Modal showModal={visible} onClose={closeModal} useFixedPosition={false}>
-  <div class="p-4 mx-4">
-    <div class="flex items-center justify-between my-2">
-      <h3 class="default-header">Add Events</h3>
-      <button class="times-button" on:click={closeModal}>&times;</button>
-    </div>
+{#if visible}
+  <Modal onClose={exitModal}>
+    <div class="p-4 mx-4">
+      <div class="flex items-center justify-between my-2">
+        <h3 class="default-header">Add Events</h3>
+        <button class="times-button" on:click={exitModal}>&times;</button>
+      </div>
 
-    <div class="mt-6">
-      <div class="flex-col w-full mb-2 space-y-4">
-        <div class="flex flex-row items-center space-x-4">
-          <svelte:component
-            this={getFlagComponent(player.nationality)}
-            className="w-4 h-4 mr-2 hidden xs:flex"
-          />
-          <p class="text-lg">
-            {player.firstName !== "" ? player.firstName.charAt(0) + "." : ""}
-            {player.lastName}
-          </p>
-        </div>
-
-        <div class="border-b border-gray-200"></div>
-
-        <div class="flex flex-row space-x-1">
-          <div class="flex-col w-1/2 space-y-2 ">
-            <p class="block mb-1 text-sm text-gray-400">Start Minute</p>
-            <input
-              type="number"
-              id="startMinute"
-              bind:value={appearanceStart}
-              class="modal-input-box"
-              placeholder="Enter start minute"
-              min="0"
-              max="90"
+      <div class="mt-6">
+        <div class="flex-col w-full mb-2 space-y-4">
+          <div class="flex flex-row items-center space-x-4">
+            <svelte:component
+              this={getFlagComponent(player.nationality)}
+              className="w-4 h-4 mr-2 hidden xs:flex"
             />
+            <p class="text-lg">
+              {player.firstName !== "" ? player.firstName.charAt(0) + "." : ""}
+              {player.lastName}
+            </p>
           </div>
 
-          <div class="flex-col w-1/2 space-y-2">
-            <p class="block mb-1 text-sm text-gray-400">End Minute</p>
-            <input
-              type="number"
-              id="endMinute"
-              bind:value={appearanceEnd}
-              class="modal-input-box"
-              max={selectedCard === 2 ? cardMinute : 90}
-              placeholder="Enter end minute"
-              min="0"
-            />
-          </div>
-        </div>
-
-        <div class="border-b border-gray-200"></div>
-
-        {#if Object.keys(player.position)[0] == "Goalkeeper"}
+          <div class="border-b border-gray-200"></div>
 
           <div class="flex flex-row space-x-1">
-            <div class="flex-col w-full space-y-2">
-              <p class="block mb-1 text-sm text-gray-400">Keeper Saves</p>
+            <div class="flex-col w-1/2 space-y-2 ">
+              <p class="block mb-1 text-sm text-gray-400">Start Minute</p>
               <input
                 type="number"
-                id="keeperSaves"
-                bind:value={keeperSaves}
+                id="startMinute"
+                bind:value={appearanceStart}
                 class="modal-input-box"
-                placeholder="Enter keeper saves"
+                placeholder="Enter start minute"
                 min="0"
-                max="999"
+                max="90"
+              />
+            </div>
+
+            <div class="flex-col w-1/2 space-y-2">
+              <p class="block mb-1 text-sm text-gray-400">End Minute</p>
+              <input
+                type="number"
+                id="endMinute"
+                bind:value={appearanceEnd}
+                class="modal-input-box"
+                max={selectedCard === 2 ? cardMinute : 90}
+                placeholder="Enter end minute"
+                min="0"
               />
             </div>
           </div>
+
           <div class="border-b border-gray-200"></div>
-        {/if}
 
-        <CardsTab
-          bind:selectedCard
-          bind:cardMinute
-          bind:firstYellowMinute
-          bind:redCardType
-          {fixtureId}
-          playerId={player.id}
-          clubId={player.clubId}
-          {playerEventData}
-        />
+          {#if Object.keys(player.position)[0] == "Goalkeeper"}
 
-        <div class="border-b border-gray-200"></div>
+            <div class="flex flex-row space-x-1">
+              <div class="flex-col w-full space-y-2">
+                <p class="block mb-1 text-sm text-gray-400">Keeper Saves</p>
+                <input
+                  type="number"
+                  id="keeperSaves"
+                  bind:value={keeperSaves}
+                  class="modal-input-box"
+                  placeholder="Enter keeper saves"
+                  min="0"
+                  max="999"
+                />
+              </div>
+            </div>
+            <div class="border-b border-gray-200"></div>
+          {/if}
 
-        <FixtureEventSection
-          title="Goals"
-          bind:eventMinutes={goalMinutes}
-          bind:sliderValue={goalSliderValue}
-          onAdd={addGoalEvent}
-          onRemove={removeGoal}
-        />
+          <CardsTab
+            bind:selectedCard
+            bind:cardMinute
+            bind:firstYellowMinute
+            bind:redCardType
+            {fixtureId}
+            playerId={player.id}
+            clubId={player.clubId}
+            {playerEventData}
+          />
 
-        <div class="border-b border-gray-200"></div>
-
-        <FixtureEventSection
-          title="Assists"
-          eventMinutes={assistMinutes}
-          bind:sliderValue={assistSliderValue}
-          onAdd={addAssistEvent}
-          onRemove={removeAssist}
-        />
-        
-        <div class="border-b border-gray-200"></div>
-
-        <FixtureEventSection
-          title="Own Goals"
-          eventMinutes={ownGoalMinutes}
-          bind:sliderValue={ownGoalSliderValue}
-          onAdd={addOwnGoalEvent}
-          onRemove={removeOwnGoal}
-        />
-      
-        <div class="border-b border-gray-200"></div>
-        
-        {#if Object.keys(player.position)[0] == "Goalkeeper"}
+          <div class="border-b border-gray-200"></div>
 
           <FixtureEventSection
-            title="Penalty Saved"
-            eventMinutes={penaltySaveMinutes}
-            bind:sliderValue={penaltySaveSliderValue}
-            onAdd={addPenaltySaveEvent}
-            onRemove={removePenaltySave}
+            title="Goals"
+            bind:eventMinutes={goalMinutes}
+            bind:sliderValue={goalSliderValue}
+            onAdd={addGoalEvent}
+            onRemove={removeGoal}
           />
-          <div class="border-b border-gray-200"></div>
-        {/if}
-        
-        <FixtureEventSection
-          title="Penalty Missed"
-          eventMinutes={penaltyMissedMinutes}
-          bind:sliderValue={penaltyMissSliderValue}
-          onAdd={addPenaltyMissEvent}
-          onRemove={removePenaltyMiss}
-        />
-        
-        <div class="border-b border-gray-200"></div>
 
-        <div class="flex items-center justify-end space-x-4">
-          <button
-            on:click={addPlayerEvents}
-            class="brand-button px-4 py-2 min-w-[150px]"
-          >
-            Done
-          </button>
+          <div class="border-b border-gray-200"></div>
+
+          <FixtureEventSection
+            title="Assists"
+            eventMinutes={assistMinutes}
+            bind:sliderValue={assistSliderValue}
+            onAdd={addAssistEvent}
+            onRemove={removeAssist}
+          />
+          
+          <div class="border-b border-gray-200"></div>
+
+          <FixtureEventSection
+            title="Own Goals"
+            eventMinutes={ownGoalMinutes}
+            bind:sliderValue={ownGoalSliderValue}
+            onAdd={addOwnGoalEvent}
+            onRemove={removeOwnGoal}
+          />
+        
+          <div class="border-b border-gray-200"></div>
+          
+          {#if Object.keys(player.position)[0] == "Goalkeeper"}
+
+            <FixtureEventSection
+              title="Penalty Saved"
+              eventMinutes={penaltySaveMinutes}
+              bind:sliderValue={penaltySaveSliderValue}
+              onAdd={addPenaltySaveEvent}
+              onRemove={removePenaltySave}
+            />
+            <div class="border-b border-gray-200"></div>
+          {/if}
+          
+          <FixtureEventSection
+            title="Penalty Missed"
+            eventMinutes={penaltyMissedMinutes}
+            bind:sliderValue={penaltyMissSliderValue}
+            onAdd={addPenaltyMissEvent}
+            onRemove={removePenaltyMiss}
+          />
+          
+          <div class="border-b border-gray-200"></div>
+
+          <div class="flex items-center justify-end space-x-4">
+            <button
+              on:click={addPlayerEvents}
+              class="brand-button px-4 py-2 min-w-[150px]"
+            >
+              Done
+            </button>
+          </div>
         </div>
       </div>
     </div>
-  </div>
-</Modal>
+  </Modal>
+{/if}

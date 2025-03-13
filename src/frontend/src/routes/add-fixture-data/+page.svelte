@@ -23,7 +23,6 @@
   
   import type { ClubDTO, FixtureDTO, PlayerDTO, PlayerEventData, SubmitFixtureDataDTO } from "../../../../declarations/data_canister/data_canister.did";
   
-  
   let clubs: ClubDTO[] = [];
   let players: PlayerDTO[] = [];
   let fixture: FixtureDTO | undefined;
@@ -119,17 +118,17 @@
       const draftKey = `fixtureDraft_${fixtureId}`;
       const savedDraft = localStorage.getItem(draftKey);
       if (savedDraft) {
-      const draftData = JSON.parse(savedDraft);
+        const draftData = JSON.parse(savedDraft);
 
-      let selectedPlayersData: PlayerDTO[] = draftData.selectedPlayers;
-      if(selectedPlayersData && selectedPlayersData.length > 0){
-        selectedPlayers.set(selectedPlayersData);
-      }
+        let selectedPlayersData: PlayerDTO[] = draftData.selectedPlayers;
+        if(selectedPlayersData && selectedPlayersData.length > 0){
+          selectedPlayers.set(selectedPlayersData);
+        }
 
-      let draftEventData = draftData.playerEventData;
-      if (draftEventData) {
-        playerEventData.set(draftEventData);
-      }
+        let draftEventData = draftData.playerEventData;
+        if (draftEventData) {
+          playerEventData.set(draftEventData);
+        }
 
       }
     } catch (error)  {
@@ -468,7 +467,7 @@
   </div>
 </Layout>
 
-{#if selectedTeam}
+{#if showPlayerSelectionModal && selectedTeam}
   <SelectPlayersModal
     visible={showPlayerSelectionModal}
     teamPlayers={$teamPlayers}
@@ -479,7 +478,7 @@
   />
 {/if}
 
-{#if selectedPlayer}
+{#if showPlayerEventModal && selectedPlayer}
   <PlayerEventsModal
     visible={showPlayerEventModal}
     player={selectedPlayer}
@@ -490,14 +489,19 @@
   />
 {/if}
 
-<ConfirmFixtureDataModal
-  visible={showConfirmDataModal}
-  onConfirm={confirmFixtureData}
-  closeModal={closeConfirmDataModal}
-/>
 
-<ClearDraftModal
-  closeModal={closeConfirmClearDraftModal}
-  visible={showClearDraftModal}
-  onConfirm={clearDraft}
-/>
+{#if showConfirmDataModal}
+  <ConfirmFixtureDataModal
+    visible={showConfirmDataModal}
+    onConfirm={confirmFixtureData}
+    closeModal={closeConfirmDataModal}
+  />
+{/if}
+
+{#if showClearDraftModal}
+  <ClearDraftModal
+    closeModal={closeConfirmClearDraftModal}
+    visible={showClearDraftModal}
+    onConfirm={clearDraft}
+  />
+{/if}

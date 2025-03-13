@@ -105,47 +105,50 @@
   }
 </script>
 
-<Modal showModal={visible} onClose={closeModal}>
-  <GovernanceModal title={"Loan Player " + selectedPlayer.firstName + " " + selectedPlayer.lastName} {cancelModal} {confirmProposal} {isLoading} {isSubmitDisabled}>
-    <FormComponent label="Select loan league:">
-    <div class="z-20">
-        <DropdownSelect
-          options={loanLeagues.map(league => ({ id: league.id, label: league.name }))}
-          value={loanLeagueId}
-          onChange={(value: string | number) => {
-            loanLeagueId = Number(value);
-          }}
-          scrollOnOpen={true}
-        />
-    </div>
-  </FormComponent>
-    
-    {#if loanLeagueId > 0}
-        <div class="z-10 space-y-3">
-          <FormComponent label="Select loan club:">
-            <DropdownSelect
-              options={loanClubs.map(club => ({ id: club.id, label: club.friendlyName }))}
-              value={loanClubId}
-              onChange={(value: string | number) => {
-                loanClubId = Number(value);
-              }}
-              scrollOnOpen={true}
-            />
-          </FormComponent>
-
-          {#if loanClubId > 0}
-            <FormComponent label="Loan End Date:">
-              <input class="modal-input-box" type="date" bind:value={date} />
+{#if visible}
+  <Modal onClose={closeModal}>
+    <GovernanceModal title={"Loan Player " + selectedPlayer.firstName + " " + selectedPlayer.lastName} {cancelModal} {confirmProposal} {isLoading} {isSubmitDisabled}>
+      <FormComponent label="Select loan league:">
+      <div class="z-20">
+          <DropdownSelect
+            options={loanLeagues.map(league => ({ id: league.id, label: league.name }))}
+            value={loanLeagueId}
+            onChange={(value: string | number) => {
+              loanLeagueId = Number(value);
+            }}
+            scrollOnOpen={true}
+          />
+      </div>
+    </FormComponent>
+      
+      {#if loanLeagueId > 0}
+          <div class="z-10 space-y-3">
+            <FormComponent label="Select loan club:">
+              <DropdownSelect
+                options={loanClubs.map(club => ({ id: club.id, label: club.friendlyName }))}
+                value={loanClubId}
+                onChange={(value: string | number) => {
+                  loanClubId = Number(value);
+                }}
+                scrollOnOpen={true}
+              />
             </FormComponent>
 
-            <FormComponent label="New Value (£ millions):">
-              <input class="modal-input-box" type="number" step="0.25" min="0.25" max="250" bind:value={newValueMillions} />
-            </FormComponent>
-          {/if}
-        </div>
-    {/if}
-  </GovernanceModal>
-</Modal>
+            {#if loanClubId > 0}
+              <FormComponent label="Loan End Date:">
+                <input class="modal-input-box" type="date" bind:value={date} />
+              </FormComponent>
+
+              <FormComponent label="New Value (£ millions):">
+                <input class="modal-input-box" type="number" step="0.25" min="0.25" max="250" bind:value={newValueMillions} />
+              </FormComponent>
+            {/if}
+          </div>
+      {/if}
+    </GovernanceModal>
+  </Modal>
+{/if}
+
 
 
 

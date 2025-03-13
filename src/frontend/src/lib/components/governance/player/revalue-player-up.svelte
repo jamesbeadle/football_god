@@ -79,8 +79,10 @@
   }
 </script>
 
-<Modal showModal={visible} onClose={closeModal}>
-  <GovernanceModal title={"Revalue Player"} {cancelModal} {confirmProposal} {isLoading} {isSubmitDisabled}>
-    <p>Raise proposal to increase the value of {player.firstName} {player.lastName} ({club.friendlyName}) by £0.25?</p>
-  </GovernanceModal>
-</Modal>
+{#if visible}
+  <Modal onClose={closeModal}>
+    <GovernanceModal title={"Revalue Player"} {cancelModal} {confirmProposal} {isLoading} {isSubmitDisabled}>
+      <p>Raise proposal to increase the value of {player.firstName} {player.lastName} ({club.friendlyName}) by £0.25?</p>
+    </GovernanceModal>
+  </Modal>
+{/if}

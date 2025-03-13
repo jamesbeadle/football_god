@@ -34,6 +34,7 @@ import type {
   CreateLeagueDTO,
   UpdateLeagueDTO,
   RescheduleFixtureDTO,
+  SetFreeAgentDTO,
 } from "../../../../declarations/data_canister/data_canister.did";
 
 import type {
@@ -51,13 +52,19 @@ import {
   buildCreatePlayerText,
   buildLoanPlayerText,
   buildMoveFixtureText,
+  buildPostponeFixtureText,
+  buildPromoteClubText,
+  buildRecallPlayerText,
   buildRescheduleFixtureText,
   buildRetirePlayerText,
   buildRevaluePlayerDownText,
   buildRevaluePlayerUpText,
+  buildSetFreeAgentText,
   buildSetPlayerInjuryText,
   buildSubmitFixtureDataText,
   buildTransferPlayerText,
+  buildUnretirePlayerText,
+  buildUpdateClubText,
   buildUpdateLeagueText,
   buildUpdatePlayerText,
 } from "$lib/utils/proposal.utils";
@@ -78,6 +85,7 @@ import {
   UpdateLeagueDTO_Idl,
 } from "$lib/types/idl-types";
 import {
+  convertDateToReadable,
   formatUnixDateToReadableNumber,
   formatUnixDateToSmallReadableNumber,
   formatUnixTimeToTimeNumber,
@@ -487,13 +495,149 @@ function createGovernanceStore() {
     });
   }
 
-  async function setPlayerInjury(dto: SetPlayerInjuryDTO): Promise<any> {}
+  async function setPlayerInjury(dto: SetPlayerInjuryDTO): Promise<any> {
+    let userIdentity: OptionIdentity;
+    authStore.subscribe((auth) => (userIdentity = auth.identity));
+    if (!userIdentity) return;
 
-  async function retirePlayer(dto: RetirePlayerDTO): Promise<any> {}
+    let leagues = await leagueStore.getLeagues();
 
-  async function unretirePlayer(dto: UnretirePlayerDTO): Promise<any> {}
+    let league = leagues.find((x) => x.id == dto.leagueId);
+    if (!league) throw new Error("Player league not found.");
 
-  async function recallPlayer(dto: RecallPlayerDTO): Promise<any> {}
+    const allPlayers = await playerStore.getPlayers(dto.leagueId);
+    const player = allPlayers.find((p) => p.id === dto.playerId);
+    if (!player) throw new Error("Player not found.");
+
+    const { title, summary } = buildSetPlayerInjuryText(
+      `${player.firstName} ${player.lastName}`,
+      dto.description,
+      convertDateToReadable(Number(dto.expectedEndDate)),
+    );
+
+    const encoded = IDL.encode([SetPlayerInjuryDTO_Idl], [dto]);
+
+    return await createProposal({
+      identity: userIdentity,
+      functionId: 66000n,
+      payload: new Uint8Array(encoded),
+      title,
+      summary,
+    });
+  }
+
+  async function retirePlayer(dto: RetirePlayerDTO): Promise<any> {
+    let userIdentity: OptionIdentity;
+    authStore.subscribe((auth) => (userIdentity = auth.identity));
+    if (!userIdentity) return;
+
+    let leagues = await leagueStore.getLeagues();
+
+    let league = leagues.find((x) => x.id == dto.leagueId);
+    if (!league) throw new Error("Player league not found.");
+
+    const allPlayers = await playerStore.getPlayers(dto.leagueId);
+    const player = allPlayers.find((p) => p.id === dto.playerId);
+    if (!player) throw new Error("Player not found.");
+    const clubs = await clubStore.getClubs(dto.leagueId);
+    const currentClub = clubs.find((c) => c.id === player.clubId);
+    if (!currentClub) throw new Error("Current club not found.");
+
+    const { title, summary } = buildRetirePlayerText(
+      `${player.firstName} ${player.lastName}`,
+      Object.keys(player.position)[0],
+      currentClub.friendlyName,
+      convertDateToReadable(Number(dto.retirementDate)),
+    );
+
+    const encoded = IDL.encode([RetirePlayerDTO_Idl], [dto]);
+
+    return await createProposal({
+      identity: userIdentity,
+      functionId: 67000n,
+      payload: new Uint8Array(encoded),
+      title,
+      summary,
+    });
+  }
+
+  async function unretirePlayer(dto: UnretirePlayerDTO): Promise<any> {
+    let userIdentity: OptionIdentity;
+    authStore.subscribe((auth) => (userIdentity = auth.identity));
+    if (!userIdentity) return;
+
+    let leagues = await leagueStore.getLeagues();
+
+    let league = leagues.find((x) => x.id == dto.leagueId);
+    if (!league) throw new Error("Player league not found.");
+
+    const allPlayers = await playerStore.getPlayers(dto.leagueId);
+    const player = allPlayers.find((p) => p.id === dto.playerId);
+    if (!player) throw new Error("Player not found.");
+    const clubs = await clubStore.getClubs(dto.leagueId);
+    const currentClub = clubs.find((c) => c.id === player.clubId);
+    if (!currentClub) throw new Error("Current club not found.");
+
+    const { title, summary } = buildUnretirePlayerText(
+      `${player.firstName} ${player.lastName}`,
+      Object.keys(player.position)[0],
+      currentClub.friendlyName,
+    );
+
+    const encoded = IDL.encode([RetirePlayerDTO_Idl], [dto]);
+
+    return await createProposal({
+      identity: userIdentity,
+      functionId: 68000n,
+      payload: new Uint8Array(encoded),
+      title,
+      summary,
+    });
+  }
+
+  async function recallPlayer(dto: RecallPlayerDTO): Promise<any> {
+    let userIdentity: OptionIdentity;
+    authStore.subscribe((auth) => (userIdentity = auth.identity));
+    if (!userIdentity) return;
+
+    const allPlayers = await playerStore.getPlayers(dto.leagueId);
+    const player = allPlayers.find((p) => p.id === dto.playerId);
+    if (!player) throw new Error("Player not found.");
+
+    let leagues = await leagueStore.getLeagues();
+
+    let recallLeague = leagues.find((x) => x.id == player.leagueId);
+    let parentLeague = leagues.find((x) => x.id == player.parentLeagueId);
+    if (!recallLeague) throw new Error("Recall league not found.");
+    if (!parentLeague) throw new Error("Parent league not found.");
+
+    const recallClubs = await clubStore.getClubs(player.leagueId);
+    const parentLeagueClubs = await clubStore.getClubs(player.parentLeagueId);
+    const recallClub = recallClubs.find((c) => c.id === player.clubId);
+    const parentClub = parentLeagueClubs.find(
+      (c) => c.id === player.parentClubId,
+    );
+    if (!recallClub) throw new Error("Recall club not found.");
+    if (!parentClub) throw new Error("Parent club not found.");
+
+    const { title, summary } = buildRecallPlayerText(
+      `${player.firstName} ${player.lastName}`,
+      recallClub.friendlyName,
+      parentClub.friendlyName,
+      recallLeague.name,
+      parentLeague.name,
+    );
+
+    const encoded = IDL.encode([RetirePlayerDTO_Idl], [dto]);
+
+    return await createProposal({
+      identity: userIdentity,
+      functionId: 69000n,
+      payload: new Uint8Array(encoded),
+      title,
+      summary,
+    });
+  }
 
   async function createClub(dto: CreateClubDTO): Promise<any> {
     let userIdentity: OptionIdentity;
@@ -527,15 +671,108 @@ function createGovernanceStore() {
     });
   }
 
-  async function updateClub(dto: UpdateClubDTO): Promise<any> {}
+  async function updateClub(dto: UpdateClubDTO): Promise<any> {
+    let userIdentity: OptionIdentity;
+    authStore.subscribe((auth) => (userIdentity = auth.identity));
+    if (!userIdentity) return;
 
-  async function promoteClub(dto: PromoteClubDTO): Promise<any> {}
+    let leagues = await leagueStore.getLeagues();
 
-  async function addInitialFixtures(dto: AddInitialFixturesDTO): Promise<any> {}
+    let league = leagues.find((x) => x.id == dto.leagueId);
+    if (!league) throw new Error("Player league not found.");
+
+    const { title, summary } = buildUpdateClubText(
+      dto.name,
+      league.name,
+      dto.friendlyName,
+      dto.primaryColourHex,
+      dto.secondaryColourHex,
+      dto.thirdColourHex,
+      dto.abbreviatedName,
+      Object.keys(dto.shirtType)[0],
+    );
+
+    const encoded = IDL.encode([SetPlayerInjuryDTO_Idl], [dto]);
+
+    return await createProposal({
+      identity: userIdentity,
+      functionId: 62000n,
+      payload: new Uint8Array(encoded),
+      title,
+      summary,
+    });
+  }
+
+  async function promoteClub(dto: PromoteClubDTO): Promise<any> {
+    let userIdentity: OptionIdentity;
+    authStore.subscribe((auth) => (userIdentity = auth.identity));
+    if (!userIdentity) return;
+
+    let leagues = await leagueStore.getLeagues();
+
+    let fromLeague = leagues.find((x) => x.id == dto.leagueId);
+    let toLeague = leagues.find((x) => x.id == dto.toLeagueId);
+    if (!fromLeague) throw new Error("Player 'from' league not found.");
+    if (!toLeague) throw new Error("Player 'to' league not found.");
+
+    const clubs = await clubStore.getClubs(dto.leagueId);
+    const currentClub = clubs.find((c) => c.id === dto.clubId);
+    if (!currentClub) throw new Error("Current club not found.");
+
+    const { title, summary } = buildPromoteClubText(
+      currentClub.friendlyName,
+      fromLeague.name,
+      toLeague.name,
+    );
+
+    const encoded = IDL.encode([SetPlayerInjuryDTO_Idl], [dto]);
+
+    return await createProposal({
+      identity: userIdentity,
+      functionId: 63000n,
+      payload: new Uint8Array(encoded),
+      title,
+      summary,
+    });
+  }
+
+  async function addInitialFixtures(dto: AddInitialFixturesDTO): Promise<any> {
+    //TODO
+  }
+
+  async function setFreeAgent(dto: SetFreeAgentDTO): Promise<any> {
+    let userIdentity: OptionIdentity;
+    authStore.subscribe((auth) => (userIdentity = auth.identity));
+    if (!userIdentity) return;
+
+    let leagues = await leagueStore.getLeagues();
+
+    let league = leagues.find((x) => x.id == dto.leagueId);
+    if (!league) throw new Error("Player league not found.");
+
+    const allPlayers = await playerStore.getPlayers(dto.leagueId);
+    const player = allPlayers.find((p) => p.id === dto.playerId);
+    if (!player) throw new Error("Player not found.");
+
+    const newValue = (dto.newValueQuarterMillions / 4).toFixed(2);
+
+    const { title, summary } = buildSetFreeAgentText(
+      `${player.firstName} ${player.lastName}`,
+      newValue,
+    );
+
+    const encoded = IDL.encode([SetPlayerInjuryDTO_Idl], [dto]);
+
+    return await createProposal({
+      identity: userIdentity,
+      functionId: 64000n,
+      payload: new Uint8Array(encoded),
+      title,
+      summary,
+    });
+  }
 
   async function moveFixture(dto: MoveFixtureDTO): Promise<any> {
-    console.log("moving fixture");
-    console.log(dto);
     let userIdentity: OptionIdentity;
     authStore.subscribe((auth) => (userIdentity = auth.identity));
     if (!userIdentity) return;
@@ -570,7 +807,38 @@ function createGovernanceStore() {
     });
   }
 
-  async function postponeFixture(dto: PostponeFixtureDTO): Promise<any> {}
+  async function postponeFixture(dto: PostponeFixtureDTO): Promise<any> {
+    let userIdentity: OptionIdentity;
+    authStore.subscribe((auth) => (userIdentity = auth.identity));
+    if (!userIdentity) return;
+
+    const leagueFixtures = await fixtureStore.getFixtures(
+      dto.leagueId,
+      dto.seasonId,
+    );
+    let fixture = leagueFixtures.find((x) => x.id == dto.fixtureId);
+    if (!fixture) throw new Error("Fixture not found.");
+
+    const clubs = await clubStore.getClubs(dto.leagueId);
+    const homeClub = clubs.find((c) => c.id === fixture.homeClubId);
+    const awayClub = clubs.find((c) => c.id === fixture.awayClubId);
+    if (!homeClub || !awayClub) throw new Error("Missing home/away club.");
+
+    const { title, summary } = buildPostponeFixtureText(
+      `${homeClub.name} v ${awayClub.name}`,
+      fixture.gameweek,
+    );
+
+    const encoded = IDL.encode([SetPlayerInjuryDTO_Idl], [dto]);
+
+    return await createProposal({
+      identity: userIdentity,
+      functionId: 65000n,
+      payload: new Uint8Array(encoded),
+      title,
+      summary,
+    });
+  }
 
   async function rescheduleFixture(dto: RescheduleFixtureDTO): Promise<any> {
     let userIdentity: OptionIdentity;
@@ -626,6 +894,7 @@ function createGovernanceStore() {
     createLeague,
     updateLeague,
     rescheduleFixture,
+    setFreeAgent,
   };
 }
 

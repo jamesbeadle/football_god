@@ -13,14 +13,15 @@
   import TransferPlayer from "$lib/components/governance/player/transfer-player.svelte";
   import LoanPlayer from "$lib/components/governance/player/loan-player.svelte";
   import SetFreeAgent from "$lib/components/governance/player/set-free-agent.svelte";
+  import SetPlayerInjury from "$lib/components/governance/player/set-player-injury.svelte";
   import LocalSpinner from "$lib/components/shared/local-spinner.svelte";
   import RecallPlayer from "$lib/components/governance/player/recall-player.svelte";
   import RevaluePlayerDown from "$lib/components/governance/player/revalue-player-down.svelte";
   import RevaluePlayerUp from "$lib/components/governance/player/revalue-player-up.svelte";
   import PlayersHeaderDisplay from "$lib/components/governance/player/players-header-display.svelte";
   import PlayerDisplay from "$lib/components/player/player-display.svelte";
-    
-
+  import RetirePlayer from "$lib/components/governance/player/retire-player.svelte";
+  
   let isLoading = true;
   let loadingPlayers = false;
   let loadingClubs = false;
@@ -337,7 +338,6 @@
             onRevaluePlayerUp={loadRevaluePlayerUp}
             onRevaluePlayerDown={loadRevaluePlayerDown}
             onRetirePlayer={loadRetirePlayer}
-            onUnretirePlayer={loadUnretirePlayer}
             onSetFreeAgent={loadSetFreeAgent}
           />
         {/each}
@@ -369,7 +369,7 @@
     
       {#if selectedPlayerId > 0 && showSetFreeAgentModal}
       {@const selectedPlayer = filteredPlayers.find(x => x.id == selectedPlayerId) }
-        <SetFreeAgent visible={showRecallPlayerModal} {closeModal} selectedPlayer={selectedPlayer!} />
+        <SetFreeAgent visible={showSetFreeAgentModal} {closeModal} selectedPlayer={selectedPlayer!} />
       {/if}
     
       {#if selectedPlayerId > 0 && showRevaluePlayerUpModal}
@@ -382,6 +382,16 @@
         {@const selectedPlayer = filteredPlayers.find(x => x.id == selectedPlayerId) }
         {@const playerClub = clubs.find(x => x.id == selectedPlayer!.clubId) }
         <RevaluePlayerDown visible={showRevaluePlayerDownModal} {closeModal} club={playerClub!} player={selectedPlayer!} />
+      {/if}
+
+      {#if selectedPlayerId > 0 && showSetPlayerInjuryModal}
+        {@const selectedPlayer = filteredPlayers.find(x => x.id == selectedPlayerId) }
+        <SetPlayerInjury visible={showSetPlayerInjuryModal} {closeModal} selectedPlayer={selectedPlayer!} />
+      {/if}
+
+      {#if selectedPlayerId > 0 && showRetirePlayerModal}
+        {@const selectedPlayer = filteredPlayers.find(x => x.id == selectedPlayerId) }
+        <RetirePlayer visible={showRetirePlayerModal} {closeModal} selectedPlayer={selectedPlayer!} />
       {/if}
     
     {/if}

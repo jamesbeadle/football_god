@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount } from "svelte";
-  import { playerStore } from "$lib/stores/player-store";
+  import { governanceStore } from "$lib/stores/governance-store";
   import type { PlayerDTO, SetFreeAgentDTO } from "../../../../../../declarations/data_canister/data_canister.did";
   import Modal from "$lib/components/shared/modal.svelte";
   import GovernanceModal from "../governance-modal.svelte";
@@ -34,7 +34,7 @@
       playerId: selectedPlayer.id,
       newValueQuarterMillions: newValueMillions * 4
     };
-    await playerStore.setFreeAgent(selectedPlayer.leagueId, dto);
+    await governanceStore.setFreeAgent(dto);
     isLoading = false;
     resetForm();
     closeModal();
@@ -48,14 +48,15 @@
     closeModal();
   }
 </script>
-
-<Modal showModal={visible} onClose={closeModal}>
-  <GovernanceModal title={"Set Free Agent"} {cancelModal} {confirmProposal} {isLoading} {isSubmitDisabled}><p>Select the player's league:</p>
-    <p>Set {selectedPlayer.firstName} {selectedPlayer.lastName} as a free agent:</p>
-    <FormComponent label="New Value (£ millions):">
-      <div class="flex flex-row w-full items-center">
-        <input class="brand-input" type="number" step="0.25" min="0.25" max="250" bind:value={newValueMillions} />
-      </div>
-    </FormComponent>
-  </GovernanceModal>
-</Modal>
+{#if visible}
+  <Modal onClose={closeModal}>
+    <GovernanceModal title={"Set Free Agent"} {cancelModal} {confirmProposal} {isLoading} {isSubmitDisabled}><p>Select the player's league:</p>
+      <p>Set {selectedPlayer.firstName} {selectedPlayer.lastName} as a free agent:</p>
+      <FormComponent label="New Value (£ millions):">
+        <div class="flex flex-row items-center w-full">
+          <input class="brand-input" type="number" step="0.25" min="0.25" max="250" bind:value={newValueMillions} />
+        </div>
+      </FormComponent>
+    </GovernanceModal>
+  </Modal>
+{/if}

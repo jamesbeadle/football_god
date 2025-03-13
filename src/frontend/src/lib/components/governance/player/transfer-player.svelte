@@ -107,48 +107,50 @@
     resetForm();
   }
 </script>
-<Modal showModal={visible} onClose={closeModal}>
-  <GovernanceModal title={"Transfer " + selectedPlayer.firstName + " " + selectedPlayer.lastName} {cancelModal} {confirmProposal} {isLoading} {isSubmitDisabled}>
-    <FormComponent label="Transfer to league:">
-      <DropdownSelect
-        options={transferLeagues.map((league: FootballLeagueDTO) => ({ id: league.id, label: league.name }))}
-        value={transferLeagueId}
-        onChange={(value: string | number) => {
-          transferLeagueId = Number(value);
-        }}
-        scrollOnOpen={true}
-      />
-    </FormComponent>
-        
-    {#if transferLeagueId > 0}
-      <FormComponent label="Transfer to club:">
+{#if visible}
+  <Modal onClose={closeModal}>
+    <GovernanceModal title={"Transfer " + selectedPlayer.firstName + " " + selectedPlayer.lastName} {cancelModal} {confirmProposal} {isLoading} {isSubmitDisabled}>
+      <FormComponent label="Transfer to league:">
         <DropdownSelect
-          options={transferClubs.map((club: ClubDTO) => ({ id: club.id, label: club.friendlyName }))}
-          value={transferClubId}
+          options={transferLeagues.map((league: FootballLeagueDTO) => ({ id: league.id, label: league.name }))}
+          value={transferLeagueId}
           onChange={(value: string | number) => {
-            transferClubId = Number(value);
+            transferLeagueId = Number(value);
           }}
           scrollOnOpen={true}
         />
       </FormComponent>
-
-      {#if transferClubId > 0}
-        <FormComponent label="New Value (£ millions):">
-          <input class="modal-input-box z-100" type="number" step="0.25" min="0.25" max="250" bind:value={newValueMillions} />    
-        </FormComponent>
-
-        <FormComponent label="New Shirt Number:">
-          <input
-            type="number"
-            class="modal-input-box"
-            placeholder="Shirt Number"
-            min="1"
-            max="99"
-            step="1"
-            bind:value={shirtNumber}
+          
+      {#if transferLeagueId > 0}
+        <FormComponent label="Transfer to club:">
+          <DropdownSelect
+            options={transferClubs.map((club: ClubDTO) => ({ id: club.id, label: club.friendlyName }))}
+            value={transferClubId}
+            onChange={(value: string | number) => {
+              transferClubId = Number(value);
+            }}
+            scrollOnOpen={true}
           />
         </FormComponent>
+
+        {#if transferClubId > 0}
+          <FormComponent label="New Value (£ millions):">
+            <input class="modal-input-box z-100" type="number" step="0.25" min="0.25" max="250" bind:value={newValueMillions} />    
+          </FormComponent>
+
+          <FormComponent label="New Shirt Number:">
+            <input
+              type="number"
+              class="modal-input-box"
+              placeholder="Shirt Number"
+              min="1"
+              max="99"
+              step="1"
+              bind:value={shirtNumber}
+            />
+          </FormComponent>
+        {/if}
       {/if}
-    {/if}
-  </GovernanceModal>
-</Modal>
+    </GovernanceModal>
+  </Modal>
+{/if}

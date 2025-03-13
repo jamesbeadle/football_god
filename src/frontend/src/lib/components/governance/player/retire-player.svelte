@@ -72,14 +72,16 @@
   }
 </script>
 
-<Modal showModal={visible} onClose={closeModal}>
-  <GovernanceModal title={"Retire Player"} {cancelModal} {confirmProposal} {isLoading} {isSubmitDisabled}>
-   <FormComponent label="Retirement Date:">
-    <input
-      type="date"
-      bind:value={retirementDate}
-      class="brand-dropdown"
-    />
-   </FormComponent>
-  </GovernanceModal>
-</Modal>
+{#if visible}
+  <Modal onClose={closeModal}>
+    <GovernanceModal title={"Retire Player"} {cancelModal} {confirmProposal} {isLoading} {isSubmitDisabled}>
+    <FormComponent label="Retirement Date:">
+      <input
+        type="date"
+        bind:value={retirementDate}
+        class="brand-dropdown"
+      />
+    </FormComponent>
+    </GovernanceModal>
+  </Modal>
+{/if}

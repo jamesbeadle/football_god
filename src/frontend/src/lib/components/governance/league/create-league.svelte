@@ -150,74 +150,76 @@
   }
 </script>
 
-<Modal showModal={visible} onClose={closeModal}>
-  <GovernanceModal title={"Create League"} {cancelModal} {confirmProposal} {isLoading} {isSubmitDisabled}>
-    <FormComponent label="League Name:">
-      <input
-        type="text"
-        class="modal-input-box"
-        bind:value={leagueName}
-      />
-    </FormComponent>
+{#if visible}
+  <Modal onClose={closeModal}>
+    <GovernanceModal title={"Create League"} {cancelModal} {confirmProposal} {isLoading} {isSubmitDisabled}>
+      <FormComponent label="League Name:">
+        <input
+          type="text"
+          class="modal-input-box"
+          bind:value={leagueName}
+        />
+      </FormComponent>
 
-    <FormComponent label="Abbreviated Name:">
-      <input
-        type="text"
-        class="modal-input-box"
-        bind:value={abbreviatedName}
-      />
-    </FormComponent>
+      <FormComponent label="Abbreviated Name:">
+        <input
+          type="text"
+          class="modal-input-box"
+          bind:value={abbreviatedName}
+        />
+      </FormComponent>
 
-    <FormComponent label="Governing Body:">
-      <input
-        type="text"
-        class="modal-input-box"
-        bind:value={governingBody}
-      />
-    </FormComponent>
+      <FormComponent label="Governing Body:">
+        <input
+          type="text"
+          class="modal-input-box"
+          bind:value={governingBody}
+        />
+      </FormComponent>
 
-    <DropdownSelect
-      value={selectedGender}
-      options={genderOptions}
-      onChange={handleGenderChange}
-    />
-
-    <FormComponent label="Team Count:">
-      <input
-        type="number"
-        class="modal-input-box"
-        bind:value={teamCount}
-      />
-    </FormComponent>
-
-    <FormComponent label="Date Formed:">
-      <input
-        type="date"
-        class="modal-input-box"
-        bind:value={dateFormed}
-      />
-    </FormComponent>
-
-    <FormComponent label="Country:">
       <DropdownSelect
-        value={countryId}
-        options={[{ id: 0, label: "Select League Country" }, ...countryOptions]}
-        onChange={handleCountryChange}
+        value={selectedGender}
+        options={genderOptions}
+        onChange={handleGenderChange}
       />
-    </FormComponent>
 
-    <FormComponent label="Logo:">
-      <button class="btn-file-upload brand-button" on:click={clickFileInput}>
-        Upload Logo
-      </button>
-      <input
-        type="file"
-        id="logo-image"
-        accept="image/*"
-        bind:this={fileInput}
-        on:change={handleFileChange}
-        style="opacity: 0; position: absolute; left: 0; top: 0;"
-      />
-    </FormComponent> 
-  </GovernanceModal>
-</Modal>
+      <FormComponent label="Team Count:">
+        <input
+          type="number"
+          class="modal-input-box"
+          bind:value={teamCount}
+        />
+      </FormComponent>
+
+      <FormComponent label="Date Formed:">
+        <input
+          type="date"
+          class="modal-input-box"
+          bind:value={dateFormed}
+        />
+      </FormComponent>
+
+      <FormComponent label="Country:">
+        <DropdownSelect
+          value={countryId}
+          options={[{ id: 0, label: "Select League Country" }, ...countryOptions]}
+          onChange={handleCountryChange}
+        />
+      </FormComponent>
+
+      <FormComponent label="Logo:">
+        <button class="btn-file-upload brand-button" on:click={clickFileInput}>
+          Upload Logo
+        </button>
+        <input
+          type="file"
+          id="logo-image"
+          accept="image/*"
+          bind:this={fileInput}
+          on:change={handleFileChange}
+          style="opacity: 0; position: absolute; left: 0; top: 0;"
+        />
+      </FormComponent> 
+    </GovernanceModal>
+  </Modal>
+{/if}
