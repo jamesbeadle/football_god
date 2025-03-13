@@ -76,23 +76,25 @@
   }
 </script>
 
-<Modal showModal={visible} onClose={closeModal}>
-  <GovernanceModal title={"Set Player Injury"} {cancelModal} {confirmProposal} {isLoading} {isSubmitDisabled}>
-    <FormComponent label="Enter the injury description:">
-      <input
-        type="text"
-        class="brand-input"
-        placeholder="Injury Description"
-        bind:value={description}
-      />
-    </FormComponent>
-
-    <FormComponent label="Enter the expected return date of the player:">
+{#if visible}
+  <Modal onClose={closeModal}>
+    <GovernanceModal title={"Set Player Injury"} {cancelModal} {confirmProposal} {isLoading} {isSubmitDisabled}>
+      <FormComponent label="Enter the injury description:">
         <input
-        type="date"
-        bind:value={injuryEndDate}
-        class="brand-dropdown"
-      />
-    </FormComponent>
-  </GovernanceModal>
-</Modal>
+          type="text"
+          class="brand-input"
+          placeholder="Injury Description"
+          bind:value={description}
+        />
+      </FormComponent>
+
+      <FormComponent label="Enter the expected return date of the player:">
+          <input
+          type="date"
+          bind:value={injuryEndDate}
+          class="brand-dropdown"
+        />
+      </FormComponent>
+    </GovernanceModal>
+  </Modal>
+{/if}

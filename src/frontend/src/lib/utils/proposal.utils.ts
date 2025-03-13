@@ -70,10 +70,7 @@ export function buildLoanPlayerText(
   };
 }
 
-export function buildSetFreeAgentText(
-  playerName: string,
-  value: string,
-) {
+export function buildSetFreeAgentText(playerName: string, value: string) {
   return {
     title: `Set ${playerName} as free agent`,
     summary:
@@ -81,7 +78,6 @@ export function buildSetFreeAgentText(
       `Description: Set ${playerName} as free agent.`,
   };
 }
-
 
 export function buildRetirePlayerText(
   playerName: string,

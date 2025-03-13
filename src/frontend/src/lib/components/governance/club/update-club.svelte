@@ -122,69 +122,71 @@
 
 </script>
 
-<Modal showModal={visible} onClose={closeModal}>
-  <GovernanceModal title={"Update Club"} {cancelModal} {confirmProposal} {isLoading} {isSubmitDisabled}>
-    <FormComponent label="Club Full Name:">
-      <input
-        type="text"
-        class="brand-input"
-        placeholder="Club Full Name"
-        bind:value={name}
-      />
-    </FormComponent>
-    
-    <FormComponent label="Club Friendly Name:">
-      <input
-        type="text"
-        class="brand-input"
-        placeholder="Club Friendly Name"
-        bind:value={friendlyName}
-      />
-    </FormComponent>
+{#if visible}
+  <Modal onClose={closeModal}>
+    <GovernanceModal title={"Update Club"} {cancelModal} {confirmProposal} {isLoading} {isSubmitDisabled}>
+      <FormComponent label="Club Full Name:">
+        <input
+          type="text"
+          class="brand-input"
+          placeholder="Club Full Name"
+          bind:value={name}
+        />
+      </FormComponent>
+      
+      <FormComponent label="Club Friendly Name:">
+        <input
+          type="text"
+          class="brand-input"
+          placeholder="Club Friendly Name"
+          bind:value={friendlyName}
+        />
+      </FormComponent>
 
-    <FormComponent label="Abbreviated Name">
-      <input
-        type="text"
-        class="brand-input"
-        placeholder="Abbreviated Name"
-        bind:value={abbreviatedName}
-      />
-    </FormComponent>
+      <FormComponent label="Abbreviated Name">
+        <input
+          type="text"
+          class="brand-input"
+          placeholder="Abbreviated Name"
+          bind:value={abbreviatedName}
+        />
+      </FormComponent>
 
-    <FormComponent label="Primary Colour:">
-      <input
-        type="color"
-        bind:value={primaryColourHex}
-        on:input={handlePrimaryColorChange}
-        class="brand-input"
-      />
-    </FormComponent>
+      <FormComponent label="Primary Colour:">
+        <input
+          type="color"
+          bind:value={primaryColourHex}
+          on:input={handlePrimaryColorChange}
+          class="brand-input"
+        />
+      </FormComponent>
 
-    <FormComponent label="Secondary Colour:">
-      <input
-        type="color"
-        bind:value={secondaryColourHex}
-        on:input={handleSecondaryColorChange}
-        class="brand-input"
-      />
-    </FormComponent>
-    <FormComponent label="Third Colour:">
-      <input
-        type="color"
-        bind:value={thirdColourHex}
-        on:input={handleThirdColorChange}
-        class="brand-input"
-      />
-    </FormComponent>
-    <FormComponent label="Shirt Type:">
-      <select
-        class="brand-dropdown"
-        bind:value={shirtType}
-        >
-        {#each shirtTypes as shirt}
-          <option value={shirt}>{shirt}</option>
-        {/each}
-      </select>
-    </FormComponent>
-  </GovernanceModal>
-</Modal>
+      <FormComponent label="Secondary Colour:">
+        <input
+          type="color"
+          bind:value={secondaryColourHex}
+          on:input={handleSecondaryColorChange}
+          class="brand-input"
+        />
+      </FormComponent>
+      <FormComponent label="Third Colour:">
+        <input
+          type="color"
+          bind:value={thirdColourHex}
+          on:input={handleThirdColorChange}
+          class="brand-input"
+        />
+      </FormComponent>
+      <FormComponent label="Shirt Type:">
+        <select
+          class="brand-dropdown"
+          bind:value={shirtType}
+          >
+          {#each shirtTypes as shirt}
+            <option value={shirt}>{shirt}</option>
+          {/each}
+        </select>
+      </FormComponent>
+    </GovernanceModal>
+  </Modal>
+{/if}

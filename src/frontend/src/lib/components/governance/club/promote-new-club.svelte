@@ -64,18 +64,20 @@
   }
 </script>
 
-<Modal showModal={visible} onClose={closeModal}>
-  <GovernanceModal title={"Promote New Club"} {cancelModal} {confirmProposal} {isLoading} {isSubmitDisabled}>
-    <FormComponent label="New league:">
-      <select
-        class="brand-dropdown"
-        bind:value={newLeagueId}
-      >
-        <option value={0}>Select League</option>
-        {#each promotionLeagues as league}
-          <option value={league.id}>{league.name}</option>
-        {/each}
-      </select>
-    </FormComponent>
-  </GovernanceModal>
-</Modal>
+{#if visible}
+  <Modal onClose={closeModal}>
+    <GovernanceModal title={"Promote New Club"} {cancelModal} {confirmProposal} {isLoading} {isSubmitDisabled}>
+      <FormComponent label="New league:">
+        <select
+          class="brand-dropdown"
+          bind:value={newLeagueId}
+        >
+          <option value={0}>Select League</option>
+          {#each promotionLeagues as league}
+            <option value={league.id}>{league.name}</option>
+          {/each}
+        </select>
+      </FormComponent>
+    </GovernanceModal>
+  </Modal>
+{/if}

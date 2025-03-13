@@ -7,11 +7,12 @@
   import { userStore } from "$lib/stores/user-store";
   import { initAuthWorker } from "$lib/services/worker.auth.services";
   import { authStore, type AuthStoreData } from "$lib/stores/auth-store";
+  import { toasts } from "$lib/stores/toasts-store";
 
   import Dashboard from "$lib/components/shared/dashboard.svelte";
   import FullScreenSpinner from "$lib/components/shared/full-screen-spinner.svelte";
-  import { toasts } from "$lib/stores/toasts-store";
   import Toasts from "$lib/components/toasts/toasts.svelte";
+  import PortalHost from 'svelte-portal'
 
   import "../app.css";
 
@@ -57,4 +58,5 @@
     <slot />
   </Dashboard>
   <Toasts />
+  <PortalHost />
 {/await}

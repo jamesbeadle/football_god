@@ -1,17 +1,18 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import { countryStore } from "$lib/stores/country-store";
-  import { playerStore } from "$lib/stores/player-store";
   import type { PlayerPosition } from "../../../../../../declarations/backend/backend.did";
   import { convertDateInputToUnixNano, formatUnixToDateInputValue } from "$lib/utils/helpers";
-  import type { CountryDTO, PlayerDTO, UpdatePlayerDTO } from "../../../../../../declarations/data_canister/data_canister.did";
+  import type { CountryDTO, PlayerDTO, UpdatePlayerDTO } from "../../../../../../declarations/data_canister/data_canister.did"; 
+  import { governanceStore } from "$lib/stores/governance-store";
+  import { toasts } from "$lib/stores/toasts-store";
+  import { isError } from "$lib/utils/helpers";
+  import { busy } from "$lib/stores/busy-store";
+
   import Modal from "$lib/components/shared/modal.svelte";
   import GovernanceModal from "../governance-modal.svelte";
   import FormComponent from "$lib/components/shared/form-component.svelte";
-  import { governanceStore } from "$lib/stores/governance-store";
   import DropdownSelect from "$lib/components/shared/dropdown-select.svelte";
-  import { toasts } from "$lib/stores/toasts-store";
-  import { isError } from "$lib/utils/helpers";
 
   export let visible: boolean;
   export let closeModal: () => void;
@@ -82,7 +83,7 @@
 
   async function confirmProposal() {
     isLoading = true;
-
+    busy.start();
     var position: PlayerPosition = { "Goalkeeper" : null };
     
     switch(selectedPosition){
@@ -112,7 +113,7 @@
       let result = await governanceStore.updatePlayer(dto);
       if (isError(result)) {
         isLoading = false;
-        console.error("Error submitting proposal");
+        console.error("Error submitting proposal", result);
         return;
       }
 
@@ -129,6 +130,7 @@
       });
     } finally {
       isLoading = false;
+      busy.stop();
       visible = false;
       closeModal();
     }
@@ -150,68 +152,70 @@
   }
 </script>
 
-<Modal showModal={visible} onClose={closeModal}>
-  <GovernanceModal title={"Update Player"} {cancelModal} {confirmProposal} {isLoading} {isSubmitDisabled}>
+{#if visible}
+  <Modal onClose={closeModal}>
+    <GovernanceModal title={"Update Player"} {cancelModal} {confirmProposal} {isLoading} {isSubmitDisabled}>
 
-    <FormComponent label="Select Position:">
-      <DropdownSelect
-        options={positions.map((position: any) => ({ id: position.id, label: position.name }))}
-        value={selectedPosition}
-        onChange={(value: string | number) => {
-          selectedPosition = Number(value);
-        }}
-      />
-    </FormComponent>
+      <FormComponent label="Select Position:">
+        <DropdownSelect
+          options={positions.map((position: any) => ({ id: position.id, label: position.name }))}
+          value={selectedPosition}
+          onChange={(value: string | number) => {
+            selectedPosition = Number(value);
+          }}
+        />
+      </FormComponent>
 
-    <FormComponent label="First Name:">
-      <input
-        type="text"
-        class="modal-input-box"
-        placeholder="First Name"
-        bind:value={firstName}
-      />
-    </FormComponent>
+      <FormComponent label="First Name:">
+        <input
+          type="text"
+          class="modal-input-box"
+          placeholder="First Name"
+          bind:value={firstName}
+        />
+      </FormComponent>
 
-    <FormComponent label="Last Name:">
-      <input
-        type="text"
-        class="modal-input-box"
-        placeholder="Last Name"
-        bind:value={lastName}
-      />
-    </FormComponent>
+      <FormComponent label="Last Name:">
+        <input
+          type="text"
+          class="modal-input-box"
+          placeholder="Last Name"
+          bind:value={lastName}
+        />
+      </FormComponent>
 
-    <FormComponent label="Shirt Number:">
-      <input
-        type="number"
-        class="modal-input-box"
-        placeholder="Shirt Number"
-        min="1"
-        max="99"
-        step="1"
-        bind:value={shirtNumber}
-      />
-    </FormComponent>
+      <FormComponent label="Shirt Number:">
+        <input
+          type="number"
+          class="modal-input-box"
+          placeholder="Shirt Number"
+          min="1"
+          max="99"
+          step="1"
+          bind:value={shirtNumber}
+        />
+      </FormComponent>
 
-    <FormComponent label="Date of Birth:">
-      <input
-        type="date"
-        bind:value={dateOfBirth}
-        class="modal-input-box"
-      />
-    </FormComponent>
+      <FormComponent label="Date of Birth:">
+        <input
+          type="date"
+          bind:value={dateOfBirth}
+          class="modal-input-box"
+        />
+      </FormComponent>
 
-    <FormComponent label="Nationality:">
-      <DropdownSelect
-        options={countries.map((country: CountryDTO) => ({ id: country.id, label: country.name }))}
-        value={nationalityId}
-        onChange={(value: string | number) => {
-          nationalityId = Number(value);
-        }}
-      />
-    </FormComponent>
-  </GovernanceModal>
-</Modal>
+      <FormComponent label="Nationality:">
+        <DropdownSelect
+          options={countries.map((country: CountryDTO) => ({ id: country.id, label: country.name }))}
+          value={nationalityId}
+          onChange={(value: string | number) => {
+            nationalityId = Number(value);
+          }}
+        />
+      </FormComponent>
+    </GovernanceModal>
+  </Modal>
+{/if}
 
 
 

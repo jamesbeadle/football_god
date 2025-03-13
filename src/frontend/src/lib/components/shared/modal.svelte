@@ -1,80 +1,66 @@
 <script lang="ts">
-  import { onDestroy, onMount } from "svelte";
-  import CrossIcon from "$lib/icons/CrossIcon.svelte";
+  import Portal from 'svelte-portal';
+	import type { Snippet } from 'svelte';
+	import { quintOut } from 'svelte/easing';
+	import { fade, scale } from 'svelte/transition';
+  import { isBusy } from '$lib/stores/busy-store';
+  import { handleKeyPress } from '$lib/utils/keyboard.utils';
+  import { onMount, onDestroy } from 'svelte';
+  
+  interface Props {
+    onClose: () => void;
+		children: Snippet;
+	}
 
-  export let showModal: boolean;
-  export let onClose: () => void;
-  export let closeOnClickOutside = true;
+  let { children, onClose}: Props = $props();
 
-  let modalElement: HTMLDivElement;
-  let startOnBackdrop = false;
+  let visible = $state(true);
 
-  const handleKeydown = (e: KeyboardEvent) => {
-    if (e.key === 'Escape' && showModal) {
-      onClose();
-    }
-  };
-
-  if (typeof window !== "undefined") {
-    window.addEventListener("keydown", handleKeydown);
+  const close = () => {
+    if ($isBusy) return;
+    visible = false;
+    onClose(); 
   }
 
-  onDestroy(() => {
-    if (typeof window !== "undefined") {
-      window.removeEventListener("keydown", handleKeydown);
-    }
-  });
-
-  const handlePointerDown = (e: PointerEvent) => {
-    if (e.target === e.currentTarget) {
-      startOnBackdrop = true;
-    } else {
-      startOnBackdrop = false;
-    }
-  };
-
-  const handlePointerUp = (e: PointerEvent) => {
-    if (closeOnClickOutside && startOnBackdrop && e.target === e.currentTarget) {
-      onClose();
-    }
-    startOnBackdrop = false;
+  const onCloseHandler = ($event: MouseEvent | TouchEvent) => {
+    $event.stopPropagation();
+    close();
   };
 
   onMount(() => {
-    if (modalElement && showModal) {
-      modalElement.focus();
-    }
+    document.body.style.overflow = 'hidden';
   });
+
+  onDestroy(() => {
+    document.body.style.overflow = '';
+  });
+
 </script>
 
-{#if showModal}
-  <div
-    class="fixed inset-0 z-50 overflow-visible bg-black bg-opacity-50 shadow-lg modal-backdrop"
-    role="dialog"
-    aria-modal="true"
-    tabindex="-1"
-    on:pointerdown={handlePointerDown}
-    on:pointerup={handlePointerUp}
-  >
+{#if visible}
+  <Portal>
     <div
-      bind:this={modalElement}
-      class="w-full max-w-lg mx-4 text-white rounded shadow outline-none bg-BrandLightGray md:max-w-3xl focus:outline-none"
-      tabindex="-1"
+      class="fixed inset-0 z-[calc(var(--z-index)+998)] flex items-center justify-center"
+      out:fade
+      role="dialog"
+      aria-labelledby="modalTitle"
+      aria-describedby="modalContent"
     >
-      <header class="flex items-center justify-between p-4">
-        <button
-          type="button"
-          class="text-black"
-          aria-label="Close modal"
-          on:click={onClose}
-        >
-          <CrossIcon className="w-4" fill='white' />
-        </button>
-      </header>
-      <div class="bg-Brand p-6 rounded-b-lg overflow-auto max-h-[80vh]">
-        <div class=""></div>
-        <slot />
+      <div
+        class="absolute inset-0 bg-black bg-opacity-50 cursor-pointer"
+        onclick={onCloseHandler}
+        onkeypress={($event) => handleKeyPress({ $event, callback: close })}
+        role="button"
+        tabindex="-1"
+      ></div>
+      <div 
+        transition:scale={{ delay: 25, duration: 150, easing: quintOut }} 
+        class="relative w-full max-w-xl p-6 shadow-xl"
+      >
+        <div class="relative max-h-screen px-12 py-4 overflow-auto rounded shadow bg-BrandGray">
+          {@render children()}
+        </div>
       </div>
     </div>
-  </div>
+  </Portal>
 {/if}

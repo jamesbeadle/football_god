@@ -118,17 +118,17 @@
       const draftKey = `fixtureDraft_${fixtureId}`;
       const savedDraft = localStorage.getItem(draftKey);
       if (savedDraft) {
-      const draftData = JSON.parse(savedDraft);
+        const draftData = JSON.parse(savedDraft);
 
-      let selectedPlayersData: PlayerDTO[] = draftData.selectedPlayers;
-      if(selectedPlayersData && selectedPlayersData.length > 0){
-        selectedPlayers.set(selectedPlayersData);
-      }
+        let selectedPlayersData: PlayerDTO[] = draftData.selectedPlayers;
+        if(selectedPlayersData && selectedPlayersData.length > 0){
+          selectedPlayers.set(selectedPlayersData);
+        }
 
-      let draftEventData = draftData.playerEventData;
-      if (draftEventData) {
-        playerEventData.set(draftEventData);
-      }
+        let draftEventData = draftData.playerEventData;
+        if (draftEventData) {
+          playerEventData.set(draftEventData);
+        }
 
       }
     } catch (error)  {
@@ -156,10 +156,13 @@
       if (isError(result)) {
         submitting = false;
         console.error("Error submitting proposal");
+        toasts.addToast({
+          message: `Error submitting proposal`,
+          type: "error",
+        });
         return;
       }
       submitted = true;
-      submitting = false;
       localStorage.removeItem(`fixtureDraft_${fixtureId}`);
       if(submitted){
         toasts.addToast({
@@ -170,9 +173,14 @@
       }
       goto(`/`)
     } catch (error) {
-      console.error("Error saving fixture data: ", error);
+        console.error("Error saving fixture data: ", error);
+        toasts.addToast({
+            message: `Error submitting proposal`,
+            type: "error",
+          });
     } finally {
       isLoading = false;
+      submitting = false;
       showConfirmDataModal = false;
     }
   }
@@ -489,14 +497,19 @@
   />
 {/if}
 
-<ConfirmFixtureDataModal
-  visible={showConfirmDataModal}
-  onConfirm={confirmFixtureData}
-  closeModal={closeConfirmDataModal}
-/>
 
-<ClearDraftModal
-  closeModal={closeConfirmClearDraftModal}
-  visible={showClearDraftModal}
-  onConfirm={clearDraft}
-/>
+{#if showConfirmDataModal}
+  <ConfirmFixtureDataModal
+    visible={showConfirmDataModal}
+    onConfirm={confirmFixtureData}
+    closeModal={closeConfirmDataModal}
+  />
+{/if}
+
+{#if showClearDraftModal}
+  <ClearDraftModal
+    closeModal={closeConfirmClearDraftModal}
+    visible={showClearDraftModal}
+    onConfirm={clearDraft}
+  />
+{/if}

@@ -113,7 +113,6 @@
   }
 
   function closeModal() {
-    console.log("close modal called")
     selectedFixtureId = 0;
     showMoveFixtureModal = false;
     showPostponeFixtureModal = false;

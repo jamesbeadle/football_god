@@ -163,93 +163,90 @@
   }
 </script>
 
-<Modal showModal={visible} onClose={closeModal}>
-  <GovernanceModal title={"Create Player"} {cancelModal} {confirmProposal} {isLoading} {isSubmitDisabled}>
-    <FormComponent label="Select the player's league:">
-      <DropdownSelect
-        options={leagues.map(league => ({ id: league.id, label: league.name }))}
-        value={selectedLeagueId}
-        onChange={(value: string | number) => {
-          selectedLeagueId = Number(value);
-        }}
-        scrollOnOpen={true}
-      />
-    </FormComponent>
-    
-    {#if selectedLeagueId > 0}
-      <FormComponent label="Select the player's club:">
+{#if visible}
+  <Modal onClose={closeModal}>
+    <GovernanceModal title={"Create Player"} {cancelModal} {confirmProposal} {isLoading} {isSubmitDisabled}>
+      <FormComponent label="Select the player's league:">
         <DropdownSelect
-          options={clubs.map(club => ({ id: club.id, label: club.friendlyName }))}
-          value={selectedClubId}
+          options={leagues.map(league => ({ id: league.id, label: league.name }))}
+          value={selectedLeagueId}
           onChange={(value: string | number) => {
-            selectedClubId = Number(value);
+            selectedLeagueId = Number(value);
           }}
           scrollOnOpen={true}
         />
       </FormComponent>
-    {/if}
-    {#if selectedClubId > 0}
-      <FormComponent label="Select Position:">
-        <DropdownSelect
-          options={positions.map((position: any) => ({ id: position.id, label: position.name }))}
-          value={selectedPosition}
-          onChange={(value: string | number) => {
-            selectedPosition = Number(value);
-          }}
-        />
-      </FormComponent>
       
-      <FormComponent label="First Name:">
-        <input type="text" class="modal-input-box" placeholder="First Name" bind:value={firstName} />
-      </FormComponent>
-      
-      <FormComponent label="Last Name:">
-        <input type="text" class="modal-input-box" placeholder="Last Name" bind:value={lastName} />
-      </FormComponent>
-      
-      <FormComponent label="Shirt Number:">
-        <input
+      {#if selectedLeagueId > 0}
+        <FormComponent label="Select the player's club:">
+          <DropdownSelect
+            options={clubs.map(club => ({ id: club.id, label: club.friendlyName }))}
+            value={selectedClubId}
+            onChange={(value: string | number) => {
+              selectedClubId = Number(value);
+            }}
+            scrollOnOpen={true}
+          />
+        </FormComponent>
+      {/if}
+      {#if selectedClubId > 0}
+        <FormComponent label="Select Position:">
+          <DropdownSelect
+            options={positions.map((position: any) => ({ id: position.id, label: position.name }))}
+            value={selectedPosition}
+            onChange={(value: string | number) => {
+              selectedPosition = Number(value);
+            }}
+          />
+        </FormComponent>
+        
+        <FormComponent label="First Name:">
+          <input type="text" class="modal-input-box" placeholder="First Name" bind:value={firstName} />
+        </FormComponent>
+        
+        <FormComponent label="Last Name:">
+          <input type="text" class="modal-input-box" placeholder="Last Name" bind:value={lastName} />
+        </FormComponent>
+        
+        <FormComponent label="Shirt Number:">
+          <input
+            type="number"
+            class="modal-input-box"
+            placeholder="Shirt Number"
+            min="1"
+            max="99"
+            step="1"
+            bind:value={shirtNumber} />
+        </FormComponent>
+        
+        <FormComponent label="Value (£m):">
+          <input
           type="number"
+          step="0.25"
           class="modal-input-box"
-          placeholder="Shirt Number"
-          min="1"
-          max="99"
-          step="1"
-          bind:value={shirtNumber} />
-      </FormComponent>
-      
-      <FormComponent label="Value (£m):">
-        <input
-        type="number"
-        step="0.25"
-        class="modal-input-box"
-        placeholder="Value"
-        bind:value
-      />
-      </FormComponent>
-      
-      <FormComponent label="Date of Birth:">
-        <input
-          type="date"
-          bind:value={dateOfBirth}
-          class="modal-input-box"
+          placeholder="Value"
+          bind:value
         />
-      </FormComponent>
-      
-      <FormComponent label="Nationality:">
-        <DropdownSelect
-          options={countries.map(country => ({ id: country.id, label: country.name }))}
-          value={nationalityId}
-          onChange={(value: string | number) => {
-            nationalityId = Number(value);
-          }}
-        />
-      </FormComponent>
-    {/if}
-  </GovernanceModal>
-</Modal>
-
-
-
-
-
+        </FormComponent>
+        
+        <FormComponent label="Date of Birth:">
+          <input
+            type="date"
+            bind:value={dateOfBirth}
+            class="modal-input-box"
+          />
+        </FormComponent>
+        
+        <FormComponent label="Nationality:">
+          <DropdownSelect
+            options={countries.map(country => ({ id: country.id, label: country.name }))}
+            value={nationalityId}
+            onChange={(value: string | number) => {
+              nationalityId = Number(value);
+            }}
+          />
+        </FormComponent>
+      {/if}
+    </GovernanceModal>
+  </Modal>
+{/if}

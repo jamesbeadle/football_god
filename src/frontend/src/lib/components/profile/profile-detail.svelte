@@ -109,38 +109,42 @@
 {#if isLoading}
   <FullScreenSpinner />
 {:else}
-  <UpdateUsernameModal
-    newUsername={$userStore ? $userStore.username : ""}
-    visible={showUsernameModal}
-    closeModal={closeUsernameModal}
-    cancelModal={cancelUsernameModal}
-  />
-  <WithdrawFplModal
-    visible={showFPLModal}
-    closeModal={closeWithdrawFPLModal}
-    cancelModal={closeWithdrawFPLModal}
-    fplBalance={fplBalance}
-    fplBalanceFormatted={fplBalanceFormatted}
-  />
-  <div class="container mt-4 mx-6">
+  {#if showUsernameModal}
+    <UpdateUsernameModal
+      newUsername={$userStore ? $userStore.username : ""}
+      visible={showUsernameModal}
+      closeModal={closeUsernameModal}
+      cancelModal={cancelUsernameModal}
+    />
+  {/if}
+  {#if showFPLModal}
+    <WithdrawFplModal
+      visible={showFPLModal}
+      closeModal={closeWithdrawFPLModal}
+      cancelModal={closeWithdrawFPLModal}
+      fplBalance={fplBalance}
+      fplBalanceFormatted={fplBalanceFormatted}
+    />
+  {/if}
+  <div class="container mx-6 mt-4">
     <div class="flex flex-wrap">
       <div class="w-full mb-4 md:mb-0">
-        <div class="mt-2 md:mt-1 rounded-lg">
+        <div class="mt-2 rounded-lg md:mt-1">
           <p class="mb-1 text-xs">Username:</p>
-          <h2 class="default-header mb-1 md:mb-2">
+          <h2 class="mb-1 default-header md:mb-2">
             {profile == null || profile.username == "" ? "Not Set" : profile.username}
           </h2>
           <button
-            class="text-sm md:text-sm p-1 md:p-2 px-2 md:px-4 rounded fg-button button-hover"
+            class="p-1 px-2 text-sm rounded md:text-sm md:p-2 md:px-4 fg-button button-hover"
             on:click={displayUsernameModal}
           >
             Update
           </button>
 
-          <p class="mb-1 mt-4 text-xs">Principal:</p>
+          <p class="mt-4 mb-1 text-xs">Principal:</p>
           <div class="flex items-center">
             <button
-              class="flex items-center text-left text-xxs break-all"
+              class="flex items-center text-left break-all text-xxs"
               on:click={() => copyTextAndShowToast(principalId)}
             >
               <span>{ principalId }</span>
@@ -153,14 +157,14 @@
     <div class="flex flex-wrap">
       <div class="w-full mb-4">
         <div class="mt-4">
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
             <div
-              class="flex items-center p-4 rounded-lg shadow-md border border-gray-700"
+              class="flex items-center p-4 border border-gray-700 rounded-lg shadow-md"
             >
               <img
                 src="/FPLCoin.png"
                 alt="FPL"
-                class="h-12 w-12 md:h-9 md:w-9"
+                class="w-12 h-12 md:h-9 md:w-9"
               />
               <div class="ml-4 md:ml-3">
 
@@ -184,9 +188,9 @@
 
 
                 {#if !loadingBalances}
-                <div class="flex items-center text-xs mt-2">
+                <div class="flex items-center mt-2 text-xs">
                   <button
-                  class="text-sm md:text-sm p-1 md:p-2 px-2 md:px-4 rounded fg-button button-hover"
+                  class="p-1 px-2 text-sm rounded md:text-sm md:p-2 md:px-4 fg-button button-hover"
                     on:click={loadWithdrawFPLModal}
                   >
                     Withdraw
