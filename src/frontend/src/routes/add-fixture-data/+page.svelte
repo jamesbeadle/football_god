@@ -156,10 +156,13 @@
       if (isError(result)) {
         submitting = false;
         console.error("Error submitting proposal");
+        toasts.addToast({
+          message: `Error submitting proposal`,
+          type: "error",
+        });
         return;
       }
       submitted = true;
-      submitting = false;
       localStorage.removeItem(`fixtureDraft_${fixtureId}`);
       if(submitted){
         toasts.addToast({
@@ -170,9 +173,14 @@
       }
       goto(`/`)
     } catch (error) {
-      console.error("Error saving fixture data: ", error);
+        console.error("Error saving fixture data: ", error);
+        toasts.addToast({
+            message: `Error submitting proposal`,
+            type: "error",
+          });
     } finally {
       isLoading = false;
+      submitting = false;
       showConfirmDataModal = false;
     }
   }
