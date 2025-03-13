@@ -13,7 +13,10 @@
 # frontend code
 node_modules/
 dist/
+build/
 
 .mops
 
 .svelte-kit/
+
+sns/utils/ic_admin.pem
