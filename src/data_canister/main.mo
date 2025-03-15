@@ -4000,10 +4000,10 @@ actor Self {
     await createTransferWindowEndTimers();
     await createLoanExpiredTimers();
     await createInjuryExpiredTimers();
-    await checkRollOverPickTeam();
     //await createInitialHashes();
     //addDefaultClubsToRequiredStatus();
     //checkRequiredStatus(1); //TODO - ONLY SHOW LEAGUES ON BETTING FOR LEAGUES WITH NO CLUBS THAT REQUIRE DATA
+    await checkRollOverPickTeam();
   };
 
   private func addDefaultClubsToRequiredStatus() {
@@ -4077,7 +4077,7 @@ actor Self {
                 func(fixture : FootballTypes.Fixture) {
                   fixture.kickOff - Utilities.getHour() >= Time.now();
                 },
-              );
+              );// TODO
               for (fixture in Iter.fromList(activeFutureFixtures)) {
                 let triggerDuration = #nanoseconds(Int.abs((fixture.kickOff - Utilities.getHour() - Time.now())));
                 await setTimer(triggerDuration, "rollOverPickTeam");

@@ -156,7 +156,6 @@ async function createProposal({
 }
 
 function createGovernanceStore() {
-  
   async function revaluePlayerUp(dto: RevaluePlayerUpDTO): Promise<any> {
     let userIdentity: OptionIdentity;
     authStore.subscribe((auth) => (userIdentity = auth.identity));
@@ -513,7 +512,7 @@ function createGovernanceStore() {
     const { title, summary } = buildSetPlayerInjuryText(
       `${player.firstName} ${player.lastName}`,
       dto.description,
-      convertDateToReadable(Number(dto.expectedEndDate))
+      convertDateToReadable(Number(dto.expectedEndDate)),
     );
 
     const encoded = IDL.encode([SetPlayerInjuryDTO_Idl], [dto]);
@@ -548,7 +547,7 @@ function createGovernanceStore() {
       `${player.firstName} ${player.lastName}`,
       Object.keys(player.position)[0],
       currentClub.friendlyName,
-      convertDateToReadable(Number(dto.retirementDate))
+      convertDateToReadable(Number(dto.retirementDate)),
     );
 
     const encoded = IDL.encode([RetirePlayerDTO_Idl], [dto]);
@@ -615,7 +614,9 @@ function createGovernanceStore() {
     const recallClubs = await clubStore.getClubs(player.leagueId);
     const parentLeagueClubs = await clubStore.getClubs(player.parentLeagueId);
     const recallClub = recallClubs.find((c) => c.id === player.clubId);
-    const parentClub = parentLeagueClubs.find((c) => c.id === player.parentClubId);
+    const parentClub = parentLeagueClubs.find(
+      (c) => c.id === player.parentClubId,
+    );
     if (!recallClub) throw new Error("Recall club not found.");
     if (!parentClub) throw new Error("Parent club not found.");
 
@@ -624,7 +625,7 @@ function createGovernanceStore() {
       recallClub.friendlyName,
       parentClub.friendlyName,
       recallLeague.name,
-      parentLeague.name
+      parentLeague.name,
     );
 
     const encoded = IDL.encode([RetirePlayerDTO_Idl], [dto]);
@@ -688,7 +689,7 @@ function createGovernanceStore() {
       dto.secondaryColourHex,
       dto.thirdColourHex,
       dto.abbreviatedName,
-      Object.keys(dto.shirtType)[0]
+      Object.keys(dto.shirtType)[0],
     );
 
     const encoded = IDL.encode([SetPlayerInjuryDTO_Idl], [dto]);
@@ -714,8 +715,6 @@ function createGovernanceStore() {
     if (!fromLeague) throw new Error("Player 'from' league not found.");
     if (!toLeague) throw new Error("Player 'to' league not found.");
 
-    
-
     const clubs = await clubStore.getClubs(dto.leagueId);
     const currentClub = clubs.find((c) => c.id === dto.clubId);
     if (!currentClub) throw new Error("Current club not found.");
@@ -723,7 +722,7 @@ function createGovernanceStore() {
     const { title, summary } = buildPromoteClubText(
       currentClub.friendlyName,
       fromLeague.name,
-      toLeague.name
+      toLeague.name,
     );
 
     const encoded = IDL.encode([SetPlayerInjuryDTO_Idl], [dto]);
@@ -757,10 +756,9 @@ function createGovernanceStore() {
 
     const newValue = (dto.newValueQuarterMillions / 4).toFixed(2);
 
-
     const { title, summary } = buildSetFreeAgentText(
       `${player.firstName} ${player.lastName}`,
-      newValue
+      newValue,
     );
 
     const encoded = IDL.encode([SetPlayerInjuryDTO_Idl], [dto]);
@@ -830,7 +828,7 @@ function createGovernanceStore() {
 
     const { title, summary } = buildPostponeFixtureText(
       `${homeClub.name} v ${awayClub.name}`,
-      fixture.gameweek
+      fixture.gameweek,
     );
 
     const encoded = IDL.encode([SetPlayerInjuryDTO_Idl], [dto]);
@@ -842,7 +840,6 @@ function createGovernanceStore() {
       title,
       summary,
     });
-
   }
 
   async function rescheduleFixture(dto: RescheduleFixtureDTO): Promise<any> {
