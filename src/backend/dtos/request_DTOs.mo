@@ -49,12 +49,6 @@ module RequestDTOs {
     amount: Nat64;
   };
 
-  public type GetSnapshotPlayers = {
-    seasonId: FootballTypes.SeasonId;
-    leagueId: FootballTypes.LeagueId;
-    gameweek: FootballTypes.GameweekNumber;
-  };
-
   public type UpdateRewardPoolsDTO = {
     seasonId : FootballTypes.SeasonId;
     seasonLeaderboardPool : Nat64;

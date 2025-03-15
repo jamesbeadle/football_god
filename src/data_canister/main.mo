@@ -4000,10 +4000,10 @@ actor Self {
     await createTransferWindowEndTimers();
     await createLoanExpiredTimers();
     await createInjuryExpiredTimers();
-    //await createInitialHashes();
+    await createInitialHashes();
     //addDefaultClubsToRequiredStatus();
     //checkRequiredStatus(1); //TODO - ONLY SHOW LEAGUES ON BETTING FOR LEAGUES WITH NO CLUBS THAT REQUIRE DATA
-    await checkRollOverPickTeam();
+    //await checkRollOverPickTeam();
   };
 
   private func addDefaultClubsToRequiredStatus() {
@@ -4031,7 +4031,7 @@ actor Self {
       let _ = await updateDataHash(league.leagueId, "players");
       let _ = await updateDataHash(league.leagueId, "player_events");
       let _ = await updateDataHash(league.leagueId, "countries");
-      let _ = await updateDataHash(league.leagueId, "league_statuses");
+      let _ = await updateDataHash(league.leagueId, "league_status");
     };
 
   };
