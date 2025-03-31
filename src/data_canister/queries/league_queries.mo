@@ -1,9 +1,8 @@
-import FootballIds "mo:waterway-mops/football/FootballIds";
 import Enums "mo:waterway-mops/Enums";
 import Ids "mo:waterway-mops/Ids";
-import BaseTypes "mo:waterway-mops/BaseTypes";
+import FootballIds "mo:waterway-mops/football/FootballIds";
+import BaseDefinitions "mo:waterway-mops/BaseDefinitions";
 import FootballDefinitions "mo:waterway-mops/football/FootballDefinitions";
-
 
 module LeagueQueries {
 
@@ -42,7 +41,7 @@ module LeagueQueries {
     public type LeagueStatus = {
         leagueId : FootballIds.LeagueId;
         activeSeasonId : FootballIds.SeasonId;
-        activeMonth : BaseTypes.CalendarMonth;
+        activeMonth : BaseDefinitions.CalendarMonth;
         unplayedGameweek : FootballDefinitions.GameweekNumber;
         activeGameweek : FootballDefinitions.GameweekNumber;
         completedGameweek : FootballDefinitions.GameweekNumber;
