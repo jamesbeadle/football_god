@@ -21,14 +21,14 @@
   import BadgeIcon from "$lib/icons/BadgeIcon.svelte";
   import SelectedPlayerList from "$lib/components/fixture-validation/selected-player-list.svelte";
   
-  import type { ClubDTO, FixtureDTO, PlayerDTO, PlayerEventData, SubmitFixtureDataDTO } from "../../../../declarations/data_canister/data_canister.did";
+  import type { Club, Fixture, Player, PlayerEventData, SubmitFixtureData } from "../../../../declarations/data_canister/data_canister.did";
   
-  let clubs: ClubDTO[] = [];
-  let players: PlayerDTO[] = [];
-  let fixture: FixtureDTO | undefined;
-  let selectedTeam: ClubDTO | null = null;
-  let homeTeam: ClubDTO | null;
-  let awayTeam: ClubDTO | null;
+  let clubs: Club[] = [];
+  let players: Player[] = [];
+  let fixture: Fixture | undefined;
+  let selectedTeam: Club | null = null;
+  let homeTeam: Club | null;
+  let awayTeam: Club | null;
 
   let activeTab: string = "home";
   let showPlayerSelectionModal = false;
@@ -36,10 +36,10 @@
   let showClearDraftModal = false;
   let showConfirmDataModal = false;
 
-  let selectedPlayer: PlayerDTO | null = null;
+  let selectedPlayer: Player | null = null;
 
-  let teamPlayers = writable<PlayerDTO[]>([]);
-  let selectedPlayers = writable<PlayerDTO[]>([]);
+  let teamPlayers = writable<Player[]>([]);
+  let selectedPlayers = writable<Player[]>([]);
   let playerEventData = writable<PlayerEventData[]>([]);
 
   let homeGoalsText = 0;
@@ -120,7 +120,7 @@
       if (savedDraft) {
       const draftData = JSON.parse(savedDraft);
 
-      let selectedPlayersData: PlayerDTO[] = draftData.selectedPlayers;
+      let selectedPlayersData: Player[] = draftData.selectedPlayers;
       if(selectedPlayersData && selectedPlayersData.length > 0){
         selectedPlayers.set(selectedPlayersData);
       }
@@ -144,7 +144,7 @@
     try {
       showConfirmDataModal = false;
       submitting = true;
-      let dto: SubmitFixtureDataDTO = {
+      let dto: SubmitFixtureData = {
         seasonId,
         leagueId,
         fixtureId : fixtureId,
@@ -178,13 +178,13 @@
   }
 
   function saveDraft() {
-    let uniquePlayers = new Set<PlayerDTO>();
+    let uniquePlayers = new Set<Player>();
     $playerEventData.forEach((event) => {
       uniquePlayers.add(players.find(x => x.id == event.playerId)!);
   });
 
 
-    let allSelectedPlayers = new Set<PlayerDTO>();
+    let allSelectedPlayers = new Set<Player>();
     $selectedPlayers.forEach((player) => {
       allSelectedPlayers.add(player);
     });
@@ -205,7 +205,7 @@
 
   function clearDraft() {
     playerEventData = writable<PlayerEventData[]>([]);
-    selectedPlayers = writable<PlayerDTO[]>([]);
+    selectedPlayers = writable<Player[]>([]);
     localStorage.removeItem(`fixtureDraft_${fixtureId}`);
     closeConfirmClearDraftModal();
     toasts.addToast({
@@ -221,12 +221,12 @@
     activeTab = tab;
   }
 
-  function handleEditPlayerEvents(player: PlayerDTO) {
+  function handleEditPlayerEvents(player: Player) {
     selectedPlayer = player;
     showPlayerEventModal = true;
   }
 
-  function handleRemovePlayer(player: PlayerDTO) {
+  function handleRemovePlayer(player: Player) {
     selectedPlayers.set($selectedPlayers.filter((x) => x.id != player.id));
     playerEventData.set($playerEventData.filter(x => x.playerId != player.id))
   }

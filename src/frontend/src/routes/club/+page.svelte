@@ -1,7 +1,7 @@
 <script lang="ts">
     import { onMount } from "svelte";
     import { page } from "$app/stores";
-    import type { ClubId, LeagueId, ClubDTO } from "../../../../declarations/data_canister/data_canister.did";
+    import type { ClubId, LeagueId, Club } from "../../../../declarations/data_canister/data_canister.did";
     import { goto } from "$app/navigation";
 
     import { clubStore } from "$lib/stores/club-store";
@@ -14,7 +14,7 @@
     import ClubHeader from "$lib/components/club/club-header.svelte";
   
     let isLoading = true;
-    let club: ClubDTO | null = null;
+    let club: Club | null = null;
     
     let activeTab: string = "players";
     const tabs = [

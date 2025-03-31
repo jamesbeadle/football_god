@@ -4,20 +4,20 @@
   import { clubStore } from "$lib/stores/club-store";
   import { governanceStore } from "$lib/stores/governance-store";
   import { isError } from "$lib/utils/helpers";
-  import type { ClubDTO, FixtureDTO, PostponeFixtureDTO } from "../../../../../../declarations/data_canister/data_canister.did";
+  import type { Club, Fixture, PostponeFixture } from "../../../../../../declarations/data_canister/data_canister.did";
   import Modal from "$lib/components/shared/modal.svelte";
   import GovernanceModal from "../governance-modal.svelte";
   import { toasts } from "$lib/stores/toasts-store";
     
   export let visible: boolean;
   export let closeModal: () => void;
-  export let selectedFixture: FixtureDTO;
+  export let selectedFixture: Fixture;
   export let selectedLeagueId: number;
 
   let gameweeks = Array.from({ length: Number(process.env.TOTAL_GAMEWEEKS) }, (_, i) => i + 1);
-  let clubs: ClubDTO[] = [];
-  let homeClub: ClubDTO;
-  let awayClub: ClubDTO;
+  let clubs: Club[] = [];
+  let homeClub: Club;
+  let awayClub: Club;
   
   $: isSubmitDisabled = false;
 
@@ -57,7 +57,7 @@
         return
       }
 
-      let dto: PostponeFixtureDTO = {
+      let dto: PostponeFixture = {
         leagueId: selectedLeagueId,
         seasonId: leagueStatus.activeSeasonId,
         fixtureId : selectedFixture.id

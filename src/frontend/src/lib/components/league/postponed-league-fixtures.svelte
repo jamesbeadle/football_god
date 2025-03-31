@@ -5,7 +5,7 @@
   import { clubStore } from "$lib/stores/club-store";
   import { fixtureStore } from "$lib/stores/fixture-store";
   import { leagueStore } from "$lib/stores/league-store";
-  import type { ClubDTO, FixtureDTO, FootballLeagueDTO } from "../../../../../declarations/data_canister/data_canister.did";
+  import type { Club, Fixture, FootballLeagueDTO } from "../../../../../declarations/data_canister/data_canister.did";
   
   import RescheduleFixture from "../governance/fixture/reschedule-fixture.svelte";
   import FixtureDisplay from "./fixture-display.svelte";
@@ -16,9 +16,9 @@
   let isLoading = true;
   
   let league: FootballLeagueDTO | undefined;
-  let clubs: ClubDTO[] = [];
-  let fixtures: FixtureDTO[] = [];
-  let selectedFixture: FixtureDTO | undefined;
+  let clubs: Club[] = [];
+  let fixtures: Fixture[] = [];
+  let selectedFixture: Fixture | undefined;
   let selectedSeasonId: number = 0;
 
   let showRescheduleFixture = false;

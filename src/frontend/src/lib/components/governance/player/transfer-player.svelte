@@ -4,7 +4,7 @@
   import { clubStore } from "$lib/stores/club-store";
   import { governanceStore } from "$lib/stores/governance-store";
   import { isError } from "$lib/utils/helpers";
-  import type { ClubDTO, FootballLeagueDTO, PlayerDTO, TransferPlayerDTO } from "../../../../../../declarations/data_canister/data_canister.did";
+  import type { Club, League, Player, TransferPlayer } from "../../../../../../declarations/data_canister/data_canister.did";
   import Modal from "$lib/components/shared/modal.svelte";
   import GovernanceModal from "../governance-modal.svelte";
   import FormComponent from "$lib/components/shared/form-component.svelte";
@@ -13,15 +13,15 @@
   
   export let visible: boolean;
   export let closeModal: () => void;
-  export let selectedPlayer: PlayerDTO;
+  export let selectedPlayer: Player;
   
   let transferLeagueId: number = 0;
   let transferClubId: number = 0;
   let newValueMillions: number = 0;
   let shirtNumber: number = 0;
 
-  let transferLeagues: FootballLeagueDTO[] = [];
-  let transferClubs: ClubDTO[] = [];
+  let transferLeagues: League[] = [];
+  let transferClubs: Club[] = [];
   
   let isLoading = false;
   let submitting = false;
@@ -57,7 +57,7 @@
 
     try {
       isLoading = true;
-      let dto: TransferPlayerDTO = {
+      let dto: TransferPlayer = {
         leagueId: selectedPlayer.leagueId,
         clubId: selectedPlayer.clubId,
         newLeagueId: transferLeagueId,
@@ -111,7 +111,7 @@
   <GovernanceModal title={"Transfer " + selectedPlayer.firstName + " " + selectedPlayer.lastName} {cancelModal} {confirmProposal} {isLoading} {isSubmitDisabled}>
     <FormComponent label="Transfer to league:">
       <DropdownSelect
-        options={transferLeagues.map((league: FootballLeagueDTO) => ({ id: league.id, label: league.name }))}
+        options={transferLeagues.map((league: League) => ({ id: league.id, label: league.name }))}
         value={transferLeagueId}
         onChange={(value: string | number) => {
           transferLeagueId = Number(value);
@@ -123,7 +123,7 @@
     {#if transferLeagueId > 0}
       <FormComponent label="Transfer to club:">
         <DropdownSelect
-          options={transferClubs.map((club: ClubDTO) => ({ id: club.id, label: club.friendlyName }))}
+          options={transferClubs.map((club: Club) => ({ id: club.id, label: club.friendlyName }))}
           value={transferClubId}
           onChange={(value: string | number) => {
             transferClubId = Number(value);

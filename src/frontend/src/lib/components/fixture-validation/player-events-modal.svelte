@@ -4,11 +4,11 @@
   import { onMount } from "svelte";
   import Modal from "../shared/modal.svelte";
   import CardsTab from "./cards-tab.svelte";
-  import type { PlayerDTO, PlayerEventData } from "../../../../../declarations/data_canister/data_canister.did";
+  import type { Player, PlayerEventData } from "../../../../../declarations/data_canister/data_canister.did";
   import FixtureEventSection from "./fixture-event-section.svelte";
 
   export let visible = false;
-  export let player: PlayerDTO;
+  export let player: Player;
   export let fixtureId: number;
   export let playerEventData: Writable<PlayerEventData[]>;
   export let closeModal: () => void;

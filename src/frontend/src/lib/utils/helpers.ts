@@ -8,8 +8,8 @@ import Sco from "$lib/components/flags/sco.svelte";
 import Wal from "$lib/components/flags/wal.svelte";
 import Noi from "$lib/components/flags/noi.svelte";
 import type {
-  ClubDTO,
-  FixtureDTO,
+  Club,
+  Fixture,
   FixtureStatusType,
 } from "../../../../declarations/data_canister/data_canister.did";
 import type { FixtureWithClubs } from "$lib/types/fixture-with-clubs";
@@ -801,8 +801,8 @@ export function deserializeData(data: string): any {
 }
 
 export function getFixturesWithTeams(
-  clubs: ClubDTO[],
-  fixtures: FixtureDTO[],
+  clubs: Club[],
+  fixtures: Fixture[],
 ): FixtureWithClubs[] {
   return fixtures
     .sort((a, b) => Number(a.kickOff) - Number(b.kickOff))
@@ -815,7 +815,7 @@ export function getFixturesWithTeams(
 
 export function updateTableData(
   fixtures: FixtureWithClubs[],
-  teams: ClubDTO[],
+  teams: Club[],
   selectedGameweek: number,
 ): TeamStats[] {
   let tempTable: Record<number, TeamStats> = {};
@@ -875,7 +875,7 @@ export function updateTableData(
 function initTeamData(
   teamId: number,
   table: Record<number, TeamStats>,
-  teams: ClubDTO[],
+  teams: Club[],
 ) {
   if (!table[teamId]) {
     const team = teams.find((t) => t.id === teamId);

@@ -3,7 +3,7 @@
   import { leagueStore } from "$lib/stores/league-store";
   import { governanceStore } from "$lib/stores/governance-store";
   import { convertDateTimeInputToUnixNano, isError } from "$lib/utils/helpers";
-  import type { ClubDTO, MoveFixtureDTO } from "../../../../../../declarations/data_canister/data_canister.did";
+  import type { Club, MoveFixture } from "../../../../../../declarations/data_canister/data_canister.did";
   import Modal from "$lib/components/shared/modal.svelte";
   import GovernanceModal from "../governance-modal.svelte";
   import FormComponent from "$lib/components/shared/form-component.svelte";
@@ -13,8 +13,8 @@
   export let selectedLeagueId: number;
   export let selectedGameweek: number;
   export let selectedFixtureId: number;
-  export let homeClub: ClubDTO;
-  export let awayClub: ClubDTO;
+  export let homeClub: Club;
+  export let awayClub: Club;
 
   let isLoading = true;
   let submitting = false;
@@ -62,7 +62,7 @@
         return
       }
 
-      let dto: MoveFixtureDTO = {
+      let dto: MoveFixture = {
         leagueId: selectedLeagueId,
         seasonId: leagueStatus.activeSeasonId,
         fixtureId : selectedFixtureId,

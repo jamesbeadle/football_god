@@ -4,7 +4,7 @@
   import { clubStore } from "$lib/stores/club-store";
   import { governanceStore } from "$lib/stores/governance-store";
   import { convertDateInputToUnixNano, isError } from "$lib/utils/helpers";
-  import type { ClubDTO, FootballLeagueDTO, LoanPlayerDTO, PlayerDTO } from "../../../../../../declarations/data_canister/data_canister.did";
+  import type { Club, League, LoanPlayer, Player } from "../../../../../../declarations/data_canister/data_canister.did";
   import { toasts } from "$lib/stores/toasts-store";
   import Modal from "$lib/components/shared/modal.svelte";
   import GovernanceModal from "../governance-modal.svelte";
@@ -13,14 +13,14 @@
   
   export let visible: boolean;
   export let closeModal: () => void;
-  export let selectedPlayer: PlayerDTO;
+  export let selectedPlayer: Player;
   
   let loanLeagueId: number = 0;
   let loanClubId: number = 0;
   let newValueMillions: number = 0;
   let date = "";
-  let loanLeagues: FootballLeagueDTO[] = [];
-  let loanClubs: ClubDTO[] = [];
+  let loanLeagues: League[] = [];
+  let loanClubs: Club[] = [];
   let isLoading = false;
   let submitting = false;
   let submitted = false;
@@ -56,7 +56,7 @@
     try {
       isLoading = true;
     
-      let dto: LoanPlayerDTO = {
+      let dto: LoanPlayer = {
         leagueId: selectedPlayer.leagueId,
         loanEndDate: convertDateInputToUnixNano(date),
         playerId: selectedPlayer.id,

@@ -1,7 +1,6 @@
 <script lang="ts">
   import { onMount } from "svelte";
-  import { playerStore } from "$lib/stores/player-store";
-  import type { LoanedPlayerDTO, RecallPlayerDTO } from "../../../../../../declarations/data_canister/data_canister.did";
+  import type { Player, RecallPlayer } from "../../../../../../declarations/data_canister/data_canister.did";
   import { governanceStore } from "$lib/stores/governance-store";
   import { isError } from "$lib/utils/helpers";
   import Modal from "$lib/components/shared/modal.svelte";
@@ -11,7 +10,7 @@
   export let visible: boolean;
   export let closeModal: () => void;
 
-  export let selectedPlayer: LoanedPlayerDTO;
+  export let selectedPlayer: Player;
 
 
   let isLoading = true;
@@ -31,7 +30,7 @@
 
   async function confirmProposal() {
     isLoading = true;
-    let dto: RecallPlayerDTO = {
+    let dto: RecallPlayer = {
       leagueId: selectedPlayer.leagueId,
       playerId: selectedPlayer.id,
       newValueQuarterMillions: newValueMillions * 4

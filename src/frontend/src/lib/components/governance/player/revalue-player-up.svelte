@@ -2,15 +2,15 @@
   import { onMount } from "svelte";
   import { governanceStore } from "$lib/stores/governance-store";
   import { isError } from "$lib/utils/helpers";
-  import type { ClubDTO, PlayerDTO, RevaluePlayerUpDTO } from "../../../../../../declarations/data_canister/data_canister.did";
+  import type { Club, Player, RevaluePlayerUp } from "../../../../../../declarations/data_canister/data_canister.did";
   import Modal from "$lib/components/shared/modal.svelte";
   import GovernanceModal from "../governance-modal.svelte";
   import { toasts } from "$lib/stores/toasts-store";
 
   export let visible: boolean;
   export let closeModal: () => void;
-  export let player: PlayerDTO;
-  export let club: ClubDTO;
+  export let player: Player;
+  export let club: Club;
 
   let isLoading = false;
   let submitting = false;
@@ -36,7 +36,7 @@
 
     try {
       isLoading = true;
-      var dto: RevaluePlayerUpDTO = {
+      var dto: RevaluePlayerUp = {
         leagueId: player.leagueId,
         playerId: player.id,
       };

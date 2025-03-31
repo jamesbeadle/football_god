@@ -1,10 +1,8 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import { countryStore } from "$lib/stores/country-store";
-  import { playerStore } from "$lib/stores/player-store";
-  import type { PlayerPosition } from "../../../../../../declarations/backend/backend.did";
   import { convertDateInputToUnixNano, formatUnixToDateInputValue } from "$lib/utils/helpers";
-  import type { CountryDTO, PlayerDTO, UpdatePlayerDTO } from "../../../../../../declarations/data_canister/data_canister.did";
+  import type { Country, Player, PlayerPosition, UpdatePlayer } from "../../../../../../declarations/data_canister/data_canister.did";
   import Modal from "$lib/components/shared/modal.svelte";
   import GovernanceModal from "../governance-modal.svelte";
   import FormComponent from "$lib/components/shared/form-component.svelte";
@@ -15,9 +13,9 @@
 
   export let visible: boolean;
   export let closeModal: () => void;
-  export let selectedPlayer: PlayerDTO;
+  export let selectedPlayer: Player;
   
-  let countries: CountryDTO[] = [];
+  let countries: Country[] = [];
 
   let selectedPosition = 0;
   let firstName = "";
@@ -98,7 +96,7 @@
 
     }
     try{
-      let dto: UpdatePlayerDTO = {
+      let dto: UpdatePlayer = {
         leagueId: selectedPlayer.leagueId,
         playerId: selectedPlayer.id,
         position,
@@ -203,7 +201,7 @@
 
     <FormComponent label="Nationality:">
       <DropdownSelect
-        options={countries.map((country: CountryDTO) => ({ id: country.id, label: country.name }))}
+        options={countries.map((country: Country) => ({ id: country.id, label: country.name }))}
         value={nationalityId}
         onChange={(value: string | number) => {
           nationalityId = Number(value);

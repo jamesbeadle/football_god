@@ -1,7 +1,7 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import { governanceStore } from "$lib/stores/governance-store";
-  import type { ClubDTO, LeagueId, ShirtType, UpdateClubDTO } from "../../../../../../declarations/data_canister/data_canister.did";
+  import type { Club, LeagueId, ShirtType, UpdateClub } from "../../../../../../declarations/data_canister/data_canister.did";
   import { isError } from "$lib/utils/helpers";
   import Modal from "$lib/components/shared/modal.svelte";
   import GovernanceModal from "../governance-modal.svelte";
@@ -9,7 +9,7 @@
 
   export let visible: boolean;
   export let closeModal: () => void;
-  export let selectedClub: ClubDTO;
+  export let selectedClub: Club;
   export let selectedLeagueId: LeagueId;
 
   let name = "";
@@ -59,7 +59,7 @@
 
     try {
       isLoading = true;
-      let dto: UpdateClubDTO = {
+      let dto: UpdateClub = {
         leagueId: selectedLeagueId,
         clubId: selectedClub.id,
         name,

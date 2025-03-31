@@ -5,7 +5,7 @@
   import { leagueStore } from "$lib/stores/league-store";
   import { clubStore } from "$lib/stores/club-store";
   import { playerStore } from "$lib/stores/player-store";
-  import type { ClubDTO, CountryDTO, FootballLeagueDTO, PlayerDTO } from "../../../../declarations/data_canister/data_canister.did";
+  import type { Club, CountryDTO, FootballLeagueDTO, Player } from "../../../../declarations/data_canister/data_canister.did";
   
   import Layout from "../Layout.svelte";
   import CreatePlayer from "$lib/components/governance/player/create-player.svelte";
@@ -35,11 +35,11 @@
   let searchSurname = "";
   
   let leagues: FootballLeagueDTO[] = [];
-  let clubs: ClubDTO[] = [];
+  let clubs: Club[] = [];
   let countries: CountryDTO[] = [];
   
-  let filteredPlayers: PlayerDTO[] = [];
-  let allLeaguePlayers: Record<number, PlayerDTO[]> = {};
+  let filteredPlayers: Player[] = [];
+  let allLeaguePlayers: Record<number, Player[]> = {};
   
   let positions = [
       { id: 1, positionName: "Goalkeeper"},

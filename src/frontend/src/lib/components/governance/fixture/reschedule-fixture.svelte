@@ -1,7 +1,7 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import Modal from "$lib/components/shared/modal.svelte";
-  import type { ClubDTO, FixtureDTO, GameweekNumber, RescheduleFixtureDTO } from "../../../../../../declarations/data_canister/data_canister.did";
+  import type { Club, Fixture, GameweekNumber, RescheduleFixture } from "../../../../../../declarations/data_canister/data_canister.did";
   import { convertDateInputToUnixNano, isError } from "$lib/utils/helpers";
   import { governanceStore } from "$lib/stores/governance-store";
   import { clubStore } from "$lib/stores/club-store";
@@ -15,16 +15,16 @@
 
   export let selectedLeagueId: number;
   export let selectedSeasonId: number;
-  export let selectedFixture: FixtureDTO;
+  export let selectedFixture: Fixture;
 
   let gameweeks: GameweekNumber[] = [];
   let nextUnplayedGameweek: number = 0;
   let totalGameweeks: number = 0;
   let newGameweek: number = 0;
   let gameweekOptions: { id: number; label: string }[] = [];
-  let clubs: ClubDTO[] = [];
-  let homeTeam: ClubDTO;
-  let awayTeam: ClubDTO;
+  let clubs: Club[] = [];
+  let homeTeam: Club;
+  let awayTeam: Club;
   
   let date = "";
   let time = "";
@@ -82,7 +82,7 @@
 
     try {
       isLoading = true;
-      let dto: RescheduleFixtureDTO = {
+      let dto: RescheduleFixture = {
         leagueId: selectedLeagueId,
         seasonId: selectedSeasonId,
         fixtureId: selectedFixture.id,

@@ -1,10 +1,10 @@
 <script lang="ts">
     import BadgeIcon from "$lib/icons/BadgeIcon.svelte";
-    import type { ClubDTO} from "../../../../../../declarations/data_canister/data_canister.did";
+    import type { Club} from "../../../../../../declarations/data_canister/data_canister.did";
     import { page } from '$app/stores';
     export let header: string;
-    export let nextFixtureHomeTeam: ClubDTO | undefined;
-    export let nextFixtureAwayTeam: ClubDTO | undefined;
+    export let nextFixtureHomeTeam: Club | undefined;
+    export let nextFixtureAwayTeam: Club | undefined;
 
     let leagueId = Number($page.url.searchParams.get('leagueId')) || 1; 
 </script>

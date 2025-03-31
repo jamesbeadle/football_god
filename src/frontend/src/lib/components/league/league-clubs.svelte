@@ -4,7 +4,7 @@
 
   import { clubStore } from "$lib/stores/club-store";
   import { leagueStore } from "$lib/stores/league-store";
-  import type { ClubDTO, FootballLeagueDTO } from "../../../../../declarations/data_canister/data_canister.did";
+  import type { Club, FootballLeagueDTO } from "../../../../../declarations/data_canister/data_canister.did";
 
   import BadgeIcon from "$lib/icons/BadgeIcon.svelte";
   import CreateClub from "../governance/club/create-club.svelte";
@@ -16,7 +16,7 @@
   let isLoading = true;
 
   let league: FootballLeagueDTO | undefined;
-  let clubs: ClubDTO[] = [];
+  let clubs: Club[] = [];
   let dropdownVisible: number | null = null;
   
   let showAddClub = false;

@@ -4,13 +4,13 @@ import { isError } from "../utils/helpers";
 import { authStore } from "$lib/stores/auth-store";
 import type {
   LoanedPlayerDTO,
-  PlayerDTO,
+  Player,
 } from "../../../../declarations/data_canister/data_canister.did";
 
 export class PlayerService {
   constructor() {}
 
-  async getPlayers(leagueId: LeagueId): Promise<PlayerDTO[]> {
+  async getPlayers(leagueId: LeagueId): Promise<Player[]> {
     const identityActor: any =
       await ActorFactory.createDataCanisterIdentityActor(
         authStore,

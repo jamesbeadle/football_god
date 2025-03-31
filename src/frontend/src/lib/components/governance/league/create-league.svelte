@@ -2,7 +2,7 @@
   import { onMount } from "svelte";
   import { countryStore } from "$lib/stores/country-store";
   import Modal from "$lib/components/shared/modal.svelte";
-  import type { CountryDTO, CreateLeagueDTO, Gender } from "../../../../../../declarations/data_canister/data_canister.did";
+  import type { Country, CreateLeague, Gender } from "../../../../../../declarations/data_canister/data_canister.did";
   import { governanceStore } from "$lib/stores/governance-store";
   import GovernanceModal from "../governance-modal.svelte";
   import FormComponent from "$lib/components/shared/form-component.svelte";
@@ -21,7 +21,7 @@
   let logo: Uint8Array | number[] = [];
   let fileInput: HTMLInputElement;
   let teamCount: 0;
-  let countries: CountryDTO[] = [];
+  let countries: Country[] = [];
 
   let isLoading = true;
 
@@ -105,7 +105,7 @@
       leagueGender = { "Female" : null };
     }
     
-    const dto: CreateLeagueDTO = {
+    const dto: CreateLeague = {
       name: leagueName,
       abbreviation: abbreviatedName,
       governingBody,

@@ -3,16 +3,16 @@
   import BadgeIcon from "$lib/icons/BadgeIcon.svelte";
   import { type Writable } from "svelte/store";
   import Modal from "../shared/modal.svelte";
-  import type { ClubDTO, PlayerDTO, PlayerEventData } from "../../../../../declarations/data_canister/data_canister.did";
+  import type { Club, Player, PlayerEventData } from "../../../../../declarations/data_canister/data_canister.did";
   
-  export let selectedTeam: ClubDTO;
-  export let teamPlayers: PlayerDTO[];
-  export let selectedPlayers: Writable<PlayerDTO[]>;
+  export let selectedTeam: Club;
+  export let teamPlayers: Player[];
+  export let selectedPlayers: Writable<Player[]>;
   export let playerEventData: Writable<PlayerEventData[]>;
   export let visible = false;
   export let closeModal: () => void;
 
-  function handlePlayerSelection(event: Event, player: PlayerDTO) {
+  function handlePlayerSelection(event: Event, player: Player) {
     const input = event.target as HTMLInputElement;
 
     let allSelectedPlayers = $selectedPlayers;

@@ -1,7 +1,7 @@
 <script lang="ts">
     import ViewDetailsIcon from "../../icons/ViewDetailsIcon.svelte";
     import { onMount } from "svelte";
-    import type { PlayerDTO, ClubDTO } from "../../../../../declarations/data_canister/data_canister.did";
+    import type { Player, Club } from "../../../../../declarations/data_canister/data_canister.did";
     import {
       calculateAgeFromNanoseconds,
       convertPositionToIndex,
@@ -14,7 +14,7 @@
     import TeamPlayersTableHeader from "../../components/shared/players-table-header.svelte";
     import { page } from "$app/stores";
   
-    export let club: ClubDTO;
+    export let club: Club;
 
     const leagueId = Number($page.url.searchParams.get('leagueId')) || 1;
   
@@ -23,7 +23,7 @@
       players = playersList.filter((x) => x.clubId == club.id)
     });
   
-    let players: PlayerDTO[] = [];
+    let players: Player[] = [];
     let selectedPosition = writable(-1);
     let sortField: string | null = 'shirtNumber';
     let sortDirection: 'asc' | 'desc' = 'asc';

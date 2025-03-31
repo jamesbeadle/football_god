@@ -1,14 +1,14 @@
 <script lang="ts">
     import type { Writable } from "svelte/store";
     import { convertEvent } from "$lib/utils/helpers";
-    import type { FixtureDTO, PlayerDTO, PlayerEventData } from "../../../../../declarations/data_canister/data_canister.did";
+    import type { Fixture, Player, PlayerEventData } from "../../../../../declarations/data_canister/data_canister.did";
 
-    export let selectedPlayers: Writable<PlayerDTO[]>;
-    export let fixture: FixtureDTO;
+    export let selectedPlayers: Writable<Player[]>;
+    export let fixture: Fixture;
     export let playerEventData: Writable<PlayerEventData[]>;
     export let view = "home";
 
-    export let handleEditPlayerEvents: (player: PlayerDTO) => void;
+    export let handleEditPlayerEvents: (player: Player) => void;
 
     function getEventName(eventType: any): string {
         if ("Goal" in eventType) return "Goal";

@@ -38,7 +38,7 @@ const PlayerEventData = IDL.Record({
   eventType: PlayerEventType,
 });
 
-const FixtureDTO = IDL.Record({
+const Fixture = IDL.Record({
   id: IDL.Nat32,
   status: FixtureStatusType,
   highestScoringPlayerId: IDL.Nat16,
@@ -64,7 +64,7 @@ const PlayerPosition = IDL.Variant({
 
 export const AddInitialFixturesDTO_Idl = IDL.Record({
   seasonId: SeasonId,
-  seasonFixtures: IDL.Vec(FixtureDTO),
+  seasonFixtures: IDL.Vec(Fixture),
   leagueId: LeagueId,
 });
 

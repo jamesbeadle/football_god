@@ -6,7 +6,7 @@
     import { fixtureStore } from "$lib/stores/fixture-store";
     import { clubStore } from "$lib/stores/club-store";
     import { playerStore } from "$lib/stores/player-store";
-    import type { ClubDTO, FixtureDTO, PlayerDTO, LeagueStatus } from "../../../../../declarations/data_canister/data_canister.did";
+    import type { Club, Fixture, Player, LeagueStatus } from "../../../../../declarations/data_canister/data_canister.did";
     import type { FixtureWithClubs } from "$lib/types/fixture-with-clubs";
     import HeaderContentPanel from "../../components/shared/panels/header-content-panel.svelte";
     import HeaderFixturePanel from "../../components/shared/panels/header-fixture-panel.svelte";
@@ -17,24 +17,24 @@
     import LocalSpinner from "../shared/local-spinner.svelte";
     import { page } from '$app/stores';
     
-    export let club: ClubDTO;
+    export let club: Club;
     
     let leagueId = Number($page.url.searchParams.get('leagueId')) || 1; 
   
     let isLoading = true;
-    let nextFixture: FixtureDTO | null;
-    let nextFixtureHomeTeam: ClubDTO | undefined;
-    let nextFixtureAwayTeam: ClubDTO | undefined;
+    let nextFixture: Fixture | null;
+    let nextFixtureHomeTeam: Club | undefined;
+    let nextFixtureAwayTeam: Club | undefined;
     let clubFixturesWithTeams: FixtureWithClubs[] = [];
     let fixturesWithTeams: FixtureWithClubs[] = [];
     let selectedGameweek = writable(1);
     let tableData: any[] = [];
-    let highestScoringPlayer: PlayerDTO | null = null;
+    let highestScoringPlayer: Player | null = null;
     let seasonName = "";
     let leagueStatus: LeagueStatus | null = null;
-    let players: PlayerDTO[] = [];
-    let clubs: ClubDTO[] = [];
-    let fixtures: FixtureDTO[] = [];
+    let players: Player[] = [];
+    let clubs: Club[] = [];
+    let fixtures: Fixture[] = [];
     
     $: if (fixturesWithTeams.length > 0 && clubs.length > 0) {
       tableData = updateTableData(fixturesWithTeams, clubs, $selectedGameweek);

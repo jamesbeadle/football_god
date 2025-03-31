@@ -2,7 +2,7 @@
   import { onMount } from "svelte";
   import { governanceStore } from "$lib/stores/governance-store";
   import { isError } from "$lib/utils/helpers";
-  import type { CreateClubDTO, ShirtType } from "../../../../../../declarations/data_canister/data_canister.did";
+  import type { CreateClub, ShirtType } from "../../../../../../declarations/data_canister/data_canister.did";
   import Modal from "$lib/components/shared/modal.svelte";
   import GovernanceModal from "../governance-modal.svelte";
   import FormComponent from "$lib/components/shared/form-component.svelte";
@@ -50,7 +50,7 @@
 
     try {
       isLoading = true;
-      let dto: CreateClubDTO = {
+      let dto: CreateClub = {
         leagueId: selectedLeagueId,
         name,
         friendlyName,

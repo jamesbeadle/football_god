@@ -3,7 +3,7 @@
   
   import { clubStore } from "$lib/stores/club-store";
   import { leagueStore } from "$lib/stores/league-store";
-  import type { ClubDTO, FootballLeagueDTO, LoanedPlayerDTO } from "../../../../../declarations/data_canister/data_canister.did";
+  import type { Club, FootballLeagueDTO, LoanedPlayerDTO } from "../../../../../declarations/data_canister/data_canister.did";
   import { playerStore } from "$lib/stores/player-store";
 
   import LocalSpinner from "../shared/local-spinner.svelte";
@@ -15,7 +15,7 @@
   let isLoading = true;
 
   let league: FootballLeagueDTO | undefined;
-  let clubs: ClubDTO[] = [];
+  let clubs: Club[] = [];
   let loanedPlayers: LoanedPlayerDTO[] = [];
   let selectedPlayerId: number = 0;
 

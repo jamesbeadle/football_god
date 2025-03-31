@@ -3,7 +3,7 @@
   import { onMount } from "svelte";
   import { governanceStore } from "$lib/stores/governance-store";
   import {getImageURL } from "$lib/utils/helpers";
-  import type { CountryDTO, FootballLeagueDTO, Gender, UpdateLeagueDTO } from "../../../../../../declarations/data_canister/data_canister.did";
+  import type { Country, League, Gender, UpdateLeague } from "../../../../../../declarations/data_canister/data_canister.did";
   import { toasts } from "$lib/stores/toasts-store";
   
   import Modal from "$lib/components/shared/modal.svelte";
@@ -14,7 +14,7 @@
 
   export let visible: boolean;
   export let closeModal: () => void;
-  export let selectedLeague: FootballLeagueDTO;
+  export let selectedLeague: League;
 
   let leagueName = "";
   let abbreviatedName = "";
@@ -25,7 +25,7 @@
   let logo: Uint8Array | number[];
   let fileInput: HTMLInputElement;
   let teamCount = 0;
-  let countries: CountryDTO[] = [];
+  let countries: Country[] = [];
 
   let isLoading = true;
 
@@ -119,7 +119,7 @@
 
   async function confirmProposal() {
     isLoading = true;
-    const dto: UpdateLeagueDTO = {
+    const dto: UpdateLeague = {
         leagueId: selectedLeague.id,
         name: leagueName,
         abbreviation: abbreviatedName,

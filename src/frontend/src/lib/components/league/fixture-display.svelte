@@ -1,11 +1,11 @@
 <script lang="ts">
-  import type { ClubDTO, FixtureDTO } from "../../../../../declarations/data_canister/data_canister.did";
+  import type { Club, Fixture } from "../../../../../declarations/data_canister/data_canister.did";
   import BadgeIcon from "$lib/icons/BadgeIcon.svelte";
   import PipsIcon from "$lib/icons/pips-icon.svelte";
   
-  export let fixture: FixtureDTO;
-  export let homeClub: ClubDTO;
-  export let awayClub: ClubDTO;
+  export let fixture: Fixture;
+  export let homeClub: Club;
+  export let awayClub: Club;
   export let onDropdownClick: ((fixtureId: number, event: MouseEvent) => void) | undefined = undefined;
   export let dropdownVisible: number | null = null;
   export let onAddFixtureData: ((fixtureId: number) => void) | undefined = undefined;

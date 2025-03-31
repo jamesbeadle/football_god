@@ -1,11 +1,11 @@
 <script lang="ts">
-  import type { ClubDTO, PlayerDTO } from "../../../../../declarations/data_canister/data_canister.did";
+  import type { Club, Player } from "../../../../../declarations/data_canister/data_canister.did";
   import { getFlagComponent, calculateAgeFromNanoseconds } from "$lib/utils/helpers";
   import BadgeIcon from "$lib/icons/BadgeIcon.svelte";
   import PipsIcon from "$lib/icons/pips-icon.svelte";
 
-  export let player: PlayerDTO;
-  export let club: ClubDTO;
+  export let player: Player;
+  export let club: Club;
   export let onDropdownClick: (playerId: number, event: MouseEvent) => void;
   export let dropdownVisible: number | null;
   

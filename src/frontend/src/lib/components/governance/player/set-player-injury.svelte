@@ -2,14 +2,14 @@
   import { onMount } from "svelte";
   import { governanceStore } from "$lib/stores/governance-store";
   import { convertDateInputToUnixNano, isError } from "$lib/utils/helpers";
-  import type { PlayerDTO, SetPlayerInjuryDTO } from "../../../../../../declarations/data_canister/data_canister.did";
+  import type { Player, SetPlayerInjury } from "../../../../../../declarations/data_canister/data_canister.did";
   import Modal from "$lib/components/shared/modal.svelte";
   import GovernanceModal from "../governance-modal.svelte";
   import FormComponent from "$lib/components/shared/form-component.svelte";
 
   export let visible: boolean;
   export let closeModal: () => void;
-  export let selectedPlayer: PlayerDTO; 
+  export let selectedPlayer: Player; 
 
   let description = "";
   let injuryEndDate = "";
@@ -39,7 +39,7 @@
 
     try {
       isLoading = true;
-      let dto: SetPlayerInjuryDTO = {
+      let dto: SetPlayerInjury = {
         leagueId: selectedPlayer.leagueId,
         playerId: selectedPlayer.id,
         description,

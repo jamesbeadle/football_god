@@ -2,14 +2,14 @@
   import { onMount } from "svelte";
   import { governanceStore } from "$lib/stores/governance-store";
   import { convertDateInputToUnixNano, isError } from "$lib/utils/helpers";
-  import type { PlayerDTO, RetirePlayerDTO } from "../../../../../../declarations/data_canister/data_canister.did";
+  import type { Player, RetirePlayer } from "../../../../../../declarations/data_canister/data_canister.did";
   import Modal from "$lib/components/shared/modal.svelte";
   import GovernanceModal from "../governance-modal.svelte";
   import FormComponent from "$lib/components/shared/form-component.svelte";
 
   export let visible: boolean;
   export let closeModal: () => void;
-  export let selectedPlayer: PlayerDTO;
+  export let selectedPlayer: Player;
 
   let retirementDate: string = "";
   let isLoading = false;
@@ -36,7 +36,7 @@
 
     try {
       isLoading = true;
-      let dto: RetirePlayerDTO = {
+      let dto: RetirePlayer = {
         playerId: selectedPlayer.id,
         retirementDate: convertDateInputToUnixNano(retirementDate),
         leagueId: selectedPlayer.leagueId

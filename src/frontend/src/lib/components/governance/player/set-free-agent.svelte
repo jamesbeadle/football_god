@@ -1,14 +1,14 @@
 <script lang="ts">
   import { onMount } from "svelte";
-  import { playerStore } from "$lib/stores/player-store";
-  import type { PlayerDTO, SetFreeAgentDTO } from "../../../../../../declarations/data_canister/data_canister.did";
+  import type { Player, SetFreeAgent } from "../../../../../../declarations/data_canister/data_canister.did";
   import Modal from "$lib/components/shared/modal.svelte";
   import GovernanceModal from "../governance-modal.svelte";
   import FormComponent from "$lib/components/shared/form-component.svelte";
+    import { governanceStore } from "$lib/stores/governance-store";
 
   export let visible: boolean;
   export let closeModal: () => void
-  export let selectedPlayer: PlayerDTO;
+  export let selectedPlayer: Player;
   
   let isLoading = false;
   let newValueMillions: number = 0;
@@ -29,12 +29,12 @@
 
   async function confirmProposal() {
     isLoading = true;
-    let dto: SetFreeAgentDTO = {
+    let dto: SetFreeAgent = {
       leagueId: selectedPlayer.leagueId,
       playerId: selectedPlayer.id,
       newValueQuarterMillions: newValueMillions * 4
     };
-    await playerStore.setFreeAgent(selectedPlayer.leagueId, dto);
+    await governanceStore.setFreeAgent(dto);
     isLoading = false;
     resetForm();
     closeModal();

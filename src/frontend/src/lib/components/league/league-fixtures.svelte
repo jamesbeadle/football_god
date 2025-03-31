@@ -5,7 +5,7 @@
   import { clubStore } from "$lib/stores/club-store";
   import { fixtureStore } from "$lib/stores/fixture-store";
   import { leagueStore } from "$lib/stores/league-store";
-  import type { ClubDTO, FixtureDTO, FootballLeagueDTO } from "../../../../../declarations/data_canister/data_canister.did";
+  import type { Club, Fixture, FootballLeagueDTO } from "../../../../../declarations/data_canister/data_canister.did";
 
   import MoveFixture from "../governance/fixture/move-fixture.svelte";
   import LocalSpinner from "../shared/local-spinner.svelte";
@@ -17,9 +17,9 @@
 
   let isLoading = true;
   let league: FootballLeagueDTO | undefined;
-  let clubs: ClubDTO[] = [];
-  let fixtures: FixtureDTO[] = [];
-  let fitleredFixtures: FixtureDTO[] = [];
+  let clubs: Club[] = [];
+  let fixtures: Fixture[] = [];
+  let fitleredFixtures: Fixture[] = [];
   let selectedGameweek: number = 1;
   let selectedFixtureId: number = 0;
   let dropdownVisible: number | null = null;

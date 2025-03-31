@@ -15,9 +15,9 @@
     import { writable } from "svelte/store";
     import TeamFixturesTableHeader from "../club/team-fixtures-table-header.svelte";
     import BadgeIcon from "$lib/icons/BadgeIcon.svelte";
-    import type { ClubDTO } from "../../../../../declarations/data_canister/data_canister.did";
+    import type { Club } from "../../../../../declarations/data_canister/data_canister.did";
   
-    export let club: ClubDTO;
+    export let club: Club;
     export let leagueId: number;
   
     let fixturesWithTeams: FixtureWithClubs[] = [];

@@ -5,7 +5,7 @@
   import { leagueStore } from "$lib/stores/league-store";
   import { clubStore } from "$lib/stores/club-store";
   import { convertDateInputToUnixNano } from "$lib/utils/helpers";
-  import type { ClubDTO, CountryDTO, CreatePlayerDTO, FootballLeagueDTO, PlayerPosition } from "../../../../../../declarations/data_canister/data_canister.did";
+  import type { Club, Country, CreatePlayer, League, PlayerPosition } from "../../../../../../declarations/data_canister/data_canister.did";
   import { toasts } from "$lib/stores/toasts-store";
   import { isError } from "$lib/utils/helpers";
   import Modal from "$lib/components/shared/modal.svelte";
@@ -18,9 +18,9 @@
   export let selectedLeagueId: number = 0;
   export let selectedClubId: number = 0;
   
-  let leagues: FootballLeagueDTO[] = [];
-  let clubs: ClubDTO[] = [];
-  let countries: CountryDTO[] = [];
+  let leagues: League[] = [];
+  let clubs: Club[] = [];
+  let countries: Country[] = [];
   let positions = [
     { id: 1, name: "Goalkeeper" },
     { id: 2, name: "Defender" },
@@ -102,7 +102,7 @@
 
     }
     try{
-        let dto: CreatePlayerDTO = {
+        let dto: CreatePlayer = {
         leagueId: selectedLeagueId,
         clubId: selectedClubId,
         position,
