@@ -18,7 +18,7 @@ module LeagueQueries {
     };
 
     public type BettableLeagues = {
-
+        leagues: [League];
     };
 
     public type GetLeagueStatus = {

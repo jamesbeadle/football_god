@@ -16,7 +16,10 @@ module FixtureCommands {
   };
 
   public type InitialFixture = {
-
+    gameweek : FootballTypes.GameweekNumber;
+    kickOff : Int;
+    homeClubId : FootballTypes.ClubId;
+    awayClubId : FootballTypes.ClubId;
   };
 
   public type MoveFixture = {

@@ -154,7 +154,7 @@ actor Self {
       };
     };
 
-    return #ok(Buffer.toArray(upToDateLeaguesBuffer));
+    return #ok({ leagues = Buffer.toArray(upToDateLeaguesBuffer) });
   };
 
   public shared query ({ caller }) func getLeagueStatus(dto: LeagueQueries.GetLeagueStatus) : async Result.Result<LeagueQueries.LeagueStatus, Enums.Error> {
@@ -277,7 +277,7 @@ actor Self {
     let filteredLeaguePlayers = Array.find<(FootballTypes.LeagueId, [FootballTypes.Player])>(
       leaguePlayers,
       func(currentLeaguePlayers : (FootballTypes.LeagueId, [FootballTypes.Player])) : Bool {
-        currentLeaguePlayers.0 == leagueId;
+        currentLeaguePlayers.0 == dto.leagueId;
       },
     );
 
@@ -291,31 +291,31 @@ actor Self {
           },
         );
 
-        return #ok(
-          Array.map<FootballTypes.Player, ResponseDTOs.LoanedPlayerDTO>(
-            loanedClubPlayers,
-            func(player : FootballTypes.Player) {
+        return #ok({ players = 
+            Array.map<FootballTypes.Player, PlayerQueries.Player>(
+              loanedClubPlayers,
+              func(player : FootballTypes.Player) {
 
-              return {
-                clubId = player.clubId;
-                dateOfBirth = player.dateOfBirth;
-                firstName = player.firstName;
-                id = player.id;
-                lastName = player.lastName;
-                nationality = player.nationality;
-                position = player.position;
-                shirtNumber = player.shirtNumber;
-                status = player.status;
-                totalPoints = 0;
-                valueQuarterMillions = player.valueQuarterMillions;
-                currentLoanEndDate = player.currentLoanEndDate;
-                parentClubId = player.parentClubId;
-                parentLeagueId = player.parentLeagueId;
-                leagueId = player.leagueId;
-              };
-
-            },
-          )
+                return {
+                  clubId = player.clubId;
+                  dateOfBirth = player.dateOfBirth;
+                  firstName = player.firstName;
+                  id = player.id;
+                  lastName = player.lastName;
+                  nationality = player.nationality;
+                  position = player.position;
+                  shirtNumber = player.shirtNumber;
+                  status = player.status;
+                  totalPoints = 0;
+                  valueQuarterMillions = player.valueQuarterMillions;
+                  currentLoanEndDate = player.currentLoanEndDate;
+                  parentClubId = player.parentClubId;
+                  parentLeagueId = player.parentLeagueId;
+                  leagueId = player.leagueId;
+                };
+              }
+            ,
+          )}
         );
       };
       case (null) {
@@ -330,7 +330,7 @@ actor Self {
     let filteredLeaguePlayers = Array.find<(FootballTypes.LeagueId, [FootballTypes.Player])>(
       retiredLeaguePlayers,
       func(currentLeaguePlayers : (FootballTypes.LeagueId, [FootballTypes.Player])) : Bool {
-        currentLeaguePlayers.0 == leagueId;
+        currentLeaguePlayers.0 == dto.leagueId;
       },
     );
 
@@ -344,8 +344,8 @@ actor Self {
           },
         );
 
-        return #ok(
-          Array.map<FootballTypes.Player, ResponseDTOs.PlayerDTO>(
+        return #ok({ players = 
+          Array.map<FootballTypes.Player, PlayerQueries.Player>(
             clubPlayers,
             func(player : FootballTypes.Player) {
 
@@ -368,7 +368,7 @@ actor Self {
               };
 
             },
-          )
+          ) }
         );
       };
       case (null) {
@@ -605,7 +605,7 @@ actor Self {
           };
           playersMap.put(player.id, scoreDTO);
         };
-        return #ok(Iter.toArray(playersMap.entries()));
+        return #ok({ players = Iter.toArray(playersMap.entries()) });
       };
       case (null) {
         return #err(#NotFound);
@@ -618,7 +618,58 @@ actor Self {
 
   public shared ({ caller }) func getFixtures(dto: FixtureQueries.GetFixtures) : async Result.Result<FixtureQueries.Fixtures, Enums.Error> {
     assert callerAllowed(caller);
-    return getPrivateFixtures(dto);
+     let filteredLeagueSeasons = Array.find<(FootballTypes.LeagueId, [FootballTypes.Season])>(
+      leagueSeasons,
+      func(leagueSeason : (FootballTypes.LeagueId, [FootballTypes.Season])) : Bool {
+        leagueSeason.0 == dto.leagueId;
+      },
+    );
+
+    switch (filteredLeagueSeasons) {
+      case (?foundLeagueSeasons) {
+
+        let filteredSeason = Array.find<FootballTypes.Season>(
+          foundLeagueSeasons.1,
+          func(leagueSeason : FootballTypes.Season) : Bool {
+            leagueSeason.id == dto.seasonId;
+          },
+        );
+
+        switch (filteredSeason) {
+          case (?foundSeason) {
+            return #ok({ fixtures = 
+              List.toArray(
+                List.map<FootballTypes.Fixture, FixtureQueries.Fixture>(
+                  foundSeason.fixtures,
+                  func(fixture : FootballTypes.Fixture) {
+                    return {
+                      awayClubId = fixture.awayClubId;
+                      awayGoals = fixture.awayGoals;
+                      events = List.toArray(fixture.events);
+                      gameweek = fixture.gameweek;
+                      highestScoringPlayerId = fixture.highestScoringPlayerId;
+                      homeClubId = fixture.homeClubId;
+                      homeGoals = fixture.homeGoals;
+                      id = fixture.id;
+                      kickOff = fixture.kickOff;
+                      seasonId = fixture.seasonId;
+                      status = fixture.status;
+                    };
+                  },
+                )
+              ) }
+            );
+          };
+          case (null) {
+            return #err(#NotFound);
+          };
+        };
+      };
+      case (null) {
+        return #err(#NotFound);
+      };
+    };
+
   };
 
   public shared ({ caller }) func getBettableFixtures(dto: FixtureQueries.GetBettableFixtures) : async Result.Result<FixtureQueries.BettableFixtures, Enums.Error> {
@@ -632,7 +683,7 @@ actor Self {
     let filteredLeagueSeasons = Array.find<(FootballTypes.LeagueId, [FootballTypes.Season])>(
       leagueSeasons,
       func(currentLeagueSeason : (FootballTypes.LeagueId, [FootballTypes.Season])) : Bool {
-        currentLeagueSeason.0 == leagueId;
+        currentLeagueSeason.0 == dto.leagueId;
       },
     );
 
@@ -642,7 +693,7 @@ actor Self {
         let status = Array.find<FootballTypes.LeagueStatus>(
           leagueStatuses,
           func(entry : FootballTypes.LeagueStatus) : Bool {
-            entry.leagueId == leagueId;
+            entry.leagueId == dto.leagueId;
           },
         );
         switch (status) {
@@ -657,9 +708,9 @@ actor Self {
 
             switch (filteredSeason) {
               case (?foundSeason) {
-                return #ok(
-                  List.toArray(
-                    List.map<FootballTypes.Fixture, ResponseDTOs.FixtureDTO>(
+                return #ok({fixtures = 
+                  List.toArray<FixtureQueries.Fixture>(
+                    List.map<FootballTypes.Fixture, FixtureQueries.Fixture>(
                       foundSeason.postponedFixtures,
                       func(fixture : FootballTypes.Fixture) {
                         return {
@@ -677,7 +728,7 @@ actor Self {
                         };
                       },
                     )
-                  )
+                  )}
                 );
               };
               case (null) {
@@ -710,9 +761,9 @@ actor Self {
   //Private getters
 
   private func callerAllowed(caller : Principal) : Bool {
-    let foundCaller = Array.find<BaseTypes.PrincipalId>(
+    let foundCaller = Array.find<Ids.PrincipalId>(
       Environment.APPROVED_CANISTERS,
-      func(canisterId : BaseTypes.CanisterId) : Bool {
+      func(canisterId : Ids.CanisterId) : Bool {
         Principal.toText(caller) == canisterId;
       },
     );
@@ -723,14 +774,14 @@ actor Self {
     let filteredLeaguePlayers = Array.find<(FootballTypes.LeagueId, [FootballTypes.Player])>(
       leaguePlayers,
       func(currentLeaguePlayers : (FootballTypes.LeagueId, [FootballTypes.Player])) : Bool {
-        currentLeaguePlayers.0 == leagueId;
+        currentLeaguePlayers.0 == dto.leagueId;
       },
     );
 
     switch (filteredLeaguePlayers) {
       case (?foundLeaguePlayers) {
-        return #ok(
-          Array.map<FootballTypes.Player, ResponseDTOs.PlayerDTO>(
+        return #ok({ players =
+          Array.map<FootballTypes.Player, PlayerQueries.Player>(
             foundLeaguePlayers.1,
             func(player : FootballTypes.Player) {
 
@@ -752,7 +803,7 @@ actor Self {
               };
 
             },
-          )
+          ) }
         );
       };
       case (null) {
@@ -761,66 +812,13 @@ actor Self {
     };
   };
 
-  private func getPrivateFixtures(dto: FixtureQueries.GetFixtures) : Result.Result<FixtureQueries.GetFixtures, Enums.Error> {
-    let filteredLeagueSeasons = Array.find<(FootballTypes.LeagueId, [FootballTypes.Season])>(
-      leagueSeasons,
-      func(leagueSeason : (FootballTypes.LeagueId, [FootballTypes.Season])) : Bool {
-        leagueSeason.0 == leagueId;
-      },
-    );
-
-    switch (filteredLeagueSeasons) {
-      case (?foundLeagueSeasons) {
-
-        let filteredSeason = Array.find<FootballTypes.Season>(
-          foundLeagueSeasons.1,
-          func(leagueSeason : FootballTypes.Season) : Bool {
-            leagueSeason.id == seasonId;
-          },
-        );
-
-        switch (filteredSeason) {
-          case (?foundSeason) {
-            return #ok(
-              List.toArray(
-                List.map<FootballTypes.Fixture, ResponseDTOs.FixtureDTO>(
-                  foundSeason.fixtures,
-                  func(fixture : FootballTypes.Fixture) {
-                    return {
-                      awayClubId = fixture.awayClubId;
-                      awayGoals = fixture.awayGoals;
-                      events = List.toArray(fixture.events);
-                      gameweek = fixture.gameweek;
-                      highestScoringPlayerId = fixture.highestScoringPlayerId;
-                      homeClubId = fixture.homeClubId;
-                      homeGoals = fixture.homeGoals;
-                      id = fixture.id;
-                      kickOff = fixture.kickOff;
-                      seasonId = fixture.seasonId;
-                      status = fixture.status;
-                    };
-                  },
-                )
-              )
-            );
-          };
-          case (null) {
-            return #err(#NotFound);
-          };
-        };
-      };
-      case (null) {
-        return #err(#NotFound);
-      };
-    };
-  };
 
   private func getPrivateBettableFixtures(dto: FixtureQueries.GetBettableFixtures) : Result.Result<FixtureQueries.BettableFixtures, Enums.Error> {
 
     let filteredLeagueSeasons = Array.find<(FootballTypes.LeagueId, [FootballTypes.Season])>(
       leagueSeasons,
       func(leagueSeason : (FootballTypes.LeagueId, [FootballTypes.Season])) : Bool {
-        leagueSeason.0 == leagueId;
+        leagueSeason.0 == dto.leagueId;
       },
     );
 
@@ -830,7 +828,7 @@ actor Self {
         let filteredSeason = Array.find<FootballTypes.Season>(
           foundLeagueSeasons.1,
           func(leagueSeason : FootballTypes.Season) : Bool {
-            leagueSeason.id == seasonId;
+            leagueSeason.id == dto.seasonId;
           },
         );
 
@@ -839,7 +837,7 @@ actor Self {
             let foundIncompleteLeagueClubIds = Array.find<(FootballTypes.LeagueId, [FootballTypes.ClubId])>(
               leagueClubsRequiringData,
               func(entry : (FootballTypes.LeagueId, [FootballTypes.ClubId])) {
-                entry.0 == leagueId;
+                entry.0 == dto.leagueId;
               },
             );
 
@@ -860,9 +858,9 @@ actor Self {
                   },
                 );
 
-                return #ok(
-                  List.toArray<ResponseDTOs.FixtureDTO>(
-                    List.map<FootballTypes.Fixture, ResponseDTOs.FixtureDTO>(
+                return #ok({ fixtures = 
+                  List.toArray<FixtureQueries.Fixture>(
+                    List.map<FootballTypes.Fixture, FixtureQueries.Fixture>(
                       fixturesWithoutIncompleteClubs,
                       func(fixtureEntry : FootballTypes.Fixture) {
                         return {
@@ -880,7 +878,7 @@ actor Self {
                         };
                       },
                     )
-                  )
+                  ) }
                 );
               };
               case (null) {};
@@ -899,7 +897,7 @@ actor Self {
     let filteredLeagueClubs = Array.find<(FootballTypes.LeagueId, [FootballTypes.Club])>(
       leagueClubs,
       func(leagueClubs : (FootballTypes.LeagueId, [FootballTypes.Club])) : Bool {
-        leagueClubs.0 == leagueId;
+        leagueClubs.0 == dto.leagueId;
       },
     );
 
@@ -913,7 +911,7 @@ actor Self {
             return #greater;
           },
         );
-        return #ok(sortedArray);
+        return #ok({ clubs = sortedArray });
 
       };
       case (null) {
@@ -930,7 +928,7 @@ actor Self {
     let filteredLeagueSeasons = Array.find<(FootballTypes.LeagueId, [FootballTypes.Season])>(
       leagueSeasons,
       func(leagueSeason : (FootballTypes.LeagueId, [FootballTypes.Season])) : Bool {
-        leagueSeason.0 == leagueId;
+        leagueSeason.0 == dto.leagueId;
       },
     );
 
@@ -944,7 +942,7 @@ actor Self {
             return #less;
           },
         );
-        return #ok(sortedArray);
+        return #ok({ seasons = sortedArray });
 
       };
       case (null) {
@@ -2249,9 +2247,9 @@ actor Self {
                 if (seasonEntry.id == dto.seasonId) {
                   return {
                     fixtures = List.fromArray(
-                      Array.map<ResponseDTOs.FixtureDTO, FootballTypes.Fixture>(
+                      Array.map<FixtureCommands.InitialFixture, FootballTypes.Fixture>(
                         dto.seasonFixtures,
-                        func(fixtureEntry : ResponseDTOs.FixtureDTO) {
+                        func(fixtureEntry : FixtureCommands.InitialFixture) {
                           return {
                             awayClubId = fixtureEntry.awayClubId;
                             awayGoals = 0;
@@ -2260,7 +2258,7 @@ actor Self {
                             highestScoringPlayerId = 0;
                             homeClubId = fixtureEntry.homeClubId;
                             homeGoals = 0;
-                            id = fixtureEntry.id;
+                            id = 0; // TODO: Need to write the league id logic for incrementing this
                             kickOff = fixtureEntry.kickOff;
                             seasonId = seasonEntry.id;
                             status = #Unplayed;
@@ -2830,7 +2828,7 @@ actor Self {
                 let awayTeamDefensivePlayerIdsBuffer = Buffer.fromArray<Nat16>([]);
 
                 for (playerId in Iter.fromArray<Nat16>(Buffer.toArray(homeTeamPlayerIdsBuffer))) {
-                  let player = Array.find<ResponseDTOs.PlayerDTO>(allPlayers, func(p : ResponseDTOs.PlayerDTO) : Bool { return p.id == playerId });
+                  let player = Array.find<PlayerQueries.Player>(allPlayers, func(p : PlayerQueries.Player) : Bool { return p.id == playerId });
                   switch (player) {
                     case (null) {};
                     case (?actualPlayer) {
@@ -2849,7 +2847,7 @@ actor Self {
                 };
 
                 for (playerId in Iter.fromArray<Nat16>(Buffer.toArray(awayTeamPlayerIdsBuffer))) {
-                  let player = Array.find<ResponseDTOs.PlayerDTO>(allPlayers, func(p : ResponseDTOs.PlayerDTO) : Bool { return p.id == playerId });
+                  let player = Array.find<PlayerQueries.Player>(allPlayers, func(p : PlayerQueries.Player) : Bool { return p.id == playerId });
                   switch (player) {
                     case (null) {};
                     case (?actualPlayer) {
@@ -2900,7 +2898,7 @@ actor Self {
 
                 if (totalHomeScored == 0) {
                   for (playerId in Iter.fromArray(Buffer.toArray(awayTeamDefensivePlayerIdsBuffer))) {
-                    let player = Array.find<ResponseDTOs.PlayerDTO>(allPlayers, func(p : ResponseDTOs.PlayerDTO) : Bool { return p.id == playerId });
+                    let player = Array.find<PlayerQueries.Player>(allPlayers, func(p : PlayerQueries.Player) : Bool { return p.id == playerId });
                     switch (player) {
                       case (null) {};
                       case (?actualPlayer) {
@@ -2920,7 +2918,7 @@ actor Self {
                 } else {
                   for (goal in Iter.fromArray(homeTeamGoals)) {
                     for (playerId in Iter.fromArray(Buffer.toArray(awayTeamDefensivePlayerIdsBuffer))) {
-                      let player = Array.find<ResponseDTOs.PlayerDTO>(allPlayers, func(p : ResponseDTOs.PlayerDTO) : Bool { return p.id == playerId });
+                      let player = Array.find<PlayerQueries.Player>(allPlayers, func(p : PlayerQueries.Player) : Bool { return p.id == playerId });
                       switch (player) {
                         case (null) {};
                         case (?actualPlayer) {
@@ -2942,7 +2940,7 @@ actor Self {
 
                 if (totalAwayScored == 0) {
                   for (playerId in Iter.fromArray(Buffer.toArray(homeTeamDefensivePlayerIdsBuffer))) {
-                    let player = Array.find<ResponseDTOs.PlayerDTO>(allPlayers, func(p : ResponseDTOs.PlayerDTO) : Bool { return p.id == playerId });
+                    let player = Array.find<PlayerQueries.Player>(allPlayers, func(p : PlayerQueries.Player) : Bool { return p.id == playerId });
                     switch (player) {
                       case (null) {};
                       case (?actualPlayer) {
@@ -2962,7 +2960,7 @@ actor Self {
                 } else {
                   for (goal in Iter.fromArray(awayTeamGoals)) {
                     for (playerId in Iter.fromArray(Buffer.toArray(homeTeamDefensivePlayerIdsBuffer))) {
-                      let player = Array.find<ResponseDTOs.PlayerDTO>(allPlayers, func(p : ResponseDTOs.PlayerDTO) : Bool { return p.id == playerId });
+                      let player = Array.find<PlayerQueries.Player>(allPlayers, func(p : PlayerQueries.Player) : Bool { return p.id == playerId });
                       switch (player) {
                         case (null) {};
                         case (?actualPlayer) {

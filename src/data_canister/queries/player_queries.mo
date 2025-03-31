@@ -6,11 +6,24 @@ module PlayerQueries {
     };
 
     public type Players = {
-        leagueId: FootballTypes.LeagueId;
-
+        players: [Player];
     };
 
     public type Player = {
+        id : Nat16;
+        clubId : FootballTypes.ClubId;
+        position : FootballTypes.PlayerPosition;
+        firstName : Text;
+        lastName : Text;
+        shirtNumber : Nat8;
+        valueQuarterMillions : Nat16;
+        dateOfBirth : Int;
+        nationality : Ids.CountryId;
+        status : FootballTypes.PlayerStatus;
+        leagueId: FootballTypes.LeagueId;
+        parentLeagueId: FootballTypes.LeagueId;
+        parentClubId: FootballTypes.ClubId;
+        currentLoanEndDate: Int;
 
     };
 
@@ -23,19 +36,22 @@ module PlayerQueries {
     };
 
     public type GetLoanedPlayers = {
+        leagueId: FootballTypes.LeagueId;
 
     };
 
     public type LoanedPlayers = {
-
+        players: [Player];
     };
 
     public type GetRetiredPlayers = {
+        leagueId: FootballTypes.LeagueId;
+        clubId : FootballTypes.ClubId;
 
     };
 
     public type RetiredPlayers = {
-
+        players: [Player];
     };
 
     public type GetPlayerDetails = {
