@@ -69,7 +69,6 @@ actor Self {
   private stable var nextPlayerId : FootballTypes.PlayerId = 0;
   private stable var leagueDataHashes : [(FootballTypes.LeagueId, [BaseTypes.DataHash])] = [];
   private stable var leagueTables : [FootballTypes.LeagueTable] = [];
-  private stable var leagueRelegationPairs : [(FootballTypes.LeagueId, FootballTypes.LeagueId)] = [];
   private stable var leagueClubsRequiringData : [(FootballTypes.LeagueId, [FootballTypes.ClubId])] = [];
 
 
@@ -104,7 +103,7 @@ actor Self {
     return #err(#NotFound);
   };
 
-  public shared query ({ caller }) func getCountries(dto: AppQueries.GetCountries) : async Result.Result<AppQueries.Countries, Enums.Error> {
+  public shared query ({ caller }) func getCountries(_: AppQueries.GetCountries) : async Result.Result<AppQueries.Countries, Enums.Error> {
     assert not Principal.isAnonymous(caller);
     return #ok({ countries = Countries.countries });
   };
@@ -112,12 +111,12 @@ actor Self {
 
   /* ----- League Queries ------ */
 
-  public shared query ({ caller }) func getLeagues(dto: LeagueQueries.GetLeagues) : async Result.Result<LeagueQueries.Leagues, Enums.Error> {
+  public shared query ({ caller }) func getLeagues(_: LeagueQueries.GetLeagues) : async Result.Result<LeagueQueries.Leagues, Enums.Error> {
     assert not Principal.isAnonymous(caller);
     return #ok({leagues});
   };
 
-  public shared query ({ caller }) func getBettableLeagues(dto: LeagueQueries.GetBettableLeagues) : async Result.Result<LeagueQueries.BettableLeagues, Enums.Error> {
+  public shared query ({ caller }) func getBettableLeagues(_: LeagueQueries.GetBettableLeagues) : async Result.Result<LeagueQueries.BettableLeagues, Enums.Error> {
     assert not Principal.isAnonymous(caller);
 
     let upToDateLeaguesBuffer = Buffer.fromArray<LeagueQueries.League>([]);
