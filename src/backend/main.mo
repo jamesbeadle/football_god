@@ -19,17 +19,13 @@ import Timer "mo:base/Timer";
 
 
 /* ----- Only Stable Variables Should Use Types ----- */
-import Base "mo:waterway-mops/BaseTypes";
 import Ids "mo:waterway-mops/Ids";
 import BaseTypes "mo:waterway-mops/BaseTypes";
 import BaseQueries "mo:waterway-mops/queries/BaseQueries";
-import T "types/app_types";
+import Enums "mo:waterway-mops/Enums";
 
 
 /* ----- Application Environment & Utility Files ----- */ 
-import Environment "environment";
-import AppQueries "./queries/app_queries";
-
 
 actor Self {
 
@@ -50,7 +46,7 @@ actor Self {
   
   /* ----- General App Queries ----- */
   
-  public shared query func getAppStatus(dto: BaseQueries.GetAppStatus) : async Result.Result<BaseQueries.AppStatus, T.Error> {
+  public shared query func getAppStatus(dto: BaseQueries.GetAppStatus) : async Result.Result<BaseQueries.AppStatus, Enums.Error> {
     return #ok(stable_app_status);
   };
 
@@ -70,17 +66,9 @@ actor Self {
   };
 
   private func getManagerStableVariables(){
-      stable_profile_canister_ids := userManager.getStableProfileCanisterIds(); // TODO: John, let's see what's here, remove and get cycles back
-      stable_unique_profile_canister_ids := userManager.getStableUniqueProfileCanisterIds();
-      stable_active_profile_canister_id := userManager.getStableActiveProfileCanisterId();
-      stable_usernames := userManager.getStableUsernames();
   };
 
   private func setManagerStableVariables(){
-    userManager.setStableProfileCanisterIds(stable_profile_canister_ids);
-    userManager.setStableUniqueProfileCanisterIds(stable_unique_profile_canister_ids);
-    userManager.setStableActiveProfileCanisterId(stable_active_profile_canister_id);
-    userManager.setStableUsernames(stable_usernames);
   };
 
   private func postUpgradeCallback() : async (){

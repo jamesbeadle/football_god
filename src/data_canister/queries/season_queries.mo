@@ -1,7 +1,8 @@
-import FootballTypes "mo:waterway-mops/FootballTypes";
+import FootballIds "mo:waterway-mops/football/FootballIds";
+
 module SeasonQueries {
     public type GetSeasons = {
-        leagueId: FootballTypes.LeagueId;
+        leagueId: FootballIds.LeagueId;
     };
 
     public type Seasons = {

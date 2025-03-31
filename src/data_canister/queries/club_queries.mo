@@ -1,7 +1,9 @@
-import FootballTypes "mo:waterway-mops/FootballTypes";
+import FootballIds "mo:waterway-mops/football/FootballIds";
+import FootballEnums "mo:waterway-mops/football/FootballEnums";
+
 module ClubQueries {
     public type GetClubs = {
-        leagueId: FootballTypes.LeagueId;
+        leagueId: FootballIds.LeagueId;
     };
 
     public type Clubs = {
@@ -9,13 +11,13 @@ module ClubQueries {
     };
 
     public type Club = {
-        id : FootballTypes.ClubId;
+        id : FootballIds.ClubId;
         name : Text;
         friendlyName : Text;
         primaryColourHex : Text;
         secondaryColourHex : Text;
         thirdColourHex : Text;
         abbreviatedName : Text;
-        shirtType : FootballTypes.ShirtType;
+        shirtType : FootballEnums.ShirtType;
     };
 }

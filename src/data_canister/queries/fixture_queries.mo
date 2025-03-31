@@ -1,8 +1,11 @@
-import FootballTypes "mo:waterway-mops/FootballTypes";
+import FootballIds "mo:waterway-mops/football/FootballIds";
+import FootballDefinitions "mo:waterway-mops/football/FootballDefinitions";
+import FootballEnums "mo:waterway-mops/football/FootballEnums";
+
 module FixtureQueries {
     public type GetFixtures = {
-        leagueId: FootballTypes.LeagueId;
-        seasonId: FootballTypes.SeasonId;
+        leagueId: FootballIds.LeagueId;
+        seasonId: FootballIds.SeasonId;
     };
 
     public type Fixtures = {
@@ -10,8 +13,8 @@ module FixtureQueries {
     };
 
     public type GetBettableFixtures = {
-        leagueId: FootballTypes.LeagueId;
-        seasonId: FootballTypes.SeasonId;
+        leagueId: FootballIds.LeagueId;
+        seasonId: FootballIds.SeasonId;
     };
 
     public type BettableFixtures = {
@@ -19,7 +22,7 @@ module FixtureQueries {
     };
 
     public type GetPostponedFixtures = {
-        leagueId: FootballTypes.LeagueId;
+        leagueId: FootballIds.LeagueId;
     };
 
     public type PostponedFixtures = {
@@ -27,16 +30,25 @@ module FixtureQueries {
     };
 
     public type Fixture = {
-        id : FootballTypes.FixtureId;
-        seasonId : FootballTypes.SeasonId;
-        gameweek : FootballTypes.GameweekNumber;
+        id : FootballIds.FixtureId;
+        seasonId : FootballIds.SeasonId;
+        gameweek : FootballDefinitions.GameweekNumber;
         kickOff : Int;
-        homeClubId : FootballTypes.ClubId;
-        awayClubId : FootballTypes.ClubId;
+        homeClubId : FootballIds.ClubId;
+        awayClubId : FootballIds.ClubId;
         homeGoals : Nat8;
         awayGoals : Nat8;
-        status : FootballTypes.FixtureStatusType;
-        highestScoringPlayerId : FootballTypes.PlayerId;
-        events : [FootballTypes.PlayerEventData];
+        status : FootballEnums.FixtureStatusType;
+        highestScoringPlayerId : FootballIds.PlayerId;
+        events : [PlayerEventData];
+    };
+
+    public type PlayerEventData = {
+        fixtureId : FootballIds.FixtureId;
+        playerId : Nat16;
+        eventType : FootballEnums.PlayerEventType;
+        eventStartMinute : Nat8;
+        eventEndMinute : Nat8;
+        clubId : FootballIds.ClubId;
     };
 }

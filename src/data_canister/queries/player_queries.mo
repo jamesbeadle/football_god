@@ -1,8 +1,11 @@
-import FootballTypes "mo:waterway-mops/FootballTypes";
 import Ids "mo:waterway-mops/Ids";
+import FootballIds "mo:waterway-mops/football/FootballIds";
+import FootballEnums "mo:waterway-mops/football/FootballEnums";
+import FootballDefinitions "mo:waterway-mops/football/FootballDefinitions";
+
 module PlayerQueries {
     public type GetPlayers = {
-        leagueId: FootballTypes.LeagueId;
+        leagueId: FootballIds.LeagueId;
     };
 
     public type Players = {
@@ -11,18 +14,18 @@ module PlayerQueries {
 
     public type Player = {
         id : Nat16;
-        clubId : FootballTypes.ClubId;
-        position : FootballTypes.PlayerPosition;
+        clubId : FootballIds.ClubId;
+        position : FootballEnums.PlayerPosition;
         firstName : Text;
         lastName : Text;
         shirtNumber : Nat8;
         valueQuarterMillions : Nat16;
         dateOfBirth : Int;
         nationality : Ids.CountryId;
-        status : FootballTypes.PlayerStatus;
-        leagueId: FootballTypes.LeagueId;
-        parentLeagueId: FootballTypes.LeagueId;
-        parentClubId: FootballTypes.ClubId;
+        status : FootballEnums.PlayerStatus;
+        leagueId: FootballIds.LeagueId;
+        parentLeagueId: FootballIds.LeagueId;
+        parentClubId: FootballIds.ClubId;
         currentLoanEndDate: Int;
 
     };
@@ -36,7 +39,7 @@ module PlayerQueries {
     };
 
     public type GetLoanedPlayers = {
-        leagueId: FootballTypes.LeagueId;
+        leagueId: FootballIds.LeagueId;
 
     };
 
@@ -45,8 +48,8 @@ module PlayerQueries {
     };
 
     public type GetRetiredPlayers = {
-        leagueId: FootballTypes.LeagueId;
-        clubId : FootballTypes.ClubId;
+        leagueId: FootballIds.LeagueId;
+        clubId : FootballIds.ClubId;
 
     };
 
@@ -55,9 +58,9 @@ module PlayerQueries {
     };
 
     public type GetPlayerDetails = {
-        leagueId: FootballTypes.LeagueId;
-        playerId : FootballTypes.PlayerId;
-        seasonId : FootballTypes.SeasonId;
+        leagueId: FootballIds.LeagueId;
+        playerId : FootballIds.PlayerId;
+        seasonId : FootballIds.SeasonId;
     };
 
     public type PlayerDetails = {
@@ -66,37 +69,58 @@ module PlayerQueries {
 
 
     public type DetailedPlayer = {
-        id : FootballTypes.PlayerId;
-        clubId : FootballTypes.ClubId;
-        position : FootballTypes.PlayerPosition;
+        id : FootballIds.PlayerId;
+        clubId : FootballIds.ClubId;
+        position : FootballEnums.PlayerPosition;
         firstName : Text;
         lastName : Text;
         shirtNumber : Nat8;
         valueQuarterMillions : Nat16;
         dateOfBirth : Int;
         nationality : Ids.CountryId;
-        seasonId : FootballTypes.SeasonId;
+        seasonId : FootballIds.SeasonId;
         gameweeks : [PlayerGameweek];
-        valueHistory : [FootballTypes.ValueHistory];
-        status : FootballTypes.PlayerStatus;
-        parentClubId : FootballTypes.ClubId;
+        valueHistory : [ValueHistory];
+        status : FootballEnums.PlayerStatus;
+        parentClubId : FootballIds.ClubId;
         latestInjuryEndDate : Int;
-        injuryHistory : [FootballTypes.InjuryHistory];
+        injuryHistory : [InjuryHistory];
         retirementDate : Int;
+    };
+
+    public type ValueHistory = {
+        oldValue: Nat16;
+        changedOn: Int;
+        newValue: Nat16;
+    };
+
+    public type InjuryHistory = {
+        description: Text;
+        injuryStartDate: Int;
+        expectedEndDate: Int;
     };
         
     public type PlayerGameweek = {
         number : Nat8;
-        events : [FootballTypes.PlayerEventData];
+        events : [PlayerEventData];
         points : Int16;
-        fixtureId : FootballTypes.FixtureId;
+        fixtureId : FootballIds.FixtureId;
+    };
+
+    public type PlayerEventData = {
+        fixtureId : FootballIds.FixtureId;
+        playerId : Nat16;
+        eventType : FootballEnums.PlayerEventType;
+        eventStartMinute : Nat8;
+        eventEndMinute : Nat8;
+        clubId : FootballIds.ClubId;
     };
 
 
     public type GetPlayerDetailsForGameweek = {
-        leagueId: FootballTypes.LeagueId;
-        seasonId: FootballTypes.SeasonId;
-        gameweek: FootballTypes.GameweekNumber;
+        leagueId: FootballIds.LeagueId;
+        seasonId: FootballIds.SeasonId;
+        gameweek: FootballDefinitions.GameweekNumber;
     };
 
     public type PlayerDetailsForGameweek = {
@@ -105,18 +129,18 @@ module PlayerQueries {
 
     public type PlayerPoints = {
         id : Nat16;
-        gameweek : FootballTypes.GameweekNumber;
+        gameweek : FootballDefinitions.GameweekNumber;
         points : Int16;
-        clubId : FootballTypes.ClubId;
-        position : FootballTypes.PlayerPosition;
-        events : [FootballTypes.PlayerEventData];
+        clubId : FootballIds.ClubId;
+        position : FootballEnums.PlayerPosition;
+        events : [PlayerEventData];
     };
 
 
     public type GetPlayersMap = {
-        leagueId: FootballTypes.LeagueId;
-        seasonId: FootballTypes.SeasonId;
-        gameweek: FootballTypes.GameweekNumber;
+        leagueId: FootballIds.LeagueId;
+        seasonId: FootballIds.SeasonId;
+        gameweek: FootballDefinitions.GameweekNumber;
     };
 
     public type PlayersMap = {
@@ -126,22 +150,15 @@ module PlayerQueries {
     public type PlayerScore = {
          id : Nat16;
         points : Int16;
-        clubId : FootballTypes.ClubId;
+        clubId : FootballIds.ClubId;
         goalsScored : Int16;
         goalsConceded : Int16;
-        position : FootballTypes.PlayerPosition;
+        position : FootballEnums.PlayerPosition;
         nationality : Ids.CountryId;
         dateOfBirth : Int;
         saves : Int16;
         assists : Int16;
-        events : [FootballTypes.PlayerEventData];
+        events : [PlayerEventData];
     };
-
-
-
-
-
-
-
 
 }

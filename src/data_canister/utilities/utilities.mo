@@ -11,7 +11,8 @@ import Nat32 "mo:base/Nat32";
 import Nat8 "mo:base/Nat8";
 import Nat16 "mo:base/Nat16";
 import Int16 "mo:base/Int16";
-import FootballTypes "mo:waterway-mops/FootballTypes";
+import FootballTypes "mo:waterway-mops/football/FootballTypes";
+import FootballEnums "mo:waterway-mops/football/FootballEnums";
 
 module {
 
@@ -167,7 +168,7 @@ module {
     return Nat8.fromNat(month);
   };
 
-  public func calculateAggregatePlayerEvents(events : [FootballTypes.PlayerEventData], playerPosition : FootballTypes.PlayerPosition) : Int16 {
+  public func calculateAggregatePlayerEvents(events : [FootballTypes.PlayerEventData], playerPosition : FootballEnums.PlayerPosition) : Int16 {
     var totalScore : Int16 = 0;
 
     if (playerPosition == #Goalkeeper or playerPosition == #Defender) {
@@ -198,7 +199,7 @@ module {
     return totalScore;
   };
 
-  public func calculateIndividualScoreForEvent(event : FootballTypes.PlayerEventData, playerPosition : FootballTypes.PlayerPosition) : Int16 {
+  public func calculateIndividualScoreForEvent(event : FootballTypes.PlayerEventData, playerPosition : FootballEnums.PlayerPosition) : Int16 {
     switch (event.eventType) {
       case (#Appearance) { return 5 };
       case (#Goal) {
