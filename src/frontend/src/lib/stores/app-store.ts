@@ -1,7 +1,7 @@
 import { isError } from "../utils/helpers";
-import type { AppStatusDTO } from "../../../../declarations/backend/backend.did";
 import { AppService } from "$lib/services/app-service";
 import { toasts } from "./toasts-store";
+import type { AppStatus } from "../../../../declarations/backend/backend.did";
 
 function createAppStore() {
   async function checkServerVersion() {
@@ -10,7 +10,7 @@ function createAppStore() {
       throw new Error("Error fetching app status");
     }
 
-    let status: AppStatusDTO = res!;
+    let status: AppStatus = res!;
 
     let localVersion = localStorage.getItem("version");
     if (!localVersion) {
@@ -32,7 +32,7 @@ function createAppStore() {
       throw new Error("Error fetching app status");
     }
 
-    let status: AppStatusDTO = res!;
+    let status: AppStatus = res!;
     localStorage.setItem("version", status.version);
     window.location.replace(`${window.location.pathname}?v=${status.version}`);
   }

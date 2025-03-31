@@ -14,27 +14,27 @@ import type {
 } from "@dfinity/sns/dist/candid/sns_governance";
 
 import type {
-  RevaluePlayerUpDTO,
-  RevaluePlayerDownDTO,
-  LoanPlayerDTO,
-  TransferPlayerDTO,
-  RecallPlayerDTO,
-  CreatePlayerDTO,
-  UpdatePlayerDTO,
-  SetPlayerInjuryDTO,
-  RetirePlayerDTO,
-  UnretirePlayerDTO,
-  PromoteClubDTO,
-  UpdateClubDTO,
-  CreateClubDTO,
-  SubmitFixtureDataDTO,
-  AddInitialFixturesDTO,
-  MoveFixtureDTO,
-  PostponeFixtureDTO,
-  CreateLeagueDTO,
-  UpdateLeagueDTO,
-  RescheduleFixtureDTO,
-  SetFreeAgentDTO,
+  RevaluePlayerUp,
+  RevaluePlayerDown,
+  LoanPlayer,
+  TransferPlayer,
+  RecallPlayer,
+  CreatePlayer,
+  UpdatePlayer,
+  SetPlayerInjury,
+  RetirePlayer,
+  UnretirePlayer,
+  PromoteClub,
+  UpdateClub,
+  CreateClub,
+  SubmitFixtureData,
+  AddInitialFixtures,
+  MoveFixture,
+  PostponeFixture,
+  CreateLeague,
+  UpdateLeague,
+  RescheduleFixture,
+  SetFreeAgent,
 } from "../../../../declarations/data_canister/data_canister.did";
 
 import type {
@@ -156,7 +156,7 @@ async function createProposal({
 }
 
 function createGovernanceStore() {
-  async function revaluePlayerUp(dto: RevaluePlayerUpDTO): Promise<any> {
+  async function revaluePlayerUp(dto: RevaluePlayerUp): Promise<any> {
     let userIdentity: OptionIdentity;
     authStore.subscribe((auth) => (userIdentity = auth.identity));
     if (!userIdentity) return;
@@ -184,7 +184,7 @@ function createGovernanceStore() {
     });
   }
 
-  async function revaluePlayerDown(dto: RevaluePlayerDownDTO): Promise<any> {
+  async function revaluePlayerDown(dto: RevaluePlayerDown): Promise<any> {
     let userIdentity: OptionIdentity;
     authStore.subscribe((auth) => (userIdentity = auth.identity));
     if (!userIdentity) return;
@@ -212,7 +212,7 @@ function createGovernanceStore() {
     });
   }
 
-  async function loanPlayer(dto: LoanPlayerDTO): Promise<any> {
+  async function loanPlayer(dto: LoanPlayer): Promise<any> {
     let userIdentity: OptionIdentity;
     authStore.subscribe((auth) => (userIdentity = auth.identity));
     if (!userIdentity) return;
@@ -250,7 +250,7 @@ function createGovernanceStore() {
     });
   }
 
-  async function transferPlayer(dto: TransferPlayerDTO): Promise<any> {
+  async function transferPlayer(dto: TransferPlayer): Promise<any> {
     let userIdentity: OptionIdentity;
     authStore.subscribe((auth) => (userIdentity = auth.identity));
     if (!userIdentity) return;
@@ -297,7 +297,7 @@ function createGovernanceStore() {
     });
   }
 
-  async function submitFixtureData(dto: SubmitFixtureDataDTO): Promise<any> {
+  async function submitFixtureData(dto: SubmitFixtureData): Promise<any> {
     let userIdentity: OptionIdentity;
     authStore.subscribe((auth) => (userIdentity = auth.identity));
     if (!userIdentity) return;
@@ -354,7 +354,7 @@ function createGovernanceStore() {
     });
   }
 
-  async function createLeague(dto: CreateLeagueDTO): Promise<any> {
+  async function createLeague(dto: CreateLeague): Promise<any> {
     let userIdentity: OptionIdentity;
     authStore.subscribe((auth) => (userIdentity = auth.identity));
     if (!userIdentity) return;
@@ -384,7 +384,7 @@ function createGovernanceStore() {
     });
   }
 
-  async function updateLeague(dto: UpdateLeagueDTO): Promise<any> {
+  async function updateLeague(dto: UpdateLeague): Promise<any> {
     let userIdentity: OptionIdentity;
     authStore.subscribe((auth) => (userIdentity = auth.identity));
     if (!userIdentity) return;
@@ -414,7 +414,7 @@ function createGovernanceStore() {
     });
   }
 
-  async function createPlayer(dto: CreatePlayerDTO): Promise<any> {
+  async function createPlayer(dto: CreatePlayer): Promise<any> {
     let userIdentity: OptionIdentity;
     authStore.subscribe((auth) => (userIdentity = auth.identity));
     if (!userIdentity) return;
@@ -453,7 +453,7 @@ function createGovernanceStore() {
     });
   }
 
-  async function updatePlayer(dto: UpdatePlayerDTO): Promise<any> {
+  async function updatePlayer(dto: UpdatePlayer): Promise<any> {
     let userIdentity: OptionIdentity;
     authStore.subscribe((auth) => (userIdentity = auth.identity));
     if (!userIdentity) return;
@@ -495,7 +495,7 @@ function createGovernanceStore() {
     });
   }
 
-  async function setPlayerInjury(dto: SetPlayerInjuryDTO): Promise<any> {
+  async function setPlayerInjury(dto: SetPlayerInjury): Promise<any> {
     let userIdentity: OptionIdentity;
     authStore.subscribe((auth) => (userIdentity = auth.identity));
     if (!userIdentity) return;
@@ -526,7 +526,7 @@ function createGovernanceStore() {
     });
   }
 
-  async function retirePlayer(dto: RetirePlayerDTO): Promise<any> {
+  async function retirePlayer(dto: RetirePlayer): Promise<any> {
     let userIdentity: OptionIdentity;
     authStore.subscribe((auth) => (userIdentity = auth.identity));
     if (!userIdentity) return;
@@ -561,7 +561,7 @@ function createGovernanceStore() {
     });
   }
 
-  async function unretirePlayer(dto: UnretirePlayerDTO): Promise<any> {
+  async function unretirePlayer(dto: UnretirePlayer): Promise<any> {
     let userIdentity: OptionIdentity;
     authStore.subscribe((auth) => (userIdentity = auth.identity));
     if (!userIdentity) return;
@@ -595,7 +595,7 @@ function createGovernanceStore() {
     });
   }
 
-  async function recallPlayer(dto: RecallPlayerDTO): Promise<any> {
+  async function recallPlayer(dto: RecallPlayer): Promise<any> {
     let userIdentity: OptionIdentity;
     authStore.subscribe((auth) => (userIdentity = auth.identity));
     if (!userIdentity) return;
@@ -639,7 +639,7 @@ function createGovernanceStore() {
     });
   }
 
-  async function createClub(dto: CreateClubDTO): Promise<any> {
+  async function createClub(dto: CreateClub): Promise<any> {
     let userIdentity: OptionIdentity;
     authStore.subscribe((auth) => (userIdentity = auth.identity));
     if (!userIdentity) return;
@@ -671,7 +671,7 @@ function createGovernanceStore() {
     });
   }
 
-  async function updateClub(dto: UpdateClubDTO): Promise<any> {
+  async function updateClub(dto: UpdateClub): Promise<any> {
     let userIdentity: OptionIdentity;
     authStore.subscribe((auth) => (userIdentity = auth.identity));
     if (!userIdentity) return;
@@ -703,7 +703,7 @@ function createGovernanceStore() {
     });
   }
 
-  async function promoteClub(dto: PromoteClubDTO): Promise<any> {
+  async function promoteClub(dto: PromoteClub): Promise<any> {
     let userIdentity: OptionIdentity;
     authStore.subscribe((auth) => (userIdentity = auth.identity));
     if (!userIdentity) return;
@@ -736,11 +736,11 @@ function createGovernanceStore() {
     });
   }
 
-  async function addInitialFixtures(dto: AddInitialFixturesDTO): Promise<any> {
+  async function addInitialFixtures(dto: AddInitialFixtures): Promise<any> {
     //TODO
   }
 
-  async function setFreeAgent(dto: SetFreeAgentDTO): Promise<any> {
+  async function setFreeAgent(dto: SetFreeAgent): Promise<any> {
     let userIdentity: OptionIdentity;
     authStore.subscribe((auth) => (userIdentity = auth.identity));
     if (!userIdentity) return;
@@ -772,9 +772,9 @@ function createGovernanceStore() {
     });
   }
 
-  async function moveFixture(dto: MoveFixtureDTO): Promise<any> {
+  async function moveFixture(dto: MoveFixture): Promise<any> {
     console.log("moving fixture");
-    console.log(dto);
+    console.log();
     let userIdentity: OptionIdentity;
     authStore.subscribe((auth) => (userIdentity = auth.identity));
     if (!userIdentity) return;
@@ -809,7 +809,7 @@ function createGovernanceStore() {
     });
   }
 
-  async function postponeFixture(dto: PostponeFixtureDTO): Promise<any> {
+  async function postponeFixture(dto: PostponeFixture): Promise<any> {
     let userIdentity: OptionIdentity;
     authStore.subscribe((auth) => (userIdentity = auth.identity));
     if (!userIdentity) return;
@@ -842,7 +842,7 @@ function createGovernanceStore() {
     });
   }
 
-  async function rescheduleFixture(dto: RescheduleFixtureDTO): Promise<any> {
+  async function rescheduleFixture(dto: RescheduleFixture): Promise<any> {
     let userIdentity: OptionIdentity;
     authStore.subscribe((auth) => (userIdentity = auth.identity));
     if (!userIdentity) return;

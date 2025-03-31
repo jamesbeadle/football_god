@@ -1,7 +1,7 @@
 import { ActorFactory } from "../utils/ActorFactory";
 import { isError } from "../utils/helpers";
 import { authStore } from "$lib/stores/auth-store";
-import type { FixtureDTO } from "../../../../declarations/data_canister/data_canister.did";
+import type { Fixture } from "../../../../declarations/data_canister/data_canister.did";
 
 export class FixtureService {
   constructor() {}
@@ -17,7 +17,7 @@ export class FixtureService {
     return result.ok;
   }
 
-  async getPostponedFixtures(leagueId: number): Promise<FixtureDTO[]> {
+  async getPostponedFixtures(leagueId: number): Promise<Fixture[]> {
     const identityActor: any =
       await ActorFactory.createDataCanisterIdentityActor(
         authStore,
@@ -28,7 +28,7 @@ export class FixtureService {
     return result.ok;
   }
 
-  async getFixtures(leagueId: number, seasonId: number): Promise<FixtureDTO[]> {
+  async getFixtures(leagueId: number, seasonId: number): Promise<Fixture[]> {
     const identityActor: any =
       await ActorFactory.createDataCanisterIdentityActor(
         authStore,

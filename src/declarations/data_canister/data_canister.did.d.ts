@@ -8,11 +8,14 @@ export interface AddInitialFixtures {
   leagueId: LeagueId;
 }
 export interface BettableFixtures {
+  seasonId: SeasonId;
   fixtures: Array<Fixture>;
+  leagueId: LeagueId;
 }
 export interface BettableLeagues {
   leagues: Array<League>;
 }
+export type CalendarMonth = number;
 export interface Club {
   id: ClubId;
   secondaryColourHex: string;
@@ -26,6 +29,7 @@ export interface Club {
 export type ClubId = number;
 export interface Clubs {
   clubs: Array<Club>;
+  leagueId: LeagueId;
 }
 export interface Countries {
   countries: Array<Country>;
@@ -128,12 +132,13 @@ export type FixtureStatusType =
   | { Active: null }
   | { Complete: null };
 export interface Fixtures {
+  seasonId: SeasonId;
   fixtures: Array<Fixture>;
+  leagueId: LeagueId;
 }
 export type GameweekNumber = number;
 export type Gender = { Male: null } | { Female: null };
 export interface GetBettableFixtures {
-  seasonId: SeasonId;
   leagueId: LeagueId;
 }
 export type GetBettableLeagues = {};
@@ -198,10 +203,63 @@ export interface InjuryHistory {
   injuryStartDate: bigint;
   expectedEndDate: bigint;
 }
-export type League = {};
+export interface League {
+  id: LeagueId;
+  logo: Uint8Array | number[];
+  name: string;
+  teamCount: number;
+  relatedGender: Gender;
+  countryId: CountryId;
+  abbreviation: string;
+  governingBody: string;
+  formed: bigint;
+}
 export type LeagueId = number;
-export type LeagueStatus = {};
-export type LeagueTable = {};
+export interface LeagueStatus {
+  transferWindowEndMonth: number;
+  transferWindowEndDay: number;
+  transferWindowStartMonth: number;
+  transferWindowActive: boolean;
+  totalGameweeks: number;
+  completedGameweek: GameweekNumber;
+  transferWindowStartDay: number;
+  unplayedGameweek: GameweekNumber;
+  activeMonth: CalendarMonth;
+  activeSeasonId: SeasonId;
+  activeGameweek: GameweekNumber;
+  leagueId: LeagueId;
+  seasonActive: boolean;
+}
+export interface LeagueTable {
+  seasonId: SeasonId;
+  entries: Array<LeagueTableEntry>;
+  leagueId: LeagueId;
+}
+export interface LeagueTableEntry {
+  won: bigint;
+  homeDrawn: bigint;
+  clubId: ClubId;
+  awayDrawn: bigint;
+  homeLost: bigint;
+  played: bigint;
+  scored: bigint;
+  lost: bigint;
+  homeWon: bigint;
+  conceded: bigint;
+  awayPoints: bigint;
+  awayWon: bigint;
+  homePoints: bigint;
+  awayConceded: bigint;
+  awayLost: bigint;
+  awayPlayed: bigint;
+  awayScored: bigint;
+  homePlayed: bigint;
+  position: bigint;
+  homeScored: bigint;
+  drawn: bigint;
+  homeConceded: bigint;
+  points: bigint;
+}
 export interface Leagues {
   leagues: Array<League>;
 }
@@ -302,6 +360,19 @@ export type PlayerPosition =
   | { Midfielder: null }
   | { Forward: null }
   | { Defender: null };
+export interface PlayerScore {
+  id: number;
+  clubId: ClubId;
+  assists: number;
+  dateOfBirth: bigint;
+  nationality: CountryId;
+  goalsScored: number;
+  saves: number;
+  goalsConceded: number;
+  events: Array<PlayerEventData__2>;
+  position: PlayerPosition;
+  points: number;
+}
 export type PlayerStatus =
   | { OnLoan: null }
   | { Active: null }
@@ -310,14 +381,18 @@ export type PlayerStatus =
 export interface Players {
   players: Array<Player>;
 }
-export type PlayersMap = {};
+export interface PlayersMap {
+  playersMap: Array<[PlayerId, PlayerScore]>;
+}
 export interface PostponeFixture {
   fixtureId: FixtureId;
   seasonId: SeasonId;
   leagueId: LeagueId;
 }
 export interface PostponedFixtures {
+  seasonId: SeasonId;
   fixtures: Array<Fixture>;
+  leagueId: LeagueId;
 }
 export interface PromoteClub {
   clubId: ClubId;
@@ -375,8 +450,15 @@ export interface RevaluePlayerUp {
   leagueId: LeagueId;
 }
 export type RustResult = { Ok: string } | { Err: string };
+export interface Season {
+  id: number;
+  name: string;
+  year: number;
+}
 export type SeasonId = number;
-export type Seasons = {};
+export interface Seasons {
+  seasons: Array<Season>;
+}
 export interface SetFreeAgent {
   playerId: ClubId;
   newValueQuarterMillions: number;

@@ -1,23 +1,23 @@
 import { writable } from "svelte/store";
 import { FixtureService } from "../services/fixture-service";
-import type { FixtureDTO } from "../../../../declarations/data_canister/data_canister.did";
+import type { Fixture } from "../../../../declarations/data_canister/data_canister.did";
 
 function createFixtureStore() {
-  const { subscribe, set } = writable<FixtureDTO[]>([]);
+  const { subscribe, set } = writable<Fixture[]>([]);
 
   async function getFixtures(
     leagueId: number,
     seasonId: number,
-  ): Promise<FixtureDTO[]> {
+  ): Promise<Fixture[]> {
     return new FixtureService().getFixtures(leagueId, seasonId);
   }
 
-  async function getPostponedFixtures(leagueId: number): Promise<FixtureDTO[]> {
+  async function getPostponedFixtures(leagueId: number): Promise<Fixture[]> {
     return new FixtureService().getPostponedFixtures(leagueId);
   }
 
-  async function getNextFixture(): Promise<FixtureDTO | undefined> {
-    let fixtures: FixtureDTO[] = [];
+  async function getNextFixture(): Promise<Fixture | undefined> {
+    let fixtures: Fixture[] = [];
     await subscribe((value) => {
       fixtures = value;
     })();
@@ -41,7 +41,7 @@ function createFixtureStore() {
 
   return {
     subscribe,
-    setFixtures: (fixtures: FixtureDTO[]) => set(fixtures),
+    setFixtures: (fixtures: Fixture[]) => set(fixtures),
     getFixtures,
     getPostponedFixtures,
     getNextFixture,

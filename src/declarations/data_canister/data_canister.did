@@ -81,8 +81,14 @@ type SetFreeAgent =
    newValueQuarterMillions: nat16;
    playerId: ClubId;
  };
-type Seasons = record {};
+type Seasons = record {seasons: vec Season;};
 type SeasonId = nat16;
+type Season = 
+ record {
+   id: nat16;
+   name: text;
+   year: nat16;
+ };
 type RustResult = 
  variant {
    Err: text;
@@ -216,14 +222,22 @@ type PromoteClub =
    leagueId: LeagueId;
    toLeagueId: LeagueId;
  };
-type PostponedFixtures = record {fixtures: vec Fixture;};
+type PostponedFixtures = 
+ record {
+   fixtures: vec Fixture;
+   leagueId: LeagueId;
+   seasonId: SeasonId;
+ };
 type PostponeFixture = 
  record {
    fixtureId: FixtureId;
    leagueId: LeagueId;
    seasonId: SeasonId;
  };
-type PlayersMap = record {};
+type PlayersMap = record {playersMap: vec record {
+                                            PlayerId;
+                                            PlayerScore;
+                                          };};
 type Players = record {players: vec Player;};
 type PlayerStatus = 
  variant {
@@ -231,6 +245,20 @@ type PlayerStatus =
    FreeAgent;
    OnLoan;
    Retired;
+ };
+type PlayerScore = 
+ record {
+   assists: int16;
+   clubId: ClubId;
+   dateOfBirth: int;
+   events: vec PlayerEventData__2;
+   goalsConceded: int16;
+   goalsScored: int16;
+   id: nat16;
+   nationality: CountryId;
+   points: int16;
+   position: PlayerPosition;
+   saves: int16;
  };
 type PlayerPosition = 
  variant {
@@ -336,10 +364,67 @@ type LoanPlayer =
    playerId: ClubId;
  };
 type Leagues = record {leagues: vec League;};
-type LeagueTable = record {};
-type LeagueStatus = record {};
+type LeagueTableEntry = 
+ record {
+   awayConceded: nat;
+   awayDrawn: nat;
+   awayLost: nat;
+   awayPlayed: nat;
+   awayPoints: nat;
+   awayScored: nat;
+   awayWon: nat;
+   clubId: ClubId;
+   conceded: nat;
+   drawn: nat;
+   homeConceded: nat;
+   homeDrawn: nat;
+   homeLost: nat;
+   homePlayed: nat;
+   homePoints: nat;
+   homeScored: nat;
+   homeWon: nat;
+   lost: nat;
+   played: nat;
+   points: nat;
+   position: nat;
+   scored: nat;
+   won: nat;
+ };
+type LeagueTable = 
+ record {
+   entries: vec LeagueTableEntry;
+   leagueId: LeagueId;
+   seasonId: SeasonId;
+ };
+type LeagueStatus = 
+ record {
+   activeGameweek: GameweekNumber;
+   activeMonth: CalendarMonth;
+   activeSeasonId: SeasonId;
+   completedGameweek: GameweekNumber;
+   leagueId: LeagueId;
+   seasonActive: bool;
+   totalGameweeks: nat8;
+   transferWindowActive: bool;
+   transferWindowEndDay: nat8;
+   transferWindowEndMonth: nat8;
+   transferWindowStartDay: nat8;
+   transferWindowStartMonth: nat8;
+   unplayedGameweek: GameweekNumber;
+ };
 type LeagueId = nat16;
-type League = record {};
+type League = 
+ record {
+   abbreviation: text;
+   countryId: CountryId;
+   formed: int;
+   governingBody: text;
+   id: LeagueId;
+   logo: blob;
+   name: text;
+   relatedGender: Gender;
+   teamCount: nat8;
+ };
 type InjuryHistory = 
  record {
    description: text;
@@ -396,18 +481,19 @@ type GetDataHashes = record {leagueId: LeagueId;};
 type GetCountries = record {};
 type GetClubs = record {leagueId: LeagueId;};
 type GetBettableLeagues = record {};
-type GetBettableFixtures = 
- record {
-   leagueId: LeagueId;
-   seasonId: SeasonId;
- };
+type GetBettableFixtures = record {leagueId: LeagueId;};
 type Gender = 
  variant {
    Female;
    Male;
  };
 type GameweekNumber = nat8;
-type Fixtures = record {fixtures: vec Fixture;};
+type Fixtures = 
+ record {
+   fixtures: vec Fixture;
+   leagueId: LeagueId;
+   seasonId: SeasonId;
+ };
 type FixtureStatusType = 
  variant {
    Active;
@@ -515,7 +601,11 @@ type Country =
    name: text;
  };
 type Countries = record {countries: vec Country;};
-type Clubs = record {clubs: vec Club;};
+type Clubs = 
+ record {
+   clubs: vec Club;
+   leagueId: LeagueId;
+ };
 type ClubId = nat16;
 type Club = 
  record {
@@ -528,8 +618,14 @@ type Club =
    shirtType: ShirtType;
    thirdColourHex: text;
  };
+type CalendarMonth = nat8;
 type BettableLeagues = record {leagues: vec League;};
-type BettableFixtures = record {fixtures: vec Fixture;};
+type BettableFixtures = 
+ record {
+   fixtures: vec Fixture;
+   leagueId: LeagueId;
+   seasonId: SeasonId;
+ };
 type AddInitialFixtures = 
  record {
    leagueId: LeagueId;

@@ -1,12 +1,12 @@
 import { ActorFactory } from "../utils/ActorFactory";
 import { isError } from "../utils/helpers";
-import type { CountryDTO } from "../../../../declarations/data_canister/data_canister.did";
+import type { Country } from "../../../../declarations/data_canister/data_canister.did";
 import { authStore } from "$lib/stores/auth-store";
 
 export class CountryService {
   constructor() {}
 
-  async getCountries(): Promise<CountryDTO[]> {
+  async getCountries(): Promise<Country[]> {
     const identityActor: any =
       await ActorFactory.createDataCanisterIdentityActor(
         authStore,

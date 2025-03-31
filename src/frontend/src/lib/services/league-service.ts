@@ -2,14 +2,14 @@ import { authStore } from "../stores/auth-store";
 import { ActorFactory } from "../utils/ActorFactory";
 import { isError } from "../utils/helpers";
 import type {
-  FootballLeagueDTO,
+  League,
   LeagueStatus,
 } from "../../../../declarations/data_canister/data_canister.did";
 
 export class LeagueService {
   constructor() {}
 
-  async getLeagues(): Promise<FootballLeagueDTO[]> {
+  async getLeagues(): Promise<League[]> {
     const identityActor: any =
       await ActorFactory.createDataCanisterIdentityActor(
         authStore,
