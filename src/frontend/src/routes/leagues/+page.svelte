@@ -3,8 +3,8 @@
   import { goto } from "$app/navigation";
   import { leagueStore } from "$lib/stores/league-store";
   import { convertDateToReadable, getImageURL } from "$lib/utils/helpers";
-  import type { FootballLeagueDTO } from "../../../../declarations/data_canister/data_canister.did";
-  import Layout from "../Layout.svelte";
+  import type { League } from "../../../../declarations/data_canister/data_canister.did";
+  import Layout from "../+layout.svelte";
   import LocalSpinner from "$lib/components/shared/local-spinner.svelte";
   import AddLeagueModal from "$lib/components/governance/league/create-league.svelte";
   import UpdateLeagueModal from "$lib/components/governance/league/update-league.svelte";
@@ -13,9 +13,9 @@
   let isLoading = true;
   let showAddLeague = false;
   let showUpdateLeague = false;
-  let leagues: FootballLeagueDTO[] = [];
+  let leagues: League[] = [];
   let dropdownVisible: number | null = null;
-  let selectedLeague: FootballLeagueDTO;
+  let selectedLeague: League;
 
   onMount(async () => {
     document.addEventListener("click", handleClickOutside);
@@ -57,7 +57,7 @@
   }
 
   function getLeagueById(leagueId: number) {
-    return leagues.find(league => league.id === leagueId) as FootballLeagueDTO;
+    return leagues.find(league => league.id === leagueId) as League;
   }
 
   function toggleDropdown(leagueId: number, event: MouseEvent) {

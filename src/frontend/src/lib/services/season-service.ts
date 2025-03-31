@@ -1,6 +1,9 @@
 import { ActorFactory } from "$lib/utils/ActorFactory";
 import { isError } from "$lib/utils/helpers";
-import type { GetSeasons, Season } from "../../../../declarations/data_canister/data_canister.did";
+import type {
+  GetSeasons,
+  Season,
+} from "../../../../declarations/data_canister/data_canister.did";
 import { authStore } from "$lib/stores/auth-store";
 
 export class SeasonService {

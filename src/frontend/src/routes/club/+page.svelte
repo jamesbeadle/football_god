@@ -6,7 +6,7 @@
 
     import { clubStore } from "$lib/stores/club-store";
     
-    import Layout from "../Layout.svelte";
+    import Layout from "../+layout.svelte";
     import LocalSpinner from "$lib/components/shared/local-spinner.svelte";
     import TeamPlayers from "$lib/components/club/team-players.svelte";
     import TeamFixtures from "$lib/components/club/team-fixtures.svelte";

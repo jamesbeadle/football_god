@@ -5,11 +5,11 @@
     import { countryStore } from "$lib/stores/country-store"; 
     import { leagueStore } from "$lib/stores/league-store";
     
-    import Layout from "../Layout.svelte";
+    import Layout from "../+layout.svelte";
     import LeagueClubs from "$lib/components/league/league-clubs.svelte";
     import LeagueFixtures from "$lib/components/league/league-fixtures.svelte";
     import FullScreenSpinner from "$lib/components/shared/full-screen-spinner.svelte";
-    import type { CountryDTO, FootballLeagueDTO, LeagueStatus } from "../../../../declarations/data_canister/data_canister.did";
+    import type { Country, League, LeagueStatus } from "../../../../declarations/data_canister/data_canister.did";
     import LeagueLoanedPlayers from "$lib/components/league/league-loaned-players.svelte";
     import PostponedLeagueFixtures from "$lib/components/league/postponed-league-fixtures.svelte";
     import TabContainer from "$lib/components/shared/tab-container.svelte";
@@ -23,8 +23,8 @@
     ]
     
     let isLoading = true;
-    let countries: CountryDTO[] = [];
-    let league: FootballLeagueDTO | null = null;
+    let countries: Country[] = [];
+    let league: League | null = null;
     let leagueStatus: LeagueStatus | null = null;
     
     let filterType: string = "clubs";

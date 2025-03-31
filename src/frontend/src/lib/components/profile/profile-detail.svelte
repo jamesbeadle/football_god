@@ -1,13 +1,11 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import { userStore } from "$lib/stores/user-store";
-  import UpdateUsernameModal from "$lib/components/profile/update-username-modal.svelte";
   import CopyIcon from "$lib/icons/CopyIcon.svelte";
   import { writable } from "svelte/store";
   import WithdrawFplModal from "./withdraw-fpl-modal.svelte";
   import { authStore } from "$lib/stores/auth-store";
   import FullScreenSpinner from "../shared/full-screen-spinner.svelte";
-  import type { ProfileDTO } from "../../../../../declarations/backend/backend.did";
   import { toasts } from "$lib/stores/toasts-store";
    
   let isLoading = true;
@@ -18,24 +16,14 @@
   let dots = writable('.');
   let dot_interval: ReturnType<typeof setInterval>;
   let principalId = "";
-  let profile: ProfileDTO | null = null;
 
-  let showUsernameModal = false;
   let showFPLModal = false;
 
   onMount(async () => {
     try {
       startDotAnimation();
-      await userStore.sync();
       await authStore.sync();
       principalId = $authStore.identity?.getPrincipal().toText() ?? "";
-      unsubscribeUserProfile = userStore.subscribe((value) => {
-        if (!value) {
-          return;
-        }
-        profile = value;
-      });
-      unsubscribeUserProfile();
       isLoading = false;
       await fetchBalances();
     } catch (error) {
@@ -43,8 +31,6 @@
       isLoading = false;
     }
   });
-
-  let unsubscribeUserProfile: () => void;
 
   function startDotAnimation(){
     let count = 1;
@@ -78,19 +64,6 @@
     }
   }
 
-  function displayUsernameModal(): void {
-    showUsernameModal = true;
-  }
-
-  async function closeUsernameModal() {
-    await userStore.cacheProfile();
-    showUsernameModal = false;
-  }
-
-  function cancelUsernameModal() {
-    showUsernameModal = false;
-  }
-
   async function copyTextAndShowToast(text: string) {
     try {
       await navigator.clipboard.writeText(text);
@@ -109,12 +82,6 @@
 {#if isLoading}
   <FullScreenSpinner />
 {:else}
-  <UpdateUsernameModal
-    newUsername={$userStore ? $userStore.username : ""}
-    visible={showUsernameModal}
-    closeModal={closeUsernameModal}
-    cancelModal={cancelUsernameModal}
-  />
   <WithdrawFplModal
     visible={showFPLModal}
     closeModal={closeWithdrawFPLModal}
@@ -126,17 +93,6 @@
     <div class="flex flex-wrap">
       <div class="w-full mb-4 md:mb-0">
         <div class="mt-2 md:mt-1 rounded-lg">
-          <p class="mb-1 text-xs">Username:</p>
-          <h2 class="default-header mb-1 md:mb-2">
-            {profile == null || profile.username == "" ? "Not Set" : profile.username}
-          </h2>
-          <button
-            class="text-sm md:text-sm p-1 md:p-2 px-2 md:px-4 rounded fg-button button-hover"
-            on:click={displayUsernameModal}
-          >
-            Update
-          </button>
-
           <p class="mb-1 mt-4 text-xs">Principal:</p>
           <div class="flex items-center">
             <button

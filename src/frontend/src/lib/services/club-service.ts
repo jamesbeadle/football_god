@@ -11,11 +11,10 @@ export class ClubService {
   constructor() {}
 
   async getClubs(leagueId: LeagueId): Promise<Club[]> {
-    const identityActor: any =
-      await ActorFactory.createIdentityActor(
-        authStore,
-        process.env.BACKEND_CANISTER_ID ?? "",
-      );
+    const identityActor: any = await ActorFactory.createIdentityActor(
+      authStore,
+      process.env.BACKEND_CANISTER_ID ?? "",
+    );
 
     let dto: GetClubs = { leagueId };
 

@@ -7,7 +7,7 @@
   import { playerStore } from "$lib/stores/player-store";
   import type { Club, Country, League, Player } from "../../../../declarations/data_canister/data_canister.did";
   
-  import Layout from "../Layout.svelte";
+  import Layout from "../+layout.svelte";
   import CreatePlayer from "$lib/components/governance/player/create-player.svelte";
   import UpdatePlayer from "$lib/components/governance/player/update-player.svelte";
   import TransferPlayer from "$lib/components/governance/player/transfer-player.svelte";

@@ -1,7 +1,7 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import { authStore, type AuthSignInParams } from "$lib/stores/auth-store";
-  import Layout from "../Layout.svelte";
+  import Layout from "../+layout.svelte";
   import ProfileDetail from "$lib/components/profile/profile-detail.svelte";
   import FullScreenSpinner from "$lib/components/shared/full-screen-spinner.svelte";
     import type { OptionIdentity } from "$lib/types/identity";

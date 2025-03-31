@@ -12,7 +12,7 @@
   import { convertEvent, isError, replacer } from "$lib/utils/helpers";
   import { toasts } from "$lib/stores/toasts-store";
   
-  import Layout from "../Layout.svelte";
+  import Layout from "../+layout.svelte";
   import PlayerEventsModal from "$lib/components/fixture-validation/player-events-modal.svelte";
   import SelectPlayersModal from "$lib/components/fixture-validation/select-players-modal.svelte";
   import ConfirmFixtureDataModal from "$lib/components/fixture-validation/confirm-fixture-data-modal.svelte";

@@ -1,4 +1,7 @@
-import type { AppStatus, GetAppStatus } from "../../../../declarations/backend/backend.did";
+import type {
+  AppStatus,
+  GetAppStatus,
+} from "../../../../declarations/backend/backend.did";
 import { isError } from "../utils/helpers";
 import { idlFactory as backend_canister } from "../../../../declarations/backend";
 import { ActorFactory } from "$lib/utils/ActorFactory";

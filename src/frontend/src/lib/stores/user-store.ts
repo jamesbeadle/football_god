@@ -1,5 +1,4 @@
 import { authStore } from "./auth-store";
-import { writable } from "svelte/store";
 import { IcrcLedgerCanister } from "@dfinity/ledger-icrc";
 import { Principal } from "@dfinity/principal";
 import { Text } from "@dfinity/candid/lib/cjs/idl";
@@ -7,8 +6,6 @@ import { createAgent } from "@dfinity/utils";
 import type { OptionIdentity } from "../types/identity";
 
 function createUserStore() {
-  const { subscribe, set } = writable<any>(null);
-
   async function withdrawFPL(
     withdrawalAddress: string,
     withdrawalAmount: bigint,
@@ -105,7 +102,6 @@ function createUserStore() {
     return 0n;
   }
   return {
-    subscribe,
     withdrawFPL,
     getFPLBalance,
   };
