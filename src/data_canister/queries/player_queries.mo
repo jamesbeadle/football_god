@@ -100,25 +100,8 @@ module PlayerQueries {
     };
 
     public type PlayerDetailsForGameweek = {
-        id : FootballTypes.PlayerId;
-        clubId : FootballTypes.ClubId;
-        position : FootballTypes.PlayerPosition;
-        firstName : Text;
-        lastName : Text;
-        shirtNumber : Nat8;
-        valueQuarterMillions : Nat16;
-        dateOfBirth : Int;
-        nationality : Ids.CountryId;
-        seasonId : FootballTypes.SeasonId;
-        gameweeks : [PlayerGameweek];
-        valueHistory : [FootballTypes.ValueHistory];
-        status : FootballTypes.PlayerStatus;
-        parentClubId : FootballTypes.ClubId;
-        latestInjuryEndDate : Int;
-        injuryHistory : [FootballTypes.InjuryHistory];
-        retirementDate : Int;
+        playerPoints: [PlayerQueries.PlayerPoints];
     };
-
 
     public type PlayerPoints = {
         id : Nat16;

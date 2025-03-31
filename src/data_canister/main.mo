@@ -533,7 +533,7 @@ actor Self {
           playerDetailsBuffer.add(playerGameweek);
         };
 
-        return #ok(Buffer.toArray(playerDetailsBuffer));
+        return #ok({ playerPoints = Buffer.toArray(playerDetailsBuffer) });
       };
       case (null) {
         return #err(#NotFound);
