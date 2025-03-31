@@ -1,36 +1,73 @@
+
+/* ----- Mops Packages ----- */
+
 import Int "mo:base/Int";
+import Iter "mo:base/Iter";
 import Principal "mo:base/Principal";
 import Result "mo:base/Result";
 import Text "mo:base/Text";
 import Timer "mo:base/Timer";
-import Iter "mo:base/Iter";
 
-import T "types/app_types";
+
+/* ----- Canister Definition Files ----- */
+
+import ProfileCanister "canister_definitions/profile-canister";
+
+
+/* ----- Queries ----- */
+
+
+
+/* ----- Commands ----- */
+
+import ResponseDTOs "dtos/response_DTOs"; //TODO REPLACE WITH CQRS
+
 import Base "mo:waterway-mops/BaseTypes";
 import FootballTypes "mo:waterway-mops/FootballTypes";
 import Environment "environment";
 
-import RequestDTOs "dtos/request_DTOs";
-import ResponseDTOs "dtos/response_DTOs";
+
+/* ----- Managers ----- */
 
 import UserManager "managers/user_manager";
 import Management "utilities/Management";
-import ProfileCanister "canister_definitions/profile-canister";
+
+
+/* ----- Only Stable Variables Should Use Types ----- */
+
+import T "types/app_types";
 
 actor Self {
 
+
+  /* ----- Stable Canister Variables ----- */ 
+
+  private stable var stable_profile_canister_ids: [(Base.PrincipalId, Base.CanisterId)] = [];
+  private stable var stable_unique_profile_canister_ids: [Base.CanisterId] = [];
+  private stable var stable_active_profile_canister_id: Text = "";
+  private stable var stable_usernames: [(Base.PrincipalId, Text)] = [];
+  private stable var stable_app_status: MopsTypes.AppStatus = { 
+    onHold = true; 
+    version = ""; 
+  };  
+
+
+  /* ----- Domain Object Managers ----- */ 
+
   private let userManager = UserManager.UserManager(); 
   
-  private var appStatus: Base.AppStatus = { 
-    onHold = false;
-    version = "0.0.2";
-  };  
+  
+  /* ----- General App Queries ----- */
   
   public shared query func getAppStatus() : async Result.Result<ResponseDTOs.AppStatusDTO, T.Error> {
-    return #ok(appStatus);
+    return #ok(stable_app_status);
   };
 
-  /* User management functions */
+
+  /* ----- Data Hash Queries ----- */
+
+
+  /* ----- User Queries ----- */
 
   public shared ({ caller }) func getProfile() : async Result.Result<ResponseDTOs.ProfileDTO, T.Error> {
     assert not Principal.isAnonymous(caller);
@@ -38,6 +75,9 @@ actor Self {
     
     return await userManager.getProfile(principalId);
   };
+
+
+  /* ----- User Commands ----- */
 
   public shared ({ caller }) func  agreeTerms() : async Result.Result<(), T.Error> {
     assert not Principal.isAnonymous(caller);
@@ -73,6 +113,11 @@ actor Self {
     return await userManager.pauseAccount(dto);
   };
 
+
+  /* ----- Authenticated Data Canister Queries ----- */
+
+
+
   /* Data functions */
 
   //Giving me ic0 trap error
@@ -85,32 +130,41 @@ actor Self {
 
   /* Stable variable backup for managers */
 
-  //User Manager
-  private stable var stable_profile_canister_ids: [(Base.PrincipalId, Base.CanisterId)] = [];
-  private stable var stable_unique_profile_canister_ids: [Base.CanisterId] = [];
-  private stable var stable_active_profile_canister_id: Text = "";
-  private stable var stable_usernames: [(Base.PrincipalId, Text)] = [];
-
+  
+  /* ----- Canister Lifecycle Management ----- */
+  
   system func preupgrade() {
-    stable_profile_canister_ids := userManager.getStableProfileCanisterIds();
-    stable_unique_profile_canister_ids := userManager.getStableUniqueProfileCanisterIds();
-    stable_active_profile_canister_id := userManager.getStableActiveProfileCanisterId();
-    stable_usernames := userManager.getStableUsernames();
+    getManagerStableVariables();
+
   };
 
   system func postupgrade() {
-    
+    setManagerStableVariables();
+
+  
+    ignore Timer.setTimer<system>(#nanoseconds(Int.abs(1)), postUpgradeCallback); 
+  };
+
+  private func getManagerStableVariables(){
+      stable_profile_canister_ids := userManager.getStableProfileCanisterIds();
+      stable_unique_profile_canister_ids := userManager.getStableUniqueProfileCanisterIds();
+      stable_active_profile_canister_id := userManager.getStableActiveProfileCanisterId();
+      stable_usernames := userManager.getStableUsernames();
+  };
+
+  private func setManagerStableVariables(){
     userManager.setStableProfileCanisterIds(stable_profile_canister_ids);
     userManager.setStableUniqueProfileCanisterIds(stable_unique_profile_canister_ids);
     userManager.setStableActiveProfileCanisterId(stable_active_profile_canister_id);
     userManager.setStableUsernames(stable_usernames);
-
-    ignore Timer.setTimer<system>(#nanoseconds(Int.abs(1)), postUpgradeCallback); 
   };
 
   private func postUpgradeCallback() : async (){
     //await updateProfileCanisterWasms();
   };
+
+
+  /* ----- Dynamic Canister Wasm Upgrade Functions ----- */ 
 
   private func updateProfileCanisterWasms() : async (){
     let profileCanisterIds = userManager.getStableUniqueProfileCanisterIds();
