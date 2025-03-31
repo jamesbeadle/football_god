@@ -12,11 +12,10 @@ export class PlayerService {
   constructor() {}
 
   async getPlayers(dto: GetPlayers): Promise<Player[]> {
-    const identityActor: any =
-      await ActorFactory.createIdentityActor(
-        authStore,
-        process.env.BACKEND_CANISTER_ID ?? "",
-      );
+    const identityActor: any = await ActorFactory.createIdentityActor(
+      authStore,
+      process.env.BACKEND_CANISTER_ID ?? "",
+    );
 
     const result = await identityActor.getPlayers(dto);
     if (isError(result)) throw new Error("Failed to fetch players");
@@ -24,11 +23,10 @@ export class PlayerService {
   }
 
   async getLoanedPlayers(dto: GetLoanedPlayers): Promise<LoanedPlayers> {
-    const identityActor: any =
-      await ActorFactory.createIdentityActor(
-        authStore,
-        process.env.BACKEND_CANISTER_ID ?? "",
-      );
+    const identityActor: any = await ActorFactory.createIdentityActor(
+      authStore,
+      process.env.BACKEND_CANISTER_ID ?? "",
+    );
     const result = await identityActor.getLoanedPlayers(dto);
     if (isError(result)) throw new Error("Failed to fetch loaned players");
     return result.ok;

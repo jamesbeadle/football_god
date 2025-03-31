@@ -11,7 +11,7 @@ export class CountryService {
 
   async getCountries(): Promise<Country[]> {
     const identityActor: any =
-      await ActorFactory.createDataCanisterIdentityActor(
+      await ActorFactory.createIdentityActor(
         authStore,
         process.env.BACKEND_CANISTER_ID ?? "",
       );

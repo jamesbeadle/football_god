@@ -74,10 +74,7 @@ export class ActorFactory {
     return new HttpAgent({ ...options.agentOptions });
   }
 
-  static createIdentityActor(
-    authStore: AuthStore,
-    canisterId: string,
-  ) {
+  static createIdentityActor(authStore: AuthStore, canisterId: string) {
     let unsubscribe: Unsubscriber;
     return new Promise<OptionIdentity>((resolve, reject) => {
       unsubscribe = authStore.subscribe((store) => {
