@@ -1,38 +1,40 @@
-import FootballTypes "mo:waterway-mops/FootballTypes";
+import FootballIds "mo:waterway-mops/football/FootballIds";
+import FootballEnums "mo:waterway-mops/football/FootballEnums";
+
 module ClubCommands {
 
   public type CreateClub = {
-    leagueId: FootballTypes.LeagueId;
+    leagueId: FootballIds.LeagueId;
     name : Text;
     friendlyName : Text;
     primaryColourHex : Text;
     secondaryColourHex : Text;
     thirdColourHex : Text;
     abbreviatedName : Text;
-    shirtType : FootballTypes.ShirtType;
+    shirtType : FootballEnums.ShirtType;
   };
   
   public type UpdateClub = {
-    leagueId: FootballTypes.LeagueId;
-    clubId : FootballTypes.ClubId;
+    leagueId: FootballIds.LeagueId;
+    clubId : FootballIds.ClubId;
     name : Text;
     friendlyName : Text;
     primaryColourHex : Text;
     secondaryColourHex : Text;
     thirdColourHex : Text;
     abbreviatedName : Text;
-    shirtType : FootballTypes.ShirtType;
+    shirtType : FootballEnums.ShirtType;
   };
 
   public type PromoteClub = {
-    leagueId: FootballTypes.LeagueId;
-    clubId: FootballTypes.ClubId;
-    toLeagueId: FootballTypes.LeagueId;
+    leagueId: FootballIds.LeagueId;
+    clubId: FootballIds.ClubId;
+    toLeagueId: FootballIds.LeagueId;
   };
 
   public type RelegateClub = {
-    leagueId: FootballTypes.LeagueId;
-    clubId: FootballTypes.ClubId;
-    relegatedToLeagueId: FootballTypes.LeagueId;
+    leagueId: FootballIds.LeagueId;
+    clubId: FootballIds.ClubId;
+    relegatedToLeagueId: FootballIds.LeagueId;
   };
 }

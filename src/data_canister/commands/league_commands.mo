@@ -1,6 +1,7 @@
-import FootballTypes "mo:waterway-mops/FootballTypes";
-import Enums "mo:waterway-mops/Enums";
 import Ids "mo:waterway-mops/Ids";
+import FootballIds "mo:waterway-mops/football/FootballIds";
+import Enums "mo:waterway-mops/Enums";
+
 module LeagueCommands {
 
   public type CreateLeague = {
@@ -15,7 +16,7 @@ module LeagueCommands {
   };
 
   public type UpdateLeague = {
-    leagueId: FootballTypes.LeagueId;
+    leagueId: FootballIds.LeagueId;
     name: Text;
     abbreviation: Text;
     teamCount: Nat8;

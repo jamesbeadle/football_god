@@ -1,8 +1,9 @@
-import FootballTypes "mo:waterway-mops/FootballTypes";
 import Ids "mo:waterway-mops/Ids";
+import FootballIds "mo:waterway-mops/football/FootballIds";
+
 module AppQueries {
     public type GetDataHashes = {
-        leagueId: FootballTypes.LeagueId;
+        leagueId: FootballIds.LeagueId;
     };
 
     public type DataHashes = {

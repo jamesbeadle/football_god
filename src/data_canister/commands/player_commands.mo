@@ -1,52 +1,55 @@
-import FootballTypes "mo:waterway-mops/FootballTypes";
+
 import Ids "mo:waterway-mops/Ids";
+import FootballIds "mo:waterway-mops/football/FootballIds";
+import FootballEnums "mo:waterway-mops/football/FootballEnums";
+
 module PlayerCommands {
 
 
   public type RevaluePlayerUp = {
-    leagueId: FootballTypes.LeagueId;
-    playerId : FootballTypes.PlayerId;
+    leagueId: FootballIds.LeagueId;
+    playerId : FootballIds.PlayerId;
   };
 
   public type RevaluePlayerDown = {
-    leagueId: FootballTypes.LeagueId;
-    playerId : FootballTypes.PlayerId;
+    leagueId: FootballIds.LeagueId;
+    playerId : FootballIds.PlayerId;
   };
   public type LoanPlayer = {
-    leagueId: FootballTypes.LeagueId;
-    playerId : FootballTypes.ClubId;
-    loanLeagueId: FootballTypes.LeagueId;
-    loanClubId : FootballTypes.ClubId;
+    leagueId: FootballIds.LeagueId;
+    playerId : FootballIds.ClubId;
+    loanLeagueId: FootballIds.LeagueId;
+    loanClubId : FootballIds.ClubId;
     loanEndDate : Int;
     newValueQuarterMillions : Nat16;
   };
 
   public type TransferPlayer = {
-    leagueId: FootballTypes.LeagueId;
-    clubId: FootballTypes.ClubId;
-    playerId : FootballTypes.ClubId;
-    newLeagueId: FootballTypes.LeagueId;
-    newClubId : FootballTypes.ClubId;
+    leagueId: FootballIds.LeagueId;
+    clubId: FootballIds.ClubId;
+    playerId : FootballIds.ClubId;
+    newLeagueId: FootballIds.LeagueId;
+    newClubId : FootballIds.ClubId;
     newShirtNumber: Nat8;
     newValueQuarterMillions : Nat16;
   };
 
   public type SetFreeAgent = {
-    leagueId: FootballTypes.LeagueId;
-    playerId : FootballTypes.ClubId;
+    leagueId: FootballIds.LeagueId;
+    playerId : FootballIds.ClubId;
     newValueQuarterMillions : Nat16;
   };
 
   public type RecallPlayer = {
-    leagueId: FootballTypes.LeagueId;
-    playerId : FootballTypes.ClubId;
+    leagueId: FootballIds.LeagueId;
+    playerId : FootballIds.ClubId;
     newValueQuarterMillions : Nat16;
   };
 
   public type CreatePlayer = {
-    leagueId: FootballTypes.LeagueId;
-    clubId : FootballTypes.ClubId;
-    position : FootballTypes.PlayerPosition;
+    leagueId: FootballIds.LeagueId;
+    clubId : FootballIds.ClubId;
+    position : FootballEnums.PlayerPosition;
     firstName : Text;
     lastName : Text;
     shirtNumber : Nat8;
@@ -56,9 +59,9 @@ module PlayerCommands {
   };
 
   public type UpdatePlayer = {
-    leagueId: FootballTypes.LeagueId;
-    playerId : FootballTypes.ClubId;
-    position : FootballTypes.PlayerPosition;
+    leagueId: FootballIds.LeagueId;
+    playerId : FootballIds.ClubId;
+    position : FootballEnums.PlayerPosition;
     firstName : Text;
     lastName : Text;
     shirtNumber : Nat8;
@@ -67,21 +70,21 @@ module PlayerCommands {
   };
 
   public type SetPlayerInjury = {
-    leagueId: FootballTypes.LeagueId;
-    playerId : FootballTypes.ClubId;
+    leagueId: FootballIds.LeagueId;
+    playerId : FootballIds.ClubId;
     description : Text;
     expectedEndDate : Int;
   };
 
   public type RetirePlayer = {
-    leagueId: FootballTypes.LeagueId;
-    playerId : FootballTypes.ClubId;
+    leagueId: FootballIds.LeagueId;
+    playerId : FootballIds.ClubId;
     retirementDate : Int;
   };
 
   public type UnretirePlayer = {
-    leagueId: FootballTypes.LeagueId;
-    playerId : FootballTypes.ClubId;
+    leagueId: FootballIds.LeagueId;
+    playerId : FootballIds.ClubId;
     newValueQuarterMillions : Nat16;
   };
 }

@@ -20,6 +20,9 @@ import Time "mo:base/Time";
 import Timer "mo:base/Timer";
 import TrieMap "mo:base/TrieMap";
 
+/* ----- Mops Packages ----- */
+
+
 
 import SHA224 "mo:waterway-mops/SHA224";
 import Countries "mo:waterway-mops/def/Countries";
@@ -27,7 +30,6 @@ import Ids "mo:waterway-mops/Ids";
 import Enums "mo:waterway-mops/Enums";
 
 import BaseTypes "mo:waterway-mops/BaseTypes";
-import FootballTypes "mo:waterway-mops/FootballTypes";
 import CanisterIds "mo:waterway-mops/CanisterIds";
 import BaseUtilities "mo:waterway-mops/BaseUtilities";
 
@@ -36,7 +38,6 @@ import PlayerQueries "queries/player_queries";
 import FixtureQueries "queries/fixture_queries";
 import ClubQueries "queries/club_queries";
 import LeagueQueries "queries/league_queries";
-import AppQueries "queries/app_queries";
 import SeasonQueries "queries/season_queries";
 
 
@@ -49,6 +50,7 @@ import ClubCommands "commands/club_commands";
 
 import Environment "environment";
 import Utilities "utilities/utilities";
+import AppQueries "queries/app_queries";
 
 actor Self {
 

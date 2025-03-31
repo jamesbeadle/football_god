@@ -1,4 +1,6 @@
-import FootballTypes "mo:waterway-mops/FootballTypes";
+import FootballIds "mo:waterway-mops/football/FootballIds";
+
+
 module LeagueQueries {
 
     public type GetLeagues = {
@@ -22,7 +24,7 @@ module LeagueQueries {
     };
 
     public type GetLeagueStatus = {
-        leagueId: FootballTypes.LeagueId;
+        leagueId: FootballIds.LeagueId;
     };
 
     public type LeagueStatus = {
@@ -30,8 +32,8 @@ module LeagueQueries {
     };
 
     public type GetLeagueTable = {
-        leagueId: FootballTypes.LeagueId;
-        seasonId: FootballTypes.SeasonId;
+        leagueId: FootballIds.LeagueId;
+        seasonId: FootballIds.SeasonId;
     };
 
     public type LeagueTable = {

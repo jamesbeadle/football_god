@@ -20,9 +20,9 @@ import Timer "mo:base/Timer";
 
 /* ----- Only Stable Variables Should Use Types ----- */
 import Base "mo:waterway-mops/BaseTypes";
-import FootballTypes "mo:waterway-mops/FootballTypes";
 import Ids "mo:waterway-mops/Ids";
 import BaseTypes "mo:waterway-mops/BaseTypes";
+import BaseQueries "mo:waterway-mops/queries/BaseQueries";
 import T "types/app_types";
 
 
@@ -50,7 +50,7 @@ actor Self {
   
   /* ----- General App Queries ----- */
   
-  public shared query func getAppStatus() : async Result.Result<AppQueries.AppStatus, T.Error> {
+  public shared query func getAppStatus(dto: BaseQueries.GetAppStatus) : async Result.Result<BaseQueries.AppStatus, T.Error> {
     return #ok(stable_app_status);
   };
 
