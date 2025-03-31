@@ -7,7 +7,8 @@ module ClubQueries {
     };
 
     public type Clubs = {
-        clubs: [Club]
+        leagueId: FootballIds.LeagueId;
+        clubs: [Club];
     };
 
     public type Club = {

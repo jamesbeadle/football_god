@@ -9,15 +9,18 @@ module FixtureQueries {
     };
 
     public type Fixtures = {
+        leagueId: FootballIds.LeagueId;
+        seasonId: FootballIds.SeasonId;
         fixtures: [Fixture];
     };
 
     public type GetBettableFixtures = {
         leagueId: FootballIds.LeagueId;
-        seasonId: FootballIds.SeasonId;
     };
 
     public type BettableFixtures = {
+        leagueId: FootballIds.LeagueId;
+        seasonId: FootballIds.SeasonId;
         fixtures: [Fixture];
     };
 
@@ -26,6 +29,8 @@ module FixtureQueries {
     };
 
     public type PostponedFixtures = {
+        leagueId: FootballIds.LeagueId;
+        seasonId: FootballIds.SeasonId;
         fixtures: [Fixture];
     };
 

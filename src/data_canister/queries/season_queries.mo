@@ -6,6 +6,12 @@ module SeasonQueries {
     };
 
     public type Seasons = {
-
+        seasons: [Season];
     };
+
+    public type Season = {
+        id : Nat16;
+        name : Text;
+        year : Nat16;
+    }
 }

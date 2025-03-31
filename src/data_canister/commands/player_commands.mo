@@ -5,7 +5,6 @@ import FootballEnums "mo:waterway-mops/football/FootballEnums";
 
 module PlayerCommands {
 
-
   public type RevaluePlayerUp = {
     leagueId: FootballIds.LeagueId;
     playerId : FootballIds.PlayerId;

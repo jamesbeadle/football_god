@@ -16,7 +16,7 @@ module AppQueries {
     };
 
     public type GetCountries = {
-
+        
     };
 
     public type Countries = {

@@ -1,63 +1,21 @@
 export const idlFactory = ({ IDL }) => {
-  const List = IDL.Rec();
-  const List_1 = IDL.Rec();
-  const List_2 = IDL.Rec();
-  const List_3 = IDL.Rec();
-  const List_4 = IDL.Rec();
-  const List_5 = IDL.Rec();
   const SeasonId = IDL.Nat16;
-  const FixtureStatusType = IDL.Variant({
-    Unplayed: IDL.Null,
-    Finalised: IDL.Null,
-    Active: IDL.Null,
-    Complete: IDL.Null,
-  });
   const ClubId = IDL.Nat16;
-  const FixtureId = IDL.Nat32;
-  const PlayerEventType = IDL.Variant({
-    PenaltyMissed: IDL.Null,
-    Goal: IDL.Null,
-    GoalConceded: IDL.Null,
-    Appearance: IDL.Null,
-    PenaltySaved: IDL.Null,
-    RedCard: IDL.Null,
-    KeeperSave: IDL.Null,
-    CleanSheet: IDL.Null,
-    YellowCard: IDL.Null,
-    GoalAssisted: IDL.Null,
-    OwnGoal: IDL.Null,
-    HighestScoringPlayer: IDL.Null,
-  });
-  const PlayerEventData = IDL.Record({
-    fixtureId: FixtureId,
-    clubId: ClubId,
-    playerId: IDL.Nat16,
-    eventStartMinute: IDL.Nat8,
-    eventEndMinute: IDL.Nat8,
-    eventType: PlayerEventType,
-  });
   const GameweekNumber = IDL.Nat8;
-  const FixtureDTO = IDL.Record({
-    id: IDL.Nat32,
-    status: FixtureStatusType,
-    highestScoringPlayerId: IDL.Nat16,
-    seasonId: SeasonId,
+  const InitialFixture = IDL.Record({
     awayClubId: ClubId,
-    events: IDL.Vec(PlayerEventData),
     homeClubId: ClubId,
     kickOff: IDL.Int,
-    homeGoals: IDL.Nat8,
     gameweek: GameweekNumber,
-    awayGoals: IDL.Nat8,
   });
   const LeagueId = IDL.Nat16;
-  const AddInitialFixturesDTO = IDL.Record({
+  const AddInitialFixtures = IDL.Record({
     seasonId: SeasonId,
-    seasonFixtures: IDL.Vec(FixtureDTO),
+    seasonFixtures: IDL.Vec(InitialFixture),
     leagueId: LeagueId,
   });
   const ShirtType = IDL.Variant({ Filled: IDL.Null, Striped: IDL.Null });
-  const CreateClubDTO = IDL.Record({
+  const CreateClub = IDL.Record({
     secondaryColourHex: IDL.Text,
     name: IDL.Text,
     friendlyName: IDL.Text,
@@ -69,7 +27,7 @@ export const idlFactory = ({ IDL }) => {
   });
   const Gender = IDL.Variant({ Male: IDL.Null, Female: IDL.Null });
   const CountryId = IDL.Nat16;
-  const CreateLeagueDTO = IDL.Record({
+  const CreateLeague = IDL.Record({
     logo: IDL.Opt(IDL.Vec(IDL.Nat8)),
     name: IDL.Text,
     teamCount: IDL.Nat8,
@@ -85,7 +43,7 @@ export const idlFactory = ({ IDL }) => {
     Forward: IDL.Null,
     Defender: IDL.Null,
   });
-  const CreatePlayerDTO = IDL.Record({
+  const CreatePlayer = IDL.Record({
     clubId: ClubId,
     valueQuarterMillions: IDL.Nat16,
     dateOfBirth: IDL.Int,
@@ -96,19 +54,77 @@ export const idlFactory = ({ IDL }) => {
     leagueId: LeagueId,
     firstName: IDL.Text,
   });
+  const GetBettableFixtures = IDL.Record({
+    seasonId: SeasonId,
+    leagueId: LeagueId,
+  });
+  const FixtureId = IDL.Nat32;
+  const FixtureStatusType = IDL.Variant({
+    Unplayed: IDL.Null,
+    Finalised: IDL.Null,
+    Active: IDL.Null,
+    Complete: IDL.Null,
+  });
+  const PlayerId = IDL.Nat16;
+  const PlayerEventType = IDL.Variant({
+    PenaltyMissed: IDL.Null,
+    Goal: IDL.Null,
+    GoalConceded: IDL.Null,
+    Appearance: IDL.Null,
+    PenaltySaved: IDL.Null,
+    RedCard: IDL.Null,
+    KeeperSave: IDL.Null,
+    CleanSheet: IDL.Null,
+    YellowCard: IDL.Null,
+    GoalAssisted: IDL.Null,
+    OwnGoal: IDL.Null,
+    HighestScoringPlayer: IDL.Null,
+  });
+  const PlayerEventData__1 = IDL.Record({
+    fixtureId: FixtureId,
+    clubId: ClubId,
+    playerId: IDL.Nat16,
+    eventStartMinute: IDL.Nat8,
+    eventEndMinute: IDL.Nat8,
+    eventType: PlayerEventType,
+  });
+  const Fixture = IDL.Record({
+    id: FixtureId,
+    status: FixtureStatusType,
+    highestScoringPlayerId: PlayerId,
+    seasonId: SeasonId,
+    awayClubId: ClubId,
+    events: IDL.Vec(PlayerEventData__1),
+    homeClubId: ClubId,
+    kickOff: IDL.Int,
+    homeGoals: IDL.Nat8,
+    gameweek: GameweekNumber,
+    awayGoals: IDL.Nat8,
+  });
+  const BettableFixtures = IDL.Record({ fixtures: IDL.Vec(Fixture) });
   const Error = IDL.Variant({
     DecodeError: IDL.Null,
     NotAllowed: IDL.Null,
+    DuplicateData: IDL.Null,
+    InvalidProperty: IDL.Null,
     NotFound: IDL.Null,
+    IncorrectSetup: IDL.Null,
     NotAuthorized: IDL.Null,
+    MaxDataExceeded: IDL.Null,
     InvalidData: IDL.Null,
+    SystemOnHold: IDL.Null,
     AlreadyExists: IDL.Null,
     CanisterCreateError: IDL.Null,
     FailedInterCanisterCall: IDL.Null,
-    CanisterFull: IDL.Null,
+    InsufficientFunds: IDL.Null,
   });
-  const Result_1 = IDL.Variant({ ok: IDL.Vec(FixtureDTO), err: Error });
-  const ClubDTO = IDL.Record({
+  const Result_16 = IDL.Variant({ ok: BettableFixtures, err: Error });
+  const GetBettableLeagues = IDL.Record({});
+  const League = IDL.Record({});
+  const BettableLeagues = IDL.Record({ leagues: IDL.Vec(League) });
+  const Result_15 = IDL.Variant({ ok: BettableLeagues, err: Error });
+  const GetClubs = IDL.Record({ leagueId: LeagueId });
+  const Club = IDL.Record({
     id: ClubId,
     secondaryColourHex: IDL.Text,
     name: IDL.Text,
@@ -118,93 +134,46 @@ export const idlFactory = ({ IDL }) => {
     shirtType: ShirtType,
     primaryColourHex: IDL.Text,
   });
-  const Result_2 = IDL.Variant({ ok: IDL.Vec(ClubDTO), err: Error });
-  const CountryDTO = IDL.Record({
+  const Clubs = IDL.Record({ clubs: IDL.Vec(Club) });
+  const Result_14 = IDL.Variant({ ok: Clubs, err: Error });
+  const GetCountries = IDL.Record({});
+  const Country = IDL.Record({
     id: CountryId,
     code: IDL.Text,
     name: IDL.Text,
   });
-  const Result_14 = IDL.Variant({ ok: IDL.Vec(CountryDTO), err: Error });
-  const DataHashDTO = IDL.Record({ hash: IDL.Text, category: IDL.Text });
-  const Result_13 = IDL.Variant({ ok: IDL.Vec(DataHashDTO), err: Error });
-  const Result_12 = IDL.Variant({
-    ok: IDL.Tuple(LeagueId, IDL.Vec(ClubId)),
-    err: Error,
-  });
-  const Result_11 = IDL.Variant({
-    ok: IDL.Vec(IDL.Tuple(LeagueId, LeagueId)),
-    err: Error,
-  });
-  const CalendarMonth = IDL.Nat8;
-  const LeagueStatus = IDL.Record({
-    transferWindowEndMonth: IDL.Nat8,
-    transferWindowEndDay: IDL.Nat8,
-    transferWindowStartMonth: IDL.Nat8,
-    transferWindowActive: IDL.Bool,
-    totalGameweeks: IDL.Nat8,
-    completedGameweek: GameweekNumber,
-    transferWindowStartDay: IDL.Nat8,
-    unplayedGameweek: GameweekNumber,
-    activeMonth: CalendarMonth,
-    activeSeasonId: SeasonId,
-    activeGameweek: GameweekNumber,
-    leagueId: LeagueId,
-    seasonActive: IDL.Bool,
-  });
-  const Result_10 = IDL.Variant({ ok: LeagueStatus, err: Error });
-  const LeagueTableEntry = IDL.Record({
-    won: IDL.Nat,
-    homeDrawn: IDL.Nat,
-    clubId: ClubId,
-    awayDrawn: IDL.Nat,
-    homeLost: IDL.Nat,
-    played: IDL.Nat,
-    scored: IDL.Nat,
-    lost: IDL.Nat,
-    homeWon: IDL.Nat,
-    conceded: IDL.Nat,
-    awayPoints: IDL.Nat,
-    awayWon: IDL.Nat,
-    homePoints: IDL.Nat,
-    awayConceded: IDL.Nat,
-    awayLost: IDL.Nat,
-    awayPlayed: IDL.Nat,
-    awayScored: IDL.Nat,
-    homePlayed: IDL.Nat,
-    position: IDL.Nat,
-    homeScored: IDL.Nat,
-    drawn: IDL.Nat,
-    homeConceded: IDL.Nat,
-    points: IDL.Nat,
-  });
-  const LeagueTable = IDL.Record({
+  const Countries = IDL.Record({ countries: IDL.Vec(Country) });
+  const Result_13 = IDL.Variant({ ok: Countries, err: Error });
+  const GetDataHashes = IDL.Record({ leagueId: LeagueId });
+  const DataHash = IDL.Record({ hash: IDL.Text, category: IDL.Text });
+  const DataHashes = IDL.Record({ dataHashes: IDL.Vec(DataHash) });
+  const Result_12 = IDL.Variant({ ok: DataHashes, err: Error });
+  const GetFixtures = IDL.Record({
     seasonId: SeasonId,
-    entries: IDL.Vec(LeagueTableEntry),
     leagueId: LeagueId,
   });
+  const Fixtures = IDL.Record({ fixtures: IDL.Vec(Fixture) });
+  const Result_11 = IDL.Variant({ ok: Fixtures, err: Error });
+  const GetLeagueStatus = IDL.Record({ leagueId: LeagueId });
+  const LeagueStatus = IDL.Record({});
+  const Result_10 = IDL.Variant({ ok: LeagueStatus, err: Error });
+  const GetLeagueTable = IDL.Record({
+    seasonId: SeasonId,
+    leagueId: LeagueId,
+  });
+  const LeagueTable = IDL.Record({});
   const Result_9 = IDL.Variant({ ok: LeagueTable, err: Error });
-  const FootballLeagueDTO = IDL.Record({
-    id: LeagueId,
-    logo: IDL.Vec(IDL.Nat8),
-    name: IDL.Text,
-    teamCount: IDL.Nat8,
-    relatedGender: Gender,
-    countryId: CountryId,
-    abbreviation: IDL.Text,
-    governingBody: IDL.Text,
-    formed: IDL.Int,
-  });
-  const Result_3 = IDL.Variant({
-    ok: IDL.Vec(FootballLeagueDTO),
-    err: Error,
-  });
+  const GetLeagues = IDL.Record({});
+  const Leagues = IDL.Record({ leagues: IDL.Vec(League) });
+  const Result_8 = IDL.Variant({ ok: Leagues, err: Error });
+  const GetLoanedPlayers = IDL.Record({ leagueId: LeagueId });
   const PlayerStatus = IDL.Variant({
     OnLoan: IDL.Null,
     Active: IDL.Null,
     FreeAgent: IDL.Null,
     Retired: IDL.Null,
   });
-  const LoanedPlayerDTO = IDL.Record({
+  const Player = IDL.Record({
     id: IDL.Nat16,
     status: PlayerStatus,
     clubId: ClubId,
@@ -220,23 +189,29 @@ export const idlFactory = ({ IDL }) => {
     leagueId: LeagueId,
     firstName: IDL.Text,
   });
-  const Result_8 = IDL.Variant({
-    ok: IDL.Vec(LoanedPlayerDTO),
-    err: Error,
-  });
-  const GetPlayerDetailsDTO = IDL.Record({
-    playerId: ClubId,
+  const LoanedPlayers = IDL.Record({ players: IDL.Vec(Player) });
+  const Result_7 = IDL.Variant({ ok: LoanedPlayers, err: Error });
+  const GetPlayerDetails = IDL.Record({
+    playerId: PlayerId,
     seasonId: SeasonId,
+    leagueId: LeagueId,
   });
-  const PlayerId = IDL.Nat16;
   const InjuryHistory = IDL.Record({
     description: IDL.Text,
     injuryStartDate: IDL.Int,
     expectedEndDate: IDL.Int,
   });
-  const PlayerGameweekDTO = IDL.Record({
+  const PlayerEventData__2 = IDL.Record({
     fixtureId: FixtureId,
-    events: IDL.Vec(PlayerEventData),
+    clubId: ClubId,
+    playerId: IDL.Nat16,
+    eventStartMinute: IDL.Nat8,
+    eventEndMinute: IDL.Nat8,
+    eventType: PlayerEventType,
+  });
+  const PlayerGameweek = IDL.Record({
+    fixtureId: FixtureId,
+    events: IDL.Vec(PlayerEventData__2),
     number: IDL.Nat8,
     points: IDL.Int16,
   });
@@ -245,7 +220,7 @@ export const idlFactory = ({ IDL }) => {
     changedOn: IDL.Int,
     newValue: IDL.Nat16,
   });
-  const PlayerDetailDTO = IDL.Record({
+  const DetailedPlayer = IDL.Record({
     id: PlayerId,
     status: PlayerStatus,
     clubId: ClubId,
@@ -254,7 +229,7 @@ export const idlFactory = ({ IDL }) => {
     dateOfBirth: IDL.Int,
     injuryHistory: IDL.Vec(InjuryHistory),
     seasonId: SeasonId,
-    gameweeks: IDL.Vec(PlayerGameweekDTO),
+    gameweeks: IDL.Vec(PlayerGameweek),
     nationality: CountryId,
     retirementDate: IDL.Int,
     valueHistory: IDL.Vec(ValueHistory),
@@ -264,68 +239,51 @@ export const idlFactory = ({ IDL }) => {
     lastName: IDL.Text,
     firstName: IDL.Text,
   });
-  const Result_7 = IDL.Variant({ ok: PlayerDetailDTO, err: Error });
-  const GameweekFiltersDTO = IDL.Record({
+  const PlayerDetails = IDL.Record({ player: DetailedPlayer });
+  const Result_6 = IDL.Variant({ ok: PlayerDetails, err: Error });
+  const GetPlayerDetailsForGameweek = IDL.Record({
     seasonId: SeasonId,
     gameweek: GameweekNumber,
+    leagueId: LeagueId,
   });
-  const PlayerPointsDTO = IDL.Record({
+  const PlayerPoints = IDL.Record({
     id: IDL.Nat16,
     clubId: ClubId,
-    events: IDL.Vec(PlayerEventData),
+    events: IDL.Vec(PlayerEventData__2),
     position: PlayerPosition,
     gameweek: GameweekNumber,
     points: IDL.Int16,
   });
-  const Result_6 = IDL.Variant({
-    ok: IDL.Vec(PlayerPointsDTO),
-    err: Error,
-  });
-  const PlayerDTO = IDL.Record({
-    id: IDL.Nat16,
-    status: PlayerStatus,
-    clubId: ClubId,
-    parentClubId: ClubId,
-    valueQuarterMillions: IDL.Nat16,
-    dateOfBirth: IDL.Int,
-    nationality: CountryId,
-    currentLoanEndDate: IDL.Int,
-    shirtNumber: IDL.Nat8,
-    parentLeagueId: LeagueId,
-    position: PlayerPosition,
-    lastName: IDL.Text,
-    leagueId: LeagueId,
-    firstName: IDL.Text,
-  });
-  const Result = IDL.Variant({ ok: IDL.Vec(PlayerDTO), err: Error });
-  const PlayerScoreDTO = IDL.Record({
-    id: IDL.Nat16,
-    clubId: ClubId,
-    assists: IDL.Int16,
-    dateOfBirth: IDL.Int,
-    nationality: CountryId,
-    goalsScored: IDL.Int16,
-    saves: IDL.Int16,
-    goalsConceded: IDL.Int16,
-    events: IDL.Vec(PlayerEventData),
-    position: PlayerPosition,
-    points: IDL.Int16,
+  const PlayerDetailsForGameweek = IDL.Record({
+    playerPoints: IDL.Vec(PlayerPoints),
   });
   const Result_5 = IDL.Variant({
-    ok: IDL.Vec(IDL.Tuple(IDL.Nat16, PlayerScoreDTO)),
+    ok: PlayerDetailsForGameweek,
     err: Error,
   });
-  const ClubFilterDTO = IDL.Record({
+  const GetPlayers = IDL.Record({ leagueId: LeagueId });
+  const Players = IDL.Record({ players: IDL.Vec(Player) });
+  const Result_4 = IDL.Variant({ ok: Players, err: Error });
+  const GetPlayersMap = IDL.Record({
+    seasonId: SeasonId,
+    gameweek: GameweekNumber,
+    leagueId: LeagueId,
+  });
+  const PlayersMap = IDL.Record({});
+  const Result_3 = IDL.Variant({ ok: PlayersMap, err: Error });
+  const GetPostponedFixtures = IDL.Record({ leagueId: LeagueId });
+  const PostponedFixtures = IDL.Record({ fixtures: IDL.Vec(Fixture) });
+  const Result_2 = IDL.Variant({ ok: PostponedFixtures, err: Error });
+  const GetRetiredPlayers = IDL.Record({
     clubId: ClubId,
     leagueId: LeagueId,
   });
-  const SeasonDTO = IDL.Record({
-    id: SeasonId,
-    name: IDL.Text,
-    year: IDL.Nat16,
-  });
-  const Result_4 = IDL.Variant({ ok: IDL.Vec(SeasonDTO), err: Error });
-  const LoanPlayerDTO = IDL.Record({
+  const RetiredPlayers = IDL.Record({ players: IDL.Vec(Player) });
+  const Result_1 = IDL.Variant({ ok: RetiredPlayers, err: Error });
+  const GetSeasons = IDL.Record({ leagueId: LeagueId });
+  const Seasons = IDL.Record({});
+  const Result = IDL.Variant({ ok: Seasons, err: Error });
+  const LoanPlayer = IDL.Record({
     loanEndDate: IDL.Int,
     playerId: ClubId,
     loanClubId: ClubId,
@@ -333,109 +291,70 @@ export const idlFactory = ({ IDL }) => {
     loanLeagueId: LeagueId,
     leagueId: LeagueId,
   });
-  const MoveFixtureDTO = IDL.Record({
+  const MoveFixture = IDL.Record({
     fixtureId: FixtureId,
     updatedFixtureGameweek: GameweekNumber,
     updatedFixtureDate: IDL.Int,
     seasonId: SeasonId,
     leagueId: LeagueId,
   });
-  const SubmitFixtureDataDTO = IDL.Record({
+  const PostponeFixture = IDL.Record({
+    fixtureId: FixtureId,
+    seasonId: SeasonId,
+    leagueId: LeagueId,
+  });
+  const RecallPlayer = IDL.Record({
+    playerId: ClubId,
+    newValueQuarterMillions: IDL.Nat16,
+    leagueId: LeagueId,
+  });
+  const RescheduleFixture = IDL.Record({
+    fixtureId: FixtureId,
+    updatedFixtureGameweek: GameweekNumber,
+    updatedFixtureDate: IDL.Int,
+    seasonId: SeasonId,
+    leagueId: LeagueId,
+  });
+  const RetirePlayer = IDL.Record({
+    playerId: ClubId,
+    retirementDate: IDL.Int,
+    leagueId: LeagueId,
+  });
+  const RevaluePlayerDown = IDL.Record({
+    playerId: PlayerId,
+    leagueId: LeagueId,
+  });
+  const RevaluePlayerUp = IDL.Record({
+    playerId: PlayerId,
+    leagueId: LeagueId,
+  });
+  const SetFreeAgent = IDL.Record({
+    playerId: ClubId,
+    newValueQuarterMillions: IDL.Nat16,
+    leagueId: LeagueId,
+  });
+  const SetPlayerInjury = IDL.Record({
+    playerId: ClubId,
+    description: IDL.Text,
+    leagueId: LeagueId,
+    expectedEndDate: IDL.Int,
+  });
+  const PlayerEventData = IDL.Record({
+    fixtureId: FixtureId,
+    clubId: ClubId,
+    playerId: IDL.Nat16,
+    eventStartMinute: IDL.Nat8,
+    eventEndMinute: IDL.Nat8,
+    eventType: PlayerEventType,
+  });
+  const SubmitFixtureData = IDL.Record({
     fixtureId: FixtureId,
     seasonId: SeasonId,
     gameweek: GameweekNumber,
     playerEventData: IDL.Vec(PlayerEventData),
     leagueId: LeagueId,
   });
-  List_3.fill(IDL.Opt(IDL.Tuple(PlayerEventData, List_3)));
-  const PlayerGameweek = IDL.Record({
-    events: List_3,
-    number: GameweekNumber,
-    points: IDL.Int16,
-  });
-  List_2.fill(IDL.Opt(IDL.Tuple(PlayerGameweek, List_2)));
-  const PlayerSeason = IDL.Record({
-    id: SeasonId,
-    gameweeks: List_2,
-    totalPoints: IDL.Int16,
-  });
-  List_1.fill(IDL.Opt(IDL.Tuple(PlayerSeason, List_1)));
-  List.fill(IDL.Opt(IDL.Tuple(InjuryHistory, List)));
-  const TransferHistory = IDL.Record({
-    transferDate: IDL.Int,
-    loanEndDate: IDL.Int,
-    toLeagueId: LeagueId,
-    toClub: ClubId,
-    fromLeagueId: LeagueId,
-    fromClub: ClubId,
-  });
-  List_4.fill(IDL.Opt(IDL.Tuple(TransferHistory, List_4)));
-  List_5.fill(IDL.Opt(IDL.Tuple(ValueHistory, List_5)));
-  const Player = IDL.Record({
-    id: PlayerId,
-    status: PlayerStatus,
-    clubId: ClubId,
-    parentClubId: ClubId,
-    seasons: List_1,
-    valueQuarterMillions: IDL.Nat16,
-    dateOfBirth: IDL.Int,
-    injuryHistory: List,
-    transferHistory: List_4,
-    nationality: CountryId,
-    retirementDate: IDL.Int,
-    valueHistory: List_5,
-    latestInjuryEndDate: IDL.Int,
-    gender: Gender,
-    currentLoanEndDate: IDL.Int,
-    shirtNumber: IDL.Nat8,
-    parentLeagueId: LeagueId,
-    position: PlayerPosition,
-    lastName: IDL.Text,
-    leagueId: LeagueId,
-    firstName: IDL.Text,
-  });
-  const PostponeFixtureDTO = IDL.Record({
-    fixtureId: FixtureId,
-    seasonId: SeasonId,
-    leagueId: LeagueId,
-  });
-  const RecallPlayerDTO = IDL.Record({
-    playerId: ClubId,
-    newValueQuarterMillions: IDL.Nat16,
-    leagueId: LeagueId,
-  });
-  const RescheduleFixtureDTO = IDL.Record({
-    fixtureId: FixtureId,
-    updatedFixtureGameweek: GameweekNumber,
-    updatedFixtureDate: IDL.Int,
-    seasonId: SeasonId,
-    leagueId: LeagueId,
-  });
-  const RetirePlayerDTO = IDL.Record({
-    playerId: ClubId,
-    retirementDate: IDL.Int,
-    leagueId: LeagueId,
-  });
-  const RevaluePlayerDownDTO = IDL.Record({
-    playerId: PlayerId,
-    leagueId: LeagueId,
-  });
-  const RevaluePlayerUpDTO = IDL.Record({
-    playerId: PlayerId,
-    leagueId: LeagueId,
-  });
-  const SetFreeAgentDTO = IDL.Record({
-    playerId: ClubId,
-    newValueQuarterMillions: IDL.Nat16,
-    leagueId: LeagueId,
-  });
-  const SetPlayerInjuryDTO = IDL.Record({
-    playerId: ClubId,
-    description: IDL.Text,
-    leagueId: LeagueId,
-    expectedEndDate: IDL.Int,
-  });
-  const TransferPlayerDTO = IDL.Record({
+  const TransferPlayer = IDL.Record({
     clubId: ClubId,
     newLeagueId: LeagueId,
     playerId: ClubId,
@@ -444,12 +363,12 @@ export const idlFactory = ({ IDL }) => {
     newClubId: ClubId,
     leagueId: LeagueId,
   });
-  const UnretirePlayerDTO = IDL.Record({
+  const UnretirePlayer = IDL.Record({
     playerId: ClubId,
     newValueQuarterMillions: IDL.Nat16,
     leagueId: LeagueId,
   });
-  const UpdateClubDTO = IDL.Record({
+  const UpdateClub = IDL.Record({
     clubId: ClubId,
     secondaryColourHex: IDL.Text,
     name: IDL.Text,
@@ -460,7 +379,7 @@ export const idlFactory = ({ IDL }) => {
     primaryColourHex: IDL.Text,
     leagueId: LeagueId,
   });
-  const UpdateLeagueDTO = IDL.Record({
+  const UpdateLeague = IDL.Record({
     logo: IDL.Vec(IDL.Nat8),
     name: IDL.Text,
     teamCount: IDL.Nat8,
@@ -471,7 +390,7 @@ export const idlFactory = ({ IDL }) => {
     leagueId: LeagueId,
     formed: IDL.Int,
   });
-  const UpdatePlayerDTO = IDL.Record({
+  const UpdatePlayer = IDL.Record({
     dateOfBirth: IDL.Int,
     playerId: ClubId,
     nationality: CountryId,
@@ -482,114 +401,88 @@ export const idlFactory = ({ IDL }) => {
     firstName: IDL.Text,
   });
   const RustResult = IDL.Variant({ Ok: IDL.Text, Err: IDL.Text });
-  const PromoteClubDTO = IDL.Record({
+  const PromoteClub = IDL.Record({
     clubId: ClubId,
     toLeagueId: LeagueId,
     leagueId: LeagueId,
   });
-  const RelegateClubDTO = IDL.Record({
+  const RelegateClub = IDL.Record({
     clubId: ClubId,
     relegatedToLeagueId: LeagueId,
     leagueId: LeagueId,
   });
   return IDL.Service({
-    addInitialFixtures: IDL.Func([AddInitialFixturesDTO], [], []),
-    createClub: IDL.Func([CreateClubDTO], [], []),
-    createLeague: IDL.Func([CreateLeagueDTO], [], []),
-    createPlayer: IDL.Func([CreatePlayerDTO], [], []),
-    getBettableFixtures: IDL.Func([LeagueId, SeasonId], [Result_1], ["query"]),
-    getClubs: IDL.Func([LeagueId], [Result_2], ["query"]),
-    getCountries: IDL.Func([], [Result_14], ["query"]),
-    getDataHashes: IDL.Func([LeagueId], [Result_13], ["query"]),
-    getFixtures: IDL.Func([LeagueId, SeasonId], [Result_1], ["query"]),
-    getLeagueClubsRequiringData: IDL.Func([LeagueId], [Result_12], ["query"]),
-    getLeagueRelegationPairs: IDL.Func([], [Result_11], ["query"]),
-    getLeagueStatus: IDL.Func([LeagueId], [Result_10], ["query"]),
-    getLeagueTable: IDL.Func([LeagueId, SeasonId], [Result_9], ["query"]),
-    getLeagues: IDL.Func([], [Result_3], ["query"]),
-    getLoanedPlayers: IDL.Func([LeagueId], [Result_8], ["query"]),
-    getPlayerDetails: IDL.Func(
-      [LeagueId, GetPlayerDetailsDTO],
-      [Result_7],
-      ["query"],
-    ),
+    addInitialFixtures: IDL.Func([AddInitialFixtures], [], []),
+    createClub: IDL.Func([CreateClub], [], []),
+    createLeague: IDL.Func([CreateLeague], [], []),
+    createPlayer: IDL.Func([CreatePlayer], [], []),
+    getBettableFixtures: IDL.Func([GetBettableFixtures], [Result_16], []),
+    getBettableLeagues: IDL.Func([GetBettableLeagues], [Result_15], ["query"]),
+    getClubs: IDL.Func([GetClubs], [Result_14], []),
+    getCountries: IDL.Func([GetCountries], [Result_13], ["query"]),
+    getDataHashes: IDL.Func([GetDataHashes], [Result_12], ["query"]),
+    getFixtures: IDL.Func([GetFixtures], [Result_11], []),
+    getLeagueStatus: IDL.Func([GetLeagueStatus], [Result_10], ["query"]),
+    getLeagueTable: IDL.Func([GetLeagueTable], [Result_9], ["query"]),
+    getLeagues: IDL.Func([GetLeagues], [Result_8], ["query"]),
+    getLoanedPlayers: IDL.Func([GetLoanedPlayers], [Result_7], ["query"]),
+    getPlayerDetails: IDL.Func([GetPlayerDetails], [Result_6], ["query"]),
     getPlayerDetailsForGameweek: IDL.Func(
-      [LeagueId, GameweekFiltersDTO],
-      [Result_6],
-      ["query"],
-    ),
-    getPlayers: IDL.Func([LeagueId], [Result], ["query"]),
-    getPlayersMap: IDL.Func(
-      [LeagueId, GameweekFiltersDTO],
+      [GetPlayerDetailsForGameweek],
       [Result_5],
       ["query"],
     ),
-    getPostponedFixtures: IDL.Func([LeagueId], [Result_1], ["query"]),
-    getRetiredPlayers: IDL.Func([LeagueId, ClubFilterDTO], [Result], ["query"]),
-    getSeasons: IDL.Func([LeagueId], [Result_4], ["query"]),
-    getUpToDateLeagues: IDL.Func([], [Result_3], ["query"]),
-    getVerifiedClubs: IDL.Func([LeagueId], [Result_2], []),
-    getVerifiedFixtures: IDL.Func([LeagueId, SeasonId], [Result_1], []),
-    getVerifiedPlayers: IDL.Func([LeagueId], [Result], []),
-    loanPlayer: IDL.Func([LoanPlayerDTO], [], []),
-    moveFixture: IDL.Func([MoveFixtureDTO], [], []),
-    populatePlayerEventData: IDL.Func(
-      [SubmitFixtureDataDTO, IDL.Vec(Player)],
-      [IDL.Opt(IDL.Vec(PlayerEventData))],
-      [],
+    getPlayers: IDL.Func([GetPlayers], [Result_4], []),
+    getPlayersMap: IDL.Func([GetPlayersMap], [Result_3], ["query"]),
+    getPostponedFixtures: IDL.Func(
+      [GetPostponedFixtures],
+      [Result_2],
+      ["query"],
     ),
-    postponeFixture: IDL.Func([PostponeFixtureDTO], [], []),
-    recallPlayer: IDL.Func([RecallPlayerDTO], [], []),
-    rescheduleFixture: IDL.Func([RescheduleFixtureDTO], [], []),
-    retirePlayer: IDL.Func([RetirePlayerDTO], [], []),
-    revaluePlayerDown: IDL.Func([RevaluePlayerDownDTO], [], []),
-    revaluePlayerUp: IDL.Func([RevaluePlayerUpDTO], [], []),
-    setFreeAgent: IDL.Func([SetFreeAgentDTO], [], []),
-    setPlayerInjury: IDL.Func([SetPlayerInjuryDTO], [], []),
-    submitFixtureData: IDL.Func([SubmitFixtureDataDTO], [], []),
-    transferPlayer: IDL.Func([TransferPlayerDTO], [], []),
-    unretirePlayer: IDL.Func([UnretirePlayerDTO], [], []),
-    updateClub: IDL.Func([UpdateClubDTO], [], []),
-    updateLeague: IDL.Func([UpdateLeagueDTO], [], []),
-    updatePlayer: IDL.Func([UpdatePlayerDTO], [], []),
+    getRetiredPlayers: IDL.Func([GetRetiredPlayers], [Result_1], ["query"]),
+    getSeasons: IDL.Func([GetSeasons], [Result], ["query"]),
+    loanPlayer: IDL.Func([LoanPlayer], [], []),
+    moveFixture: IDL.Func([MoveFixture], [], []),
+    postponeFixture: IDL.Func([PostponeFixture], [], []),
+    recallPlayer: IDL.Func([RecallPlayer], [], []),
+    rescheduleFixture: IDL.Func([RescheduleFixture], [], []),
+    retirePlayer: IDL.Func([RetirePlayer], [], []),
+    revaluePlayerDown: IDL.Func([RevaluePlayerDown], [], []),
+    revaluePlayerUp: IDL.Func([RevaluePlayerUp], [], []),
+    setFreeAgent: IDL.Func([SetFreeAgent], [], []),
+    setPlayerInjury: IDL.Func([SetPlayerInjury], [], []),
+    submitFixtureData: IDL.Func([SubmitFixtureData], [], []),
+    transferPlayer: IDL.Func([TransferPlayer], [], []),
+    unretirePlayer: IDL.Func([UnretirePlayer], [], []),
+    updateClub: IDL.Func([UpdateClub], [], []),
+    updateLeague: IDL.Func([UpdateLeague], [], []),
+    updatePlayer: IDL.Func([UpdatePlayer], [], []),
     validateAddInitialFixtures: IDL.Func(
-      [AddInitialFixturesDTO],
+      [AddInitialFixtures],
       [RustResult],
       [],
     ),
-    validateCreateClub: IDL.Func([CreateClubDTO], [RustResult], []),
-    validateCreateLeague: IDL.Func([CreateLeagueDTO], [RustResult], []),
-    validateCreatePlayer: IDL.Func([CreatePlayerDTO], [RustResult], []),
-    validateLoanPlayer: IDL.Func([LoanPlayerDTO], [RustResult], []),
-    validateMoveFixture: IDL.Func([MoveFixtureDTO], [RustResult], []),
-    validatePostponeFixture: IDL.Func([PostponeFixtureDTO], [RustResult], []),
-    validatePromoteClub: IDL.Func([PromoteClubDTO], [RustResult], []),
-    validateRecallPlayer: IDL.Func([RecallPlayerDTO], [RustResult], []),
-    validateRelegateClub: IDL.Func([RelegateClubDTO], [RustResult], []),
-    validateRescheduleFixture: IDL.Func(
-      [RescheduleFixtureDTO],
-      [RustResult],
-      [],
-    ),
-    validateRetirePlayer: IDL.Func([RetirePlayerDTO], [RustResult], []),
-    validateRevaluePlayerDown: IDL.Func(
-      [RevaluePlayerDownDTO],
-      [RustResult],
-      [],
-    ),
-    validateRevaluePlayerUp: IDL.Func([RevaluePlayerUpDTO], [RustResult], []),
-    validateSetFreeAgent: IDL.Func([SetFreeAgentDTO], [RustResult], []),
-    validateSetPlayerInjury: IDL.Func([SetPlayerInjuryDTO], [RustResult], []),
-    validateSubmitFixtureData: IDL.Func(
-      [SubmitFixtureDataDTO],
-      [RustResult],
-      [],
-    ),
-    validateTransferPlayer: IDL.Func([TransferPlayerDTO], [RustResult], []),
-    validateUnretirePlayer: IDL.Func([UnretirePlayerDTO], [RustResult], []),
-    validateUpdateClub: IDL.Func([UpdateClubDTO], [RustResult], []),
-    validateUpdateLeague: IDL.Func([UpdateLeagueDTO], [RustResult], []),
-    validateUpdatePlayer: IDL.Func([UpdatePlayerDTO], [RustResult], []),
+    validateCreateClub: IDL.Func([CreateClub], [RustResult], []),
+    validateCreateLeague: IDL.Func([CreateLeague], [RustResult], []),
+    validateCreatePlayer: IDL.Func([CreatePlayer], [RustResult], []),
+    validateLoanPlayer: IDL.Func([LoanPlayer], [RustResult], []),
+    validateMoveFixture: IDL.Func([MoveFixture], [RustResult], []),
+    validatePostponeFixture: IDL.Func([PostponeFixture], [RustResult], []),
+    validatePromoteClub: IDL.Func([PromoteClub], [RustResult], []),
+    validateRecallPlayer: IDL.Func([RecallPlayer], [RustResult], []),
+    validateRelegateClub: IDL.Func([RelegateClub], [RustResult], []),
+    validateRescheduleFixture: IDL.Func([RescheduleFixture], [RustResult], []),
+    validateRetirePlayer: IDL.Func([RetirePlayer], [RustResult], []),
+    validateRevaluePlayerDown: IDL.Func([RevaluePlayerDown], [RustResult], []),
+    validateRevaluePlayerUp: IDL.Func([RevaluePlayerUp], [RustResult], []),
+    validateSetFreeAgent: IDL.Func([SetFreeAgent], [RustResult], []),
+    validateSetPlayerInjury: IDL.Func([SetPlayerInjury], [RustResult], []),
+    validateSubmitFixtureData: IDL.Func([SubmitFixtureData], [RustResult], []),
+    validateTransferPlayer: IDL.Func([TransferPlayer], [RustResult], []),
+    validateUnretirePlayer: IDL.Func([UnretirePlayer], [RustResult], []),
+    validateUpdateClub: IDL.Func([UpdateClub], [RustResult], []),
+    validateUpdateLeague: IDL.Func([UpdateLeague], [RustResult], []),
+    validateUpdatePlayer: IDL.Func([UpdatePlayer], [RustResult], []),
   });
 };
 export const init = ({ IDL }) => {

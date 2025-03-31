@@ -1,169 +1,31 @@
-type ValueHistory = 
- record {
-   changedOn: int;
-   newValue: nat16;
-   oldValue: nat16;
- };
-type UpdateWithdrawalAddressDTO = 
- record {
-   principalId: PrincipalId;
-   withdrawalAddress: text;
- };
-type UpdateUsernameDTO = 
- record {
-   principalId: PrincipalId;
-   username: text;
- };
-type UpdateProfilePictureDTO = 
- record {
-   principalId: PrincipalId;
-   profilePicture: blob;
-   profilePictureExtension: text;
- };
-type SeasonId = nat16;
-type Result_3 = 
- variant {
-   err: Error;
-   ok: AppStatusDTO;
- };
-type Result_2 = 
- variant {
-   err: Error;
-   ok: PlayerDetailDTO;
- };
-type Result_1 = 
- variant {
-   err: Error;
-   ok: ProfileDTO;
- };
 type Result = 
  variant {
    err: Error;
-   ok;
+   ok: AppStatus;
  };
-type ProfileDTO = 
- record {
-   joinedDate: int;
-   principalId: PrincipalId;
-   profilePicture: opt blob;
-   profilePictureExtension: text;
-   termsAcceptedDate: int;
-   username: text;
-   withdrawalAddress: text;
- };
-type PrincipalId = text;
-type PlayerStatus = 
- variant {
-   Active;
-   FreeAgent;
-   OnLoan;
-   Retired;
- };
-type PlayerPosition = 
- variant {
-   Defender;
-   Forward;
-   Goalkeeper;
-   Midfielder;
- };
-type PlayerId = nat16;
-type PlayerGameweekDTO = 
- record {
-   events: vec PlayerEventData;
-   fixtureId: FixtureId;
-   number: nat8;
-   points: int16;
- };
-type PlayerEventType = 
- variant {
-   Appearance;
-   CleanSheet;
-   Goal;
-   GoalAssisted;
-   GoalConceded;
-   HighestScoringPlayer;
-   KeeperSave;
-   OwnGoal;
-   PenaltyMissed;
-   PenaltySaved;
-   RedCard;
-   YellowCard;
- };
-type PlayerEventData = 
- record {
-   clubId: ClubId;
-   eventEndMinute: nat8;
-   eventStartMinute: nat8;
-   eventType: PlayerEventType;
-   fixtureId: FixtureId;
-   playerId: nat16;
- };
-type PlayerDetailDTO = 
- record {
-   clubId: ClubId;
-   dateOfBirth: int;
-   firstName: text;
-   gameweeks: vec PlayerGameweekDTO;
-   id: PlayerId;
-   injuryHistory: vec InjuryHistory;
-   lastName: text;
-   latestInjuryEndDate: int;
-   nationality: CountryId;
-   parentClubId: ClubId;
-   position: PlayerPosition;
-   retirementDate: int;
-   seasonId: SeasonId;
-   shirtNumber: nat8;
-   status: PlayerStatus;
-   valueHistory: vec ValueHistory;
-   valueQuarterMillions: nat16;
- };
-type PauseAccountDTO = 
- record {
-   pauseDays: nat;
-   principalId: PrincipalId;
- };
-type LeagueId = nat16;
-type InjuryHistory = 
- record {
-   description: text;
-   expectedEndDate: int;
-   injuryStartDate: int;
- };
-type GameweekNumber = nat8;
-type GameweekFiltersDTO = 
- record {
-   gameweek: GameweekNumber;
-   seasonId: SeasonId;
- };
-type FixtureId = nat32;
+type GetAppStatus = record {};
 type Error = 
  variant {
    AlreadyExists;
    CanisterCreateError;
-   CanisterFull;
    DecodeError;
+   DuplicateData;
    FailedInterCanisterCall;
+   IncorrectSetup;
+   InsufficientFunds;
    InvalidData;
+   InvalidProperty;
+   MaxDataExceeded;
    NotAllowed;
    NotAuthorized;
    NotFound;
+   SystemOnHold;
  };
-type CountryId = nat16;
-type ClubId = nat16;
-type AppStatusDTO = 
+type AppStatus = 
  record {
    onHold: bool;
    version: text;
  };
 service : {
-  agreeTerms: () -> (Result);
-  getAppStatus: () -> (Result_3) query;
-  getPlayerDetailsForGameweek: (LeagueId, GameweekFiltersDTO) ->
-   (Result_2) composite_query;
-  getProfile: () -> (Result_1);
-  pauseAccount: (PauseAccountDTO) -> (Result);
-  updateProfilePicture: (UpdateProfilePictureDTO) -> (Result);
-  updateUsername: (UpdateUsernameDTO) -> (Result);
-  updateWithdrawalAddress: (UpdateWithdrawalAddressDTO) -> (Result);
+  getAppStatus: (GetAppStatus) -> (Result) query;
 }

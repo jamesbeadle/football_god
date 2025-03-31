@@ -30,17 +30,8 @@ module PlayerQueries {
 
     };
 
-    public type GetPlayerEvents = {
-        
-    };
-
-    public type PlayerEvents = {
-        
-    };
-
     public type GetLoanedPlayers = {
         leagueId: FootballIds.LeagueId;
-
     };
 
     public type LoanedPlayers = {
@@ -136,7 +127,6 @@ module PlayerQueries {
         events : [PlayerEventData];
     };
 
-
     public type GetPlayersMap = {
         leagueId: FootballIds.LeagueId;
         seasonId: FootballIds.SeasonId;
@@ -144,7 +134,7 @@ module PlayerQueries {
     };
 
     public type PlayersMap = {
-
+        playersMap: [(FootballIds.PlayerId, PlayerQueries.PlayerScore)]
     };
 
     public type PlayerScore = {

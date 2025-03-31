@@ -608,7 +608,7 @@ actor Self {
           };
           playersMap.put(player.id, scoreDTO);
         };
-        return #ok({ players = Iter.toArray(playersMap.entries()) });
+        return #ok({ playersMap = Iter.toArray(playersMap.entries()) });
       };
       case (null) {
         return #err(#NotFound);
@@ -640,27 +640,31 @@ actor Self {
 
         switch (filteredSeason) {
           case (?foundSeason) {
-            return #ok({ fixtures = 
-              List.toArray(
-                List.map<FootballTypes.Fixture, FixtureQueries.Fixture>(
-                  foundSeason.fixtures,
-                  func(fixture : FootballTypes.Fixture) {
-                    return {
-                      awayClubId = fixture.awayClubId;
-                      awayGoals = fixture.awayGoals;
-                      events = List.toArray(fixture.events);
-                      gameweek = fixture.gameweek;
-                      highestScoringPlayerId = fixture.highestScoringPlayerId;
-                      homeClubId = fixture.homeClubId;
-                      homeGoals = fixture.homeGoals;
-                      id = fixture.id;
-                      kickOff = fixture.kickOff;
-                      seasonId = fixture.seasonId;
-                      status = fixture.status;
-                    };
-                  },
-                )
-              ) }
+            return #ok(
+              { 
+                leagueId = dto.leagueId;
+                seasonId = dto.seasonId;
+                fixtures = List.toArray(
+                  List.map<FootballTypes.Fixture, FixtureQueries.Fixture>(
+                    foundSeason.fixtures,
+                    func(fixture : FootballTypes.Fixture) {
+                      return {
+                        awayClubId = fixture.awayClubId;
+                        awayGoals = fixture.awayGoals;
+                        events = List.toArray(fixture.events);
+                        gameweek = fixture.gameweek;
+                        highestScoringPlayerId = fixture.highestScoringPlayerId;
+                        homeClubId = fixture.homeClubId;
+                        homeGoals = fixture.homeGoals;
+                        id = fixture.id;
+                        kickOff = fixture.kickOff;
+                        seasonId = fixture.seasonId;
+                        status = fixture.status;
+                      };
+                    },
+                  )
+                ) 
+              }
             );
           };
           case (null) {
@@ -677,7 +681,102 @@ actor Self {
 
   public shared ({ caller }) func getBettableFixtures(dto: FixtureQueries.GetBettableFixtures) : async Result.Result<FixtureQueries.BettableFixtures, Enums.Error> {
     assert not Principal.isAnonymous(caller);
-    return getPrivateBettableFixtures(dto);
+
+    
+    
+    let filteredLeagueSeasons = Array.find<(FootballIds.LeagueId, [FootballTypes.Season])>(
+      leagueSeasons,
+      func(leagueSeason : (FootballIds.LeagueId, [FootballTypes.Season])) : Bool {
+        leagueSeason.0 == dto.leagueId;
+      },
+    );
+
+    switch (filteredLeagueSeasons) {
+      case (?foundLeagueSeasons) {
+
+        let status = Array.find<FootballTypes.LeagueStatus>(
+          leagueStatuses,
+          func(entry : FootballTypes.LeagueStatus) : Bool {
+            entry.leagueId == dto.leagueId;
+          },
+        );
+        switch (status) {
+          case (?foundStatus) {
+
+            let filteredSeason = Array.find<FootballTypes.Season>(
+              foundLeagueSeasons.1,
+              func(leagueSeason : FootballTypes.Season) : Bool {
+                leagueSeason.id == foundStatus.activeSeasonId;
+              },
+            );
+
+            switch (filteredSeason) {
+              case (?foundSeason) {
+                let foundIncompleteLeagueClubIds = Array.find<(FootballIds.LeagueId, [FootballIds.ClubId])>(
+                  leagueClubsRequiringData,
+                  func(entry : (FootballIds.LeagueId, [FootballIds.ClubId])) {
+                    entry.0 == dto.leagueId;
+                  },
+                );
+
+                switch (foundIncompleteLeagueClubIds) {
+                  case (?foundClubIds) {
+
+                    let fixturesWithoutIncompleteClubs = List.filter<FootballTypes.Fixture>(
+                      foundSeason.fixtures,
+                      func(fixtureEntry : FootballTypes.Fixture) {
+                        return fixtureEntry.status != #Finalised and not Option.isSome(
+                          Array.find<FootballIds.ClubId>(
+                            foundClubIds.1,
+                            func(incompleteClubId : FootballIds.ClubId) : Bool {
+                              fixtureEntry.homeClubId == incompleteClubId or fixtureEntry.awayClubId == incompleteClubId;
+                            },
+                          )
+                        );
+                      },
+                    );
+
+                    return #ok(
+                      { 
+                        leagueId = dto.leagueId;
+                        seasonId = foundStatus.activeSeasonId;
+                        fixtures = 
+                      List.toArray<FixtureQueries.Fixture>(
+                        List.map<FootballTypes.Fixture, FixtureQueries.Fixture>(
+                          fixturesWithoutIncompleteClubs,
+                          func(fixtureEntry : FootballTypes.Fixture) {
+                            return {
+                              awayClubId = fixtureEntry.awayClubId;
+                              awayGoals = fixtureEntry.awayGoals;
+                              events = List.toArray(fixtureEntry.events);
+                              gameweek = fixtureEntry.gameweek;
+                              highestScoringPlayerId = fixtureEntry.highestScoringPlayerId;
+                              homeClubId = fixtureEntry.homeClubId;
+                              homeGoals = fixtureEntry.homeGoals;
+                              id = fixtureEntry.id;
+                              kickOff = fixtureEntry.kickOff;
+                              seasonId = fixtureEntry.seasonId;
+                              status = fixtureEntry.status;
+                            };
+                          },
+                        )
+                      ) }
+                    );
+                  };
+                  case (null) {};
+                };
+              };
+              case (null) {};
+            };
+          };
+          case (null) {
+            return #err(#NotFound);
+          };
+        };
+      };
+      case (null) {};
+    };
+    return #err(#NotFound);
   };
 
   public shared query ({ caller }) func getPostponedFixtures(dto: FixtureQueries.GetPostponedFixtures) : async Result.Result<FixtureQueries.PostponedFixtures, Enums.Error> {
@@ -711,27 +810,32 @@ actor Self {
 
             switch (filteredSeason) {
               case (?foundSeason) {
-                return #ok({fixtures = 
-                  List.toArray<FixtureQueries.Fixture>(
-                    List.map<FootballTypes.Fixture, FixtureQueries.Fixture>(
-                      foundSeason.postponedFixtures,
-                      func(fixture : FootballTypes.Fixture) {
-                        return {
-                          awayClubId = fixture.awayClubId;
-                          awayGoals = fixture.awayGoals;
-                          events = List.toArray(fixture.events);
-                          gameweek = fixture.gameweek;
-                          highestScoringPlayerId = fixture.highestScoringPlayerId;
-                          homeClubId = fixture.homeClubId;
-                          homeGoals = fixture.homeGoals;
-                          id = fixture.id;
-                          kickOff = fixture.kickOff;
-                          seasonId = fixture.seasonId;
-                          status = fixture.status;
-                        };
-                      },
-                    )
-                  )}
+                return #ok(
+                  {
+                    
+                    leagueId = dto.leagueId;
+                    seasonId = foundStatus.activeSeasonId;
+                    fixtures = 
+                      List.toArray<FixtureQueries.Fixture>(
+                        List.map<FootballTypes.Fixture, FixtureQueries.Fixture>(
+                          foundSeason.postponedFixtures,
+                          func(fixture : FootballTypes.Fixture) {
+                            return {
+                              awayClubId = fixture.awayClubId;
+                              awayGoals = fixture.awayGoals;
+                              events = List.toArray(fixture.events);
+                              gameweek = fixture.gameweek;
+                              highestScoringPlayerId = fixture.highestScoringPlayerId;
+                              homeClubId = fixture.homeClubId;
+                              homeGoals = fixture.homeGoals;
+                              id = fixture.id;
+                              kickOff = fixture.kickOff;
+                              seasonId = fixture.seasonId;
+                              status = fixture.status;
+                            };
+                          },
+                        )
+                      )}
                 );
               };
               case (null) {
@@ -816,85 +920,6 @@ actor Self {
   };
 
 
-  private func getPrivateBettableFixtures(dto: FixtureQueries.GetBettableFixtures) : Result.Result<FixtureQueries.BettableFixtures, Enums.Error> {
-
-    let filteredLeagueSeasons = Array.find<(FootballIds.LeagueId, [FootballTypes.Season])>(
-      leagueSeasons,
-      func(leagueSeason : (FootballIds.LeagueId, [FootballTypes.Season])) : Bool {
-        leagueSeason.0 == dto.leagueId;
-      },
-    );
-
-    switch (filteredLeagueSeasons) {
-      case (?foundLeagueSeasons) {
-
-        let filteredSeason = Array.find<FootballTypes.Season>(
-          foundLeagueSeasons.1,
-          func(leagueSeason : FootballTypes.Season) : Bool {
-            leagueSeason.id == dto.seasonId;
-          },
-        );
-
-        switch (filteredSeason) {
-          case (?foundSeason) {
-            let foundIncompleteLeagueClubIds = Array.find<(FootballIds.LeagueId, [FootballIds.ClubId])>(
-              leagueClubsRequiringData,
-              func(entry : (FootballIds.LeagueId, [FootballIds.ClubId])) {
-                entry.0 == dto.leagueId;
-              },
-            );
-
-            switch (foundIncompleteLeagueClubIds) {
-              case (?foundClubIds) {
-
-                let fixturesWithoutIncompleteClubs = List.filter<FootballTypes.Fixture>(
-                  foundSeason.fixtures,
-                  func(fixtureEntry : FootballTypes.Fixture) {
-                    return fixtureEntry.status != #Finalised and not Option.isSome(
-                      Array.find<FootballIds.ClubId>(
-                        foundClubIds.1,
-                        func(incompleteClubId : FootballIds.ClubId) : Bool {
-                          fixtureEntry.homeClubId == incompleteClubId or fixtureEntry.awayClubId == incompleteClubId;
-                        },
-                      )
-                    );
-                  },
-                );
-
-                return #ok({ fixtures = 
-                  List.toArray<FixtureQueries.Fixture>(
-                    List.map<FootballTypes.Fixture, FixtureQueries.Fixture>(
-                      fixturesWithoutIncompleteClubs,
-                      func(fixtureEntry : FootballTypes.Fixture) {
-                        return {
-                          awayClubId = fixtureEntry.awayClubId;
-                          awayGoals = fixtureEntry.awayGoals;
-                          events = List.toArray(fixtureEntry.events);
-                          gameweek = fixtureEntry.gameweek;
-                          highestScoringPlayerId = fixtureEntry.highestScoringPlayerId;
-                          homeClubId = fixtureEntry.homeClubId;
-                          homeGoals = fixtureEntry.homeGoals;
-                          id = fixtureEntry.id;
-                          kickOff = fixtureEntry.kickOff;
-                          seasonId = fixtureEntry.seasonId;
-                          status = fixtureEntry.status;
-                        };
-                      },
-                    )
-                  ) }
-                );
-              };
-              case (null) {};
-            };
-          };
-          case (null) {};
-        };
-      };
-      case (null) {};
-    };
-    return #err(#NotFound);
-  };
-
   private func getPrivateClubs(dto: ClubQueries.GetClubs) : Result.Result<ClubQueries.Clubs, Enums.Error> {
 
     let filteredLeagueClubs = Array.find<(FootballIds.LeagueId, [FootballTypes.Club])>(
@@ -914,7 +939,7 @@ actor Self {
             return #greater;
           },
         );
-        return #ok({ clubs = sortedArray });
+        return #ok({ leagueId = dto.leagueId; clubs = sortedArray });
 
       };
       case (null) {
