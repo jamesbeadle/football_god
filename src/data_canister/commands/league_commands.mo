@@ -1,15 +1,16 @@
-import BaseTypes "mo:waterway-mops/BaseTypes";
 import FootballTypes "mo:waterway-mops/FootballTypes";
+import Enums "mo:waterway-mops/Enums";
+import Ids "mo:waterway-mops/Ids";
 module LeagueCommands {
 
   public type CreateLeague = {
     name: Text;
     abbreviation: Text;
     teamCount: Nat8;
-    relatedGender: BaseTypes.Gender;
+    relatedGender: Enums.Gender;
     governingBody: Text;
     formed: Int;
-    countryId: BaseTypes.CountryId;
+    countryId: Ids.CountryId;
     logo: ?Blob;
   };
 
@@ -18,10 +19,10 @@ module LeagueCommands {
     name: Text;
     abbreviation: Text;
     teamCount: Nat8;
-    relatedGender: BaseTypes.Gender;
+    relatedGender: Enums.Gender;
     governingBody: Text;
     formed: Int;
-    countryId: BaseTypes.CountryId;
+    countryId: Ids.CountryId;
     logo: Blob;
   };
 }

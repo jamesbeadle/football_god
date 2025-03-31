@@ -1,5 +1,5 @@
 import FootballTypes "mo:waterway-mops/FootballTypes";
-import BaseTypes "mo:waterway-mops/BaseTypes";
+import Ids "mo:waterway-mops/Ids";
 module PlayerCommands {
 
 
@@ -52,7 +52,7 @@ module PlayerCommands {
     shirtNumber : Nat8;
     valueQuarterMillions : Nat16;
     dateOfBirth : Int;
-    nationality : BaseTypes.CountryId;
+    nationality : Ids.CountryId;
   };
 
   public type UpdatePlayer = {
@@ -63,7 +63,7 @@ module PlayerCommands {
     lastName : Text;
     shirtNumber : Nat8;
     dateOfBirth : Int;
-    nationality : BaseTypes.CountryId;
+    nationality : Ids.CountryId;
   };
 
   public type SetPlayerInjury = {

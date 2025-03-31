@@ -1,5 +1,5 @@
 import FootballTypes "mo:waterway-mops/FootballTypes";
-import BaseTypes "mo:waterway-mops/BaseTypes";
+import Ids "mo:waterway-mops/Ids";
 module PlayerQueries {
     public type GetPlayers = {
         leagueId: FootballTypes.LeagueId;
@@ -58,7 +58,7 @@ module PlayerQueries {
         shirtNumber : Nat8;
         valueQuarterMillions : Nat16;
         dateOfBirth : Int;
-        nationality : BaseTypes.CountryId;
+        nationality : Ids.CountryId;
         seasonId : FootballTypes.SeasonId;
         gameweeks : [PlayerGameweek];
         valueHistory : [FootballTypes.ValueHistory];
@@ -84,7 +84,23 @@ module PlayerQueries {
     };
 
     public type PlayerDetailsForGameweek = {
-
+        id : FootballTypes.PlayerId;
+        clubId : FootballTypes.ClubId;
+        position : FootballTypes.PlayerPosition;
+        firstName : Text;
+        lastName : Text;
+        shirtNumber : Nat8;
+        valueQuarterMillions : Nat16;
+        dateOfBirth : Int;
+        nationality : Ids.CountryId;
+        seasonId : FootballTypes.SeasonId;
+        gameweeks : [PlayerGameweek];
+        valueHistory : [FootballTypes.ValueHistory];
+        status : FootballTypes.PlayerStatus;
+        parentClubId : FootballTypes.ClubId;
+        latestInjuryEndDate : Int;
+        injuryHistory : [FootballTypes.InjuryHistory];
+        retirementDate : Int;
     };
 
 
@@ -99,11 +115,27 @@ module PlayerQueries {
 
 
     public type GetPlayersMap = {
-
+        leagueId: FootballTypes.LeagueId;
+        seasonId: FootballTypes.SeasonId;
+        gameweek: FootballTypes.GameweekNumber;
     };
 
     public type PlayersMap = {
 
+    };
+
+    public type PlayerScore = {
+         id : Nat16;
+        points : Int16;
+        clubId : FootballTypes.ClubId;
+        goalsScored : Int16;
+        goalsConceded : Int16;
+        position : FootballTypes.PlayerPosition;
+        nationality : Ids.CountryId;
+        dateOfBirth : Int;
+        saves : Int16;
+        assists : Int16;
+        events : [FootballTypes.PlayerEventData];
     };
 
 

@@ -1,4 +1,5 @@
 import FootballTypes "mo:waterway-mops/FootballTypes";
+import Ids "mo:waterway-mops/Ids";
 module AppQueries {
     public type GetDataHashes = {
         leagueId: FootballTypes.LeagueId;
@@ -18,6 +19,12 @@ module AppQueries {
     };
 
     public type Countries = {
-        
+        countries: [Country];
+    };
+
+    public type Country = {
+        id : Ids.CountryId;
+        name : Text;
+        code : Text;
     }
 }

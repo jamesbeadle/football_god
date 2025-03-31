@@ -21,26 +21,36 @@ import Timer "mo:base/Timer";
 import TrieMap "mo:base/TrieMap";
 
 
-/* ----- Queries ----- */
+import SHA224 "mo:waterway-mops/SHA224";
+import Countries "mo:waterway-mops/def/Countries";
+import Ids "mo:waterway-mops/Ids";
+import Enums "mo:waterway-mops/Enums";
 
-
-/* ----- Commands ----- */
-
-import Base "mo:waterway-mops/BaseTypes";
+//Why Types
+import BaseTypes "mo:waterway-mops/BaseTypes";
 import FootballTypes "mo:waterway-mops/FootballTypes";
+import CanisterIds "mo:waterway-mops/CanisterIds";
+import BaseUtilities "mo:waterway-mops/BaseUtilities";
 import T "../backend/types/app_types";
 
-import Environment "environment";
+/* ----- Queries ----- */
 import PlayerQueries "queries/player_queries";
 import FixtureQueries "queries/fixture_queries";
 import ClubQueries "queries/club_queries";
 import LeagueQueries "queries/league_queries";
 import AppQueries "queries/app_queries";
 import SeasonQueries "queries/season_queries";
+
+
+/* ----- Commands ----- */
+
 import PlayerCommands "commands/player_commands";
 import LeagueCommands "commands/league_commands";
 import FixtureCommands "commands/fixture_commands";
 import ClubCommands "commands/club_commands";
+
+import Environment "environment";
+import Utilities "utilities/utilities";
 
 actor Self {
 
@@ -57,7 +67,7 @@ actor Self {
   private stable var nextLeagueId : FootballTypes.LeagueId = 0;
   private stable var nextClubId : FootballTypes.ClubId = 0;
   private stable var nextPlayerId : FootballTypes.PlayerId = 0;
-  private stable var leagueDataHashes : [(FootballTypes.LeagueId, [Base.DataHash])] = [];
+  private stable var leagueDataHashes : [(FootballTypes.LeagueId, [BaseTypes.DataHash])] = [];
   private stable var leagueTables : [FootballTypes.LeagueTable] = [];
   private stable var leagueRelegationPairs : [(FootballTypes.LeagueId, FootballTypes.LeagueId)] = [];
   private stable var leagueClubsRequiringData : [(FootballTypes.LeagueId, [FootballTypes.ClubId])] = [];
@@ -65,7 +75,7 @@ actor Self {
 
   /* ----- Canister Variables Recreacted in PostUpgrade ----- */ 
 
-  private var leagueApplications : [(FootballTypes.LeagueId, Base.CanisterId)] = [(1, Environment.OPENFPL_BACKEND_CANISTER_ID), (2, Environment.OPENWSL_BACKEND_CANISTER_ID)];
+  private var leagueApplications : [(FootballTypes.LeagueId, Ids.CanisterId)] = [(1, CanisterIds.OPENFPL_BACKEND_CANISTER_ID), (2, CanisterIds.OPENWSL_BACKEND_CANISTER_ID)];
   private var pickTeamRollOverTimerIds : [Nat] = [];
   private var activateFixtureTimerIds : [Nat] = [];
   private var completeFixtureTimerIds : [Nat] = [];
@@ -77,11 +87,11 @@ actor Self {
 
   /* ----- General App Queries ----- */
 
-  public shared query ({ caller }) func getDataHashes(dto: AppQueries.GetDataHashes) : async Result.Result<AppQueries.DataHashes, T.Error> {
+  public shared query ({ caller }) func getDataHashes(dto: AppQueries.GetDataHashes) : async Result.Result<AppQueries.DataHashes, Enums.Error> {
     assert not Principal.isAnonymous(caller);
-    let leagueDataHashesResult = Array.find<(FootballTypes.LeagueId, [Base.DataHash])>(
+    let leagueDataHashesResult = Array.find<(FootballTypes.LeagueId, [BaseTypes.DataHash])>(
       leagueDataHashes,
-      func(entry : (FootballTypes.LeagueId, [Base.DataHash])) : Bool {
+      func(entry : (FootballTypes.LeagueId, [BaseTypes.DataHash])) : Bool {
         entry.0 == dto.leagueId;
       },
     );
@@ -94,23 +104,23 @@ actor Self {
     return #err(#NotFound);
   };
 
-  public shared query ({ caller }) func getCountries(dto: AppQueries.GetCountries) : async Result.Result<AppQueries.Countries, T.Error> {
+  public shared query ({ caller }) func getCountries(dto: AppQueries.GetCountries) : async Result.Result<AppQueries.Countries, Enums.Error> {
     assert not Principal.isAnonymous(caller);
-    return #ok(Countries.countries);
+    return #ok({ countries = Countries.countries });
   };
 
 
   /* ----- League Queries ------ */
 
-  public shared query ({ caller }) func getLeagues(dto: LeagueQueries.GetLeagues) : async Result.Result<LeagueQueries.Leagues, T.Error> {
+  public shared query ({ caller }) func getLeagues(dto: LeagueQueries.GetLeagues) : async Result.Result<LeagueQueries.Leagues, Enums.Error> {
     assert not Principal.isAnonymous(caller);
-    return #ok(leagues);
+    return #ok({leagues});
   };
 
-  public shared query ({ caller }) func getBettableLeagues(dto: LeagueQueries.GetBettableLeagues) : async Result.Result<LeagueQueries.BettableLeagues, T.Error> {
+  public shared query ({ caller }) func getBettableLeagues(dto: LeagueQueries.GetBettableLeagues) : async Result.Result<LeagueQueries.BettableLeagues, Enums.Error> {
     assert not Principal.isAnonymous(caller);
 
-    let upToDateLeaguesBuffer = Buffer.fromArray<ResponseDTOs.FootballLeagueDTO>([]);
+    let upToDateLeaguesBuffer = Buffer.fromArray<LeagueQueries.League>([]);
 
     for (league in Iter.fromArray(leagues)) {
       let leagueClubsRequiringDataResult = Array.find(
@@ -147,12 +157,12 @@ actor Self {
     return #ok(Buffer.toArray(upToDateLeaguesBuffer));
   };
 
-  public shared query ({ caller }) func getLeagueStatus(dto: LeagueQueries.GetLeagueStatus) : async Result.Result<LeagueQueries.LeagueStatus, T.Error> {
+  public shared query ({ caller }) func getLeagueStatus(dto: LeagueQueries.GetLeagueStatus) : async Result.Result<LeagueQueries.LeagueStatus, Enums.Error> {
     assert not Principal.isAnonymous(caller);
     let status = Array.find<FootballTypes.LeagueStatus>(
       leagueStatuses,
       func(entry : FootballTypes.LeagueStatus) : Bool {
-        entry.leagueId == leagueId;
+        entry.leagueId == dto.leagueId;
       },
     );
     switch (status) {
@@ -165,12 +175,12 @@ actor Self {
     };
   };
 
-  public shared query ({ caller }) func getLeagueTable(dto: LeagueQueries.GetLeagueTable) : async Result.Result<LeagueQueries.LeagueTable, T.Error> {
+  public shared query ({ caller }) func getLeagueTable(dto: LeagueQueries.GetLeagueTable) : async Result.Result<LeagueQueries.LeagueTable, Enums.Error> {
     assert not Principal.isAnonymous(caller);
     let leagueTable = Array.find(
       leagueTables,
       func(entry : FootballTypes.LeagueTable) : Bool {
-        entry.leagueId == leagueId and entry.seasonId == seasonId;
+        entry.leagueId == dto.leagueId and entry.seasonId == dto.seasonId;
       },
     );
     switch (leagueTable) {
@@ -186,8 +196,8 @@ actor Self {
 
   /* ----- League Commands ------ */
 
-  public shared ({ caller }) func validateCreateLeague(dto : LeagueCommands.CreateLeague) : async Base.RustResult {
-    assert Principal.toText(caller) == Environment.SNS_GOVERNANCE_CANISTER_ID;
+  public shared ({ caller }) func validateCreateLeague(dto : LeagueCommands.CreateLeague) : async BaseTypes.RustResult {
+    assert Principal.toText(caller) == CanisterIds.ICFC_SNS_GOVERNANCE_CANISTER_ID;
     assert countryExists(dto.countryId);
     switch (dto.logo) {
       case (?foundLogo) {
@@ -218,8 +228,8 @@ actor Self {
     return #Ok("Valid");
   };
 
-  public shared ({ caller }) func validateUpdateLeague(dto : LeagueCommands.UpdateLeague) : async Base.RustResult {
-    assert Principal.toText(caller) == Environment.SNS_GOVERNANCE_CANISTER_ID;
+  public shared ({ caller }) func validateUpdateLeague(dto : LeagueCommands.UpdateLeague) : async BaseTypes.RustResult {
+    assert Principal.toText(caller) == CanisterIds.ICFC_SNS_GOVERNANCE_CANISTER_ID;
     assert leagueExists(dto.leagueId);
     assert countryExists(dto.countryId);
     assert logoSizeValid(dto.logo);
@@ -253,7 +263,7 @@ actor Self {
 
   /* ----- Player Queries ----- */
 
-  public shared ({ caller }) func getPlayers(dto: PlayerQueries.GetPlayers) : async Result.Result<PlayerQueries.Players, T.Error> {
+  public shared ({ caller }) func getPlayers(dto: PlayerQueries.GetPlayers) : async Result.Result<PlayerQueries.Players, Enums.Error> {
     assert callerAllowed(caller);
     return getPrivatePlayers(dto: PlayerQueries.GetPlayers);
   };
@@ -261,7 +271,7 @@ actor Self {
   /* ----- Player Commands ----- */
 
 
-  public shared query ({ caller }) func getLoanedPlayers(dto: PlayerQueries.GetLoanedPlayers) : async Result.Result<PlayerQueries.LoanedPlayers, T.Error> {
+  public shared query ({ caller }) func getLoanedPlayers(dto: PlayerQueries.GetLoanedPlayers) : async Result.Result<PlayerQueries.LoanedPlayers, Enums.Error> {
     assert not Principal.isAnonymous(caller);
 
     let filteredLeaguePlayers = Array.find<(FootballTypes.LeagueId, [FootballTypes.Player])>(
@@ -314,7 +324,7 @@ actor Self {
     };
   };
 
-  public shared query ({ caller }) func getRetiredPlayers(dto: PlayerQueries.GetRetiredPlayers) : async Result.Result<PlayerQueries.RetiredPlayers, T.Error> {
+  public shared query ({ caller }) func getRetiredPlayers(dto: PlayerQueries.GetRetiredPlayers) : async Result.Result<PlayerQueries.RetiredPlayers, Enums.Error> {
     assert not Principal.isAnonymous(caller);
 
     let filteredLeaguePlayers = Array.find<(FootballTypes.LeagueId, [FootballTypes.Player])>(
@@ -367,7 +377,7 @@ actor Self {
     };
   };
 
-  public shared query ({ caller }) func getPlayerDetails(dto: PlayerQueries.GetPlayerDetails) : async Result.Result<PlayerQueries.PlayerDetails, T.Error> {
+  public shared query ({ caller }) func getPlayerDetails(dto: PlayerQueries.GetPlayerDetails) : async Result.Result<PlayerQueries.PlayerDetails, Enums.Error> {
     assert not Principal.isAnonymous(caller);
 
     var clubId : FootballTypes.ClubId = 0;
@@ -377,7 +387,7 @@ actor Self {
     var shirtNumber : Nat8 = 0;
     var valueQuarterMillions : Nat16 = 0;
     var dateOfBirth : Int = 0;
-    var nationality : Base.CountryId = 0;
+    var nationality : Ids.CountryId = 0;
     var valueHistory : [FootballTypes.ValueHistory] = [];
     var status : FootballTypes.PlayerStatus = #Active;
     var parentClubId : FootballTypes.ClubId = 0;
@@ -385,12 +395,12 @@ actor Self {
     var injuryHistory : [FootballTypes.InjuryHistory] = [];
     var retirementDate : Int = 0;
 
-    let gameweeksBuffer = Buffer.fromArray<ResponseDTOs.PlayerGameweekDTO>([]);
+    let gameweeksBuffer = Buffer.fromArray<PlayerQueries.PlayerGameweek>([]);
 
     let filteredLeaguePlayers = Array.find<(FootballTypes.LeagueId, [FootballTypes.Player])>(
       leaguePlayers,
       func(leagueWithPlayers : (FootballTypes.LeagueId, [FootballTypes.Player])) : Bool {
-        leagueWithPlayers.0 == leagueId;
+        leagueWithPlayers.0 == dto.leagueId;
       },
     );
 
@@ -434,7 +444,7 @@ actor Self {
                     fixtureId := events[0].fixtureId;
                   };
 
-                  let gameweekDTO : ResponseDTOs.PlayerGameweek = {
+                  let gameweekDTO : PlayerQueries.PlayerGameweek = {
                     number = gw.number;
                     events = List.toArray<FootballTypes.PlayerEventData>(gw.events);
                     points = gw.points;
@@ -449,24 +459,26 @@ actor Self {
           };
         };
 
-        return #ok({
-          id = dto.playerId;
-          clubId = clubId;
-          position = position;
-          firstName = firstName;
-          lastName = lastName;
-          shirtNumber = shirtNumber;
-          valueQuarterMillions = valueQuarterMillions;
-          dateOfBirth = dateOfBirth;
-          nationality = nationality;
-          seasonId = dto.seasonId;
-          valueHistory = valueHistory;
-          status = status;
-          parentClubId = parentClubId;
-          latestInjuryEndDate = latestInjuryEndDate;
-          injuryHistory = injuryHistory;
-          retirementDate = retirementDate;
-          gameweeks = Buffer.toArray<ResponseDTOs.PlayerGameweekDTO>(gameweeksBuffer);
+        return #ok({ 
+          player = {
+            id = dto.playerId;
+            clubId = clubId;
+            position = position;
+            firstName = firstName;
+            lastName = lastName;
+            shirtNumber = shirtNumber;
+            valueQuarterMillions = valueQuarterMillions;
+            dateOfBirth = dateOfBirth;
+            nationality = nationality;
+            seasonId = dto.seasonId;
+            valueHistory = valueHistory;
+            status = status;
+            parentClubId = parentClubId;
+            latestInjuryEndDate = latestInjuryEndDate;
+            injuryHistory = injuryHistory;
+            retirementDate = retirementDate;
+            gameweeks = Buffer.toArray<PlayerQueries.PlayerGameweek>(gameweeksBuffer);
+          }
         });
 
       };
@@ -476,7 +488,7 @@ actor Self {
     };
   };
 
-  public shared query ({ caller }) func getPlayerDetailsForGameweek(dto: PlayerQueries.GetPlayerDetailsForGameweek) : async Result.Result<PlayerQueries.PlayerDetailsForGameweek, T.Error> {
+  public shared query ({ caller }) func getPlayerDetailsForGameweek(dto: PlayerQueries.GetPlayerDetailsForGameweek) : async Result.Result<PlayerQueries.PlayerDetailsForGameweek, Enums.Error> {
     assert not Principal.isAnonymous(caller);
 
     var playerDetailsBuffer = Buffer.fromArray<PlayerQueries.PlayerPoints>([]);
@@ -529,15 +541,15 @@ actor Self {
     };
   };
 
-  public shared query ({ caller }) func getPlayersMap(dto: PlayerQueries.GetPlayersMap) : async Result.Result<PlayerQueries.PlayersMap, T.Error> {
+  public shared query ({ caller }) func getPlayersMap(dto: PlayerQueries.GetPlayersMap) : async Result.Result<PlayerQueries.PlayersMap, Enums.Error> {
     assert not Principal.isAnonymous(caller);
 
-    var playersMap : TrieMap.TrieMap<Nat16, ResponseDTOs.PlayerScoreDTO> = TrieMap.TrieMap<Nat16, ResponseDTOs.PlayerScoreDTO>(Utilities.eqNat16, Utilities.hashNat16);
+    var playersMap : TrieMap.TrieMap<Nat16, PlayerQueries.PlayerScore> = TrieMap.TrieMap<Nat16, PlayerQueries.PlayerScore>(BaseUtilities.eqNat16, BaseUtilities.hashNat16);
 
     let filteredLeaguePlayers = Array.find<(FootballTypes.LeagueId, [FootballTypes.Player])>(
       leaguePlayers,
       func(leagueWithPlayers : (FootballTypes.LeagueId, [FootballTypes.Player])) : Bool {
-        leagueWithPlayers.0 == leagueId;
+        leagueWithPlayers.0 == dto.leagueId;
       },
     );
 
@@ -578,7 +590,7 @@ actor Self {
             };
           };
 
-          let scoreDTO : ResponseDTOs.PlayerScore = {
+          let scoreDTO : PlayerQueries.PlayerScore = {
             id = player.id;
             points = points;
             events = List.toArray(events);
@@ -604,17 +616,17 @@ actor Self {
 
   /* ----- Fixture Queries ----- */
 
-  public shared ({ caller }) func getFixtures(dto: FixtureQueries.GetFixtures) : async Result.Result<FixtureQueries.Fixtures, T.Error> {
+  public shared ({ caller }) func getFixtures(dto: FixtureQueries.GetFixtures) : async Result.Result<FixtureQueries.Fixtures, Enums.Error> {
     assert callerAllowed(caller);
     return getPrivateFixtures(dto);
   };
 
-  public shared ({ caller }) func getBettableFixtures(dto: FixtureQueries.GetBettableFixtures) : async Result.Result<FixtureQueries.BettableFixtures, T.Error> {
+  public shared ({ caller }) func getBettableFixtures(dto: FixtureQueries.GetBettableFixtures) : async Result.Result<FixtureQueries.BettableFixtures, Enums.Error> {
     assert not Principal.isAnonymous(caller);
     return getPrivateBettableFixtures(dto);
   };
 
-  public shared query ({ caller }) func getPostponedFixtures(dto: FixtureQueries.GetPostponedFixtures) : async Result.Result<FixtureQueries.PostponedFixtures, T.Error> {
+  public shared query ({ caller }) func getPostponedFixtures(dto: FixtureQueries.GetPostponedFixtures) : async Result.Result<FixtureQueries.PostponedFixtures, Enums.Error> {
     assert not Principal.isAnonymous(caller);
 
     let filteredLeagueSeasons = Array.find<(FootballTypes.LeagueId, [FootballTypes.Season])>(
@@ -688,7 +700,7 @@ actor Self {
 
   /* ----- Clubs Queries ----- */
 
-  public shared ({ caller }) func getClubs(dto: ClubQueries.GetClubs) : async Result.Result<ClubQueries.Clubs, T.Error> {
+  public shared ({ caller }) func getClubs(dto: ClubQueries.GetClubs) : async Result.Result<ClubQueries.Clubs, Enums.Error> {
     assert callerAllowed(caller);
     return getPrivateClubs(dto);
   };
@@ -698,16 +710,16 @@ actor Self {
   //Private getters
 
   private func callerAllowed(caller : Principal) : Bool {
-    let foundCaller = Array.find<Base.PrincipalId>(
+    let foundCaller = Array.find<BaseTypes.PrincipalId>(
       Environment.APPROVED_CANISTERS,
-      func(canisterId : Base.CanisterId) : Bool {
+      func(canisterId : BaseTypes.CanisterId) : Bool {
         Principal.toText(caller) == canisterId;
       },
     );
     return Option.isSome(foundCaller);
   };
 
-  private func getPrivatePlayers(dto: PlayerQueries.GetPlayers) : Result.Result<PlayerQueries.Players, T.Error> {
+  private func getPrivatePlayers(dto: PlayerQueries.GetPlayers) : Result.Result<PlayerQueries.Players, Enums.Error> {
     let filteredLeaguePlayers = Array.find<(FootballTypes.LeagueId, [FootballTypes.Player])>(
       leaguePlayers,
       func(currentLeaguePlayers : (FootballTypes.LeagueId, [FootballTypes.Player])) : Bool {
@@ -749,7 +761,7 @@ actor Self {
     };
   };
 
-  private func getPrivateFixtures(dto: FixtureQueries.GetFixtures) : Result.Result<FixtureQueries.GetFixtures, T.Error> {
+  private func getPrivateFixtures(dto: FixtureQueries.GetFixtures) : Result.Result<FixtureQueries.GetFixtures, Enums.Error> {
     let filteredLeagueSeasons = Array.find<(FootballTypes.LeagueId, [FootballTypes.Season])>(
       leagueSeasons,
       func(leagueSeason : (FootballTypes.LeagueId, [FootballTypes.Season])) : Bool {
@@ -803,7 +815,7 @@ actor Self {
     };
   };
 
-  private func getPrivateBettableFixtures(dto: FixtureQueries.GetBettableFixtures) : Result.Result<FixtureQueries.BettableFixtures, T.Error> {
+  private func getPrivateBettableFixtures(dto: FixtureQueries.GetBettableFixtures) : Result.Result<FixtureQueries.BettableFixtures, Enums.Error> {
 
     let filteredLeagueSeasons = Array.find<(FootballTypes.LeagueId, [FootballTypes.Season])>(
       leagueSeasons,
@@ -882,7 +894,7 @@ actor Self {
     return #err(#NotFound);
   };
 
-  private func getPrivateClubs(dto: ClubQueries.GetClubs) : Result.Result<ClubQueries.Clubs, T.Error> {
+  private func getPrivateClubs(dto: ClubQueries.GetClubs) : Result.Result<ClubQueries.Clubs, Enums.Error> {
 
     let filteredLeagueClubs = Array.find<(FootballTypes.LeagueId, [FootballTypes.Club])>(
       leagueClubs,
@@ -912,7 +924,7 @@ actor Self {
 
 
 
-  public shared query ({ caller }) func getSeasons(dto: SeasonQueries.GetSeasons) : async Result.Result<SeasonQueries.Seasons, T.Error> {
+  public shared query ({ caller }) func getSeasons(dto: SeasonQueries.GetSeasons) : async Result.Result<SeasonQueries.Seasons, Enums.Error> {
     assert not Principal.isAnonymous(caller);
 
     let filteredLeagueSeasons = Array.find<(FootballTypes.LeagueId, [FootballTypes.Season])>(
@@ -967,8 +979,8 @@ actor Self {
     };
   };
 
-  public shared ({ caller }) func validateRevaluePlayerUp(dto : PlayerCommands.RevaluePlayerUp) : async Base.RustResult {
-    assert Principal.toText(caller) == Environment.SNS_GOVERNANCE_CANISTER_ID;
+  public shared ({ caller }) func validateRevaluePlayerUp(dto : PlayerCommands.RevaluePlayerUp) : async BaseTypes.RustResult {
+    assert Principal.toText(caller) == CanisterIds.ICFC_SNS_GOVERNANCE_CANISTER_ID;
     assert leagueExists(dto.leagueId);
     switch (checkPlayerExists(dto.leagueId, dto.playerId)) {
       case (?player) {
@@ -984,8 +996,8 @@ actor Self {
     };
   };
 
-  public shared ({ caller }) func validateRevaluePlayerDown(dto : PlayerCommands.RevaluePlayerDown) : async Base.RustResult {
-    assert Principal.toText(caller) == Environment.SNS_GOVERNANCE_CANISTER_ID;
+  public shared ({ caller }) func validateRevaluePlayerDown(dto : PlayerCommands.RevaluePlayerDown) : async BaseTypes.RustResult {
+    assert Principal.toText(caller) == CanisterIds.ICFC_SNS_GOVERNANCE_CANISTER_ID;
     assert leagueExists(dto.leagueId);
     switch (checkPlayerExists(dto.leagueId, dto.playerId)) {
       case (?player) {
@@ -1001,8 +1013,8 @@ actor Self {
     };
   };
 
-  public shared ({ caller }) func validateLoanPlayer(dto : PlayerCommands.LoanPlayer) : async Base.RustResult {
-    assert Principal.toText(caller) == Environment.SNS_GOVERNANCE_CANISTER_ID;
+  public shared ({ caller }) func validateLoanPlayer(dto : PlayerCommands.LoanPlayer) : async BaseTypes.RustResult {
+    assert Principal.toText(caller) == CanisterIds.ICFC_SNS_GOVERNANCE_CANISTER_ID;
     assert leagueExists(dto.leagueId);
     assert leagueExists(dto.loanLeagueId);
     assert clubExists(dto.loanLeagueId, dto.loanClubId);
@@ -1011,8 +1023,8 @@ actor Self {
     return #Ok("Valid");
   };
 
-  public shared ({ caller }) func validateTransferPlayer(dto : PlayerCommands.TransferPlayer) : async Base.RustResult {
-    assert Principal.toText(caller) == Environment.SNS_GOVERNANCE_CANISTER_ID;
+  public shared ({ caller }) func validateTransferPlayer(dto : PlayerCommands.TransferPlayer) : async BaseTypes.RustResult {
+    assert Principal.toText(caller) == CanisterIds.ICFC_SNS_GOVERNANCE_CANISTER_ID;
     assert leagueExists(dto.leagueId);
     assert leagueExists(dto.newLeagueId);
     assert clubExists(dto.leagueId, dto.clubId);
@@ -1021,22 +1033,22 @@ actor Self {
     return #Ok("Valid");
   };
 
-  public shared ({ caller }) func validateSetFreeAgent(dto : PlayerCommands.SetFreeAgent) : async Base.RustResult {
-    assert Principal.toText(caller) == Environment.SNS_GOVERNANCE_CANISTER_ID;
+  public shared ({ caller }) func validateSetFreeAgent(dto : PlayerCommands.SetFreeAgent) : async BaseTypes.RustResult {
+    assert Principal.toText(caller) == CanisterIds.ICFC_SNS_GOVERNANCE_CANISTER_ID;
     assert leagueExists(dto.leagueId);
     assert Option.isSome(checkPlayerExists(dto.leagueId, dto.playerId));
     return #Ok("Valid");
   };
 
-  public shared ({ caller }) func validateRecallPlayer(dto : PlayerCommands.RecallPlayer) : async Base.RustResult {
-    assert Principal.toText(caller) == Environment.SNS_GOVERNANCE_CANISTER_ID;
+  public shared ({ caller }) func validateRecallPlayer(dto : PlayerCommands.RecallPlayer) : async BaseTypes.RustResult {
+    assert Principal.toText(caller) == CanisterIds.ICFC_SNS_GOVERNANCE_CANISTER_ID;
     assert leagueExists(dto.leagueId);
     assert Option.isSome(checkPlayerExists(dto.leagueId, dto.playerId));
     return #Ok("Valid");
   };
 
-  public shared ({ caller }) func validateCreatePlayer(dto : PlayerCommands.CreatePlayer) : async Base.RustResult {
-    assert Principal.toText(caller) == Environment.SNS_GOVERNANCE_CANISTER_ID;
+  public shared ({ caller }) func validateCreatePlayer(dto : PlayerCommands.CreatePlayer) : async BaseTypes.RustResult {
+    assert Principal.toText(caller) == CanisterIds.ICFC_SNS_GOVERNANCE_CANISTER_ID;
     assert leagueExists(dto.leagueId);
     assert clubExists(dto.leagueId, dto.clubId);
     assert countryExists(dto.nationality);
@@ -1058,8 +1070,8 @@ actor Self {
     return #Ok("Valid");
   };
 
-  public shared ({ caller }) func validateUpdatePlayer(dto : PlayerCommands.UpdatePlayer) : async Base.RustResult {
-    assert Principal.toText(caller) == Environment.SNS_GOVERNANCE_CANISTER_ID;
+  public shared ({ caller }) func validateUpdatePlayer(dto : PlayerCommands.UpdatePlayer) : async BaseTypes.RustResult {
+    assert Principal.toText(caller) == CanisterIds.ICFC_SNS_GOVERNANCE_CANISTER_ID;
     assert leagueExists(dto.leagueId);
     assert Option.isSome(checkPlayerExists(dto.leagueId, dto.playerId));
 
@@ -1071,7 +1083,7 @@ actor Self {
       return #Err("Invalid Data");
     };
 
-    let playerCountry = Array.find<Base.Country>(Countries.countries, func(country : Base.Country) : Bool { return country.id == dto.nationality });
+    let playerCountry = Array.find<BaseTypes.Country>(Countries.countries, func(country : BaseTypes.Country) : Bool { return country.id == dto.nationality });
     switch (playerCountry) {
       case (null) {
         return #Err("Invalid Data");
@@ -1085,22 +1097,22 @@ actor Self {
     return #Ok("Valid");
   };
 
-  public shared ({ caller }) func validateSetPlayerInjury(dto : PlayerCommands.SetPlayerInjury) : async Base.RustResult {
-    assert Principal.toText(caller) == Environment.SNS_GOVERNANCE_CANISTER_ID;
+  public shared ({ caller }) func validateSetPlayerInjury(dto : PlayerCommands.SetPlayerInjury) : async BaseTypes.RustResult {
+    assert Principal.toText(caller) == CanisterIds.ICFC_SNS_GOVERNANCE_CANISTER_ID;
     assert leagueExists(dto.leagueId);
     assert Option.isSome(checkPlayerExists(dto.leagueId, dto.playerId));
     return #Ok("Valid");
   };
 
-  public shared ({ caller }) func validateRetirePlayer(dto : PlayerCommands.RetirePlayer) : async Base.RustResult {
-    assert Principal.toText(caller) == Environment.SNS_GOVERNANCE_CANISTER_ID;
+  public shared ({ caller }) func validateRetirePlayer(dto : PlayerCommands.RetirePlayer) : async BaseTypes.RustResult {
+    assert Principal.toText(caller) == CanisterIds.ICFC_SNS_GOVERNANCE_CANISTER_ID;
     assert leagueExists(dto.leagueId);
     assert Option.isSome(checkPlayerExists(dto.leagueId, dto.playerId));
     return #Ok("Valid");
   };
 
-  public shared ({ caller }) func validateUnretirePlayer(dto : PlayerCommands.UnretirePlayer) : async Base.RustResult {
-    assert Principal.toText(caller) == Environment.SNS_GOVERNANCE_CANISTER_ID;
+  public shared ({ caller }) func validateUnretirePlayer(dto : PlayerCommands.UnretirePlayer) : async BaseTypes.RustResult {
+    assert Principal.toText(caller) == CanisterIds.ICFC_SNS_GOVERNANCE_CANISTER_ID;
     assert leagueExists(dto.leagueId);
     assert Option.isSome(checkPlayerExists(dto.leagueId, dto.playerId));
     return #Ok("Valid");
@@ -1108,8 +1120,8 @@ actor Self {
 
   /* League */
 
-  public shared ({ caller }) func validateAddInitialFixtures(dto : FixtureCommands.AddInitialFixtures) : async Base.RustResult {
-    assert Principal.toText(caller) == Environment.SNS_GOVERNANCE_CANISTER_ID;
+  public shared ({ caller }) func validateAddInitialFixtures(dto : FixtureCommands.AddInitialFixtures) : async BaseTypes.RustResult {
+    assert Principal.toText(caller) == CanisterIds.ICFC_SNS_GOVERNANCE_CANISTER_ID;
     assert not seasonActive(dto.leagueId);
 
     let maybeLeague = Array.find<FootballTypes.League>(
@@ -1205,8 +1217,8 @@ actor Self {
     };
   };
 
-  public shared ({ caller }) func validateMoveFixture(dto : FixtureCommands.MoveFixture) : async Base.RustResult {
-    assert Principal.toText(caller) == Environment.SNS_GOVERNANCE_CANISTER_ID;
+  public shared ({ caller }) func validateMoveFixture(dto : FixtureCommands.MoveFixture) : async BaseTypes.RustResult {
+    assert Principal.toText(caller) == CanisterIds.ICFC_SNS_GOVERNANCE_CANISTER_ID;
     assert leagueExists(dto.leagueId);
     assert seasonExists(dto.leagueId, dto.seasonId);
     assert fixtureExists(dto.leagueId, dto.seasonId, dto.fixtureId);
@@ -1238,22 +1250,22 @@ actor Self {
     };
   };
 
-  public shared ({ caller }) func validatePostponeFixture(dto : FixtureCommands.PostponeFixture) : async Base.RustResult {
-    assert Principal.toText(caller) == Environment.SNS_GOVERNANCE_CANISTER_ID;
+  public shared ({ caller }) func validatePostponeFixture(dto : FixtureCommands.PostponeFixture) : async BaseTypes.RustResult {
+    assert Principal.toText(caller) == CanisterIds.ICFC_SNS_GOVERNANCE_CANISTER_ID;
     assert leagueExists(dto.leagueId);
     assert fixtureExists(dto.leagueId, dto.seasonId, dto.fixtureId);
     return #Ok("Valid");
   };
 
-  public shared ({ caller }) func validateRescheduleFixture(dto : FixtureCommands.RescheduleFixture) : async Base.RustResult {
-    assert Principal.toText(caller) == Environment.SNS_GOVERNANCE_CANISTER_ID;
+  public shared ({ caller }) func validateRescheduleFixture(dto : FixtureCommands.RescheduleFixture) : async BaseTypes.RustResult {
+    assert Principal.toText(caller) == CanisterIds.ICFC_SNS_GOVERNANCE_CANISTER_ID;
     assert leagueExists(dto.leagueId);
     assert postponedFixtureExists(dto.leagueId, dto.seasonId, dto.fixtureId);
     return #Ok("Valid");
   };
 
-  public shared ({ caller }) func validateSubmitFixtureData(dto : FixtureCommands.SubmitFixtureData) : async Base.RustResult {
-    assert Principal.toText(caller) == Environment.SNS_GOVERNANCE_CANISTER_ID;
+  public shared ({ caller }) func validateSubmitFixtureData(dto : FixtureCommands.SubmitFixtureData) : async BaseTypes.RustResult {
+    assert Principal.toText(caller) == CanisterIds.ICFC_SNS_GOVERNANCE_CANISTER_ID;
     assert leagueExists(dto.leagueId);
     assert fixtureExists(dto.leagueId, dto.seasonId, dto.fixtureId);
     assert validatePlayerEvents(dto.playerEventData);
@@ -1262,8 +1274,8 @@ actor Self {
 
   /* Club */
 
-  public shared ({ caller }) func validateCreateClub(dto : ClubCommands.CreateClub) : async Base.RustResult {
-    assert Principal.toText(caller) == Environment.SNS_GOVERNANCE_CANISTER_ID;
+  public shared ({ caller }) func validateCreateClub(dto : ClubCommands.CreateClub) : async BaseTypes.RustResult {
+    assert Principal.toText(caller) == CanisterIds.ICFC_SNS_GOVERNANCE_CANISTER_ID;
     assert leagueExists(dto.leagueId);
     if (Text.size(dto.name) > 100) {
       return #Err("Error: Name greater than 100 characters.");
@@ -1292,8 +1304,8 @@ actor Self {
     return #Ok("Valid");
   };
 
-  public shared ({ caller }) func validateUpdateClub(dto : ClubCommands.UpdateClub) : async Base.RustResult {
-    assert Principal.toText(caller) == Environment.SNS_GOVERNANCE_CANISTER_ID;
+  public shared ({ caller }) func validateUpdateClub(dto : ClubCommands.UpdateClub) : async BaseTypes.RustResult {
+    assert Principal.toText(caller) == CanisterIds.ICFC_SNS_GOVERNANCE_CANISTER_ID;
     assert leagueExists(dto.leagueId);
     assert clubExists(dto.leagueId, dto.clubId);
 
@@ -1324,8 +1336,8 @@ actor Self {
     return #Ok("Valid");
   };
 
-  public shared ({ caller }) func validatePromoteClub(dto : ClubCommands.PromoteClub) : async Base.RustResult {
-    assert Principal.toText(caller) == Environment.SNS_GOVERNANCE_CANISTER_ID;
+  public shared ({ caller }) func validatePromoteClub(dto : ClubCommands.PromoteClub) : async BaseTypes.RustResult {
+    assert Principal.toText(caller) == CanisterIds.ICFC_SNS_GOVERNANCE_CANISTER_ID;
     assert leagueExists(dto.leagueId);
     assert leagueExists(dto.toLeagueId);
     assert clubExists(dto.leagueId, dto.clubId);
@@ -1334,8 +1346,8 @@ actor Self {
     return #Ok("Valid");
   };
 
-  public shared ({ caller }) func validateRelegateClub(dto : ClubCommands.RelegateClub) : async Base.RustResult {
-    assert Principal.toText(caller) == Environment.SNS_GOVERNANCE_CANISTER_ID;
+  public shared ({ caller }) func validateRelegateClub(dto : ClubCommands.RelegateClub) : async BaseTypes.RustResult {
+    assert Principal.toText(caller) == CanisterIds.ICFC_SNS_GOVERNANCE_CANISTER_ID;
     assert leagueExists(dto.leagueId);
     assert leagueExists(dto.relegatedToLeagueId);
     assert clubExists(dto.leagueId, dto.clubId);
@@ -1347,7 +1359,7 @@ actor Self {
   /* Player */
 
   public shared ({ caller }) func revaluePlayerUp(dto : PlayerCommands.RevaluePlayerUp) : async () {
-    assert Principal.toText(caller) == Environment.SNS_GOVERNANCE_CANISTER_ID;
+    assert Principal.toText(caller) == CanisterIds.ICFC_SNS_GOVERNANCE_CANISTER_ID;
 
     let updatedLeaguePlayersBuffer = Buffer.fromArray<(FootballTypes.LeagueId, [FootballTypes.Player])>([]);
 
@@ -1424,7 +1436,7 @@ actor Self {
   };
 
   public shared ({ caller }) func revaluePlayerDown(dto : PlayerCommands.RevaluePlayerDown) : async () {
-    assert Principal.toText(caller) == Environment.SNS_GOVERNANCE_CANISTER_ID;
+    assert Principal.toText(caller) == CanisterIds.ICFC_SNS_GOVERNANCE_CANISTER_ID;
 
     let updatedLeaguePlayersBuffer = Buffer.fromArray<(FootballTypes.LeagueId, [FootballTypes.Player])>([]);
 
@@ -1503,7 +1515,7 @@ actor Self {
   };
 
   public shared ({ caller }) func loanPlayer(dto : PlayerCommands.LoanPlayer) : async () {
-    assert Principal.toText(caller) == Environment.SNS_GOVERNANCE_CANISTER_ID;
+    assert Principal.toText(caller) == CanisterIds.ICFC_SNS_GOVERNANCE_CANISTER_ID;
 
     if (dto.leagueId == dto.loanLeagueId) {
       leaguePlayers := Array.map<(FootballTypes.LeagueId, [FootballTypes.Player]), (FootballTypes.LeagueId, [FootballTypes.Player])>(
@@ -1652,7 +1664,7 @@ actor Self {
   };
 
   public shared ({ caller }) func transferPlayer(dto : PlayerCommands.TransferPlayer) : async () {
-    assert Principal.toText(caller) == Environment.SNS_GOVERNANCE_CANISTER_ID;
+    assert Principal.toText(caller) == CanisterIds.ICFC_SNS_GOVERNANCE_CANISTER_ID;
 
     if (dto.newClubId == 0 and dto.newLeagueId == 0) {
       movePlayerToFreeAgents(dto.leagueId, dto.playerId, dto.newValueQuarterMillions);
@@ -1672,7 +1684,7 @@ actor Self {
   };
 
   public shared ({ caller }) func setFreeAgent(dto : PlayerCommands.SetFreeAgent) : async () {
-    assert Principal.toText(caller) == Environment.SNS_GOVERNANCE_CANISTER_ID;
+    assert Principal.toText(caller) == CanisterIds.ICFC_SNS_GOVERNANCE_CANISTER_ID;
 
     movePlayerToFreeAgents(dto.leagueId, dto.playerId, dto.newValueQuarterMillions);
     let _ = await updateDataHash(dto.leagueId, "players");
@@ -1681,7 +1693,7 @@ actor Self {
   };
 
   public shared ({ caller }) func recallPlayer(dto : PlayerCommands.RecallPlayer) : async () {
-    assert Principal.toText(caller) == Environment.SNS_GOVERNANCE_CANISTER_ID;
+    assert Principal.toText(caller) == CanisterIds.ICFC_SNS_GOVERNANCE_CANISTER_ID;
 
     let fromPlayerLeagueResult = Array.find(
       leaguePlayers,
@@ -1792,7 +1804,7 @@ actor Self {
   };
 
   public shared ({ caller }) func createPlayer(dto : PlayerCommands.CreatePlayer) : async () {
-    assert Principal.toText(caller) == Environment.SNS_GOVERNANCE_CANISTER_ID;
+    assert Principal.toText(caller) == CanisterIds.ICFC_SNS_GOVERNANCE_CANISTER_ID;
 
     let foundLeague = Array.find<FootballTypes.League>(
       leagues,
@@ -1850,7 +1862,7 @@ actor Self {
   };
 
   public shared ({ caller }) func updatePlayer(dto : PlayerCommands.UpdatePlayer) : async () {
-    assert Principal.toText(caller) == Environment.SNS_GOVERNANCE_CANISTER_ID;
+    assert Principal.toText(caller) == CanisterIds.ICFC_SNS_GOVERNANCE_CANISTER_ID;
 
     var positionUpdated = false;
 
@@ -1926,7 +1938,7 @@ actor Self {
   };
 
   public shared ({ caller }) func setPlayerInjury(dto : PlayerCommands.SetPlayerInjury) : async () {
-    assert Principal.toText(caller) == Environment.SNS_GOVERNANCE_CANISTER_ID;
+    assert Principal.toText(caller) == CanisterIds.ICFC_SNS_GOVERNANCE_CANISTER_ID;
 
     leaguePlayers := Array.map<(FootballTypes.LeagueId, [FootballTypes.Player]), (FootballTypes.LeagueId, [FootballTypes.Player])>(
       leaguePlayers,
@@ -2003,7 +2015,7 @@ actor Self {
   };
 
   public shared ({ caller }) func retirePlayer(dto : PlayerCommands.RetirePlayer) : async () {
-    assert Principal.toText(caller) == Environment.SNS_GOVERNANCE_CANISTER_ID;
+    assert Principal.toText(caller) == CanisterIds.ICFC_SNS_GOVERNANCE_CANISTER_ID;
 
     leaguePlayers := Array.map<(FootballTypes.LeagueId, [FootballTypes.Player]), (FootballTypes.LeagueId, [FootballTypes.Player])>(
       leaguePlayers,
@@ -2049,7 +2061,7 @@ actor Self {
   };
 
   public shared ({ caller }) func unretirePlayer(dto : PlayerCommands.UnretirePlayer) : async () {
-    assert Principal.toText(caller) == Environment.SNS_GOVERNANCE_CANISTER_ID;
+    assert Principal.toText(caller) == CanisterIds.ICFC_SNS_GOVERNANCE_CANISTER_ID;
 
     let leagueRetiredPlayers = Array.find<(FootballTypes.LeagueId, [FootballTypes.Player])>(
       retiredLeaguePlayers,
@@ -2140,7 +2152,7 @@ actor Self {
   /* League */
 
   public shared ({ caller }) func createLeague(dto : LeagueCommands.CreateLeague) : async () {
-    assert Principal.toText(caller) == Environment.SNS_GOVERNANCE_CANISTER_ID;
+    assert Principal.toText(caller) == CanisterIds.ICFC_SNS_GOVERNANCE_CANISTER_ID;
 
     var logo : Blob = Blob.fromArray([]);
 
@@ -2184,7 +2196,7 @@ actor Self {
   };
 
   public shared ({ caller }) func updateLeague(dto : LeagueCommands.UpdateLeague) : async () {
-    assert Principal.toText(caller) == Environment.SNS_GOVERNANCE_CANISTER_ID;
+    assert Principal.toText(caller) == CanisterIds.ICFC_SNS_GOVERNANCE_CANISTER_ID;
 
     let league = Array.find<FootballTypes.League>(
       leagues,
@@ -2223,7 +2235,7 @@ actor Self {
 
 
   public shared ({ caller }) func addInitialFixtures(dto : FixtureCommands.AddInitialFixtures) : async () {
-    assert Principal.toText(caller) == Environment.SNS_GOVERNANCE_CANISTER_ID;
+    assert Principal.toText(caller) == CanisterIds.ICFC_SNS_GOVERNANCE_CANISTER_ID;
 
     leagueSeasons := Array.map<(FootballTypes.LeagueId, [FootballTypes.Season]), (FootballTypes.LeagueId, [FootballTypes.Season])>(
       leagueSeasons,
@@ -2279,7 +2291,7 @@ actor Self {
   };
 
   public shared ({ caller }) func moveFixture(dto : FixtureCommands.MoveFixture) : async () {
-    assert Principal.toText(caller) == Environment.SNS_GOVERNANCE_CANISTER_ID;
+    assert Principal.toText(caller) == CanisterIds.ICFC_SNS_GOVERNANCE_CANISTER_ID;
 
     leagueSeasons := Array.map<(FootballTypes.LeagueId, [FootballTypes.Season]), (FootballTypes.LeagueId, [FootballTypes.Season])>(
       leagueSeasons,
@@ -2333,7 +2345,7 @@ actor Self {
   };
 
   public shared ({ caller }) func postponeFixture(dto : FixtureCommands.PostponeFixture) : async () {
-    assert Principal.toText(caller) == Environment.SNS_GOVERNANCE_CANISTER_ID;
+    assert Principal.toText(caller) == CanisterIds.ICFC_SNS_GOVERNANCE_CANISTER_ID;
 
     leagueSeasons := Array.map<(FootballTypes.LeagueId, [FootballTypes.Season]), (FootballTypes.LeagueId, [FootballTypes.Season])>(
       leagueSeasons,
@@ -2385,7 +2397,7 @@ actor Self {
   };
 
   public shared ({ caller }) func rescheduleFixture(dto : FixtureCommands.RescheduleFixture) : async () {
-    assert Principal.toText(caller) == Environment.SNS_GOVERNANCE_CANISTER_ID;
+    assert Principal.toText(caller) == CanisterIds.ICFC_SNS_GOVERNANCE_CANISTER_ID;
 
     leagueSeasons := Array.map<(FootballTypes.LeagueId, [FootballTypes.Season]), (FootballTypes.LeagueId, [FootballTypes.Season])>(
       leagueSeasons,
@@ -2436,7 +2448,7 @@ actor Self {
   };
 
   public shared ({ caller }) func submitFixtureData(dto : FixtureCommands.SubmitFixtureData) : async () {
-    assert Principal.toText(caller) == Environment.SNS_GOVERNANCE_CANISTER_ID;
+    assert Principal.toText(caller) == CanisterIds.ICFC_SNS_GOVERNANCE_CANISTER_ID;
 
     for (leagueApplication in Iter.fromArray(leagueApplications)) {
       if (leagueApplication.0 == dto.leagueId) {
@@ -2489,7 +2501,7 @@ actor Self {
   /* Club */
 
   public shared ({ caller }) func createClub(dto : ClubCommands.CreateClub) : async () {
-    assert Principal.toText(caller) == Environment.SNS_GOVERNANCE_CANISTER_ID;
+    assert Principal.toText(caller) == CanisterIds.ICFC_SNS_GOVERNANCE_CANISTER_ID;
 
     let leagueResult = Array.find<FootballTypes.League>(
       leagues,
@@ -2530,7 +2542,7 @@ actor Self {
   };
 
   public shared ({ caller }) func updateClub(dto : ClubCommands.UpdateClub) : async () {
-    assert Principal.toText(caller) == Environment.SNS_GOVERNANCE_CANISTER_ID;
+    assert Principal.toText(caller) == CanisterIds.ICFC_SNS_GOVERNANCE_CANISTER_ID;
 
     let leagueResult = Array.find<FootballTypes.League>(
       leagues,
@@ -3022,9 +3034,9 @@ actor Self {
 
     let playerScoresMap : TrieMap.TrieMap<Nat16, Int16> = TrieMap.TrieMap<Nat16, Int16>(Utilities.eqNat16, Utilities.hashNat16);
     for ((playerId, events) in playerEventsMap.entries()) {
-      let currentPlayer = Array.find<ResponseDTOs.PlayerDTO>(
+      let currentPlayer = Array.find<PlayerQueries.Player>(
         players,
-        func(player : ResponseDTOs.PlayerDTO) : Bool {
+        func(player : PlayerQueries.Player) : Bool {
           return player.id == playerId;
         },
       );
@@ -3076,7 +3088,7 @@ actor Self {
     };
 
     if (isUniqueHighScore) {
-      let highestScoringPlayer = Array.find<ResponseDTOs.PlayerDTO>(players, func(p : ResponseDTOs.PlayerDTO) : Bool { return p.id == highestScoringPlayerId });
+      let highestScoringPlayer = Array.find<PlayerQueries.Player>(players, func(p : PlayerQueries.Player) : Bool { return p.id == highestScoringPlayerId });
       switch (highestScoringPlayer) {
         case (null) {};
         case (?foundPlayer) {
@@ -3945,8 +3957,8 @@ actor Self {
     return true;
   };
 
-  private func countryExists(countryId : Base.CountryId) : Bool {
-    let playerCountry = Array.find<Base.Country>(Countries.countries, func(country : Base.Country) : Bool { return country.id == countryId });
+  private func countryExists(countryId : Ids.CountryId) : Bool {
+    let playerCountry = Array.find<BaseTypes.Country>(Countries.countries, func(country : BaseTypes.Country) : Bool { return country.id == countryId });
     return Option.isSome(playerCountry);
   };
 
@@ -4884,11 +4896,11 @@ actor Self {
   };
 
   //Application Notification Functions
-  private func notifyAppsOfLoan(leagueId : FootballTypes.LeagueId, playerId : FootballTypes.PlayerId) : async Result.Result<(), T.Error> {
+  private func notifyAppsOfLoan(leagueId : FootballTypes.LeagueId, playerId : FootballTypes.PlayerId) : async Result.Result<(), Enums.Error> {
     for (leagueApplication in Iter.fromArray(leagueApplications)) {
       if (leagueApplication.0 == leagueId) {
         let application_canister = actor (leagueApplication.1) : actor {
-          notifyAppsOfLoan : (leagueId : FootballTypes.LeagueId, playerId : FootballTypes.PlayerId) -> async Result.Result<(), T.Error>;
+          notifyAppsOfLoan : (leagueId : FootballTypes.LeagueId, playerId : FootballTypes.PlayerId) -> async Result.Result<(), Enums.Error>;
         };
 
         try {
@@ -4903,11 +4915,11 @@ actor Self {
     return #ok();
   };
 
-  private func notifyAppsOfLoanExpired(leagueId : FootballTypes.LeagueId, playerId : FootballTypes.PlayerId) : async Result.Result<(), T.Error> {
+  private func notifyAppsOfLoanExpired(leagueId : FootballTypes.LeagueId, playerId : FootballTypes.PlayerId) : async Result.Result<(), Enums.Error> {
     for (leagueApplication in Iter.fromArray(leagueApplications)) {
       if (leagueApplication.0 == leagueId) {
         let application_canister = actor (leagueApplication.1) : actor {
-          notifyAppsOfLoanExpired : (leagueId : FootballTypes.LeagueId, playerId : FootballTypes.PlayerId) -> async Result.Result<(), T.Error>;
+          notifyAppsOfLoanExpired : (leagueId : FootballTypes.LeagueId, playerId : FootballTypes.PlayerId) -> async Result.Result<(), Enums.Error>;
         };
         try {
           let _ = await application_canister.notifyAppsOfLoanExpired(leagueId, playerId);
@@ -4919,11 +4931,11 @@ actor Self {
     return #ok();
   };
 
-  private func notifyAppsOfTransfer(leagueId : FootballTypes.LeagueId, playerId : FootballTypes.PlayerId) : async Result.Result<(), T.Error> {
+  private func notifyAppsOfTransfer(leagueId : FootballTypes.LeagueId, playerId : FootballTypes.PlayerId) : async Result.Result<(), Enums.Error> {
     for (leagueApplication in Iter.fromArray(leagueApplications)) {
       if (leagueApplication.0 == leagueId) {
         let application_canister = actor (leagueApplication.1) : actor {
-          notifyAppsOfTransfer : (leagueId : FootballTypes.LeagueId, playerId : FootballTypes.PlayerId) -> async Result.Result<(), T.Error>;
+          notifyAppsOfTransfer : (leagueId : FootballTypes.LeagueId, playerId : FootballTypes.PlayerId) -> async Result.Result<(), Enums.Error>;
         };
         try {
           let _ = await application_canister.notifyAppsOfTransfer(leagueId, playerId);
@@ -4935,11 +4947,11 @@ actor Self {
     return #ok();
   };
 
-  private func notifyAppsOfRetirement(leagueId : FootballTypes.LeagueId, playerId : FootballTypes.PlayerId) : async Result.Result<(), T.Error> {
+  private func notifyAppsOfRetirement(leagueId : FootballTypes.LeagueId, playerId : FootballTypes.PlayerId) : async Result.Result<(), Enums.Error> {
     for (leagueApplication in Iter.fromArray(leagueApplications)) {
       if (leagueApplication.0 == leagueId) {
         let application_canister = actor (leagueApplication.1) : actor {
-          notifyAppsOfRetirement : (leagueId : FootballTypes.LeagueId, playerId : FootballTypes.PlayerId) -> async Result.Result<(), T.Error>;
+          notifyAppsOfRetirement : (leagueId : FootballTypes.LeagueId, playerId : FootballTypes.PlayerId) -> async Result.Result<(), Enums.Error>;
         };
         try {
           let _ = await application_canister.notifyAppsOfRetirement(leagueId, playerId);
@@ -4951,11 +4963,11 @@ actor Self {
     return #ok();
   };
 
-  private func notifyAppsOfPositionChange(leagueId : FootballTypes.LeagueId, playerId : FootballTypes.PlayerId) : async Result.Result<(), T.Error> {
+  private func notifyAppsOfPositionChange(leagueId : FootballTypes.LeagueId, playerId : FootballTypes.PlayerId) : async Result.Result<(), Enums.Error> {
     for (leagueApplication in Iter.fromArray(leagueApplications)) {
       if (leagueApplication.0 == leagueId) {
         let application_canister = actor (leagueApplication.1) : actor {
-          notifyAppsOfPositionChange : (leagueId : FootballTypes.LeagueId, playerId : FootballTypes.PlayerId) -> async Result.Result<(), T.Error>;
+          notifyAppsOfPositionChange : (leagueId : FootballTypes.LeagueId, playerId : FootballTypes.PlayerId) -> async Result.Result<(), Enums.Error>;
         };
         try {
           let _ = await application_canister.notifyAppsOfPositionChange(leagueId, playerId);
@@ -4969,11 +4981,11 @@ actor Self {
 
   //Fixture Notification Functions
 
-  private func notifyAppsOfGameweekStarting(leagueId : FootballTypes.LeagueId, seasonId : FootballTypes.SeasonId, gameweek : FootballTypes.GameweekNumber) : async Result.Result<(), T.Error> {
+  private func notifyAppsOfGameweekStarting(leagueId : FootballTypes.LeagueId, seasonId : FootballTypes.SeasonId, gameweek : FootballTypes.GameweekNumber) : async Result.Result<(), Enums.Error> {
     for (leagueApplication in Iter.fromArray(leagueApplications)) {
       if (leagueApplication.0 == leagueId) {
         let application_canister = actor (leagueApplication.1) : actor {
-          notifyAppsOfGameweekStarting : (leagueId : FootballTypes.LeagueId, seasonId : FootballTypes.SeasonId, gameweek : FootballTypes.GameweekNumber) -> async Result.Result<(), T.Error>;
+          notifyAppsOfGameweekStarting : (leagueId : FootballTypes.LeagueId, seasonId : FootballTypes.SeasonId, gameweek : FootballTypes.GameweekNumber) -> async Result.Result<(), Enums.Error>;
         };
         try {
           let _ = await application_canister.notifyAppsOfGameweekStarting(leagueId, seasonId, gameweek);
@@ -4985,11 +4997,11 @@ actor Self {
     return #ok();
   };
 
-  private func notifyAppsOfFixtureComplete(leagueId : FootballTypes.LeagueId, seasonId : FootballTypes.SeasonId, gameweek : FootballTypes.GameweekNumber) : async Result.Result<(), T.Error> {
+  private func notifyAppsOfFixtureComplete(leagueId : FootballTypes.LeagueId, seasonId : FootballTypes.SeasonId, gameweek : FootballTypes.GameweekNumber) : async Result.Result<(), Enums.Error> {
     for (leagueApplication in Iter.fromArray(leagueApplications)) {
       if (leagueApplication.0 == leagueId) {
         let application_canister = actor (leagueApplication.1) : actor {
-          notifyAppsOfFixtureComplete : (leagueId : FootballTypes.LeagueId, seasonId : FootballTypes.SeasonId, gameweek : FootballTypes.GameweekNumber) -> async Result.Result<(), T.Error>;
+          notifyAppsOfFixtureComplete : (leagueId : FootballTypes.LeagueId, seasonId : FootballTypes.SeasonId, gameweek : FootballTypes.GameweekNumber) -> async Result.Result<(), Enums.Error>;
         };
         try {
           let _ = await application_canister.notifyAppsOfFixtureComplete(leagueId, seasonId, gameweek);
@@ -5001,11 +5013,11 @@ actor Self {
     return #ok();
   };
 
-  private func notifyAppsOfFixtureFinalised(leagueId : FootballTypes.LeagueId, seasonId : FootballTypes.SeasonId, gameweek : FootballTypes.GameweekNumber) : async Result.Result<(), T.Error> {
+  private func notifyAppsOfFixtureFinalised(leagueId : FootballTypes.LeagueId, seasonId : FootballTypes.SeasonId, gameweek : FootballTypes.GameweekNumber) : async Result.Result<(), Enums.Error> {
     for (leagueApplication in Iter.fromArray(leagueApplications)) {
       if (leagueApplication.0 == leagueId) {
         let application_canister = actor (leagueApplication.1) : actor {
-          notifyAppsOfFixtureFinalised : (leagueId : FootballTypes.LeagueId, seasonId : FootballTypes.SeasonId, gameweek : FootballTypes.GameweekNumber) -> async Result.Result<(), T.Error>;
+          notifyAppsOfFixtureFinalised : (leagueId : FootballTypes.LeagueId, seasonId : FootballTypes.SeasonId, gameweek : FootballTypes.GameweekNumber) -> async Result.Result<(), Enums.Error>;
         };
         try {
           let _ = await application_canister.notifyAppsOfFixtureFinalised(leagueId, seasonId, gameweek);
@@ -5017,11 +5029,11 @@ actor Self {
     return #ok();
   };
 
-  private func notifyAppsOfSeasonComplete(leagueId : FootballTypes.LeagueId, seasonId : FootballTypes.SeasonId) : async Result.Result<(), T.Error> {
+  private func notifyAppsOfSeasonComplete(leagueId : FootballTypes.LeagueId, seasonId : FootballTypes.SeasonId) : async Result.Result<(), Enums.Error> {
     for (leagueApplication in Iter.fromArray(leagueApplications)) {
       if (leagueApplication.0 == leagueId) {
         let application_canister = actor (leagueApplication.1) : actor {
-          notifyAppsOfSeasonComplete : (leagueId : FootballTypes.LeagueId, seasonId : FootballTypes.SeasonId) -> async Result.Result<(), T.Error>;
+          notifyAppsOfSeasonComplete : (leagueId : FootballTypes.LeagueId, seasonId : FootballTypes.SeasonId) -> async Result.Result<(), Enums.Error>;
         };
         try {
           let _ = await application_canister.notifyAppsOfSeasonComplete(leagueId, seasonId);
@@ -5041,7 +5053,7 @@ actor Self {
       leagueStatuses,
       func(status : FootballTypes.LeagueStatus) {
 
-        let activeMonth : Base.CalendarMonth = Utilities.unixTimeToMonth(earliestGameweekKickOffTime);
+        let activeMonth : BaseTypes.CalendarMonth = Utilities.unixTimeToMonth(earliestGameweekKickOffTime);
 
         if (status.leagueId == leagueId) {
           return {
@@ -5071,11 +5083,11 @@ actor Self {
 
     var updated = false;
 
-    leagueDataHashes := Array.map<(FootballTypes.LeagueId, [Base.DataHash]), (FootballTypes.LeagueId, [Base.DataHash])>(
+    leagueDataHashes := Array.map<(FootballTypes.LeagueId, [BaseTypes.DataHash]), (FootballTypes.LeagueId, [BaseTypes.DataHash])>(
       leagueDataHashes,
-      func(entry : (FootballTypes.LeagueId, [Base.DataHash])) {
+      func(entry : (FootballTypes.LeagueId, [BaseTypes.DataHash])) {
         if (entry.0 == leagueId) {
-          let hashBuffer = Buffer.fromArray<Base.DataHash>([]);
+          let hashBuffer = Buffer.fromArray<BaseTypes.DataHash>([]);
           for (hashObj in Iter.fromArray(entry.1)) {
             if (hashObj.category == category) {
               hashBuffer.add({ category = hashObj.category; hash = randomHash });

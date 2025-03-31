@@ -1,8 +1,6 @@
 import FootballTypes "mo:waterway-mops/FootballTypes";
 module ClubCommands {
 
-  
-
   public type CreateClub = {
     leagueId: FootballTypes.LeagueId;
     name : Text;
