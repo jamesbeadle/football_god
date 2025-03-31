@@ -7,7 +7,6 @@ import { Principal } from "@dfinity/principal";
 import { Text } from "@dfinity/candid/lib/cjs/idl";
 import { createAgent } from "@dfinity/utils";
 import type { OptionIdentity } from "../types/identity";
-import { AdminService } from "../services/admin-service";
 
 function createUserStore() {
   const { subscribe, set } = writable<any>(null);
@@ -190,18 +189,6 @@ function createUserStore() {
     set(profileData);
   }
 
-  async function isAdmin(): Promise<boolean> {
-    return new AdminService().isAdmin();
-  }
-
-  async function isDataManager(): Promise<boolean> {
-    return new AdminService().isDataManager();
-  }
-
-  async function isAuditor(): Promise<boolean> {
-    return new AdminService().isAuditor();
-  }
-
   async function getFPLBalance(): Promise<bigint> {
     let identity: OptionIdentity;
 
@@ -252,9 +239,6 @@ function createUserStore() {
     isUsernameAvailable,
     cacheProfile,
     withdrawFPL,
-    isDataManager,
-    isAdmin,
-    isAuditor,
     getFPLBalance,
   };
 }

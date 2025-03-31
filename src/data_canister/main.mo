@@ -35,6 +35,7 @@ import FootballTypes "mo:waterway-mops/football/FootballTypes";
 import FootballIds "mo:waterway-mops/football/FootballIds";
 import FootballDefinitions "mo:waterway-mops/football/FootballDefinitions";
 import FootballEnums "mo:waterway-mops/football/FootballEnums";
+import BaseDefinitions "mo:waterway-mops/BaseDefinitions";
 
 /* ----- Queries ----- */
 import PlayerQueries "queries/player_queries";
@@ -5078,7 +5079,7 @@ actor Self {
       leagueStatuses,
       func(status : FootballTypes.LeagueStatus) {
 
-        let activeMonth : BaseTypes.CalendarMonth = Utilities.unixTimeToMonth(earliestGameweekKickOffTime);
+        let activeMonth : BaseDefinitions.CalendarMonth = Utilities.unixTimeToMonth(earliestGameweekKickOffTime);
 
         if (status.leagueId == leagueId) {
           return {
