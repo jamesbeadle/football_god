@@ -13,7 +13,7 @@ export class ClubService {
     const identityActor: any =
       await ActorFactory.createDataCanisterIdentityActor(
         authStore,
-        process.env.DATA_CANISTER_ID ?? "",
+        process.env.BACKEND_CANISTER_ID ?? "",
       );
 
     const result = await identityActor.getClubs(leagueId);

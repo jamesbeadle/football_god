@@ -11,9 +11,9 @@ export class LeagueService {
 
   async getLeagues(): Promise<League[]> {
     const identityActor: any =
-      await ActorFactory.createDataCanisterIdentityActor(
+      await ActorFactory.createIdentityActor(
         authStore,
-        process.env.DATA_CANISTER_CANISTER_ID ?? "",
+        process.env.BACKEND_CANISTER_ID ?? "",
       );
     const result = await identityActor.getLeagues();
     if (isError(result)) throw new Error("Failed to fetch leagues");
@@ -22,9 +22,9 @@ export class LeagueService {
 
   async getLeagueStatus(leagueId: number): Promise<LeagueStatus> {
     const identityActor: any =
-      await ActorFactory.createDataCanisterIdentityActor(
+      await ActorFactory.createIdentityActor(
         authStore,
-        process.env.DATA_CANISTER_CANISTER_ID ?? "",
+        process.env.BACKEND_CANISTER_ID ?? "",
       );
     const result = await identityActor.getLeagueStatus(leagueId);
     if (isError(result)) throw new Error("Failed to fetch league status");

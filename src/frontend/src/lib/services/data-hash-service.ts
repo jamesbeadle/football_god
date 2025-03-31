@@ -11,9 +11,9 @@ export class DataHashService {
 
   async getDataHashes(leagueId: LeagueId): Promise<DataHash[]> {
     const identityActor: any =
-      await ActorFactory.createDataCanisterIdentityActor(
+      await ActorFactory.createIdentityActor(
         authStore,
-        process.env.DATA_CANISTER_CANISTER_ID ?? "",
+        process.env.BACKEND_CANISTER_ID ?? "",
       );
     const result = await identityActor.getDataHashes(leagueId);
     if (isError(result)) throw new Error("Failed to fetch data hashes");

@@ -5,7 +5,7 @@
   import { leagueStore } from "$lib/stores/league-store";
   import { clubStore } from "$lib/stores/club-store";
   import { playerStore } from "$lib/stores/player-store";
-  import type { Club, CountryDTO, FootballLeagueDTO, Player } from "../../../../declarations/data_canister/data_canister.did";
+  import type { Club, Country, League, Player } from "../../../../declarations/data_canister/data_canister.did";
   
   import Layout from "../Layout.svelte";
   import CreatePlayer from "$lib/components/governance/player/create-player.svelte";
@@ -34,9 +34,9 @@
   let maxValue: number = 150;
   let searchSurname = "";
   
-  let leagues: FootballLeagueDTO[] = [];
+  let leagues: League[] = [];
   let clubs: Club[] = [];
-  let countries: CountryDTO[] = [];
+  let countries: Country[] = [];
   
   let filteredPlayers: Player[] = [];
   let allLeaguePlayers: Record<number, Player[]> = {};
@@ -113,7 +113,7 @@
   async function fetchPlayersForLeague(leagueId: number) {
     if (!allLeaguePlayers[leagueId]) {
       try {
-        const leaguePlayers = await playerStore.getPlayers(leagueId);
+        const leaguePlayers = await playerStore.getPlayers({leagueId});
         allLeaguePlayers[leagueId] = leaguePlayers;
       } catch (error) {
         console.error("Error fetching players:", error);

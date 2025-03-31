@@ -48,6 +48,17 @@ actor Self {
     return #ok(stable_app_status);
   };
 
+  /* ----- Data Canister Calls -----  */
+
+  //getDataHashes
+  //getClubs
+  //getCountries
+  //getSeasons
+  //getLoanedPlayers
+  //getPlayers
+  //getLeagueStatus
+  //getLeagues
+  //getFixtures
   
   /* ----- Canister Lifecycle Management ----- */
   

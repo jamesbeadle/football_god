@@ -8,20 +8,20 @@ export class FixtureService {
 
   async getFixturesHash(leagueId: number): Promise<string> {
     const identityActor: any =
-      await ActorFactory.createDataCanisterIdentityActor(
+      await ActorFactory.createIdentityActor(
         authStore,
-        process.env.DATA_CANISTER_CANISTER_ID ?? "",
+        process.env.BACKEND_CANISTER_ID ?? "",
       );
-    const result = await identityActor.getFixturesHash(leagueId);
+    const result = await identityActor.getFixtures(leagueId);
     if (isError(result)) throw new Error("Failed to fetch fixtures hash");
     return result.ok;
   }
 
   async getPostponedFixtures(leagueId: number): Promise<Fixture[]> {
     const identityActor: any =
-      await ActorFactory.createDataCanisterIdentityActor(
+      await ActorFactory.createIdentityActor(
         authStore,
-        process.env.DATA_CANISTER_CANISTER_ID ?? "",
+        process.env.BACKEND_CANISTER_ID ?? "",
       );
     const result = await identityActor.getPostponedFixtures(leagueId);
     if (isError(result)) throw new Error("Failed to fetch postponed fixtures");
@@ -30,9 +30,9 @@ export class FixtureService {
 
   async getFixtures(leagueId: number, seasonId: number): Promise<Fixture[]> {
     const identityActor: any =
-      await ActorFactory.createDataCanisterIdentityActor(
+      await ActorFactory.createIdentityActor(
         authStore,
-        process.env.DATA_CANISTER_CANISTER_ID ?? "",
+        process.env.BACKEND_CANISTER_ID ?? "",
       );
     const result = await identityActor.getFixtures(leagueId, seasonId);
     if (isError(result)) throw new Error("Failed to fetch fixtures");

@@ -1,35 +1,36 @@
-import type { LeagueId } from "../../../../declarations/backend/backend.did";
 import { ActorFactory } from "../utils/ActorFactory";
 import { isError } from "../utils/helpers";
 import { authStore } from "$lib/stores/auth-store";
 import type {
-  LoanedPlayerDTO,
+  GetLoanedPlayers,
+  GetPlayers,
+  LoanedPlayers,
   Player,
 } from "../../../../declarations/data_canister/data_canister.did";
 
 export class PlayerService {
   constructor() {}
 
-  async getPlayers(leagueId: LeagueId): Promise<Player[]> {
+  async getPlayers(dto: GetPlayers): Promise<Player[]> {
     const identityActor: any =
-      await ActorFactory.createDataCanisterIdentityActor(
+      await ActorFactory.createIdentityActor(
         authStore,
-        process.env.DATA_CANISTER_CANISTER_ID ?? "",
+        process.env.BACKEND_CANISTER_ID ?? "",
       );
 
-    const result = await identityActor.getPlayers(leagueId);
+    const result = await identityActor.getPlayers(dto);
     if (isError(result)) throw new Error("Failed to fetch players");
     return result.ok;
   }
 
-  async getLoanedPlayers(leagueId: LeagueId): Promise<LoanedPlayerDTO[]> {
+  async getLoanedPlayers(dto: GetLoanedPlayers): Promise<LoanedPlayers> {
     const identityActor: any =
-      await ActorFactory.createDataCanisterIdentityActor(
+      await ActorFactory.createIdentityActor(
         authStore,
-        process.env.DATA_CANISTER_CANISTER_ID ?? "",
+        process.env.BACKEND_CANISTER_ID ?? "",
       );
-    const result = await identityActor.getLoanedPlayers(leagueId);
-    if (isError(result)) throw new Error("Failed to fetch players");
+    const result = await identityActor.getLoanedPlayers(dto);
+    if (isError(result)) throw new Error("Failed to fetch loaned players");
     return result.ok;
   }
 }

@@ -92,6 +92,7 @@ actor Self {
 
   public shared query ({ caller }) func getDataHashes(dto: AppQueries.GetDataHashes) : async Result.Result<AppQueries.DataHashes, Enums.Error> {
     assert not Principal.isAnonymous(caller);
+    
     let leagueDataHashesResult = Array.find<(FootballIds.LeagueId, [BaseTypes.DataHash])>(
       leagueDataHashes,
       func(entry : (FootballIds.LeagueId, [BaseTypes.DataHash])) : Bool {
