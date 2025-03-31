@@ -26,12 +26,10 @@ import Countries "mo:waterway-mops/def/Countries";
 import Ids "mo:waterway-mops/Ids";
 import Enums "mo:waterway-mops/Enums";
 
-//Why Types
 import BaseTypes "mo:waterway-mops/BaseTypes";
 import FootballTypes "mo:waterway-mops/FootballTypes";
 import CanisterIds "mo:waterway-mops/CanisterIds";
 import BaseUtilities "mo:waterway-mops/BaseUtilities";
-import T "../backend/types/app_types";
 
 /* ----- Queries ----- */
 import PlayerQueries "queries/player_queries";
