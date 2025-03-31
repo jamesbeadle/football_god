@@ -20,9 +20,8 @@ import Time "mo:base/Time";
 import Timer "mo:base/Timer";
 import TrieMap "mo:base/TrieMap";
 
-/* ----- Mops Packages ----- */
 
-
+/* ----- WWL Mops Packages ----- */
 
 import SHA224 "mo:waterway-mops/SHA224";
 import Countries "mo:waterway-mops/def/Countries";
