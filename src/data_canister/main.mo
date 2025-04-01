@@ -36,6 +36,7 @@ import FootballIds "mo:waterway-mops/football/FootballIds";
 import FootballDefinitions "mo:waterway-mops/football/FootballDefinitions";
 import FootballEnums "mo:waterway-mops/football/FootballEnums";
 import BaseDefinitions "mo:waterway-mops/BaseDefinitions";
+import BaseQueries "mo:waterway-mops/queries/BaseQueries";
 
 /* ----- Queries ----- */
 import PlayerQueries "queries/player_queries";
@@ -108,7 +109,7 @@ actor Self {
     return #err(#NotFound);
   };
 
-  public shared query ({ caller }) func getCountries(_: AppQueries.GetCountries) : async Result.Result<AppQueries.Countries, Enums.Error> {
+  public shared query ({ caller }) func getCountries(_: BaseQueries.GetCountries) : async Result.Result<BaseQueries.Countries, Enums.Error> {
     assert not Principal.isAnonymous(caller);
     return #ok({ countries = Countries.countries });
   };
