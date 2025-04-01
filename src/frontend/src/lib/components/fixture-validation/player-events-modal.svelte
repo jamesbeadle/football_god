@@ -46,8 +46,6 @@
 
 
   onMount(() => {
-    console.log("loading")
-    console.log(player)
     const cardEvents = $playerEventData.filter(
       event =>
         ("YellowCard" in event.eventType || "RedCard" in event.eventType) &&
@@ -307,7 +305,6 @@
   }
 
   function exitModal(){
-    console.log("exit")
     closeModal();
   }
 

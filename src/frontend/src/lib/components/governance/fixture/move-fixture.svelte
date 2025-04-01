@@ -37,7 +37,6 @@
 
   onMount(async () => {
     try {
-      console.log(selectedFixtureId)
       let leagueStatus = await leagueStore.getLeagueStatus(selectedLeagueId);
       gameweeks = Array.from({ length: leagueStatus.totalGameweeks }, (_, i) => i + 1);
     } catch (error) {
@@ -71,7 +70,6 @@
       };
       submitting = true;
 
-      console.log("moving fixture")
       let result = await governanceStore.moveFixture(dto);
       if (isError(result)) {
         isLoading = false;
@@ -84,7 +82,6 @@
     } catch (error) {
       console.error("Error raising proposal: ", error);
     } finally {
-      console.log("finally")
       isLoading = false;
       visible = false;
       resetForm();
@@ -93,14 +90,12 @@
   }
 
   function resetForm() {
-    console.log("resetting")
     date = "";
     time = "";
     dateTime = "";
   }
 
   function cancelModal() {
-    console.log("cancelling")
     resetForm();
     closeModal();
   }

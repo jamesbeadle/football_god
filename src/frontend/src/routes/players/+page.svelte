@@ -113,7 +113,7 @@
   async function fetchPlayersForLeague(leagueId: number) {
     if (!allLeaguePlayers[leagueId]) {
       try {
-        const leaguePlayers = await playerStore.getPlayers({leagueId});
+        const leaguePlayers = await playerStore.getPlayers(leagueId);
         allLeaguePlayers[leagueId] = leaguePlayers;
       } catch (error) {
         console.error("Error fetching players:", error);

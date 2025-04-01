@@ -35,6 +35,8 @@ import type {
   UpdateLeague,
   RescheduleFixture,
   SetFreeAgent,
+  GetPlayers,
+  GetLeagues,
 } from "../../../../declarations/data_canister/data_canister.did";
 
 import type {
@@ -599,7 +601,6 @@ function createGovernanceStore() {
     let userIdentity: OptionIdentity;
     authStore.subscribe((auth) => (userIdentity = auth.identity));
     if (!userIdentity) return;
-
     const allPlayers = await playerStore.getPlayers(dto.leagueId);
     const player = allPlayers.find((p) => p.id === dto.playerId);
     if (!player) throw new Error("Player not found.");
@@ -773,8 +774,6 @@ function createGovernanceStore() {
   }
 
   async function moveFixture(dto: MoveFixture): Promise<any> {
-    console.log("moving fixture");
-    console.log();
     let userIdentity: OptionIdentity;
     authStore.subscribe((auth) => (userIdentity = auth.identity));
     if (!userIdentity) return;

@@ -3,14 +3,16 @@ import { ActorFactory } from "../utils/ActorFactory";
 import { isError } from "../utils/helpers";
 import type {
   GetLeagues,
-  League,
+  GetLeagueStatus,
+  Leagues,
+  LeagueId,
   LeagueStatus,
 } from "../../../../declarations/data_canister/data_canister.did";
 
 export class LeagueService {
   constructor() {}
 
-  async getLeagues(): Promise<League[]> {
+  async getLeagues(): Promise<Leagues> {
     const identityActor: any = await ActorFactory.createIdentityActor(
       authStore,
       process.env.BACKEND_CANISTER_ID ?? "",
@@ -21,12 +23,13 @@ export class LeagueService {
     return result.ok;
   }
 
-  async getLeagueStatus(leagueId: number): Promise<LeagueStatus> {
+  async getLeagueStatus(leagueId: LeagueId): Promise<LeagueStatus> {
     const identityActor: any = await ActorFactory.createIdentityActor(
       authStore,
       process.env.BACKEND_CANISTER_ID ?? "",
     );
-    const result = await identityActor.getLeagueStatus(leagueId);
+    let dto: GetLeagueStatus = { leagueId };
+    const result = await identityActor.getLeagueStatus(dto);
     if (isError(result)) throw new Error("Failed to fetch league status");
     return result.ok;
   }

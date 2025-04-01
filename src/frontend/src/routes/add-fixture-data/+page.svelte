@@ -88,7 +88,7 @@
   onMount(async () => {
     try {
       clubs = await clubStore.getClubs(leagueId);      
-      players = await playerStore.getPlayers({leagueId});
+      players = await playerStore.getPlayers(leagueId);
 
       let leagueStatus = await leagueStore.getLeagueStatus(leagueId);
       const fixtures = await fixtureStore.getFixtures(leagueId, leagueStatus.activeSeasonId);

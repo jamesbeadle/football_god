@@ -125,7 +125,8 @@ actor Self {
     let data_canister = actor (CanisterIds.ICFC_DATA_CANISTER_ID) : actor {
       getLeagues : (dto: LeagueQueries.GetLeagues) -> async Result.Result<LeagueQueries.Leagues, Enums.Error>;
     };
-    return await data_canister.getLeagues(dto);
+    let result = await data_canister.getLeagues(dto);
+    return result;
   };
 
   public shared ({ caller }) func getLeagueStatus(dto: LeagueQueries.GetLeagueStatus) : async Result.Result<LeagueQueries.LeagueStatus, Enums.Error> {

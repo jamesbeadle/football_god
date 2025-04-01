@@ -5,7 +5,7 @@
   import { clubStore } from "$lib/stores/club-store";
   import { fixtureStore } from "$lib/stores/fixture-store";
   import { leagueStore } from "$lib/stores/league-store";
-  import type { Club, Fixture, FootballLeagueDTO } from "../../../../../declarations/data_canister/data_canister.did";
+  import type { Club, Fixture, League } from "../../../../../declarations/data_canister/data_canister.did";
 
   import MoveFixture from "../governance/fixture/move-fixture.svelte";
   import LocalSpinner from "../shared/local-spinner.svelte";
@@ -16,7 +16,7 @@
   export let leagueId: number;
 
   let isLoading = true;
-  let league: FootballLeagueDTO | undefined;
+  let league: League | undefined;
   let clubs: Club[] = [];
   let fixtures: Fixture[] = [];
   let fitleredFixtures: Fixture[] = [];
@@ -113,7 +113,6 @@
   }
 
   function closeModal() {
-    console.log("close modal called")
     selectedFixtureId = 0;
     showMoveFixtureModal = false;
     showPostponeFixtureModal = false;

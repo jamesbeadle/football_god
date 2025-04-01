@@ -3,7 +3,7 @@
   import { goto } from "$app/navigation";
   import { leagueStore } from "$lib/stores/league-store";
   import { convertDateToReadable, getImageURL } from "$lib/utils/helpers";
-  import type { League } from "../../../../declarations/data_canister/data_canister.did";
+  import type { League, Leagues } from "../../../../declarations/data_canister/data_canister.did";
   import Layout from "../+layout.svelte";
   import LocalSpinner from "$lib/components/shared/local-spinner.svelte";
   import AddLeagueModal from "$lib/components/governance/league/create-league.svelte";
@@ -13,7 +13,7 @@
   let isLoading = true;
   let showAddLeague = false;
   let showUpdateLeague = false;
-  let leagues: League[] = [];
+  let leagues: Leagues | null = null;
   let dropdownVisible: number | null = null;
   let selectedLeague: League;
 
@@ -57,7 +57,7 @@
   }
 
   function getLeagueById(leagueId: number) {
-    return leagues.find(league => league.id === leagueId) as League;
+    return leagues?.leagues.find(league => league.id === leagueId) as League;
   }
 
   function toggleDropdown(leagueId: number, event: MouseEvent) {
@@ -81,7 +81,7 @@
     </div>
     
     <div class="px-2 pb-4 space-y-4 mb:px-0">
-      {#each leagues.sort((a, b) => Number(a.id) - Number(b.id)) as league}
+      {#each leagues!.leagues.sort((a, b) => Number(a.id) - Number(b.id)) as league}
         <div class="flex flex-row items-center justify-between w-full p-4 transition rounded-lg shadow bg-BrandGray hover:bg-BrandLightGray">
           <div class="flex items-center space-x-4">
             <img

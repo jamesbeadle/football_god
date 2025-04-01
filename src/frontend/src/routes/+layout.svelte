@@ -29,25 +29,18 @@
   };
 
   onMount(async () => {
-    console.log("on mount")
-    console.log(browser)
     if (browser) {
       document.querySelector('#app-spinner')?.remove();
     }
-    console.log("init")
     await init();
-    console.log("complete")
     const identity = get(authStore).identity;
-    console.log(identity)
     if (identity) {
       try {
       } catch (err) {
         console.error('initUserProfile error:', err);
       }
     }
-    console.log("init auth worker")
     worker = await initAuthWorker();
-    console.log("init auth worker complete")
     isLoading = false;
   });
 </script>

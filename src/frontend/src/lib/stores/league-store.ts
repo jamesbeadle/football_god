@@ -1,6 +1,9 @@
 import { writable } from "svelte/store";
 import type {
+  GetLeagues,
+  GetLeagueStatus,
   League,
+  LeagueId,
   LeagueStatus,
 } from "../../../../declarations/data_canister/data_canister.did";
 import { LeagueService } from "$lib/services/league-service";
@@ -15,7 +18,7 @@ function createLeagueStore() {
     return new LeagueService().getLeagues();
   }
 
-  async function getLeagueStatus(leagueId: number): Promise<LeagueStatus> {
+  async function getLeagueStatus(leagueId: LeagueId): Promise<LeagueStatus> {
     return new LeagueService().getLeagueStatus(leagueId);
   }
 
