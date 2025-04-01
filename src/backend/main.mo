@@ -78,12 +78,12 @@ actor Self {
     return await data_canister.getClubs(dto);
   };
 
-  public shared ({ caller }) func getCountries(dto: AppQueries.GetCountries) : async Result.Result<AppQueries.Countries, Enums.Error> {
+  public shared ({ caller }) func getCountries(dto: BaseQueries.GetCountries) : async Result.Result<BaseQueries.Countries, Enums.Error> {
     assert not Principal.isAnonymous(caller);
     // TODO: Check caller is a member
 
     let data_canister = actor (CanisterIds.ICFC_DATA_CANISTER_ID) : actor {
-      getCountries : (dto: AppQueries.GetCountries) -> async Result.Result<AppQueries.Countries, Enums.Error>;
+      getCountries : (dto: BaseQueries.GetCountries) -> async Result.Result<BaseQueries.Countries, Enums.Error>;
     };
     return await data_canister.getCountries(dto);
   };
