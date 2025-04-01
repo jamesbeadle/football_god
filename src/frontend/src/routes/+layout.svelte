@@ -4,7 +4,6 @@
   import { browser } from "$app/environment";
 
   import { get } from "svelte/store";
-  import { appStore } from "$lib/stores/app-store";
   import { initAuthWorker } from "$lib/services/worker.auth.services";
   import { authStore, type AuthStoreData } from "$lib/stores/auth-store";
 
