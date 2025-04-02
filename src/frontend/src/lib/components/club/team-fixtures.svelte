@@ -16,6 +16,7 @@
     import TeamFixturesTableHeader from "../club/team-fixtures-table-header.svelte";
     import BadgeIcon from "$lib/icons/BadgeIcon.svelte";
     import type { Club } from "../../../../../declarations/data_canister/data_canister.did";
+    import { leagueStore } from "$lib/stores/league-store";
   
     export let club: Club;
     export let leagueId: number;
@@ -36,8 +37,17 @@
   
     onMount(async () => {
         //await storeManager.syncStores();
-        const fixtures = await fixtureStore.getFixtures(leagueId, 1);
-        const clubs = await clubStore.getClubs(leagueId);
+        let leagueStatusResult = await leagueStore.getLeagueStatus(leagueId);
+        if(!leagueStatusResult) throw new Error("Failed to fetch league status");
+        let leagueStatus = leagueStatusResult;
+
+        let fixturesResult = await fixtureStore.getFixtures(leagueId, leagueStatus?.activeSeasonId ?? 1);
+        if(!fixturesResult) throw new Error("Failed to fetch fixtures");
+        let fixtures = fixturesResult.fixtures;
+        
+        let clubsResult = await clubStore.getClubs(leagueId);
+        if(!clubsResult) throw new Error("Failed to fetch clubs");
+        let clubs = clubsResult.clubs;
         
         const clubFixtures = fixtures.filter(fixture => 
             fixture.homeClubId === club.id || fixture.awayClubId === club.id

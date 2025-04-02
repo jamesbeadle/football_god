@@ -41,19 +41,29 @@
     }
   
     onMount(async () => {
-        leagueStatus = await leagueStore.getLeagueStatus(leagueId);
+      let leagueStatusResult = await leagueStore.getLeagueStatus(id);
+        if(!leagueStatusResult) throw new Error("Failed to fetch league status");
+        leagueStatus = leagueStatusResult;
         const seasons = await seasonStore.getSeasons(leagueId);
         seasonName = seasons.find(x => x.id == leagueStatus?.activeSeasonId)?.name ?? "";
         $selectedGameweek = leagueStatus?.activeGameweek == 0 
             ? leagueStatus?.unplayedGameweek 
             : leagueStatus?.activeGameweek ?? 1;
 
-        [clubs, fixtures] = await Promise.all([clubStore.getClubs(leagueId), fixtureStore.getFixtures(leagueId, 1)]);
+            let fixturesResult = await fixtureStore.getFixtures(leagueId, leagueStatus?.activeSeasonId ?? 1);
+            if(!fixturesResult) throw new Error("Failed to fetch fixtures");
+            let fixtures = fixturesResult.fixtures;
+
+            let clubsResult = await clubStore.getClubs(leagueId);
+            if(!clubsResult) throw new Error("Failed to fetch fixtures");
+            clubs = clubsResult.clubs;
 
         let teamFixtures = fixtures.filter((x) => x.homeClubId === club.id || x.awayClubId === club.id);
         fixturesWithTeams = getFixturesWithTeams(clubs, fixtures);
 
-        players = await playerStore.getPlayers(leagueId);
+        let playersResult = await playerStore.getPlayers(leagueId);
+        if(!playersResult) throw new Error("Failed to fetch players");
+        players = playersResult.players;
         highestScoringPlayer = players.filter(x => x.clubId == club.id)
           .sort((a, b) => Number(b.valueQuarterMillions) - Number(a.valueQuarterMillions))[0];
   

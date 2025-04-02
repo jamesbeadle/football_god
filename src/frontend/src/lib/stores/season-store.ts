@@ -1,19 +1,19 @@
 import { writable } from "svelte/store";
 import { SeasonService } from "$lib/services/season-service";
-import type { Season } from "../../../../declarations/data_canister/data_canister.did";
+import type { Season, Seasons } from "../../../../declarations/data_canister/data_canister.did";
 
 function createSeasonStore() {
-  const { subscribe, set } = writable<Season[]>([]);
+  const { subscribe, set } = writable<Seasons | undefined>(undefined);
 
-  async function getSeasons(leagueId: number): Promise<Season[]> {
+  async function getSeasons(leagueId: number): Promise<Seasons | undefined> {
     const seasons = await new SeasonService().getSeasons(leagueId);
-    return seasons ?? [];
+    return seasons;
   }
 
   async function getSeasonName(seasonId: number): Promise<string | undefined> {
     let seasons: Season[] = [];
     await subscribe((value) => {
-      seasons = value;
+      seasons = value?.seasons!;
     })();
 
     if (seasons.length == 0) {
@@ -29,7 +29,7 @@ function createSeasonStore() {
 
   return {
     subscribe,
-    setSeasons: (seasons: Season[]) => set(seasons),
+    setSeasons: (seasons: Seasons) => set(seasons),
     getSeasons,
     getSeasonName,
   };

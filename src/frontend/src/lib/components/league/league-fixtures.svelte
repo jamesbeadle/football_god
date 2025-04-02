@@ -31,12 +31,23 @@
   
   onMount(async () => {
     try {
-      let leagues = await leagueStore.getLeagues();
+      let leaguesResult = await leagueStore.getLeagues();
+      if(!leaguesResult) throw new Error("Error fetching leagues.");
+      let leagues = leaguesResult.leagues;
       league = leagues.find(x => x.id == leagueId);
-      clubs = await clubStore.getClubs(leagueId);
-      let leagueStatus = await leagueStore.getLeagueStatus(leagueId);
+    
+      let clubsResult = await clubStore.getClubs(league?.id!);
+      if(!clubsResult) throw new Error("Error loading clubs")
+      clubs = clubsResult.clubs;
+
+      let leagueStatusResult = await leagueStore.getLeagueStatus(league?.id!);
+        if(!leagueStatusResult) throw new Error("Failed to fetch league status");
+        var leagueStatus = leagueStatusResult;
   
-      fixtures = await fixtureStore.getFixtures(leagueId, leagueStatus?.activeSeasonId ?? 1);
+      let fixturesResult = await fixtureStore.getFixtures(leagueId, leagueStatus?.activeSeasonId ?? 1);
+      if(!fixturesResult) throw new Error("Failed to fetch fixtures");
+      fixtures = fixturesResult.fixtures;
+
 
       const highestGameweek = fixtures.reduce((max, fixture) => Math.max(max, fixture.gameweek), 0);
       gameweeks = Array.from({ length: Number(highestGameweek) }, (_, i) => i + 1);
@@ -105,7 +116,9 @@
   }
 
   async function loadAddFixtureData(fixtureId: number) {
-    var leagueStatus = await leagueStore.getLeagueStatus(leagueId);
+    let leagueStatusResult = await leagueStore.getLeagueStatus(leagueId);
+        if(!leagueStatusResult) throw new Error("Failed to fetch league status");
+        var leagueStatus = leagueStatusResult;
     if(!leagueStatus){
       return;
     }

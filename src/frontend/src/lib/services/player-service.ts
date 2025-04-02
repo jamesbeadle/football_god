@@ -7,12 +7,13 @@ import type {
   LeagueId,
   LoanedPlayers,
   Player,
+  Players,
 } from "../../../../declarations/data_canister/data_canister.did";
 
 export class PlayerService {
   constructor() {}
 
-  async getPlayers(leagueId: LeagueId): Promise<Player[]> {
+  async getPlayers(leagueId: LeagueId): Promise<Players | undefined> {
     const identityActor: any = await ActorFactory.createIdentityActor(
       authStore,
       process.env.BACKEND_CANISTER_ID ?? "",
@@ -23,7 +24,7 @@ export class PlayerService {
     return result.ok;
   }
 
-  async getLoanedPlayers(leagueId: LeagueId): Promise<LoanedPlayers> {
+  async getLoanedPlayers(leagueId: LeagueId): Promise<LoanedPlayers | undefined> {
     const identityActor: any = await ActorFactory.createIdentityActor(
       authStore,
       process.env.BACKEND_CANISTER_ID ?? "",

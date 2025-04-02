@@ -18,7 +18,6 @@
   export let selectedFixture: Fixture;
 
   let gameweeks: GameweekNumber[] = [];
-  let nextUnplayedGameweek: number = 0;
   let totalGameweeks: number = 0;
   let newGameweek: number = 0;
   let gameweekOptions: { id: number; label: string }[] = [];
@@ -39,11 +38,16 @@
 
   onMount(async () => {
     try {
-      clubs = await clubStore.getClubs(selectedLeagueId);
+      let clubsResult = await clubStore.getClubs(selectedLeagueId);
+      if(!clubsResult) throw new Error("Error loading clubs")
+      clubs = clubsResult.clubs;
+
       homeTeam = clubs.find(x=>x.id == selectedFixture.homeClubId)!;
       awayTeam = clubs.find(x=>x.id == selectedFixture.awayClubId)!;
 
-      let leagueStatus = await leagueStore.getLeagueStatus(selectedLeagueId);
+      let leagueStatusResult = await leagueStore.getLeagueStatus(selectedLeagueId);
+        if(!leagueStatusResult) throw new Error("Failed to fetch league status");
+        let leagueStatus = leagueStatusResult;
       totalGameweeks = leagueStatus.totalGameweeks;
       gameweeks = Array.from(
         { length: totalGameweeks },

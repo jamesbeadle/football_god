@@ -33,7 +33,9 @@
     try {
       isLoading = true;
       newValueMillions = selectedPlayer.valueQuarterMillions / 4;
-      transferLeagues = await leagueStore.getLeagues();
+      let leaguesResult = await leagueStore.getLeagues();
+      if(!leaguesResult) throw new Error("Error loading leagues")
+      transferLeagues  = leaguesResult.leagues;
     } catch (error) {
       console.error("Error syncing proposal data.", error);
     } finally {
@@ -46,7 +48,9 @@
   };
 
   async function getTransferClubs() {
-    transferClubs = await clubStore.getClubs(transferLeagueId);
+    let clubsResult = await clubStore.getClubs(transferLeagueId);
+      if(!clubsResult) throw new Error("Error loading clubs")
+      transferClubs = clubsResult.clubs;
   }
 
   async function confirmProposal() {

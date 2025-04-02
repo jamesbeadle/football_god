@@ -42,12 +42,19 @@
     });
 
     async function loadData(){
-      countries = await countryStore.getCountries();
-      let leagues = await leagueStore.getLeagues();      
+      let countriesResult = await countryStore.getCountries();
+      if(!countriesResult) throw new Error("Failed to fetch countries");
+      countries = countriesResult.countries;
+      let leaguesResult = await leagueStore.getLeagues();
+      if(!leaguesResult) throw new Error("Error fetching leagues.");
+      let leagues = leaguesResult.leagues;     
       league = leagues.find((x) => x.id == id) ?? null;
       
       try {
-        leagueStatus = await leagueStore.getLeagueStatus(id);
+        let leagueStatusResult = await leagueStore.getLeagueStatus(id);
+        if(!leagueStatusResult) throw new Error("Failed to fetch league status");
+        leagueStatus = leagueStatusResult;
+        
       } catch (error) {
         leagueStatus = null;
       }

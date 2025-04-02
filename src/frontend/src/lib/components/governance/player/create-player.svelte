@@ -58,8 +58,12 @@
   onMount(async () => {
     try {
       isLoading = true;
-      countries = await countryStore.getCountries();
-      leagues = await leagueStore.getLeagues();
+      let countriesResult = await countryStore.getCountries();
+      if(!countriesResult) throw new Error("Failed to fetch countries");
+      countries = countriesResult.countries;
+      let leaguesResult = await leagueStore.getLeagues();
+      if(!leaguesResult) throw new Error("Error loading leagues")
+      leagues  = leaguesResult.leagues;
       leaguesLoaded = true; 
       
       if (selectedLeagueId > 0) {
@@ -77,7 +81,9 @@
   }
 
   async function getClubs() {
-    clubs = await clubStore.getClubs(selectedLeagueId);
+    let clubsResult = await clubStore.getClubs(selectedLeagueId);
+    if(!clubsResult) throw new Error("Error loading clubs")
+    clubs = clubsResult.clubs;
   }
 
   async function confirmProposal() {

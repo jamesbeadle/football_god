@@ -3,16 +3,16 @@ import { isError } from "../utils/helpers";
 import { authStore } from "$lib/stores/auth-store";
 import type {
   Fixture,
+  Fixtures,
   GetFixtures,
   GetPostponedFixtures,
   PostponedFixtures,
-  PostponeFixture,
 } from "../../../../declarations/data_canister/data_canister.did";
 
 export class FixtureService {
   constructor() {}
 
-  async getPostponedFixtures(leagueId: number): Promise<Fixture[]> {
+  async getPostponedFixtures(leagueId: number): Promise<PostponedFixtures | undefined> {
     const identityActor: any = await ActorFactory.createIdentityActor(
       authStore,
       process.env.BACKEND_CANISTER_ID ?? "",
@@ -25,7 +25,7 @@ export class FixtureService {
     return result.ok;
   }
 
-  async getFixtures(leagueId: number, seasonId: number): Promise<Fixture[]> {
+  async getFixtures(leagueId: number, seasonId: number): Promise<Fixtures | undefined> {
     const identityActor: any = await ActorFactory.createIdentityActor(
       authStore,
       process.env.BACKEND_CANISTER_ID ?? "",

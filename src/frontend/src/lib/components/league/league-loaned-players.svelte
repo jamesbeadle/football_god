@@ -24,9 +24,13 @@
   
   onMount(async () => {
     try {
-      let leagues = await leagueStore.getLeagues();
+      let leaguesResult = await leagueStore.getLeagues();
+      if(!leaguesResult) throw new Error("Error fetching leagues.");
+      let leagues = leaguesResult.leagues;
       league = leagues.find(x => x.id == leagueId);
-      clubs = await clubStore.getClubs(leagueId);
+      let clubsResult = await clubStore.getClubs(leagueId);
+      if(!clubsResult) throw new Error("Failed to fetch clubs");
+      clubs = clubsResult.clubs;
       loanedPlayers = await playerStore.getLoanedPlayers(leagueId);
     } catch (error) {
       console.error("Error fetching league fixtures:", error);

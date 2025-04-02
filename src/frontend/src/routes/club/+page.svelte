@@ -26,7 +26,9 @@
     $: leagueId = Number($page.url.searchParams.get("leagueId")) as LeagueId;
   
     onMount(async () => {
-      const clubs = await clubStore.getClubs(leagueId);
+      let clubsResult = await clubStore.getClubs(leagueId);
+      if(!clubsResult) throw new Error("Failed to fetch clubs");
+      let clubs = clubsResult.clubs;
       club = clubs.find(c => c.id === clubId) || null;
       
       if (!club) {

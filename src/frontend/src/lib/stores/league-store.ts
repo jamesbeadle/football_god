@@ -1,24 +1,23 @@
 import { writable } from "svelte/store";
 import type {
-  GetLeagues,
-  GetLeagueStatus,
   League,
   LeagueId,
+  Leagues,
   LeagueStatus,
 } from "../../../../declarations/data_canister/data_canister.did";
 import { LeagueService } from "$lib/services/league-service";
 
 function createLeagueStore() {
-  const { subscribe, set } = writable<League[]>([]);
+  const { subscribe, set } = writable<Leagues | undefined>(undefined);
   const { subscribe: subscribeLeagueStatus, set: setLeagueStatus } = writable<
     LeagueStatus[] | null
   >(null);
 
-  async function getLeagues() {
+  async function getLeagues() : Promise<Leagues | undefined> {
     return new LeagueService().getLeagues();
   }
 
-  async function getLeagueStatus(leagueId: LeagueId): Promise<LeagueStatus> {
+  async function getLeagueStatus(leagueId: LeagueId): Promise<LeagueStatus | undefined> {
     return new LeagueService().getLeagueStatus(leagueId);
   }
 
@@ -43,7 +42,7 @@ function createLeagueStore() {
 
   return {
     subscribe,
-    setLeagues: (leagues: League[]) => set(leagues),
+    setLeagues: (leagues: Leagues) => set(leagues),
     setLeagueStatus: (leagueStatus: LeagueStatus[]) =>
       setLeagueStatus(leagueStatus),
     getLeagues,

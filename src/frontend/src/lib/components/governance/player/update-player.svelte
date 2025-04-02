@@ -46,7 +46,9 @@
   onMount(async () => {
     try {
       isLoading = true;
-      countries = await countryStore.getCountries();
+      let countriesResult = await countryStore.getCountries();
+      if(!countriesResult) throw new Error("Failed to fetch countries");
+      countries = countriesResult.countries;
       
       let positionId = 0;
 

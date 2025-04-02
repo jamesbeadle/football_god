@@ -12,7 +12,7 @@ import type {
 export class LeagueService {
   constructor() {}
 
-  async getLeagues(): Promise<Leagues> {
+  async getLeagues(): Promise<Leagues | undefined> {
     const identityActor: any = await ActorFactory.createIdentityActor(
       authStore,
       process.env.BACKEND_CANISTER_ID ?? "",
@@ -23,7 +23,7 @@ export class LeagueService {
     return result.ok;
   }
 
-  async getLeagueStatus(leagueId: LeagueId): Promise<LeagueStatus> {
+  async getLeagueStatus(leagueId: LeagueId): Promise<LeagueStatus | undefined> {
     const identityActor: any = await ActorFactory.createIdentityActor(
       authStore,
       process.env.BACKEND_CANISTER_ID ?? "",

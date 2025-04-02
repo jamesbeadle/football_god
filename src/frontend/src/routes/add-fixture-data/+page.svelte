@@ -87,11 +87,21 @@
 
   onMount(async () => {
     try {
-      clubs = await clubStore.getClubs(leagueId);      
-      players = await playerStore.getPlayers(leagueId);
+      let clubsResult = await clubStore.getClubs(leagueId);
+      if(!clubsResult) throw new Error("Failed to fetch clubs");
+      clubs = clubsResult.clubs;    
 
-      let leagueStatus = await leagueStore.getLeagueStatus(leagueId);
-      const fixtures = await fixtureStore.getFixtures(leagueId, leagueStatus.activeSeasonId);
+      let playersResult = await playerStore.getPlayers(leagueId);
+      if(!playersResult) throw new Error("Failed to fetch players");
+      players = playersResult.players;
+
+      let leagueStatusResult = await leagueStore.getLeagueStatus(leagueId);
+        if(!leagueStatusResult) throw new Error("Failed to fetch league status");
+        let leagueStatus = leagueStatusResult;
+
+        let fixturesResult = await fixtureStore.getFixtures(leagueId, leagueStatus?.activeSeasonId ?? 1);
+        if(!fixturesResult) throw new Error("Failed to fetch fixtures");
+        const fixtures = fixturesResult.fixtures;
       
       if (clubs.length == 0 || players.length == 0 || !fixtures) {
         return;

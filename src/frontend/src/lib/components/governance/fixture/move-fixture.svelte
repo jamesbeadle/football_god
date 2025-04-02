@@ -37,7 +37,9 @@
 
   onMount(async () => {
     try {
-      let leagueStatus = await leagueStore.getLeagueStatus(selectedLeagueId);
+      let leagueStatusResult = await leagueStore.getLeagueStatus(id);
+        if(!leagueStatusResult) throw new Error("Failed to fetch league status");
+        leagueStatus = leagueStatusResult;
       gameweeks = Array.from({ length: leagueStatus.totalGameweeks }, (_, i) => i + 1);
     } catch (error) {
       console.error("Error syncing proposal data.", error);
@@ -56,7 +58,9 @@
       
       isLoading = true;
 
-      let leagueStatus = await leagueStore.getLeagueStatus(selectedLeagueId);
+      let leagueStatusResult = await leagueStore.getLeagueStatus(selectedLeagueId);
+        if(!leagueStatusResult) throw new Error("Failed to fetch league status");
+        leagueStatus = leagueStatusResult;
       if(!leagueStatus){
         return
       }

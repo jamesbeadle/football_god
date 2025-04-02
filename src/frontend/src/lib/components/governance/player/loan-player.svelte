@@ -31,7 +31,11 @@
     try {
       isLoading = true;
       newValueMillions = selectedPlayer.valueQuarterMillions / 4;
-      loanLeagues = await leagueStore.getLeagues();
+      
+      let leaguesResult = await leagueStore.getLeagues();
+      if(!leaguesResult) throw new Error("Error loading leagues")
+      loanLeagues  = leaguesResult.leagues;
+    
     } catch (error) {
       console.error("Error mounting loan player modal.", error);
     } finally {
@@ -44,7 +48,9 @@
   };
   
   async function getLoanClubs() {
-    loanClubs = await clubStore.getClubs(loanLeagueId);
+    let clubsResult = await clubStore.getClubs(loanLeagueId);
+      if(!clubsResult) throw new Error("Error loading clubs")
+      loanClubs  = clubsResult.clubs;
   }
 
   async function confirmProposal() {

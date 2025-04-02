@@ -3,13 +3,14 @@ import { isError } from "$lib/utils/helpers";
 import type {
   GetSeasons,
   Season,
+  Seasons,
 } from "../../../../declarations/data_canister/data_canister.did";
 import { authStore } from "$lib/stores/auth-store";
 
 export class SeasonService {
   constructor() {}
 
-  async getSeasons(leagueId: number): Promise<Season[] | undefined> {
+  async getSeasons(leagueId: number): Promise<Seasons | undefined> {
     const identityActor: any = await ActorFactory.createIdentityActor(
       authStore,
       process.env.BACKEND_CANISTER_ID ?? "",

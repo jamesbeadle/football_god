@@ -2,11 +2,12 @@ import { writable } from "svelte/store";
 import { ClubService } from "../services/club-service";
 import type {
   Club,
+  Clubs,
   LeagueId,
 } from "../../../../declarations/data_canister/data_canister.did";
 
 function createClubStore() {
-  const { subscribe, set } = writable<Club[]>([]);
+  const { subscribe, set } = writable<Clubs | undefined>(undefined);
 
   async function getClubs(leagueId: LeagueId) {
     return new ClubService().getClubs(leagueId);
@@ -14,8 +15,7 @@ function createClubStore() {
   return {
     getClubs,
     subscribe,
-    setClubs: (clubs: Club[]) =>
-      set(clubs.sort((a, b) => a.friendlyName.localeCompare(b.friendlyName))),
+    setClubs: (clubs: Clubs) => set(clubs),
   };
 }
 

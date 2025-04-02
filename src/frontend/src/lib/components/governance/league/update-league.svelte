@@ -51,7 +51,9 @@
       countryId = selectedLeague.countryId;
       logo = selectedLeague.logo;
       teamCount = selectedLeague.teamCount;
-      countries = await countryStore.getCountries();
+      let countriesResult = await countryStore.getCountries();
+      if(!countriesResult) throw new Error("Failed to fetch countries");
+      countries = countriesResult.countries;
       countryOptions = countries.map(country => ({
         id: country.id,
         label: country.name

@@ -84,9 +84,17 @@
 
   onMount(async () => {
     try {
-      countries = await countryStore.getCountries();
-      leagues = await leagueStore.getLeagues();
-      clubs = await clubStore.getClubs(selectedLeagueId);
+
+      let countriesResult = await countryStore.getCountries();
+      if(!countriesResult) throw new Error("Failed to fetch countries");
+      countries = countriesResult.countries;
+
+      let leaguesResult = await leagueStore.getLeagues();
+      if(!leaguesResult) throw new Error("Error loading leagues")
+      leagues  = leaguesResult.leagues;
+      let clubsResult = await clubStore.getClubs(selectedLeagueId);
+      if(!clubsResult) throw new Error("Error loading clubs")
+      clubs = clubsResult.clubs;
       await fetchPlayersForLeague(selectedLeagueId);
       if (typeof window !== 'undefined') {
         document.addEventListener('click', handleClickOutside);
@@ -113,8 +121,10 @@
   async function fetchPlayersForLeague(leagueId: number) {
     if (!allLeaguePlayers[leagueId]) {
       try {
-        const leaguePlayers = await playerStore.getPlayers(leagueId);
-        allLeaguePlayers[leagueId] = leaguePlayers;
+        let playersResult = await playerStore.getPlayers(leagueId);
+        if(!playersResult) throw new Error("Failed to fetch players");
+        let players = playersResult.players;
+        allLeaguePlayers[leagueId] = players;
       } catch (error) {
         console.error("Error fetching players:", error);
       }
@@ -158,7 +168,9 @@
 
 
   async function filterClubs() {  
-      clubs = await clubStore.getClubs(selectedLeagueId);
+    let clubsResult = await clubStore.getClubs(selectedLeagueId);
+      if(!clubsResult) throw new Error("Error loading clubs")
+      clubs = clubsResult.clubs;
       loadingClubs = false;
   }
 

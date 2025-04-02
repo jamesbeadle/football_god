@@ -27,10 +27,14 @@
 
   onMount(async () => {
     try {
-      let leagueStatus = await leagueStore.getLeagueStatus(selectedLeagueId);
+      let leagueStatusResult = await leagueStore.getLeagueStatus(id);
+        if(!leagueStatusResult) throw new Error("Failed to fetch league status");
+        leagueStatus = leagueStatusResult;
       gameweeks = Array.from({ length: leagueStatus.totalGameweeks }, (_, i) => i + 1);
       if(selectedLeagueId > 0){
-          clubs = await clubStore.getClubs(selectedLeagueId);
+        let clubsResult = await clubStore.getClubs(selectedLeagueId);
+        if(!clubsResult) throw new Error("Error loading clubs")
+        clubs = clubsResult.clubs;
       }
       homeClub = clubs.find(x => x.id == selectedFixture.homeClubId)!;
       awayClub = clubs.find(x => x.id == selectedFixture.awayClubId)!;
@@ -52,10 +56,9 @@
       
       isLoading = true;
 
-      let leagueStatus = await leagueStore.getLeagueStatus(selectedLeagueId);
-      if(!leagueStatus){
-        return
-      }
+      let leagueStatusResult = await leagueStore.getLeagueStatus(id);
+        if(!leagueStatusResult) throw new Error("Failed to fetch league status");
+        leagueStatus = leagueStatusResult;
 
       let dto: PostponeFixture = {
         leagueId: selectedLeagueId,

@@ -4,7 +4,7 @@
 
   import { clubStore } from "$lib/stores/club-store";
   import { leagueStore } from "$lib/stores/league-store";
-  import type { Club, FootballLeagueDTO } from "../../../../../declarations/data_canister/data_canister.did";
+  import type { Club, League } from "../../../../../declarations/data_canister/data_canister.did";
 
   import BadgeIcon from "$lib/icons/BadgeIcon.svelte";
   import CreateClub from "../governance/club/create-club.svelte";
@@ -15,7 +15,7 @@
 
   let isLoading = true;
 
-  let league: FootballLeagueDTO | undefined;
+  let league: League | undefined;
   let clubs: Club[] = [];
   let dropdownVisible: number | null = null;
   
@@ -23,9 +23,13 @@
   
   onMount(async () => {
     try {
-      let leagues = await leagueStore.getLeagues();
+      let leaguesResult = await leagueStore.getLeagues();
+      if(!leaguesResult) throw new Error("Error fetching leagues.");
+      let leagues = leaguesResult.leagues;
       league = leagues.find(x => x.id == leagueId);
-      clubs = await clubStore.getClubs(leagueId);
+      let clubsResult = await clubStore.getClubs(leagueId);
+      if(!clubsResult) throw new Error("Failed to fetch clubs");
+      clubs = clubsResult.clubs;
     } catch (error) {
       console.error("Error fetching league clubs:", error);
     } finally {

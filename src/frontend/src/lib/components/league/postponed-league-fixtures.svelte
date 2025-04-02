@@ -26,11 +26,20 @@
   
   onMount(async () => {
     try {
-      let leagues = await leagueStore.getLeagues();
+      let leaguesResult = await leagueStore.getLeagues();
+      if(!leaguesResult) throw new Error("Error fetching leagues.");
+      let leagues = leaguesResult.leagues;
       league = leagues.find(x => x.id == leagueId);
-      clubs = await clubStore.getClubs(leagueId);
+
+
+      let clubsResult = await clubStore.getClubs(leagueId);
+      if(!clubsResult) throw new Error("Failed to fetch clubs");
+      clubs = clubsResult.clubs;
+
       fixtures = await fixtureStore.getPostponedFixtures(leagueId);
-      let leagueStatus = await leagueStore.getLeagueStatus(leagueId);
+      let leagueStatusResult = await leagueStore.getLeagueStatus(leagueId);
+      if(!leagueStatusResult) throw new Error("Failed to fetch league status");
+      let leagueStatus = leagueStatusResult;
       selectedSeasonId = leagueStatus.activeSeasonId;
     } catch (error) {
       console.error("Error fetching postponed fixtures:", error);

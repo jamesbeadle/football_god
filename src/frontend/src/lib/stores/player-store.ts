@@ -2,11 +2,12 @@ import { writable } from "svelte/store";
 import type {
   LeagueId,
   Player,
+  Players,
 } from "../../../../declarations/data_canister/data_canister.did";
 import { PlayerService } from "../services/player-service";
 
 function createPlayerStore() {
-  const { subscribe, set } = writable<Player[]>([]);
+  const { subscribe, set } = writable<Players | undefined>(undefined);
 
   async function getPlayers(leagueId: LeagueId) {
     return new PlayerService().getPlayers(leagueId);
@@ -18,7 +19,7 @@ function createPlayerStore() {
 
   return {
     subscribe,
-    setPlayers: (players: Player[]) => set(players),
+    setPlayers: (players: Players) => set(players),
     getPlayers,
     getLoanedPlayers,
   };
