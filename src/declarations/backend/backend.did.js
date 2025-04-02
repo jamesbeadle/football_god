@@ -2,20 +2,28 @@ export const idlFactory = ({ IDL }) => {
   const GetAppStatus = IDL.Record({});
   const AppStatus = IDL.Record({ version: IDL.Text, onHold: IDL.Bool });
   const Error = IDL.Variant({
+    InvalidProfilePicture: IDL.Null,
     DecodeError: IDL.Null,
+    TooLong: IDL.Null,
     NotAllowed: IDL.Null,
     DuplicateData: IDL.Null,
     InvalidProperty: IDL.Null,
     NotFound: IDL.Null,
     IncorrectSetup: IDL.Null,
+    AlreadyClaimed: IDL.Null,
     NotAuthorized: IDL.Null,
     MaxDataExceeded: IDL.Null,
     InvalidData: IDL.Null,
     SystemOnHold: IDL.Null,
     AlreadyExists: IDL.Null,
+    NoPacketsRemaining: IDL.Null,
+    UpdateFailed: IDL.Null,
     CanisterCreateError: IDL.Null,
+    NeuronAlreadyUsed: IDL.Null,
     FailedInterCanisterCall: IDL.Null,
+    InsufficientPacketsRemaining: IDL.Null,
     InsufficientFunds: IDL.Null,
+    InEligible: IDL.Null,
   });
   const Result_9 = IDL.Variant({ ok: AppStatus, err: Error });
   const LeagueId = IDL.Nat16;

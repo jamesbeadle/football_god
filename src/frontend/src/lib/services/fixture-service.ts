@@ -12,7 +12,9 @@ import type {
 export class FixtureService {
   constructor() {}
 
-  async getPostponedFixtures(leagueId: number): Promise<PostponedFixtures | undefined> {
+  async getPostponedFixtures(
+    leagueId: number,
+  ): Promise<PostponedFixtures | undefined> {
     const identityActor: any = await ActorFactory.createIdentityActor(
       authStore,
       process.env.BACKEND_CANISTER_ID ?? "",
@@ -25,7 +27,10 @@ export class FixtureService {
     return result.ok;
   }
 
-  async getFixtures(leagueId: number, seasonId: number): Promise<Fixtures | undefined> {
+  async getFixtures(
+    leagueId: number,
+    seasonId: number,
+  ): Promise<Fixtures | undefined> {
     const identityActor: any = await ActorFactory.createIdentityActor(
       authStore,
       process.env.BACKEND_CANISTER_ID ?? "",

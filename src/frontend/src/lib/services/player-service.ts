@@ -24,7 +24,9 @@ export class PlayerService {
     return result.ok;
   }
 
-  async getLoanedPlayers(leagueId: LeagueId): Promise<LoanedPlayers | undefined> {
+  async getLoanedPlayers(
+    leagueId: LeagueId,
+  ): Promise<LoanedPlayers | undefined> {
     const identityActor: any = await ActorFactory.createIdentityActor(
       authStore,
       process.env.BACKEND_CANISTER_ID ?? "",

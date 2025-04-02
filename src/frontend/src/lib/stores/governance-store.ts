@@ -228,11 +228,10 @@ function createGovernanceStore() {
     const currentClub = clubs.find((c) => c.id === player.clubId);
     if (!currentClub) throw new Error("Current club not found.");
 
-
     const loanClubsResult = await clubStore.getClubs(dto.loanLeagueId);
     if (!loanClubsResult) throw new Error("Clubs not found.");
     let loanClubs = loanClubsResult.clubs;
-    
+
     const newClub = loanClubs.find((c) => c.id === dto.loanClubId);
     if (!newClub) throw new Error("Loan club not found.");
 
@@ -265,20 +264,16 @@ function createGovernanceStore() {
     let playersResult = await playerStore.getPlayers(dto.leagueId);
     if (!playersResult) throw new Error("Players not found.");
     let allPlayers = playersResult.players;
-    
 
     const player = allPlayers.find((p) => p.id === dto.playerId);
     if (!player) throw new Error("Player not found.");
 
-    
     const clubsResult = await clubStore.getClubs(dto.leagueId);
     if (!clubsResult) throw new Error("Clubs not found.");
     let clubs = clubsResult.clubs;
 
-
     const currentClub = clubs.find((c) => c.id === player.clubId);
     if (!currentClub) throw new Error("Current club not found.");
-
 
     const newLeagueClubsResult = await clubStore.getClubs(dto.newLeagueId);
     if (!newLeagueClubsResult) throw new Error("Clubs not found.");
@@ -288,9 +283,9 @@ function createGovernanceStore() {
     if (!newClub) throw new Error("New club not found.");
 
     let leaguesResult = await leagueStore.getLeagues();
-    if(!leaguesResult) throw new Error("Error fetching leagues.");
+    if (!leaguesResult) throw new Error("Error fetching leagues.");
     let leagues = leaguesResult.leagues;
-    
+
     const currentLeague = leagues.find((x) => x.id == dto.leagueId);
     if (!currentLeague) throw new Error("Current league not found.");
 
@@ -348,12 +343,10 @@ function createGovernanceStore() {
     let fixture = leagueFixtures.find((x) => x.id == dto.fixtureId);
     if (!fixture) throw new Error("Fixture not found.");
 
-    
     const clubsResult = await clubStore.getClubs(dto.leagueId);
     if (!clubsResult) throw new Error("Clubs not found.");
     let clubs = clubsResult.clubs;
 
-  
     const homeClub = clubs.find((c) => c.id === fixture.homeClubId);
     const awayClub = clubs.find((c) => c.id === fixture.awayClubId);
     if (!homeClub || !awayClub) throw new Error("Missing home/away club.");
@@ -459,7 +452,7 @@ function createGovernanceStore() {
     if (!userIdentity) return;
 
     let leaguesResult = await leagueStore.getLeagues();
-    if(!leaguesResult) throw new Error("Error fetching leagues.");
+    if (!leaguesResult) throw new Error("Error fetching leagues.");
     let leagues = leaguesResult.leagues;
 
     let league = leagues.find((x) => x.id == dto.leagueId);
@@ -469,7 +462,6 @@ function createGovernanceStore() {
     if (!leagueClubsResult) throw new Error("Players not found.");
     let leagueClubs = leagueClubsResult.clubs;
 
-    
     let playerClub = leagueClubs.find((x) => x.id == dto.clubId);
     if (!playerClub) throw new Error("Player club not found.");
 
@@ -507,7 +499,7 @@ function createGovernanceStore() {
     if (!userIdentity) return;
 
     let leaguesResult = await leagueStore.getLeagues();
-    if(!leaguesResult) throw new Error("Error fetching leagues.");
+    if (!leaguesResult) throw new Error("Error fetching leagues.");
     let leagues = leaguesResult.leagues;
 
     let league = leagues.find((x) => x.id == dto.leagueId);
@@ -517,11 +509,10 @@ function createGovernanceStore() {
     if (!leagueClubsResult) throw new Error("Players not found.");
     let leagueClubs = leagueClubsResult.clubs;
 
-
     let playersResult = await playerStore.getPlayers(dto.leagueId);
     if (!playersResult) throw new Error("Players not found.");
     let players = playersResult.players;
-    
+
     let player = players.find((x) => x.id == dto.playerId);
     if (!player) throw new Error("Player not found.");
 
@@ -561,7 +552,7 @@ function createGovernanceStore() {
     if (!userIdentity) return;
 
     let leaguesResult = await leagueStore.getLeagues();
-    if(!leaguesResult) throw new Error("Error fetching leagues.");
+    if (!leaguesResult) throw new Error("Error fetching leagues.");
     let leagues = leaguesResult.leagues;
 
     let league = leagues.find((x) => x.id == dto.leagueId);
@@ -597,7 +588,7 @@ function createGovernanceStore() {
     if (!userIdentity) return;
 
     let leaguesResult = await leagueStore.getLeagues();
-    if(!leaguesResult) throw new Error("Error fetching leagues.");
+    if (!leaguesResult) throw new Error("Error fetching leagues.");
     let leagues = leaguesResult.leagues;
 
     let league = leagues.find((x) => x.id == dto.leagueId);
@@ -613,7 +604,7 @@ function createGovernanceStore() {
     let leagueClubsResult = await clubStore.getClubs(dto.leagueId);
     if (!leagueClubsResult) throw new Error("Players not found.");
     let clubs = leagueClubsResult.clubs;
-    
+
     const currentClub = clubs.find((c) => c.id === player.clubId);
     if (!currentClub) throw new Error("Current club not found.");
 
@@ -641,7 +632,7 @@ function createGovernanceStore() {
     if (!userIdentity) return;
 
     let leaguesResult = await leagueStore.getLeagues();
-    if(!leaguesResult) throw new Error("Error fetching leagues.");
+    if (!leaguesResult) throw new Error("Error fetching leagues.");
     let leagues = leaguesResult.leagues;
 
     let league = leagues.find((x) => x.id == dto.leagueId);
@@ -681,7 +672,7 @@ function createGovernanceStore() {
     let userIdentity: OptionIdentity;
     authStore.subscribe((auth) => (userIdentity = auth.identity));
     if (!userIdentity) return;
-    
+
     const allPlayersResult = await playerStore.getPlayers(dto.leagueId);
     if (!allPlayersResult) throw new Error("All players not found.");
     let allPlayers = allPlayersResult.players;
@@ -690,7 +681,7 @@ function createGovernanceStore() {
     if (!player) throw new Error("Player not found.");
 
     let leaguesResult = await leagueStore.getLeagues();
-    if(!leaguesResult) throw new Error("Error fetching leagues.");
+    if (!leaguesResult) throw new Error("Error fetching leagues.");
     let leagues = leaguesResult.leagues;
 
     let recallLeague = leagues.find((x) => x.id == player.leagueId);
@@ -701,7 +692,6 @@ function createGovernanceStore() {
     const recallClubsResult = await clubStore.getClubs(player.leagueId);
     if (!recallClubsResult) throw new Error("Clubs not found.");
     let recallClubs = recallClubsResult.clubs;
-
 
     const parentClubsResult = await clubStore.getClubs(player.parentLeagueId);
     if (!parentClubsResult) throw new Error("Clubs not found.");
@@ -739,7 +729,7 @@ function createGovernanceStore() {
     if (!userIdentity) return;
 
     let leaguesResult = await leagueStore.getLeagues();
-    if(!leaguesResult) throw new Error("Error fetching leagues.");
+    if (!leaguesResult) throw new Error("Error fetching leagues.");
     let leagues = leaguesResult.leagues;
 
     let league = leagues.find((x) => x.id == dto.leagueId);
@@ -773,7 +763,7 @@ function createGovernanceStore() {
     if (!userIdentity) return;
 
     let leaguesResult = await leagueStore.getLeagues();
-    if(!leaguesResult) throw new Error("Error fetching leagues.");
+    if (!leaguesResult) throw new Error("Error fetching leagues.");
     let leagues = leaguesResult.leagues;
 
     let league = leagues.find((x) => x.id == dto.leagueId);
@@ -807,7 +797,7 @@ function createGovernanceStore() {
     if (!userIdentity) return;
 
     let leaguesResult = await leagueStore.getLeagues();
-    if(!leaguesResult) throw new Error("Error fetching leagues.");
+    if (!leaguesResult) throw new Error("Error fetching leagues.");
     let leagues = leaguesResult.leagues;
 
     let fromLeague = leagues.find((x) => x.id == dto.leagueId);
@@ -849,7 +839,7 @@ function createGovernanceStore() {
     if (!userIdentity) return;
 
     let leaguesResult = await leagueStore.getLeagues();
-    if(!leaguesResult) throw new Error("Error fetching leagues.");
+    if (!leaguesResult) throw new Error("Error fetching leagues.");
     let leagues = leaguesResult.leagues;
 
     let league = leagues.find((x) => x.id == dto.leagueId);
@@ -976,7 +966,7 @@ function createGovernanceStore() {
     const clubsResult = await clubStore.getClubs(dto.leagueId);
     if (!clubsResult) throw new Error("Clubs not found.");
     let clubs = clubsResult.clubs;
-    
+
     const homeClub = clubs.find((c) => c.id === fixture.homeClubId);
     const awayClub = clubs.find((c) => c.id === fixture.awayClubId);
     if (!homeClub || !awayClub) throw new Error("Missing home/away club.");

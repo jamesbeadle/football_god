@@ -1,6 +1,9 @@
 import { writable } from "svelte/store";
 import { SeasonService } from "$lib/services/season-service";
-import type { Season, Seasons } from "../../../../declarations/data_canister/data_canister.did";
+import type {
+  Season,
+  Seasons,
+} from "../../../../declarations/data_canister/data_canister.did";
 
 function createSeasonStore() {
   const { subscribe, set } = writable<Seasons | undefined>(undefined);

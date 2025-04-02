@@ -13,11 +13,13 @@ function createLeagueStore() {
     LeagueStatus[] | null
   >(null);
 
-  async function getLeagues() : Promise<Leagues | undefined> {
+  async function getLeagues(): Promise<Leagues | undefined> {
     return new LeagueService().getLeagues();
   }
 
-  async function getLeagueStatus(leagueId: LeagueId): Promise<LeagueStatus | undefined> {
+  async function getLeagueStatus(
+    leagueId: LeagueId,
+  ): Promise<LeagueStatus | undefined> {
     return new LeagueService().getLeagueStatus(leagueId);
   }
 

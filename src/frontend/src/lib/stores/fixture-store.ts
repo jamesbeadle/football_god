@@ -1,6 +1,10 @@
 import { writable } from "svelte/store";
 import { FixtureService } from "../services/fixture-service";
-import type { Fixture, Fixtures, PostponedFixtures } from "../../../../declarations/data_canister/data_canister.did";
+import type {
+  Fixture,
+  Fixtures,
+  PostponedFixtures,
+} from "../../../../declarations/data_canister/data_canister.did";
 
 function createFixtureStore() {
   const { subscribe, set } = writable<Fixtures | undefined>(undefined);
@@ -12,7 +16,9 @@ function createFixtureStore() {
     return new FixtureService().getFixtures(leagueId, seasonId);
   }
 
-  async function getPostponedFixtures(leagueId: number): Promise<PostponedFixtures | undefined> {
+  async function getPostponedFixtures(
+    leagueId: number,
+  ): Promise<PostponedFixtures | undefined> {
     return new FixtureService().getPostponedFixtures(leagueId);
   }
 
