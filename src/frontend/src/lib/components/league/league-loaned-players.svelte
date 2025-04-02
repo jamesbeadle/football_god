@@ -3,7 +3,7 @@
   
   import { clubStore } from "$lib/stores/club-store";
   import { leagueStore } from "$lib/stores/league-store";
-  import type { Club, FootballLeagueDTO, LoanedPlayerDTO } from "../../../../../declarations/data_canister/data_canister.did";
+  import type { Club, League, LoanedPlayers, Player } from "../../../../../declarations/data_canister/data_canister.did";
   import { playerStore } from "$lib/stores/player-store";
 
   import LocalSpinner from "../shared/local-spinner.svelte";
@@ -14,9 +14,9 @@
 
   let isLoading = true;
 
-  let league: FootballLeagueDTO | undefined;
+  let league: League | undefined;
   let clubs: Club[] = [];
-  let loanedPlayers: LoanedPlayerDTO[] = [];
+  let loanedPlayers: Player[] = [];
   let selectedPlayerId: number = 0;
 
   let showRecallLoanModal = false;
@@ -31,7 +31,10 @@
       let clubsResult = await clubStore.getClubs(leagueId);
       if(!clubsResult) throw new Error("Failed to fetch clubs");
       clubs = clubsResult.clubs;
-      loanedPlayers = await playerStore.getLoanedPlayers(leagueId);
+      let loanedPlayersResult = await playerStore.getLoanedPlayers(leagueId);
+      if(!loanedPlayersResult) throw new Error("Failed to fetch loaned players");
+      loanedPlayers = loanedPlayersResult.players;
+
     } catch (error) {
       console.error("Error fetching league fixtures:", error);
     } finally {

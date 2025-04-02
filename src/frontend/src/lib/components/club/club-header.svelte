@@ -41,10 +41,13 @@
     }
   
     onMount(async () => {
-      let leagueStatusResult = await leagueStore.getLeagueStatus(id);
+      let leagueStatusResult = await leagueStore.getLeagueStatus(leagueId);
         if(!leagueStatusResult) throw new Error("Failed to fetch league status");
         leagueStatus = leagueStatusResult;
-        const seasons = await seasonStore.getSeasons(leagueId);
+        let seasonsResult = await seasonStore.getSeasons(leagueId);
+        if(!seasonsResult) throw new Error("Failed to fetch seasons");
+        let seasons = seasonsResult.seasons;
+
         seasonName = seasons.find(x => x.id == leagueStatus?.activeSeasonId)?.name ?? "";
         $selectedGameweek = leagueStatus?.activeGameweek == 0 
             ? leagueStatus?.unplayedGameweek 

@@ -5,7 +5,7 @@
   import { clubStore } from "$lib/stores/club-store";
   import { fixtureStore } from "$lib/stores/fixture-store";
   import { leagueStore } from "$lib/stores/league-store";
-  import type { Club, Fixture, FootballLeagueDTO } from "../../../../../declarations/data_canister/data_canister.did";
+  import type { Club, Fixture, League } from "../../../../../declarations/data_canister/data_canister.did";
   
   import RescheduleFixture from "../governance/fixture/reschedule-fixture.svelte";
   import FixtureDisplay from "./fixture-display.svelte";
@@ -15,7 +15,7 @@
   
   let isLoading = true;
   
-  let league: FootballLeagueDTO | undefined;
+  let league: League | undefined;
   let clubs: Club[] = [];
   let fixtures: Fixture[] = [];
   let selectedFixture: Fixture | undefined;
@@ -36,7 +36,10 @@
       if(!clubsResult) throw new Error("Failed to fetch clubs");
       clubs = clubsResult.clubs;
 
-      fixtures = await fixtureStore.getPostponedFixtures(leagueId);
+      let fixturesResult = await fixtureStore.getPostponedFixtures(leagueId);
+      if(!fixturesResult) throw new Error("Failed to fetch fixtures");
+      fixtures = fixturesResult.fixtures;
+
       let leagueStatusResult = await leagueStore.getLeagueStatus(leagueId);
       if(!leagueStatusResult) throw new Error("Failed to fetch league status");
       let leagueStatus = leagueStatusResult;
