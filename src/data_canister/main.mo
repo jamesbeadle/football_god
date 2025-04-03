@@ -307,7 +307,7 @@ actor Self {
                 parentLeagueId = player.parentLeagueId;
                 leagueId = player.leagueId;
               };
-            },,
+            },
           );
         });
       };
