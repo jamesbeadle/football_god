@@ -372,7 +372,7 @@ actor Self {
 
   public shared query ({ caller }) func getPlayerDetails(dto : PlayerQueries.GetPlayerDetails) : async Result.Result<PlayerQueries.PlayerDetails, Enums.Error> {
     assert not Principal.isAnonymous(caller);
-    assert Principal.isAnonymous(caller) == CanisterIds.OPENFPL_BACKEND_CANISTER_ID;
+    assert Principal.toText(caller) == CanisterIds.OPENFPL_BACKEND_CANISTER_ID;
 
     var clubId : FootballIds.ClubId = 0;
     var position : FootballEnums.PlayerPosition = #Goalkeeper;
@@ -765,7 +765,7 @@ actor Self {
 
   public shared query ({ caller }) func getPostponedFixtures(dto : FixtureQueries.GetPostponedFixtures) : async Result.Result<FixtureQueries.PostponedFixtures, Enums.Error> {
     assert not Principal.isAnonymous(caller);
-    assert Principal.isAnonymous(caller) == CanisterIds.OPENFPL_BACKEND_CANISTER_ID;
+    assert Principal.toText(caller) == CanisterIds.OPENFPL_BACKEND_CANISTER_ID;
 
     let filteredLeagueSeasons = Array.find<(FootballIds.LeagueId, [FootballTypes.Season])>(
       leagueSeasons,
