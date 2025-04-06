@@ -18,6 +18,21 @@ export interface Club {
   primaryColourHex: string;
 }
 export type ClubId = number;
+export interface ClubSummary {
+  clubId: ClubId;
+  clubName: string;
+  totalValue: number;
+  positionText: string;
+  primaryColour: string;
+  shirtType: ShirtType;
+  thirdColour: string;
+  secondaryColour: string;
+  position: bigint;
+  leagueId: LeagueId;
+}
+export interface ClubValueLeaderboard {
+  clubs: Array<ClubSummary>;
+}
 export interface Clubs {
   clubs: Array<Club>;
   leagueId: LeagueId;
@@ -88,6 +103,7 @@ export interface Fixtures {
 export type GameweekNumber = number;
 export type Gender = { Male: null } | { Female: null };
 export type GetAppStatus = {};
+export type GetClubValueLeaderboard = {};
 export interface GetClubs {
   leagueId: LeagueId;
 }
@@ -198,6 +214,7 @@ export interface Players {
 }
 export type Result = { ok: Seasons } | { err: Error };
 export type Result_1 = { ok: Players } | { err: Error };
+export type Result_10 = { ok: AppStatus } | { err: Error };
 export type Result_2 = { ok: LoanedPlayers } | { err: Error };
 export type Result_3 = { ok: Leagues } | { err: Error };
 export type Result_4 = { ok: LeagueStatus } | { err: Error };
@@ -205,7 +222,7 @@ export type Result_5 = { ok: Fixtures } | { err: Error };
 export type Result_6 = { ok: DataHashes } | { err: Error };
 export type Result_7 = { ok: Countries } | { err: Error };
 export type Result_8 = { ok: Clubs } | { err: Error };
-export type Result_9 = { ok: AppStatus } | { err: Error };
+export type Result_9 = { ok: ClubValueLeaderboard } | { err: Error };
 export interface Season {
   id: number;
   name: string;
@@ -217,7 +234,8 @@ export interface Seasons {
 }
 export type ShirtType = { Filled: null } | { Striped: null };
 export interface _SERVICE {
-  getAppStatus: ActorMethod<[GetAppStatus], Result_9>;
+  getAppStatus: ActorMethod<[GetAppStatus], Result_10>;
+  getClubValueLeaderboard: ActorMethod<[GetClubValueLeaderboard], Result_9>;
   getClubs: ActorMethod<[GetClubs], Result_8>;
   getCountries: ActorMethod<[GetCountries], Result_7>;
   getDataHashes: ActorMethod<[GetDataHashes], Result_6>;

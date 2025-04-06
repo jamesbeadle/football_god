@@ -21,4 +21,23 @@ module ClubQueries {
         abbreviatedName : Text;
         shirtType : FootballEnums.ShirtType;
     };
+
+    public type GetClubValueLeaderboard = {};
+
+    public type ClubValueLeaderboard = {
+        clubs: [ClubSummary]
+    };
+
+    public type ClubSummary = {
+        clubId: FootballIds.ClubId;
+        leagueId: FootballIds.LeagueId;
+        clubName: Text;
+        position: Nat;
+        positionText: Text;
+        totalValue: Nat16;
+        primaryColour: Text;
+        secondaryColour: Text;
+        thirdColour: Text;
+        shirtType: FootballEnums.ShirtType;
+    };
 }

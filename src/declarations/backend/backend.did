@@ -14,7 +14,7 @@ type Season =
 type Result_9 = 
  variant {
    err: Error;
-   ok: AppStatus;
+   ok: ClubValueLeaderboard;
  };
 type Result_8 = 
  variant {
@@ -50,6 +50,11 @@ type Result_2 =
  variant {
    err: Error;
    ok: LoanedPlayers;
+ };
+type Result_10 = 
+ variant {
+   err: Error;
+   ok: AppStatus;
  };
 type Result_1 = 
  variant {
@@ -162,6 +167,7 @@ type GetFixtures =
 type GetDataHashes = record {leagueId: LeagueId;};
 type GetCountries = record {};
 type GetClubs = record {leagueId: LeagueId;};
+type GetClubValueLeaderboard = record {};
 type GetAppStatus = record {};
 type Gender = 
  variant {
@@ -241,6 +247,20 @@ type Clubs =
    clubs: vec Club;
    leagueId: LeagueId;
  };
+type ClubValueLeaderboard = record {clubs: vec ClubSummary;};
+type ClubSummary = 
+ record {
+   clubId: ClubId;
+   clubName: text;
+   leagueId: LeagueId;
+   position: nat;
+   positionText: text;
+   primaryColour: text;
+   secondaryColour: text;
+   shirtType: ShirtType;
+   thirdColour: text;
+   totalValue: nat16;
+ };
 type ClubId = nat16;
 type Club = 
  record {
@@ -260,7 +280,8 @@ type AppStatus =
    version: text;
  };
 service : {
-  getAppStatus: (GetAppStatus) -> (Result_9) query;
+  getAppStatus: (GetAppStatus) -> (Result_10) query;
+  getClubValueLeaderboard: (GetClubValueLeaderboard) -> (Result_9);
   getClubs: (GetClubs) -> (Result_8);
   getCountries: (GetCountries) -> (Result_7);
   getDataHashes: (GetDataHashes) -> (Result_6);

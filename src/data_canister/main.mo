@@ -18,6 +18,7 @@ import Text "mo:base/Text";
 import Time "mo:base/Time";
 import Timer "mo:base/Timer";
 import TrieMap "mo:base/TrieMap";
+import Nat "mo:base/Nat";
 
 /* ----- WWL Mops Packages ----- */
 
@@ -53,6 +54,7 @@ import ClubCommands "commands/club_commands";
 import Environment "environment";
 import Utilities "utilities/utilities";
 import AppQueries "queries/app_queries";
+import SummaryTypes "summary_types";
 
 actor Self {
 
@@ -71,6 +73,8 @@ actor Self {
   private stable var leagueDataHashes : [(FootballIds.LeagueId, [BaseTypes.DataHash])] = [];
   private stable var leagueTables : [FootballTypes.LeagueTable] = [];
   private stable var leagueClubsRequiringData : [(FootballIds.LeagueId, [FootballIds.ClubId])] = [];
+
+  private stable var clubSummaries: [SummaryTypes.ClubSummary] = [];
 
   /* ----- Canister Variables Recreacted in PostUpgrade ----- */
 
@@ -843,6 +847,13 @@ actor Self {
   public shared ({ caller }) func getClubs(dto : ClubQueries.GetClubs) : async Result.Result<ClubQueries.Clubs, Enums.Error> {
     assert callerAllowed(caller);
     return getPrivateClubs(dto);
+  };
+
+  public shared ({ caller }) func getClubValueLeaderboard(dto: ClubQueries.GetClubValueLeaderboard) : async Result.Result<ClubQueries.ClubValueLeaderboard, Enums.Error> {
+    assert not Principal.isAnonymous(caller);
+    
+    return #ok({ clubs = clubSummaries });
+    
   };
 
   //Private getters
@@ -2489,6 +2500,7 @@ actor Self {
                 let _ = await updateDataHash(dto.leagueId, "fixtures");
                 let _ = await updateDataHash(dto.leagueId, "players");
                 let _ = await updateDataHash(dto.leagueId, "player_events");
+                populateClubSummaries();
                 await checkSeasonComplete(dto.leagueId, dto.seasonId);
               };
             };
@@ -3961,6 +3973,7 @@ actor Self {
   system func preupgrade() {};
 
   system func postupgrade() {
+    populateClubSummaries();    
     ignore Timer.setTimer<system>(#nanoseconds(Int.abs(1)), postUpgradeCallback);
   };
 
@@ -5096,6 +5109,75 @@ actor Self {
       },
     );
 
+  };
+
+  private func populateClubSummaries() {
+    
+    let clubSummaryBuffer = Buffer.fromArray<SummaryTypes.ClubSummary>([]);
+
+    for(league in Iter.fromArray(leagueClubs)){
+      for(club in Iter.fromArray(league.1)){
+        clubSummaryBuffer.add({
+          clubId = club.id;
+          clubName = club.name;
+          leagueId = league.0;
+          position = 0;
+          positionText = "-";
+          primaryColour = club.primaryColourHex;
+          secondaryColour = club.secondaryColourHex;
+          shirtType = club.shirtType;
+          thirdColour = club.thirdColourHex;
+          totalValue = getClubTotalValue(league.0, club.id);
+        })
+      }
+    };
+
+    let sortedClubSummaries = Array.sort(
+      Buffer.toArray(clubSummaryBuffer),
+      func(entry1 : SummaryTypes.ClubSummary, entry2 : SummaryTypes.ClubSummary) : Order.Order {
+        if (entry1.totalValue < entry2.totalValue) { return #greater };
+        if (entry1.totalValue == entry2.totalValue) { return #equal };
+        return #less;
+      },
+    );
+
+    var position: Nat = 1;
+    let positionedBuffer = Buffer.fromArray<SummaryTypes.ClubSummary>([]);
+
+    for(sortedEntry in Iter.fromArray(sortedClubSummaries)){
+      positionedBuffer.add({
+        clubId = sortedEntry.clubId;
+        clubName = sortedEntry.clubName;
+        leagueId = sortedEntry.leagueId;
+        position = position;
+        positionText = Nat.toText(position);
+        primaryColour = sortedEntry.primaryColour;
+        secondaryColour = sortedEntry.secondaryColour;
+        shirtType = sortedEntry.shirtType;
+        thirdColour = sortedEntry.thirdColour;
+        totalValue = sortedEntry.totalValue;
+      });
+      position += 1;
+    };
+
+    clubSummaries := sortedClubSummaries;
+  };
+
+  private func getClubTotalValue(leagueId: FootballIds.LeagueId, clubId: FootballIds.ClubId) : Nat16 {
+
+    var totalClubValue: Nat16 = 0;
+
+    for(league in Iter.fromArray(leaguePlayers)){
+      if(league.0 == leagueId){
+        for(player in Iter.fromArray(league.1)){
+          if(player.clubId == clubId){
+            totalClubValue += player.valueQuarterMillions 
+          }
+        }
+      };
+    };
+
+    return totalClubValue;
   };
 
 };

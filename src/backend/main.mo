@@ -148,6 +148,16 @@ actor Self {
     };
     return await data_canister.getFixtures(dto);
   };
+
+  public shared ({ caller }) func getClubValueLeaderboard(dto: ClubQueries.GetClubValueLeaderboard) : async Result.Result<ClubQueries.ClubValueLeaderboard, Enums.Error> {
+    assert not Principal.isAnonymous(caller);
+    // TODO: Check caller is a member
+
+    let data_canister = actor (CanisterIds.ICFC_DATA_CANISTER_ID) : actor {
+      getClubValueLeaderboard : (dto: ClubQueries.GetClubValueLeaderboard) -> async Result.Result<ClubQueries.ClubValueLeaderboard, Enums.Error>;
+    };
+    return await data_canister.getClubValueLeaderboard(dto);
+  };
   
   /* ----- Canister Lifecycle Management ----- */
   

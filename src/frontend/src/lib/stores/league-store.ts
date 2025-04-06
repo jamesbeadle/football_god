@@ -6,6 +6,7 @@ import type {
   LeagueStatus,
 } from "../../../../declarations/data_canister/data_canister.did";
 import { LeagueService } from "$lib/services/league-service";
+import type { ClubValueLeaderboard } from "../../../../declarations/backend/backend.did";
 
 function createLeagueStore() {
   const { subscribe, set } = writable<Leagues | undefined>(undefined);

@@ -12,8 +12,14 @@ function createClubStore() {
   async function getClubs(leagueId: LeagueId) {
     return new ClubService().getClubs(leagueId);
   }
+
+  async function getClubValueLeaderboard() {
+    return new ClubService().getClubValueLeaderboard();
+  }
+
   return {
     getClubs,
+    getClubValueLeaderboard,
     subscribe,
     setClubs: (clubs: Clubs) => set(clubs),
   };

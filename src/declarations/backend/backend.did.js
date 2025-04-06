@@ -25,11 +25,26 @@ export const idlFactory = ({ IDL }) => {
     InsufficientFunds: IDL.Null,
     InEligible: IDL.Null,
   });
-  const Result_9 = IDL.Variant({ ok: AppStatus, err: Error });
-  const LeagueId = IDL.Nat16;
-  const GetClubs = IDL.Record({ leagueId: LeagueId });
+  const Result_10 = IDL.Variant({ ok: AppStatus, err: Error });
+  const GetClubValueLeaderboard = IDL.Record({});
   const ClubId = IDL.Nat16;
   const ShirtType = IDL.Variant({ Filled: IDL.Null, Striped: IDL.Null });
+  const LeagueId = IDL.Nat16;
+  const ClubSummary = IDL.Record({
+    clubId: ClubId,
+    clubName: IDL.Text,
+    totalValue: IDL.Nat16,
+    positionText: IDL.Text,
+    primaryColour: IDL.Text,
+    shirtType: ShirtType,
+    thirdColour: IDL.Text,
+    secondaryColour: IDL.Text,
+    position: IDL.Nat,
+    leagueId: LeagueId,
+  });
+  const ClubValueLeaderboard = IDL.Record({ clubs: IDL.Vec(ClubSummary) });
+  const Result_9 = IDL.Variant({ ok: ClubValueLeaderboard, err: Error });
+  const GetClubs = IDL.Record({ leagueId: LeagueId });
   const Club = IDL.Record({
     id: ClubId,
     secondaryColourHex: IDL.Text,
@@ -186,7 +201,12 @@ export const idlFactory = ({ IDL }) => {
   const Seasons = IDL.Record({ seasons: IDL.Vec(Season) });
   const Result = IDL.Variant({ ok: Seasons, err: Error });
   return IDL.Service({
-    getAppStatus: IDL.Func([GetAppStatus], [Result_9], ["query"]),
+    getAppStatus: IDL.Func([GetAppStatus], [Result_10], ["query"]),
+    getClubValueLeaderboard: IDL.Func(
+      [GetClubValueLeaderboard],
+      [Result_9],
+      [],
+    ),
     getClubs: IDL.Func([GetClubs], [Result_8], []),
     getCountries: IDL.Func([GetCountries], [Result_7], []),
     getDataHashes: IDL.Func([GetDataHashes], [Result_6], []),
