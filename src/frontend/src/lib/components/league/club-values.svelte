@@ -51,6 +51,8 @@
               <div class="flex flex-col flex-grow">
                 <p class="text-lg md:text-sm">{club.clubName}</p>
                 <p class="text-xs">ID: {club.clubId}</p>
+                <p class="text-xs">Value: £{(club.totalValue / 4).toFixed(2)}m</p>
+                
               </div>
             </div>
           </div>  
