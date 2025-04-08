@@ -81,13 +81,13 @@ module {
                     };
                 };
             };
-            case (#AddInitialFixture){
+            case (#AddInitialFixtures){
                 for(app in Iter.fromArray(defaultNotificationGroup)){
                     let application_canister = actor (app.1) : actor {
                         addInitialFixtureNotification : (dto: MopsLeagueNotificationCommands.AddInitialFixtureNotification) -> async Result.Result<(), Enums.Error>;
                     };
                     switch(dto){
-                        case (#AddInitialFixture foundDTO){
+                        case (#AddInitialFixtures foundDTO){
                             let _ = await application_canister.addInitialFixtureNotification(foundDTO);
                         };
                         case (_){}

@@ -4,10 +4,13 @@ module Enums {
         #UpdateClub;
         #PromoteClub;
         #RelegateClub;
-        #AddInitialFixture;
+        #CreateLeague;
+        #UpdateLeague;
+        #AddInitialFixtures;
         #BeginSeason;
         #BeginGameweek;
         #CompleteGameweek;
+        #CompleteFixture;
         #FinaliseFixture;
         #CompleteSeason;
         #RevaluePlayerUp;

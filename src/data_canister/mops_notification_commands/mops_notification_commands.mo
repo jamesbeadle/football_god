@@ -7,10 +7,13 @@ module NotificationCommands {
         #UpdateClub : MopsClubNotificationCommands.UpdateClubNotification;
         #PromoteClub : MopsClubNotificationCommands.PromoteClubNotification;
         #RelegateClub : MopsClubNotificationCommands.RelegateClubNotification;
-        #AddInitialFixture : MopsLeagueNotificationCommands.AddInitialFixtureNotification;
+        #CreateLeague : MopsLeagueNotificationCommands.CreateLeagueNotification;
+        #UpdateLeague : MopsLeagueNotificationCommands.UpdateLeagueNotification;
+        #AddInitialFixtures : MopsLeagueNotificationCommands.AddInitialFixtureNotification;
         #BeginSeason : MopsLeagueNotificationCommands.BeginSeasonNotification;
         #BeginGameweek : MopsLeagueNotificationCommands.BeginGameweekNotification;
         #CompleteGameweek : MopsLeagueNotificationCommands.CompleteGameweekNotification;
+        #CompleteFixture : MopsLeagueNotificationCommands.CompleteFixtureNotification;
         #FinaliseFixture : MopsLeagueNotificationCommands.FinaliseFixtureNotification;
         #CompleteSeason : MopsLeagueNotificationCommands.CompleteSeasonNotification;
         #RevaluePlayerUp : MopsPlayerNotificationCommands.RevaluePlayerUpNotification;
