@@ -1,4 +1,3 @@
-import FootballIds "mo:waterway-mops/football/FootballIds";
 module MopsPlayerNotificationCommands = {
   public type RevaluePlayerUpNotification = {};
   public type RevaluePlayerDownNotification = {};

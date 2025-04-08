@@ -81,6 +81,8 @@ module {
                     };
                 };
             };
+            case (#CreateLeague){};
+            case (#UpdateLeague){};
             case (#AddInitialFixtures){
                 for(app in Iter.fromArray(defaultNotificationGroup)){
                     let application_canister = actor (app.1) : actor {
@@ -128,6 +130,19 @@ module {
                     switch(dto){
                         case (#CompleteGameweek foundDTO){
                             let _ = await application_canister.completeGameweekNotification(foundDTO);
+                        };
+                        case (_){}
+                    };
+                };
+            };
+            case (#CompleteFixture){
+                for(app in Iter.fromArray(defaultNotificationGroup)){
+                    let application_canister = actor (app.1) : actor {
+                        finaliseFixtureNotification : (dto: MopsLeagueNotificationCommands.CompleteFixtureNotification) -> async Result.Result<(), Enums.Error>;
+                    };
+                    switch(dto){
+                        case (#CompleteFixture foundDTO){
+                            let _ = await application_canister.finaliseFixtureNotification(foundDTO);
                         };
                         case (_){}
                     };

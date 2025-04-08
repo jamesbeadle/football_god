@@ -56,7 +56,6 @@ import Utilities "utilities/utilities";
 import AppQueries "queries/app_queries";
 import SummaryTypes "summary_types";
 import NotificationManager "managers/notification_manager";
-import MopsPlayerNotificationCommands "mops_notification_commands/mops_player_notification_commands";
 
 actor Self {
 
@@ -309,7 +308,6 @@ actor Self {
                 position = player.position;
                 shirtNumber = player.shirtNumber;
                 status = player.status;
-                totalPoints = 0;
                 valueQuarterMillions = player.valueQuarterMillions;
                 currentLoanEndDate = player.currentLoanEndDate;
                 parentClubId = player.parentClubId;
@@ -361,7 +359,6 @@ actor Self {
                 position = player.position;
                 shirtNumber = player.shirtNumber;
                 status = player.status;
-                totalPoints = 0;
                 valueQuarterMillions = player.valueQuarterMillions;
                 leagueId = player.leagueId;
                 parentLeagueId = player.parentLeagueId;
@@ -854,7 +851,7 @@ actor Self {
     return getPrivateClubs(dto);
   };
 
-  public shared ({ caller }) func getClubValueLeaderboard(dto: ClubQueries.GetClubValueLeaderboard) : async Result.Result<ClubQueries.ClubValueLeaderboard, Enums.Error> {
+  public shared ({ caller }) func getClubValueLeaderboard(_: ClubQueries.GetClubValueLeaderboard) : async Result.Result<ClubQueries.ClubValueLeaderboard, Enums.Error> {
     assert not Principal.isAnonymous(caller);
     
     return #ok({ clubs = clubSummaries });
@@ -2502,7 +2499,7 @@ actor Self {
 
               };
             };
-            await finaliseFixture(dto.leagueId, dto.seasonId, dto.gameweek, dto.fixtureId, highestScoringPlayerId);
+            await finaliseFixture(dto.leagueId, dto.seasonId, dto.fixtureId, highestScoringPlayerId);
             populateClubSummaries();
             await checkSeasonComplete(dto.leagueId, dto.seasonId);
             let _ = await updateDataHash(dto.leagueId, "fixtures");
@@ -2607,7 +2604,7 @@ actor Self {
 
   /* Private Functions */
 
-  private func finaliseFixture(leagueId : FootballIds.LeagueId, seasonId : FootballIds.SeasonId, gameweek : FootballDefinitions.GameweekNumber, fixtureId : FootballIds.FixtureId, highestScoringPlayerId : FootballIds.PlayerId) : async () {
+  private func finaliseFixture(leagueId : FootballIds.LeagueId, seasonId : FootballIds.SeasonId, fixtureId : FootballIds.FixtureId, highestScoringPlayerId : FootballIds.PlayerId) : async () {
     leagueSeasons := Array.map<(FootballIds.LeagueId, [FootballTypes.Season]), (FootballIds.LeagueId, [FootballTypes.Season])>(
       leagueSeasons,
       func(leagueSeasonsEntry : (FootballIds.LeagueId, [FootballTypes.Season])) {
@@ -2918,7 +2915,6 @@ actor Self {
                           eventStartMinute = 90;
                           eventEndMinute = 90;
                           clubId = actualPlayer.clubId;
-                          position = actualPlayer.position;
                         };
                         allPlayerEventsBuffer.add(cleanSheetEvent);
                       };
@@ -2938,7 +2934,6 @@ actor Self {
                             eventStartMinute = goal.eventStartMinute;
                             eventEndMinute = goal.eventStartMinute;
                             clubId = actualPlayer.clubId;
-                            position = actualPlayer.position;
                           };
                           allPlayerEventsBuffer.add(concededEvent);
                         };
@@ -4901,160 +4896,6 @@ actor Self {
       },
     );
   };
-
-  /*
-
-  //Application Notification Functions
-  private func notifyAppsOfLoan(leagueId : FootballIds.LeagueId, playerId : FootballIds.PlayerId) : async Result.Result<(), Enums.Error> {
-    for (leagueApplication in Iter.fromArray(leagueApplications)) {
-      if (leagueApplication.0 == leagueId) {
-        let application_canister = actor (leagueApplication.1) : actor {
-          notifyAppsOfLoan : (leagueId : FootballIds.LeagueId, playerId : FootballIds.PlayerId) -> async Result.Result<(), Enums.Error>;
-        };
-
-        try {
-          let _ = await application_canister.notifyAppsOfLoan(leagueId, playerId);
-
-        } catch _ {
-
-          return #err(#FailedInterCanisterCall);
-        };
-      };
-    };
-    return #ok();
-  };
-
-  private func notifyAppsOfLoanExpired(leagueId : FootballIds.LeagueId, playerId : FootballIds.PlayerId) : async Result.Result<(), Enums.Error> {
-    for (leagueApplication in Iter.fromArray(leagueApplications)) {
-      if (leagueApplication.0 == leagueId) {
-        let application_canister = actor (leagueApplication.1) : actor {
-          notifyAppsOfLoanExpired : (leagueId : FootballIds.LeagueId, playerId : FootballIds.PlayerId) -> async Result.Result<(), Enums.Error>;
-        };
-        try {
-          let _ = await application_canister.notifyAppsOfLoanExpired(leagueId, playerId);
-        } catch _ {
-          return #err(#FailedInterCanisterCall);
-        };
-      };
-    };
-    return #ok();
-  };
-
-  private func notifyAppsOfTransfer(leagueId : FootballIds.LeagueId, playerId : FootballIds.PlayerId) : async Result.Result<(), Enums.Error> {
-    for (leagueApplication in Iter.fromArray(leagueApplications)) {
-      if (leagueApplication.0 == leagueId) {
-        let application_canister = actor (leagueApplication.1) : actor {
-          notifyAppsOfTransfer : (leagueId : FootballIds.LeagueId, playerId : FootballIds.PlayerId) -> async Result.Result<(), Enums.Error>;
-        };
-        try {
-          let _ = await application_canister.notifyAppsOfTransfer(leagueId, playerId);
-        } catch _ {
-          return #err(#FailedInterCanisterCall);
-        };
-      };
-    };
-    return #ok();
-  };
-
-  private func notifyAppsOfRetirement(leagueId : FootballIds.LeagueId, playerId : FootballIds.PlayerId) : async Result.Result<(), Enums.Error> {
-    for (leagueApplication in Iter.fromArray(leagueApplications)) {
-      if (leagueApplication.0 == leagueId) {
-        let application_canister = actor (leagueApplication.1) : actor {
-          notifyAppsOfRetirement : (leagueId : FootballIds.LeagueId, playerId : FootballIds.PlayerId) -> async Result.Result<(), Enums.Error>;
-        };
-        try {
-          let _ = await application_canister.notifyAppsOfRetirement(leagueId, playerId);
-        } catch _ {
-          return #err(#FailedInterCanisterCall);
-        };
-      };
-    };
-    return #ok();
-  };
-
-  private func notifyAppsOfPositionChange(leagueId : FootballIds.LeagueId, playerId : FootballIds.PlayerId) : async Result.Result<(), Enums.Error> {
-    for (leagueApplication in Iter.fromArray(leagueApplications)) {
-      if (leagueApplication.0 == leagueId) {
-        let application_canister = actor (leagueApplication.1) : actor {
-          notifyAppsOfPositionChange : (leagueId : FootballIds.LeagueId, playerId : FootballIds.PlayerId) -> async Result.Result<(), Enums.Error>;
-        };
-        try {
-          let _ = await application_canister.notifyAppsOfPositionChange(leagueId, playerId);
-        } catch _ {
-          return #err(#FailedInterCanisterCall);
-        };
-      };
-    };
-    return #ok();
-  };
-
-  //Fixture Notification Functions
-
-  private func notifyAppsOfGameweekStarting(leagueId : FootballIds.LeagueId, seasonId : FootballIds.SeasonId, gameweek : FootballDefinitions.GameweekNumber) : async Result.Result<(), Enums.Error> {
-    for (leagueApplication in Iter.fromArray(leagueApplications)) {
-      if (leagueApplication.0 == leagueId) {
-        let application_canister = actor (leagueApplication.1) : actor {
-          notifyAppsOfGameweekStarting : (leagueId : FootballIds.LeagueId, seasonId : FootballIds.SeasonId, gameweek : FootballDefinitions.GameweekNumber) -> async Result.Result<(), Enums.Error>;
-        };
-        try {
-          let _ = await application_canister.notifyAppsOfGameweekStarting(leagueId, seasonId, gameweek);
-        } catch _ {
-          return #err(#FailedInterCanisterCall);
-        };
-      };
-    };
-    return #ok();
-  };
-
-  private func notifyAppsOfFixtureComplete(leagueId : FootballIds.LeagueId, seasonId : FootballIds.SeasonId, gameweek : FootballDefinitions.GameweekNumber) : async Result.Result<(), Enums.Error> {
-    for (leagueApplication in Iter.fromArray(leagueApplications)) {
-      if (leagueApplication.0 == leagueId) {
-        let application_canister = actor (leagueApplication.1) : actor {
-          notifyAppsOfFixtureComplete : (leagueId : FootballIds.LeagueId, seasonId : FootballIds.SeasonId, gameweek : FootballDefinitions.GameweekNumber) -> async Result.Result<(), Enums.Error>;
-        };
-        try {
-          let _ = await application_canister.notifyAppsOfFixtureComplete(leagueId, seasonId, gameweek);
-        } catch _ {
-          return #err(#FailedInterCanisterCall);
-        };
-      };
-    };
-    return #ok();
-  };
-
-  private func notifyAppsOfFixtureFinalised(leagueId : FootballIds.LeagueId, seasonId : FootballIds.SeasonId, gameweek : FootballDefinitions.GameweekNumber) : async Result.Result<(), Enums.Error> {
-    for (leagueApplication in Iter.fromArray(leagueApplications)) {
-      if (leagueApplication.0 == leagueId) {
-        let application_canister = actor (leagueApplication.1) : actor {
-          notifyAppsOfFixtureFinalised : (leagueId : FootballIds.LeagueId, seasonId : FootballIds.SeasonId, gameweek : FootballDefinitions.GameweekNumber) -> async Result.Result<(), Enums.Error>;
-        };
-        try {
-          let _ = await application_canister.notifyAppsOfFixtureFinalised(leagueId, seasonId, gameweek);
-        } catch _ {
-          return #err(#FailedInterCanisterCall);
-        };
-      };
-    };
-    return #ok();
-  };
-
-  private func notifyAppsOfSeasonComplete(leagueId : FootballIds.LeagueId, seasonId : FootballIds.SeasonId) : async Result.Result<(), Enums.Error> {
-    for (leagueApplication in Iter.fromArray(leagueApplications)) {
-      if (leagueApplication.0 == leagueId) {
-        let application_canister = actor (leagueApplication.1) : actor {
-          notifyAppsOfSeasonComplete : (leagueId : FootballIds.LeagueId, seasonId : FootballIds.SeasonId) -> async Result.Result<(), Enums.Error>;
-        };
-        try {
-          let _ = await application_canister.notifyAppsOfSeasonComplete(leagueId, seasonId);
-        } catch _ {
-          return #err(#FailedInterCanisterCall);
-        };
-      };
-    };
-    return #ok();
-  };
-
-  */
 
   //Private data update functions
 
