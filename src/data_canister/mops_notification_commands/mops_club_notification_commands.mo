@@ -1,6 +1,6 @@
 module MopsClubNotificationCommands = {
     public type NewClubNotification = {};
-    public type UpdatedClubNotification = {};
-    public type PromotedClubNotification = {};
-    public type RelegatedClubNotification = {};
+    public type UpdateClubNotification = {};
+    public type PromoteClubNotification = {};
+    public type RelegateClubNotification = {};
 };

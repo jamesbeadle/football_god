@@ -1,8 +1,8 @@
 module MopsPlayerNotificationCommands = {
-    public type InitialFixturesAddedNotification = {};
-    public type SeasonBeginNotification = {};
-    public type GameweekBeginNotification = {};
-    public type GameweekCompleteNotification = {};
-    public type FixtureFinalisedNotification = {};
-    public type SeasonCompleteNotification = {};
+    public type AddInitialFixtureNotification = {};
+    public type BeginSeasonNotification = {};
+    public type BeginGameweekNotification = {};
+    public type CompleteGameweekNotification = {};
+    public type FinaliseFixtureNotification = {};
+    public type CompleteSeasonNotification = {};
 };
