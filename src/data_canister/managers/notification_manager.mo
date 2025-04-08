@@ -32,7 +32,7 @@ module {
             case (#CreateClub){
                 for(app in Iter.fromArray(defaultNotificationGroup)){
                     let application_canister = actor (app.1) : actor {
-                        createClubNotification : (dto: MopsClubNotificationCommands.CreateClubNotification) -> async Result.Result<(), Enums.Error>;
+                        createClubNotification : (dto: MopsClubNotificationCommands.ClubChangeNotification) -> async Result.Result<(), Enums.Error>;
                     };
                     switch(dto){
                         case (#CreateClub foundDTO){
@@ -45,7 +45,7 @@ module {
             case (#UpdateClub){
                 for(app in Iter.fromArray(defaultNotificationGroup)){
                     let application_canister = actor (app.1) : actor {
-                        updateClubNotification : (dto: MopsClubNotificationCommands.UpdateClubNotification) -> async Result.Result<(), Enums.Error>;
+                        updateClubNotification : (dto: MopsClubNotificationCommands.ClubChangeNotification) -> async Result.Result<(), Enums.Error>;
                     };
                     switch(dto){
                         case (#UpdateClub foundDTO){
@@ -58,7 +58,7 @@ module {
             case (#PromoteClub){
                 for(app in Iter.fromArray(defaultNotificationGroup)){
                     let application_canister = actor (app.1) : actor {
-                        promoteClubNotification : (dto: MopsClubNotificationCommands.PromoteClubNotification) -> async Result.Result<(), Enums.Error>;
+                        promoteClubNotification : (dto: MopsClubNotificationCommands.ClubChangeNotification) -> async Result.Result<(), Enums.Error>;
                     };
                     switch(dto){
                         case (#PromoteClub foundDTO){
@@ -71,7 +71,7 @@ module {
             case (#RelegateClub){
                 for(app in Iter.fromArray(defaultNotificationGroup)){
                     let application_canister = actor (app.1) : actor {
-                        relegateClubNotification : (dto: MopsClubNotificationCommands.RelegateClubNotification) -> async Result.Result<(), Enums.Error>;
+                        relegateClubNotification : (dto: MopsClubNotificationCommands.ClubChangeNotification) -> async Result.Result<(), Enums.Error>;
                     };
                     switch(dto){
                         case (#RelegateClub foundDTO){
@@ -177,7 +177,7 @@ module {
             case (#RevaluePlayerUp){
                 for(app in Iter.fromArray(defaultNotificationGroup)){
                     let application_canister = actor (app.1) : actor {
-                        revaluePlayerUpNotification : (dto: MopsPlayerNotificationCommands.RevaluePlayerUpNotification) -> async Result.Result<(), Enums.Error>;
+                        revaluePlayerUpNotification : (dto: MopsPlayerNotificationCommands.PlayerChangeNotification) -> async Result.Result<(), Enums.Error>;
                     };
                     switch(dto){
                         case (#RevaluePlayerUp foundDTO){
@@ -190,7 +190,7 @@ module {
             case (#RevaluePlayerDown){
                 for(app in Iter.fromArray(defaultNotificationGroup)){
                     let application_canister = actor (app.1) : actor {
-                        revaluePlayerDownNotification : (dto: MopsPlayerNotificationCommands.RevaluePlayerDownNotification) -> async Result.Result<(), Enums.Error>;
+                        revaluePlayerDownNotification : (dto: MopsPlayerNotificationCommands.PlayerChangeNotification) -> async Result.Result<(), Enums.Error>;
                     };
                     switch(dto){
                         case (#RevaluePlayerDown foundDTO){
@@ -203,7 +203,7 @@ module {
             case (#LoanPlayer){
                 for(app in Iter.fromArray(defaultNotificationGroup)){
                     let application_canister = actor (app.1) : actor {
-                        loanPlayerNotification : (dto: MopsPlayerNotificationCommands.LoanPlayerNotification) -> async Result.Result<(), Enums.Error>;
+                        loanPlayerNotification : (dto: MopsPlayerNotificationCommands.PlayerChangeNotification) -> async Result.Result<(), Enums.Error>;
                     };
                     switch(dto){
                         case (#LoanPlayer foundDTO){
@@ -216,7 +216,7 @@ module {
             case (#RecallPlayer){
                 for(app in Iter.fromArray(defaultNotificationGroup)){
                     let application_canister = actor (app.1) : actor {
-                        recallPlayerNotification : (dto: MopsPlayerNotificationCommands.RecallPlayerNotification) -> async Result.Result<(), Enums.Error>;
+                        recallPlayerNotification : (dto: MopsPlayerNotificationCommands.PlayerChangeNotification) -> async Result.Result<(), Enums.Error>;
                     };
                     switch(dto){
                         case (#RecallPlayer foundDTO){
@@ -229,7 +229,7 @@ module {
             case (#ExpireLoan){
                 for(app in Iter.fromArray(defaultNotificationGroup)){
                     let application_canister = actor (app.1) : actor {
-                        expireLoanNotification : (dto: MopsPlayerNotificationCommands.ExpireLoanNotification) -> async Result.Result<(), Enums.Error>;
+                        expireLoanNotification : (dto: MopsPlayerNotificationCommands.PlayerChangeNotification) -> async Result.Result<(), Enums.Error>;
                     };
                     switch(dto){
                         case (#ExpireLoan foundDTO){
@@ -242,7 +242,7 @@ module {
             case (#TransferPlayer){
                 for(app in Iter.fromArray(defaultNotificationGroup)){
                     let application_canister = actor (app.1) : actor {
-                        transferPlayerNotification : (dto: MopsPlayerNotificationCommands.TransferPlayerNotification) -> async Result.Result<(), Enums.Error>;
+                        transferPlayerNotification : (dto: MopsPlayerNotificationCommands.PlayerChangeNotification) -> async Result.Result<(), Enums.Error>;
                     };
                     switch(dto){
                         case (#TransferPlayer foundDTO){
@@ -255,7 +255,7 @@ module {
             case (#SetFreeAgent){
                 for(app in Iter.fromArray(defaultNotificationGroup)){
                     let application_canister = actor (app.1) : actor {
-                        setFreeAgentNotification : (dto: MopsPlayerNotificationCommands.SetFreeAgentNotification) -> async Result.Result<(), Enums.Error>;
+                        setFreeAgentNotification : (dto: MopsPlayerNotificationCommands.PlayerChangeNotification) -> async Result.Result<(), Enums.Error>;
                     };
                     switch(dto){
                         case (#SetFreeAgent foundDTO){
@@ -268,7 +268,7 @@ module {
             case (#CreatePlayer){
                 for(app in Iter.fromArray(defaultNotificationGroup)){
                     let application_canister = actor (app.1) : actor {
-                        createPlayerNotification : (dto: MopsPlayerNotificationCommands.CreatePlayerNotification) -> async Result.Result<(), Enums.Error>;
+                        createPlayerNotification : (dto: MopsPlayerNotificationCommands.PlayerChangeNotification) -> async Result.Result<(), Enums.Error>;
                     };
                     switch(dto){
                         case (#CreatePlayer foundDTO){
@@ -281,7 +281,7 @@ module {
             case (#UpdatePlayer){
                 for(app in Iter.fromArray(defaultNotificationGroup)){
                     let application_canister = actor (app.1) : actor {
-                        updatePlayerNotification : (dto: MopsPlayerNotificationCommands.UpdatePlayerNotification) -> async Result.Result<(), Enums.Error>;
+                        updatePlayerNotification : (dto: MopsPlayerNotificationCommands.PlayerChangeNotification) -> async Result.Result<(), Enums.Error>;
                     };
                     switch(dto){
                         case (#UpdatePlayer foundDTO){
@@ -294,7 +294,7 @@ module {
             case (#InjuryUpdated){
                 for(app in Iter.fromArray(defaultNotificationGroup)){
                     let application_canister = actor (app.1) : actor {
-                        injuryUpdatedNotification : (dto: MopsPlayerNotificationCommands.InjuryUpdatedNotification) -> async Result.Result<(), Enums.Error>;
+                        injuryUpdatedNotification : (dto: MopsPlayerNotificationCommands.PlayerChangeNotification) -> async Result.Result<(), Enums.Error>;
                     };
                     switch(dto){
                         case (#InjuryUpdated foundDTO){
@@ -307,7 +307,7 @@ module {
             case (#RetirePlayer){
                 for(app in Iter.fromArray(defaultNotificationGroup)){
                     let application_canister = actor (app.1) : actor {
-                        retirePlayerNotification : (dto: MopsPlayerNotificationCommands.RetirePlayerNotification) -> async Result.Result<(), Enums.Error>;
+                        retirePlayerNotification : (dto: MopsPlayerNotificationCommands.PlayerChangeNotification) -> async Result.Result<(), Enums.Error>;
                     };
                     switch(dto){
                         case (#RetirePlayer foundDTO){
@@ -320,7 +320,7 @@ module {
             case (#UnretirePlayer){
                 for(app in Iter.fromArray(defaultNotificationGroup)){
                     let application_canister = actor (app.1) : actor {
-                        unretirePlayerNotification : (dto: MopsPlayerNotificationCommands.UnretirePlayerNotification) -> async Result.Result<(), Enums.Error>;
+                        unretirePlayerNotification : (dto: MopsPlayerNotificationCommands.PlayerChangeNotification) -> async Result.Result<(), Enums.Error>;
                     };
                     switch(dto){
                         case (#UnretirePlayer foundDTO){
@@ -333,7 +333,7 @@ module {
             case (#ChangePlayerPosition){
                 for(app in Iter.fromArray(defaultNotificationGroup)){
                     let application_canister = actor (app.1) : actor {
-                        changePlayerPositionNotification : (dto: MopsPlayerNotificationCommands.ChangePlayerPositionNotification) -> async Result.Result<(), Enums.Error>;
+                        changePlayerPositionNotification : (dto: MopsPlayerNotificationCommands.PlayerChangeNotification) -> async Result.Result<(), Enums.Error>;
                     };
                     switch(dto){
                         case (#ChangePlayerPosition foundDTO){

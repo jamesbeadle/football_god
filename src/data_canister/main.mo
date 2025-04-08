@@ -1447,7 +1447,7 @@ actor Self {
 
     leaguePlayers := Buffer.toArray(updatedLeaguePlayersBuffer);
     let _ = await updateDataHash(dto.leagueId, "players");
-    let _ = await notificationManager.distributeNotification(#RevaluePlayerUp, #RevaluePlayerUp { });
+    let _ = await notificationManager.distributeNotification(#RevaluePlayerUp, #RevaluePlayerUp { leagueId = dto.leagueId; playerId = dto.playerId });
   };
 
   public shared ({ caller }) func revaluePlayerDown(dto : PlayerCommands.RevaluePlayerDown) : async () {
@@ -1526,7 +1526,7 @@ actor Self {
 
     leaguePlayers := Buffer.toArray(updatedLeaguePlayersBuffer);
     let _ = await updateDataHash(dto.leagueId, "players");
-    let _ = await notificationManager.distributeNotification(#RevaluePlayerDown, #RevaluePlayerDown { });
+    let _ = await notificationManager.distributeNotification(#RevaluePlayerDown, #RevaluePlayerDown { leagueId = dto.leagueId; playerId = dto.playerId });
   };
 
   public shared ({ caller }) func loanPlayer(dto : PlayerCommands.LoanPlayer) : async () {
@@ -1587,7 +1587,7 @@ actor Self {
       );
 
       let _ = await updateDataHash(dto.leagueId, "players");
-      let _ = await notificationManager.distributeNotification(#LoanPlayer, #LoanPlayer {});
+      let _ = await notificationManager.distributeNotification(#LoanPlayer, #LoanPlayer { leagueId = dto.leagueId; playerId = dto.playerId });
     } else {
 
       let currentLeaguePlayersSet = Array.find<(FootballIds.LeagueId, [FootballTypes.Player])>(
@@ -1668,7 +1668,7 @@ actor Self {
               let _ = await updateDataHash(dto.leagueId, "players");
               let _ = await updateDataHash(dto.loanLeagueId, "players");
               
-              let _ = await notificationManager.distributeNotification(#LoanPlayer, #LoanPlayer { });
+              let _ = await notificationManager.distributeNotification(#LoanPlayer, #LoanPlayer { leagueId = dto.leagueId; playerId = dto.playerId });
 
             };
             case (null) {};
@@ -1696,7 +1696,7 @@ actor Self {
 
     movePlayerToLeague(dto.leagueId, dto.newLeagueId, dto.newClubId, dto.playerId, dto.newShirtNumber);
     let _ = await updateDataHash(dto.leagueId, "players");
-    let _ = await notificationManager.distributeNotification(#TransferPlayer, #TransferPlayer {  });
+    let _ = await notificationManager.distributeNotification(#TransferPlayer, #TransferPlayer { leagueId = dto.leagueId; playerId = dto.playerId });
   };
 
   public shared ({ caller }) func setFreeAgent(dto : PlayerCommands.SetFreeAgent) : async () {
@@ -1704,7 +1704,7 @@ actor Self {
 
     movePlayerToFreeAgents(dto.leagueId, dto.playerId, dto.newValueQuarterMillions);
     let _ = await updateDataHash(dto.leagueId, "players");
-    let _ = await notificationManager.distributeNotification(#SetFreeAgent, #SetFreeAgent {  });
+    let _ = await notificationManager.distributeNotification(#SetFreeAgent, #SetFreeAgent { leagueId = dto.leagueId; playerId = dto.playerId });
 
   };
 
@@ -1809,7 +1809,7 @@ actor Self {
               },
             );
 
-            let _ = await notificationManager.distributeNotification(#RecallPlayer, #RecallPlayer {  });
+            let _ = await notificationManager.distributeNotification(#RecallPlayer, #RecallPlayer { leagueId = dto.leagueId; playerId = dto.playerId });
           };
           case (null) {};
         };
@@ -1868,9 +1868,10 @@ actor Self {
           },
         );
 
+        let newPlayerId = nextPlayerId;
         nextPlayerId += 1;
         let _ = await updateDataHash(dto.leagueId, "players");
-        let _ = await notificationManager.distributeNotification(#CreatePlayer, #CreatePlayer {  });
+        let _ = await notificationManager.distributeNotification(#CreatePlayer, #CreatePlayer { leagueId = dto.leagueId; playerId = nextPlayerId });
 
       };
       case (null) {};
@@ -1947,7 +1948,7 @@ actor Self {
     );
 
     if (positionUpdated) {
-      let _ = await notificationManager.distributeNotification(#ChangePlayerPosition, #ChangePlayerPosition {  });
+      let _ = await notificationManager.distributeNotification(#ChangePlayerPosition, #ChangePlayerPosition { leagueId = dto.leagueId; playerId = dto.playerId });
     };
 
     let _ = await updateDataHash(dto.leagueId, "players");
@@ -2028,7 +2029,7 @@ actor Self {
     let playerInjuryDuration = #nanoseconds(Int.abs((dto.expectedEndDate - Time.now())));
     let _ = await setTimer(playerInjuryDuration, "injuryExpired");
     let _ = await updateDataHash(dto.leagueId, "players");
-    let _ = await notificationManager.distributeNotification(#InjuryUpdated, #InjuryUpdated {  });
+    let _ = await notificationManager.distributeNotification(#InjuryUpdated, #InjuryUpdated { leagueId = dto.leagueId; playerId = dto.playerId });
   };
 
   public shared ({ caller }) func retirePlayer(dto : PlayerCommands.RetirePlayer) : async () {
@@ -2074,7 +2075,7 @@ actor Self {
       },
     );
     let _ = await updateDataHash(dto.leagueId, "players");
-    let _ = await notificationManager.distributeNotification(#RetirePlayer, #RetirePlayer {  });
+    let _ = await notificationManager.distributeNotification(#RetirePlayer, #RetirePlayer { leagueId = dto.leagueId; playerId = dto.playerId });
   };
 
   public shared ({ caller }) func unretirePlayer(dto : PlayerCommands.UnretirePlayer) : async () {
@@ -2156,7 +2157,7 @@ actor Self {
             );
 
             let _ = await updateDataHash(dto.leagueId, "players");
-    let _ = await notificationManager.distributeNotification(#UnretirePlayer, #UnretirePlayer {  });
+    let _ = await notificationManager.distributeNotification(#UnretirePlayer, #UnretirePlayer { leagueId = dto.leagueId; playerId = dto.playerId });
           };
           case (null) {
 
@@ -2210,8 +2211,9 @@ actor Self {
     leagueClubs := Buffer.toArray(leaguesClubsBuffer);
     leaguePlayers := Buffer.toArray(leaguePlayersBuffer);
 
+    let newLeagueId = nextLeagueId;
     nextLeagueId += 1;
-    let _ = await notificationManager.distributeNotification(#CreateLeague, #CreateLeague {  });
+    let _ = await notificationManager.distributeNotification(#CreateLeague, #CreateLeague { leagueId = newLeagueId; });
   };
 
   public shared ({ caller }) func updateLeague(dto : LeagueCommands.UpdateLeague) : async () {
@@ -2249,7 +2251,7 @@ actor Self {
       };
       case (null) {};
     };
-    let _ = await notificationManager.distributeNotification(#UpdateLeague, #UpdateLeague {  });
+    let _ = await notificationManager.distributeNotification(#UpdateLeague, #UpdateLeague { leagueId = dto.leagueId });
   };
 
   public shared ({ caller }) func addInitialFixtures(dto : FixtureCommands.AddInitialFixtures) : async () {
@@ -2306,7 +2308,7 @@ actor Self {
     );
     let _ = await updateDataHash(dto.leagueId, "fixtures");
     await createFixtureTimers();
-    let _ = await notificationManager.distributeNotification(#AddInitialFixtures, #AddInitialFixtures {  });
+    let _ = await notificationManager.distributeNotification(#AddInitialFixtures, #AddInitialFixtures { leagueId = dto.leagueId });
   };
 
   public shared ({ caller }) func moveFixture(dto : FixtureCommands.MoveFixture) : async () {
@@ -2505,7 +2507,7 @@ actor Self {
             let _ = await updateDataHash(dto.leagueId, "fixtures");
             let _ = await updateDataHash(dto.leagueId, "players");
             let _ = await updateDataHash(dto.leagueId, "player_events");
-            let _ = await notificationManager.distributeNotification(#FinaliseFixture, #FinaliseFixture {  });
+            let _ = await notificationManager.distributeNotification(#FinaliseFixture, #FinaliseFixture { leagueId = dto.leagueId; seasonId = dto.seasonId; fixtureId = dto.fixtureId });
           };
         };
       };
@@ -2684,7 +2686,7 @@ actor Self {
             );
             if (List.size(finalisedFixtures) == List.size(season.fixtures)) {
               await endSeason(leagueId, seasonId);
-            let _ = await notificationManager.distributeNotification(#CompleteSeason, #CompleteSeason {  });
+            let _ = await notificationManager.distributeNotification(#CompleteSeason, #CompleteSeason { leagueId; seasonId; });
             };
           };
           case (null) {};
@@ -4385,7 +4387,7 @@ actor Self {
                 activeGameweek := nextFixture.gameweek;
                 unplayedGameweek := activeGameweek + 1;
                 setLeagueGameweek(leagueStatus.leagueId, unplayedGameweek, activeGameweek, completedGameweek, nextFixtureGameweekFixtures[0].kickOff);
-                let _ = await notificationManager.distributeNotification(#BeginGameweek, #BeginGameweek {  });
+                let _ = await notificationManager.distributeNotification(#BeginGameweek, #BeginGameweek { leagueId = league.0; seasonId = season.id; gameweek = activeGameweek });
               };
             };
             case (null) {};
@@ -4540,8 +4542,8 @@ actor Self {
 
   private func setFixtureToComplete() : async () {
     var completedFixtureLeagueId : Nat16 = 0;
-    var completeFixtureSeasonId : Nat16 = 0;
-    var compeltedFixtureGameweek : Nat8 = 0;
+    var completedFixtureSeasonId : Nat16 = 0;
+    var completedFixtureId : FootballIds.FixtureId = 0;
 
     leagueSeasons := Array.map<(FootballIds.LeagueId, [FootballTypes.Season]), (FootballIds.LeagueId, [FootballTypes.Season])>(
       leagueSeasons,
@@ -4574,8 +4576,8 @@ actor Self {
                           if (fixture.gameweek == leagueStatus.activeGameweek and fixture.status == #Active and now > fixtureEndTime) {
                             checkRequiredStatus(leagueStatus.leagueId);
                             completedFixtureLeagueId := leagueStatus.leagueId;
-                            completeFixtureSeasonId := fixture.seasonId;
-                            compeltedFixtureGameweek := fixture.gameweek;
+                            completedFixtureSeasonId := fixture.seasonId;
+                            completedFixtureId := fixture.id;
                             return {
                               awayClubId = fixture.awayClubId;
                               awayGoals = fixture.awayGoals;
@@ -4615,8 +4617,8 @@ actor Self {
       },
     );
 
-    if (completedFixtureLeagueId > 0 and completeFixtureSeasonId > 0 and compeltedFixtureGameweek > 0) {
-      let _ = await notificationManager.distributeNotification(#CompleteFixture, #CompleteFixture {  });
+    if (completedFixtureLeagueId > 0 and completedFixtureSeasonId > 0 and completedFixtureId > 0) {
+      let _ = await notificationManager.distributeNotification(#CompleteFixture, #CompleteFixture { leagueId = completedFixtureLeagueId; seasonId = completedFixtureSeasonId; fixtureId = completedFixtureId });
     };
   };
 
@@ -4847,7 +4849,8 @@ actor Self {
           },
         );
 
-        let _ = await notificationManager.distributeNotification(#ExpireLoan, #ExpireLoan {  });
+        // TODO: Needs to be more idempotent
+        //let _ = await notificationManager.distributeNotification(#ExpireLoan, #ExpireLoan { leagueId = dto.leagueId; playerId = dto.playerId });
       };
     };
   };

@@ -2,11 +2,7 @@ import FootballIds "mo:waterway-mops/football/FootballIds";
 import FootballDefinitions "mo:waterway-mops/football/FootballDefinitions";
 module MopsPlayerNotificationCommands = {
 
-    public type CreateLeagueNotification = {
-        leagueId: FootballIds.LeagueId;
-    };
-
-    public type UpdateLeagueNotification = {
+    public type LeagueChangeNotification = {
         leagueId: FootballIds.LeagueId;
     };
 
@@ -42,7 +38,7 @@ module MopsPlayerNotificationCommands = {
         seasonId: FootballIds.SeasonId;
         fixtureId: FootballIds.FixtureId;
     };
-    
+
     public type CompleteSeasonNotification = {
         leagueId: FootballIds.LeagueId;
         seasonId: FootballIds.SeasonId;
