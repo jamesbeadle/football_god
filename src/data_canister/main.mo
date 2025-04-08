@@ -36,6 +36,7 @@ import FootballDefinitions "mo:waterway-mops/football/FootballDefinitions";
 import FootballEnums "mo:waterway-mops/football/FootballEnums";
 import BaseDefinitions "mo:waterway-mops/BaseDefinitions";
 import BaseQueries "mo:waterway-mops/queries/BaseQueries";
+import DateTimeUtilities "mo:waterway-mops/DateTimeUtilities";
 
 /* ----- Queries ----- */
 import PlayerQueries "queries/player_queries";
@@ -52,10 +53,10 @@ import FixtureCommands "commands/fixture_commands";
 import ClubCommands "commands/club_commands";
 
 import Environment "environment";
-import Utilities "utilities/utilities";
 import AppQueries "queries/app_queries";
 import SummaryTypes "summary_types";
 import NotificationManager "managers/notification_manager";
+import MopsUtilities "utilities/mops_utilities";
 
 actor Self {
 
@@ -1078,7 +1079,7 @@ actor Self {
       return #Err("Invalid Data");
     };
 
-    if (Utilities.calculateAgeFromUnix(dto.dateOfBirth) < 16) {
+    if (DateTimeUtilities.calculateAgeFromUnix(dto.dateOfBirth) < 16) {
       return #Err("Invalid Data");
     };
 
@@ -1106,7 +1107,7 @@ actor Self {
       case (?_) {};
     };
 
-    if (Utilities.calculateAgeFromUnix(dto.dateOfBirth) < 16) {
+    if (DateTimeUtilities.calculateAgeFromUnix(dto.dateOfBirth) < 16) {
       return #Err("Invalid Data");
     };
     return #Ok("Valid");
@@ -3001,7 +3002,7 @@ actor Self {
     var homeGoalsCount : Nat8 = 0;
     var awayGoalsCount : Nat8 = 0;
 
-    let playerEventsMap : TrieMap.TrieMap<FootballIds.PlayerId, [FootballTypes.PlayerEventData]> = TrieMap.TrieMap<FootballIds.PlayerId, [FootballTypes.PlayerEventData]>(Utilities.eqNat16, Utilities.hashNat16);
+    let playerEventsMap : TrieMap.TrieMap<FootballIds.PlayerId, [FootballTypes.PlayerEventData]> = TrieMap.TrieMap<FootballIds.PlayerId, [FootballTypes.PlayerEventData]>(BaseUtilities.eqNat16, BaseUtilities.hashNat16);
 
     for (event in Iter.fromArray(playerEvents)) {
       switch (event.eventType) {
@@ -3035,7 +3036,7 @@ actor Self {
       };
     };
 
-    let playerScoresMap : TrieMap.TrieMap<Nat16, Int16> = TrieMap.TrieMap<Nat16, Int16>(Utilities.eqNat16, Utilities.hashNat16);
+    let playerScoresMap : TrieMap.TrieMap<Nat16, Int16> = TrieMap.TrieMap<Nat16, Int16>(BaseUtilities.eqNat16, BaseUtilities.hashNat16);
     for ((playerId, events) in playerEventsMap.entries()) {
       let currentPlayer = Array.find<PlayerQueries.Player>(
         players,
@@ -3051,11 +3052,11 @@ actor Self {
             events,
             0,
             func(acc : Int16, event : FootballTypes.PlayerEventData) : Int16 {
-              return acc + Utilities.calculateIndividualScoreForEvent(event, foundPlayer.position);
+              return acc + MopsUtilities.calculateIndividualScoreForEvent(event, foundPlayer.position);
             },
           );
 
-          let aggregateScore = Utilities.calculateAggregatePlayerEvents(events, foundPlayer.position);
+          let aggregateScore = MopsUtilities.calculateAggregatePlayerEvents(events, foundPlayer.position);
           playerScoresMap.put(playerId, totalScore + aggregateScore);
         };
       };
@@ -3177,7 +3178,7 @@ actor Self {
   private func addEventsToPlayers(leagueId : FootballIds.LeagueId, playerEventData : [FootballTypes.PlayerEventData], seasonId : FootballIds.SeasonId, gameweek : FootballDefinitions.GameweekNumber, fixtureId : FootballIds.FixtureId) {
 
     var updatedSeasons : List.List<FootballTypes.PlayerSeason> = List.nil<FootballTypes.PlayerSeason>();
-    let playerEventsMap : TrieMap.TrieMap<Nat16, [FootballTypes.PlayerEventData]> = TrieMap.TrieMap<Nat16, [FootballTypes.PlayerEventData]>(Utilities.eqNat16, Utilities.hashNat16);
+    let playerEventsMap : TrieMap.TrieMap<Nat16, [FootballTypes.PlayerEventData]> = TrieMap.TrieMap<Nat16, [FootballTypes.PlayerEventData]>(BaseUtilities.eqNat16, BaseUtilities.hashNat16);
 
     for (event in Iter.fromArray(playerEventData)) {
       let playerId : Nat16 = event.playerId;
@@ -3679,11 +3680,11 @@ actor Self {
       events,
       0,
       func(acc : Int16, event : FootballTypes.PlayerEventData) : Int16 {
-        return acc + Utilities.calculateIndividualScoreForEvent(event, playerPosition);
+        return acc + MopsUtilities.calculateIndividualScoreForEvent(event, playerPosition);
       },
     );
 
-    let aggregateScore = Utilities.calculateAggregatePlayerEvents(events, playerPosition);
+    let aggregateScore = MopsUtilities.calculateAggregatePlayerEvents(events, playerPosition);
     return totalScore + aggregateScore;
   };
 
@@ -3878,7 +3879,7 @@ actor Self {
       return false;
     };
 
-    let playerEventsMap : TrieMap.TrieMap<FootballIds.PlayerId, List.List<FootballTypes.PlayerEventData>> = TrieMap.TrieMap<FootballIds.PlayerId, List.List<FootballTypes.PlayerEventData>>(Utilities.eqNat16, Utilities.hashNat16);
+    let playerEventsMap : TrieMap.TrieMap<FootballIds.PlayerId, List.List<FootballTypes.PlayerEventData>> = TrieMap.TrieMap<FootballIds.PlayerId, List.List<FootballTypes.PlayerEventData>>(BaseUtilities.eqNat16, BaseUtilities.hashNat16);
 
     for (playerEvent in Iter.fromArray(playerEvents)) {
       switch (playerEventsMap.get(playerEvent.playerId)) {
@@ -4058,11 +4059,11 @@ actor Self {
               let activeFutureFixtures = List.filter<FootballTypes.Fixture>(
                 season.fixtures,
                 func(fixture : FootballTypes.Fixture) {
-                  fixture.kickOff - Utilities.getHour() >= Time.now();
+                  fixture.kickOff - DateTimeUtilities.getHour() >= Time.now();
                 },
               ); // TODO
               for (fixture in Iter.fromList(activeFutureFixtures)) {
-                let triggerDuration = #nanoseconds(Int.abs((fixture.kickOff - Utilities.getHour() - Time.now())));
+                let triggerDuration = #nanoseconds(Int.abs((fixture.kickOff - DateTimeUtilities.getHour() - Time.now())));
                 await setTimer(triggerDuration, "rollOverPickTeam");
               };
             };
@@ -4090,7 +4091,7 @@ actor Self {
 
       switch (leagueStatusResult) {
         case (?leagueState) {
-          let nextTransferWindowStartDate = Utilities.getNextUnixTimestampForDayMonth(leagueState.transferWindowStartDay, leagueState.transferWindowStartMonth);
+          let nextTransferWindowStartDate = MopsUtilities.getNextUnixTimestampForDayMonth(leagueState.transferWindowStartDay, leagueState.transferWindowStartMonth);
           switch (nextTransferWindowStartDate) {
             case (?foundDate) {
               let triggerDuration = #nanoseconds(Int.abs((foundDate - Time.now())));
@@ -4121,7 +4122,7 @@ actor Self {
 
       switch (leagueStatusResult) {
         case (?leagueState) {
-          let nextTransferWindowEndDate = Utilities.getNextUnixTimestampForDayMonth(leagueState.transferWindowEndDay, leagueState.transferWindowEndMonth);
+          let nextTransferWindowEndDate = MopsUtilities.getNextUnixTimestampForDayMonth(leagueState.transferWindowEndDay, leagueState.transferWindowEndMonth);
           switch (nextTransferWindowEndDate) {
             case (?foundDate) {
               let triggerDuration = #nanoseconds(Int.abs((foundDate - Time.now())));
@@ -4214,7 +4215,7 @@ actor Self {
               );
 
               for (fixture in Iter.fromList(unplayedFixtures)) {
-                let gameCompletedDuration = #nanoseconds(Int.abs(((fixture.kickOff + (Utilities.getHour() * 2)) - Time.now())));
+                let gameCompletedDuration = #nanoseconds(Int.abs(((fixture.kickOff + (DateTimeUtilities.getHour() * 2)) - Time.now())));
                 let _ = setTimer(gameCompletedDuration, "setFixtureToComplete");
               };
             };
@@ -4496,7 +4497,7 @@ actor Self {
                         func(fixture : FootballTypes.Fixture) {
 
                           let now = Time.now();
-                          let fixtureEndTime = fixture.kickOff + (Utilities.getHour() * 2);
+                          let fixtureEndTime = fixture.kickOff + (DateTimeUtilities.getHour() * 2);
 
                           if (fixture.gameweek == leagueStatus.activeGameweek and fixture.status == #Unplayed and now <= fixtureEndTime) {
                             checkRequiredStatus(leagueStatus.leagueId);
@@ -4571,7 +4572,7 @@ actor Self {
                         func(fixture : FootballTypes.Fixture) {
 
                           let now = Time.now();
-                          let fixtureEndTime = fixture.kickOff + (Utilities.getHour() * 2);
+                          let fixtureEndTime = fixture.kickOff + (DateTimeUtilities.getHour() * 2);
 
                           if (fixture.gameweek == leagueStatus.activeGameweek and fixture.status == #Active and now > fixtureEndTime) {
                             checkRequiredStatus(leagueStatus.leagueId);
@@ -4907,7 +4908,7 @@ actor Self {
       leagueStatuses,
       func(status : FootballTypes.LeagueStatus) {
 
-        let activeMonth : BaseDefinitions.CalendarMonth = Utilities.unixTimeToMonth(earliestGameweekKickOffTime);
+        let activeMonth : BaseDefinitions.CalendarMonth = DateTimeUtilities.unixTimeToMonth(earliestGameweekKickOffTime);
 
         if (status.leagueId == leagueId) {
           return {

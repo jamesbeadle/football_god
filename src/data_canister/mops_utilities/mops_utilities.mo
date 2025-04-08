@@ -1,4 +1,3 @@
-import Float "mo:base/Float";
 import Nat64 "mo:base/Nat64";
 import Int64 "mo:base/Int64";
 import Array "mo:base/Array";
@@ -6,8 +5,6 @@ import Int "mo:base/Int";
 import Nat "mo:base/Nat";
 import Time "mo:base/Time";
 import Iter "mo:base/Iter";
-import Hash "mo:base/Hash";
-import Nat32 "mo:base/Nat32";
 import Nat8 "mo:base/Nat8";
 import Nat16 "mo:base/Nat16";
 import Int16 "mo:base/Int16";
@@ -16,35 +13,6 @@ import FootballEnums "mo:waterway-mops/football/FootballEnums";
 
 module {
 
-    public func convertNat64ToFloat(input: Nat64) : Float {
-        return Float.fromInt64(Int64.fromNat64(input));
-    };
-
-    public func convertFloatToNat64(input: Float) : Nat64 {
-        return Nat64.fromIntWrap(Int64.toInt(Float.toInt64(input)));
-    };
-
-    public func convertNatToInt(input: Nat) : Int {
-        return Int64.toInt(Int64.fromNat64(Nat64.fromNat(input)));
-    };
-
-    public func convertDaysToNanosecondsInt(pauseDays: Nat): Int {
-      let secondsPerDay: Int = 24 * 60 * 60;
-      let nanosecondsPerSecond: Int = 1_000_000_000;
-      return convertNatToInt(pauseDays) * secondsPerDay * nanosecondsPerSecond;
-    };
-
-    public func getDay(): Int {
-      let secondsPerDay: Int = 24 * 60 * 60;
-      let nanosecondsPerSecond: Int = 1_000_000_000;
-      return secondsPerDay * nanosecondsPerSecond;
-    };
-
-    public func getHour(): Int {
-      let secondsPerHour: Int = 60 * 60;
-      let nanosecondsPerSecond: Int = 1_000_000_000;
-      return secondsPerHour * nanosecondsPerSecond;
-    };
 
     public func calculateAgeFromUnix(dobUnix : Int) : Nat {
       let secondsInADay : Int = 86_400;
@@ -92,80 +60,6 @@ module {
       };
     };
     return dayCounter;
-  };
-
-  public let eqNat8 = func(a : Nat8, b : Nat8) : Bool {
-    a == b;
-  };
-
-  public let hashNat8 = func(key : Nat8) : Hash.Hash {
-    Nat32.fromNat(Nat8.toNat(key) % (2 ** 32 -1));
-  };
-
-  public let eqNat16 = func(a : Nat16, b : Nat16) : Bool {
-    a == b;
-  };
-
-  public let hashNat16 = func(key : Nat16) : Hash.Hash {
-    Nat32.fromNat(Nat16.toNat(key) % (2 ** 32 -1));
-  };
-
-  public let eqNat32 = func(a : Nat32, b : Nat32) : Bool {
-    a == b;
-  };
-
-  public let hashNat32 = func(key : Nat32) : Hash.Hash {
-    Nat32.fromNat(Nat32.toNat(key) % (2 ** 32 -1));
-  };
-
-  public func unixTimeToMonth(unixTime : Int) : Nat8 {
-
-    let secondsInADay = 86400;
-    let seconds = unixTime / 1000000000;
-    var days = seconds / secondsInADay;
-
-    var years = 1970;
-    var dayCounter = days;
-    label leapLoop while (dayCounter > 365) {
-      if (years % 4 == 0 and (years % 100 != 0 or years % 400 == 0) and dayCounter > 366) {
-        dayCounter -= 366;
-      } else {
-        dayCounter -= 365;
-      };
-      years += 1;
-    };
-
-    var dayOfYear : Int = dayCounter + 1;
-    if (dayOfYear == 366) {
-      dayOfYear := 1;
-    };
-
-    var isLeapYear = false;
-    if (years % 4 == 0) {
-      if (years % 100 != 0) {
-        isLeapYear := true;
-      } else if (years % 400 == 0) {
-        isLeapYear := true;
-      };
-    };
-
-    var monthEnds : [Nat] = [];
-
-    if (isLeapYear) {
-      monthEnds := [31, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335, 366];
-    } else {
-      monthEnds := [31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334, 365];
-    };
-
-    var month = 0;
-    label monthLoop for (m in Iter.range(0, 11)) {
-      month += 1;
-      if (dayOfYear <= monthEnds[m]) {
-        break monthLoop;
-      };
-    };
-
-    return Nat8.fromNat(month);
   };
 
   public func calculateAggregatePlayerEvents(events : [FootballTypes.PlayerEventData], playerPosition : FootballEnums.PlayerPosition) : Int16 {
