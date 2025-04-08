@@ -853,7 +853,6 @@ actor Self {
     assert not Principal.isAnonymous(caller);
     
     return #ok({ clubs = clubSummaries });
-    
   };
 
   //Private getters
@@ -5112,6 +5111,7 @@ actor Self {
   };
 
   private func populateClubSummaries() {
+    /*
     
     let clubSummaryBuffer = Buffer.fromArray<SummaryTypes.ClubSummary>([]);
 
@@ -5128,6 +5128,7 @@ actor Self {
           shirtType = club.shirtType;
           thirdColour = club.thirdColourHex;
           totalValue = getClubTotalValue(league.0, club.id);
+          gender = club.gender;
         })
       }
     };
@@ -5161,8 +5162,16 @@ actor Self {
     };
 
     clubSummaries := sortedClubSummaries;
+    */
   };
 
+  private func remapData(){
+    //if league id == 2
+      //set as womens clubs
+        //give new club ids
+        
+  };
+  
   private func getClubTotalValue(leagueId: FootballIds.LeagueId, clubId: FootballIds.ClubId) : Nat16 {
 
     var totalClubValue: Nat16 = 0;

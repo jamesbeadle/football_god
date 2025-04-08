@@ -52,7 +52,7 @@ actor Self {
   
   /* ----- General App Queries ----- */
   
-  public shared query func getAppStatus(dto: BaseQueries.GetAppStatus) : async Result.Result<BaseQueries.AppStatus, Enums.Error> {
+  public shared query func getAppStatus() : async Result.Result<BaseQueries.AppStatus, Enums.Error> {
     return #ok(stable_app_status);
   };
 
