@@ -11,5 +11,5 @@ module MopsPlayerNotificationCommands = {
   public type PlayerInjuryUpdatedNotification = {};
   public type PlayerRetirementNotification = {};
   public type PlayerUnretiredNotification = {};
-  public type PlayerPositionChange = {};
+  public type PlayerPositionChangeNotification = {};
 };
