@@ -3,7 +3,7 @@ import MopsLeagueNotificationCommands "mops_league_notification_commands";
 import MopsPlayerNotificationCommands "mops_player_notification_commands";
 module NotificationCommands {
     public type Notification = {
-        #NewClub : MopsClubNotificationCommands.NewClubNotification;
+        #CreateClub : MopsClubNotificationCommands.CreateClubNotification;
         #UpdateClub : MopsClubNotificationCommands.UpdateClubNotification;
         #PromoteClub : MopsClubNotificationCommands.PromoteClubNotification;
         #RelegateClub : MopsClubNotificationCommands.RelegateClubNotification;

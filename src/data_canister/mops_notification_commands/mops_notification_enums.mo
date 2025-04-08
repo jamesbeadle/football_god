@@ -1,6 +1,6 @@
 module Enums {
     public type NotificationType = {
-        #NewClub;
+        #CreateClub;
         #UpdateClub;
         #PromoteClub;
         #RelegateClub;

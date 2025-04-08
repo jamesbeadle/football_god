@@ -29,14 +29,14 @@ module {
     public func distributeNotification(notificationType: MopsNotificationEnums.NotificationType, dto: MopsNotificationCommands.Notification) : async Result.Result<(), Enums.Error>{
        
         switch(notificationType){
-            case (#NewClub){
+            case (#CreateClub){
                 for(app in Iter.fromArray(defaultNotificationGroup)){
                     let application_canister = actor (app.1) : actor {
-                        newClubNotification : (dto: MopsClubNotificationCommands.NewClubNotification) -> async Result.Result<(), Enums.Error>;
+                        createClubNotification : (dto: MopsClubNotificationCommands.CreateClubNotification) -> async Result.Result<(), Enums.Error>;
                     };
                     switch(dto){
-                        case (#NewClub foundDTO){
-                            let _ = await application_canister.newClubNotification(foundDTO);
+                        case (#CreateClub foundDTO){
+                            let _ = await application_canister.createClubNotification(foundDTO);
                         };
                         case (_){}
                     };
