@@ -2955,7 +2955,6 @@ actor Self {
                           eventStartMinute = 90;
                           eventEndMinute = 90;
                           clubId = actualPlayer.clubId;
-                          position = actualPlayer.position;
                         };
                         allPlayerEventsBuffer.add(cleanSheetEvent);
                       };

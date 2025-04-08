@@ -1,5 +1,4 @@
 export const idlFactory = ({ IDL }) => {
-  const GetAppStatus = IDL.Record({});
   const AppStatus = IDL.Record({ version: IDL.Text, onHold: IDL.Bool });
   const Error = IDL.Variant({
     InvalidProfilePicture: IDL.Null,
@@ -27,20 +26,39 @@ export const idlFactory = ({ IDL }) => {
   });
   const Result_10 = IDL.Variant({ ok: AppStatus, err: Error });
   const GetClubValueLeaderboard = IDL.Record({});
+  const PlayerId = IDL.Nat16;
+  const MostValuablePlayer = IDL.Record({
+    id: PlayerId,
+    value: IDL.Nat16,
+    lastName: IDL.Text,
+    firstName: IDL.Text,
+  });
   const ClubId = IDL.Nat16;
+  const Gender = IDL.Variant({ Male: IDL.Null, Female: IDL.Null });
   const ShirtType = IDL.Variant({ Filled: IDL.Null, Striped: IDL.Null });
   const LeagueId = IDL.Nat16;
   const ClubSummary = IDL.Record({
+    mvp: MostValuablePlayer,
     clubId: ClubId,
     clubName: IDL.Text,
+    totalMFValue: IDL.Nat16,
+    totalGKValue: IDL.Nat16,
+    totalPlayers: IDL.Nat8,
     totalValue: IDL.Nat16,
+    totalDefenders: IDL.Nat8,
+    totalForwards: IDL.Nat8,
     positionText: IDL.Text,
     primaryColour: IDL.Text,
+    totalGoalkeepers: IDL.Nat8,
+    gender: Gender,
     shirtType: ShirtType,
+    totalDFValue: IDL.Nat16,
     thirdColour: IDL.Text,
     secondaryColour: IDL.Text,
+    totalFWValue: IDL.Nat16,
     position: IDL.Nat,
     leagueId: LeagueId,
+    totalMidfielders: IDL.Nat8,
   });
   const ClubValueLeaderboard = IDL.Record({ clubs: IDL.Vec(ClubSummary) });
   const Result_9 = IDL.Variant({ ok: ClubValueLeaderboard, err: Error });
@@ -82,7 +100,6 @@ export const idlFactory = ({ IDL }) => {
     Active: IDL.Null,
     Complete: IDL.Null,
   });
-  const PlayerId = IDL.Nat16;
   const PlayerEventType = IDL.Variant({
     PenaltyMissed: IDL.Null,
     Goal: IDL.Null,
@@ -144,7 +161,6 @@ export const idlFactory = ({ IDL }) => {
   });
   const Result_4 = IDL.Variant({ ok: LeagueStatus, err: Error });
   const GetLeagues = IDL.Record({});
-  const Gender = IDL.Variant({ Male: IDL.Null, Female: IDL.Null });
   const League = IDL.Record({
     id: LeagueId,
     logo: IDL.Vec(IDL.Nat8),
@@ -201,7 +217,7 @@ export const idlFactory = ({ IDL }) => {
   const Seasons = IDL.Record({ seasons: IDL.Vec(Season) });
   const Result = IDL.Variant({ ok: Seasons, err: Error });
   return IDL.Service({
-    getAppStatus: IDL.Func([GetAppStatus], [Result_10], ["query"]),
+    getAppStatus: IDL.Func([], [Result_10], ["query"]),
     getClubValueLeaderboard: IDL.Func(
       [GetClubValueLeaderboard],
       [Result_9],

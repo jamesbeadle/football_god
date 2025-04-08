@@ -19,16 +19,27 @@ export interface Club {
 }
 export type ClubId = number;
 export interface ClubSummary {
+  mvp: MostValuablePlayer;
   clubId: ClubId;
   clubName: string;
+  totalMFValue: number;
+  totalGKValue: number;
+  totalPlayers: number;
   totalValue: number;
+  totalDefenders: number;
+  totalForwards: number;
   positionText: string;
   primaryColour: string;
+  totalGoalkeepers: number;
+  gender: Gender;
   shirtType: ShirtType;
+  totalDFValue: number;
   thirdColour: string;
   secondaryColour: string;
+  totalFWValue: number;
   position: bigint;
   leagueId: LeagueId;
+  totalMidfielders: number;
 }
 export interface ClubValueLeaderboard {
   clubs: Array<ClubSummary>;
@@ -102,7 +113,6 @@ export interface Fixtures {
 }
 export type GameweekNumber = number;
 export type Gender = { Male: null } | { Female: null };
-export type GetAppStatus = {};
 export type GetClubValueLeaderboard = {};
 export interface GetClubs {
   leagueId: LeagueId;
@@ -160,6 +170,12 @@ export interface Leagues {
 }
 export interface LoanedPlayers {
   players: Array<Player>;
+}
+export interface MostValuablePlayer {
+  id: PlayerId;
+  value: number;
+  lastName: string;
+  firstName: string;
 }
 export interface Player {
   id: number;
@@ -234,7 +250,7 @@ export interface Seasons {
 }
 export type ShirtType = { Filled: null } | { Striped: null };
 export interface _SERVICE {
-  getAppStatus: ActorMethod<[GetAppStatus], Result_10>;
+  getAppStatus: ActorMethod<[], Result_10>;
   getClubValueLeaderboard: ActorMethod<[GetClubValueLeaderboard], Result_9>;
   getClubs: ActorMethod<[GetClubs], Result_8>;
   getCountries: ActorMethod<[GetCountries], Result_7>;

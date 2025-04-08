@@ -123,6 +123,13 @@ type Player =
    status: PlayerStatus;
    valueQuarterMillions: nat16;
  };
+type MostValuablePlayer = 
+ record {
+   firstName: text;
+   id: PlayerId;
+   lastName: text;
+   value: nat16;
+ };
 type LoanedPlayers = record {players: vec Player;};
 type Leagues = record {leagues: vec League;};
 type LeagueStatus = 
@@ -168,7 +175,6 @@ type GetDataHashes = record {leagueId: LeagueId;};
 type GetCountries = record {};
 type GetClubs = record {leagueId: LeagueId;};
 type GetClubValueLeaderboard = record {};
-type GetAppStatus = record {};
 type Gender = 
  variant {
    Female;
@@ -252,13 +258,24 @@ type ClubSummary =
  record {
    clubId: ClubId;
    clubName: text;
+   gender: Gender;
    leagueId: LeagueId;
+   mvp: MostValuablePlayer;
    position: nat;
    positionText: text;
    primaryColour: text;
    secondaryColour: text;
    shirtType: ShirtType;
    thirdColour: text;
+   totalDFValue: nat16;
+   totalDefenders: nat8;
+   totalFWValue: nat16;
+   totalForwards: nat8;
+   totalGKValue: nat16;
+   totalGoalkeepers: nat8;
+   totalMFValue: nat16;
+   totalMidfielders: nat8;
+   totalPlayers: nat8;
    totalValue: nat16;
  };
 type ClubId = nat16;
@@ -280,7 +297,7 @@ type AppStatus =
    version: text;
  };
 service : {
-  getAppStatus: (GetAppStatus) -> (Result_10) query;
+  getAppStatus: () -> (Result_10) query;
   getClubValueLeaderboard: (GetClubValueLeaderboard) -> (Result_9);
   getClubs: (GetClubs) -> (Result_8);
   getCountries: (GetCountries) -> (Result_7);

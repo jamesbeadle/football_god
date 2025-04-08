@@ -143,17 +143,34 @@ export const idlFactory = ({ IDL }) => {
   const BettableLeagues = IDL.Record({ leagues: IDL.Vec(League) });
   const Result_16 = IDL.Variant({ ok: BettableLeagues, err: Error });
   const GetClubValueLeaderboard = IDL.Record({});
+  const MostValuablePlayer = IDL.Record({
+    id: PlayerId,
+    value: IDL.Nat16,
+    lastName: IDL.Text,
+    firstName: IDL.Text,
+  });
   const ClubSummary = IDL.Record({
+    mvp: MostValuablePlayer,
     clubId: ClubId,
     clubName: IDL.Text,
+    totalMFValue: IDL.Nat16,
+    totalGKValue: IDL.Nat16,
+    totalPlayers: IDL.Nat8,
     totalValue: IDL.Nat16,
+    totalDefenders: IDL.Nat8,
+    totalForwards: IDL.Nat8,
     positionText: IDL.Text,
     primaryColour: IDL.Text,
+    totalGoalkeepers: IDL.Nat8,
+    gender: Gender,
     shirtType: ShirtType,
+    totalDFValue: IDL.Nat16,
     thirdColour: IDL.Text,
     secondaryColour: IDL.Text,
+    totalFWValue: IDL.Nat16,
     position: IDL.Nat,
     leagueId: LeagueId,
+    totalMidfielders: IDL.Nat8,
   });
   const ClubValueLeaderboard = IDL.Record({ clubs: IDL.Vec(ClubSummary) });
   const Result_15 = IDL.Variant({ ok: ClubValueLeaderboard, err: Error });

@@ -358,6 +358,13 @@ type MoveFixture =
    updatedFixtureDate: int;
    updatedFixtureGameweek: GameweekNumber;
  };
+type MostValuablePlayer = 
+ record {
+   firstName: text;
+   id: PlayerId;
+   lastName: text;
+   value: nat16;
+ };
 type LoanedPlayers = record {players: vec Player;};
 type LoanPlayer = 
  record {
@@ -625,13 +632,24 @@ type ClubSummary =
  record {
    clubId: ClubId;
    clubName: text;
+   gender: Gender;
    leagueId: LeagueId;
+   mvp: MostValuablePlayer;
    position: nat;
    positionText: text;
    primaryColour: text;
    secondaryColour: text;
    shirtType: ShirtType;
    thirdColour: text;
+   totalDFValue: nat16;
+   totalDefenders: nat8;
+   totalFWValue: nat16;
+   totalForwards: nat8;
+   totalGKValue: nat16;
+   totalGoalkeepers: nat8;
+   totalMFValue: nat16;
+   totalMidfielders: nat8;
+   totalPlayers: nat8;
    totalValue: nat16;
  };
 type ClubId = nat16;

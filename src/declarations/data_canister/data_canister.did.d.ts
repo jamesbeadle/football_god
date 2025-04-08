@@ -28,16 +28,27 @@ export interface Club {
 }
 export type ClubId = number;
 export interface ClubSummary {
+  mvp: MostValuablePlayer;
   clubId: ClubId;
   clubName: string;
+  totalMFValue: number;
+  totalGKValue: number;
+  totalPlayers: number;
   totalValue: number;
+  totalDefenders: number;
+  totalForwards: number;
   positionText: string;
   primaryColour: string;
+  totalGoalkeepers: number;
+  gender: Gender;
   shirtType: ShirtType;
+  totalDFValue: number;
   thirdColour: string;
   secondaryColour: string;
+  totalFWValue: number;
   position: bigint;
   leagueId: LeagueId;
+  totalMidfielders: number;
 }
 export interface ClubValueLeaderboard {
   clubs: Array<ClubSummary>;
@@ -297,6 +308,12 @@ export interface LoanPlayer {
 }
 export interface LoanedPlayers {
   players: Array<Player>;
+}
+export interface MostValuablePlayer {
+  id: PlayerId;
+  value: number;
+  lastName: string;
+  firstName: string;
 }
 export interface MoveFixture {
   fixtureId: FixtureId;
