@@ -98,8 +98,8 @@ actor Self {
   /* ----- General App Queries ----- */
 
   public shared query ({ caller }) func getDataHashes(dto : AppQueries.GetDataHashes) : async Result.Result<AppQueries.DataHashes, Enums.Error> {
-    assert not Principal.isAnonymous(caller);
-
+    assert callerAllowed(caller);
+    
     let leagueDataHashesResult = Array.find<(FootballIds.LeagueId, [BaseTypes.DataHash])>(
       leagueDataHashes,
       func(entry : (FootballIds.LeagueId, [BaseTypes.DataHash])) : Bool {
@@ -115,22 +115,17 @@ actor Self {
     return #err(#NotFound);
   };
 
-  public shared query ({ caller }) func getCountries(_ : BaseQueries.GetCountries) : async Result.Result<BaseQueries.Countries, Enums.Error> {
-    assert not Principal.isAnonymous(caller);
-    return #ok({ countries = Countries.countries });
-  };
-
 
   /* ----- League Queries ------ */
 
   public shared query ({ caller }) func getLeagues(_ : LeagueQueries.GetLeagues) : async Result.Result<LeagueQueries.Leagues, Enums.Error> {
-    assert not Principal.isAnonymous(caller);
+    assert callerAllowed(caller);
     return #ok({ leagues });
   };
 
   public shared query ({ caller }) func getBettableLeagues(_ : LeagueQueries.GetBettableLeagues) : async Result.Result<LeagueQueries.BettableLeagues, Enums.Error> {
-    assert not Principal.isAnonymous(caller);
-
+    assert callerAllowed(caller);
+    
     let upToDateLeaguesBuffer = Buffer.fromArray<LeagueQueries.League>([]);
 
     for (league in Iter.fromArray(leagues)) {
@@ -169,7 +164,7 @@ actor Self {
   };
 
   public shared query ({ caller }) func getLeagueStatus(dto : LeagueQueries.GetLeagueStatus) : async Result.Result<LeagueQueries.LeagueStatus, Enums.Error> {
-    assert not Principal.isAnonymous(caller);
+    assert callerAllowed(caller);
     let status = Array.find<FootballTypes.LeagueStatus>(
       leagueStatuses,
       func(entry : FootballTypes.LeagueStatus) : Bool {
@@ -187,7 +182,7 @@ actor Self {
   };
 
   public shared query ({ caller }) func getLeagueTable(dto : LeagueQueries.GetLeagueTable) : async Result.Result<LeagueQueries.LeagueTable, Enums.Error> {
-    assert not Principal.isAnonymous(caller);
+    assert callerAllowed(caller);
     let leagueTable = Array.find(
       leagueTables,
       func(entry : FootballTypes.LeagueTable) : Bool {
@@ -209,12 +204,50 @@ actor Self {
 
   public shared ({ caller }) func getPlayers(dto : PlayerQueries.GetPlayers) : async Result.Result<PlayerQueries.Players, Enums.Error> {
     assert callerAllowed(caller);
-    return getPrivatePlayers(dto : PlayerQueries.GetPlayers);
+    let filteredLeaguePlayers = Array.find<(FootballIds.LeagueId, [FootballTypes.Player])>(
+      leaguePlayers,
+      func(currentLeaguePlayers : (FootballIds.LeagueId, [FootballTypes.Player])) : Bool {
+        currentLeaguePlayers.0 == dto.leagueId;
+      },
+    );
+
+    switch (filteredLeaguePlayers) {
+      case (?foundLeaguePlayers) {
+        return #ok({
+          players = Array.map<FootballTypes.Player, PlayerQueries.Player>(
+            foundLeaguePlayers.1,
+            func(player : FootballTypes.Player) {
+
+              return {
+                clubId = player.clubId;
+                dateOfBirth = player.dateOfBirth;
+                firstName = player.firstName;
+                id = player.id;
+                lastName = player.lastName;
+                nationality = player.nationality;
+                position = player.position;
+                shirtNumber = player.shirtNumber;
+                status = player.status;
+                valueQuarterMillions = player.valueQuarterMillions;
+                leagueId = player.leagueId;
+                parentLeagueId = player.parentLeagueId;
+                parentClubId = player.parentClubId;
+                currentLoanEndDate = player.currentLoanEndDate;
+              };
+
+            },
+          );
+        });
+      };
+      case (null) {
+        return #err(#NotFound);
+      };
+    };
   };
 
   public shared query ({ caller }) func getLoanedPlayers(dto : PlayerQueries.GetLoanedPlayers) : async Result.Result<PlayerQueries.LoanedPlayers, Enums.Error> {
-    assert not Principal.isAnonymous(caller);
-
+    assert callerAllowed(caller);
+    
     let filteredLeaguePlayers = Array.find<(FootballIds.LeagueId, [FootballTypes.Player])>(
       leaguePlayers,
       func(currentLeaguePlayers : (FootballIds.LeagueId, [FootballTypes.Player])) : Bool {
@@ -264,8 +297,8 @@ actor Self {
   };
 
   public shared query ({ caller }) func getRetiredPlayers(dto : PlayerQueries.GetRetiredPlayers) : async Result.Result<PlayerQueries.RetiredPlayers, Enums.Error> {
-    assert not Principal.isAnonymous(caller);
-
+    assert callerAllowed(caller);
+    
     let filteredLeaguePlayers = Array.find<(FootballIds.LeagueId, [FootballTypes.Player])>(
       retiredLeaguePlayers,
       func(currentLeaguePlayers : (FootballIds.LeagueId, [FootballTypes.Player])) : Bool {
@@ -316,9 +349,8 @@ actor Self {
   };
 
   public shared query ({ caller }) func getPlayerDetails(dto : PlayerQueries.GetPlayerDetails) : async Result.Result<PlayerQueries.PlayerDetails, Enums.Error> {
-    assert not Principal.isAnonymous(caller);
-    assert Principal.toText(caller) == CanisterIds.OPENFPL_BACKEND_CANISTER_ID;
-
+    assert callerAllowed(caller);
+    
     var clubId : FootballIds.ClubId = 0;
     var position : FootballEnums.PlayerPosition = #Goalkeeper;
     var firstName = "";
@@ -428,8 +460,8 @@ actor Self {
   };
 
   public shared query ({ caller }) func getPlayerDetailsForGameweek(dto : PlayerQueries.GetPlayerDetailsForGameweek) : async Result.Result<PlayerQueries.PlayerDetailsForGameweek, Enums.Error> {
-    assert not Principal.isAnonymous(caller);
-
+    assert callerAllowed(caller);
+    
     var playerDetailsBuffer = Buffer.fromArray<PlayerQueries.PlayerPoints>([]);
 
     let filteredLeaguePlayers = Array.find<(FootballIds.LeagueId, [FootballTypes.Player])>(
@@ -481,8 +513,8 @@ actor Self {
   };
 
   public shared query ({ caller }) func getPlayersMap(dto : PlayerQueries.GetPlayersMap) : async Result.Result<PlayerQueries.PlayersMap, Enums.Error> {
-    assert not Principal.isAnonymous(caller);
-
+    assert callerAllowed(caller);
+    
     var playersMap : TrieMap.TrieMap<Nat16, PlayerQueries.PlayerScore> = TrieMap.TrieMap<Nat16, PlayerQueries.PlayerScore>(BaseUtilities.eqNat16, BaseUtilities.hashNat16);
 
     let filteredLeaguePlayers = Array.find<(FootballIds.LeagueId, [FootballTypes.Player])>(
@@ -614,8 +646,8 @@ actor Self {
   };
 
   public shared ({ caller }) func getBettableFixtures(dto : FixtureQueries.GetBettableFixtures) : async Result.Result<FixtureQueries.BettableFixtures, Enums.Error> {
-    assert not Principal.isAnonymous(caller);
-
+    assert callerAllowed(caller);
+    
     let filteredLeagueSeasons = Array.find<(FootballIds.LeagueId, [FootballTypes.Season])>(
       leagueSeasons,
       func(leagueSeason : (FootballIds.LeagueId, [FootballTypes.Season])) : Bool {
@@ -710,9 +742,8 @@ actor Self {
   };
 
   public shared query ({ caller }) func getPostponedFixtures(dto : FixtureQueries.GetPostponedFixtures) : async Result.Result<FixtureQueries.PostponedFixtures, Enums.Error> {
-    assert not Principal.isAnonymous(caller);
-    assert Principal.toText(caller) == CanisterIds.OPENFPL_BACKEND_CANISTER_ID;
-
+    assert callerAllowed(caller);
+    
     let filteredLeagueSeasons = Array.find<(FootballIds.LeagueId, [FootballTypes.Season])>(
       leagueSeasons,
       func(currentLeagueSeason : (FootballIds.LeagueId, [FootballTypes.Season])) : Bool {
@@ -789,11 +820,34 @@ actor Self {
 
   public shared ({ caller }) func getClubs(dto : ClubQueries.GetClubs) : async Result.Result<ClubQueries.Clubs, Enums.Error> {
     assert callerAllowed(caller);
-    return getPrivateClubs(dto);
+    let filteredLeagueClubs = Array.find<(FootballIds.LeagueId, [FootballTypes.Club])>(
+      leagueClubs,
+      func(leagueClubs : (FootballIds.LeagueId, [FootballTypes.Club])) : Bool {
+        leagueClubs.0 == dto.leagueId;
+      },
+    );
+
+    switch (filteredLeagueClubs) {
+      case (?foundLeagueClubs) {
+        let sortedArray = Array.sort<FootballTypes.Club>(
+          foundLeagueClubs.1,
+          func(a : FootballTypes.Club, b : FootballTypes.Club) : Order.Order {
+            if (a.friendlyName < b.friendlyName) { return #less };
+            if (a.friendlyName == b.friendlyName) { return #equal };
+            return #greater;
+          },
+        );
+        return #ok({ leagueId = dto.leagueId; clubs = sortedArray });
+
+      };
+      case (null) {
+        return #err(#NotFound);
+      };
+    };
   };
 
   public shared ({ caller }) func getClubValueLeaderboard(_: ClubQueries.GetClubValueLeaderboard) : async Result.Result<ClubQueries.ClubValueLeaderboard, Enums.Error> {
-    assert not Principal.isAnonymous(caller);
+    assert callerAllowed(caller);
     
     return #ok({ clubs = clubSummaries });
   };
@@ -802,8 +856,8 @@ actor Self {
   /* ----- Season Queries ----- */
 
   public shared query ({ caller }) func getSeasons(dto : SeasonQueries.GetSeasons) : async Result.Result<SeasonQueries.Seasons, Enums.Error> {
-    assert not Principal.isAnonymous(caller);
-
+    assert callerAllowed(caller);
+    
     let filteredLeagueSeasons = Array.find<(FootballIds.LeagueId, [FootballTypes.Season])>(
       leagueSeasons,
       func(leagueSeason : (FootballIds.LeagueId, [FootballTypes.Season])) : Bool {
@@ -870,6 +924,7 @@ actor Self {
 
   public shared ({ caller }) func validateUpdateLeague(dto : LeagueCommands.UpdateLeague) : async BaseTypes.RustResult {
     assert Principal.toText(caller) == CanisterIds.ICFC_SNS_GOVERNANCE_CANISTER_ID;
+
     assert leagueExists(dto.leagueId);
     assert countryExists(dto.countryId);
     assert logoSizeValid(dto.logo);
@@ -1055,7 +1110,7 @@ actor Self {
   public shared ({ caller }) func validateRevaluePlayerUp(dto : PlayerCommands.RevaluePlayerUp) : async BaseTypes.RustResult {
     assert Principal.toText(caller) == CanisterIds.ICFC_SNS_GOVERNANCE_CANISTER_ID;
     assert leagueExists(dto.leagueId);
-    switch (checkPlayerExists(dto.leagueId, dto.playerId)) {
+    switch (playerExists(dto.leagueId, dto.playerId)) {
       case (?player) {
         if (isValidValueChange(player)) {
           return #Ok("Valid");
@@ -1072,7 +1127,7 @@ actor Self {
   public shared ({ caller }) func validateRevaluePlayerDown(dto : PlayerCommands.RevaluePlayerDown) : async BaseTypes.RustResult {
     assert Principal.toText(caller) == CanisterIds.ICFC_SNS_GOVERNANCE_CANISTER_ID;
     assert leagueExists(dto.leagueId);
-    switch (checkPlayerExists(dto.leagueId, dto.playerId)) {
+    switch (playerExists(dto.leagueId, dto.playerId)) {
       case (?player) {
         if (isValidValueChange(player)) {
           return #Ok("Valid");
@@ -1091,7 +1146,7 @@ actor Self {
     assert leagueExists(dto.leagueId);
     assert leagueExists(dto.loanLeagueId);
     assert clubExists(dto.loanLeagueId, dto.loanClubId);
-    assert Option.isSome(checkPlayerExists(dto.leagueId, dto.playerId));
+    assert Option.isSome(playerExists(dto.leagueId, dto.playerId));
     assert dto.loanEndDate > Time.now();
     return #Ok("Valid");
   };
@@ -1102,21 +1157,21 @@ actor Self {
     assert leagueExists(dto.newLeagueId);
     assert clubExists(dto.leagueId, dto.clubId);
     assert clubExists(dto.newLeagueId, dto.newClubId);
-    assert Option.isSome(checkPlayerExists(dto.leagueId, dto.playerId));
+    assert Option.isSome(playerExists(dto.leagueId, dto.playerId));
     return #Ok("Valid");
   };
 
   public shared ({ caller }) func validateSetFreeAgent(dto : PlayerCommands.SetFreeAgent) : async BaseTypes.RustResult {
     assert Principal.toText(caller) == CanisterIds.ICFC_SNS_GOVERNANCE_CANISTER_ID;
     assert leagueExists(dto.leagueId);
-    assert Option.isSome(checkPlayerExists(dto.leagueId, dto.playerId));
+    assert Option.isSome(playerExists(dto.leagueId, dto.playerId));
     return #Ok("Valid");
   };
 
   public shared ({ caller }) func validateRecallPlayer(dto : PlayerCommands.RecallPlayer) : async BaseTypes.RustResult {
     assert Principal.toText(caller) == CanisterIds.ICFC_SNS_GOVERNANCE_CANISTER_ID;
     assert leagueExists(dto.leagueId);
-    assert Option.isSome(checkPlayerExists(dto.leagueId, dto.playerId));
+    assert Option.isSome(playerExists(dto.leagueId, dto.playerId));
     return #Ok("Valid");
   };
 
@@ -1146,7 +1201,7 @@ actor Self {
   public shared ({ caller }) func validateUpdatePlayer(dto : PlayerCommands.UpdatePlayer) : async BaseTypes.RustResult {
     assert Principal.toText(caller) == CanisterIds.ICFC_SNS_GOVERNANCE_CANISTER_ID;
     assert leagueExists(dto.leagueId);
-    assert Option.isSome(checkPlayerExists(dto.leagueId, dto.playerId));
+    assert Option.isSome(playerExists(dto.leagueId, dto.playerId));
 
     if (Text.size(dto.firstName) > 50) {
       return #Err("Invalid Data");
@@ -1173,21 +1228,21 @@ actor Self {
   public shared ({ caller }) func validateSetPlayerInjury(dto : PlayerCommands.SetPlayerInjury) : async BaseTypes.RustResult {
     assert Principal.toText(caller) == CanisterIds.ICFC_SNS_GOVERNANCE_CANISTER_ID;
     assert leagueExists(dto.leagueId);
-    assert Option.isSome(checkPlayerExists(dto.leagueId, dto.playerId));
+    assert Option.isSome(playerExists(dto.leagueId, dto.playerId));
     return #Ok("Valid");
   };
 
   public shared ({ caller }) func validateRetirePlayer(dto : PlayerCommands.RetirePlayer) : async BaseTypes.RustResult {
     assert Principal.toText(caller) == CanisterIds.ICFC_SNS_GOVERNANCE_CANISTER_ID;
     assert leagueExists(dto.leagueId);
-    assert Option.isSome(checkPlayerExists(dto.leagueId, dto.playerId));
+    assert Option.isSome(playerExists(dto.leagueId, dto.playerId));
     return #Ok("Valid");
   };
 
   public shared ({ caller }) func validateUnretirePlayer(dto : PlayerCommands.UnretirePlayer) : async BaseTypes.RustResult {
     assert Principal.toText(caller) == CanisterIds.ICFC_SNS_GOVERNANCE_CANISTER_ID;
     assert leagueExists(dto.leagueId);
-    assert Option.isSome(checkPlayerExists(dto.leagueId, dto.playerId));
+    assert Option.isSome(playerExists(dto.leagueId, dto.playerId));
     return #Ok("Valid");
   };
 
@@ -1624,6 +1679,796 @@ actor Self {
       case (null) {};
     };
   };
+
+
+  /* Proposal Execution Private Functions Related to submit fixture data - Likely utility functions: */
+
+  //This is used on proposal validation for submitting fixture data  
+  private func validatePlayerEvents(playerEvents : [FootballTypes.PlayerEventData]) : Bool {
+
+    let eventsBelow0 = Array.filter<FootballTypes.PlayerEventData>(
+      playerEvents,
+      func(event : FootballTypes.PlayerEventData) : Bool {
+        return event.eventStartMinute < 0;
+      },
+    );
+
+    if (Array.size(eventsBelow0) > 0) {
+      return false;
+    };
+
+    let eventsAbove90 = Array.filter<FootballTypes.PlayerEventData>(
+      playerEvents,
+      func(event : FootballTypes.PlayerEventData) : Bool {
+        return event.eventStartMinute > 90;
+      },
+    );
+
+    if (Array.size(eventsAbove90) > 0) {
+      return false;
+    };
+
+    let playerEventsMap : TrieMap.TrieMap<FootballIds.PlayerId, List.List<FootballTypes.PlayerEventData>> = TrieMap.TrieMap<FootballIds.PlayerId, List.List<FootballTypes.PlayerEventData>>(BaseUtilities.eqNat16, BaseUtilities.hashNat16);
+
+    for (playerEvent in Iter.fromArray(playerEvents)) {
+      switch (playerEventsMap.get(playerEvent.playerId)) {
+        case (null) {};
+        case (?existingEvents) {
+          playerEventsMap.put(playerEvent.playerId, List.push<FootballTypes.PlayerEventData>(playerEvent, existingEvents));
+        };
+      };
+    };
+
+    for ((playerId, events) in playerEventsMap.entries()) {
+      let redCards = List.filter<FootballTypes.PlayerEventData>(
+        events,
+        func(event : FootballTypes.PlayerEventData) : Bool {
+          return event.eventType == #RedCard;
+        },
+      );
+
+      if (List.size<FootballTypes.PlayerEventData>(redCards) > 1) {
+        return false;
+      };
+
+      let yellowCards = List.filter<FootballTypes.PlayerEventData>(
+        events,
+        func(event : FootballTypes.PlayerEventData) : Bool {
+          return event.eventType == #YellowCard;
+        },
+      );
+
+      if (List.size<FootballTypes.PlayerEventData>(yellowCards) > 2) {
+        return false;
+      };
+
+      if (List.size<FootballTypes.PlayerEventData>(yellowCards) == 2 and List.size<FootballTypes.PlayerEventData>(redCards) != 1) {
+        return false;
+      };
+
+      let assists = List.filter<FootballTypes.PlayerEventData>(
+        events,
+        func(event : FootballTypes.PlayerEventData) : Bool {
+          return event.eventType == #GoalAssisted;
+        },
+      );
+
+      for (assist in Iter.fromList(assists)) {
+        let goalsAtSameMinute = List.filter<FootballTypes.PlayerEventData>(
+          events,
+          func(event : FootballTypes.PlayerEventData) : Bool {
+            return (event.eventType == #Goal or event.eventType == #OwnGoal) and event.eventStartMinute == assist.eventStartMinute;
+          },
+        );
+
+        if (List.size<FootballTypes.PlayerEventData>(goalsAtSameMinute) == 0) {
+          return false;
+        };
+      };
+
+      let penaltySaves = List.filter<FootballTypes.PlayerEventData>(
+        events,
+        func(event : FootballTypes.PlayerEventData) : Bool {
+          return event.eventType == #PenaltySaved;
+        },
+      );
+
+      for (penaltySave in Iter.fromList(penaltySaves)) {
+        let penaltyMissesAtSameMinute = List.filter<FootballTypes.PlayerEventData>(
+          events,
+          func(event : FootballTypes.PlayerEventData) : Bool {
+            return event.eventType == #PenaltyMissed and event.eventStartMinute == penaltySave.eventStartMinute;
+          },
+        );
+
+        if (List.size<FootballTypes.PlayerEventData>(penaltyMissesAtSameMinute) == 0) {
+          return false;
+        };
+      };
+    };
+
+    return true;
+  };
+
+  //These are all used on proposal execution for submitting fixture data and validate is also called
+  private func populatePlayerEventData(submitFixtureDataDTO : FixtureCommands.SubmitFixtureData, allPlayers : [FootballTypes.Player]) : async ?[FootballTypes.PlayerEventData] {
+
+    let allPlayerEventsBuffer = Buffer.fromArray<FootballTypes.PlayerEventData>(submitFixtureDataDTO.playerEventData);
+
+    let homeTeamPlayerIdsBuffer = Buffer.fromArray<Nat16>([]);
+    let awayTeamPlayerIdsBuffer = Buffer.fromArray<Nat16>([]);
+
+    let leagueSeasonEntry = Array.find<(FootballIds.LeagueId, [FootballTypes.Season])>(
+      leagueSeasons,
+      func(leagueSeasonEntry : (FootballIds.LeagueId, [FootballTypes.Season])) : Bool {
+        leagueSeasonEntry.0 == submitFixtureDataDTO.leagueId;
+      },
+    );
+
+    switch (leagueSeasonEntry) {
+      case (null) {
+        return null;
+      };
+      case (?foundLeagueSeasonEntry) {
+        let currentSeason = Array.find<FootballTypes.Season>(
+          foundLeagueSeasonEntry.1,
+          func(season : FootballTypes.Season) : Bool {
+            return season.id == submitFixtureDataDTO.seasonId;
+          },
+        );
+
+        switch (currentSeason) {
+          case (null) { return null };
+          case (?foundSeason) {
+            let fixture = List.find<FootballTypes.Fixture>(
+              foundSeason.fixtures,
+              func(f : FootballTypes.Fixture) : Bool {
+                return f.id == submitFixtureDataDTO.fixtureId;
+              },
+            );
+            switch (fixture) {
+              case (null) { return null };
+              case (?foundFixture) {
+
+                for (event in Iter.fromArray(submitFixtureDataDTO.playerEventData)) {
+                  if (event.clubId == foundFixture.homeClubId) {
+                    homeTeamPlayerIdsBuffer.add(event.playerId);
+                  } else if (event.clubId == foundFixture.awayClubId) {
+                    awayTeamPlayerIdsBuffer.add(event.playerId);
+                  };
+                };
+
+                let homeTeamDefensivePlayerIdsBuffer = Buffer.fromArray<Nat16>([]);
+                let awayTeamDefensivePlayerIdsBuffer = Buffer.fromArray<Nat16>([]);
+
+                for (playerId in Iter.fromArray<Nat16>(Buffer.toArray(homeTeamPlayerIdsBuffer))) {
+                  let player = Array.find<PlayerQueries.Player>(allPlayers, func(p : PlayerQueries.Player) : Bool { return p.id == playerId });
+                  switch (player) {
+                    case (null) {};
+                    case (?actualPlayer) {
+                      if (actualPlayer.position == #Goalkeeper or actualPlayer.position == #Defender) {
+                        if (
+                          Array.find<Nat16>(
+                            Buffer.toArray(homeTeamDefensivePlayerIdsBuffer),
+                            func(x : Nat16) : Bool { return x == playerId },
+                          ) == null
+                        ) {
+                          homeTeamDefensivePlayerIdsBuffer.add(playerId);
+                        };
+                      };
+                    };
+                  };
+                };
+
+                for (playerId in Iter.fromArray<Nat16>(Buffer.toArray(awayTeamPlayerIdsBuffer))) {
+                  let player = Array.find<PlayerQueries.Player>(allPlayers, func(p : PlayerQueries.Player) : Bool { return p.id == playerId });
+                  switch (player) {
+                    case (null) {};
+                    case (?actualPlayer) {
+                      if (actualPlayer.position == #Goalkeeper or actualPlayer.position == #Defender) {
+                        if (
+                          Array.find<Nat16>(
+                            Buffer.toArray(awayTeamDefensivePlayerIdsBuffer),
+                            func(x : Nat16) : Bool { return x == playerId },
+                          ) == null
+                        ) {
+                          awayTeamDefensivePlayerIdsBuffer.add(playerId);
+                        };
+                      };
+                    };
+                  };
+                };
+
+                let homeTeamGoals = Array.filter<FootballTypes.PlayerEventData>(
+                  submitFixtureDataDTO.playerEventData,
+                  func(event : FootballTypes.PlayerEventData) : Bool {
+                    return event.clubId == foundFixture.homeClubId and event.eventType == #Goal;
+                  },
+                );
+
+                let awayTeamGoals = Array.filter<FootballTypes.PlayerEventData>(
+                  submitFixtureDataDTO.playerEventData,
+                  func(event : FootballTypes.PlayerEventData) : Bool {
+                    return event.clubId == foundFixture.awayClubId and event.eventType == #Goal;
+                  },
+                );
+
+                let homeTeamOwnGoals = Array.filter<FootballTypes.PlayerEventData>(
+                  submitFixtureDataDTO.playerEventData,
+                  func(event : FootballTypes.PlayerEventData) : Bool {
+                    return event.clubId == foundFixture.homeClubId and event.eventType == #OwnGoal;
+                  },
+                );
+
+                let awayTeamOwnGoals = Array.filter<FootballTypes.PlayerEventData>(
+                  submitFixtureDataDTO.playerEventData,
+                  func(event : FootballTypes.PlayerEventData) : Bool {
+                    return event.clubId == foundFixture.awayClubId and event.eventType == #OwnGoal;
+                  },
+                );
+
+                let totalHomeScored = Array.size(homeTeamGoals) + Array.size(awayTeamOwnGoals);
+                let totalAwayScored = Array.size(awayTeamGoals) + Array.size(homeTeamOwnGoals);
+
+                if (totalHomeScored == 0) {
+                  for (playerId in Iter.fromArray(Buffer.toArray(awayTeamDefensivePlayerIdsBuffer))) {
+                    let player = Array.find<PlayerQueries.Player>(allPlayers, func(p : PlayerQueries.Player) : Bool { return p.id == playerId });
+                    switch (player) {
+                      case (null) {};
+                      case (?actualPlayer) {
+                        let cleanSheetEvent : FootballTypes.PlayerEventData = {
+                          fixtureId = submitFixtureDataDTO.fixtureId;
+                          playerId = playerId;
+                          eventType = #CleanSheet;
+                          eventStartMinute = 90;
+                          eventEndMinute = 90;
+                          clubId = actualPlayer.clubId;
+                        };
+                        allPlayerEventsBuffer.add(cleanSheetEvent);
+                      };
+                    };
+                  };
+                } else {
+                  for (goal in Iter.fromArray(homeTeamGoals)) {
+                    for (playerId in Iter.fromArray(Buffer.toArray(awayTeamDefensivePlayerIdsBuffer))) {
+                      let player = Array.find<PlayerQueries.Player>(allPlayers, func(p : PlayerQueries.Player) : Bool { return p.id == playerId });
+                      switch (player) {
+                        case (null) {};
+                        case (?actualPlayer) {
+                          let concededEvent : FootballTypes.PlayerEventData = {
+                            fixtureId = submitFixtureDataDTO.fixtureId;
+                            playerId = actualPlayer.id;
+                            eventType = #GoalConceded;
+                            eventStartMinute = goal.eventStartMinute;
+                            eventEndMinute = goal.eventStartMinute;
+                            clubId = actualPlayer.clubId;
+                          };
+                          allPlayerEventsBuffer.add(concededEvent);
+                        };
+                      };
+                    };
+                  };
+                };
+
+                if (totalAwayScored == 0) {
+                  for (playerId in Iter.fromArray(Buffer.toArray(homeTeamDefensivePlayerIdsBuffer))) {
+                    let player = Array.find<PlayerQueries.Player>(allPlayers, func(p : PlayerQueries.Player) : Bool { return p.id == playerId });
+                    switch (player) {
+                      case (null) {};
+                      case (?actualPlayer) {
+                        let cleanSheetEvent : FootballTypes.PlayerEventData = {
+                          fixtureId = submitFixtureDataDTO.fixtureId;
+                          playerId = playerId;
+                          eventType = #CleanSheet;
+                          eventStartMinute = 90;
+                          eventEndMinute = 90;
+                          clubId = actualPlayer.clubId;
+                        };
+                        allPlayerEventsBuffer.add(cleanSheetEvent);
+                      };
+                    };
+                  };
+                } else {
+                  for (goal in Iter.fromArray(awayTeamGoals)) {
+                    for (playerId in Iter.fromArray(Buffer.toArray(homeTeamDefensivePlayerIdsBuffer))) {
+                      let player = Array.find<PlayerQueries.Player>(allPlayers, func(p : PlayerQueries.Player) : Bool { return p.id == playerId });
+                      switch (player) {
+                        case (null) {};
+                        case (?actualPlayer) {
+                          let concededEvent : FootballTypes.PlayerEventData = {
+                            fixtureId = goal.fixtureId;
+                            playerId = actualPlayer.id;
+                            eventType = #GoalConceded;
+                            eventStartMinute = goal.eventStartMinute;
+                            eventEndMinute = goal.eventStartMinute;
+                            clubId = actualPlayer.clubId;
+                          };
+                          allPlayerEventsBuffer.add(concededEvent);
+                        };
+                      };
+                    };
+                  };
+                };
+
+                let playerEvents = Buffer.toArray<FootballTypes.PlayerEventData>(allPlayerEventsBuffer);
+                let eventsWithHighestScoringPlayer = populateHighestScoringPlayer(playerEvents, foundFixture, allPlayers);
+                return ?eventsWithHighestScoringPlayer;
+              };
+            };
+          };
+        };
+      };
+    };
+  };
+
+  private func populateHighestScoringPlayer(playerEvents : [FootballTypes.PlayerEventData], fixture : FootballTypes.Fixture, players : [PlayerQueries.Player]) : [FootballTypes.PlayerEventData] {
+
+    var homeGoalsCount : Nat8 = 0;
+    var awayGoalsCount : Nat8 = 0;
+
+    let playerEventsMap : TrieMap.TrieMap<FootballIds.PlayerId, [FootballTypes.PlayerEventData]> = TrieMap.TrieMap<FootballIds.PlayerId, [FootballTypes.PlayerEventData]>(BaseUtilities.eqNat16, BaseUtilities.hashNat16);
+
+    for (event in Iter.fromArray(playerEvents)) {
+      switch (event.eventType) {
+        case (#Goal) {
+          if (event.clubId == fixture.homeClubId) {
+            homeGoalsCount += 1;
+          } else if (event.clubId == fixture.awayClubId) {
+            awayGoalsCount += 1;
+          };
+        };
+        case (#OwnGoal) {
+          if (event.clubId == fixture.homeClubId) {
+            awayGoalsCount += 1;
+          } else if (event.clubId == fixture.awayClubId) {
+            homeGoalsCount += 1;
+          };
+        };
+        case _ {};
+      };
+
+      let playerId : FootballIds.PlayerId = event.playerId;
+      switch (playerEventsMap.get(playerId)) {
+        case (null) {
+          playerEventsMap.put(playerId, [event]);
+        };
+        case (?existingEvents) {
+          let existingEventsBuffer = Buffer.fromArray<FootballTypes.PlayerEventData>(existingEvents);
+          existingEventsBuffer.add(event);
+          playerEventsMap.put(playerId, Buffer.toArray(existingEventsBuffer));
+        };
+      };
+    };
+
+    let playerScoresMap : TrieMap.TrieMap<Nat16, Int16> = TrieMap.TrieMap<Nat16, Int16>(BaseUtilities.eqNat16, BaseUtilities.hashNat16);
+    for ((playerId, events) in playerEventsMap.entries()) {
+      let currentPlayer = Array.find<PlayerQueries.Player>(
+        players,
+        func(player : PlayerQueries.Player) : Bool {
+          return player.id == playerId;
+        },
+      );
+
+      switch (currentPlayer) {
+        case (null) {};
+        case (?foundPlayer) {
+          let totalScore = Array.foldLeft<FootballTypes.PlayerEventData, Int16>(
+            events,
+            0,
+            func(acc : Int16, event : FootballTypes.PlayerEventData) : Int16 {
+              return acc + MopsUtilities.calculateIndividualScoreForEvent(event, foundPlayer.position);
+            },
+          );
+
+          let aggregateScore = MopsUtilities.calculateAggregatePlayerEvents(events, foundPlayer.position);
+          playerScoresMap.put(playerId, totalScore + aggregateScore);
+        };
+      };
+    };
+
+    var highestScore : Int16 = 0;
+    var highestScoringPlayerId : FootballIds.PlayerId = 0;
+    var isUniqueHighScore : Bool = true;
+    let uniquePlayerIdsBuffer = Buffer.fromArray<FootballIds.PlayerId>([]);
+
+    for (event in Iter.fromArray(playerEvents)) {
+      if (not Buffer.contains<FootballIds.PlayerId>(uniquePlayerIdsBuffer, event.playerId, func(a : FootballIds.PlayerId, b : FootballIds.PlayerId) : Bool { a == b })) {
+        uniquePlayerIdsBuffer.add(event.playerId);
+      };
+    };
+
+    let uniquePlayerIds = Buffer.toArray<Nat16>(uniquePlayerIdsBuffer);
+
+    for (j in Iter.range(0, Array.size(uniquePlayerIds) -1)) {
+      let playerId = uniquePlayerIds[j];
+      switch (playerScoresMap.get(playerId)) {
+        case (?playerScore) {
+          if (playerScore > highestScore) {
+            highestScore := playerScore;
+            highestScoringPlayerId := playerId;
+            isUniqueHighScore := true;
+          } else if (playerScore == highestScore) {
+            isUniqueHighScore := false;
+          };
+        };
+        case null {};
+      };
+    };
+
+    if (isUniqueHighScore) {
+      let highestScoringPlayer = Array.find<PlayerQueries.Player>(players, func(p : PlayerQueries.Player) : Bool { return p.id == highestScoringPlayerId });
+      switch (highestScoringPlayer) {
+        case (null) {};
+        case (?foundPlayer) {
+          let newEvent : FootballTypes.PlayerEventData = {
+            fixtureId = fixture.id;
+            playerId = highestScoringPlayerId;
+            eventType = #HighestScoringPlayer;
+            eventStartMinute = 90;
+            eventEndMinute = 90;
+            clubId = foundPlayer.clubId;
+          };
+          let existingEvents = playerEventsMap.get(highestScoringPlayerId);
+          switch (existingEvents) {
+            case (null) {};
+            case (?foundEvents) {
+              let existingEventsBuffer = Buffer.fromArray<FootballTypes.PlayerEventData>(foundEvents);
+              existingEventsBuffer.add(newEvent);
+              playerEventsMap.put(highestScoringPlayerId, Buffer.toArray(existingEventsBuffer));
+            };
+          };
+        };
+      };
+    };
+
+    let allEventsBuffer = Buffer.fromArray<FootballTypes.PlayerEventData>([]);
+    for ((playerId, playerEventArray) in playerEventsMap.entries()) {
+      allEventsBuffer.append(Buffer.fromArray(playerEventArray));
+    };
+
+    return Buffer.toArray(allEventsBuffer);
+  };
+
+  private func addEventsToFixture(leagueId : FootballIds.LeagueId, playerEventData : [FootballTypes.PlayerEventData], seasonId : FootballIds.SeasonId, fixtureId : FootballIds.FixtureId) {
+
+    leagueSeasons := Array.map<(FootballIds.LeagueId, [FootballTypes.Season]), (FootballIds.LeagueId, [FootballTypes.Season])>(
+      leagueSeasons,
+      func(leagueSeasonsEntry : (FootballIds.LeagueId, [FootballTypes.Season])) {
+        if (leagueSeasonsEntry.0 == leagueId) {
+          return (
+            leagueSeasonsEntry.0,
+            Array.map<FootballTypes.Season, FootballTypes.Season>(
+              leagueSeasonsEntry.1,
+              func(season : FootballTypes.Season) {
+                if (season.id == seasonId) {
+                  return {
+                    id = season.id;
+                    name = season.name;
+                    year = season.year;
+                    fixtures = List.map<FootballTypes.Fixture, FootballTypes.Fixture>(
+                      season.fixtures,
+                      func(fixture : FootballTypes.Fixture) : FootballTypes.Fixture {
+                        if (fixture.id == fixtureId) {
+                          return {
+                            id = fixture.id;
+                            seasonId = fixture.seasonId;
+                            gameweek = fixture.gameweek;
+                            kickOff = fixture.kickOff;
+                            homeClubId = fixture.homeClubId;
+                            awayClubId = fixture.awayClubId;
+                            homeGoals = fixture.homeGoals;
+                            awayGoals = fixture.awayGoals;
+                            status = fixture.status;
+                            events = List.fromArray(playerEventData);
+                            highestScoringPlayerId = fixture.highestScoringPlayerId;
+                          };
+                        } else { return fixture };
+                      },
+                    );
+                    postponedFixtures = season.postponedFixtures;
+                  };
+                } else {
+                  return season;
+                };
+              },
+            ),
+          );
+        } else { return leagueSeasonsEntry };
+      },
+    );
+    setGameScore(leagueId, seasonId, fixtureId);
+  };
+
+  private func addEventsToPlayers(leagueId : FootballIds.LeagueId, playerEventData : [FootballTypes.PlayerEventData], seasonId : FootballIds.SeasonId, gameweek : FootballDefinitions.GameweekNumber, fixtureId : FootballIds.FixtureId) {
+
+    var updatedSeasons : List.List<FootballTypes.PlayerSeason> = List.nil<FootballTypes.PlayerSeason>();
+    let playerEventsMap : TrieMap.TrieMap<Nat16, [FootballTypes.PlayerEventData]> = TrieMap.TrieMap<Nat16, [FootballTypes.PlayerEventData]>(BaseUtilities.eqNat16, BaseUtilities.hashNat16);
+
+    for (event in Iter.fromArray(playerEventData)) {
+      let playerId : Nat16 = event.playerId;
+      switch (playerEventsMap.get(playerId)) {
+        case (null) {
+          playerEventsMap.put(playerId, [event]);
+        };
+        case (?existingEvents) {
+          let existingEventsBuffer = Buffer.fromArray<FootballTypes.PlayerEventData>(existingEvents);
+          existingEventsBuffer.add(event);
+          playerEventsMap.put(playerId, Buffer.toArray(existingEventsBuffer));
+        };
+      };
+    };
+
+    let leaguePlayerArray = Array.find<(FootballIds.LeagueId, [FootballTypes.Player])>(
+      leaguePlayers,
+      func(leaguePlayersArray : (FootballIds.LeagueId, [FootballTypes.Player])) : Bool {
+        return leaguePlayersArray.0 == leagueId;
+      },
+    );
+
+    switch (leaguePlayerArray) {
+      case (?foundArray) {
+
+        let players = List.fromArray(foundArray.1);
+
+        for (playerEventMap in playerEventsMap.entries()) {
+          let player = List.find<FootballTypes.Player>(
+            players,
+            func(p : FootballTypes.Player) : Bool {
+              return p.id == playerEventMap.0;
+            },
+          );
+          switch (player) {
+            case (null) {};
+            case (?foundPlayer) {
+
+              let score : Int16 = calculatePlayerScore(foundPlayer.position, playerEventMap.1);
+
+              if (foundPlayer.seasons == null) {
+                let newGameweek : FootballTypes.PlayerGameweek = {
+                  number = gameweek;
+                  events = List.fromArray<FootballTypes.PlayerEventData>(playerEventMap.1);
+                  points = score;
+                };
+                let newSeason : FootballTypes.PlayerSeason = {
+                  id = seasonId;
+                  gameweeks = List.fromArray<FootballTypes.PlayerGameweek>([newGameweek]);
+                  totalPoints = 0;
+                };
+                updatedSeasons := List.fromArray<FootballTypes.PlayerSeason>([newSeason]);
+              } else {
+                let currentSeason = List.find<FootballTypes.PlayerSeason>(
+                  foundPlayer.seasons,
+                  func(s : FootballTypes.PlayerSeason) : Bool {
+                    s.id == seasonId;
+                  },
+                );
+
+                if (currentSeason == null) {
+                  let newGameweek : FootballTypes.PlayerGameweek = {
+                    number = gameweek;
+                    events = List.fromArray<FootballTypes.PlayerEventData>(playerEventMap.1);
+                    points = score;
+                  };
+                  let newSeason : FootballTypes.PlayerSeason = {
+                    id = seasonId;
+                    gameweeks = List.fromArray<FootballTypes.PlayerGameweek>([newGameweek]);
+                    totalPoints = 0;
+                  };
+                  updatedSeasons := List.append<FootballTypes.PlayerSeason>(foundPlayer.seasons, List.fromArray<FootballTypes.PlayerSeason>([newSeason]));
+
+                } else {
+                  updatedSeasons := List.map<FootballTypes.PlayerSeason, FootballTypes.PlayerSeason>(
+                    foundPlayer.seasons,
+                    func(season : FootballTypes.PlayerSeason) : FootballTypes.PlayerSeason {
+
+                      if (season.id != seasonId) {
+                        return season;
+                      };
+
+                      let currentGameweek = List.find<FootballTypes.PlayerGameweek>(
+                        season.gameweeks,
+                        func(gw : FootballTypes.PlayerGameweek) : Bool {
+                          gw.number == gameweek;
+                        },
+                      );
+
+                      if (currentGameweek == null) {
+                        let newGameweek : FootballTypes.PlayerGameweek = {
+                          number = gameweek;
+                          events = List.fromArray<FootballTypes.PlayerEventData>(playerEventMap.1);
+                          points = score;
+                        };
+                        let updatedSeason : FootballTypes.PlayerSeason = {
+                          id = season.id;
+                          gameweeks = List.append<FootballTypes.PlayerGameweek>(season.gameweeks, List.fromArray<FootballTypes.PlayerGameweek>([newGameweek]));
+                          totalPoints = 0;
+                        };
+                        return updatedSeason;
+                      } else {
+                        let updatedGameweeks = List.map<FootballTypes.PlayerGameweek, FootballTypes.PlayerGameweek>(
+                          season.gameweeks,
+                          func(gw : FootballTypes.PlayerGameweek) : FootballTypes.PlayerGameweek {
+                            if (gw.number != gameweek) {
+                              return gw;
+                            };
+
+                            let otherFixtureEvents = List.filter<FootballTypes.PlayerEventData>(
+                              gw.events,
+                              func(playerEvent : FootballTypes.PlayerEventData) {
+                                playerEvent.fixtureId != fixtureId;
+                              },
+                            );
+
+                            return {
+                              number = gw.number;
+                              events = List.append<FootballTypes.PlayerEventData>(otherFixtureEvents, List.fromArray(playerEventMap.1));
+                              points = score;
+                            };
+                          },
+                        );
+                        return {
+                          id = season.id;
+                          gameweeks = updatedGameweeks;
+                          totalPoints = 0;
+                        };
+                      };
+                    },
+                  );
+                };
+              };
+
+              let updatedPlayer : FootballTypes.Player = {
+                leagueId = foundPlayer.leagueId;
+                id = foundPlayer.id;
+                clubId = foundPlayer.clubId;
+                position = foundPlayer.position;
+                firstName = foundPlayer.firstName;
+                lastName = foundPlayer.lastName;
+                shirtNumber = foundPlayer.shirtNumber;
+                valueQuarterMillions = foundPlayer.valueQuarterMillions;
+                dateOfBirth = foundPlayer.dateOfBirth;
+                nationality = foundPlayer.nationality;
+                seasons = updatedSeasons;
+                valueHistory = foundPlayer.valueHistory;
+                status = foundPlayer.status;
+                parentLeagueId = foundPlayer.parentLeagueId;
+                parentClubId = foundPlayer.parentClubId;
+                currentLoanEndDate = foundPlayer.currentLoanEndDate;
+                latestInjuryEndDate = foundPlayer.latestInjuryEndDate;
+                injuryHistory = foundPlayer.injuryHistory;
+                retirementDate = foundPlayer.retirementDate;
+                transferHistory = foundPlayer.transferHistory;
+                gender = foundPlayer.gender;
+              };
+
+              updateLeaguePlayer(leagueId, updatedPlayer);
+            };
+          }
+
+        };
+
+      };
+      case (null) {
+
+      };
+    };
+  };
+
+  private func setGameScore(leagueId : FootballIds.LeagueId, seasonId : FootballIds.SeasonId, fixtureId : FootballIds.FixtureId) {
+
+    leagueSeasons := Array.map<(FootballIds.LeagueId, [FootballTypes.Season]), (FootballIds.LeagueId, [FootballTypes.Season])>(
+      leagueSeasons,
+      func(leagueSeasonsEntry : (FootballIds.LeagueId, [FootballTypes.Season])) {
+        if (leagueSeasonsEntry.0 == leagueId) {
+          return (
+            leagueSeasonsEntry.0,
+            Array.map<FootballTypes.Season, FootballTypes.Season>(
+              leagueSeasonsEntry.1,
+              func(season : FootballTypes.Season) {
+                if (season.id == seasonId) {
+
+                  let fixturesBuffer = Buffer.fromArray<FootballTypes.Fixture>([]);
+                  for (fixture in Iter.fromList(season.fixtures)) {
+                    if (fixture.id == fixtureId) {
+
+                      var homeGoals : Nat8 = 0;
+                      var awayGoals : Nat8 = 0;
+
+                      for (event in Iter.fromList(fixture.events)) {
+                        switch (event.eventType) {
+                          case (#Goal) {
+                            if (event.clubId == fixture.homeClubId) {
+                              homeGoals += 1;
+                            } else {
+                              awayGoals += 1;
+                            };
+                          };
+                          case (#OwnGoal) {
+                            if (event.clubId == fixture.homeClubId) {
+                              awayGoals += 1;
+                            } else {
+                              homeGoals += 1;
+                            };
+                          };
+                          case _ {};
+                        };
+                      };
+
+                      fixturesBuffer.add({
+                        awayClubId = fixture.awayClubId;
+                        awayGoals = awayGoals;
+                        events = fixture.events;
+                        gameweek = fixture.gameweek;
+                        highestScoringPlayerId = fixture.highestScoringPlayerId;
+                        homeClubId = fixture.homeClubId;
+                        homeGoals = homeGoals;
+                        id = fixture.id;
+                        kickOff = fixture.kickOff;
+                        seasonId = fixture.seasonId;
+                        status = fixture.status;
+                      });
+                    } else {
+                      fixturesBuffer.add(fixture);
+                    };
+                  };
+                  return {
+                    fixtures = List.fromArray(Buffer.toArray(fixturesBuffer));
+                    id = season.id;
+                    name = season.name;
+                    postponedFixtures = season.postponedFixtures;
+                    year = season.year;
+                  };
+
+                } else {
+                  return season;
+                };
+              },
+            ),
+          );
+        } else { return leagueSeasonsEntry };
+      },
+    );
+  };
+
+  private func updateLeaguePlayer(leagueId : FootballIds.LeagueId, updatedPlayer : FootballTypes.Player) {
+
+    leaguePlayers := Array.map<(FootballIds.LeagueId, [FootballTypes.Player]), (FootballIds.LeagueId, [FootballTypes.Player])>(
+      leaguePlayers,
+      func(leaguePlayersSet : (FootballIds.LeagueId, [FootballTypes.Player])) {
+        if (leaguePlayersSet.0 == leagueId) {
+          return (
+            leaguePlayersSet.0,
+            Array.map<FootballTypes.Player, FootballTypes.Player>(
+              leaguePlayersSet.1,
+              func(player : FootballTypes.Player) {
+                if (player.id == updatedPlayer.id) {
+                  updatedPlayer;
+                } else {
+                  return player;
+                };
+              },
+            ),
+          );
+        } else {
+          return leaguePlayersSet;
+        };
+      },
+    );
+  };
+
+  private func calculatePlayerScore(playerPosition : FootballEnums.PlayerPosition, events : [FootballTypes.PlayerEventData]) : Int16 {
+    let totalScore = Array.foldLeft<FootballTypes.PlayerEventData, Int16>(
+      events,
+      0,
+      func(acc : Int16, event : FootballTypes.PlayerEventData) : Int16 {
+        return acc + MopsUtilities.calculateIndividualScoreForEvent(event, playerPosition);
+      },
+    );
+
+    let aggregateScore = MopsUtilities.calculateAggregatePlayerEvents(events, playerPosition);
+    return totalScore + aggregateScore;
+  };
+
 
 
   /* ----- Player ------ */
@@ -2514,7 +3359,255 @@ actor Self {
   };
 
 
-  /* ----- Private Functions ------ */
+  /* ----- Private Queries ------ */
+  
+  private func callerAllowed(caller : Principal) : Bool {
+    let foundCaller = Array.find<Ids.PrincipalId>(
+      Environment.APPROVED_CANISTERS,
+      func(canisterId : Ids.CanisterId) : Bool {
+        Principal.toText(caller) == canisterId;
+      },
+    );
+    return Option.isSome(foundCaller);
+  };
+
+
+  /* ----- Private Commands ------ */
+
+  private func updateDataHash(leagueId : FootballIds.LeagueId, category : Text) : async () {
+    let randomHash = await SHA224.getRandomHash();
+
+    var updated = false;
+
+    leagueDataHashes := Array.map<(FootballIds.LeagueId, [BaseTypes.DataHash]), (FootballIds.LeagueId, [BaseTypes.DataHash])>(
+      leagueDataHashes,
+      func(entry : (FootballIds.LeagueId, [BaseTypes.DataHash])) {
+        if (entry.0 == leagueId) {
+          let hashBuffer = Buffer.fromArray<BaseTypes.DataHash>([]);
+          for (hashObj in Iter.fromArray(entry.1)) {
+            if (hashObj.category == category) {
+              hashBuffer.add({ category = hashObj.category; hash = randomHash });
+              updated := true;
+            } else { hashBuffer.add(hashObj) };
+          };
+          if (not updated) {
+            hashBuffer.add({ category = category; hash = randomHash });
+            updated := true;
+          };
+          return (entry.0, Buffer.toArray(hashBuffer));
+        } else {
+          return entry;
+        };
+      },
+    );
+
+  };
+  
+
+  /* Validation Functions related to data being entered under DAO Control */
+  // TODO: Move to validation manager / Ensure all validations are in 
+
+  private func seasonActive(leagueId : FootballIds.LeagueId) : Bool {
+    let leagueStatusResult = Array.find<FootballTypes.LeagueStatus>(
+      leagueStatuses,
+      func(statusEntry : FootballTypes.LeagueStatus) : Bool {
+        statusEntry.leagueId == leagueId;
+      },
+    );
+    switch (leagueStatusResult) {
+      case (?leagueStatus) {
+        return leagueStatus.seasonActive;
+      };
+      case (null) {};
+    };
+    return false;
+  };
+
+  private func logoSizeValid(logo : Blob) : Bool {
+    let sizeInKB = Array.size(Blob.toArray(logo)) / 1024;
+    return (sizeInKB <= 500);
+  };
+
+  private func isValidValueChange(player : FootballTypes.Player) : Bool {
+    let currentTimestamp = Time.now();
+    let oneYearAgo = currentTimestamp - (365 * 24 * 60 * 60);
+
+    let relevantHistory = List.filter<FootballTypes.ValueHistory>(player.valueHistory, func(entry) = entry.changedOn >= oneYearAgo);
+
+    switch (List.last(relevantHistory)) {
+      case (null) {
+        return true;
+      };
+      case (?lastEntry) {
+        let oldVal = lastEntry.oldValue;
+        let newVal = lastEntry.newValue;
+
+        let decreaseLimit = oldVal / 2;
+        let increaseLimit = oldVal * 4;
+
+        return (newVal >= decreaseLimit) and (newVal <= increaseLimit);
+      };
+    };
+  };
+  
+  private func leagueExists(leagueId : FootballIds.LeagueId) : Bool {
+    let foundLeague = Array.find<FootballTypes.League>(
+      leagues,
+      func(league : FootballTypes.League) : Bool {
+        league.id == leagueId;
+      },
+    );
+    return Option.isSome(foundLeague);
+  };
+
+  private func seasonExists(leagueId : FootballIds.LeagueId, seasonId : FootballIds.SeasonId) : Bool {
+
+    let foundLeagueSeasons = Array.find<(FootballIds.LeagueId, [FootballTypes.Season])>(
+      leagueSeasons,
+      func(entry : (FootballIds.LeagueId, [FootballTypes.Season])) : Bool {
+        entry.0 == leagueId;
+      },
+    );
+    switch (foundLeagueSeasons) {
+      case (?foundSeasons) {
+        let leagueSeasonResult = Array.find<FootballTypes.Season>(
+          foundSeasons.1,
+          func(seasonEntry : FootballTypes.Season) : Bool {
+            return seasonEntry.id == seasonId;
+          },
+        );
+
+        return Option.isSome(leagueSeasonResult);
+      };
+      case (null) {
+        return false;
+      };
+    };
+  };
+
+  private func fixtureExists(leagueId : FootballIds.LeagueId, seasonId : FootballIds.SeasonId, fixtureId : FootballIds.FixtureId) : Bool {
+    let foundLeagueSeasons = Array.find<(FootballIds.LeagueId, [FootballTypes.Season])>(
+      leagueSeasons,
+      func(entry : (FootballIds.LeagueId, [FootballTypes.Season])) : Bool {
+        entry.0 == leagueId;
+      },
+    );
+    switch (foundLeagueSeasons) {
+      case (?leagueSeasonsEntry) {
+        let foundSeason = Array.find<FootballTypes.Season>(
+          leagueSeasonsEntry.1,
+          func(seasonEntry : FootballTypes.Season) : Bool {
+            seasonEntry.id == seasonId;
+          },
+        );
+        switch (foundSeason) {
+          case (?foundSeasonEntry) {
+            let foundFixture = List.find<FootballTypes.Fixture>(
+              foundSeasonEntry.fixtures,
+              func(fixtureEntry : FootballTypes.Fixture) : Bool {
+                fixtureEntry.id == fixtureId;
+              },
+            );
+            return Option.isSome(foundFixture);
+          };
+          case (null) {};
+        };
+      };
+      case (null) {};
+    };
+    return false;
+  };
+
+  private func postponedFixtureExists(leagueId : FootballIds.LeagueId, seasonId : FootballIds.SeasonId, fixtureId : FootballIds.FixtureId) : Bool {
+    let foundLeagueSeasons = Array.find<(FootballIds.LeagueId, [FootballTypes.Season])>(
+      leagueSeasons,
+      func(entry : (FootballIds.LeagueId, [FootballTypes.Season])) : Bool {
+        entry.0 == leagueId;
+      },
+    );
+    switch (foundLeagueSeasons) {
+      case (?leagueSeasonsEntry) {
+        let foundSeason = Array.find<FootballTypes.Season>(
+          leagueSeasonsEntry.1,
+          func(seasonEntry : FootballTypes.Season) : Bool {
+            seasonEntry.id == seasonId;
+          },
+        );
+        switch (foundSeason) {
+          case (?foundSeasonEntry) {
+            let foundFixture = List.find<FootballTypes.Fixture>(
+              foundSeasonEntry.postponedFixtures,
+              func(fixtureEntry : FootballTypes.Fixture) : Bool {
+                fixtureEntry.id == fixtureId;
+              },
+            );
+            return Option.isSome(foundFixture);
+          };
+          case (null) {};
+        };
+      };
+      case (null) {};
+    };
+    return false;
+  };
+
+  private func clubExists(leagueId : FootballIds.LeagueId, clubId : FootballIds.ClubId) : Bool {
+
+    let league = Array.find<(FootballIds.LeagueId, [FootballTypes.Club])>(
+      leagueClubs,
+      func(league : (FootballIds.LeagueId, [FootballTypes.Club])) : Bool {
+        league.0 == leagueId;
+      },
+    );
+
+    switch (league) {
+      case (?foundLeague) {
+        let foundClub = Array.find<FootballTypes.Club>(
+          foundLeague.1,
+          func(club : FootballTypes.Club) : Bool {
+            return club.id == clubId;
+          },
+        );
+
+        return Option.isSome(foundClub);
+      };
+      case (null) {
+        return false;
+      };
+    };
+  };
+
+  private func playerExists(leagueId : FootballIds.LeagueId, playerId : FootballIds.PlayerId) : ?FootballTypes.Player {
+    let playersInLeague = Array.find<(FootballIds.LeagueId, [FootballTypes.Player])>(
+      leaguePlayers,
+      func(foundLeaguePlayers : (FootballIds.LeagueId, [FootballTypes.Player])) : Bool {
+        foundLeaguePlayers.0 == leagueId;
+      },
+    );
+
+    switch (playersInLeague) {
+      case (?foundPlayersInLeague) {
+        let foundPlayer = Array.find<FootballTypes.Player>(
+          foundPlayersInLeague.1,
+          func(player : FootballTypes.Player) : Bool {
+            player.id == playerId;
+          },
+        );
+        return foundPlayer;
+      };
+      case (null) {
+        return null;
+      };
+    };
+  };
+
+  private func countryExists(countryId : Ids.CountryId) : Bool {
+    let playerCountry = Array.find<BaseTypes.Country>(Countries.countries, func(country : BaseTypes.Country) : Bool { return country.id == countryId });
+    return Option.isSome(playerCountry);
+  };
+
+
+  /* ----- Timer Event Private Function ----- */
 
   private func finaliseFixture(leagueId : FootballIds.LeagueId, seasonId : FootballIds.SeasonId, fixtureId : FootballIds.FixtureId, highestScoringPlayerId : FootballIds.PlayerId) : async () {
     leagueSeasons := Array.map<(FootballIds.LeagueId, [FootballTypes.Season]), (FootballIds.LeagueId, [FootballTypes.Season])>(
@@ -2695,693 +3788,9 @@ actor Self {
     };
   };
 
-  private func populatePlayerEventData(submitFixtureDataDTO : FixtureCommands.SubmitFixtureData, allPlayers : [FootballTypes.Player]) : async ?[FootballTypes.PlayerEventData] {
 
-    let allPlayerEventsBuffer = Buffer.fromArray<FootballTypes.PlayerEventData>(submitFixtureDataDTO.playerEventData);
 
-    let homeTeamPlayerIdsBuffer = Buffer.fromArray<Nat16>([]);
-    let awayTeamPlayerIdsBuffer = Buffer.fromArray<Nat16>([]);
-
-    let leagueSeasonEntry = Array.find<(FootballIds.LeagueId, [FootballTypes.Season])>(
-      leagueSeasons,
-      func(leagueSeasonEntry : (FootballIds.LeagueId, [FootballTypes.Season])) : Bool {
-        leagueSeasonEntry.0 == submitFixtureDataDTO.leagueId;
-      },
-    );
-
-    switch (leagueSeasonEntry) {
-      case (null) {
-        return null;
-      };
-      case (?foundLeagueSeasonEntry) {
-        let currentSeason = Array.find<FootballTypes.Season>(
-          foundLeagueSeasonEntry.1,
-          func(season : FootballTypes.Season) : Bool {
-            return season.id == submitFixtureDataDTO.seasonId;
-          },
-        );
-
-        switch (currentSeason) {
-          case (null) { return null };
-          case (?foundSeason) {
-            let fixture = List.find<FootballTypes.Fixture>(
-              foundSeason.fixtures,
-              func(f : FootballTypes.Fixture) : Bool {
-                return f.id == submitFixtureDataDTO.fixtureId;
-              },
-            );
-            switch (fixture) {
-              case (null) { return null };
-              case (?foundFixture) {
-
-                for (event in Iter.fromArray(submitFixtureDataDTO.playerEventData)) {
-                  if (event.clubId == foundFixture.homeClubId) {
-                    homeTeamPlayerIdsBuffer.add(event.playerId);
-                  } else if (event.clubId == foundFixture.awayClubId) {
-                    awayTeamPlayerIdsBuffer.add(event.playerId);
-                  };
-                };
-
-                let homeTeamDefensivePlayerIdsBuffer = Buffer.fromArray<Nat16>([]);
-                let awayTeamDefensivePlayerIdsBuffer = Buffer.fromArray<Nat16>([]);
-
-                for (playerId in Iter.fromArray<Nat16>(Buffer.toArray(homeTeamPlayerIdsBuffer))) {
-                  let player = Array.find<PlayerQueries.Player>(allPlayers, func(p : PlayerQueries.Player) : Bool { return p.id == playerId });
-                  switch (player) {
-                    case (null) {};
-                    case (?actualPlayer) {
-                      if (actualPlayer.position == #Goalkeeper or actualPlayer.position == #Defender) {
-                        if (
-                          Array.find<Nat16>(
-                            Buffer.toArray(homeTeamDefensivePlayerIdsBuffer),
-                            func(x : Nat16) : Bool { return x == playerId },
-                          ) == null
-                        ) {
-                          homeTeamDefensivePlayerIdsBuffer.add(playerId);
-                        };
-                      };
-                    };
-                  };
-                };
-
-                for (playerId in Iter.fromArray<Nat16>(Buffer.toArray(awayTeamPlayerIdsBuffer))) {
-                  let player = Array.find<PlayerQueries.Player>(allPlayers, func(p : PlayerQueries.Player) : Bool { return p.id == playerId });
-                  switch (player) {
-                    case (null) {};
-                    case (?actualPlayer) {
-                      if (actualPlayer.position == #Goalkeeper or actualPlayer.position == #Defender) {
-                        if (
-                          Array.find<Nat16>(
-                            Buffer.toArray(awayTeamDefensivePlayerIdsBuffer),
-                            func(x : Nat16) : Bool { return x == playerId },
-                          ) == null
-                        ) {
-                          awayTeamDefensivePlayerIdsBuffer.add(playerId);
-                        };
-                      };
-                    };
-                  };
-                };
-
-                let homeTeamGoals = Array.filter<FootballTypes.PlayerEventData>(
-                  submitFixtureDataDTO.playerEventData,
-                  func(event : FootballTypes.PlayerEventData) : Bool {
-                    return event.clubId == foundFixture.homeClubId and event.eventType == #Goal;
-                  },
-                );
-
-                let awayTeamGoals = Array.filter<FootballTypes.PlayerEventData>(
-                  submitFixtureDataDTO.playerEventData,
-                  func(event : FootballTypes.PlayerEventData) : Bool {
-                    return event.clubId == foundFixture.awayClubId and event.eventType == #Goal;
-                  },
-                );
-
-                let homeTeamOwnGoals = Array.filter<FootballTypes.PlayerEventData>(
-                  submitFixtureDataDTO.playerEventData,
-                  func(event : FootballTypes.PlayerEventData) : Bool {
-                    return event.clubId == foundFixture.homeClubId and event.eventType == #OwnGoal;
-                  },
-                );
-
-                let awayTeamOwnGoals = Array.filter<FootballTypes.PlayerEventData>(
-                  submitFixtureDataDTO.playerEventData,
-                  func(event : FootballTypes.PlayerEventData) : Bool {
-                    return event.clubId == foundFixture.awayClubId and event.eventType == #OwnGoal;
-                  },
-                );
-
-                let totalHomeScored = Array.size(homeTeamGoals) + Array.size(awayTeamOwnGoals);
-                let totalAwayScored = Array.size(awayTeamGoals) + Array.size(homeTeamOwnGoals);
-
-                if (totalHomeScored == 0) {
-                  for (playerId in Iter.fromArray(Buffer.toArray(awayTeamDefensivePlayerIdsBuffer))) {
-                    let player = Array.find<PlayerQueries.Player>(allPlayers, func(p : PlayerQueries.Player) : Bool { return p.id == playerId });
-                    switch (player) {
-                      case (null) {};
-                      case (?actualPlayer) {
-                        let cleanSheetEvent : FootballTypes.PlayerEventData = {
-                          fixtureId = submitFixtureDataDTO.fixtureId;
-                          playerId = playerId;
-                          eventType = #CleanSheet;
-                          eventStartMinute = 90;
-                          eventEndMinute = 90;
-                          clubId = actualPlayer.clubId;
-                        };
-                        allPlayerEventsBuffer.add(cleanSheetEvent);
-                      };
-                    };
-                  };
-                } else {
-                  for (goal in Iter.fromArray(homeTeamGoals)) {
-                    for (playerId in Iter.fromArray(Buffer.toArray(awayTeamDefensivePlayerIdsBuffer))) {
-                      let player = Array.find<PlayerQueries.Player>(allPlayers, func(p : PlayerQueries.Player) : Bool { return p.id == playerId });
-                      switch (player) {
-                        case (null) {};
-                        case (?actualPlayer) {
-                          let concededEvent : FootballTypes.PlayerEventData = {
-                            fixtureId = submitFixtureDataDTO.fixtureId;
-                            playerId = actualPlayer.id;
-                            eventType = #GoalConceded;
-                            eventStartMinute = goal.eventStartMinute;
-                            eventEndMinute = goal.eventStartMinute;
-                            clubId = actualPlayer.clubId;
-                          };
-                          allPlayerEventsBuffer.add(concededEvent);
-                        };
-                      };
-                    };
-                  };
-                };
-
-                if (totalAwayScored == 0) {
-                  for (playerId in Iter.fromArray(Buffer.toArray(homeTeamDefensivePlayerIdsBuffer))) {
-                    let player = Array.find<PlayerQueries.Player>(allPlayers, func(p : PlayerQueries.Player) : Bool { return p.id == playerId });
-                    switch (player) {
-                      case (null) {};
-                      case (?actualPlayer) {
-                        let cleanSheetEvent : FootballTypes.PlayerEventData = {
-                          fixtureId = submitFixtureDataDTO.fixtureId;
-                          playerId = playerId;
-                          eventType = #CleanSheet;
-                          eventStartMinute = 90;
-                          eventEndMinute = 90;
-                          clubId = actualPlayer.clubId;
-                        };
-                        allPlayerEventsBuffer.add(cleanSheetEvent);
-                      };
-                    };
-                  };
-                } else {
-                  for (goal in Iter.fromArray(awayTeamGoals)) {
-                    for (playerId in Iter.fromArray(Buffer.toArray(homeTeamDefensivePlayerIdsBuffer))) {
-                      let player = Array.find<PlayerQueries.Player>(allPlayers, func(p : PlayerQueries.Player) : Bool { return p.id == playerId });
-                      switch (player) {
-                        case (null) {};
-                        case (?actualPlayer) {
-                          let concededEvent : FootballTypes.PlayerEventData = {
-                            fixtureId = goal.fixtureId;
-                            playerId = actualPlayer.id;
-                            eventType = #GoalConceded;
-                            eventStartMinute = goal.eventStartMinute;
-                            eventEndMinute = goal.eventStartMinute;
-                            clubId = actualPlayer.clubId;
-                            position = actualPlayer.position;
-                          };
-                          allPlayerEventsBuffer.add(concededEvent);
-                        };
-                      };
-                    };
-                  };
-                };
-
-                let playerEvents = Buffer.toArray<FootballTypes.PlayerEventData>(allPlayerEventsBuffer);
-                let eventsWithHighestScoringPlayer = populateHighestScoringPlayer(playerEvents, foundFixture, allPlayers);
-                return ?eventsWithHighestScoringPlayer;
-              };
-            };
-          };
-        };
-      };
-    };
-  };
-
-  private func populateHighestScoringPlayer(playerEvents : [FootballTypes.PlayerEventData], fixture : FootballTypes.Fixture, players : [PlayerQueries.Player]) : [FootballTypes.PlayerEventData] {
-
-    var homeGoalsCount : Nat8 = 0;
-    var awayGoalsCount : Nat8 = 0;
-
-    let playerEventsMap : TrieMap.TrieMap<FootballIds.PlayerId, [FootballTypes.PlayerEventData]> = TrieMap.TrieMap<FootballIds.PlayerId, [FootballTypes.PlayerEventData]>(BaseUtilities.eqNat16, BaseUtilities.hashNat16);
-
-    for (event in Iter.fromArray(playerEvents)) {
-      switch (event.eventType) {
-        case (#Goal) {
-          if (event.clubId == fixture.homeClubId) {
-            homeGoalsCount += 1;
-          } else if (event.clubId == fixture.awayClubId) {
-            awayGoalsCount += 1;
-          };
-        };
-        case (#OwnGoal) {
-          if (event.clubId == fixture.homeClubId) {
-            awayGoalsCount += 1;
-          } else if (event.clubId == fixture.awayClubId) {
-            homeGoalsCount += 1;
-          };
-        };
-        case _ {};
-      };
-
-      let playerId : FootballIds.PlayerId = event.playerId;
-      switch (playerEventsMap.get(playerId)) {
-        case (null) {
-          playerEventsMap.put(playerId, [event]);
-        };
-        case (?existingEvents) {
-          let existingEventsBuffer = Buffer.fromArray<FootballTypes.PlayerEventData>(existingEvents);
-          existingEventsBuffer.add(event);
-          playerEventsMap.put(playerId, Buffer.toArray(existingEventsBuffer));
-        };
-      };
-    };
-
-    let playerScoresMap : TrieMap.TrieMap<Nat16, Int16> = TrieMap.TrieMap<Nat16, Int16>(BaseUtilities.eqNat16, BaseUtilities.hashNat16);
-    for ((playerId, events) in playerEventsMap.entries()) {
-      let currentPlayer = Array.find<PlayerQueries.Player>(
-        players,
-        func(player : PlayerQueries.Player) : Bool {
-          return player.id == playerId;
-        },
-      );
-
-      switch (currentPlayer) {
-        case (null) {};
-        case (?foundPlayer) {
-          let totalScore = Array.foldLeft<FootballTypes.PlayerEventData, Int16>(
-            events,
-            0,
-            func(acc : Int16, event : FootballTypes.PlayerEventData) : Int16 {
-              return acc + MopsUtilities.calculateIndividualScoreForEvent(event, foundPlayer.position);
-            },
-          );
-
-          let aggregateScore = MopsUtilities.calculateAggregatePlayerEvents(events, foundPlayer.position);
-          playerScoresMap.put(playerId, totalScore + aggregateScore);
-        };
-      };
-    };
-
-    var highestScore : Int16 = 0;
-    var highestScoringPlayerId : FootballIds.PlayerId = 0;
-    var isUniqueHighScore : Bool = true;
-    let uniquePlayerIdsBuffer = Buffer.fromArray<FootballIds.PlayerId>([]);
-
-    for (event in Iter.fromArray(playerEvents)) {
-      if (not Buffer.contains<FootballIds.PlayerId>(uniquePlayerIdsBuffer, event.playerId, func(a : FootballIds.PlayerId, b : FootballIds.PlayerId) : Bool { a == b })) {
-        uniquePlayerIdsBuffer.add(event.playerId);
-      };
-    };
-
-    let uniquePlayerIds = Buffer.toArray<Nat16>(uniquePlayerIdsBuffer);
-
-    for (j in Iter.range(0, Array.size(uniquePlayerIds) -1)) {
-      let playerId = uniquePlayerIds[j];
-      switch (playerScoresMap.get(playerId)) {
-        case (?playerScore) {
-          if (playerScore > highestScore) {
-            highestScore := playerScore;
-            highestScoringPlayerId := playerId;
-            isUniqueHighScore := true;
-          } else if (playerScore == highestScore) {
-            isUniqueHighScore := false;
-          };
-        };
-        case null {};
-      };
-    };
-
-    if (isUniqueHighScore) {
-      let highestScoringPlayer = Array.find<PlayerQueries.Player>(players, func(p : PlayerQueries.Player) : Bool { return p.id == highestScoringPlayerId });
-      switch (highestScoringPlayer) {
-        case (null) {};
-        case (?foundPlayer) {
-          let newEvent : FootballTypes.PlayerEventData = {
-            fixtureId = fixture.id;
-            playerId = highestScoringPlayerId;
-            eventType = #HighestScoringPlayer;
-            eventStartMinute = 90;
-            eventEndMinute = 90;
-            clubId = foundPlayer.clubId;
-          };
-          let existingEvents = playerEventsMap.get(highestScoringPlayerId);
-          switch (existingEvents) {
-            case (null) {};
-            case (?foundEvents) {
-              let existingEventsBuffer = Buffer.fromArray<FootballTypes.PlayerEventData>(foundEvents);
-              existingEventsBuffer.add(newEvent);
-              playerEventsMap.put(highestScoringPlayerId, Buffer.toArray(existingEventsBuffer));
-            };
-          };
-        };
-      };
-    };
-
-    let allEventsBuffer = Buffer.fromArray<FootballTypes.PlayerEventData>([]);
-    for ((playerId, playerEventArray) in playerEventsMap.entries()) {
-      allEventsBuffer.append(Buffer.fromArray(playerEventArray));
-    };
-
-    return Buffer.toArray(allEventsBuffer);
-  };
-
-  private func addEventsToFixture(leagueId : FootballIds.LeagueId, playerEventData : [FootballTypes.PlayerEventData], seasonId : FootballIds.SeasonId, fixtureId : FootballIds.FixtureId) {
-
-    leagueSeasons := Array.map<(FootballIds.LeagueId, [FootballTypes.Season]), (FootballIds.LeagueId, [FootballTypes.Season])>(
-      leagueSeasons,
-      func(leagueSeasonsEntry : (FootballIds.LeagueId, [FootballTypes.Season])) {
-        if (leagueSeasonsEntry.0 == leagueId) {
-          return (
-            leagueSeasonsEntry.0,
-            Array.map<FootballTypes.Season, FootballTypes.Season>(
-              leagueSeasonsEntry.1,
-              func(season : FootballTypes.Season) {
-                if (season.id == seasonId) {
-                  return {
-                    id = season.id;
-                    name = season.name;
-                    year = season.year;
-                    fixtures = List.map<FootballTypes.Fixture, FootballTypes.Fixture>(
-                      season.fixtures,
-                      func(fixture : FootballTypes.Fixture) : FootballTypes.Fixture {
-                        if (fixture.id == fixtureId) {
-                          return {
-                            id = fixture.id;
-                            seasonId = fixture.seasonId;
-                            gameweek = fixture.gameweek;
-                            kickOff = fixture.kickOff;
-                            homeClubId = fixture.homeClubId;
-                            awayClubId = fixture.awayClubId;
-                            homeGoals = fixture.homeGoals;
-                            awayGoals = fixture.awayGoals;
-                            status = fixture.status;
-                            events = List.fromArray(playerEventData);
-                            highestScoringPlayerId = fixture.highestScoringPlayerId;
-                          };
-                        } else { return fixture };
-                      },
-                    );
-                    postponedFixtures = season.postponedFixtures;
-                  };
-                } else {
-                  return season;
-                };
-              },
-            ),
-          );
-        } else { return leagueSeasonsEntry };
-      },
-    );
-    setGameScore(leagueId, seasonId, fixtureId);
-  };
-
-  private func addEventsToPlayers(leagueId : FootballIds.LeagueId, playerEventData : [FootballTypes.PlayerEventData], seasonId : FootballIds.SeasonId, gameweek : FootballDefinitions.GameweekNumber, fixtureId : FootballIds.FixtureId) {
-
-    var updatedSeasons : List.List<FootballTypes.PlayerSeason> = List.nil<FootballTypes.PlayerSeason>();
-    let playerEventsMap : TrieMap.TrieMap<Nat16, [FootballTypes.PlayerEventData]> = TrieMap.TrieMap<Nat16, [FootballTypes.PlayerEventData]>(BaseUtilities.eqNat16, BaseUtilities.hashNat16);
-
-    for (event in Iter.fromArray(playerEventData)) {
-      let playerId : Nat16 = event.playerId;
-      switch (playerEventsMap.get(playerId)) {
-        case (null) {
-          playerEventsMap.put(playerId, [event]);
-        };
-        case (?existingEvents) {
-          let existingEventsBuffer = Buffer.fromArray<FootballTypes.PlayerEventData>(existingEvents);
-          existingEventsBuffer.add(event);
-          playerEventsMap.put(playerId, Buffer.toArray(existingEventsBuffer));
-        };
-      };
-    };
-
-    let leaguePlayerArray = Array.find<(FootballIds.LeagueId, [FootballTypes.Player])>(
-      leaguePlayers,
-      func(leaguePlayersArray : (FootballIds.LeagueId, [FootballTypes.Player])) : Bool {
-        return leaguePlayersArray.0 == leagueId;
-      },
-    );
-
-    switch (leaguePlayerArray) {
-      case (?foundArray) {
-
-        let players = List.fromArray(foundArray.1);
-
-        for (playerEventMap in playerEventsMap.entries()) {
-          let player = List.find<FootballTypes.Player>(
-            players,
-            func(p : FootballTypes.Player) : Bool {
-              return p.id == playerEventMap.0;
-            },
-          );
-          switch (player) {
-            case (null) {};
-            case (?foundPlayer) {
-
-              let score : Int16 = calculatePlayerScore(foundPlayer.position, playerEventMap.1);
-
-              if (foundPlayer.seasons == null) {
-                let newGameweek : FootballTypes.PlayerGameweek = {
-                  number = gameweek;
-                  events = List.fromArray<FootballTypes.PlayerEventData>(playerEventMap.1);
-                  points = score;
-                };
-                let newSeason : FootballTypes.PlayerSeason = {
-                  id = seasonId;
-                  gameweeks = List.fromArray<FootballTypes.PlayerGameweek>([newGameweek]);
-                  totalPoints = 0;
-                };
-                updatedSeasons := List.fromArray<FootballTypes.PlayerSeason>([newSeason]);
-              } else {
-                let currentSeason = List.find<FootballTypes.PlayerSeason>(
-                  foundPlayer.seasons,
-                  func(s : FootballTypes.PlayerSeason) : Bool {
-                    s.id == seasonId;
-                  },
-                );
-
-                if (currentSeason == null) {
-                  let newGameweek : FootballTypes.PlayerGameweek = {
-                    number = gameweek;
-                    events = List.fromArray<FootballTypes.PlayerEventData>(playerEventMap.1);
-                    points = score;
-                  };
-                  let newSeason : FootballTypes.PlayerSeason = {
-                    id = seasonId;
-                    gameweeks = List.fromArray<FootballTypes.PlayerGameweek>([newGameweek]);
-                    totalPoints = 0;
-                  };
-                  updatedSeasons := List.append<FootballTypes.PlayerSeason>(foundPlayer.seasons, List.fromArray<FootballTypes.PlayerSeason>([newSeason]));
-
-                } else {
-                  updatedSeasons := List.map<FootballTypes.PlayerSeason, FootballTypes.PlayerSeason>(
-                    foundPlayer.seasons,
-                    func(season : FootballTypes.PlayerSeason) : FootballTypes.PlayerSeason {
-
-                      if (season.id != seasonId) {
-                        return season;
-                      };
-
-                      let currentGameweek = List.find<FootballTypes.PlayerGameweek>(
-                        season.gameweeks,
-                        func(gw : FootballTypes.PlayerGameweek) : Bool {
-                          gw.number == gameweek;
-                        },
-                      );
-
-                      if (currentGameweek == null) {
-                        let newGameweek : FootballTypes.PlayerGameweek = {
-                          number = gameweek;
-                          events = List.fromArray<FootballTypes.PlayerEventData>(playerEventMap.1);
-                          points = score;
-                        };
-                        let updatedSeason : FootballTypes.PlayerSeason = {
-                          id = season.id;
-                          gameweeks = List.append<FootballTypes.PlayerGameweek>(season.gameweeks, List.fromArray<FootballTypes.PlayerGameweek>([newGameweek]));
-                          totalPoints = 0;
-                        };
-                        return updatedSeason;
-                      } else {
-                        let updatedGameweeks = List.map<FootballTypes.PlayerGameweek, FootballTypes.PlayerGameweek>(
-                          season.gameweeks,
-                          func(gw : FootballTypes.PlayerGameweek) : FootballTypes.PlayerGameweek {
-                            if (gw.number != gameweek) {
-                              return gw;
-                            };
-
-                            let otherFixtureEvents = List.filter<FootballTypes.PlayerEventData>(
-                              gw.events,
-                              func(playerEvent : FootballTypes.PlayerEventData) {
-                                playerEvent.fixtureId != fixtureId;
-                              },
-                            );
-
-                            return {
-                              number = gw.number;
-                              events = List.append<FootballTypes.PlayerEventData>(otherFixtureEvents, List.fromArray(playerEventMap.1));
-                              points = score;
-                            };
-                          },
-                        );
-                        return {
-                          id = season.id;
-                          gameweeks = updatedGameweeks;
-                          totalPoints = 0;
-                        };
-                      };
-                    },
-                  );
-                };
-              };
-
-              let updatedPlayer : FootballTypes.Player = {
-                leagueId = foundPlayer.leagueId;
-                id = foundPlayer.id;
-                clubId = foundPlayer.clubId;
-                position = foundPlayer.position;
-                firstName = foundPlayer.firstName;
-                lastName = foundPlayer.lastName;
-                shirtNumber = foundPlayer.shirtNumber;
-                valueQuarterMillions = foundPlayer.valueQuarterMillions;
-                dateOfBirth = foundPlayer.dateOfBirth;
-                nationality = foundPlayer.nationality;
-                seasons = updatedSeasons;
-                valueHistory = foundPlayer.valueHistory;
-                status = foundPlayer.status;
-                parentLeagueId = foundPlayer.parentLeagueId;
-                parentClubId = foundPlayer.parentClubId;
-                currentLoanEndDate = foundPlayer.currentLoanEndDate;
-                latestInjuryEndDate = foundPlayer.latestInjuryEndDate;
-                injuryHistory = foundPlayer.injuryHistory;
-                retirementDate = foundPlayer.retirementDate;
-                transferHistory = foundPlayer.transferHistory;
-                gender = foundPlayer.gender;
-              };
-
-              updateLeaguePlayer(leagueId, updatedPlayer);
-            };
-          }
-
-        };
-
-      };
-      case (null) {
-
-      };
-    };
-  };
-
-  private func setGameScore(leagueId : FootballIds.LeagueId, seasonId : FootballIds.SeasonId, fixtureId : FootballIds.FixtureId) {
-
-    leagueSeasons := Array.map<(FootballIds.LeagueId, [FootballTypes.Season]), (FootballIds.LeagueId, [FootballTypes.Season])>(
-      leagueSeasons,
-      func(leagueSeasonsEntry : (FootballIds.LeagueId, [FootballTypes.Season])) {
-        if (leagueSeasonsEntry.0 == leagueId) {
-          return (
-            leagueSeasonsEntry.0,
-            Array.map<FootballTypes.Season, FootballTypes.Season>(
-              leagueSeasonsEntry.1,
-              func(season : FootballTypes.Season) {
-                if (season.id == seasonId) {
-
-                  let fixturesBuffer = Buffer.fromArray<FootballTypes.Fixture>([]);
-                  for (fixture in Iter.fromList(season.fixtures)) {
-                    if (fixture.id == fixtureId) {
-
-                      var homeGoals : Nat8 = 0;
-                      var awayGoals : Nat8 = 0;
-
-                      for (event in Iter.fromList(fixture.events)) {
-                        switch (event.eventType) {
-                          case (#Goal) {
-                            if (event.clubId == fixture.homeClubId) {
-                              homeGoals += 1;
-                            } else {
-                              awayGoals += 1;
-                            };
-                          };
-                          case (#OwnGoal) {
-                            if (event.clubId == fixture.homeClubId) {
-                              awayGoals += 1;
-                            } else {
-                              homeGoals += 1;
-                            };
-                          };
-                          case _ {};
-                        };
-                      };
-
-                      fixturesBuffer.add({
-                        awayClubId = fixture.awayClubId;
-                        awayGoals = awayGoals;
-                        events = fixture.events;
-                        gameweek = fixture.gameweek;
-                        highestScoringPlayerId = fixture.highestScoringPlayerId;
-                        homeClubId = fixture.homeClubId;
-                        homeGoals = homeGoals;
-                        id = fixture.id;
-                        kickOff = fixture.kickOff;
-                        seasonId = fixture.seasonId;
-                        status = fixture.status;
-                      });
-                    } else {
-                      fixturesBuffer.add(fixture);
-                    };
-                  };
-                  return {
-                    fixtures = List.fromArray(Buffer.toArray(fixturesBuffer));
-                    id = season.id;
-                    name = season.name;
-                    postponedFixtures = season.postponedFixtures;
-                    year = season.year;
-                  };
-
-                } else {
-                  return season;
-                };
-              },
-            ),
-          );
-        } else { return leagueSeasonsEntry };
-      },
-    );
-  };
-
-  private func updateLeaguePlayer(leagueId : FootballIds.LeagueId, updatedPlayer : FootballTypes.Player) {
-
-    leaguePlayers := Array.map<(FootballIds.LeagueId, [FootballTypes.Player]), (FootballIds.LeagueId, [FootballTypes.Player])>(
-      leaguePlayers,
-      func(leaguePlayersSet : (FootballIds.LeagueId, [FootballTypes.Player])) {
-        if (leaguePlayersSet.0 == leagueId) {
-          return (
-            leaguePlayersSet.0,
-            Array.map<FootballTypes.Player, FootballTypes.Player>(
-              leaguePlayersSet.1,
-              func(player : FootballTypes.Player) {
-                if (player.id == updatedPlayer.id) {
-                  updatedPlayer;
-                } else {
-                  return player;
-                };
-              },
-            ),
-          );
-        } else {
-          return leaguePlayersSet;
-        };
-      },
-    );
-  };
-
-  private func getPlayer(leagueId : FootballIds.LeagueId, playerId : FootballIds.PlayerId) : ?FootballTypes.Player {
-    let playersLeague = Array.find<(FootballIds.LeagueId, [FootballTypes.Player])>(
-      leaguePlayers,
-      func(playerLeagueEntry : (FootballIds.LeagueId, [FootballTypes.Player])) : Bool {
-        playerLeagueEntry.0 == leagueId;
-      },
-    );
-    switch (playersLeague) {
-      case (null) {
-        return null;
-      };
-      case (?foundPlayersLeague) {
-        return Array.find<FootballTypes.Player>(
-          foundPlayersLeague.1,
-          func(player : FootballTypes.Player) : Bool {
-            player.id == playerId;
-          },
-        );
-      };
-    };
-  };
+  /* ----- Data Movement Functions ----- */
 
   private func movePlayerToFreeAgents(leagueId : FootballIds.LeagueId, playerId : FootballIds.PlayerId, updatedValue : Nat16) {
 
@@ -3584,403 +3993,32 @@ actor Self {
     };
   };
 
-  private func calculatePlayerScore(playerPosition : FootballEnums.PlayerPosition, events : [FootballTypes.PlayerEventData]) : Int16 {
-    let totalScore = Array.foldLeft<FootballTypes.PlayerEventData, Int16>(
-      events,
-      0,
-      func(acc : Int16, event : FootballTypes.PlayerEventData) : Int16 {
-        return acc + MopsUtilities.calculateIndividualScoreForEvent(event, playerPosition);
-      },
-    );
-
-    let aggregateScore = MopsUtilities.calculateAggregatePlayerEvents(events, playerPosition);
-    return totalScore + aggregateScore;
-  };
-
-  private func leagueExists(leagueId : FootballIds.LeagueId) : Bool {
-    let foundLeague = Array.find<FootballTypes.League>(
-      leagues,
-      func(league : FootballTypes.League) : Bool {
-        league.id == leagueId;
-      },
-    );
-    return Option.isSome(foundLeague);
-  };
-
-  private func seasonExists(leagueId : FootballIds.LeagueId, seasonId : FootballIds.SeasonId) : Bool {
-
-    let foundLeagueSeasons = Array.find<(FootballIds.LeagueId, [FootballTypes.Season])>(
-      leagueSeasons,
-      func(entry : (FootballIds.LeagueId, [FootballTypes.Season])) : Bool {
-        entry.0 == leagueId;
-      },
-    );
-    switch (foundLeagueSeasons) {
-      case (?foundSeasons) {
-        let leagueSeasonResult = Array.find<FootballTypes.Season>(
-          foundSeasons.1,
-          func(seasonEntry : FootballTypes.Season) : Bool {
-            return seasonEntry.id == seasonId;
-          },
-        );
-
-        return Option.isSome(leagueSeasonResult);
-      };
-      case (null) {
-        return false;
-      };
-    };
-  };
-
-  private func seasonActive(leagueId : FootballIds.LeagueId) : Bool {
-    let leagueStatusResult = Array.find<FootballTypes.LeagueStatus>(
-      leagueStatuses,
-      func(statusEntry : FootballTypes.LeagueStatus) : Bool {
-        statusEntry.leagueId == leagueId;
-      },
-    );
-    switch (leagueStatusResult) {
-      case (?leagueStatus) {
-        return leagueStatus.seasonActive;
-      };
-      case (null) {};
-    };
-    return false;
-  };
-
-  private func fixtureExists(leagueId : FootballIds.LeagueId, seasonId : FootballIds.SeasonId, fixtureId : FootballIds.FixtureId) : Bool {
-    let foundLeagueSeasons = Array.find<(FootballIds.LeagueId, [FootballTypes.Season])>(
-      leagueSeasons,
-      func(entry : (FootballIds.LeagueId, [FootballTypes.Season])) : Bool {
-        entry.0 == leagueId;
-      },
-    );
-    switch (foundLeagueSeasons) {
-      case (?leagueSeasonsEntry) {
-        let foundSeason = Array.find<FootballTypes.Season>(
-          leagueSeasonsEntry.1,
-          func(seasonEntry : FootballTypes.Season) : Bool {
-            seasonEntry.id == seasonId;
-          },
-        );
-        switch (foundSeason) {
-          case (?foundSeasonEntry) {
-            let foundFixture = List.find<FootballTypes.Fixture>(
-              foundSeasonEntry.fixtures,
-              func(fixtureEntry : FootballTypes.Fixture) : Bool {
-                fixtureEntry.id == fixtureId;
-              },
-            );
-            return Option.isSome(foundFixture);
-          };
-          case (null) {};
-        };
-      };
-      case (null) {};
-    };
-    return false;
-  };
-
-  private func postponedFixtureExists(leagueId : FootballIds.LeagueId, seasonId : FootballIds.SeasonId, fixtureId : FootballIds.FixtureId) : Bool {
-    let foundLeagueSeasons = Array.find<(FootballIds.LeagueId, [FootballTypes.Season])>(
-      leagueSeasons,
-      func(entry : (FootballIds.LeagueId, [FootballTypes.Season])) : Bool {
-        entry.0 == leagueId;
-      },
-    );
-    switch (foundLeagueSeasons) {
-      case (?leagueSeasonsEntry) {
-        let foundSeason = Array.find<FootballTypes.Season>(
-          leagueSeasonsEntry.1,
-          func(seasonEntry : FootballTypes.Season) : Bool {
-            seasonEntry.id == seasonId;
-          },
-        );
-        switch (foundSeason) {
-          case (?foundSeasonEntry) {
-            let foundFixture = List.find<FootballTypes.Fixture>(
-              foundSeasonEntry.postponedFixtures,
-              func(fixtureEntry : FootballTypes.Fixture) : Bool {
-                fixtureEntry.id == fixtureId;
-              },
-            );
-            return Option.isSome(foundFixture);
-          };
-          case (null) {};
-        };
-      };
-      case (null) {};
-    };
-    return false;
-  };
-
-  private func clubExists(leagueId : FootballIds.LeagueId, clubId : FootballIds.ClubId) : Bool {
-
-    let league = Array.find<(FootballIds.LeagueId, [FootballTypes.Club])>(
-      leagueClubs,
-      func(league : (FootballIds.LeagueId, [FootballTypes.Club])) : Bool {
-        league.0 == leagueId;
-      },
-    );
-
-    switch (league) {
-      case (?foundLeague) {
-        let foundClub = Array.find<FootballTypes.Club>(
-          foundLeague.1,
-          func(club : FootballTypes.Club) : Bool {
-            return club.id == clubId;
-          },
-        );
-
-        return Option.isSome(foundClub);
-      };
-      case (null) {
-        return false;
-      };
-    };
-  };
-
-  private func checkPlayerExists(leagueId : FootballIds.LeagueId, playerId : FootballIds.PlayerId) : ?FootballTypes.Player {
-    let playersInLeague = Array.find<(FootballIds.LeagueId, [FootballTypes.Player])>(
+  private func getPlayer(leagueId : FootballIds.LeagueId, playerId : FootballIds.PlayerId) : ?FootballTypes.Player {
+    let playersLeague = Array.find<(FootballIds.LeagueId, [FootballTypes.Player])>(
       leaguePlayers,
-      func(foundLeaguePlayers : (FootballIds.LeagueId, [FootballTypes.Player])) : Bool {
-        foundLeaguePlayers.0 == leagueId;
+      func(playerLeagueEntry : (FootballIds.LeagueId, [FootballTypes.Player])) : Bool {
+        playerLeagueEntry.0 == leagueId;
       },
     );
-
-    switch (playersInLeague) {
-      case (?foundPlayersInLeague) {
-        let foundPlayer = Array.find<FootballTypes.Player>(
-          foundPlayersInLeague.1,
+    switch (playersLeague) {
+      case (null) {
+        return null;
+      };
+      case (?foundPlayersLeague) {
+        return Array.find<FootballTypes.Player>(
+          foundPlayersLeague.1,
           func(player : FootballTypes.Player) : Bool {
             player.id == playerId;
           },
         );
-        return foundPlayer;
-      };
-      case (null) {
-        return null;
       };
     };
   };
 
-  private func validatePlayerEvents(playerEvents : [FootballTypes.PlayerEventData]) : Bool {
 
-    let eventsBelow0 = Array.filter<FootballTypes.PlayerEventData>(
-      playerEvents,
-      func(event : FootballTypes.PlayerEventData) : Bool {
-        return event.eventStartMinute < 0;
-      },
-    );
-
-    if (Array.size(eventsBelow0) > 0) {
-      return false;
-    };
-
-    let eventsAbove90 = Array.filter<FootballTypes.PlayerEventData>(
-      playerEvents,
-      func(event : FootballTypes.PlayerEventData) : Bool {
-        return event.eventStartMinute > 90;
-      },
-    );
-
-    if (Array.size(eventsAbove90) > 0) {
-      return false;
-    };
-
-    let playerEventsMap : TrieMap.TrieMap<FootballIds.PlayerId, List.List<FootballTypes.PlayerEventData>> = TrieMap.TrieMap<FootballIds.PlayerId, List.List<FootballTypes.PlayerEventData>>(BaseUtilities.eqNat16, BaseUtilities.hashNat16);
-
-    for (playerEvent in Iter.fromArray(playerEvents)) {
-      switch (playerEventsMap.get(playerEvent.playerId)) {
-        case (null) {};
-        case (?existingEvents) {
-          playerEventsMap.put(playerEvent.playerId, List.push<FootballTypes.PlayerEventData>(playerEvent, existingEvents));
-        };
-      };
-    };
-
-    for ((playerId, events) in playerEventsMap.entries()) {
-      let redCards = List.filter<FootballTypes.PlayerEventData>(
-        events,
-        func(event : FootballTypes.PlayerEventData) : Bool {
-          return event.eventType == #RedCard;
-        },
-      );
-
-      if (List.size<FootballTypes.PlayerEventData>(redCards) > 1) {
-        return false;
-      };
-
-      let yellowCards = List.filter<FootballTypes.PlayerEventData>(
-        events,
-        func(event : FootballTypes.PlayerEventData) : Bool {
-          return event.eventType == #YellowCard;
-        },
-      );
-
-      if (List.size<FootballTypes.PlayerEventData>(yellowCards) > 2) {
-        return false;
-      };
-
-      if (List.size<FootballTypes.PlayerEventData>(yellowCards) == 2 and List.size<FootballTypes.PlayerEventData>(redCards) != 1) {
-        return false;
-      };
-
-      let assists = List.filter<FootballTypes.PlayerEventData>(
-        events,
-        func(event : FootballTypes.PlayerEventData) : Bool {
-          return event.eventType == #GoalAssisted;
-        },
-      );
-
-      for (assist in Iter.fromList(assists)) {
-        let goalsAtSameMinute = List.filter<FootballTypes.PlayerEventData>(
-          events,
-          func(event : FootballTypes.PlayerEventData) : Bool {
-            return (event.eventType == #Goal or event.eventType == #OwnGoal) and event.eventStartMinute == assist.eventStartMinute;
-          },
-        );
-
-        if (List.size<FootballTypes.PlayerEventData>(goalsAtSameMinute) == 0) {
-          return false;
-        };
-      };
-
-      let penaltySaves = List.filter<FootballTypes.PlayerEventData>(
-        events,
-        func(event : FootballTypes.PlayerEventData) : Bool {
-          return event.eventType == #PenaltySaved;
-        },
-      );
-
-      for (penaltySave in Iter.fromList(penaltySaves)) {
-        let penaltyMissesAtSameMinute = List.filter<FootballTypes.PlayerEventData>(
-          events,
-          func(event : FootballTypes.PlayerEventData) : Bool {
-            return event.eventType == #PenaltyMissed and event.eventStartMinute == penaltySave.eventStartMinute;
-          },
-        );
-
-        if (List.size<FootballTypes.PlayerEventData>(penaltyMissesAtSameMinute) == 0) {
-          return false;
-        };
-      };
-    };
-
-    return true;
-  };
-
-  private func countryExists(countryId : Ids.CountryId) : Bool {
-    let playerCountry = Array.find<BaseTypes.Country>(Countries.countries, func(country : BaseTypes.Country) : Bool { return country.id == countryId });
-    return Option.isSome(playerCountry);
-  };
-
-  private func logoSizeValid(logo : Blob) : Bool {
-    let sizeInKB = Array.size(Blob.toArray(logo)) / 1024;
-    return (sizeInKB <= 500);
-  };
   
-  private func callerAllowed(caller : Principal) : Bool {
-    let foundCaller = Array.find<Ids.PrincipalId>(
-      Environment.APPROVED_CANISTERS,
-      func(canisterId : Ids.CanisterId) : Bool {
-        Principal.toText(caller) == canisterId;
-      },
-    );
-    return Option.isSome(foundCaller);
-  };
 
-  private func getPrivatePlayers(dto : PlayerQueries.GetPlayers) : Result.Result<PlayerQueries.Players, Enums.Error> {
-    let filteredLeaguePlayers = Array.find<(FootballIds.LeagueId, [FootballTypes.Player])>(
-      leaguePlayers,
-      func(currentLeaguePlayers : (FootballIds.LeagueId, [FootballTypes.Player])) : Bool {
-        currentLeaguePlayers.0 == dto.leagueId;
-      },
-    );
 
-    switch (filteredLeaguePlayers) {
-      case (?foundLeaguePlayers) {
-        return #ok({
-          players = Array.map<FootballTypes.Player, PlayerQueries.Player>(
-            foundLeaguePlayers.1,
-            func(player : FootballTypes.Player) {
-
-              return {
-                clubId = player.clubId;
-                dateOfBirth = player.dateOfBirth;
-                firstName = player.firstName;
-                id = player.id;
-                lastName = player.lastName;
-                nationality = player.nationality;
-                position = player.position;
-                shirtNumber = player.shirtNumber;
-                status = player.status;
-                valueQuarterMillions = player.valueQuarterMillions;
-                leagueId = player.leagueId;
-                parentLeagueId = player.parentLeagueId;
-                parentClubId = player.parentClubId;
-                currentLoanEndDate = player.currentLoanEndDate;
-              };
-
-            },
-          );
-        });
-      };
-      case (null) {
-        return #err(#NotFound);
-      };
-    };
-  };
-
-  private func getPrivateClubs(dto : ClubQueries.GetClubs) : Result.Result<ClubQueries.Clubs, Enums.Error> {
-
-    let filteredLeagueClubs = Array.find<(FootballIds.LeagueId, [FootballTypes.Club])>(
-      leagueClubs,
-      func(leagueClubs : (FootballIds.LeagueId, [FootballTypes.Club])) : Bool {
-        leagueClubs.0 == dto.leagueId;
-      },
-    );
-
-    switch (filteredLeagueClubs) {
-      case (?foundLeagueClubs) {
-        let sortedArray = Array.sort<FootballTypes.Club>(
-          foundLeagueClubs.1,
-          func(a : FootballTypes.Club, b : FootballTypes.Club) : Order.Order {
-            if (a.friendlyName < b.friendlyName) { return #less };
-            if (a.friendlyName == b.friendlyName) { return #equal };
-            return #greater;
-          },
-        );
-        return #ok({ leagueId = dto.leagueId; clubs = sortedArray });
-
-      };
-      case (null) {
-        return #err(#NotFound);
-      };
-    };
-  };
-
-  private func isValidValueChange(player : FootballTypes.Player) : Bool {
-    let currentTimestamp = Time.now();
-    let oneYearAgo = currentTimestamp - (365 * 24 * 60 * 60);
-
-    let relevantHistory = List.filter<FootballTypes.ValueHistory>(player.valueHistory, func(entry) = entry.changedOn >= oneYearAgo);
-
-    switch (List.last(relevantHistory)) {
-      case (null) {
-        return true;
-      };
-      case (?lastEntry) {
-        let oldVal = lastEntry.oldValue;
-        let newVal = lastEntry.newValue;
-
-        let decreaseLimit = oldVal / 2;
-        let increaseLimit = oldVal * 4;
-
-        return (newVal >= decreaseLimit) and (newVal <= increaseLimit);
-      };
-    };
-  };
  
 
   /* ----- Canister Lifecycle Functions ----- */
@@ -3988,7 +4026,6 @@ actor Self {
   system func preupgrade() {};
 
   system func postupgrade() {
-    populateClubSummaries();    
     ignore Timer.setTimer<system>(#nanoseconds(Int.abs(1)), postUpgradeCallback);
   };
 
@@ -3998,14 +4035,9 @@ actor Self {
     await createTransferWindowEndTimers();
     await createLoanExpiredTimers();
     await createInjuryExpiredTimers();
-    //await createInitialHashes();
-    //addDefaultClubsToRequiredStatus();
-    //checkRequiredStatus(1); //TODO - ONLY SHOW LEAGUES ON BETTING FOR LEAGUES WITH NO CLUBS THAT REQUIRE DATA
-    //await checkRollOverPickTeam();
   };
 
-
-  /* ----- Timer Functions ----- */
+  /* ----- Timer Create Functions ----- */
 
   private func createFixtureTimers() : async () {
     await createPickTeamRolloverTimers();
@@ -4248,6 +4280,9 @@ actor Self {
     };
   };
 
+
+  /* ----- Timer Set Functions ----- */
+
   private func setTimer(duration : Timer.Duration, callbackName : Text) : async () {
     switch (callbackName) {
       case "rollOverPickTeam" {
@@ -4295,6 +4330,9 @@ actor Self {
       case _ {};
     };
   };
+
+
+  /* ----- Functions Set Trigger Timers -----*/
 
   private func checkRollOverPickTeam() : async () {
     label leagueLoop for (league in Iter.fromArray(leagueSeasons)) {
@@ -4877,6 +4915,21 @@ actor Self {
     );
   };
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   private func setLeagueGameweek(leagueId : FootballIds.LeagueId, unplayedGameweek : FootballDefinitions.GameweekNumber, activeGameweek : FootballDefinitions.GameweekNumber, completedGameweek : FootballDefinitions.GameweekNumber, earliestGameweekKickOffTime : Int) {
 
     leagueStatuses := Array.map<FootballTypes.LeagueStatus, FootballTypes.LeagueStatus>(
@@ -4906,35 +4959,6 @@ actor Self {
         };
       },
     );
-  };
-
-  private func updateDataHash(leagueId : FootballIds.LeagueId, category : Text) : async () {
-    let randomHash = await SHA224.getRandomHash();
-
-    var updated = false;
-
-    leagueDataHashes := Array.map<(FootballIds.LeagueId, [BaseTypes.DataHash]), (FootballIds.LeagueId, [BaseTypes.DataHash])>(
-      leagueDataHashes,
-      func(entry : (FootballIds.LeagueId, [BaseTypes.DataHash])) {
-        if (entry.0 == leagueId) {
-          let hashBuffer = Buffer.fromArray<BaseTypes.DataHash>([]);
-          for (hashObj in Iter.fromArray(entry.1)) {
-            if (hashObj.category == category) {
-              hashBuffer.add({ category = hashObj.category; hash = randomHash });
-              updated := true;
-            } else { hashBuffer.add(hashObj) };
-          };
-          if (not updated) {
-            hashBuffer.add({ category = category; hash = randomHash });
-            updated := true;
-          };
-          return (entry.0, Buffer.toArray(hashBuffer));
-        } else {
-          return entry;
-        };
-      },
-    );
-
   };
 
   private func populateClubSummaries() {
@@ -4990,32 +5014,6 @@ actor Self {
 
     clubSummaries := sortedClubSummaries;
     */
-  };
-
-  // TODO: 
-
-  private func remapData(){
-    //if league id == 2
-      //set as womens clubs
-        //give new club ids
-        
-  };
-  
-  private func getClubTotalValue(leagueId: FootballIds.LeagueId, clubId: FootballIds.ClubId) : Nat16 {
-
-    var totalClubValue: Nat16 = 0;
-
-    for(league in Iter.fromArray(leaguePlayers)){
-      if(league.0 == leagueId){
-        for(player in Iter.fromArray(league.1)){
-          if(player.clubId == clubId){
-            totalClubValue += player.valueQuarterMillions 
-          }
-        }
-      };
-    };
-
-    return totalClubValue;
   };
 
 };

@@ -19,12 +19,13 @@ module {
 
   public class NotificationManager() {
 
+    // Add all application_canister function definitions to all apps, implement and if not required then create different groups than the default notification group
+
     let defaultNotificationGroup: [(MopsAppEnums.App, Ids.CanisterId)] = [
         (#OpenFPL, CanisterIds.OPENFPL_BACKEND_CANISTER_ID),
         (#OpenWSL, CanisterIds.OPENWSL_BACKEND_CANISTER_ID),
         (#JeffBets, CanisterIds.JEFF_BETS_BACKEND_CANISTER_ID)
     ];
-
 
     public func distributeNotification(notificationType: MopsNotificationEnums.NotificationType, dto: MopsNotificationCommands.Notification) : async Result.Result<(), Enums.Error>{
        
