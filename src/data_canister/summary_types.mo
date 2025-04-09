@@ -10,6 +10,7 @@ module SummaryTypes {
         position: Nat;
         positionText: Text;
         totalValue: Nat16;
+        priorValue: Nat16;
         primaryColour: Text;
         secondaryColour: Text;
         thirdColour: Text;
