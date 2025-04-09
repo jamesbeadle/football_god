@@ -30,12 +30,6 @@ module {
     public func distributeNotification(notificationType: MopsNotificationEnums.NotificationType, dto: MopsNotificationCommands.Notification) : async Result.Result<(), Enums.Error>{
        
         switch(notificationType){
-            case (#CreateClub){};
-            case (#UpdateClub){};
-            case (#PromoteClub){};
-            case (#RelegateClub){};
-            case (#CreateLeague){};
-            case (#UpdateLeague){};
             case (#AddInitialFixtures){
                 for(app in Iter.fromArray(defaultNotificationGroup)){
                     let application_canister = actor (app.1) : actor {
@@ -127,9 +121,6 @@ module {
                     };
                 };
             };
-            case (#CreatePlayer){};
-            case (#UpdatePlayer){};
-            case (#InjuryUpdated){};
             case (#RevaluePlayerUp){
                 for(app in Iter.fromArray(defaultNotificationGroup)){
                     let application_canister = actor (app.1) : actor {
@@ -234,19 +225,6 @@ module {
                     };
                 };
             };
-            case (#UnretirePlayer){
-                for(app in Iter.fromArray(defaultNotificationGroup)){
-                    let application_canister = actor (app.1) : actor {
-                        unretirePlayerNotification : (dto: MopsPlayerNotificationCommands.PlayerChangeNotification) -> async Result.Result<(), Enums.Error>;
-                    };
-                    switch(dto){
-                        case (#UnretirePlayer foundDTO){
-                            let _ = await application_canister.unretirePlayerNotification(foundDTO);
-                        };
-                        case (_){}
-                    };
-                };
-            };
             case (#ChangePlayerPosition){
                 for(app in Iter.fromArray(defaultNotificationGroup)){
                     let application_canister = actor (app.1) : actor {
@@ -260,6 +238,16 @@ module {
                     };
                 };
             };
+            case (#CreateClub){};
+            case (#UpdateClub){};
+            case (#PromoteClub){};
+            case (#RelegateClub){};
+            case (#CreateLeague){};
+            case (#UpdateLeague){};
+            case (#CreatePlayer){};
+            case (#UpdatePlayer){};
+            case (#InjuryUpdated){};
+            case (#UnretirePlayer){};
         };
         return #ok();
     }
