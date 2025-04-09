@@ -23,6 +23,7 @@ actor Self {
 
 
   /* ----- Stable Canister Variables ----- */ 
+
   private stable var stable_app_status: BaseTypes.AppStatus = { 
     onHold = true; 
     version = ""; 
@@ -35,11 +36,13 @@ actor Self {
   private stable var stable_unique_profile_canister_ids: [Ids.CanisterId] = [];
   private stable var stable_active_profile_canister_id: Text = "";
 
+
   /* ----- General App Queries ----- */
   
   public shared query func getAppStatus() : async Result.Result<BaseQueries.AppStatus, Enums.Error> {
     return #ok(stable_app_status);
   };
+  
 
   /* ----- Data Canister Calls -----  */
 

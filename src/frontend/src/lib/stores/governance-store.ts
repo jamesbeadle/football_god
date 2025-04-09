@@ -38,6 +38,7 @@ import type {
 } from "../../../../declarations/data_canister/data_canister.did";
 
 import {
+  buildAddInitialFixturesText,
   buildCreateClubText,
   buildCreateLeagueText,
   buildCreatePlayerText,
@@ -74,6 +75,7 @@ import {
   TransferPlayerDTO_Idl,
   UpdatePlayerDTO_Idl,
   UpdateLeagueDTO_Idl,
+  AddInitialFixturesDTO_Idl,
 } from "$lib/types/idl-types";
 import {
   convertDateToReadable,
@@ -830,7 +832,36 @@ function createGovernanceStore() {
   }
 
   async function addInitialFixtures(dto: AddInitialFixtures): Promise<any> {
-    //TODO
+    let userIdentity: OptionIdentity;
+    authStore.subscribe((auth) => (userIdentity = auth.identity));
+    if (!userIdentity) return;
+
+    let leaguesResult = await leagueStore.getLeagues();
+    if (!leaguesResult) throw new Error("Error fetching leagues.");
+    let leagues = leaguesResult.leagues;
+
+    let league = leagues.find((x) => x.id == dto.leagueId);
+    if (!league) throw new Error("Player league not found.");
+
+
+    const allSeasonsResult = await seasonStore.getSeasons(dto.leagueId);
+    if (!allSeasonsResult) throw new Error("Seasons not found.");
+    let allSeasons = allSeasonsResult.seasons;
+
+    const season = allSeasons.find((x) => x.id == dto.seasonId);
+    const seasonName = season?.name ?? "Unknown Season";
+
+    const { title, summary } = buildAddInitialFixturesText(seasonName, league.name, dto.seasonFixtures.length);
+
+    const encoded = IDL.encode([AddInitialFixturesDTO_Idl], [dto]);
+
+    return await createProposal({
+      identity: userIdentity,
+      functionId: 70000n,
+      payload: new Uint8Array(encoded),
+      title,
+      summary,
+    });
   }
 
   async function setFreeAgent(dto: SetFreeAgent): Promise<any> {
