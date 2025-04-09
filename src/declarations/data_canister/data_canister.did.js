@@ -127,7 +127,7 @@ export const idlFactory = ({ IDL }) => {
     InsufficientFunds: IDL.Null,
     InEligible: IDL.Null,
   });
-  const Result_17 = IDL.Variant({ ok: BettableFixtures, err: Error });
+  const Result_16 = IDL.Variant({ ok: BettableFixtures, err: Error });
   const GetBettableLeagues = IDL.Record({});
   const League = IDL.Record({
     id: LeagueId,
@@ -141,7 +141,7 @@ export const idlFactory = ({ IDL }) => {
     formed: IDL.Int,
   });
   const BettableLeagues = IDL.Record({ leagues: IDL.Vec(League) });
-  const Result_16 = IDL.Variant({ ok: BettableLeagues, err: Error });
+  const Result_15 = IDL.Variant({ ok: BettableLeagues, err: Error });
   const GetClubValueLeaderboard = IDL.Record({});
   const MostValuablePlayer = IDL.Record({
     id: PlayerId,
@@ -173,7 +173,7 @@ export const idlFactory = ({ IDL }) => {
     totalMidfielders: IDL.Nat8,
   });
   const ClubValueLeaderboard = IDL.Record({ clubs: IDL.Vec(ClubSummary) });
-  const Result_15 = IDL.Variant({ ok: ClubValueLeaderboard, err: Error });
+  const Result_14 = IDL.Variant({ ok: ClubValueLeaderboard, err: Error });
   const GetClubs = IDL.Record({ leagueId: LeagueId });
   const Club = IDL.Record({
     id: ClubId,
@@ -186,15 +186,7 @@ export const idlFactory = ({ IDL }) => {
     primaryColourHex: IDL.Text,
   });
   const Clubs = IDL.Record({ clubs: IDL.Vec(Club), leagueId: LeagueId });
-  const Result_14 = IDL.Variant({ ok: Clubs, err: Error });
-  const GetCountries = IDL.Record({});
-  const Country = IDL.Record({
-    id: CountryId,
-    code: IDL.Text,
-    name: IDL.Text,
-  });
-  const Countries = IDL.Record({ countries: IDL.Vec(Country) });
-  const Result_13 = IDL.Variant({ ok: Countries, err: Error });
+  const Result_13 = IDL.Variant({ ok: Clubs, err: Error });
   const GetDataHashes = IDL.Record({ leagueId: LeagueId });
   const DataHash = IDL.Record({ hash: IDL.Text, category: IDL.Text });
   const DataHashes = IDL.Record({ dataHashes: IDL.Vec(DataHash) });
@@ -539,15 +531,14 @@ export const idlFactory = ({ IDL }) => {
     createClub: IDL.Func([CreateClub], [], []),
     createLeague: IDL.Func([CreateLeague], [], []),
     createPlayer: IDL.Func([CreatePlayer], [], []),
-    getBettableFixtures: IDL.Func([GetBettableFixtures], [Result_17], []),
-    getBettableLeagues: IDL.Func([GetBettableLeagues], [Result_16], ["query"]),
+    getBettableFixtures: IDL.Func([GetBettableFixtures], [Result_16], []),
+    getBettableLeagues: IDL.Func([GetBettableLeagues], [Result_15], ["query"]),
     getClubValueLeaderboard: IDL.Func(
       [GetClubValueLeaderboard],
-      [Result_15],
+      [Result_14],
       [],
     ),
-    getClubs: IDL.Func([GetClubs], [Result_14], []),
-    getCountries: IDL.Func([GetCountries], [Result_13], ["query"]),
+    getClubs: IDL.Func([GetClubs], [Result_13], []),
     getDataHashes: IDL.Func([GetDataHashes], [Result_12], ["query"]),
     getFixtures: IDL.Func([GetFixtures], [Result_11], []),
     getLeagueStatus: IDL.Func([GetLeagueStatus], [Result_10], ["query"]),

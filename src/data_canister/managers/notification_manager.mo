@@ -27,61 +27,14 @@ module {
         (#JeffBets, CanisterIds.JEFF_BETS_BACKEND_CANISTER_ID)
     ];
 
+    
     public func distributeNotification(notificationType: MopsNotificationEnums.NotificationType, dto: MopsNotificationCommands.Notification) : async Result.Result<(), Enums.Error>{
        
         switch(notificationType){
-            case (#CreateClub){
-                for(app in Iter.fromArray(defaultNotificationGroup)){
-                    let application_canister = actor (app.1) : actor {
-                        createClubNotification : (dto: MopsClubNotificationCommands.ClubChangeNotification) -> async Result.Result<(), Enums.Error>;
-                    };
-                    switch(dto){
-                        case (#CreateClub foundDTO){
-                            let _ = await application_canister.createClubNotification(foundDTO);
-                        };
-                        case (_){}
-                    };
-                };
-            };
-            case (#UpdateClub){
-                for(app in Iter.fromArray(defaultNotificationGroup)){
-                    let application_canister = actor (app.1) : actor {
-                        updateClubNotification : (dto: MopsClubNotificationCommands.ClubChangeNotification) -> async Result.Result<(), Enums.Error>;
-                    };
-                    switch(dto){
-                        case (#UpdateClub foundDTO){
-                            let _ = await application_canister.updateClubNotification(foundDTO);
-                        };
-                        case (_){}
-                    };
-                };
-            };
-            case (#PromoteClub){
-                for(app in Iter.fromArray(defaultNotificationGroup)){
-                    let application_canister = actor (app.1) : actor {
-                        promoteClubNotification : (dto: MopsClubNotificationCommands.ClubChangeNotification) -> async Result.Result<(), Enums.Error>;
-                    };
-                    switch(dto){
-                        case (#PromoteClub foundDTO){
-                            let _ = await application_canister.promoteClubNotification(foundDTO);
-                        };
-                        case (_){}
-                    };
-                };
-            };
-            case (#RelegateClub){
-                for(app in Iter.fromArray(defaultNotificationGroup)){
-                    let application_canister = actor (app.1) : actor {
-                        relegateClubNotification : (dto: MopsClubNotificationCommands.ClubChangeNotification) -> async Result.Result<(), Enums.Error>;
-                    };
-                    switch(dto){
-                        case (#RelegateClub foundDTO){
-                            let _ = await application_canister.relegateClubNotification(foundDTO);
-                        };
-                        case (_){}
-                    };
-                };
-            };
+            case (#CreateClub){};
+            case (#UpdateClub){};
+            case (#PromoteClub){};
+            case (#RelegateClub){};
             case (#CreateLeague){};
             case (#UpdateLeague){};
             case (#AddInitialFixtures){
@@ -175,6 +128,9 @@ module {
                     };
                 };
             };
+            case (#CreatePlayer){};
+            case (#UpdatePlayer){};
+            case (#InjuryUpdated){};
             case (#RevaluePlayerUp){
                 for(app in Iter.fromArray(defaultNotificationGroup)){
                     let application_canister = actor (app.1) : actor {
@@ -261,45 +217,6 @@ module {
                     switch(dto){
                         case (#SetFreeAgent foundDTO){
                             let _ = await application_canister.setFreeAgentNotification(foundDTO);
-                        };
-                        case (_){}
-                    };
-                };
-            };
-            case (#CreatePlayer){
-                for(app in Iter.fromArray(defaultNotificationGroup)){
-                    let application_canister = actor (app.1) : actor {
-                        createPlayerNotification : (dto: MopsPlayerNotificationCommands.PlayerChangeNotification) -> async Result.Result<(), Enums.Error>;
-                    };
-                    switch(dto){
-                        case (#CreatePlayer foundDTO){
-                            let _ = await application_canister.createPlayerNotification(foundDTO);
-                        };
-                        case (_){}
-                    };
-                };
-            };
-            case (#UpdatePlayer){
-                for(app in Iter.fromArray(defaultNotificationGroup)){
-                    let application_canister = actor (app.1) : actor {
-                        updatePlayerNotification : (dto: MopsPlayerNotificationCommands.PlayerChangeNotification) -> async Result.Result<(), Enums.Error>;
-                    };
-                    switch(dto){
-                        case (#UpdatePlayer foundDTO){
-                            let _ = await application_canister.updatePlayerNotification(foundDTO);
-                        };
-                        case (_){}
-                    };
-                };
-            };
-            case (#InjuryUpdated){
-                for(app in Iter.fromArray(defaultNotificationGroup)){
-                    let application_canister = actor (app.1) : actor {
-                        injuryUpdatedNotification : (dto: MopsPlayerNotificationCommands.PlayerChangeNotification) -> async Result.Result<(), Enums.Error>;
-                    };
-                    switch(dto){
-                        case (#InjuryUpdated foundDTO){
-                            let _ = await application_canister.injuryUpdatedNotification(foundDTO);
                         };
                         case (_){}
                     };

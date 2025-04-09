@@ -151,30 +151,25 @@ type Result_2 =
    err: Error;
    ok: PostponedFixtures;
  };
-type Result_17 = 
+type Result_16 = 
  variant {
    err: Error;
    ok: BettableFixtures;
  };
-type Result_16 = 
+type Result_15 = 
  variant {
    err: Error;
    ok: BettableLeagues;
  };
-type Result_15 = 
+type Result_14 = 
  variant {
    err: Error;
    ok: ClubValueLeaderboard;
  };
-type Result_14 = 
- variant {
-   err: Error;
-   ok: Clubs;
- };
 type Result_13 = 
  variant {
    err: Error;
-   ok: Countries;
+   ok: Clubs;
  };
 type Result_12 = 
  variant {
@@ -490,7 +485,6 @@ type GetFixtures =
    seasonId: SeasonId;
  };
 type GetDataHashes = record {leagueId: LeagueId;};
-type GetCountries = record {};
 type GetClubs = record {leagueId: LeagueId;};
 type GetClubValueLeaderboard = record {};
 type GetBettableLeagues = record {};
@@ -615,13 +609,6 @@ type CreateClub =
    thirdColourHex: text;
  };
 type CountryId = nat16;
-type Country = 
- record {
-   code: text;
-   id: CountryId;
-   name: text;
- };
-type Countries = record {countries: vec Country;};
 type Clubs = 
  record {
    clubs: vec Club;
@@ -683,11 +670,10 @@ service : {
   createClub: (CreateClub) -> ();
   createLeague: (CreateLeague) -> ();
   createPlayer: (CreatePlayer) -> ();
-  getBettableFixtures: (GetBettableFixtures) -> (Result_17);
-  getBettableLeagues: (GetBettableLeagues) -> (Result_16) query;
-  getClubValueLeaderboard: (GetClubValueLeaderboard) -> (Result_15);
-  getClubs: (GetClubs) -> (Result_14);
-  getCountries: (GetCountries) -> (Result_13) query;
+  getBettableFixtures: (GetBettableFixtures) -> (Result_16);
+  getBettableLeagues: (GetBettableLeagues) -> (Result_15) query;
+  getClubValueLeaderboard: (GetClubValueLeaderboard) -> (Result_14);
+  getClubs: (GetClubs) -> (Result_13);
   getDataHashes: (GetDataHashes) -> (Result_12) query;
   getFixtures: (GetFixtures) -> (Result_11);
   getLeagueStatus: (GetLeagueStatus) -> (Result_10) query;

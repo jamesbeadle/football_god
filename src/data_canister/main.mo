@@ -54,7 +54,7 @@ import Environment "environment";
 import AppQueries "queries/app_queries";
 import SummaryTypes "summary_types";
 import NotificationManager "managers/notification_manager";
-import MopsUtilities "utilities/mops_utilities";
+import MopsUtilities "mops_utilities/mops_utilities";
 
 import BaseTypes "mo:waterway-mops/BaseTypes";
 
