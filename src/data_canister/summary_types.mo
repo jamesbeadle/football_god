@@ -2,6 +2,7 @@ import FootballIds "mo:waterway-mops/football/FootballIds";
 import FootballEnums "mo:waterway-mops/football/FootballEnums";
 import Enums "mo:waterway-mops/Enums";
 module SummaryTypes {
+
     public type ClubSummary = {
         clubId: FootballIds.ClubId;
         leagueId: FootballIds.LeagueId;
@@ -32,4 +33,5 @@ module SummaryTypes {
         lastName: Text;
         value: Nat16;
     };
+    
 }
