@@ -27,7 +27,6 @@ import Countries "mo:waterway-mops/def/Countries";
 import Ids "mo:waterway-mops/Ids";
 import Enums "mo:waterway-mops/Enums";
 
-import BaseTypes "mo:waterway-mops/BaseTypes";
 import CanisterIds "mo:waterway-mops/CanisterIds";
 import BaseUtilities "mo:waterway-mops/BaseUtilities";
 import FootballTypes "mo:waterway-mops/football/FootballTypes";
@@ -35,7 +34,6 @@ import FootballIds "mo:waterway-mops/football/FootballIds";
 import FootballDefinitions "mo:waterway-mops/football/FootballDefinitions";
 import FootballEnums "mo:waterway-mops/football/FootballEnums";
 import BaseDefinitions "mo:waterway-mops/BaseDefinitions";
-import BaseQueries "mo:waterway-mops/queries/BaseQueries";
 import DateTimeUtilities "mo:waterway-mops/DateTimeUtilities";
 
 /* ----- Queries ----- */
@@ -58,6 +56,8 @@ import SummaryTypes "summary_types";
 import NotificationManager "managers/notification_manager";
 import MopsUtilities "utilities/mops_utilities";
 
+import BaseTypes "mo:waterway-mops/BaseTypes";
+
 actor Self {
 
 
@@ -77,6 +77,9 @@ actor Self {
   private stable var leagueTables : [FootballTypes.LeagueTable] = [];
   private stable var leagueClubsRequiringData : [(FootballIds.LeagueId, [FootballIds.ClubId])] = [];
   private stable var clubSummaries: [SummaryTypes.ClubSummary] = [];
+
+  
+  /* DO NOT USE BaseTypes dot on lines ahead of this one. */
 
 
   /* ----- Canister Variables Recreacted in PostUpgrade ----- */
