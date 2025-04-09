@@ -7,7 +7,6 @@ import Ids "mo:waterway-mops/Ids";
 
 import MopsNotificationCommands "../mops_notification_commands/mops_notification_commands";
 import MopsPlayerNotificationCommands "../mops_notification_commands/mops_player_notification_commands";
-import MopsClubNotificationCommands "../mops_notification_commands/mops_club_notification_commands";
 
 import MopsNotificationEnums "../mops_notification_commands/mops_notification_enums";
 import MopsAppEnums "../mops_notification_commands/mops_app_enums";
