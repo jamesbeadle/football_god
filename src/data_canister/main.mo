@@ -3607,7 +3607,7 @@ actor Self {
   };
 
 
-  /* ----- Timer Event Private Function ----- */
+  /* ----- Submit Fixture Data Private Function ----- */
 
   private func finaliseFixture(leagueId : FootballIds.LeagueId, seasonId : FootballIds.SeasonId, fixtureId : FootballIds.FixtureId, highestScoringPlayerId : FootballIds.PlayerId) : async () {
     leagueSeasons := Array.map<(FootballIds.LeagueId, [FootballTypes.Season]), (FootballIds.LeagueId, [FootballTypes.Season])>(
@@ -3660,6 +3660,61 @@ actor Self {
     );
 
     checkRequiredStatus(leagueId);
+  };
+
+  private func populateClubSummaries() {
+    /*
+    
+    let clubSummaryBuffer = Buffer.fromArray<SummaryTypes.ClubSummary>([]);
+
+    for(league in Iter.fromArray(leagueClubs)){
+      for(club in Iter.fromArray(league.1)){
+        clubSummaryBuffer.add({
+          clubId = club.id;
+          clubName = club.name;
+          leagueId = league.0;
+          position = 0;
+          positionText = "-";
+          primaryColour = club.primaryColourHex;
+          secondaryColour = club.secondaryColourHex;
+          shirtType = club.shirtType;
+          thirdColour = club.thirdColourHex;
+          totalValue = getClubTotalValue(league.0, club.id);
+          gender = club.gender;
+        })
+      }
+    };
+
+    let sortedClubSummaries = Array.sort(
+      Buffer.toArray(clubSummaryBuffer),
+      func(entry1 : SummaryTypes.ClubSummary, entry2 : SummaryTypes.ClubSummary) : Order.Order {
+        if (entry1.totalValue < entry2.totalValue) { return #greater };
+        if (entry1.totalValue == entry2.totalValue) { return #equal };
+        return #less;
+      },
+    );
+
+    var position: Nat = 1;
+    let positionedBuffer = Buffer.fromArray<SummaryTypes.ClubSummary>([]);
+
+    for(sortedEntry in Iter.fromArray(sortedClubSummaries)){
+      positionedBuffer.add({
+        clubId = sortedEntry.clubId;
+        clubName = sortedEntry.clubName;
+        leagueId = sortedEntry.leagueId;
+        position = position;
+        positionText = Nat.toText(position);
+        primaryColour = sortedEntry.primaryColour;
+        secondaryColour = sortedEntry.secondaryColour;
+        shirtType = sortedEntry.shirtType;
+        thirdColour = sortedEntry.thirdColour;
+        totalValue = sortedEntry.totalValue;
+      });
+      position += 1;
+    };
+
+    clubSummaries := sortedClubSummaries;
+    */
   };
 
   private func checkSeasonComplete(leagueId : FootballIds.LeagueId, seasonId : FootballIds.SeasonId) : async () {
@@ -3787,7 +3842,6 @@ actor Self {
       case (null) {};
     };
   };
-
 
 
   /* ----- Data Movement Functions ----- */
@@ -4915,21 +4969,8 @@ actor Self {
     );
   };
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+  
+  /* ----- Random timer function ----- */
   private func setLeagueGameweek(leagueId : FootballIds.LeagueId, unplayedGameweek : FootballDefinitions.GameweekNumber, activeGameweek : FootballDefinitions.GameweekNumber, completedGameweek : FootballDefinitions.GameweekNumber, earliestGameweekKickOffTime : Int) {
 
     leagueStatuses := Array.map<FootballTypes.LeagueStatus, FootballTypes.LeagueStatus>(
@@ -4959,61 +5000,6 @@ actor Self {
         };
       },
     );
-  };
-
-  private func populateClubSummaries() {
-    /*
-    
-    let clubSummaryBuffer = Buffer.fromArray<SummaryTypes.ClubSummary>([]);
-
-    for(league in Iter.fromArray(leagueClubs)){
-      for(club in Iter.fromArray(league.1)){
-        clubSummaryBuffer.add({
-          clubId = club.id;
-          clubName = club.name;
-          leagueId = league.0;
-          position = 0;
-          positionText = "-";
-          primaryColour = club.primaryColourHex;
-          secondaryColour = club.secondaryColourHex;
-          shirtType = club.shirtType;
-          thirdColour = club.thirdColourHex;
-          totalValue = getClubTotalValue(league.0, club.id);
-          gender = club.gender;
-        })
-      }
-    };
-
-    let sortedClubSummaries = Array.sort(
-      Buffer.toArray(clubSummaryBuffer),
-      func(entry1 : SummaryTypes.ClubSummary, entry2 : SummaryTypes.ClubSummary) : Order.Order {
-        if (entry1.totalValue < entry2.totalValue) { return #greater };
-        if (entry1.totalValue == entry2.totalValue) { return #equal };
-        return #less;
-      },
-    );
-
-    var position: Nat = 1;
-    let positionedBuffer = Buffer.fromArray<SummaryTypes.ClubSummary>([]);
-
-    for(sortedEntry in Iter.fromArray(sortedClubSummaries)){
-      positionedBuffer.add({
-        clubId = sortedEntry.clubId;
-        clubName = sortedEntry.clubName;
-        leagueId = sortedEntry.leagueId;
-        position = position;
-        positionText = Nat.toText(position);
-        primaryColour = sortedEntry.primaryColour;
-        secondaryColour = sortedEntry.secondaryColour;
-        shirtType = sortedEntry.shirtType;
-        thirdColour = sortedEntry.thirdColour;
-        totalValue = sortedEntry.totalValue;
-      });
-      position += 1;
-    };
-
-    clubSummaries := sortedClubSummaries;
-    */
   };
 
 };
