@@ -1,8 +1,8 @@
 <script lang="ts">
     import type { Writable } from "svelte/store";
     import { convertEvent } from "$lib/utils/helpers";
-    import type { Fixture, Player, PlayerEventData } from "../../../../../declarations/data_canister/data_canister.did";
-
+    import type { Fixture, Player, PlayerEventData } from "../../../../../declarations/backend/backend.did";
+   
     export let selectedPlayers: Writable<Player[]>;
     export let fixture: Fixture;
     export let playerEventData: Writable<PlayerEventData[]>;

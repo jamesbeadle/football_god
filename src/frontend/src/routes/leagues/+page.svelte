@@ -3,12 +3,12 @@
   import { goto } from "$app/navigation";
   import { leagueStore } from "$lib/stores/league-store";
   import { convertDateToReadable, getImageURL } from "$lib/utils/helpers";
-  import type { League, Leagues } from "../../../../declarations/data_canister/data_canister.did";
   import Layout from "../+layout.svelte";
   import LocalSpinner from "$lib/components/shared/local-spinner.svelte";
   import AddLeagueModal from "$lib/components/governance/league/create-league.svelte";
   import UpdateLeagueModal from "$lib/components/governance/league/update-league.svelte";
   import PipsIcon from "$lib/icons/pips-icon.svelte";
+    import type { League, Leagues } from "../../../../declarations/backend/backend.did";
     
   let isLoading = true;
   let showAddLeague = false;
@@ -20,7 +20,9 @@
   onMount(async () => {
     document.addEventListener("click", handleClickOutside);
     try {
-      leagues = await leagueStore.getLeagues();
+      var leaguesResult = await leagueStore.getLeagues();
+      if(!leaguesResult){ return }
+      leagues = leaguesResult;
     } catch (error) {
       console.error("Error fetching leagues:", error);
     } finally {

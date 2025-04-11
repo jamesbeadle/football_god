@@ -3,13 +3,13 @@
   import { onMount } from "svelte";
   import { governanceStore } from "$lib/stores/governance-store";
   import {getImageURL } from "$lib/utils/helpers";
-  import type { Country, League, Gender, UpdateLeague } from "../../../../../../declarations/data_canister/data_canister.did";
-  import { toasts } from "$lib/stores/toasts-store";
   
   import Modal from "$lib/components/shared/modal.svelte";
   import GovernanceModal from "../governance-modal.svelte";
   import FormComponent from "$lib/components/shared/form-component.svelte";
   import DropdownSelect from "$lib/components/shared/dropdown-select.svelte";
+    import type { Country, Gender, League } from "../../../../../../declarations/backend/backend.did";
+    import type { UpdateLeague } from "../../../../../../declarations/data_canister/data_canister.did";
 
 
   export let visible: boolean;

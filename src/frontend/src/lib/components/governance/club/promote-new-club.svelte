@@ -3,7 +3,8 @@
   import Modal from "$lib/components/shared/modal.svelte";
   import { governanceStore } from "$lib/stores/governance-store";
   import { isError } from "$lib/utils/helpers";
-  import type { Club, League, LeagueId, PromoteClub } from "../../../../../../declarations/data_canister/data_canister.did";
+    import type { Club, League, LeagueId } from "../../../../../../declarations/backend/backend.did";
+    import type { PromoteClub } from "../../../../../../declarations/data_canister/data_canister.did";
   import GovernanceModal from "../governance-modal.svelte";
 
   export let visible: boolean;

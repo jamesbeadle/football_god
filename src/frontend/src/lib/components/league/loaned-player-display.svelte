@@ -1,10 +1,10 @@
 <script lang="ts">
-  import type { Club, LoanedPlayerDTO } from "../../../../../declarations/data_canister/data_canister.did";
   import { formatUnixDateToReadableNumber, formatUnixDateToSmallReadableDate } from "$lib/utils/helpers";
   import PlayerDisplay from "../player/player-display.svelte";
   import BadgeIcon from "$lib/icons/BadgeIcon.svelte";
+    import type { Club, Player } from "../../../../../declarations/backend/backend.did";
 
-  export let player: LoanedPlayerDTO;
+  export let player: Player;
   export let currentClub: Club;
   export let parentClub: Club;
   export let onDropdownClick: (playerId: number, event: MouseEvent) => void;

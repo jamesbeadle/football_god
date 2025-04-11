@@ -56,6 +56,7 @@ import SummaryTypes "summary_types";
 import NotificationManager "managers/notification_manager";
 
 import BaseTypes "mo:waterway-mops/BaseTypes";
+import Management "mo:waterway-mops/Management";
 
 actor Self {
 
@@ -5003,5 +5004,36 @@ actor Self {
       },
     );
   };
+
+  public shared func getSnapshotIds() : async [Management.Snapshot] {
+    let IC : Management.Management = actor (CanisterIds.Default);
+    let canisterSnapshotsList = await IC.list_canister_snapshots({ canister_id = Principal.fromText(CanisterIds.ICFC_DATA_CANISTER_ID) });
+    return canisterSnapshotsList;
+  };
+
+  /*
+
+  private func backupCanister() : async () {
+    
+    let IC : Management.Management = actor (CanisterIds.Default);
+    await IC.stop_canister({ canister_id = Principal.fromText(CanisterIds.ICFC_DATA_CANISTER_ID) });
+    let canisterSnapshotsList = await IC.list_canister_snapshots({ canister_id = Principal.fromText(CanisterIds.ICFC_DATA_CANISTER_ID) });
+
+
+
+   switch(canisterSnapshotsList){
+      case (?foundCanisterSnapshotList){
+
+    await IC.delete_canister_snapshot({ canister_id = Principal.fromText(CanisterIds.ICFC_DATA_CANISTER_ID); snapshot_id = snapshotId });
+
+      };
+      case (null){
+
+      }
+    };
+    
+  }
+
+  */
 
 };

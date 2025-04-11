@@ -3,10 +3,11 @@
   import { leagueStore } from "$lib/stores/league-store";
   import { governanceStore } from "$lib/stores/governance-store";
   import { convertDateTimeInputToUnixNano, isError } from "$lib/utils/helpers";
-  import type { Club, MoveFixture } from "../../../../../../declarations/data_canister/data_canister.did";
   import Modal from "$lib/components/shared/modal.svelte";
   import GovernanceModal from "../governance-modal.svelte";
   import FormComponent from "$lib/components/shared/form-component.svelte";
+    import type { Club } from "../../../../../../declarations/backend/backend.did";
+    import type { MoveFixture } from "../../../../../../declarations/data_canister/data_canister.did";
 
   export let visible: boolean;
   export let closeModal: () => void;

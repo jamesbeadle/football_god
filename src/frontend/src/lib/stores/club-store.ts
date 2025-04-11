@@ -1,10 +1,9 @@
 import { writable } from "svelte/store";
 import { ClubService } from "../services/club-service";
 import type {
-  Club,
   Clubs,
   LeagueId,
-} from "../../../../declarations/data_canister/data_canister.did";
+} from "../../../../declarations/backend/backend.did";
 
 function createClubStore() {
   const { subscribe, set } = writable<Clubs | undefined>(undefined);

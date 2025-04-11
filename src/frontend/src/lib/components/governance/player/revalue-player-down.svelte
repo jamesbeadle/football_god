@@ -1,11 +1,12 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import Modal from "$lib/components/shared/modal.svelte";
-  import type { Club, Player, RevaluePlayerDown } from "../../../../../../declarations/data_canister/data_canister.did";
   import { governanceStore } from "$lib/stores/governance-store";
   import { isError } from "$lib/utils/helpers";
   import GovernanceModal from "../governance-modal.svelte";
   import { toasts } from "$lib/stores/toasts-store";
+    import type { Club, Player } from "../../../../../../declarations/backend/backend.did";
+    import type { RevaluePlayerDown } from "../../../../../../declarations/data_canister/data_canister.did";
 
   export let visible: boolean;
   export let closeModal: () => void;

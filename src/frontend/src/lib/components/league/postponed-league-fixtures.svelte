@@ -1,15 +1,14 @@
 <script lang="ts">
   import { onDestroy, onMount } from "svelte";
-  import { goto } from "$app/navigation";
 
   import { clubStore } from "$lib/stores/club-store";
   import { fixtureStore } from "$lib/stores/fixture-store";
   import { leagueStore } from "$lib/stores/league-store";
-  import type { Club, Fixture, League } from "../../../../../declarations/data_canister/data_canister.did";
   
   import RescheduleFixture from "../governance/fixture/reschedule-fixture.svelte";
   import FixtureDisplay from "./fixture-display.svelte";
   import LocalSpinner from "../shared/local-spinner.svelte";
+    import type { Club, Fixture, League } from "../../../../../declarations/backend/backend.did";
   
   export let leagueId: number;
   

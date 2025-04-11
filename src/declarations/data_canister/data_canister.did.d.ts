@@ -504,6 +504,12 @@ export interface SetPlayerInjury {
   expectedEndDate: bigint;
 }
 export type ShirtType = { Filled: null } | { Striped: null };
+export interface Snapshot {
+  id: SnapshotId;
+  total_size: bigint;
+  taken_at_timestamp: bigint;
+}
+export type SnapshotId = Uint8Array | number[];
 export interface SubmitFixtureData {
   fixtureId: FixtureId;
   seasonId: SeasonId;
@@ -587,6 +593,7 @@ export interface _SERVICE {
   getPostponedFixtures: ActorMethod<[GetPostponedFixtures], Result_2>;
   getRetiredPlayers: ActorMethod<[GetRetiredPlayers], Result_1>;
   getSeasons: ActorMethod<[GetSeasons], Result>;
+  getSnapshotIds: ActorMethod<[], Array<Snapshot>>;
   loanPlayer: ActorMethod<[LoanPlayer], undefined>;
   moveFixture: ActorMethod<[MoveFixture], undefined>;
   postponeFixture: ActorMethod<[PostponeFixture], undefined>;

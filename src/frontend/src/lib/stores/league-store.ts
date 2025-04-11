@@ -1,12 +1,10 @@
 import { writable } from "svelte/store";
 import type {
-  League,
   LeagueId,
   Leagues,
   LeagueStatus,
-} from "../../../../declarations/data_canister/data_canister.did";
+} from "../../../../declarations/backend/backend.did";
 import { LeagueService } from "$lib/services/league-service";
-import type { ClubValueLeaderboard } from "../../../../declarations/backend/backend.did";
 
 function createLeagueStore() {
   const { subscribe, set } = writable<Leagues | undefined>(undefined);

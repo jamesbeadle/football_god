@@ -1,6 +1,5 @@
 <script lang="ts">
-  import type { PlayerEventData } from "../../../../../declarations/data_canister/data_canister.did";
-
+  
   export let title: string;
   export let eventMinutes: number[] = [];
   export let sliderValue: number;

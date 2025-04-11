@@ -20,8 +20,8 @@
   import FullScreenSpinner from "$lib/components/shared/full-screen-spinner.svelte";
   import BadgeIcon from "$lib/icons/BadgeIcon.svelte";
   import SelectedPlayerList from "$lib/components/fixture-validation/selected-player-list.svelte";
-  
-  import type { Club, Fixture, Player, PlayerEventData, SubmitFixtureData } from "../../../../declarations/data_canister/data_canister.did";
+    import type { Club, Fixture, Player, PlayerEventData } from "../../../../declarations/backend/backend.did";
+    import type { SubmitFixtureData } from "../../../../declarations/data_canister/data_canister.did";
   
   let clubs: Club[] = [];
   let players: Player[] = [];

@@ -1,7 +1,5 @@
 <script lang="ts">
-    import ViewDetailsIcon from "../../icons/ViewDetailsIcon.svelte";
     import { onMount } from "svelte";
-    import type { Player, Club } from "../../../../../declarations/data_canister/data_canister.did";
     import {
       calculateAgeFromNanoseconds,
       convertPositionToIndex,
@@ -13,6 +11,7 @@
     import PositionFilter from "../../components/shared/position-filter.svelte";
     import TeamPlayersTableHeader from "../../components/shared/players-table-header.svelte";
     import { page } from "$app/stores";
+    import type { Club, Player } from "../../../../../declarations/backend/backend.did";
   
     export let club: Club;
 
@@ -20,7 +19,8 @@
   
     onMount(async () => {
       const playersList = await playerStore.getPlayers(leagueId);
-      players = playersList.filter((x) => x.clubId == club.id)
+      if(!playersList){ return }
+      players = playersList.players.filter((x) => x.clubId == club.id)
     });
   
     let players: Player[] = [];

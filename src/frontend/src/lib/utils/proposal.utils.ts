@@ -1,9 +1,4 @@
-import type {
-  CountryId,
-  GameweekNumber,
-  Gender,
-  PlayerEventData,
-} from "../../../../declarations/data_canister/data_canister.did";
+import type { GameweekNumber } from "../../../../declarations/backend/backend.did";
 
 export function buildRevaluePlayerUpText(
   playerName: string,

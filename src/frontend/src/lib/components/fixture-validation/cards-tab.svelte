@@ -1,14 +1,7 @@
 <script lang="ts">
-  import type { PlayerEventData } from "../../../../../declarations/data_canister/data_canister.did";
-  import type { Writable } from "svelte/store";
-
   export let selectedCard: number;
   export let cardMinute: number;
   export let firstYellowMinute: number;
-  export let fixtureId: number;
-  export let playerId: number;
-  export let clubId: number;
-  export let playerEventData: Writable<PlayerEventData[]>;
   export let redCardType: "straight" | "twoYellows" | null = null;
 
   function handleCardSelection(value: number) {

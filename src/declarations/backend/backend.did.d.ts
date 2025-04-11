@@ -136,6 +136,9 @@ export interface GetLoanedPlayers {
 export interface GetPlayers {
   leagueId: LeagueId;
 }
+export interface GetPostponedFixtures {
+  leagueId: LeagueId;
+}
 export interface GetSeasons {
   leagueId: LeagueId;
 }
@@ -229,17 +232,23 @@ export type PlayerStatus =
 export interface Players {
   players: Array<Player>;
 }
+export interface PostponedFixtures {
+  seasonId: SeasonId;
+  fixtures: Array<Fixture>;
+  leagueId: LeagueId;
+}
 export type Result = { ok: Seasons } | { err: Error };
-export type Result_1 = { ok: Players } | { err: Error };
-export type Result_10 = { ok: AppStatus } | { err: Error };
-export type Result_2 = { ok: LoanedPlayers } | { err: Error };
-export type Result_3 = { ok: Leagues } | { err: Error };
-export type Result_4 = { ok: LeagueStatus } | { err: Error };
-export type Result_5 = { ok: Fixtures } | { err: Error };
-export type Result_6 = { ok: DataHashes } | { err: Error };
-export type Result_7 = { ok: Countries } | { err: Error };
-export type Result_8 = { ok: Clubs } | { err: Error };
-export type Result_9 = { ok: ClubValueLeaderboard } | { err: Error };
+export type Result_1 = { ok: PostponedFixtures } | { err: Error };
+export type Result_10 = { ok: ClubValueLeaderboard } | { err: Error };
+export type Result_11 = { ok: AppStatus } | { err: Error };
+export type Result_2 = { ok: Players } | { err: Error };
+export type Result_3 = { ok: LoanedPlayers } | { err: Error };
+export type Result_4 = { ok: Leagues } | { err: Error };
+export type Result_5 = { ok: LeagueStatus } | { err: Error };
+export type Result_6 = { ok: Fixtures } | { err: Error };
+export type Result_7 = { ok: DataHashes } | { err: Error };
+export type Result_8 = { ok: Countries } | { err: Error };
+export type Result_9 = { ok: Clubs } | { err: Error };
 export interface Season {
   id: number;
   name: string;
@@ -251,16 +260,17 @@ export interface Seasons {
 }
 export type ShirtType = { Filled: null } | { Striped: null };
 export interface _SERVICE {
-  getAppStatus: ActorMethod<[], Result_10>;
-  getClubValueLeaderboard: ActorMethod<[GetClubValueLeaderboard], Result_9>;
-  getClubs: ActorMethod<[GetClubs], Result_8>;
-  getCountries: ActorMethod<[GetCountries], Result_7>;
-  getDataHashes: ActorMethod<[GetDataHashes], Result_6>;
-  getFixtures: ActorMethod<[GetFixtures], Result_5>;
-  getLeagueStatus: ActorMethod<[GetLeagueStatus], Result_4>;
-  getLeagues: ActorMethod<[GetLeagues], Result_3>;
-  getLoanedPlayers: ActorMethod<[GetLoanedPlayers], Result_2>;
-  getPlayers: ActorMethod<[GetPlayers], Result_1>;
+  getAppStatus: ActorMethod<[], Result_11>;
+  getClubValueLeaderboard: ActorMethod<[GetClubValueLeaderboard], Result_10>;
+  getClubs: ActorMethod<[GetClubs], Result_9>;
+  getCountries: ActorMethod<[GetCountries], Result_8>;
+  getDataHashes: ActorMethod<[GetDataHashes], Result_7>;
+  getFixtures: ActorMethod<[GetFixtures], Result_6>;
+  getLeagueStatus: ActorMethod<[GetLeagueStatus], Result_5>;
+  getLeagues: ActorMethod<[GetLeagues], Result_4>;
+  getLoanedPlayers: ActorMethod<[GetLoanedPlayers], Result_3>;
+  getPlayers: ActorMethod<[GetPlayers], Result_2>;
+  getPostponedFixtures: ActorMethod<[GetPostponedFixtures], Result_1>;
   getSeasons: ActorMethod<[GetSeasons], Result>;
 }
 export declare const idlFactory: IDL.InterfaceFactory;

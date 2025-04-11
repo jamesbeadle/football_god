@@ -5,7 +5,6 @@
   import { leagueStore } from "$lib/stores/league-store";
   import { clubStore } from "$lib/stores/club-store";
   import { playerStore } from "$lib/stores/player-store";
-  import type { Club, Country, League, Player } from "../../../../declarations/data_canister/data_canister.did";
   
   import Layout from "../+layout.svelte";
   import CreatePlayer from "$lib/components/governance/player/create-player.svelte";
@@ -19,6 +18,7 @@
   import RevaluePlayerUp from "$lib/components/governance/player/revalue-player-up.svelte";
   import PlayersHeaderDisplay from "$lib/components/governance/player/players-header-display.svelte";
   import PlayerDisplay from "$lib/components/player/player-display.svelte";
+    import type { Club, Country, League, Player } from "../../../../declarations/backend/backend.did";
     
 
   let isLoading = true;

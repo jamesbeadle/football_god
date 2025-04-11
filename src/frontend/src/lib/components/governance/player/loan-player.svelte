@@ -4,12 +4,13 @@
   import { clubStore } from "$lib/stores/club-store";
   import { governanceStore } from "$lib/stores/governance-store";
   import { convertDateInputToUnixNano, isError } from "$lib/utils/helpers";
-  import type { Club, League, LoanPlayer, Player } from "../../../../../../declarations/data_canister/data_canister.did";
   import { toasts } from "$lib/stores/toasts-store";
   import Modal from "$lib/components/shared/modal.svelte";
   import GovernanceModal from "../governance-modal.svelte";
   import FormComponent from "$lib/components/shared/form-component.svelte";
   import DropdownSelect from "$lib/components/shared/dropdown-select.svelte";
+  import type { Club, League, Player } from "../../../../../../declarations/backend/backend.did";
+    import type { LoanPlayer } from "../../../../../../declarations/data_canister/data_canister.did";
   
   export let visible: boolean;
   export let closeModal: () => void;

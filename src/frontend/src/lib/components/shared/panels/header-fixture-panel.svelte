@@ -1,6 +1,6 @@
 <script lang="ts">
     import BadgeIcon from "$lib/icons/BadgeIcon.svelte";
-    import type { Club} from "../../../../../../declarations/data_canister/data_canister.did";
+    import type { Club} from "../../../../../../declarations/backend/backend.did";
     import { page } from '$app/stores';
     export let header: string;
     export let nextFixtureHomeTeam: Club | undefined;

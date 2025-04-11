@@ -4,8 +4,8 @@
   import { onMount } from "svelte";
   import Modal from "../shared/modal.svelte";
   import CardsTab from "./cards-tab.svelte";
-  import type { Player, PlayerEventData } from "../../../../../declarations/data_canister/data_canister.did";
   import FixtureEventSection from "./fixture-event-section.svelte";
+  import type { Player, PlayerEventData } from "../../../../../declarations/backend/backend.did";
 
   export let visible = false;
   export let player: Player;
@@ -386,10 +386,6 @@
           bind:cardMinute
           bind:firstYellowMinute
           bind:redCardType
-          {fixtureId}
-          playerId={player.id}
-          clubId={player.clubId}
-          {playerEventData}
         />
 
         <div class="border-b border-gray-200"></div>

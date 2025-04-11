@@ -1,10 +1,10 @@
 import { ActorFactory } from "../utils/ActorFactory";
 import { isError } from "../utils/helpers";
+import { authStore } from "$lib/stores/auth-store";
 import type {
   Countries,
   GetCountries,
-} from "../../../../declarations/data_canister/data_canister.did";
-import { authStore } from "$lib/stores/auth-store";
+} from "../../../../declarations/backend/backend.did";
 
 export class CountryService {
   constructor() {}

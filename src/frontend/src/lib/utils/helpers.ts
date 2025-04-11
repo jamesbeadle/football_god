@@ -1,17 +1,15 @@
 import * as FlagIcons from "svelte-flag-icons";
 import type {
+  FixtureStatusType,
   PlayerEventType,
   PlayerPosition,
+  Club,
+  Fixture,
 } from "../../../../declarations/backend/backend.did";
 import Eng from "$lib/components/flags/eng.svelte";
 import Sco from "$lib/components/flags/sco.svelte";
 import Wal from "$lib/components/flags/wal.svelte";
 import Noi from "$lib/components/flags/noi.svelte";
-import type {
-  Club,
-  Fixture,
-  FixtureStatusType,
-} from "../../../../declarations/data_canister/data_canister.did";
 import type { FixtureWithClubs } from "$lib/types/fixture-with-clubs";
 import type { TeamStats } from "$lib/types/team-stats";
 

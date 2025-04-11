@@ -1,10 +1,7 @@
-import type {
-  AppStatus,
-  GetAppStatus,
-} from "../../../../declarations/backend/backend.did";
 import { isError } from "../utils/helpers";
 import { idlFactory as backend_canister } from "../../../../declarations/backend";
 import { ActorFactory } from "$lib/utils/ActorFactory";
+import type { AppStatus } from "../../../../declarations/backend/backend.did";
 
 export class AppService {
   constructor() {}
@@ -15,9 +12,7 @@ export class AppService {
       process.env.BACKEND_CANISTER_ID,
     );
 
-    let dto: GetAppStatus = {};
-
-    const result = await identityActor.getAppStatus(dto);
+    const result = await identityActor.getAppStatus();
     if (isError(result)) throw new Error("Failed to get app status");
     return result.ok;
   }

@@ -1,7 +1,6 @@
 <script lang="ts">
     import { onMount } from "svelte";
     import { page } from "$app/stores";
-    import type { ClubId, LeagueId, Club } from "../../../../declarations/data_canister/data_canister.did";
     import { goto } from "$app/navigation";
 
     import { clubStore } from "$lib/stores/club-store";
@@ -12,6 +11,7 @@
     import TeamFixtures from "$lib/components/club/team-fixtures.svelte";
     import TabContainer from "$lib/components/shared/tab-container.svelte";
     import ClubHeader from "$lib/components/club/club-header.svelte";
+    import type { LeagueId, ClubId, Club } from "../../../../declarations/backend/backend.did";
   
     let isLoading = true;
     let club: Club | null = null;

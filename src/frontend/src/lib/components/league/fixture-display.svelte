@@ -1,7 +1,7 @@
 <script lang="ts">
-  import type { Club, Fixture } from "../../../../../declarations/data_canister/data_canister.did";
   import BadgeIcon from "$lib/icons/BadgeIcon.svelte";
   import PipsIcon from "$lib/icons/pips-icon.svelte";
+    import type { Club, Fixture } from "../../../../../declarations/backend/backend.did";
   
   export let fixture: Fixture;
   export let homeClub: Club;

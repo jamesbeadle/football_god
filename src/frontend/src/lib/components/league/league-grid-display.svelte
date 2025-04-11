@@ -1,10 +1,10 @@
 <script lang="ts">
-  import type { CountryDTO, FootballLeagueDTO, LeagueStatus } from "../../../../../declarations/data_canister/data_canister.did";
   import { getImageURL } from "$lib/utils/helpers";
+    import type { Country, League, LeagueStatus } from "../../../../../declarations/backend/backend.did";
 
-  export let league: FootballLeagueDTO;
+  export let league: League;
   export let leagueStatus: LeagueStatus | null;
-  export let countries: CountryDTO[];
+  export let countries: Country[];
 
   function getSeason(seasonID: number) {
     if(seasonID == 1) return "2024/2025";

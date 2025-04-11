@@ -3,7 +3,7 @@
   import BadgeIcon from "$lib/icons/BadgeIcon.svelte";
   import { type Writable } from "svelte/store";
   import Modal from "../shared/modal.svelte";
-  import type { Club, Player, PlayerEventData } from "../../../../../declarations/data_canister/data_canister.did";
+  import type { Club, Player, PlayerEventData } from "../../../../../declarations/backend/backend.did";
   
   export let selectedTeam: Club;
   export let teamPlayers: Player[];

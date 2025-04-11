@@ -137,6 +137,16 @@ actor Self {
     return await data_canister.getFixtures(dto);
   };
 
+  public shared ({ caller }) func getPostponedFixtures(dto: FixtureQueries.GetPostponedFixtures) : async Result.Result<FixtureQueries.PostponedFixtures, Enums.Error> {
+    assert not Principal.isAnonymous(caller);
+    // TODO: Check caller has associated neuron
+
+    let data_canister = actor (CanisterIds.ICFC_DATA_CANISTER_ID) : actor {
+      getPostponedFixtures : (dto: FixtureQueries.GetPostponedFixtures) -> async Result.Result<FixtureQueries.PostponedFixtures, Enums.Error>;
+    };
+    return await data_canister.getPostponedFixtures(dto);
+  };
+
   public shared ({ caller }) func getClubValueLeaderboard(dto: ClubQueries.GetClubValueLeaderboard) : async Result.Result<ClubQueries.ClubValueLeaderboard, Enums.Error> {
     assert not Principal.isAnonymous(caller);
     // TODO: Check caller has associated neuron

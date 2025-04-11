@@ -399,6 +399,12 @@ export const idlFactory = ({ IDL }) => {
   });
   const Seasons = IDL.Record({ seasons: IDL.Vec(Season) });
   const Result = IDL.Variant({ ok: Seasons, err: Error });
+  const SnapshotId = IDL.Vec(IDL.Nat8);
+  const Snapshot = IDL.Record({
+    id: SnapshotId,
+    total_size: IDL.Nat64,
+    taken_at_timestamp: IDL.Nat64,
+  });
   const LoanPlayer = IDL.Record({
     loanEndDate: IDL.Int,
     playerId: ClubId,
@@ -561,6 +567,7 @@ export const idlFactory = ({ IDL }) => {
     ),
     getRetiredPlayers: IDL.Func([GetRetiredPlayers], [Result_1], ["query"]),
     getSeasons: IDL.Func([GetSeasons], [Result], ["query"]),
+    getSnapshotIds: IDL.Func([], [IDL.Vec(Snapshot)], []),
     loanPlayer: IDL.Func([LoanPlayer], [], []),
     moveFixture: IDL.Func([MoveFixture], [], []),
     postponeFixture: IDL.Func([PostponeFixture], [], []),

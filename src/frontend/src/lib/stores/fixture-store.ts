@@ -4,7 +4,7 @@ import type {
   Fixture,
   Fixtures,
   PostponedFixtures,
-} from "../../../../declarations/data_canister/data_canister.did";
+} from "../../../../declarations/backend/backend.did";
 
 function createFixtureStore() {
   const { subscribe, set } = writable<Fixtures | undefined>(undefined);

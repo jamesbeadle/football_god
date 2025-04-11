@@ -2,10 +2,11 @@
   import { onMount } from "svelte";
   import { governanceStore } from "$lib/stores/governance-store";
   import { convertDateInputToUnixNano, isError } from "$lib/utils/helpers";
-  import type { Player, RetirePlayer } from "../../../../../../declarations/data_canister/data_canister.did";
   import Modal from "$lib/components/shared/modal.svelte";
   import GovernanceModal from "../governance-modal.svelte";
   import FormComponent from "$lib/components/shared/form-component.svelte";
+    import type { Player } from "../../../../../../declarations/backend/backend.did";
+    import type { RetirePlayer } from "../../../../../../declarations/data_canister/data_canister.did";
 
   export let visible: boolean;
   export let closeModal: () => void;

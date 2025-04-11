@@ -6,9 +6,8 @@ import type {
   GetPlayers,
   LeagueId,
   LoanedPlayers,
-  Player,
   Players,
-} from "../../../../declarations/data_canister/data_canister.did";
+} from "../../../../declarations/backend/backend.did";
 
 export class PlayerService {
   constructor() {}

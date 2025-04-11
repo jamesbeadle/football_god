@@ -1,11 +1,10 @@
 import { ActorFactory } from "../utils/ActorFactory";
 import { isError } from "../utils/helpers";
 import type {
-  DataHash,
   DataHashes,
   GetDataHashes,
   LeagueId,
-} from "../../../../declarations/data_canister/data_canister.did";
+} from "../../../../declarations/backend/backend.did";
 import { authStore } from "$lib/stores/auth-store";
 
 export class DataHashService {

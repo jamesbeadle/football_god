@@ -4,12 +4,12 @@
 
   import { clubStore } from "$lib/stores/club-store";
   import { leagueStore } from "$lib/stores/league-store";
-  import type { Club, League } from "../../../../../declarations/data_canister/data_canister.did";
-
+  
   import BadgeIcon from "$lib/icons/BadgeIcon.svelte";
   import CreateClub from "../governance/club/create-club.svelte";
   import LocalSpinner from "../shared/local-spinner.svelte";
   import PipsIcon from "$lib/icons/pips-icon.svelte";
+    import type { Club, League } from "../../../../../declarations/backend/backend.did";
   
   export let leagueId: number;
 

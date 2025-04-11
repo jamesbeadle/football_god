@@ -14,57 +14,68 @@ type Season =
 type Result_9 = 
  variant {
    err: Error;
-   ok: ClubValueLeaderboard;
+   ok: Clubs;
  };
 type Result_8 = 
  variant {
    err: Error;
-   ok: Clubs;
+   ok: Countries;
  };
 type Result_7 = 
  variant {
    err: Error;
-   ok: Countries;
+   ok: DataHashes;
  };
 type Result_6 = 
  variant {
    err: Error;
-   ok: DataHashes;
+   ok: Fixtures;
  };
 type Result_5 = 
  variant {
    err: Error;
-   ok: Fixtures;
+   ok: LeagueStatus;
  };
 type Result_4 = 
  variant {
    err: Error;
-   ok: LeagueStatus;
+   ok: Leagues;
  };
 type Result_3 = 
  variant {
    err: Error;
-   ok: Leagues;
+   ok: LoanedPlayers;
  };
 type Result_2 = 
  variant {
    err: Error;
-   ok: LoanedPlayers;
+   ok: Players;
  };
-type Result_10 = 
+type Result_11 = 
  variant {
    err: Error;
    ok: AppStatus;
  };
+type Result_10 = 
+ variant {
+   err: Error;
+   ok: ClubValueLeaderboard;
+ };
 type Result_1 = 
  variant {
    err: Error;
-   ok: Players;
+   ok: PostponedFixtures;
  };
 type Result = 
  variant {
    err: Error;
    ok: Seasons;
+ };
+type PostponedFixtures = 
+ record {
+   fixtures: vec Fixture;
+   leagueId: LeagueId;
+   seasonId: SeasonId;
  };
 type Players = record {players: vec Player;};
 type PlayerStatus = 
@@ -162,6 +173,7 @@ type League =
    teamCount: nat8;
  };
 type GetSeasons = record {leagueId: LeagueId;};
+type GetPostponedFixtures = record {leagueId: LeagueId;};
 type GetPlayers = record {leagueId: LeagueId;};
 type GetLoanedPlayers = record {leagueId: LeagueId;};
 type GetLeagues = record {};
@@ -298,15 +310,16 @@ type AppStatus =
    version: text;
  };
 service : {
-  getAppStatus: () -> (Result_10) query;
-  getClubValueLeaderboard: (GetClubValueLeaderboard) -> (Result_9);
-  getClubs: (GetClubs) -> (Result_8);
-  getCountries: (GetCountries) -> (Result_7);
-  getDataHashes: (GetDataHashes) -> (Result_6);
-  getFixtures: (GetFixtures) -> (Result_5);
-  getLeagueStatus: (GetLeagueStatus) -> (Result_4);
-  getLeagues: (GetLeagues) -> (Result_3);
-  getLoanedPlayers: (GetLoanedPlayers) -> (Result_2);
-  getPlayers: (GetPlayers) -> (Result_1);
+  getAppStatus: () -> (Result_11) query;
+  getClubValueLeaderboard: (GetClubValueLeaderboard) -> (Result_10);
+  getClubs: (GetClubs) -> (Result_9);
+  getCountries: (GetCountries) -> (Result_8);
+  getDataHashes: (GetDataHashes) -> (Result_7);
+  getFixtures: (GetFixtures) -> (Result_6);
+  getLeagueStatus: (GetLeagueStatus) -> (Result_5);
+  getLeagues: (GetLeagues) -> (Result_4);
+  getLoanedPlayers: (GetLoanedPlayers) -> (Result_3);
+  getPlayers: (GetPlayers) -> (Result_2);
+  getPostponedFixtures: (GetPostponedFixtures) -> (Result_1);
   getSeasons: (GetSeasons) -> (Result);
 }

@@ -63,6 +63,13 @@ type SubmitFixtureData =
    playerEventData: vec PlayerEventData;
    seasonId: SeasonId;
  };
+type SnapshotId = blob;
+type Snapshot = 
+ record {
+   id: SnapshotId;
+   taken_at_timestamp: nat64;
+   total_size: nat64;
+ };
 type ShirtType = 
  variant {
    Filled;
@@ -689,6 +696,7 @@ service : {
   getPostponedFixtures: (GetPostponedFixtures) -> (Result_2) query;
   getRetiredPlayers: (GetRetiredPlayers) -> (Result_1) query;
   getSeasons: (GetSeasons) -> (Result) query;
+  getSnapshotIds: () -> (vec Snapshot);
   loanPlayer: (LoanPlayer) -> ();
   moveFixture: (MoveFixture) -> ();
   postponeFixture: (PostponeFixture) -> ();

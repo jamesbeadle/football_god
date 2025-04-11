@@ -1,7 +1,7 @@
 import type {
-  Fixture,
   Club,
-} from "../../../../declarations/data_canister/data_canister.did";
+  Fixture,
+} from "../../../../declarations/backend/backend.did";
 
 export type FixtureWithClubs = {
   fixture: Fixture;

@@ -1,9 +1,8 @@
 import { writable } from "svelte/store";
 import type {
   LeagueId,
-  Player,
   Players,
-} from "../../../../declarations/data_canister/data_canister.did";
+} from "../../../../declarations/backend/backend.did";
 import { PlayerService } from "../services/player-service";
 
 function createPlayerStore() {

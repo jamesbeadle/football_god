@@ -9,14 +9,13 @@
       getFixturesWithTeams,
     } from "../../utils/helpers";
     import type { FixtureWithClubs } from "$lib/types/fixture-with-clubs";
-    //import { storeManager } from "$lib/managers/store-manager";
     import LocalSpinner from "../shared/local-spinner.svelte";
     import FixtureTypeFilter from "../../components/shared/filters/fixture-type-filter.svelte";
     import { writable } from "svelte/store";
     import TeamFixturesTableHeader from "../club/team-fixtures-table-header.svelte";
     import BadgeIcon from "$lib/icons/BadgeIcon.svelte";
-    import type { Club } from "../../../../../declarations/data_canister/data_canister.did";
     import { leagueStore } from "$lib/stores/league-store";
+    import type { Club } from "../../../../../declarations/backend/backend.did";
   
     export let club: Club;
     export let leagueId: number;

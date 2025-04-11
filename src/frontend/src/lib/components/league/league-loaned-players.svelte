@@ -3,12 +3,12 @@
   
   import { clubStore } from "$lib/stores/club-store";
   import { leagueStore } from "$lib/stores/league-store";
-  import type { Club, League, LoanedPlayers, Player } from "../../../../../declarations/data_canister/data_canister.did";
   import { playerStore } from "$lib/stores/player-store";
 
   import LocalSpinner from "../shared/local-spinner.svelte";
   import RecallPlayer from "../governance/player/recall-player.svelte";
   import LoanedPlayerDisplay from "./loaned-player-display.svelte";
+    import type { Club, League, Player } from "../../../../../declarations/backend/backend.did";
   
   export let leagueId: number;
 

@@ -1,8 +1,8 @@
 <script lang="ts">
-  import type { Club, Player } from "../../../../../declarations/data_canister/data_canister.did";
   import { getFlagComponent, calculateAgeFromNanoseconds } from "$lib/utils/helpers";
   import BadgeIcon from "$lib/icons/BadgeIcon.svelte";
   import PipsIcon from "$lib/icons/pips-icon.svelte";
+    import type { Club, Player } from "../../../../../declarations/backend/backend.did";
 
   export let player: Player;
   export let club: Club;

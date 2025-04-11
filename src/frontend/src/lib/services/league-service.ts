@@ -1,13 +1,13 @@
-import { authStore } from "../stores/auth-store";
-import { ActorFactory } from "../utils/ActorFactory";
-import { isError } from "../utils/helpers";
 import type {
   GetLeagues,
   GetLeagueStatus,
   Leagues,
   LeagueId,
   LeagueStatus,
-} from "../../../../declarations/data_canister/data_canister.did";
+} from "../../../../declarations/backend/backend.did";
+import { authStore } from "../stores/auth-store";
+import { ActorFactory } from "../utils/ActorFactory";
+import { isError } from "../utils/helpers";
 
 export class LeagueService {
   constructor() {}

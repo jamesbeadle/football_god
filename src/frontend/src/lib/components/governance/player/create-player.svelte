@@ -5,13 +5,14 @@
   import { leagueStore } from "$lib/stores/league-store";
   import { clubStore } from "$lib/stores/club-store";
   import { convertDateInputToUnixNano } from "$lib/utils/helpers";
-  import type { Club, Country, CreatePlayer, League, PlayerPosition } from "../../../../../../declarations/data_canister/data_canister.did";
   import { toasts } from "$lib/stores/toasts-store";
   import { isError } from "$lib/utils/helpers";
   import Modal from "$lib/components/shared/modal.svelte";
   import GovernanceModal from "../governance-modal.svelte";
   import FormComponent from "$lib/components/shared/form-component.svelte";
   import DropdownSelect from "$lib/components/shared/dropdown-select.svelte";
+    import type { Club, Country, League, PlayerPosition } from "../../../../../../declarations/backend/backend.did";
+    import type { CreatePlayer } from "../../../../../../declarations/data_canister/data_canister.did";
   
   export let visible: boolean;
   export let closeModal: () => void;

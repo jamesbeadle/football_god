@@ -1,11 +1,12 @@
 <script lang="ts">
   import { onMount } from "svelte";
-  import type { Player, RecallPlayer } from "../../../../../../declarations/data_canister/data_canister.did";
   import { governanceStore } from "$lib/stores/governance-store";
   import { isError } from "$lib/utils/helpers";
   import Modal from "$lib/components/shared/modal.svelte";
   import GovernanceModal from "../governance-modal.svelte";
   import FormComponent from "$lib/components/shared/form-component.svelte";
+    import type { Player } from "../../../../../../declarations/backend/backend.did";
+    import type { RecallPlayer } from "../../../../../../declarations/data_canister/data_canister.did";
   
   export let visible: boolean;
   export let closeModal: () => void;
