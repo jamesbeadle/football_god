@@ -38,6 +38,7 @@ export interface ClubSummary {
   secondaryColour: string;
   totalFWValue: number;
   position: bigint;
+  priorValue: number;
   leagueId: LeagueId;
   totalMidfielders: number;
 }

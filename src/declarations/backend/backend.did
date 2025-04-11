@@ -264,6 +264,7 @@ type ClubSummary =
    position: nat;
    positionText: text;
    primaryColour: text;
+   priorValue: nat16;
    secondaryColour: text;
    shirtType: ShirtType;
    thirdColour: text;

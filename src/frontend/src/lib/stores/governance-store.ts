@@ -843,7 +843,6 @@ function createGovernanceStore() {
     let league = leagues.find((x) => x.id == dto.leagueId);
     if (!league) throw new Error("Player league not found.");
 
-
     const allSeasonsResult = await seasonStore.getSeasons(dto.leagueId);
     if (!allSeasonsResult) throw new Error("Seasons not found.");
     let allSeasons = allSeasonsResult.seasons;
@@ -851,7 +850,11 @@ function createGovernanceStore() {
     const season = allSeasons.find((x) => x.id == dto.seasonId);
     const seasonName = season?.name ?? "Unknown Season";
 
-    const { title, summary } = buildAddInitialFixturesText(seasonName, league.name, dto.seasonFixtures.length);
+    const { title, summary } = buildAddInitialFixturesText(
+      seasonName,
+      league.name,
+      dto.seasonFixtures.length,
+    );
 
     const encoded = IDL.encode([AddInitialFixturesDTO_Idl], [dto]);
 

@@ -5,7 +5,7 @@ import type { Countries } from "../../../../declarations/backend/backend.did";
 function createCountryStore() {
   const { subscribe, set } = writable<Countries | undefined>(undefined);
 
-  async function getCountries() : Promise<Countries | undefined> {
+  async function getCountries(): Promise<Countries | undefined> {
     return new CountryService().getCountries();
   }
 

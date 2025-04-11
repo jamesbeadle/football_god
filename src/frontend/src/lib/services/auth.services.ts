@@ -58,7 +58,8 @@ const logout = async ({
 
   if (clearStorages) {
     await Promise.all([
-      //TODO: clear storages
+      // TODO: clear storages
+      console.error("Store clear not implemented"),
     ]);
   }
 

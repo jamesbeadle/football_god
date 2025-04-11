@@ -169,6 +169,7 @@ export const idlFactory = ({ IDL }) => {
     secondaryColour: IDL.Text,
     totalFWValue: IDL.Nat16,
     position: IDL.Nat,
+    priorValue: IDL.Nat16,
     leagueId: LeagueId,
     totalMidfielders: IDL.Nat8,
   });

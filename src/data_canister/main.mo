@@ -54,7 +54,6 @@ import Environment "environment";
 import AppQueries "queries/app_queries";
 import SummaryTypes "summary_types";
 import NotificationManager "managers/notification_manager";
-import MopsUtilities "mops_utilities/mops_utilities";
 
 import BaseTypes "mo:waterway-mops/BaseTypes";
 
@@ -2059,11 +2058,11 @@ actor Self {
             events,
             0,
             func(acc : Int16, event : FootballTypes.PlayerEventData) : Int16 {
-              return acc + MopsUtilities.calculateIndividualScoreForEvent(event, foundPlayer.position);
+              return acc + BaseUtilities.calculateIndividualScoreForEvent(event, foundPlayer.position);
             },
           );
 
-          let aggregateScore = MopsUtilities.calculateAggregatePlayerEvents(events, foundPlayer.position);
+          let aggregateScore = BaseUtilities.calculateAggregatePlayerEvents(events, foundPlayer.position);
           playerScoresMap.put(playerId, totalScore + aggregateScore);
         };
       };
@@ -2464,11 +2463,11 @@ actor Self {
       events,
       0,
       func(acc : Int16, event : FootballTypes.PlayerEventData) : Int16 {
-        return acc + MopsUtilities.calculateIndividualScoreForEvent(event, playerPosition);
+        return acc + BaseUtilities.calculateIndividualScoreForEvent(event, playerPosition);
       },
     );
 
-    let aggregateScore = MopsUtilities.calculateAggregatePlayerEvents(events, playerPosition);
+    let aggregateScore = BaseUtilities.calculateAggregatePlayerEvents(events, playerPosition);
     return totalScore + aggregateScore;
   };
 
@@ -3408,7 +3407,7 @@ actor Self {
   
 
   /* Validation Functions related to data being entered under DAO Control */
-  // TODO: Move to validation manager / Ensure all validations are in 
+  // TODO: Ensure all validations are in 
 
   private func seasonActive(leagueId : FootballIds.LeagueId) : Bool {
     let leagueStatusResult = Array.find<FootballTypes.LeagueStatus>(
@@ -4163,7 +4162,7 @@ actor Self {
 
       switch (leagueStatusResult) {
         case (?leagueState) {
-          let nextTransferWindowStartDate = MopsUtilities.getNextUnixTimestampForDayMonth(leagueState.transferWindowStartDay, leagueState.transferWindowStartMonth);
+          let nextTransferWindowStartDate = BaseUtilities.getNextUnixTimestampForDayMonth(leagueState.transferWindowStartDay, leagueState.transferWindowStartMonth);
           switch (nextTransferWindowStartDate) {
             case (?foundDate) {
               let triggerDuration = #nanoseconds(Int.abs((foundDate - Time.now())));
@@ -4194,7 +4193,7 @@ actor Self {
 
       switch (leagueStatusResult) {
         case (?leagueState) {
-          let nextTransferWindowEndDate = MopsUtilities.getNextUnixTimestampForDayMonth(leagueState.transferWindowEndDay, leagueState.transferWindowEndMonth);
+          let nextTransferWindowEndDate = BaseUtilities.getNextUnixTimestampForDayMonth(leagueState.transferWindowEndDay, leagueState.transferWindowEndMonth);
           switch (nextTransferWindowEndDate) {
             case (?foundDate) {
               let triggerDuration = #nanoseconds(Int.abs((foundDate - Time.now())));
