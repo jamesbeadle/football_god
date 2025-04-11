@@ -18,6 +18,7 @@ import BaseTypes "mo:waterway-mops/BaseTypes";
 import CanisterIds "mo:waterway-mops/CanisterIds";
 import Ids "mo:waterway-mops/Ids";
 import Enums "mo:waterway-mops/Enums";
+import Countries "mo:waterway-mops/def/Countries";
 
 actor Self {
 
@@ -68,12 +69,9 @@ actor Self {
 
   public shared ({ caller }) func getCountries(dto: BaseQueries.GetCountries) : async Result.Result<BaseQueries.Countries, Enums.Error> {
     assert not Principal.isAnonymous(caller);
-    // TODO: Check caller has associated neuron
-
-    let data_canister = actor (CanisterIds.ICFC_DATA_CANISTER_ID) : actor {
-      getCountries : (dto: BaseQueries.GetCountries) -> async Result.Result<BaseQueries.Countries, Enums.Error>;
-    };
-    return await data_canister.getCountries(dto);
+    return #ok({
+      countries = Countries.countries;
+    });
   };
 
   public shared ({ caller }) func getSeasons(dto: SeasonQueries.GetSeasons) : async Result.Result<SeasonQueries.Seasons, Enums.Error> {
