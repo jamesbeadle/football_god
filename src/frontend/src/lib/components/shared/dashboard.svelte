@@ -21,9 +21,9 @@
     <FullScreenSpinner message="Checking for Existing Profile" />
 {:else}
     {#if $authSignedInStore}
-        <div class="relative flex flex-col w-full min-h-screen">
+        <div class="relative flex flex-col w-full">
             <LoggedInHeader {toggleMenu} />
-            <main class="flex-1 w-full mt-16 overflow-x-hidden">
+            <main class="flex-1 w-full overflow-x-hidden p-4">
                 {@render children()}
             </main>
         </div>

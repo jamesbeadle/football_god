@@ -19,8 +19,7 @@
     data: number[][];
   }
 
-
-  let proposals: ListProposalsResponse = { proposals: [], include_ballots_by_caller: [] };
+  let proposals: ListProposalsResponse = $state({ proposals: [], include_ballots_by_caller: [] });
   let totalProposalsCount = $state(0); 
   
   let currentPage = $state(1);
@@ -61,17 +60,17 @@
       canisterId: principal,
     });
 
-    // Fetch a small batch to estimate total count (or use a canister method if available)
     const params: SnsListProposalsParams = {
       includeStatus: selectedProposalStatus,
-      limit: 1, // Minimal fetch to get count
+      limit: 1,
       beforeProposal: undefined,
       excludeType: undefined,
       certified: false,
     };
 
     const response = await governanceListProposals(params);
-    totalProposalsCount = response.proposals.length > 0 ? 1000 : 0; // Placeholder; replace with actual count if canister provides it
+    proposals = response;
+    totalProposals = response.proposals.length > 0 ? 1000 : 0;
   }
 
   async function listProposals() {
@@ -91,14 +90,12 @@
       const params: SnsListProposalsParams = {
         includeStatus: selectedProposalStatus,
         limit: itemsPerPage,
-        beforeProposal: undefined, // Adjust for pagination
+        beforeProposal: undefined,
         excludeType: undefined,
         certified: false,
       };
 
-      // Calculate offset for pagination
       if (currentPage > 1) {
-        // Fetch proposals until we reach the desired page
         let offset = (currentPage - 1) * itemsPerPage;
         let lastProposalId: ProposalId | undefined;
         while (offset > 0) {
@@ -134,11 +131,12 @@
   }
 
   const stats: Stat[] = $state([
-    { label: 'Total Proposals', value: '1,234' },
-    { label: 'Rewards Given', value: '600,678 ICFC' },
     { label: 'Total Leagues', value: '27' },
     { label: 'Total Clubs', value: '442' },
-    { label: 'Total Players', value: '13,330' }
+    { label: 'Total Players', value: '13,330' },
+    { label: 'Total Neurons', value: '1,234' },
+    { label: 'Total Proposals', value: '1,234' },
+    { label: 'Total ICFC Rewards', value: '600,678' }
   ]);
   
   function changePage(page: number) {
@@ -151,115 +149,103 @@
 
 
 <Layout>
-  <div class="relative min-h-screen">
-    <div class="flex flex-col md:flex-row">
-      <div class="flex-1 md:block">
-        {#if isLoading}
-          <FullScreenSpinner />
-        {:else}
-          <div class="min-h-screen flex flex-col">
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 mb-8">
-              {#each stats as stat}
+  {#if isLoading}
+    <FullScreenSpinner />
+  {:else}
+    <div class="flex flex-col">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+        {#each stats as stat}
+          <div
+            class="bg-BrandLightGray rounded shadow-md p-4 hover:shadow-lg transition-shadow flex items-center flex-col"
+          >
+            <h3 class="w-full text-2xl font-semibold">{stat.value}</h3>
+            <p class="w-full text-sm font-bold text-BrandDisabled">{stat.label}</p>
+          </div>
+        {/each}
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="md:col-span-2 bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
+          <div class="flex justify-between items-center mb-4">
+            <h2 class="text-xl font-semibold">{heatmaps[currentHeatmapIndex].id}</h2>
+            <button
+              onclick={cycleHeatmap}
+              class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors"
+            >
+              Next
+            </button>
+          </div>
+          <div class="grid grid-cols-7 gap-1">
+            {#each heatmaps[currentHeatmapIndex].data as row}
+              {#each row as value}
                 <div
-                  class="bg-BrandPurple rounded-lg shadow-md p-6 text-center hover:shadow-lg transition-shadow"
-                >
-                  <h3 class="text-lg font-semibold">{stat.label}</h3>
-                  <p class="text-2xl font-bold">{stat.value}</p>
-                </div>
+                  class="w-full h-8 rounded"
+                  style="background-color: rgba(37, 99, 235, {value});"
+                  title="Value: {value.toFixed(2)}"
+                ></div>
               {/each}
-            </div>
+            {/each}
+          </div>
+        </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div class="md:col-span-2 bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
-                <div class="flex justify-between items-center mb-4">
-                  <h2 class="text-xl font-semibold">{heatmaps[currentHeatmapIndex].id}</h2>
-                  <button
-                    onclick={cycleHeatmap}
-                    class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors"
+        <div class="md:col-span-1 bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
+          <h2 class="text-xl font-semibold mb-4">Recent Proposals</h2>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left">
+              <thead>
+                <tr class="border-b dark:border-gray-700">
+                  <th class="py-2 px-3 text-sm font-medium">ID</th>
+                  <th class="py-2 px-3 text-sm font-medium">Title</th>
+                  <th class="py-2 px-3 text-sm font-medium">Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                {#each proposals.proposals as proposal}
+                  <tr
+                    class="border-b dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700"
                   >
-                    Next
-                  </button>
-                </div>
-                <div class="grid grid-cols-7 gap-1">
-                  {#each heatmaps[currentHeatmapIndex].data as row}
-                    {#each row as value}
-                      <div
-                        class="w-full h-8 rounded"
-                        style="background-color: rgba(37, 99, 235, {value});"
-                        title="Value: {value.toFixed(2)}"
-                      ></div>
-                    {/each}
-                  {/each}
-                </div>
-              </div>
-
-              <div class="md:col-span-1 bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
-                <h2 class="text-xl font-semibold mb-4">Recent Proposals</h2>
-                <div class="overflow-x-auto">
-                  <table class="w-full text-left">
-                    <thead>
-                      <tr class="border-b dark:border-gray-700">
-                        <th class="py-2 px-3 text-sm font-medium">ID</th>
-                        <th class="py-2 px-3 text-sm font-medium">Title</th>
-                        <th class="py-2 px-3 text-sm font-medium">Status</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {#each proposals.proposals as proposal}
-                        <tr
-                          class="border-b dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700"
-                        >
-                          <td class="py-2 px-3 text-sm">{proposal.id[0]?.id.toString() ?? "N/A"}</td>
-                          <td class="py-2 px-3 text-sm">{proposal.proposal[0]?.title ?? "Untitled"}</td>
-                          <td class="py-2 px-3 text-sm">
-                            <span
-                              class="{proposal.executed_timestamp_seconds > 0n
-                                ? 'text-green-600 dark:text-green-400'
-                                : proposal.failed_timestamp_seconds > 0n
-                                ? 'text-red-600 dark:text-red-400'
-                                : 'text-yellow-600 dark:text-yellow-400'}"
-                            >
-                              {proposal.executed_timestamp_seconds > 0n
-                                ? "Executed"
-                                : proposal.failed_timestamp_seconds > 0n
-                                ? "Failed"
-                                : "Active"}
-                            </span>
-                          </td>
-                        </tr>
-                      {/each}
-                    </tbody>
-                  </table>
-                </div>
-
-                <div class="flex justify-between items-center mt-4">
-                  <button
-                    onclick={() => changePage(currentPage - 1)}
-                    disabled={currentPage === 1}
-                    class="px-3 py-1 bg-gray-200 dark:bg-gray-700 rounded disabled:opacity-50 hover:bg-gray-300 dark:hover:bg-gray-600"
-                  >
-                    Prev
-                  </button>
-                  <span class="text-sm">Page {currentPage} of {totalPages || 1}</span>
-                  <button
-                    onclick={() => changePage(currentPage + 1)}
-                    disabled={currentPage === totalPages || totalPages === 0}
-                    class="px-3 py-1 bg-gray-200 dark:bg-gray-700 rounded disabled:opacity-50 hover:bg-gray-300 dark:hover:bg-gray-600"
-                  >
-                    Next
-                  </button>
-                </div>
-              </div>
-            </div>
+                    <td class="py-2 px-3 text-sm">{proposal.id[0]?.id.toString() ?? "N/A"}</td>
+                    <td class="py-2 px-3 text-sm">{proposal.proposal[0]?.title ?? "Untitled"}</td>
+                    <td class="py-2 px-3 text-sm">
+                      <span
+                        class="{proposal.executed_timestamp_seconds > 0n
+                          ? 'text-green-600 dark:text-green-400'
+                          : proposal.failed_timestamp_seconds > 0n
+                          ? 'text-red-600 dark:text-red-400'
+                          : 'text-yellow-600 dark:text-yellow-400'}"
+                      >
+                        {proposal.executed_timestamp_seconds > 0n
+                          ? "Executed"
+                          : proposal.failed_timestamp_seconds > 0n
+                          ? "Failed"
+                          : "Active"}
+                      </span>
+                    </td>
+                  </tr>
+                {/each}
+              </tbody>
+            </table>
           </div>
 
-          <style lang="postcss">
-            :global(html) {
-              @apply scroll-smooth;
-            }
-          </style>
-        {/if}
+          <div class="flex justify-between items-center mt-4">
+            <button
+              onclick={() => changePage(currentPage - 1)}
+              disabled={currentPage === 1}
+              class="px-3 py-1 bg-gray-200 dark:bg-gray-700 rounded disabled:opacity-50 hover:bg-gray-300 dark:hover:bg-gray-600"
+            >
+              Prev
+            </button>
+            <span class="text-sm">Page {currentPage} of {totalPages || 1}</span>
+            <button
+              onclick={() => changePage(currentPage + 1)}
+              disabled={currentPage === totalPages || totalPages === 0}
+              class="px-3 py-1 bg-gray-200 dark:bg-gray-700 rounded disabled:opacity-50 hover:bg-gray-300 dark:hover:bg-gray-600"
+            >
+              Next
+            </button>
+          </div>
+        </div>
       </div>
     </div>
-  </div>
+  {/if}
 </Layout>
