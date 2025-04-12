@@ -9,7 +9,7 @@
 
   import VotingBar from './voting-bar.svelte';
   import VotingRules from "./voting-rules.svelte";
-  import Modal from "../shared/modal.svelte";
+  import Modal from "../../shared/modal.svelte";
   import LocalSpinner from "$lib/components/shared/local-spinner.svelte";
   import ArrowUp from "$lib/icons/ArrowUp.svelte";
   import ArrowDown from "$lib/icons/ArrowDown.svelte";

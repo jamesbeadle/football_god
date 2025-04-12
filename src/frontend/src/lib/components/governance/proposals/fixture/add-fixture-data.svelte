@@ -12,7 +12,7 @@
   import { convertEvent, isError, replacer } from "$lib/utils/helpers";
   import { toasts } from "$lib/stores/toasts-store";
   
-  import Layout from "../+layout.svelte";
+  import Layout from "../../../../../routes/+layout.svelte";
   import PlayerEventsModal from "$lib/components/fixture-validation/player-events-modal.svelte";
   import SelectPlayersModal from "$lib/components/fixture-validation/select-players-modal.svelte";
   import ConfirmFixtureDataModal from "$lib/components/fixture-validation/confirm-fixture-data-modal.svelte";
@@ -20,8 +20,8 @@
   import FullScreenSpinner from "$lib/components/shared/full-screen-spinner.svelte";
   import BadgeIcon from "$lib/icons/BadgeIcon.svelte";
   import SelectedPlayerList from "$lib/components/fixture-validation/selected-player-list.svelte";
-    import type { Club, Fixture, Player, PlayerEventData } from "../../../../declarations/backend/backend.did";
-    import type { SubmitFixtureData } from "../../../../declarations/data_canister/data_canister.did";
+    import type { Club, Fixture, Player, PlayerEventData } from "../../../../../../../declarations/backend/backend.did";
+    import type { SubmitFixtureData } from "../../../../../../../declarations/data_canister/data_canister.did";
   
   let clubs: Club[] = [];
   let players: Player[] = [];

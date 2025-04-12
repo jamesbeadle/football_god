@@ -4,7 +4,7 @@
   import { SnsGovernanceCanister, type SnsListProposalsParams } from "@dfinity/sns";
   import { Principal } from "@dfinity/principal";
   import type { ListProposalsResponse, ProposalData, ProposalId } from "@dfinity/sns/dist/candid/sns_governance";
-  import ProposalDetail from "$lib/components/governance/proposal-detail.svelte";
+  import ProposalDetail from "$lib/components/governance/voting/proposal-detail.svelte";
   import TabContainer from "$lib/components/shared/tab-container.svelte";
   import LikeButton from "$lib/icons/LikeButton.svelte";
   import DislikeButton from "$lib/icons/DislikeButton.svelte";
