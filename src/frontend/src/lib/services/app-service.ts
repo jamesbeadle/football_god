@@ -6,6 +6,7 @@ import type {
   DataTotals,
   GetDataTotals,
 } from "../../../../declarations/backend/backend.did";
+import { authStore } from "$lib/stores/auth-store";
 
 export class AppService {
   constructor() {}
@@ -22,9 +23,9 @@ export class AppService {
   }
 
   async getDataTotals(): Promise<DataTotals | undefined> {
-    const identityActor: any = await ActorFactory.createActor(
-      backend_canister,
-      process.env.BACKEND_CANISTER_ID,
+    const identityActor: any = await ActorFactory.createIdentityActor(
+      authStore,
+      process.env.BACKEND_CANISTER_ID ?? "",
     );
 
     let dto: GetDataTotals = {};
