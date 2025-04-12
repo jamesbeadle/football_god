@@ -165,12 +165,12 @@
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div class="md:col-span-2 bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
+        <div class="md:col-span-2 bg-BrandLightGray rounded shadow-md p-6">
           <div class="flex justify-between items-center mb-4">
             <h2 class="text-xl font-semibold">{heatmaps[currentHeatmapIndex].id}</h2>
             <button
               onclick={cycleHeatmap}
-              class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors"
+              class="bg-BrandPurpleDark text-white px-4 py-2 rounded hover:bg-BrandPurple transition-colors"
             >
               Next
             </button>
@@ -180,7 +180,7 @@
               {#each row as value}
                 <div
                   class="w-full h-8 rounded"
-                  style="background-color: rgba(37, 99, 235, {value});"
+                  style="background-color: rgba(127, 86, 250, {value});"
                   title="Value: {value.toFixed(2)}"
                 ></div>
               {/each}
@@ -188,7 +188,7 @@
           </div>
         </div>
 
-        <div class="md:col-span-1 bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
+        <div class="md:col-span-1 bg-BrandLightGray rounded shadow-md p-6">
           <h2 class="text-xl font-semibold mb-4">Recent Proposals</h2>
           <div class="overflow-x-auto">
             <table class="w-full text-left">

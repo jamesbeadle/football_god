@@ -10,14 +10,22 @@
   
   import "../app.css";
   import Toasts from "$lib/components/toasts/toasts.svelte";
-  import Dashboard from "$lib/components/shared/dashboard.svelte";
   import FullScreenSpinner from "$lib/components/shared/full-screen-spinner.svelte";
+  import { authSignedInStore } from "$lib/derived/auth.derived";
+  import LoggedInHeader from "$lib/components/shared/logged-in-header.svelte";
+  import Sidebar from "$lib/components/shared/sidebar.svelte";
+  import LandingPage from "$lib/components/landing/landing-page.svelte";
   
   interface Props { children: Snippet }
   let { children }: Props = $props();
     
   let worker: { syncAuthIdle: (auth: AuthStoreData) => void } | undefined;
   let isLoading = $state(true);
+  let isMenuOpen = $state(false);
+
+  function toggleMenu() {
+      isMenuOpen = !isMenuOpen;
+  }
 
   const init = async () => {
     if (!browser) return;
@@ -49,8 +57,22 @@
     <FullScreenSpinner />
   </div>
 {:else}
-  <Dashboard>
-    {@render children()}
-  </Dashboard>
-  <Toasts />
+  {#if $authSignedInStore}
+    <LoggedInHeader {toggleMenu} />
+        <div class="mx-6 mt-6">
+            {@render children()}
+        </div>
+        <Sidebar {isMenuOpen} {toggleMenu} isSaleOnly={false} />
+        {#if isMenuOpen}
+            <button 
+            class="fixed inset-0 z-30 pointer-events-none bg-black/40 sm:bg-black/20 sm:pointer-events-auto"
+            onclick={toggleMenu}
+            onkeydown={(e) => e.key === 'Enter' && toggleMenu()}
+            aria-label="Close menu overlay"
+            ></button>
+        {/if}
+        <Toasts />
+    {:else}
+        <LandingPage />
+    {/if}
 {/if}
