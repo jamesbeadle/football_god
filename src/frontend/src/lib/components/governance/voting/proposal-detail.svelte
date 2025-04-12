@@ -126,7 +126,7 @@
   }
 </script>
 
-<Modal showModal={visible} onClose={closeModal} useFixedPosition={true}>
+<Modal {visible} onClose={closeModal}>
   {#if isLoading}
     <LocalSpinner />
     <p class="pb-4 mb-4 text-center">Submitting vote...</p>
@@ -134,7 +134,7 @@
     <div class="p-6">
       <div class="flex justify-between mb-4">
         <div class="flex-1">
-          <h1 class="pr-4 break-words default-header">{proposal.proposal[0]?.title}</h1>
+          <h1 class="pr-4 break-words brand-header">{proposal.proposal[0]?.title}</h1>
         </div>
         <button class="times-button" on:click={cancelModal}>&times;</button>
       </div>

@@ -10,11 +10,9 @@
   
   import "../app.css";
   import Toasts from "$lib/components/toasts/toasts.svelte";
-
   import Dashboard from "$lib/components/shared/dashboard.svelte";
   import FullScreenSpinner from "$lib/components/shared/full-screen-spinner.svelte";
   
-
   interface Props { children: Snippet }
   let { children }: Props = $props();
     

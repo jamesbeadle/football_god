@@ -6,7 +6,7 @@
   export let closeModal: () => void;
 </script>
 
-<Modal showModal={visible} onClose={closeModal}>
+<Modal {visible} onClose={closeModal}>
   <div class="p-4 mx-4">
     <div class="flex items-center justify-between my-2">
       <h4>Confirm Fixture Data</h4>

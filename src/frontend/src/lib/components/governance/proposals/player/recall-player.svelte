@@ -3,10 +3,10 @@
   import { governanceStore } from "$lib/stores/governance-store";
   import { isError } from "$lib/utils/helpers";
   import Modal from "$lib/components/shared/modal.svelte";
-  import GovernanceModal from "../governance-modal.svelte";
+  import GovernanceModal from "../../voting/governance-modal.svelte";
   import FormComponent from "$lib/components/shared/form-component.svelte";
-    import type { Player } from "../../../../../../declarations/backend/backend.did";
-    import type { RecallPlayer } from "../../../../../../declarations/data_canister/data_canister.did";
+    import type { Player } from "../../../../../../../declarations/backend/backend.did";
+    import type { RecallPlayer } from "../../../../../../../declarations/data_canister/data_canister.did";
   
   export let visible: boolean;
   export let closeModal: () => void;
@@ -57,7 +57,7 @@
   }
 </script>
 
-<Modal showModal={visible} onClose={closeModal}>
+<Modal {visible} onClose={closeModal}>
   <GovernanceModal title={"Recall Player"} {cancelModal} {confirmProposal} {isLoading} {isSubmitDisabled}>
     <p>Recall loan for {selectedPlayer.firstName} {selectedPlayer.lastName}</p>
     <FormComponent label="New Value (£ millions):">

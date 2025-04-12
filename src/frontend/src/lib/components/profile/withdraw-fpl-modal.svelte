@@ -66,10 +66,10 @@
   }
 </script>
 
-<Modal showModal={visible} onClose={closeModal}>
+<Modal {visible} onClose={closeModal}>
   <div class="mx-4 p-4">
     <div class="flex justify-between items-center my-2">
-      <h3 class="default-header">Withdraw FPL</h3>
+      <h3 class="brand-header">Withdraw FPL</h3>
       <button class="times-button" on:click={cancelModal}>&times;</button>
     </div>
     <form on:submit|preventDefault={withdrawFPL}>

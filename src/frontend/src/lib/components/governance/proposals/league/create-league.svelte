@@ -3,12 +3,12 @@
   import { countryStore } from "$lib/stores/country-store";
   import Modal from "$lib/components/shared/modal.svelte";
   import { governanceStore } from "$lib/stores/governance-store";
-  import GovernanceModal from "../governance-modal.svelte";
+  import GovernanceModal from "../../voting/governance-modal.svelte";
   import FormComponent from "$lib/components/shared/form-component.svelte";
   import DropdownSelect from "$lib/components/shared/dropdown-select.svelte";
   import { toasts } from "$lib/stores/toasts-store";
-    import type { Country } from "../../../../../../declarations/backend/backend.did";
-    import type { CreateLeague, Gender } from "../../../../../../declarations/data_canister/data_canister.did";
+    import type { Country } from "../../../../../../../declarations/backend/backend.did";
+    import type { CreateLeague, Gender } from "../../../../../../../declarations/data_canister/data_canister.did";
 
   export let visible: boolean;
   export let closeModal: () => void;
@@ -153,7 +153,7 @@
   }
 </script>
 
-<Modal showModal={visible} onClose={closeModal}>
+<Modal {visible} onClose={closeModal}>
   <GovernanceModal title={"Create League"} {cancelModal} {confirmProposal} {isLoading} {isSubmitDisabled}>
     <FormComponent label="League Name:">
       <input

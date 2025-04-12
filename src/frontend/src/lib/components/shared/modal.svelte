@@ -1,80 +1,88 @@
 <script lang="ts">
-  import { onDestroy, onMount } from "svelte";
-  import CrossIcon from "$lib/icons/CrossIcon.svelte";
+  import type { Snippet } from 'svelte';
+  import { quintOut } from 'svelte/easing';
+  import { fade, scale } from 'svelte/transition';
+  import { isBusy } from '$lib/stores/busy-store';
+  import { handleKeyPress } from '$lib/utils/keyboard.utils';
+  import { onMount, onDestroy } from 'svelte';
+  import CrossIcon from '$lib/icons/CrossIcon.svelte';
 
-  export let showModal: boolean;
-  export let onClose: () => void;
-  export let closeOnClickOutside = true;
-
-  let modalElement: HTMLDivElement;
-  let startOnBackdrop = false;
-
-  const handleKeydown = (e: KeyboardEvent) => {
-    if (e.key === 'Escape' && showModal) {
-      onClose();
-    }
-  };
-
-  if (typeof window !== "undefined") {
-    window.addEventListener("keydown", handleKeydown);
+  interface Props {
+    onClose: () => void;
+    title?: string;
+    children: Snippet;
+    visible: boolean;
   }
 
-  onDestroy(() => {
-    if (typeof window !== "undefined") {
-      window.removeEventListener("keydown", handleKeydown);
-    }
-  });
+  let { children, onClose, title, visible }: Props = $props();
 
-  const handlePointerDown = (e: PointerEvent) => {
-    if (e.target === e.currentTarget) {
-      startOnBackdrop = true;
-    } else {
-      startOnBackdrop = false;
-    }
-  };
+  const close = () => {
+    if ($isBusy) return;
+    visible = false;
+    onClose(); 
+  }
 
-  const handlePointerUp = (e: PointerEvent) => {
-    if (closeOnClickOutside && startOnBackdrop && e.target === e.currentTarget) {
-      onClose();
-    }
-    startOnBackdrop = false;
+  const onCloseHandler = ($event: MouseEvent | TouchEvent) => {
+    $event.stopPropagation();
+    close();
   };
 
   onMount(() => {
-    if (modalElement && showModal) {
-      modalElement.focus();
-    }
+    document.body.style.overflow = 'hidden';
+  });
+
+  onDestroy(() => {
+    document.body.style.overflow = '';
   });
 </script>
 
-{#if showModal}
+{#if visible}
+<div
+  class="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-black/50 backdrop-blur-sm perspective"
+  out:fade
+  role="dialog"
+  aria-labelledby="modalTitle"
+  aria-describedby="modalContent"
+>
   <div
-    class="fixed inset-0 z-50 overflow-visible bg-black bg-opacity-50 shadow-lg modal-backdrop"
-    role="dialog"
-    aria-modal="true"
+    class="absolute inset-0 bg-black bg-opacity-50 cursor-pointer"
+    onclick={onCloseHandler}
+    onkeypress={($event) => handleKeyPress({ $event, callback: close })}
+    role="button"
     tabindex="-1"
-    on:pointerdown={handlePointerDown}
-    on:pointerup={handlePointerUp}
+  ></div>
+  <div 
+    transition:scale={{ delay: 25, duration: 150, easing: quintOut }} 
+    class="relative w-[95%] sm:w-[90%] md:w-[85%] lg:w-[80%] max-w-[1400px] mx-auto p-4 sm:p-6"
   >
-    <div
-      bind:this={modalElement}
-      class="w-full max-w-lg mx-4 text-white rounded shadow outline-none bg-BrandLightGray md:max-w-3xl focus:outline-none"
-      tabindex="-1"
+    <div 
+      class="bg-ModalBackground border border-ModalBorder rounded-lg relative h-[80vh] drop-shadow-[0_4px_16px_rgba(0,0,0,0.6)] transform-style-preserve-3d flex flex-col"
     >
-      <header class="flex items-center justify-between p-4">
-        <button
-          type="button"
-          class="text-black"
-          aria-label="Close modal"
-          on:click={onClose}
-        >
-          <CrossIcon className="w-4" fill='white' />
-        </button>
-      </header>
-      <div class="bg-Brand p-6 rounded-b-lg overflow-auto max-h-[80vh]">
-        <div class=""></div>
-        <slot />
+      <div class="flex-none px-6 py-6 border-b sm:px-8 sm:py-6 border-white/10">
+        <div class="flex items-center justify-between">
+          <h3 class="text-2xl text-white cta-text md:text-3xl">{title}</h3>
+          <button 
+            onclick={onClose}
+            class="p-2 transition-colors duration-300 rounded-lg hover:bg-white/10"
+          >
+            <CrossIcon className="w-6 h-6" fill="white" />
+          </button>
+        </div>
+      </div>
+      <div class="flex-1 px-6 py-6 overflow-y-auto sm:px-8 sm:py-6">
+        {@render children()}
       </div>
     </div>
   </div>
+</div>
 {/if}
+
+<style>
+  .perspective {
+    perspective: 2000px;
+  }
+  
+  .transform-style-preserve-3d {
+    transform-style: preserve-3d;
+  }
+</style>

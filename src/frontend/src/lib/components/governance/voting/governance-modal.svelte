@@ -21,7 +21,7 @@
   
     <div class="m-2">
       <div class="flex items-center justify-between my-2">
-        <h3 class="default-header">{title}</h3>
+        <h3 class="brand-header">{title}</h3>
         <button class="times-button" on:click={cancelModal}>&times;</button>
       </div>
   

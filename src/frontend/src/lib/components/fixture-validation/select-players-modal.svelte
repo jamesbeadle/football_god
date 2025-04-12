@@ -31,7 +31,7 @@
   }
 </script>
 
-<Modal showModal={visible} onClose={closeModal}>
+<Modal {visible} onClose={closeModal}>
   <div class="p-4 mx-4">
     <div class="flex items-center justify-between mb-4">
       <div class="flex items-center space-x-3">

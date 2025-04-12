@@ -5,10 +5,10 @@
   export let closeModal: () => void;
 </script>
 
-<Modal showModal={visible} onClose={closeModal}>
+<Modal {visible} onClose={closeModal}>
   <div class="mx-4 p-4">
     <div class="flex justify-between items-center my-2">
-      <h3 class="default-header">Clear Draft</h3>
+      <h3 class="brand-header">Clear Draft</h3>
       <button class="times-button" on:click={closeModal}>&times;</button>
     </div>
 

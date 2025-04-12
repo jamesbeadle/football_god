@@ -2,7 +2,8 @@
 @tailwind components;
 @tailwind utilities;
 
-/* global.css */
+/* ----- Global styles ----- */
+
 :root {
   --dialog-width: 90% !important;
   --dialog-max-width: 600px !important;
@@ -12,8 +13,8 @@
   --dialog-border-radius: 1px !important;
 }
 
-.default-header {
-  @apply text-xl font-semibold text-white;
+.brand-header {
+  @apply text-xl font-semibold;
 }
 
 .default-sub-header {

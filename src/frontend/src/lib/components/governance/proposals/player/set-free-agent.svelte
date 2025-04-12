@@ -1,11 +1,11 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import Modal from "$lib/components/shared/modal.svelte";
-  import GovernanceModal from "../governance-modal.svelte";
+  import GovernanceModal from "../../voting/governance-modal.svelte";
   import FormComponent from "$lib/components/shared/form-component.svelte";
   import { governanceStore } from "$lib/stores/governance-store";
-  import type { Player } from "../../../../../../declarations/backend/backend.did";
-    import type { SetFreeAgent } from "../../../../../../declarations/data_canister/data_canister.did";
+  import type { Player } from "../../../../../../../declarations/backend/backend.did";
+    import type { SetFreeAgent } from "../../../../../../../declarations/data_canister/data_canister.did";
   
   export let visible: boolean;
   export let closeModal: () => void
@@ -50,7 +50,7 @@
   }
 </script>
 
-<Modal showModal={visible} onClose={closeModal}>
+<Modal {visible} onClose={closeModal}>
   <GovernanceModal title={"Set Free Agent"} {cancelModal} {confirmProposal} {isLoading} {isSubmitDisabled}><p>Select the player's league:</p>
     <p>Set {selectedPlayer.firstName} {selectedPlayer.lastName} as a free agent:</p>
     <FormComponent label="New Value (£ millions):">

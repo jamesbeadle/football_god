@@ -3,9 +3,9 @@
   import Modal from "$lib/components/shared/modal.svelte";
   import { governanceStore } from "$lib/stores/governance-store";
   import { isError } from "$lib/utils/helpers";
-    import type { Club, League, LeagueId } from "../../../../../../declarations/backend/backend.did";
-    import type { PromoteClub } from "../../../../../../declarations/data_canister/data_canister.did";
-  import GovernanceModal from "../governance-modal.svelte";
+    import type { Club, League, LeagueId } from "../../../../../../../declarations/backend/backend.did";
+    import type { PromoteClub } from "../../../../../../../declarations/data_canister/data_canister.did";
+    import GovernanceModal from "../../voting/governance-modal.svelte";
 
   export let visible: boolean;
   export let closeModal: () => void;
@@ -65,7 +65,7 @@
   }
 </script>
 
-<Modal showModal={visible} onClose={closeModal}>
+<Modal {visible} onClose={closeModal}>
   <GovernanceModal title={"Promote New Club"} {cancelModal} {confirmProposal} {isLoading} {isSubmitDisabled}>
     <FormComponent label="New league:">
       <select

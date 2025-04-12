@@ -1,11 +1,11 @@
 <script lang="ts">
   import { onMount } from "svelte";
+  import { appStore } from "$lib/stores/app-store";
 
   import Layout from "./+layout.svelte";
   import FullScreenSpinner from "$lib/components/shared/full-screen-spinner.svelte";
   import ProposalsList from "$lib/components/governance/proposals-list.svelte";
-  import { appStore } from "$lib/stores/app-store";
-
+  
   let isLoading = true;
   
   onMount(async () => {

@@ -5,11 +5,11 @@
   import { governanceStore } from "$lib/stores/governance-store";
   import { clubStore } from "$lib/stores/club-store";
   import { leagueStore } from "$lib/stores/league-store";
-  import GovernanceModal from "../governance-modal.svelte";
+  import GovernanceModal from "../../voting/governance-modal.svelte";
   import FormComponent from "$lib/components/shared/form-component.svelte";
   import DropdownSelect from "$lib/components/shared/dropdown-select.svelte";
-    import type { Club, Fixture, GameweekNumber } from "../../../../../../declarations/backend/backend.did";
-    import type { RescheduleFixture } from "../../../../../../declarations/data_canister/data_canister.did";
+    import type { Club, Fixture, GameweekNumber } from "../../../../../../../declarations/backend/backend.did";
+    import type { RescheduleFixture } from "../../../../../../../declarations/data_canister/data_canister.did";
 
   export let visible: boolean;
   export let closeModal: () => void;
@@ -136,7 +136,7 @@
   }
 </script>
 
-<Modal showModal={visible} onClose={closeModal}>
+<Modal {visible} onClose={closeModal}>
   <GovernanceModal title={"Reschedule Fixture"} {cancelModal} {confirmProposal} {isLoading} {isSubmitDisabled}>
     
     <p class="">Reschedule {homeTeam.friendlyName} v {awayTeam.friendlyName}</p>

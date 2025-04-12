@@ -4,10 +4,10 @@
   import { governanceStore } from "$lib/stores/governance-store";
   import { convertDateTimeInputToUnixNano, isError } from "$lib/utils/helpers";
   import Modal from "$lib/components/shared/modal.svelte";
-  import GovernanceModal from "../governance-modal.svelte";
+  import GovernanceModal from "../../voting/governance-modal.svelte";
   import FormComponent from "$lib/components/shared/form-component.svelte";
-    import type { Club } from "../../../../../../declarations/backend/backend.did";
-    import type { MoveFixture } from "../../../../../../declarations/data_canister/data_canister.did";
+    import type { Club } from "../../../../../../../declarations/backend/backend.did";
+    import type { MoveFixture } from "../../../../../../../declarations/data_canister/data_canister.did";
 
   export let visible: boolean;
   export let closeModal: () => void;
@@ -106,7 +106,7 @@
   }
 </script>
 
-<Modal showModal={visible} onClose={closeModal}>
+<Modal {visible} onClose={closeModal}>
   <GovernanceModal title={`Move Fixture: ${homeClub.friendlyName} v ${awayClub.friendlyName}`} {cancelModal} {confirmProposal} {isLoading} {isSubmitDisabled}>
     <FormComponent label="Set new date:">
       <input type="date" bind:value={date} class="brand-input" />
