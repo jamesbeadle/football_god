@@ -65,6 +65,14 @@ export interface DataHash {
 export interface DataHashes {
   dataHashes: Array<DataHash>;
 }
+export interface DataTotals {
+  totalGovernanceRewards: bigint;
+  totalPlayers: bigint;
+  totalClubs: bigint;
+  totalNeurons: bigint;
+  totalProposals: bigint;
+  totalLeagues: bigint;
+}
 export type Error =
   | { InvalidProfilePicture: null }
   | { DecodeError: null }
@@ -122,6 +130,7 @@ export type GetCountries = {};
 export interface GetDataHashes {
   leagueId: LeagueId;
 }
+export type GetDataTotals = {};
 export interface GetFixtures {
   seasonId: SeasonId;
   leagueId: LeagueId;
@@ -252,17 +261,18 @@ export interface PostponedFixtures {
 }
 export type Result = { ok: Seasons } | { err: Error };
 export type Result_1 = { ok: PostponedFixtures } | { err: Error };
-export type Result_10 = { ok: Clubs } | { err: Error };
-export type Result_11 = { ok: ClubValueLeaderboard } | { err: Error };
-export type Result_12 = { ok: AppStatus } | { err: Error };
+export type Result_10 = { ok: Countries } | { err: Error };
+export type Result_11 = { ok: Clubs } | { err: Error };
+export type Result_12 = { ok: ClubValueLeaderboard } | { err: Error };
+export type Result_13 = { ok: AppStatus } | { err: Error };
 export type Result_2 = { ok: Players } | { err: Error };
 export type Result_3 = { ok: PlayerValueLeaderboard } | { err: Error };
 export type Result_4 = { ok: LoanedPlayers } | { err: Error };
 export type Result_5 = { ok: Leagues } | { err: Error };
 export type Result_6 = { ok: LeagueStatus } | { err: Error };
 export type Result_7 = { ok: Fixtures } | { err: Error };
-export type Result_8 = { ok: DataHashes } | { err: Error };
-export type Result_9 = { ok: Countries } | { err: Error };
+export type Result_8 = { ok: DataTotals } | { err: Error };
+export type Result_9 = { ok: DataHashes } | { err: Error };
 export interface Season {
   id: number;
   name: string;
@@ -274,11 +284,12 @@ export interface Seasons {
 }
 export type ShirtType = { Filled: null } | { Striped: null };
 export interface _SERVICE {
-  getAppStatus: ActorMethod<[], Result_12>;
-  getClubValueLeaderboard: ActorMethod<[GetClubValueLeaderboard], Result_11>;
-  getClubs: ActorMethod<[GetClubs], Result_10>;
-  getCountries: ActorMethod<[GetCountries], Result_9>;
-  getDataHashes: ActorMethod<[GetDataHashes], Result_8>;
+  getAppStatus: ActorMethod<[], Result_13>;
+  getClubValueLeaderboard: ActorMethod<[GetClubValueLeaderboard], Result_12>;
+  getClubs: ActorMethod<[GetClubs], Result_11>;
+  getCountries: ActorMethod<[GetCountries], Result_10>;
+  getDataHashes: ActorMethod<[GetDataHashes], Result_9>;
+  getDataTotals: ActorMethod<[GetDataTotals], Result_8>;
   getFixtures: ActorMethod<[GetFixtures], Result_7>;
   getLeagueStatus: ActorMethod<[GetLeagueStatus], Result_6>;
   getLeagues: ActorMethod<[GetLeagues], Result_5>;

@@ -165,4 +165,20 @@ actor Self {
     return await data_canister.getPlayerValueLeaderboard(dto);
   };
 
+  public shared ({ caller }) func getDataTotals(dto: AppQueries.GetDataTotals) : async Result.Result<AppQueries.DataTotals, Enums.Error> {
+    assert not Principal.isAnonymous(caller);
+    // TODO: Check caller has associated neuron
+
+    let data_canister = actor (CanisterIds.ICFC_DATA_CANISTER_ID) : actor {
+      getDataTotals : (dto: AppQueries.GetDataTotals) -> async Result.Result<AppQueries.DataTotals, Enums.Error>;
+    };
+    return await data_canister.getDataTotals(dto);
+  };
+
+  //get data totals
+
+  //get total neurons
+
+  //get total icfc governance rewards
+
 };

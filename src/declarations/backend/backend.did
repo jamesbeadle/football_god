@@ -14,12 +14,12 @@ type Season =
 type Result_9 = 
  variant {
    err: Error;
-   ok: Countries;
+   ok: DataHashes;
  };
 type Result_8 = 
  variant {
    err: Error;
-   ok: DataHashes;
+   ok: DataTotals;
  };
 type Result_7 = 
  variant {
@@ -51,20 +51,25 @@ type Result_2 =
    err: Error;
    ok: Players;
  };
-type Result_12 = 
+type Result_13 = 
  variant {
    err: Error;
    ok: AppStatus;
  };
-type Result_11 = 
+type Result_12 = 
  variant {
    err: Error;
    ok: ClubValueLeaderboard;
  };
-type Result_10 = 
+type Result_11 = 
  variant {
    err: Error;
    ok: Clubs;
+ };
+type Result_10 = 
+ variant {
+   err: Error;
+   ok: Countries;
  };
 type Result_1 = 
  variant {
@@ -200,6 +205,7 @@ type GetFixtures =
    leagueId: LeagueId;
    seasonId: SeasonId;
  };
+type GetDataTotals = record {};
 type GetDataHashes = record {leagueId: LeagueId;};
 type GetCountries = record {};
 type GetClubs = record {leagueId: LeagueId;};
@@ -262,6 +268,15 @@ type Error =
    SystemOnHold;
    TooLong;
    UpdateFailed;
+ };
+type DataTotals = 
+ record {
+   totalClubs: nat;
+   totalGovernanceRewards: nat;
+   totalLeagues: nat;
+   totalNeurons: nat;
+   totalPlayers: nat;
+   totalProposals: nat;
  };
 type DataHashes = record {dataHashes: vec DataHash;};
 type DataHash = 
@@ -327,11 +342,12 @@ type AppStatus =
    version: text;
  };
 service : {
-  getAppStatus: () -> (Result_12) query;
-  getClubValueLeaderboard: (GetClubValueLeaderboard) -> (Result_11);
-  getClubs: (GetClubs) -> (Result_10);
-  getCountries: (GetCountries) -> (Result_9);
-  getDataHashes: (GetDataHashes) -> (Result_8);
+  getAppStatus: () -> (Result_13) query;
+  getClubValueLeaderboard: (GetClubValueLeaderboard) -> (Result_12);
+  getClubs: (GetClubs) -> (Result_11);
+  getCountries: (GetCountries) -> (Result_10);
+  getDataHashes: (GetDataHashes) -> (Result_9);
+  getDataTotals: (GetDataTotals) -> (Result_8);
   getFixtures: (GetFixtures) -> (Result_7);
   getLeagueStatus: (GetLeagueStatus) -> (Result_6);
   getLeagues: (GetLeagues) -> (Result_5);

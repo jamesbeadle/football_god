@@ -44,5 +44,14 @@ module SummaryTypes {
         totalValue: Nat16;
         priorValue: Nat16;
     };
+
+    public type DataTotals = {
+        totalLeagues: Nat;
+        totalClubs: Nat;
+        totalPlayers: Nat;
+        totalNeurons: Nat;
+        totalProposals: Nat;
+        totalGovernanceRewards: Nat;
+    };
     
 }

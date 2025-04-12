@@ -97,6 +97,14 @@ export interface DataHash {
 export interface DataHashes {
   dataHashes: Array<DataHash>;
 }
+export interface DataTotals {
+  totalGovernanceRewards: bigint;
+  totalPlayers: bigint;
+  totalClubs: bigint;
+  totalNeurons: bigint;
+  totalProposals: bigint;
+  totalLeagues: bigint;
+}
 export interface DetailedPlayer {
   id: PlayerId;
   status: PlayerStatus;
@@ -176,6 +184,7 @@ export interface GetClubs {
 export interface GetDataHashes {
   leagueId: LeagueId;
 }
+export type GetDataTotals = {};
 export interface GetFixtures {
   seasonId: SeasonId;
   leagueId: LeagueId;
@@ -467,11 +476,12 @@ export type Result_1 = { ok: RetiredPlayers } | { err: Error };
 export type Result_10 = { ok: LeagueTable } | { err: Error };
 export type Result_11 = { ok: LeagueStatus } | { err: Error };
 export type Result_12 = { ok: Fixtures } | { err: Error };
-export type Result_13 = { ok: DataHashes } | { err: Error };
-export type Result_14 = { ok: Clubs } | { err: Error };
-export type Result_15 = { ok: ClubValueLeaderboard } | { err: Error };
-export type Result_16 = { ok: BettableLeagues } | { err: Error };
-export type Result_17 = { ok: BettableFixtures } | { err: Error };
+export type Result_13 = { ok: DataTotals } | { err: Error };
+export type Result_14 = { ok: DataHashes } | { err: Error };
+export type Result_15 = { ok: Clubs } | { err: Error };
+export type Result_16 = { ok: ClubValueLeaderboard } | { err: Error };
+export type Result_17 = { ok: BettableLeagues } | { err: Error };
+export type Result_18 = { ok: BettableFixtures } | { err: Error };
 export type Result_2 = { ok: PostponedFixtures } | { err: Error };
 export type Result_3 = { ok: PlayersMap } | { err: Error };
 export type Result_4 = { ok: Players } | { err: Error };
@@ -584,14 +594,16 @@ export interface ValueHistory {
 }
 export interface _SERVICE {
   addInitialFixtures: ActorMethod<[AddInitialFixtures], undefined>;
+  calculateDataTotals: ActorMethod<[], undefined>;
   createClub: ActorMethod<[CreateClub], undefined>;
   createLeague: ActorMethod<[CreateLeague], undefined>;
   createPlayer: ActorMethod<[CreatePlayer], undefined>;
-  getBettableFixtures: ActorMethod<[GetBettableFixtures], Result_17>;
-  getBettableLeagues: ActorMethod<[GetBettableLeagues], Result_16>;
-  getClubValueLeaderboard: ActorMethod<[GetClubValueLeaderboard], Result_15>;
-  getClubs: ActorMethod<[GetClubs], Result_14>;
-  getDataHashes: ActorMethod<[GetDataHashes], Result_13>;
+  getBettableFixtures: ActorMethod<[GetBettableFixtures], Result_18>;
+  getBettableLeagues: ActorMethod<[GetBettableLeagues], Result_17>;
+  getClubValueLeaderboard: ActorMethod<[GetClubValueLeaderboard], Result_16>;
+  getClubs: ActorMethod<[GetClubs], Result_15>;
+  getDataHashes: ActorMethod<[GetDataHashes], Result_14>;
+  getDataTotals: ActorMethod<[GetDataTotals], Result_13>;
   getFixtures: ActorMethod<[GetFixtures], Result_12>;
   getLeagueStatus: ActorMethod<[GetLeagueStatus], Result_11>;
   getLeagueTable: ActorMethod<[GetLeagueTable], Result_10>;

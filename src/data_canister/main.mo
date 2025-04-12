@@ -78,6 +78,14 @@ actor Self {
   private stable var leagueClubsRequiringData : [(FootballIds.LeagueId, [FootballIds.ClubId])] = [];
   private stable var clubSummaries: [SummaryTypes.ClubSummary] = [];
   private stable var playerSummaries: [SummaryTypes.PlayerSummary] = [];
+  private stable var dataTotals: SummaryTypes.DataTotals = {
+      totalClubs = 0;
+      totalGovernanceRewards = 0;
+      totalLeagues = 0;
+      totalNeurons = 0;
+      totalPlayers = 0;
+      totalProposals = 0;
+  };
 
   
   /* DO NOT USE BaseTypes dot on lines ahead of this one. */
@@ -858,10 +866,13 @@ actor Self {
 
   public shared ({ caller }) func getPlayerValueLeaderboard(_: PlayerQueries.GetPlayerValueLeaderboard) : async Result.Result<PlayerQueries.PlayerValueLeaderboard, Enums.Error> {
     assert callerAllowed(caller);
-
-    let playerSummaries: [PlayerQueries.PlayerSummary] = [];
     
     return #ok({ players = playerSummaries });
+  };
+
+  public shared ({ caller }) func getDataTotals(_: AppQueries.GetDataTotals) : async Result.Result<AppQueries.DataTotals, Enums.Error> {
+    assert callerAllowed(caller);
+    return #ok(dataTotals);
   };
 
 
@@ -1679,7 +1690,6 @@ actor Self {
               };
             };
             await finaliseFixture(dto.leagueId, dto.seasonId, dto.fixtureId, highestScoringPlayerId);
-            populateClubSummaries();
             await checkSeasonComplete(dto.leagueId, dto.seasonId);
             let _ = await updateDataHash(dto.leagueId, "fixtures");
             let _ = await updateDataHash(dto.leagueId, "players");
@@ -3674,60 +3684,6 @@ actor Self {
     checkRequiredStatus(leagueId);
   };
 
-  private func populateClubSummaries() {
-    /*
-    
-    let clubSummaryBuffer = Buffer.fromArray<SummaryTypes.ClubSummary>([]);
-
-    for(league in Iter.fromArray(leagueClubs)){
-      for(club in Iter.fromArray(league.1)){
-        clubSummaryBuffer.add({
-          clubId = club.id;
-          clubName = club.name;
-          leagueId = league.0;
-          position = 0;
-          positionText = "-";
-          primaryColour = club.primaryColourHex;
-          secondaryColour = club.secondaryColourHex;
-          shirtType = club.shirtType;
-          thirdColour = club.thirdColourHex;
-          totalValue = getClubTotalValue(league.0, club.id);
-          gender = club.gender;
-        })
-      }
-    };
-
-    let sortedClubSummaries = Array.sort(
-      Buffer.toArray(clubSummaryBuffer),
-      func(entry1 : SummaryTypes.ClubSummary, entry2 : SummaryTypes.ClubSummary) : Order.Order {
-        if (entry1.totalValue < entry2.totalValue) { return #greater };
-        if (entry1.totalValue == entry2.totalValue) { return #equal };
-        return #less;
-      },
-    );
-
-    var position: Nat = 1;
-    let positionedBuffer = Buffer.fromArray<SummaryTypes.ClubSummary>([]);
-
-    for(sortedEntry in Iter.fromArray(sortedClubSummaries)){
-      positionedBuffer.add({
-        clubId = sortedEntry.clubId;
-        clubName = sortedEntry.clubName;
-        leagueId = sortedEntry.leagueId;
-        position = position;
-        positionText = Nat.toText(position);
-        primaryColour = sortedEntry.primaryColour;
-        secondaryColour = sortedEntry.secondaryColour;
-        shirtType = sortedEntry.shirtType;
-        thirdColour = sortedEntry.thirdColour;
-        totalValue = sortedEntry.totalValue;
-      });
-      position += 1;
-    };
-
-    clubSummaries := sortedClubSummaries;
-    */
-  };
 
   private func checkSeasonComplete(leagueId : FootballIds.LeagueId, seasonId : FootballIds.SeasonId) : async () {
     let currentLeagueSeasons = Array.find<(FootballIds.LeagueId, [FootballTypes.Season])>(
@@ -4103,6 +4059,7 @@ actor Self {
     await createInjuryExpiredTimers();
     await calculateClubSummaries();
     await calculatePlayerSummaries();
+    await calculateDataTotals();
   };
 
   /* ----- Timer Create Functions ----- */
@@ -5190,6 +5147,36 @@ actor Self {
     };
     
     playerSummaries := Buffer.toArray(updatedPlayerSummaryBuffer);
+  };
+
+  public func calculateDataTotals() : async () {
+    var totalLeagues = Array.size(leagues);
+    var totalClubs = 0;
+    var totalPlayers = 0;
+    var totalGovernanceRewards = 0; // TODO
+    var totalProposals = 0; // TODO
+    var totalNeurons = 0; // TODO
+
+    for(league in Iter.fromArray(leagueClubs)){
+      for(club in Iter.fromArray(league.1)){
+        totalClubs += 1;
+      }
+    };
+
+    for(league in Iter.fromArray(leaguePlayers)){
+      for(player in Iter.fromArray(league.1)){
+        totalPlayers += 1;
+      }
+    };
+
+    dataTotals := {
+      totalClubs;
+      totalGovernanceRewards;
+      totalLeagues;
+      totalNeurons;
+      totalPlayers;
+      totalProposals;
+    };
   };
 
   

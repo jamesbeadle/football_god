@@ -37,9 +37,14 @@ function createAppStore() {
     window.location.replace(`${window.location.pathname}?v=${status.version}`);
   }
 
+  async function getDataTotals() {
+    return new AppService().getDataTotals();
+  }
+
   return {
     checkServerVersion,
     updateFrontend,
+    getDataTotals,
   };
 }
 

@@ -10,7 +10,7 @@
   import IcfcCoinIcon from "$lib/icons/ICFCCoinIcon.svelte";
   import { playerStore } from "$lib/stores/player-store";
   import { clubStore } from "$lib/stores/club-store";
-  import type { ClubValueLeaderboard, PlayerValueLeaderboard } from "../../../declarations/backend/backend.did";
+  import type { ClubValueLeaderboard, DataTotals, PlayerValueLeaderboard } from "../../../declarations/backend/backend.did";
 
   interface Stat {
     label: string;
@@ -36,12 +36,14 @@
 
   let clubValueLeaderboard: ClubValueLeaderboard | undefined = $state(undefined);
   let playerValueLeaderboard: PlayerValueLeaderboard | undefined = $state(undefined);
+  let dataTotals: DataTotals | undefined = $state(undefined);
 
   onMount(async () => {
     try {
       await appStore.checkServerVersion();
       await loadPlayerValueLeaderboard();
       await loadClubValueLeaderboard();
+      await loadDataTotals();
       await fetchProposals();
       updateHeatmaps();
     } catch (error) {
@@ -64,6 +66,14 @@
       clubValueLeaderboard = await clubStore.getClubValueLeaderboard();
     } catch (error) {
       console.error("Error loading club leaderboard:", error);
+    }
+  }
+
+  async function loadDataTotals() {
+    try {
+      dataTotals = await appStore.getDataTotals();
+    } catch (error) {
+      console.error("Error loading data totals:", error);
     }
   }
 
@@ -190,9 +200,9 @@
   }
 
   const stats: Stat[] = $derived([
-    { label: "Total Leagues", value: "27" },
-    { label: "Total Clubs", value: "442" },
-    { label: "Total Players", value: "13,330" },
+    { label: "Total Leagues", value: Number(dataTotals == undefined ? (0).toLocaleString() : (dataTotals as DataTotals).totalLeagues).toLocaleString() },
+    { label: "Total Clubs", value:  Number(dataTotals == undefined ? (0).toLocaleString() : (dataTotals as DataTotals).totalClubs).toLocaleString() },
+    { label: "Total Players", value:  Number(dataTotals == undefined ? (0).toLocaleString() : (dataTotals as DataTotals).totalPlayers).toLocaleString() },
     { label: "Total Neurons", value: "1,234" },
     { label: "Total Proposals", value: totalProposalsCount },
     { label: "Total ICFC Rewards", value: "600,678" },
