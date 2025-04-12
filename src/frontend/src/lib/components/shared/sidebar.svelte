@@ -3,11 +3,12 @@
   import { goto } from "$app/navigation";
     import HomeIcon from "$lib/icons/side-nav/home-icon.svelte";
     import GovernanceIcon from "$lib/icons/side-nav/governance-icon.svelte";
-    import PlayersIcon from "$lib/icons/side-nav/players-icon.svelte";
-    import LeaguesIcon from "$lib/icons/side-nav/leagues-icon.svelte";
+    import DataIcon from "$lib/icons/side-nav/data-icon.svelte";
     import { page } from "$app/stores";
     import LogoutIcon from "$lib/icons/LogoutIcon.svelte";
     import LogoIcon from "$lib/icons/LogoIcon.svelte";
+    import ProfileIcon from "$lib/icons/ProfileIcon.svelte";
+    import FanIcon from "$lib/icons/side-nav/fan-icon.svelte";
 
   interface Props {
     isMenuOpen: boolean;
@@ -25,10 +26,11 @@
 
   const menuItems = [
     { icon: HomeIcon, label: "Home", path: "/" },
+    { icon: FanIcon, label: "Fan Zone", path: "/fan-zone" },
+    { icon: DataIcon, label: "Data", path: "/data" },
     { icon: GovernanceIcon, label: "Governance", path: "/governance" },
-    { icon: PlayersIcon, label: "Players", path: "/players" },
-    { icon: LeaguesIcon, label: "Leagues", path: "/leagues" },
-    { icon: LogoutIcon, label: "Sign Out", path: "/" },
+    { icon: ProfileIcon, label: "Profile", path: "/profile" },
+    { icon: LogoutIcon, label: "Sign Out", path: "/" }
   ];
 
   async function selectMenuItem(item: any) {

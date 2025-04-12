@@ -20,7 +20,7 @@
 
   let currentPage: number = 1;
   let totalProposals: number = 100;
-  let itemsPerPage: number = 25;
+  let itemsPerPage: number = 10;
   let totalPages: number = 1;
 
   let showProposal = false;

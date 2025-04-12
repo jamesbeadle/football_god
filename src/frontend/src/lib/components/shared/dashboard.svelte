@@ -1,33 +1,20 @@
 <script lang="ts">
     import { type Snippet } from "svelte";
-
-    import GovernanceIcon from "$lib/icons/side-nav/governance-icon.svelte";
-    import HomeIcon from "$lib/icons/side-nav/home-icon.svelte";
-    import PlayersIcon from "$lib/icons/side-nav/players-icon.svelte";
-    import LeaguesIcon from "$lib/icons/side-nav/leagues-icon.svelte";
     import { authSignedInStore } from "$lib/derived/auth.derived";
-    import FullScreenSpinner from "./full-screen-spinner.svelte";
     import { busy } from "$lib/stores/busy-store";
     import LoggedInHeader from "./logged-in-header.svelte";
     import Sidebar from "./sidebar.svelte";
     import LandingPage from "../landing/landing-page.svelte";
-
+    import FullScreenSpinner from "./full-screen-spinner.svelte";
+    
     interface Props { children: Snippet }
+    
     let { children }: Props = $props();
-
     let isMenuOpen = $state(false);
-
 
     function toggleMenu() {
         isMenuOpen = !isMenuOpen;
     }
-
-    const menuItems = [
-        { icon: HomeIcon, title: "Home", route: "/" },
-        { icon: GovernanceIcon, title: "Governance", route: "/governance" },
-        { icon: PlayersIcon, title: "Players", route: "/players" },
-        { icon: LeaguesIcon, title: "Leagues", route: "/leagues" },
-    ];
 </script>
 
 {#if $busy}
