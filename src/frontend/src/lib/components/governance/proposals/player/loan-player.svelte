@@ -112,8 +112,8 @@
   }
 </script>
 
-<Modal {visible} onClose={closeModal}>
-  <GovernanceModal title={"Loan Player " + selectedPlayer.firstName + " " + selectedPlayer.lastName} {cancelModal} {confirmProposal} {isLoading} {isSubmitDisabled}>
+<Modal title={"Loan Player " + selectedPlayer.firstName + " " + selectedPlayer.lastName} {visible} onClose={closeModal}>
+  <GovernanceModal {cancelModal} {confirmProposal} {isLoading} {isSubmitDisabled}>
     <FormComponent label="Select loan league:">
     <div class="z-20">
         <DropdownSelect

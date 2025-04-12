@@ -114,8 +114,8 @@
   }
 </script>
 
-<Modal {visible} onClose={closeModal}>
-  <GovernanceModal title={"Create Club"} {cancelModal} {confirmProposal} {isLoading} {isSubmitDisabled}>
+<Modal title={"Create Club"} {visible} onClose={closeModal}>
+  <GovernanceModal {cancelModal} {confirmProposal} {isLoading} {isSubmitDisabled}>
     <FormComponent label="Club Full Name:">
       <input class="brand-input" type="text" bind:value={name} placeholder="Club Full Name" />
     </FormComponent>

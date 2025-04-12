@@ -65,8 +65,8 @@
   }
 </script>
 
-<Modal {visible} onClose={closeModal}>
-  <GovernanceModal title={"Promote New Club"} {cancelModal} {confirmProposal} {isLoading} {isSubmitDisabled}>
+<Modal title={"Promote New Club"} {visible} onClose={closeModal}>
+  <GovernanceModal {cancelModal} {confirmProposal} {isLoading} {isSubmitDisabled}>
     <FormComponent label="New league:">
       <select
         class="brand-dropdown"

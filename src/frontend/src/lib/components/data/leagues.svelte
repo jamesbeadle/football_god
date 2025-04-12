@@ -76,8 +76,7 @@
     <LocalSpinner />
 {:else}
     <div class="page-title-header">
-    <p class="text-lg xxs:text-xl">League Explorer</p>
-    <button class="brand-button" on:click={createNewLeague}>+ New League</button>
+      <button class="brand-button" on:click={createNewLeague}>+ New League</button>
     </div>
     
     <div class="px-2 pb-4 space-y-4 mb:px-0">

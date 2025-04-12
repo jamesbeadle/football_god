@@ -73,8 +73,8 @@
   }
 </script>
 
-<Modal {visible} onClose={closeModal}>
-  <GovernanceModal title={"Retire Player"} {cancelModal} {confirmProposal} {isLoading} {isSubmitDisabled}>
+<Modal title={"Retire Player"} {visible} onClose={closeModal}>
+  <GovernanceModal {cancelModal} {confirmProposal} {isLoading} {isSubmitDisabled}>
    <FormComponent label="Retirement Date:">
     <input
       type="date"

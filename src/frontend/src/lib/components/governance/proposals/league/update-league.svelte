@@ -156,8 +156,8 @@
   }
 </script>
 
-<Modal {visible} onClose={closeModal}>
-  <GovernanceModal title={"Update League"} {cancelModal} {confirmProposal} {isLoading} {isSubmitDisabled}>
+<Modal title={"Update League"} {visible} onClose={closeModal}>
+  <GovernanceModal {cancelModal} {confirmProposal} {isLoading} {isSubmitDisabled}>
     
     <FormComponent label="League Name:">
       <input

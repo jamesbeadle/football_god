@@ -50,8 +50,8 @@
   }
 </script>
 
-<Modal {visible} onClose={closeModal}>
-  <GovernanceModal title={"Set Free Agent"} {cancelModal} {confirmProposal} {isLoading} {isSubmitDisabled}><p>Select the player's league:</p>
+<Modal title={"Set Free Agent"} {visible} onClose={closeModal}>
+  <GovernanceModal {cancelModal} {confirmProposal} {isLoading} {isSubmitDisabled}><p>Select the player's league:</p>
     <p>Set {selectedPlayer.firstName} {selectedPlayer.lastName} as a free agent:</p>
     <FormComponent label="New Value (£ millions):">
       <div class="flex flex-row w-full items-center">

@@ -42,17 +42,21 @@
         </li>
       </ul>
 
-      {#if activeTab == 'players'}
-        <Players />
-      {/if}
+      <div class="flex w-full flex-col p-4">
 
-      {#if activeTab == 'clubs'}
-        <Clubs />
-      {/if}
+        {#if activeTab == 'players'}
+          <Players />
+        {/if}
+  
+        {#if activeTab == 'clubs'}
+          <Clubs />
+        {/if}
+  
+        {#if activeTab == 'leagues'}
+          <Leagues />
+        {/if}
 
-      {#if activeTab == 'leagues'}
-        <Leagues />
-      {/if}
+      </div>
 
     </div>
   </div>

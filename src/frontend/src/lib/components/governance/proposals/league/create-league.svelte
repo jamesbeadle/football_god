@@ -153,8 +153,8 @@
   }
 </script>
 
-<Modal {visible} onClose={closeModal}>
-  <GovernanceModal title={"Create League"} {cancelModal} {confirmProposal} {isLoading} {isSubmitDisabled}>
+<Modal title={"Create League"} {visible} onClose={closeModal}>
+  <GovernanceModal {cancelModal} {confirmProposal} {isLoading} {isSubmitDisabled}>
     <FormComponent label="League Name:">
       <input
         type="text"

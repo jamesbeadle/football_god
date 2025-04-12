@@ -63,14 +63,6 @@
         {@render children()}
     </div>
     <Sidebar {isMenuOpen} {toggleMenu} />
-    {#if isMenuOpen}
-        <button 
-        class="fixed inset-0 z-30 pointer-events-none bg-black/40 sm:bg-black/20 sm:pointer-events-auto"
-        onclick={toggleMenu}
-        onkeydown={(e) => e.key === 'Enter' && toggleMenu()}
-        aria-label="Close menu overlay"
-        ></button>
-    {/if}
     <Toasts />
   {:else}
     <LandingPage />

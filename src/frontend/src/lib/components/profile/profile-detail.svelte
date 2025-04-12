@@ -3,21 +3,21 @@
   import { userStore } from "$lib/stores/user-store";
   import CopyIcon from "$lib/icons/CopyIcon.svelte";
   import { writable } from "svelte/store";
-  import WithdrawFplModal from "./withdraw-fpl-modal.svelte";
   import { authStore } from "$lib/stores/auth-store";
   import FullScreenSpinner from "../shared/full-screen-spinner.svelte";
   import { toasts } from "$lib/stores/toasts-store";
+    import WithdrawIcfcModal from "./withdraw-icfc-modal.svelte";
    
   let isLoading = true;
   let loadingBalances = true;
 
-  let fplBalance = 0n;
-  let fplBalanceFormatted = "0.0000"; 
+  let icfcBalance = 0n;
+  let icfcBalanceFormatted = "0.0000"; 
   let dots = writable('.');
   let dot_interval: ReturnType<typeof setInterval>;
   let principalId = "";
 
-  let showFPLModal = false;
+  let showICFCModal = false;
 
   onMount(async () => {
     try {
@@ -40,12 +40,12 @@
     }, 500);
   }
   
-  function loadWithdrawFPLModal(){
-    showFPLModal = true;
+  function loadWithdrawICFCModal(){
+    showICFCModal = true;
   };
 
-  async function closeWithdrawFPLModal(){
-    showFPLModal = false;
+  async function closeWithdrawICFCModal(){
+    showICFCModal = false;
     startDotAnimation();
     await fetchBalances();
   };
@@ -54,8 +54,8 @@
 
   async function fetchBalances() {
     try {
-      let fplBalance = await userStore.getFPLBalance();
-      fplBalanceFormatted = (Number(fplBalance) / 100_000_000).toFixed(4);
+      let icfcBalance = await userStore.getICFCBalance();
+      icfcBalanceFormatted = (Number(icfcBalance) / 100_000_000).toFixed(4);
     } catch (error) {
       console.error("Error fetching profile detail:", error);
     } finally {
@@ -82,12 +82,12 @@
 {#if isLoading}
   <FullScreenSpinner />
 {:else}
-  <WithdrawFplModal
-    visible={showFPLModal}
-    closeModal={closeWithdrawFPLModal}
-    cancelModal={closeWithdrawFPLModal}
-    fplBalance={fplBalance}
-    fplBalanceFormatted={fplBalanceFormatted}
+  <WithdrawIcfcModal
+    visible={showICFCModal}
+    closeModal={closeWithdrawICFCModal}
+    cancelModal={closeWithdrawICFCModal}
+    icfcBalance={icfcBalance}
+    icfcBalanceFormatted={icfcBalanceFormatted}
   />
   <div class="container mt-4 mx-6">
     <div class="flex flex-wrap">
@@ -114,8 +114,8 @@
               class="flex items-center p-4 rounded-lg shadow-md border border-gray-700"
             >
               <img
-                src="/FPLCoin.png"
-                alt="FPL"
+                src="/ICFCCoin.png"
+                alt="ICFC"
                 class="h-12 w-12 md:h-9 md:w-9"
               />
               <div class="ml-4 md:ml-3">
@@ -124,7 +124,7 @@
                     <div class="dot-animation min-w-[20px]">{$dots}</div>
                   {:else}
                   <p>
-                    {fplBalanceFormatted} FPL
+                    {icfcBalanceFormatted} ICFC
                   </p>
                   {/if}
 
@@ -143,7 +143,7 @@
                 <div class="flex items-center text-xs mt-2">
                   <button
                   class="text-sm md:text-sm p-1 md:p-2 px-2 md:px-4 rounded fg-button button-hover"
-                    on:click={loadWithdrawFPLModal}
+                    on:click={loadWithdrawICFCModal}
                   >
                     Withdraw
                   </button>

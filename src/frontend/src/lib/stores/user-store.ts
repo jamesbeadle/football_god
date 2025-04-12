@@ -6,7 +6,7 @@ import { createAgent } from "@dfinity/utils";
 import type { OptionIdentity } from "../types/identity";
 
 function createUserStore() {
-  async function withdrawFPL(
+  async function withdrawICFC(
     withdrawalAddress: string,
     withdrawalAmount: bigint,
   ): Promise<any> {
@@ -55,12 +55,12 @@ function createUserStore() {
         }
       }
     } catch (error) {
-      console.error("Error withdrawing FPL.", error);
+      console.error("Error withdrawing ICFC.", error);
       throw error;
     }
   }
 
-  async function getFPLBalance(): Promise<bigint> {
+  async function getICFCBalance(): Promise<bigint> {
     let identity: OptionIdentity;
 
     authStore.subscribe(async (auth) => {
@@ -102,8 +102,8 @@ function createUserStore() {
     return 0n;
   }
   return {
-    withdrawFPL,
-    getFPLBalance,
+    withdrawICFC,
+    getICFCBalance,
   };
 }
 

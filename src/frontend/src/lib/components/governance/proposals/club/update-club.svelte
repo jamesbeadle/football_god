@@ -123,8 +123,8 @@
 
 </script>
 
-<Modal {visible} onClose={closeModal}>
-  <GovernanceModal title={"Update Club"} {cancelModal} {confirmProposal} {isLoading} {isSubmitDisabled}>
+<Modal title={"Update Club"} {visible} onClose={closeModal}>
+  <GovernanceModal {cancelModal} {confirmProposal} {isLoading} {isSubmitDisabled}>
     <FormComponent label="Club Full Name:">
       <input
         type="text"

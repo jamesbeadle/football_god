@@ -7,8 +7,8 @@
   export let cancelModal: () => void;
   export let withdrawalAddress: string = "";
   export let withdrawalInputAmount: string = "";
-  export let fplBalance: bigint;
-  export let fplBalanceFormatted: string;
+  export let icfcBalance: bigint;
+  export let icfcBalanceFormatted: string;
 
   let errorMessage: string = "";
 
@@ -43,37 +43,37 @@
   }
 
   function setMaxWithdrawAmount() {
-    const maxAmount = Number(fplBalance) / 100_000_000;
+    const maxAmount = Number(icfcBalance) / 100_000_000;
     withdrawalInputAmount = maxAmount.toFixed(4);
   }
 
-  $: isSubmitDisabled = !isPrincipalValid(withdrawalAddress) || !isWithdrawAmountValid(withdrawalInputAmount, fplBalance);
+  $: isSubmitDisabled = !isPrincipalValid(withdrawalAddress) || !isWithdrawAmountValid(withdrawalInputAmount, icfcBalance);
 
-  $: errorMessage = (!isAmountValid(withdrawalInputAmount) || !isWithdrawAmountValid(withdrawalInputAmount, fplBalance)) && withdrawalInputAmount
+  $: errorMessage = (!isAmountValid(withdrawalInputAmount) || !isWithdrawAmountValid(withdrawalInputAmount, icfcBalance)) && withdrawalInputAmount
     ? "Withdrawal amount greater than account balance."
     : "";
 
-  async function withdrawFPL() {
+  async function withdrawICFC() {
     try {
       const amountInE8s = convertToE8s(withdrawalInputAmount);
-      await userStore.withdrawFPL(withdrawalAddress, amountInE8s);
+      await userStore.withdrawICFC(withdrawalAddress, amountInE8s);
       await closeModal();
     } catch (error) {
-      console.error("Error withdrawing FPL:", error);
+      console.error("Error withdrawing ICFC:", error);
       cancelModal();
     } finally {
     }
   }
 </script>
 
-<Modal {visible} onClose={closeModal}>
+<Modal title="Withdraw ICFC" {visible} onClose={closeModal}>
   <div class="mx-4 p-4">
     <div class="flex justify-between items-center my-2">
-      <h3 class="brand-header">Withdraw FPL</h3>
+      <h3 class="brand-header">Withdraw ICFC</h3>
       <button class="times-button" on:click={cancelModal}>&times;</button>
     </div>
-    <form on:submit|preventDefault={withdrawFPL}>
-      <p>FPL Balance: {fplBalanceFormatted}</p>
+    <form on:submit|preventDefault={withdrawICFC}>
+      <p>ICFC Balance: {icfcBalanceFormatted}</p>
       <div class="mt-4">
         <input
           type="text"

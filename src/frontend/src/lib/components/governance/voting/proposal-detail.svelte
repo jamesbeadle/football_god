@@ -126,7 +126,7 @@
   }
 </script>
 
-<Modal {visible} onClose={closeModal}>
+<Modal title={`Proposal ${proposal.id[0]?.id} Detail`} {visible} onClose={closeModal}>
   {#if isLoading}
     <LocalSpinner />
     <p class="pb-4 mb-4 text-center">Submitting vote...</p>

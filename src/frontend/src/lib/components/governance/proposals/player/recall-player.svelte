@@ -57,8 +57,8 @@
   }
 </script>
 
-<Modal {visible} onClose={closeModal}>
-  <GovernanceModal title={"Recall Player"} {cancelModal} {confirmProposal} {isLoading} {isSubmitDisabled}>
+<Modal title={"Recall Player"} {visible} onClose={closeModal}>
+  <GovernanceModal  {cancelModal} {confirmProposal} {isLoading} {isSubmitDisabled}>
     <p>Recall loan for {selectedPlayer.firstName} {selectedPlayer.lastName}</p>
     <FormComponent label="New Value (£ millions):">
       <input class="modal-input-box" type="number" step="0.25" min="0.25" max="250" bind:value={newValueMillions} />

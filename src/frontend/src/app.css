@@ -147,7 +147,7 @@
 }
 
 .page-title-header {
-  @apply flex items-center justify-between w-full p-4 my-3 md:p-0 md:px-2 md:my-0 md:mb-4;
+  @apply flex items-center justify-between w-full my-4;
 }
 .fixture-event-panel {
   @apply flex flex-col items-center p-6 space-y-4 rounded-t-lg bg-BrandLightGray;
@@ -206,4 +206,16 @@
   min-height: 50px;
   background-color: white;
   @apply self-stretch flex-shrink-0 w-px mx-2;
+}
+
+.perspective {
+  perspective: 2000px;
+}
+
+.transform-style-preserve-3d {
+  transform-style: preserve-3d;
+}
+
+.modal-background {
+  @apply fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-black/50 backdrop-blur-sm perspective;
 }

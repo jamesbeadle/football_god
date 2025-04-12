@@ -296,38 +296,36 @@
   </script>
   
 {#if isLoading}
-    <LocalSpinner />
+  <LocalSpinner />
 {:else}
 
-    <div class="page-title-header">
-    <p class="text-lg xxs:text-xl">Player Explorer</p>
+  <div class="page-title-header">
     <button class="brand-button" on:click={createNewPlayer}>+ New Player</button>
-    </div>
-
+  </div>
 
     {#if loadingPlayers || loadingClubs}
-    <LocalSpinner />
+      <LocalSpinner />
     {:else}
     <div class="mb-4">
         <PlayersHeaderDisplay
-        leagues={leagueOptions}
-        clubs={clubOptions}
-        positions={positionOptions}
-        nationalities={nationalityOptions}
-        bind:selectedLeagueId
-        bind:selectedClubId
-        bind:selectedPositionId
-        bind:selectedNationalityId
-        bind:minValue
-        bind:maxValue
-        bind:searchSurname
-        onLeagueChange={handleLeagueChange}
-        onClubChange={handleClubChange}
-        onPositionChange={handlePositionChange}
-        onNationalityChange={handleNationalityChange}
-        onValueChange={filterPlayers}
-        onSearch={filterPlayers}
-        onKeyPress={handleKeyPress}
+          leagues={leagueOptions}
+          clubs={clubOptions}
+          positions={positionOptions}
+          nationalities={nationalityOptions}
+          bind:selectedLeagueId
+          bind:selectedClubId
+          bind:selectedPositionId
+          bind:selectedNationalityId
+          bind:minValue
+          bind:maxValue
+          bind:searchSurname
+          onLeagueChange={handleLeagueChange}
+          onClubChange={handleClubChange}
+          onPositionChange={handlePositionChange}
+          onNationalityChange={handleNationalityChange}
+          onValueChange={filterPlayers}
+          onSearch={filterPlayers}
+          onKeyPress={handleKeyPress}
         />     
     </div>
 

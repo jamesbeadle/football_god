@@ -112,8 +112,8 @@
     resetForm();
   }
 </script>
-<Modal {visible} onClose={closeModal}>
-  <GovernanceModal title={"Transfer " + selectedPlayer.firstName + " " + selectedPlayer.lastName} {cancelModal} {confirmProposal} {isLoading} {isSubmitDisabled}>
+<Modal title={"Transfer " + selectedPlayer.firstName + " " + selectedPlayer.lastName} {visible} onClose={closeModal}>
+  <GovernanceModal {cancelModal} {confirmProposal} {isLoading} {isSubmitDisabled}>
     <FormComponent label="Transfer to league:">
       <DropdownSelect
         options={transferLeagues.map((league: League) => ({ id: league.id, label: league.name }))}

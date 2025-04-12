@@ -310,7 +310,7 @@
 
 </script>
 
-<Modal {visible} onClose={exitModal}>
+<Modal title="Player Events" {visible} onClose={exitModal}>
   <div class="p-4 mx-4">
     <div class="flex items-center justify-between my-2">
       <h3 class="brand-header">Add Events</h3>
