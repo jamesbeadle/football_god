@@ -5,7 +5,6 @@
     import { countryStore } from "$lib/stores/country-store"; 
     import { leagueStore } from "$lib/stores/league-store";
     
-    import Layout from "../+layout.svelte";
     import LeagueClubs from "$lib/components/league/league-clubs.svelte";
     import LeagueFixtures from "$lib/components/league/league-fixtures.svelte";
     import FullScreenSpinner from "$lib/components/shared/full-screen-spinner.svelte";
@@ -68,7 +67,6 @@
     }
 </script>
 
-<Layout>
   {#if isLoading}
     <FullScreenSpinner />
   {:else}
@@ -94,7 +92,4 @@
     {:else}
       <p>Leagues not found.</p>
     {/if}
-  {/if}
-
-</Layout>
-  
+  {/if}  
