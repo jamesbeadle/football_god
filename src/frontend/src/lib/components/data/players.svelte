@@ -6,16 +6,16 @@
     import { clubStore } from "$lib/stores/club-store";
     import { playerStore } from "$lib/stores/player-store";
     
-    import CreatePlayer from "$lib/components/governance/player/create-player.svelte";
-    import UpdatePlayer from "$lib/components/governance/player/update-player.svelte";
-    import TransferPlayer from "$lib/components/governance/player/transfer-player.svelte";
-    import LoanPlayer from "$lib/components/governance/player/loan-player.svelte";
-    import SetFreeAgent from "$lib/components/governance/player/set-free-agent.svelte";
+    import CreatePlayer from "$lib/components/governance/proposals/player/create-player.svelte";
+    import UpdatePlayer from "$lib/components/governance/proposals/player/update-player.svelte";
+    import TransferPlayer from "$lib/components/governance/proposals/player/transfer-player.svelte";
+    import LoanPlayer from "$lib/components/governance/proposals/player/loan-player.svelte";
+    import SetFreeAgent from "$lib/components/governance/proposals/player/set-free-agent.svelte";
     import LocalSpinner from "$lib/components/shared/local-spinner.svelte";
-    import RecallPlayer from "$lib/components/governance/player/recall-player.svelte";
-    import RevaluePlayerDown from "$lib/components/governance/player/revalue-player-down.svelte";
-    import RevaluePlayerUp from "$lib/components/governance/player/revalue-player-up.svelte";
-    import PlayersHeaderDisplay from "$lib/components/governance/player/players-header-display.svelte";
+    import RecallPlayer from "$lib/components/governance/proposals/player/recall-player.svelte";
+    import RevaluePlayerDown from "$lib/components/governance/proposals/player/revalue-player-down.svelte";
+    import RevaluePlayerUp from "$lib/components/governance/proposals/player/revalue-player-up.svelte";
+    import PlayersHeaderDisplay from "$lib/components/governance/proposals/player/players-header-display.svelte";
     import PlayerDisplay from "$lib/components/player/player-display.svelte";
     import type { Club, Country, League, Player } from "../../../../../declarations/backend/backend.did";
       

@@ -5,7 +5,7 @@
   import { fixtureStore } from "$lib/stores/fixture-store";
   import { leagueStore } from "$lib/stores/league-store";
   
-  import RescheduleFixture from "../governance/fixture/reschedule-fixture.svelte";
+  import RescheduleFixture from "../governance/proposals/fixture/reschedule-fixture.svelte";
   import FixtureDisplay from "./fixture-display.svelte";
   import LocalSpinner from "../shared/local-spinner.svelte";
     import type { Club, Fixture, League } from "../../../../../declarations/backend/backend.did";

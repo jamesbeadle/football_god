@@ -6,7 +6,7 @@
   import { playerStore } from "$lib/stores/player-store";
 
   import LocalSpinner from "../shared/local-spinner.svelte";
-  import RecallPlayer from "../governance/player/recall-player.svelte";
+  import RecallPlayer from "../governance/proposals/player/recall-player.svelte";
   import LoanedPlayerDisplay from "./loaned-player-display.svelte";
     import type { Club, League, Player } from "../../../../../declarations/backend/backend.did";
   

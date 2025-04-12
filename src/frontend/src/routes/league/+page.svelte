@@ -13,8 +13,9 @@
     import PostponedLeagueFixtures from "$lib/components/league/postponed-league-fixtures.svelte";
     import TabContainer from "$lib/components/shared/tab-container.svelte";
     import LeagueGridDisplay from "$lib/components/league/league-grid-display.svelte";
-    import type { CountryId, League, LeagueStatus } from "../../../../declarations/backend/backend.did";
+    import type { Country, CountryId, League, LeagueStatus } from "../../../../declarations/backend/backend.did";
 
+    
     const tabs = [
         { id: 'clubs', label: 'Clubs' },
         { id: 'fixtures', label: 'Fixtures' },
@@ -23,7 +24,8 @@
     ]
     
     let isLoading = true;
-    let countries: CountryId[] = [];
+    let countryIds: CountryId[] = [];
+    let countries: Country[] = [];
     let league: League | null = null;
     let leagueStatus: LeagueStatus | null = null;
     
@@ -44,7 +46,8 @@
     async function loadData(){
       let countriesResult = await countryStore.getCountries();
       if(!countriesResult) throw new Error("Failed to fetch countries");
-      countries = countriesResult.countries.map(x => x.id);
+      countries = countriesResult.countries;
+      countryIds = countriesResult.countries.map(x => x.id);
       let leaguesResult = await leagueStore.getLeagues();
       if(!leaguesResult) throw new Error("Error fetching leagues.");
       let leagues = leaguesResult.leagues;     

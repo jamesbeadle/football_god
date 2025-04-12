@@ -20,7 +20,7 @@ function createAppStore() {
 
     if (status.version !== localStorage.getItem("version")) {
       toasts.addToast({
-        message: `ICFC V${status.version} is now available. Click here to reload:`,
+        message: `Football God V${status.version} is now available. Click here to reload:`,
         type: "frontend-update",
       });
     }

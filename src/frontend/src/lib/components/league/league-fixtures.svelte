@@ -6,9 +6,9 @@
   import { fixtureStore } from "$lib/stores/fixture-store";
   import { leagueStore } from "$lib/stores/league-store";
   
-  import MoveFixture from "../governance/fixture/move-fixture.svelte";
+  import MoveFixture from "../governance/proposals/fixture/move-fixture.svelte";
   import LocalSpinner from "../shared/local-spinner.svelte";
-  import PostponeFixture from "../governance/fixture/postpone-fixture.svelte";
+  import PostponeFixture from "../governance/proposals/fixture/postpone-fixture.svelte";
   import DropdownSelect from "$lib/components/shared/dropdown-select.svelte";
   import FixtureDisplay from "./fixture-display.svelte";
     import type { Club, Fixture, League } from "../../../../../declarations/backend/backend.did";

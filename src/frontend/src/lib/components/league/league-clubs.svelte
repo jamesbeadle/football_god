@@ -6,7 +6,7 @@
   import { leagueStore } from "$lib/stores/league-store";
   
   import BadgeIcon from "$lib/icons/BadgeIcon.svelte";
-  import CreateClub from "../governance/club/create-club.svelte";
+  import CreateClub from "../governance/proposals/club/create-club.svelte";
   import LocalSpinner from "../shared/local-spinner.svelte";
   import PipsIcon from "$lib/icons/pips-icon.svelte";
     import type { Club, League } from "../../../../../declarations/backend/backend.did";

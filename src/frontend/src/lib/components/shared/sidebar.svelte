@@ -68,11 +68,7 @@
             class="flex items-center p-2 space-x-4 text-white transition-colors rounded hover:bg-BrandGray"
               onclick={() => selectMenuItem(item)}
           >
-              <svelte:component 
-                  this={item.icon} 
-                  className="w-6 h-6" 
-                  fill={$page.url.pathname === item.path ? '#FFFFFF' : '#9CA3AF'}
-              />
+              <item.icon className="w-6 h-6" fill={$page.url.pathname === item.path ? '#FFFFFF' : '#9CA3AF'} />
               <span class={$page.url.pathname === item.path ? 'text-white' : 'text-zinc-400'}>
                   {item.label}
               </span>

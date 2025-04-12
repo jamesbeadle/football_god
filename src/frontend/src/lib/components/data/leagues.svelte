@@ -4,8 +4,8 @@
     import { leagueStore } from "$lib/stores/league-store";
     import { convertDateToReadable, getImageURL } from "$lib/utils/helpers";
     import LocalSpinner from "$lib/components/shared/local-spinner.svelte";
-    import AddLeagueModal from "$lib/components/governance/league/create-league.svelte";
-    import UpdateLeagueModal from "$lib/components/governance/league/update-league.svelte";
+    import AddLeagueModal from "$lib/components/governance/proposals/league/create-league.svelte";
+    import UpdateLeagueModal from "$lib/components/governance/proposals/league/update-league.svelte";
     import PipsIcon from "$lib/icons/pips-icon.svelte";
     import type { League, Leagues } from "../../../../../declarations/backend/backend.did";
       

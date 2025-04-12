@@ -1,6 +1,9 @@
 <script lang="ts">
     import Layout from "../+layout.svelte";
     import FullScreenSpinner from "$lib/components/shared/full-screen-spinner.svelte";
+    import Leagues from "$lib/components/data/leagues.svelte";
+    import Players from "$lib/components/data/players.svelte";
+    import Clubs from "$lib/components/data/clubs.svelte";
     
     let isLoading = true;
     let activeTab: string = "players";
@@ -45,6 +48,19 @@
             >
           </li>
         </ul>
+
+        {#if activeTab == 'players'}
+          <Players />
+        {/if}
+
+        {#if activeTab == 'clubs'}
+          <Clubs />
+        {/if}
+
+        {#if activeTab == 'leagues'}
+          <Leagues />
+        {/if}
+
       </div>
     </div>
     {/if}

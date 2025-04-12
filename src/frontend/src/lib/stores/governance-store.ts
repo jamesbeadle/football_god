@@ -136,7 +136,7 @@ async function createProposal({
   const command: Command = {
     MakeProposal: {
       title,
-      url: "openfpl.xyz/governance",
+      url: "footballgod.xyz/governance",
       summary,
       action: [{ ExecuteGenericNervousSystemFunction: fn }],
     },
