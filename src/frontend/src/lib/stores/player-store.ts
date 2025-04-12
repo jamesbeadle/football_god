@@ -16,11 +16,16 @@ function createPlayerStore() {
     return new PlayerService().getLoanedPlayers(leagueId);
   }
 
+  async function getPlayerValueLeaderboard() {
+    return new PlayerService().getPlayerValueLeaderboard();
+  }
+
   return {
     subscribe,
     setPlayers: (players: Players) => set(players),
     getPlayers,
     getLoanedPlayers,
+    getPlayerValueLeaderboard,
   };
 }
 

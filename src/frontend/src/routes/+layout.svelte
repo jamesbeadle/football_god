@@ -59,20 +59,20 @@
 {:else}
   {#if $authSignedInStore}
     <LoggedInHeader {toggleMenu} />
-        <div class="mx-6 mt-6">
-            {@render children()}
-        </div>
-        <Sidebar {isMenuOpen} {toggleMenu} isSaleOnly={false} />
-        {#if isMenuOpen}
-            <button 
-            class="fixed inset-0 z-30 pointer-events-none bg-black/40 sm:bg-black/20 sm:pointer-events-auto"
-            onclick={toggleMenu}
-            onkeydown={(e) => e.key === 'Enter' && toggleMenu()}
-            aria-label="Close menu overlay"
-            ></button>
-        {/if}
-        <Toasts />
-    {:else}
-        <LandingPage />
+    <div class="mx-6 mt-6">
+        {@render children()}
+    </div>
+    <Sidebar {isMenuOpen} {toggleMenu} />
+    {#if isMenuOpen}
+        <button 
+        class="fixed inset-0 z-30 pointer-events-none bg-black/40 sm:bg-black/20 sm:pointer-events-auto"
+        onclick={toggleMenu}
+        onkeydown={(e) => e.key === 'Enter' && toggleMenu()}
+        aria-label="Close menu overlay"
+        ></button>
     {/if}
+    <Toasts />
+  {:else}
+    <LandingPage />
+  {/if}
 {/if}

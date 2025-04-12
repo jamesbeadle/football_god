@@ -77,6 +77,7 @@ actor Self {
   private stable var leagueTables : [FootballTypes.LeagueTable] = [];
   private stable var leagueClubsRequiringData : [(FootballIds.LeagueId, [FootballIds.ClubId])] = [];
   private stable var clubSummaries: [SummaryTypes.ClubSummary] = [];
+  private stable var playerSummaries: [SummaryTypes.PlayerSummary] = [];
 
   
   /* DO NOT USE BaseTypes dot on lines ahead of this one. */
@@ -853,6 +854,14 @@ actor Self {
     assert callerAllowed(caller);
     
     return #ok({ clubs = clubSummaries });
+  };
+
+  public shared ({ caller }) func getPlayerValueLeaderboard(_: PlayerQueries.GetPlayerValueLeaderboard) : async Result.Result<PlayerQueries.PlayerValueLeaderboard, Enums.Error> {
+    assert callerAllowed(caller);
+
+    let playerSummaries: [PlayerQueries.PlayerSummary] = [];
+    
+    return #ok({ players = playerSummaries });
   };
 
 
@@ -4092,6 +4101,8 @@ actor Self {
     await createTransferWindowEndTimers();
     await createLoanExpiredTimers();
     await createInjuryExpiredTimers();
+    await calculateClubSummaries();
+    await calculatePlayerSummaries();
   };
 
   /* ----- Timer Create Functions ----- */
@@ -4970,6 +4981,215 @@ actor Self {
         return leaguePlayersEntry;
       },
     );
+  };
+
+  
+  /* ----- Summary Calculation Functions ----- */
+
+  private func calculateClubSummaries() : async (){
+    let updatedClubSummaryBuffer = Buffer.fromArray<SummaryTypes.ClubSummary>([]);
+    for(league in Iter.fromArray(leagueClubs)){
+      let leaguePlayers = await getPlayers({leagueId = league.0});
+      switch(leaguePlayers){
+        case (#ok players){
+          for(club in Iter.fromArray(league.1)){
+
+            let clubPlayers = Array.filter<PlayerQueries.Player>(players.players, func(playerEntry: PlayerQueries.Player) {
+              return playerEntry.clubId == club.id;
+            });
+
+            let sortedPlayers = Array.sort<PlayerQueries.Player>(
+              clubPlayers,
+              func(a : PlayerQueries.Player, b : PlayerQueries.Player) {
+                if (a.valueQuarterMillions > b.valueQuarterMillions) {
+                  return #greater;
+                } else if (a.valueQuarterMillions > b.valueQuarterMillions) {
+                  return #less;
+                } else {
+                  return #equal;
+                };
+              },
+            );
+
+            let goalkeepers = Array.filter<PlayerQueries.Player>(players.players, func(playerEntry: PlayerQueries.Player) {
+              return playerEntry.position == #Goalkeeper; // TODO add appearance count
+            });
+
+            let defenders = Array.filter<PlayerQueries.Player>(players.players, func(playerEntry: PlayerQueries.Player) {
+              return playerEntry.position == #Defender; // TODO add appearance count
+            });
+
+            let midfielders = Array.filter<PlayerQueries.Player>(players.players, func(playerEntry: PlayerQueries.Player) {
+              return playerEntry.position == #Midfielder; // TODO add appearance count
+            });
+
+            let forwards = Array.filter<PlayerQueries.Player>(players.players, func(playerEntry: PlayerQueries.Player) {
+              return playerEntry.position == #Forward; // TODO add appearance count
+            });
+
+            let goalkeeperValue = Array.foldLeft<PlayerQueries.Player, Nat16>(
+              goalkeepers,
+              0,
+              func(acc: Nat16, item: PlayerQueries.Player) : Nat16 {
+                acc + item.valueQuarterMillions
+              }
+            );
+
+            let defenderValue = Array.foldLeft<PlayerQueries.Player, Nat16>(
+              defenders,
+              0,
+              func(acc: Nat16, item: PlayerQueries.Player) : Nat16 {
+                acc + item.valueQuarterMillions
+              }
+            );
+
+            let midfielderValue = Array.foldLeft<PlayerQueries.Player, Nat16>(
+              midfielders,
+              0,
+              func(acc: Nat16, item: PlayerQueries.Player) : Nat16 {
+                acc + item.valueQuarterMillions
+              }
+            );
+
+            let forwardValue = Array.foldLeft<PlayerQueries.Player, Nat16>(
+              forwards,
+              0,
+              func(acc: Nat16, item: PlayerQueries.Player) : Nat16 {
+                acc + item.valueQuarterMillions
+              }
+            );
+
+            let totalValue = Array.foldLeft<PlayerQueries.Player, Nat16>(
+              sortedPlayers,
+              0,
+              func(acc: Nat16, item: PlayerQueries.Player) : Nat16 {
+                acc + item.valueQuarterMillions
+              }
+            );
+
+            if(Array.size(sortedPlayers) > 0){
+              updatedClubSummaryBuffer.add({
+                leagueId = league.0;
+                clubId = club.id;
+                clubName = club.friendlyName;
+                primaryColour = club.primaryColourHex;
+                secondaryColour = club.secondaryColourHex;
+                thirdColour = club.thirdColourHex;
+                shirtType = club.shirtType;
+                gender = #Male; //todo
+                mvp = {firstName = sortedPlayers[0].firstName; id = sortedPlayers[0].id; lastName = sortedPlayers[0].lastName; value = sortedPlayers[0].valueQuarterMillions};
+                totalGoalkeepers = Nat8.fromNat(Array.size(goalkeepers));
+                totalDefenders = Nat8.fromNat(Array.size(defenders));
+                totalMidfielders = Nat8.fromNat(Array.size(midfielders));
+                totalForwards = Nat8.fromNat(Array.size(forwards));
+                totalPlayers = Nat8.fromNat(Array.size(sortedPlayers));
+                totalGKValue = goalkeeperValue;
+                totalDFValue = defenderValue;
+                totalMFValue = midfielderValue;
+                totalFWValue = forwardValue;
+                totalValue = totalValue;
+                position = 0;
+                positionText = "-";
+                priorValue = 0;
+              });
+            };
+
+            
+          }
+        };
+        case (#err _){}
+      };
+    };
+
+    updatedClubSummaryBuffer.sort(func(a, b) {
+      switch (Nat16.compare(b.totalValue, a.totalValue)) {
+        case (#less) { #less };
+        case (#equal) { #equal };
+        case (#greater) { #greater };
+      };
+    });
+
+    let size = updatedClubSummaryBuffer.size();
+    let resultSize = if (size < 25) { size } else { 25 };
+    let result = Buffer.Buffer<SummaryTypes.ClubSummary>(resultSize);
+    
+    var i = 0;
+    while (i < resultSize) {
+      let fetchedResult = updatedClubSummaryBuffer.get(i);
+      result.add({
+        clubId = fetchedResult.clubId;
+        clubName = fetchedResult.clubName;
+        gender = fetchedResult.gender;
+        leagueId = fetchedResult.leagueId;
+        mvp = fetchedResult.mvp;
+        position = i + 1;
+        positionText = Nat.toText(i + 1);
+        primaryColour = fetchedResult.primaryColour;
+        priorValue  = fetchedResult.priorValue;
+        secondaryColour = fetchedResult.secondaryColour;
+        shirtType = fetchedResult.shirtType;
+        thirdColour = fetchedResult.thirdColour;
+        totalDFValue = fetchedResult.totalDFValue;
+        totalDefenders = fetchedResult.totalDefenders;
+        totalFWValue = fetchedResult.totalFWValue;
+        totalForwards = fetchedResult.totalForwards;
+        totalGKValue = fetchedResult.totalGKValue;
+        totalGoalkeepers = fetchedResult.totalGoalkeepers;
+        totalMFValue = fetchedResult.totalMFValue;
+        totalMidfielders = fetchedResult.totalMidfielders;
+        totalPlayers = fetchedResult.totalPlayers;
+        totalValue = fetchedResult.totalValue;
+      });
+      i += 1;
+    };
+    
+    clubSummaries := Buffer.toArray(updatedClubSummaryBuffer);
+  };
+
+  private func calculatePlayerSummaries() : async (){
+    let updatedPlayerSummaryBuffer = Buffer.fromArray<SummaryTypes.PlayerSummary>([]);
+    for(league in Iter.fromArray(leaguePlayers)){
+      for(player in Iter.fromArray(league.1)){
+        updatedPlayerSummaryBuffer.add({
+          clubId = player.clubId;
+          leagueId = player.leagueId;
+          playerId = player.id;
+          position = 0;
+          positionText = "-";
+          priorValue = 0;
+          totalValue = player.valueQuarterMillions;
+        })
+      };
+    };
+
+    updatedPlayerSummaryBuffer.sort(func(a, b) {
+      switch (Nat16.compare(b.totalValue, a.totalValue)) {
+        case (#less) { #less };
+        case (#equal) { #equal };
+        case (#greater) { #greater };
+      };
+    });
+
+    let size = updatedPlayerSummaryBuffer.size();
+    let resultSize = if (size < 25) { size } else { 25 };
+    let result = Buffer.Buffer<SummaryTypes.PlayerSummary>(resultSize);
+    
+    var i = 0;
+    while (i < resultSize) {
+      let fetchedEntry = updatedPlayerSummaryBuffer.get(i);
+      result.add({
+        clubId = fetchedEntry.clubId;
+        leagueId = fetchedEntry.leagueId;
+        playerId = fetchedEntry.playerId;
+        position = i + 1;
+        positionText = Nat.toText(i + 1);
+        priorValue  = fetchedEntry.priorValue;
+        totalValue  = fetchedEntry.totalValue;
+      });
+      i += 1;
+    };
+    
+    playerSummaries := Buffer.toArray(updatedPlayerSummaryBuffer);
   };
 
   

@@ -27,7 +27,6 @@ module PlayerQueries {
         parentLeagueId: FootballIds.LeagueId;
         parentClubId: FootballIds.ClubId;
         currentLoanEndDate: Int;
-
     };
 
     public type GetLoanedPlayers = {
@@ -149,6 +148,22 @@ module PlayerQueries {
         saves : Int16;
         assists : Int16;
         events : [PlayerEventData];
+    };
+
+    public type GetPlayerValueLeaderboard = {};
+
+    public type PlayerValueLeaderboard = {
+        players: [PlayerSummary]
+    };
+
+    public type PlayerSummary = {
+        playerId: FootballIds.PlayerId;
+        clubId: FootballIds.ClubId;
+        leagueId: FootballIds.LeagueId;
+        position: Nat;
+        positionText: Text;
+        totalValue: Nat16;
+        priorValue: Nat16;
     };
 
 }

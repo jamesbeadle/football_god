@@ -201,6 +201,7 @@ export interface GetPlayerDetailsForGameweek {
   gameweek: GameweekNumber;
   leagueId: LeagueId;
 }
+export type GetPlayerValueLeaderboard = {};
 export interface GetPlayers {
   leagueId: LeagueId;
 }
@@ -411,6 +412,18 @@ export type PlayerStatus =
   | { Active: null }
   | { FreeAgent: null }
   | { Retired: null };
+export interface PlayerSummary {
+  clubId: ClubId;
+  totalValue: number;
+  playerId: PlayerId;
+  positionText: string;
+  position: bigint;
+  priorValue: number;
+  leagueId: LeagueId;
+}
+export interface PlayerValueLeaderboard {
+  players: Array<PlayerSummary>;
+}
 export interface Players {
   players: Array<Player>;
 }
@@ -451,21 +464,22 @@ export interface RescheduleFixture {
 }
 export type Result = { ok: Seasons } | { err: Error };
 export type Result_1 = { ok: RetiredPlayers } | { err: Error };
-export type Result_10 = { ok: LeagueStatus } | { err: Error };
-export type Result_11 = { ok: Fixtures } | { err: Error };
-export type Result_12 = { ok: DataHashes } | { err: Error };
-export type Result_13 = { ok: Clubs } | { err: Error };
-export type Result_14 = { ok: ClubValueLeaderboard } | { err: Error };
-export type Result_15 = { ok: BettableLeagues } | { err: Error };
-export type Result_16 = { ok: BettableFixtures } | { err: Error };
+export type Result_10 = { ok: LeagueTable } | { err: Error };
+export type Result_11 = { ok: LeagueStatus } | { err: Error };
+export type Result_12 = { ok: Fixtures } | { err: Error };
+export type Result_13 = { ok: DataHashes } | { err: Error };
+export type Result_14 = { ok: Clubs } | { err: Error };
+export type Result_15 = { ok: ClubValueLeaderboard } | { err: Error };
+export type Result_16 = { ok: BettableLeagues } | { err: Error };
+export type Result_17 = { ok: BettableFixtures } | { err: Error };
 export type Result_2 = { ok: PostponedFixtures } | { err: Error };
 export type Result_3 = { ok: PlayersMap } | { err: Error };
 export type Result_4 = { ok: Players } | { err: Error };
-export type Result_5 = { ok: PlayerDetailsForGameweek } | { err: Error };
-export type Result_6 = { ok: PlayerDetails } | { err: Error };
-export type Result_7 = { ok: LoanedPlayers } | { err: Error };
-export type Result_8 = { ok: Leagues } | { err: Error };
-export type Result_9 = { ok: LeagueTable } | { err: Error };
+export type Result_5 = { ok: PlayerValueLeaderboard } | { err: Error };
+export type Result_6 = { ok: PlayerDetailsForGameweek } | { err: Error };
+export type Result_7 = { ok: PlayerDetails } | { err: Error };
+export type Result_8 = { ok: LoanedPlayers } | { err: Error };
+export type Result_9 = { ok: Leagues } | { err: Error };
 export interface RetirePlayer {
   playerId: ClubId;
   retirementDate: bigint;
@@ -573,21 +587,22 @@ export interface _SERVICE {
   createClub: ActorMethod<[CreateClub], undefined>;
   createLeague: ActorMethod<[CreateLeague], undefined>;
   createPlayer: ActorMethod<[CreatePlayer], undefined>;
-  getBettableFixtures: ActorMethod<[GetBettableFixtures], Result_16>;
-  getBettableLeagues: ActorMethod<[GetBettableLeagues], Result_15>;
-  getClubValueLeaderboard: ActorMethod<[GetClubValueLeaderboard], Result_14>;
-  getClubs: ActorMethod<[GetClubs], Result_13>;
-  getDataHashes: ActorMethod<[GetDataHashes], Result_12>;
-  getFixtures: ActorMethod<[GetFixtures], Result_11>;
-  getLeagueStatus: ActorMethod<[GetLeagueStatus], Result_10>;
-  getLeagueTable: ActorMethod<[GetLeagueTable], Result_9>;
-  getLeagues: ActorMethod<[GetLeagues], Result_8>;
-  getLoanedPlayers: ActorMethod<[GetLoanedPlayers], Result_7>;
-  getPlayerDetails: ActorMethod<[GetPlayerDetails], Result_6>;
+  getBettableFixtures: ActorMethod<[GetBettableFixtures], Result_17>;
+  getBettableLeagues: ActorMethod<[GetBettableLeagues], Result_16>;
+  getClubValueLeaderboard: ActorMethod<[GetClubValueLeaderboard], Result_15>;
+  getClubs: ActorMethod<[GetClubs], Result_14>;
+  getDataHashes: ActorMethod<[GetDataHashes], Result_13>;
+  getFixtures: ActorMethod<[GetFixtures], Result_12>;
+  getLeagueStatus: ActorMethod<[GetLeagueStatus], Result_11>;
+  getLeagueTable: ActorMethod<[GetLeagueTable], Result_10>;
+  getLeagues: ActorMethod<[GetLeagues], Result_9>;
+  getLoanedPlayers: ActorMethod<[GetLoanedPlayers], Result_8>;
+  getPlayerDetails: ActorMethod<[GetPlayerDetails], Result_7>;
   getPlayerDetailsForGameweek: ActorMethod<
     [GetPlayerDetailsForGameweek],
-    Result_5
+    Result_6
   >;
+  getPlayerValueLeaderboard: ActorMethod<[GetPlayerValueLeaderboard], Result_5>;
   getPlayers: ActorMethod<[GetPlayers], Result_4>;
   getPlayersMap: ActorMethod<[GetPlayersMap], Result_3>;
   getPostponedFixtures: ActorMethod<[GetPostponedFixtures], Result_2>;

@@ -155,4 +155,14 @@ actor Self {
     return await data_canister.getClubValueLeaderboard(dto);
   };
 
+  public shared ({ caller }) func getPlayerValueLeaderboard(dto: PlayerQueries.GetPlayerValueLeaderboard) : async Result.Result<PlayerQueries.PlayerValueLeaderboard, Enums.Error> {
+    assert not Principal.isAnonymous(caller);
+    // TODO: Check caller has associated neuron
+
+    let data_canister = actor (CanisterIds.ICFC_DATA_CANISTER_ID) : actor {
+      getPlayerValueLeaderboard : (dto: PlayerQueries.GetPlayerValueLeaderboard) -> async Result.Result<PlayerQueries.PlayerValueLeaderboard, Enums.Error>;
+    };
+    return await data_canister.getPlayerValueLeaderboard(dto);
+  };
+
 };

@@ -121,27 +121,27 @@ type RetirePlayer =
 type Result_9 = 
  variant {
    err: Error;
-   ok: LeagueTable;
+   ok: Leagues;
  };
 type Result_8 = 
  variant {
    err: Error;
-   ok: Leagues;
+   ok: LoanedPlayers;
  };
 type Result_7 = 
  variant {
    err: Error;
-   ok: LoanedPlayers;
+   ok: PlayerDetails;
  };
 type Result_6 = 
  variant {
    err: Error;
-   ok: PlayerDetails;
+   ok: PlayerDetailsForGameweek;
  };
 type Result_5 = 
  variant {
    err: Error;
-   ok: PlayerDetailsForGameweek;
+   ok: PlayerValueLeaderboard;
  };
 type Result_4 = 
  variant {
@@ -158,40 +158,45 @@ type Result_2 =
    err: Error;
    ok: PostponedFixtures;
  };
-type Result_16 = 
+type Result_17 = 
  variant {
    err: Error;
    ok: BettableFixtures;
  };
-type Result_15 = 
+type Result_16 = 
  variant {
    err: Error;
    ok: BettableLeagues;
  };
-type Result_14 = 
+type Result_15 = 
  variant {
    err: Error;
    ok: ClubValueLeaderboard;
  };
-type Result_13 = 
+type Result_14 = 
  variant {
    err: Error;
    ok: Clubs;
  };
-type Result_12 = 
+type Result_13 = 
  variant {
    err: Error;
    ok: DataHashes;
  };
-type Result_11 = 
+type Result_12 = 
  variant {
    err: Error;
    ok: Fixtures;
  };
-type Result_10 = 
+type Result_11 = 
  variant {
    err: Error;
    ok: LeagueStatus;
+ };
+type Result_10 = 
+ variant {
+   err: Error;
+   ok: LeagueTable;
  };
 type Result_1 = 
  variant {
@@ -246,6 +251,17 @@ type PlayersMap = record {playersMap: vec record {
                                             PlayerScore;
                                           };};
 type Players = record {players: vec Player;};
+type PlayerValueLeaderboard = record {players: vec PlayerSummary;};
+type PlayerSummary = 
+ record {
+   clubId: ClubId;
+   leagueId: LeagueId;
+   playerId: PlayerId;
+   position: nat;
+   positionText: text;
+   priorValue: nat16;
+   totalValue: nat16;
+ };
 type PlayerStatus = 
  variant {
    Active;
@@ -466,6 +482,7 @@ type GetPlayersMap =
    seasonId: SeasonId;
  };
 type GetPlayers = record {leagueId: LeagueId;};
+type GetPlayerValueLeaderboard = record {};
 type GetPlayerDetailsForGameweek = 
  record {
    gameweek: GameweekNumber;
@@ -678,19 +695,20 @@ service : {
   createClub: (CreateClub) -> ();
   createLeague: (CreateLeague) -> ();
   createPlayer: (CreatePlayer) -> ();
-  getBettableFixtures: (GetBettableFixtures) -> (Result_16);
-  getBettableLeagues: (GetBettableLeagues) -> (Result_15) query;
-  getClubValueLeaderboard: (GetClubValueLeaderboard) -> (Result_14);
-  getClubs: (GetClubs) -> (Result_13);
-  getDataHashes: (GetDataHashes) -> (Result_12) query;
-  getFixtures: (GetFixtures) -> (Result_11);
-  getLeagueStatus: (GetLeagueStatus) -> (Result_10) query;
-  getLeagueTable: (GetLeagueTable) -> (Result_9) query;
-  getLeagues: (GetLeagues) -> (Result_8) query;
-  getLoanedPlayers: (GetLoanedPlayers) -> (Result_7) query;
-  getPlayerDetails: (GetPlayerDetails) -> (Result_6) query;
+  getBettableFixtures: (GetBettableFixtures) -> (Result_17);
+  getBettableLeagues: (GetBettableLeagues) -> (Result_16) query;
+  getClubValueLeaderboard: (GetClubValueLeaderboard) -> (Result_15);
+  getClubs: (GetClubs) -> (Result_14);
+  getDataHashes: (GetDataHashes) -> (Result_13) query;
+  getFixtures: (GetFixtures) -> (Result_12);
+  getLeagueStatus: (GetLeagueStatus) -> (Result_11) query;
+  getLeagueTable: (GetLeagueTable) -> (Result_10) query;
+  getLeagues: (GetLeagues) -> (Result_9) query;
+  getLoanedPlayers: (GetLoanedPlayers) -> (Result_8) query;
+  getPlayerDetails: (GetPlayerDetails) -> (Result_7) query;
   getPlayerDetailsForGameweek: (GetPlayerDetailsForGameweek) ->
-   (Result_5) query;
+   (Result_6) query;
+  getPlayerValueLeaderboard: (GetPlayerValueLeaderboard) -> (Result_5);
   getPlayers: (GetPlayers) -> (Result_4);
   getPlayersMap: (GetPlayersMap) -> (Result_3) query;
   getPostponedFixtures: (GetPostponedFixtures) -> (Result_2) query;

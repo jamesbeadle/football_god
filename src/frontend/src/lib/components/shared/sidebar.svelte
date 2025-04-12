@@ -13,9 +13,8 @@
   interface Props {
     isMenuOpen: boolean;
     toggleMenu: () => void;
-    isSaleOnly: boolean;
   }
-  let { isMenuOpen, toggleMenu, isSaleOnly }: Props = $props();
+  let { isMenuOpen, toggleMenu }: Props = $props();
   
   let menuRef: HTMLDivElement;
 

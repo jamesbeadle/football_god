@@ -34,5 +34,15 @@ module SummaryTypes {
         lastName: Text;
         value: Nat16;
     };
+
+    public type PlayerSummary = {
+        playerId: FootballIds.PlayerId;
+        clubId: FootballIds.ClubId;
+        leagueId: FootballIds.LeagueId;
+        position: Nat;
+        positionText: Text;
+        totalValue: Nat16;
+        priorValue: Nat16;
+    };
     
 }

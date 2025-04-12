@@ -7,6 +7,8 @@ import type {
   LeagueId,
   LoanedPlayers,
   Players,
+  PlayerValueLeaderboard,
+  GetPlayerValueLeaderboard,
 } from "../../../../declarations/backend/backend.did";
 
 export class PlayerService {
@@ -32,6 +34,19 @@ export class PlayerService {
     );
     let dto: GetLoanedPlayers = { leagueId };
     const result = await identityActor.getLoanedPlayers(dto);
+    if (isError(result)) throw new Error("Failed to fetch loaned players");
+    return result.ok;
+  }
+
+  async getPlayerValueLeaderboard(): Promise<
+    PlayerValueLeaderboard | undefined
+  > {
+    const identityActor: any = await ActorFactory.createIdentityActor(
+      authStore,
+      process.env.BACKEND_CANISTER_ID ?? "",
+    );
+    let dto: GetPlayerValueLeaderboard = {};
+    const result = await identityActor.getPlayerValueLeaderboard(dto);
     if (isError(result)) throw new Error("Failed to fetch loaned players");
     return result.ok;
   }
