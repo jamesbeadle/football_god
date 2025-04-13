@@ -131,19 +131,22 @@
               Next
           </button>
       </div>
+      <p>{heatmaps[currentHeatmapIndex].id} Heatmap Coming Soon.</p>
+      <!-- DevOps 473 & 474
       <div class="grid grid-cols-5 gap-1">
           {#each heatmaps[currentHeatmapIndex].data as row}
-              {#each row as cell}
-                  <div
-                      class="w-full h-16 rounded flex items-center justify-center text-xs"
-                      style="background-color: {cell.color || '#7F56FA'}; transform: scale({Math.max(0.5, cell.value)});"
-                      title="{cell.label}: {cell.value.toFixed(2)}"
-                  >
-                      {cell.label}
-                  </div>
-              {/each}
+                {#each row as cell}
+                    <div
+                        class="w-full h-16 rounded flex items-center justify-center text-xs"
+                        style="background-color: {cell.color || '#7F56FA'}; transform: scale({Math.max(0.5, cell.value)});"
+                        title="{cell.label}: {cell.value.toFixed(2)}"
+                    >
+                        {cell.label}
+                    </div>
+                {/each}
           {/each}
       </div>
+      -->
   </div>
 
 {/if}
