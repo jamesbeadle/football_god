@@ -11,7 +11,7 @@
 }
 
 .page-sub-title {
-  @apply text-lg;
+  @apply text-xxs xs:text-sm sm:text-base lg:text-sm text-BrandLightGray;
 }
 
 .page-paragraph {
@@ -24,10 +24,6 @@
 
 .dropdown-link {
   @apply block w-full px-4 py-2 text-left text-gray-400 rounded-lg hover:text-white bg-BrandGray hover:bg-BrandPurple/50;
-}
-
-.content-panel-header {
-  @apply text-gray-300 text-xxs xs:text-sm sm:text-base lg:text-sm;
 }
 
 .content-panel-stat {

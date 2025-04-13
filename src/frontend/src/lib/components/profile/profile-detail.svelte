@@ -1,12 +1,14 @@
 <script lang="ts">
   import { onMount } from "svelte";
-  import { userStore } from "$lib/stores/user-store";
-  import CopyIcon from "$lib/icons/CopyIcon.svelte";
   import { writable } from "svelte/store";
+  import { userStore } from "$lib/stores/user-store";
   import { authStore } from "$lib/stores/auth-store";
-  import FullScreenSpinner from "../shared/full-screen-spinner.svelte";
   import { toasts } from "$lib/stores/toasts-store";
-    import WithdrawIcfcModal from "./withdraw-icfc-modal.svelte";
+  
+  import CopyIcon from "$lib/icons/CopyIcon.svelte";
+  import FullScreenSpinner from "../shared/full-screen-spinner.svelte";
+  import WithdrawIcfcModal from "./withdraw-icfc-modal.svelte";
+    import IcfcCoinIcon from "$lib/icons/ICFCCoinIcon.svelte";
    
   let isLoading = true;
   let loadingBalances = true;
@@ -89,6 +91,9 @@
     icfcBalance={icfcBalance}
     icfcBalanceFormatted={icfcBalanceFormatted}
   />
+
+
+  
   <div class="container mt-4 mx-6">
     <div class="flex flex-wrap">
       <div class="w-full mb-4 md:mb-0">
@@ -113,11 +118,7 @@
             <div
               class="flex items-center p-4 rounded-lg shadow-md border border-gray-700"
             >
-              <img
-                src="/ICFCCoin.png"
-                alt="ICFC"
-                class="h-12 w-12 md:h-9 md:w-9"
-              />
+            <IcfcCoinIcon className="h-12 w-12 md:h-9 md:w-9" />
               <div class="ml-4 md:ml-3">
 
                   {#if loadingBalances}
@@ -140,14 +141,14 @@
 
 
                 {#if !loadingBalances}
-                <div class="flex items-center text-xs mt-2">
-                  <button
-                  class="text-sm md:text-sm p-1 md:p-2 px-2 md:px-4 rounded fg-button button-hover"
-                    on:click={loadWithdrawICFCModal}
-                  >
-                    Withdraw
-                  </button>
-                </div>
+                  <div class="flex items-center text-xs mt-2">
+                    <button
+                    class="text-sm md:text-sm p-1 md:p-2 px-2 md:px-4 rounded fg-button button-hover"
+                      on:click={loadWithdrawICFCModal}
+                    >
+                      Withdraw
+                    </button>
+                  </div>
                 {/if}
               </div>
             </div>

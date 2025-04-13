@@ -11,7 +11,6 @@
     import HeaderFixturePanel from "../../components/shared/panels/header-fixture-panel.svelte";
     import { getFixturesWithTeams, updateTableData } from "$lib/utils/helpers";
     import ClubBrandPanel from "./club-brand-panel.svelte";
-    import PageHeader from "../shared/panels/page-header.svelte";
     import ContentPanel from "../shared/panels/content-panel.svelte";
     import LocalSpinner from "../shared/local-spinner.svelte";
     import { page } from '$app/stores';
@@ -87,28 +86,26 @@
     };
   </script>
   
-  <PageHeader>
-    {#if isLoading}
-      <LocalSpinner />
-    {:else}
-      <div class="grid grid-cols-1 gap-4 mb-8 md:grid-cols-2">
-        <ContentPanel>
-          <ClubBrandPanel {club} />
-          <div class="vertical-divider"></div>
-          <HeaderContentPanel header="League Points" content={getTeamPoints(club.id).toString()} footer="Total" loading={false} />
-          <div class="vertical-divider"></div>
-          <HeaderContentPanel header="League Position" content={getTeamPosition(club.id).toString()} footer={seasonName} loading={false} />
-        </ContentPanel>
-        <ContentPanel>
-          <HeaderFixturePanel header="Next Game" {nextFixtureAwayTeam} {nextFixtureHomeTeam} />
-          <div class="vertical-divider"></div>
-          <HeaderContentPanel 
-            header="Most Valuable Player" 
-            content={`${highestScoringPlayer?.lastName ?? "-"} £${((highestScoringPlayer?.valueQuarterMillions ?? 0) / 4).toFixed(2)}m`} 
-            footer={Object.keys(highestScoringPlayer?.position ?? { Goalkeeper: null })[0].toString()} 
-            loading={false} 
-          />
-        </ContentPanel>
-      </div>
-    {/if}
-  </PageHeader>
+  {#if isLoading}
+  <LocalSpinner />
+{:else}
+  <div class="grid grid-cols-1 gap-4 mb-8 md:grid-cols-2">
+    <ContentPanel>
+      <ClubBrandPanel {club} />
+      <div class="vertical-divider"></div>
+      <HeaderContentPanel header="League Points" content={getTeamPoints(club.id).toString()} footer="Total" loading={false} />
+      <div class="vertical-divider"></div>
+      <HeaderContentPanel header="League Position" content={getTeamPosition(club.id).toString()} footer={seasonName} loading={false} />
+    </ContentPanel>
+    <ContentPanel>
+      <HeaderFixturePanel header="Next Game" {nextFixtureAwayTeam} {nextFixtureHomeTeam} />
+      <div class="vertical-divider"></div>
+      <HeaderContentPanel 
+        header="Most Valuable Player" 
+        content={`${highestScoringPlayer?.lastName ?? "-"} £${((highestScoringPlayer?.valueQuarterMillions ?? 0) / 4).toFixed(2)}m`} 
+        footer={Object.keys(highestScoringPlayer?.position ?? { Goalkeeper: null })[0].toString()} 
+        loading={false} 
+      />
+    </ContentPanel>
+  </div>
+{/if}

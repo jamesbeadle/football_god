@@ -3,11 +3,11 @@
 @tailwind utilities;
 
 .stacked-column {
-  @apply flex flex-col;
+  @apply flex flex-col space-y-2;
 }
 
 .stacked-row {
-  @apply flex flex-row;
+  @apply flex flex-row space-x-2;
 }
 
 .page-panel {

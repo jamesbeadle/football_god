@@ -67,7 +67,7 @@
 {:else}
   {#if $authSignedInStore}
     <LoggedInHeader {toggleMenu} />
-    <div class="mx-6 mt-6">
+    <div class="mx-4 mt-6">
         {@render children()}
     </div>
     <Sidebar {isMenuOpen} {toggleMenu} />
