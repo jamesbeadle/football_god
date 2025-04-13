@@ -18,6 +18,10 @@
   @apply flex rounded-t-lg bg-BrandLightGray border-b border-gray-700 px-4 pt-2;
 }
 
+.panel-content {
+  @apply flex flex-col space-y-4 w-full p-4;
+}
+
 .page-panel-bar-format {
   @apply stacked-column px-4 space-y-4 lg:space-y-2;
 }
