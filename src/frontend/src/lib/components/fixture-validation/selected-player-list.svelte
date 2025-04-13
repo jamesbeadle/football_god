@@ -23,7 +23,7 @@
 </script>
 
 {#each $selectedPlayers.filter((x) => x.clubId === ((view == "home") ? fixture.homeClubId : fixture?.awayClubId)) as player (player.id)}
-    <div class="flex flex-col w-full border-b border-gray-700 cursor-pointer">
+    <div class="stacked-column w-full border-b border-gray-700 cursor-pointer">
         <div class="flex items-center justify-between p-4">
             <div class="w-1/6 px-4">
                 {`${ player.firstName.length > 0 ? player.firstName.charAt(0) + "." : "" } ${player.lastName}`}

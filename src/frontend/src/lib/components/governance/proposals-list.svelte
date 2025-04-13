@@ -258,7 +258,7 @@
                                                     color={getMyVote(proposal) === 0 ? '#CF5D43' : '#5A5A5A'}
                                                 />
                                             </div>
-                                            <div class="flex flex-col">
+                                            <div class="stacked-column">
                                                 <span class="text-BrandRed">{getRejectPercentage(proposal).toFixed(3)}%</span>
                                             </div>
                                         </div>

@@ -13,7 +13,7 @@
   }
 </script>
 
-<div class="flex flex-col p-4 mb-4 space-y-4">
+<div class="stacked-col p-4 mb-4 space-y-4">
   <div class="flex items-center space-x-4">
     <img src={getImageURL(league.logo)} alt="logo" class="w-8 h-8" />
     <h1 class="text-xl">{league.name}</h1>

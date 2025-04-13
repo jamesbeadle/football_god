@@ -1,0 +1,23 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.logo-text {
+  @apply text-xl;
+}
+
+.page-title {
+  @apply text-2xl;
+}
+
+.page-sub-title {
+  @apply text-lg;
+}
+
+.page-paragraph {
+  @apply text-base;
+}
+
+.small-text {
+  @apply text-xs;
+}

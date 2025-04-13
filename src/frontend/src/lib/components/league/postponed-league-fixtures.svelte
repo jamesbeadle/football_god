@@ -92,7 +92,7 @@
 {:else}
   {#if fixtures.length > 0}
   <div class="flex w-full">
-    <div class="flex flex-col w-full rounded-lg shadow-lg">
+    <div class="stacked-col w-full rounded-lg shadow-lg">
       {#if league}
         <div class="flex items-center justify-between w-full mb-6">
           <p class="px-4 md:px-2">{league.name} Postponed Fixtures</p>

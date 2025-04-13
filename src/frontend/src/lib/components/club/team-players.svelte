@@ -63,7 +63,7 @@
     });
 </script>
   
-<div class="flex flex-col">
+<div class="stacked-column">
     <PositionFilter {selectedPosition} />
     <PlayersTableHeader {sortField} {sortDirection} onSort={handleSort} />
     

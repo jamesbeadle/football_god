@@ -292,22 +292,22 @@
 </script>
 
   <div class="relative min-h-screen bg-BrandGray/90;">
-    <div class="flex flex-col md:flex-row">
+    <div class="stacked-col md:flex-row">
       <div class="flex-1 md:block">  
         {#if isLoading}
           <FullScreenSpinner />
         {:else if submitting}
-          <div class="flex flex-col items-center justify-center min-h-screen space-y-4">
+          <div class="stacked-col items-center justify-center min-h-screen space-y-4">
             <div class="pb-12">
               <FullScreenSpinner />
             </div>
             <p class="pt-12 text-xl text-center">Submitting proposal...</p>
           </div>
         {:else}
-          <div class="flex flex-col w-full min-h-screen rounded-xl backdrop-blur ">
-            <div class="flex flex-col p-3 my-2 space-y-4 md:my-0 md:mb-4 md:p-0 md:flex-row md:space-y-0 md:space-x-4">
+          <div class="stacked-col w-full min-h-screen rounded-xl backdrop-blur ">
+            <div class="stacked-col p-3 my-2 space-y-4 md:my-0 md:mb-4 md:p-0 md:flex-row md:space-y-0 md:space-x-4">
               <div class="flex flex-row items-center justify-center w-full py-4 space-x-4 border md:w-1/3 bg-panel-color">
-                <div class="flex flex-col justify-center space-y-2">
+                <div class="stacked-col justify-center space-y-2">
                   <BadgeIcon
                     className="h-8 lg:h-12"
                     primaryColour={homeTeam?.primaryColourHex}
@@ -323,7 +323,7 @@
                 {:else}
                   <p class="text-4xl">0-0</p>
                 {/if}
-                <div class="flex flex-col justify-center space-y-2">
+                <div class="stacked-col justify-center space-y-2">
                   <BadgeIcon
                     className="h-8 lg:h-12"
                     primaryColour={awayTeam?.primaryColourHex}
@@ -336,14 +336,14 @@
               <div class="flex flex-row w-full p-4 space-x-4 text-xs text-gray-400 border md:w-2/3 md:text-sm bg-panel-color">
                 <div class="flex-col w-1/2 space-y-4">
                   <p>{homeTeam?.name}</p>
-                  <div class="flex flex-col space-y-2">
+                  <div class="stacked-col space-y-2">
                     <p>Goals: {homeGoalsText}</p>
                     <p>Assists: {homeAssistsText}</p>
                   </div>
                 </div>
                 <div class="flex-col w-1/2 space-y-4">
                   <p>{awayTeam?.name}</p>
-                  <div class="flex flex-col space-y-2">
+                  <div class="stacked-col space-y-2">
                     <p>Goals: {awayGoalsText}</p>
                     <p>Assists: {awayAssistsText}</p>
                   </div>
@@ -352,7 +352,7 @@
             </div>
 
             <div class="border rounded-md bg-panel">
-              <div class="flex flex-col">
+              <div class="stacked-col">
                 <div class="flex w-full">
                   <ul
                     class="flex w-full px-4 pt-2 border-b border-gray-700 bg-light-gray"
@@ -384,7 +384,7 @@
                     on:click={showSelectPlayersModal}>Select Players</button
                   >
                 </div>
-                <div class="flex flex-col w-full">
+                <div class="stacked-col w-full">
                   <div
                     class="flex flex-row items-center justify-between py-4 border border-gray-700 bg-light-gray"
                   >
@@ -413,7 +413,7 @@
                   >
                 </div>
 
-                <div class="flex flex-col w-full m-4 space-y-4 text-xs md:flex-row md:text-sm md:space-y-0">
+                <div class="stacked-col w-full m-4 space-y-4 text-xs md:flex-row md:text-sm md:space-y-0">
                   <div class="w-full px-4 border-gray-600 md:w-1/3 md:border-r">
                     <div class="flex-grow">
                       Appearances: {$playerEventData.filter(

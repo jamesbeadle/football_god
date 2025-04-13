@@ -56,7 +56,7 @@
     </svg>
   </button>
 
-  <nav class="h-full px-6 pt-16 text-lg text-white bg-BrandBlueComp cta-text">
+  <nav class="h-full px-6 pt-16 text-lg text-white bg-BrandBlueComp">
     <div class="flex flex-row items-center my-4 p-2">
       <LogoIcon className="w-6 mr-2" />
       <p>Football God</p>

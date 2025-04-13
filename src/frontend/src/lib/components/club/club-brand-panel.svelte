@@ -7,7 +7,7 @@
     export let club: Club;
 </script>
 
-<div class="flex flex-col items-center flex-grow">
+<div class="stacked-column items-center flex-grow">
   <p class="content-panel-header">
     {club.friendlyName}
   </p>

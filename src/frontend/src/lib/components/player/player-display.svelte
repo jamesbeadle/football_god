@@ -25,9 +25,9 @@
   $: hasDropdownOptions = onUpdatePlayer || onSetPlayerInjury || onTransferPlayer || onLoanPlayer || onRecallPlayer || onRevaluePlayerUp || onRevaluePlayerDown || onRetirePlayer || onUnretirePlayer || onSetFreeAgent;
 </script>
 
-<div class="relative flex flex-col w-full px-4 py-4 mb-4 border rounded-lg shadow-lg border-BrandPurple/50 md:mb-0 bg-BrandGray">
+<div class="relative stacked-col w-full px-4 py-4 mb-4 border rounded-lg shadow-lg border-BrandPurple/50 md:mb-0 bg-BrandGray">
     <div class="flex flex-row items-start justify-between">
-        <div class="flex flex-col flex-1 min-w-0 space-y-4">
+        <div class="stacked-col flex-1 min-w-0 space-y-4">
             <div>
                 <div class="flex items-start gap-2">
                     <div class="flex-1 min-w-0 xxs:hidden">
@@ -43,15 +43,15 @@
                 </div>
 
                 <div class="flex flex-row gap-4 mt-2">
-                <div class="flex flex-col">
+                <div class="stacked-col">
                     <span class="text-xs text-white">Value</span>
                     <span class="text-sm font-medium text-white">£{player.valueQuarterMillions / 4}M</span>
                 </div>
-                <div class="flex flex-col">
+                <div class="stacked-col">
                     <span class="text-xs text-white">Position</span>
                     <span class="text-sm font-medium text-white">{Object.keys(player.position)[0]}</span>
                 </div>
-                <div class="flex flex-col">
+                <div class="stacked-column">
                     <span class="text-xs text-white">Age</span>
                     <span class="text-sm font-medium text-white">{age}</span>
                 </div>
@@ -59,10 +59,10 @@
                 </div>
             </div>
         
-            <div class="flex flex-col md:flex-row md:items-center md:gap-12">
+            <div class="stacked-column md:flex-row md:items-center md:gap-12">
                 <div class="flex items-center gap-3">
                 <BadgeIcon primaryColour={club.primaryColourHex} secondaryColour={club.secondaryColourHex} className="w-8 h-8" />
-                <div class="flex flex-col">
+                <div class="stacked-column">
                     <span class="text-xs text-white">Club</span>
                     <span class="text-sm font-medium text-white">{club.friendlyName}</span>
                 </div>

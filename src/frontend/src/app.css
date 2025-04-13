@@ -115,7 +115,7 @@
 }
 
 .page-panel {
-  @apply flex flex-col w-full min-h-screen pb-24 rounded-xl bg-BrandGray/90 backdrop-blur md:pb-28 lg:pb-0;
+  @apply stacked-column w-full min-h-screen pb-24 rounded-xl bg-BrandGray/90 backdrop-blur md:pb-28 lg:pb-0;
 }
 
 .page-panel-header {
@@ -123,7 +123,7 @@
 }
 
 .page-panel-bar-format {
-  @apply flex flex-col px-4 space-y-4 lg:space-y-2;
+  @apply stacked-column px-4 space-y-4 lg:space-y-2;
 }
 
 .page-panel-bar-button {
@@ -150,7 +150,7 @@
   @apply flex items-center justify-between w-full my-4;
 }
 .fixture-event-panel {
-  @apply flex flex-col items-center p-6 space-y-4 rounded-t-lg bg-BrandLightGray;
+  @apply stacked-column items-center p-6 space-y-4 rounded-t-lg bg-BrandLightGray;
 }
 
 .fixture-event-panel-header {

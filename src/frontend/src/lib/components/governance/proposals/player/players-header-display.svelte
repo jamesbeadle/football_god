@@ -24,7 +24,7 @@
 </script>
   
 <div class="space-y-2">
-    <div class="flex flex-col mb-2 md:flex-row md:space-x-2">
+    <div class="stacked-col mb-2 md:flex-row md:space-x-2">
         <div class="w-full mb-2 md:w-1/2 md:mb-0">
             <DropdownSelect
                 value={selectedLeagueId}
@@ -48,7 +48,7 @@
         </div>
     </div>
   
-    <div class="flex flex-col mb-2 md:flex-row md:space-x-2">
+    <div class="stacked-col mb-2 md:flex-row md:space-x-2">
         <div class="w-full mb-2 md:w-1/2 md:mb-0">
             <DropdownSelect
                 value={selectedPositionId}
@@ -72,7 +72,7 @@
         </div>
     </div>
 
-    <div class="flex flex-col mb-2 md:flex-row md:space-x-2">
+    <div class="stacked-col mb-2 md:flex-row md:space-x-2">
         <div class="w-full px-3 mb-2 md:px-0 md:w-1/2 md:mb-0">
             <label for="minValue" class="block mb-1 text-xs text-white">Min Value (M):</label>
             <div class="relative">

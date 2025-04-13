@@ -11,7 +11,7 @@
     class="flex items-center space-x-2 transition-transform hover:scale-105"
   >
     <LogoIcon className="w-6 h-6" />
-    <span class="hidden text-xl text-white cta-text sm:block">Football God</span>
+    <span class="logo-text hidden sm:block">Football God</span>
   </a>
 
   <div class="flex items-center gap-4">

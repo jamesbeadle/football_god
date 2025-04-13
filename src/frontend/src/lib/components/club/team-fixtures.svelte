@@ -60,7 +60,7 @@
   {#if isLoading}
     <LocalSpinner />
   {:else}
-    <div class="flex flex-col">
+    <div class="stacked-column">
       <FixtureTypeFilter {selectedFixtureType} />
       <TeamFixturesTableHeader />
   

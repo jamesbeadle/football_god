@@ -19,7 +19,7 @@
   {onDropdownClick}
   onRecallPlayer={onRecallLoan}
 >
-  <div class="flex flex-col" slot="additional-info">
+  <div class="stacked-col" slot="additional-info">
     <span class="text-xs text-white">Loan Expires</span>
     <span class="text-sm font-medium text-white md:hidden">
       {formatUnixDateToSmallReadableDate(player.currentLoanEndDate)}
@@ -31,7 +31,7 @@
 
   <div class="flex items-center gap-3 mt-4 md:mt-0" slot="additional-club-info">
     <BadgeIcon primaryColour={parentClub.primaryColourHex} secondaryColour={parentClub.secondaryColourHex} className="w-8 h-8" />
-    <div class="flex flex-col">
+    <div class="stacked-col">
       <span class="text-xs text-white">Parent Club</span>
       <span class="text-sm font-medium text-white">{parentClub.friendlyName}</span>
     </div>

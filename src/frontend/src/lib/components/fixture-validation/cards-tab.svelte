@@ -18,9 +18,9 @@
   }
 </script>
 
-<div class="flex flex-col space-y-4">
+<div class="stacked-column space-y-4">
   <p class="text-lg font-medium">Select Cards:</p>
-  <div class="flex flex-col space-y-2">
+  <div class="stacked-column space-y-2">
     <label class="flex items-center space-x-2">
       <input type="radio" bind:group={selectedCard} class="w-5 h-5 border-white/50 bg-BrandDarkGray text-BrandPurple/60 focus:ring-BrandPurple/60 focus:ring-offset-0 form-radio" value={0} on:change={() => handleCardSelection(0)} />
       <span>No Card</span>
@@ -51,9 +51,9 @@
   {/if}
 
   {#if selectedCard === 4}
-    <div class="flex flex-col mt-4 space-y-2">
+    <div class="stacked-column mt-4 space-y-2">
       <p class="text-sm text-gray-400">Type of Red Card:</p>
-      <div class="flex flex-col ml-4 space-y-2">
+      <div class="stacked-column ml-4 space-y-2">
         <label class="flex items-center space-x-2">
           <input 
             type="radio" 

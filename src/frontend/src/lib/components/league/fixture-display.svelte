@@ -17,9 +17,9 @@
   $: hasDropdownOptions = onDropdownClick && (onAddFixtureData || onMoveFixture || onPostponeFixture || onRescheduleFixture);
 </script>
 
-<div class="relative flex flex-col w-full px-3 py-4 mb-4 border rounded-lg shadow-lg border-BrandPurple/50 md:mb-0 md:px-0 bg-BrandGray">
+<div class="relative stacked-col w-full px-3 py-4 mb-4 border rounded-lg shadow-lg border-BrandPurple/50 md:mb-0 md:px-0 bg-BrandGray">
   <div class="flex flex-row items-center justify-between">
-    <div class="flex flex-col w-full space-y-4">
+    <div class="stacked-col w-full space-y-4">
       <div class="flex flex-row items-center justify-between">
         <div class="flex items-center flex-1">
           <BadgeIcon primaryColour={homeClub?.primaryColourHex} secondaryColour={homeClub?.secondaryColourHex} className="h-6 mr-2 ml-4" />

@@ -76,7 +76,7 @@
   <LocalSpinner />
 {:else}
   <div class="flex w-full">
-    <div class="flex flex-col w-full mb-2 shadow-lg">
+    <div class="stacked-col w-full mb-2 shadow-lg">
       {#if league}
         <div class="flex items-center justify-between w-full mb-2">
             <p class="px-4 md:px-2">{league.name} Clubs</p>
@@ -88,7 +88,7 @@
         </div>
       {/if}
 
-      <div class="flex flex-col w-full px-4 mt-2 mb-4 space-y-4 md:mb-0 md:px-0">
+      <div class="stacked-col w-full px-4 mt-2 mb-4 space-y-4 md:mb-0 md:px-0">
         {#each clubs.sort( (a, b) => a.friendlyName.localeCompare(b.friendlyName)) as club}
           <div class="flex items-center justify-between px-3 py-4 border rounded-lg shadow bg-BrandGray border-BrandPurple/50">
             <div class="flex items-center w-full space-x-4">
@@ -98,7 +98,7 @@
                 thirdColour={club.thirdColourHex}
                 className="w-8"
               />
-              <div class="flex flex-col flex-grow">
+              <div class="stacked-col flex-grow">
                 <p class="text-lg md:text-sm">{club.friendlyName}</p>
                 <p class="text-xs">ID: {club.id}</p>
               </div>

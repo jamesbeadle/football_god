@@ -9,12 +9,12 @@
     let leagueId = Number($page.url.searchParams.get('leagueId')) || 1; 
 </script>
 
-<div class="flex flex-col items-center flex-grow">
+<div class="stacked-column items-center flex-grow">
     <p class="content-panel-header">{header}</p>
     
     <div class="flex justify-center w-full space-x-8">
         <a
-          class="flex flex-col items-center justify-center"
+          class="stacked-column items-center justify-center"
           href={`/club?id=${nextFixtureHomeTeam ? nextFixtureHomeTeam.id : -1}&leagueId=${leagueId}`}
         >
           <BadgeIcon className="header-badge" primaryColour={nextFixtureHomeTeam?.primaryColourHex} secondaryColour={nextFixtureHomeTeam?.secondaryColourHex} thirdColour={nextFixtureHomeTeam?.thirdColourHex} />
@@ -28,7 +28,7 @@
         </div>
         
         <a
-          class="flex flex-col items-center justify-center"
+          class="stacked-column items-center justify-center"
           href={`/club?id=${nextFixtureAwayTeam ? nextFixtureAwayTeam.id : -1}&leagueId=${leagueId}`}
         >
           <BadgeIcon className="header-badge" primaryColour={nextFixtureAwayTeam?.primaryColourHex} secondaryColour={nextFixtureAwayTeam?.secondaryColourHex} thirdColour={nextFixtureAwayTeam?.thirdColourHex} />

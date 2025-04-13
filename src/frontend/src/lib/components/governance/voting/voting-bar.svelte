@@ -35,7 +35,7 @@
   
 <div class="space-y-4">
   <div class="flex items-center gap-4">
-    <div class="flex flex-col items-center gap-1">
+    <div class="stacked-col items-center gap-1">
       <div class="text-BrandGreen">Adopt</div>
       <button 
         class="p-2 rounded-full transition-colors {isExecuted ? 'opacity-50 cursor-not-allowed' : 'hover:bg-BrandGreen/10'}"
@@ -68,7 +68,7 @@
       </div>
     </div>
     
-    <div class="flex flex-col items-center gap-1">
+    <div class="stacked-col items-center gap-1">
       <div class="text-BrandRed">Reject</div>
       <button 
         class="p-2 rounded-full transition-colors {isExecuted ? 'opacity-50 cursor-not-allowed' : 'hover:bg-BrandRed/10'}"
