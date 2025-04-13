@@ -5,9 +5,11 @@
     import { appStore } from "$lib/stores/app-store";
     import IcfcCoinIcon from "$lib/icons/ICFCCoinIcon.svelte";
     import LocalSpinner from "../shared/local-spinner.svelte";
+    import { goto } from "$app/navigation";
     
     interface Stat {
         label: string;
+        link: string;
         value: string | number;
     }
 
@@ -47,13 +49,18 @@
       }
     }
 
+    function navigate(link: string) {
+      goto(link, { replaceState: false });
+    }
+
+
     const stats: Stat[] = $derived([
-      { label: "Total Leagues", value: Number(dataTotals == undefined ? (0).toLocaleString() : (dataTotals as DataTotals).totalLeagues).toLocaleString() },
-      { label: "Total Clubs", value:  Number(dataTotals == undefined ? (0).toLocaleString() : (dataTotals as DataTotals).totalClubs).toLocaleString() },
-      { label: "Total Players", value:  Number(dataTotals == undefined ? (0).toLocaleString() : (dataTotals as DataTotals).totalPlayers).toLocaleString() },
-      { label: "Total Neurons", value: "1,234" },
-      { label: "Total Proposals", value: totalProposalsCount },
-      { label: "Total ICFC Rewards", value: "600,678" },
+      { label: "Total Leagues", link: '/data/leagues', value: Number(dataTotals == undefined ? (0).toLocaleString() : (dataTotals as DataTotals).totalLeagues).toLocaleString() },
+      { label: "Total Clubs", link: '/data/clubs', value:  Number(dataTotals == undefined ? (0).toLocaleString() : (dataTotals as DataTotals).totalClubs).toLocaleString() },
+      { label: "Total Players", link: '/data/players', value:  Number(dataTotals == undefined ? (0).toLocaleString() : (dataTotals as DataTotals).totalPlayers).toLocaleString() },
+      { label: "Total Neurons", link: '', value: "1,234" },
+      { label: "Total Proposals", link: '', value: totalProposalsCount },
+      { label: "Total ICFC Rewards", link: '', value: "600,678" },
     ]);
 
 </script>
@@ -62,6 +69,20 @@
 {:else}
   <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
     {#each stats as stat}
+      {#if stat.link.length > 0}
+      <button onclick={() => navigate(stat.link)} class="bg-BrandGray text-left rounded shadow-md p-4 hover:shadow-lg transition-shadow flex items-center flex-col">
+        {#if stat.label == "Total ICFC Rewards"}
+          <div class="flex flex-row items-center w-full">
+            <IcfcCoinIcon className="w-6 mr-2" />
+            <h3 class="text-2xl font-semibold">{stat.value}</h3>
+          </div>
+        {:else}
+          <h3 class="w-full text-2xl font-semibold">{stat.value}</h3>
+        {/if}
+        <p class="w-full text-sm font-bold text-BrandLightGray">{stat.label}</p>
+        </button>
+
+      {:else}
       <div
         class="bg-BrandGray rounded shadow-md p-4 hover:shadow-lg transition-shadow flex items-center flex-col"
       >
@@ -75,6 +96,7 @@
         {/if}
         <p class="w-full text-sm font-bold text-BrandLightGray">{stat.label}</p>
       </div>
+      {/if}
     {/each}
   </div>
 {/if}

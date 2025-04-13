@@ -3,8 +3,9 @@
     import Players from "$lib/components/data/players.svelte";
     import Clubs from "$lib/components/data/clubs.svelte";
     import TabPanel from "$lib/components/shared/tab-panel.svelte";
+    import { page } from "$app/stores";
     
-    let activeTab: string = "players";
+    $: activeTab = $page.params.tab || 'players';
 
     const tabs = [
       { id: "players", label: "Players" },
