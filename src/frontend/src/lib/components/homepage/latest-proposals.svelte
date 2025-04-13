@@ -33,7 +33,7 @@
           totalProposalsCount = 0;
         }
       } else {
-        const beforeProposalId = totalProposalsCount - (currentPage - 1) * itemsPerPage;
+        const beforeProposalId = totalProposalsCount - ((currentPage - 1) * itemsPerPage) + 1;
         proposals = await governanceStore.listProposals(
           { id: BigInt(beforeProposalId) },
           [0, 1, 2, 3, 4, 5],
