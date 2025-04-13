@@ -69,7 +69,7 @@
 <Modal title="Withdraw ICFC" {visible} onClose={closeModal}>
   <div class="mx-4 p-4">
     <div class="flex justify-between items-center my-2">
-      <h3 class="brand-header">Withdraw ICFC</h3>
+      <h3 class="page-title">Withdraw ICFC</h3>
       <button class="times-button" on:click={cancelModal}>&times;</button>
     </div>
     <form on:submit|preventDefault={withdrawICFC}>

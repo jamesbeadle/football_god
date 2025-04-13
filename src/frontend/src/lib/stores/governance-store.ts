@@ -7,7 +7,15 @@ import { IDL } from "@dfinity/candid";
 import { Principal } from "@dfinity/principal";
 
 import type { OptionIdentity } from "$lib/types/identity";
-import { SnsGovernanceCanister } from "@dfinity/sns";
+import {
+  SnsGovernanceCanister,
+  type SnsListProposalsParams,
+} from "@dfinity/sns";
+import type {
+  ListProposalsResponse,
+  ProposalData,
+  ProposalId,
+} from "@dfinity/sns/dist/candid/sns_governance";
 import type {
   Command,
   ExecuteGenericNervousSystemFunction,
@@ -88,6 +96,7 @@ import { toasts } from "./toasts-store";
 import { fixtureStore } from "./fixture-store";
 import { seasonStore } from "./season-store";
 import { countryStore } from "./country-store";
+import { ActorFactory } from "$lib/utils/ActorFactory";
 
 async function createProposal({
   identity,
@@ -1022,7 +1031,39 @@ function createGovernanceStore() {
     });
   }
 
+  async function listProposals(
+    beforeProposal?: ProposalId,
+    includeStatus: number[] = [0, 1, 2, 3, 4, 5],
+    limit: number = 3,
+  ): Promise<ListProposalsResponse> {
+    const agent: any = await ActorFactory.getGovernanceAgent();
+    if (process.env.DFX_NETWORK !== "ic") {
+      await agent.fetchRootKey();
+    }
+
+    const principal: Principal = Principal.fromText(
+      process.env.SNS_GOVERNANCE_CANISTER_ID ?? "",
+    );
+
+    const { listProposals: governanceListProposals } =
+      SnsGovernanceCanister.create({
+        agent,
+        canisterId: principal,
+      });
+
+    const params: SnsListProposalsParams = {
+      includeStatus,
+      limit,
+      beforeProposal: beforeProposal,
+      excludeType: undefined,
+      certified: false,
+    };
+
+    return await governanceListProposals(params);
+  }
+
   return {
+    listProposals,
     revaluePlayerUp,
     revaluePlayerDown,
     loanPlayer,

@@ -1,8 +1,6 @@
 <script lang="ts">
     import { onMount } from "svelte";
-    import { ActorFactory } from "$lib/utils/ActorFactory";
-    import { Principal } from "@dfinity/principal";
-    import { SnsGovernanceCanister, type SnsListProposalsParams } from "@dfinity/sns";
+    import { governanceStore } from "$lib/stores/governance-store";
     import type { DataTotals } from "../../../../../declarations/backend/backend.did";
     import { appStore } from "$lib/stores/app-store";
     import IcfcCoinIcon from "$lib/icons/ICFCCoinIcon.svelte";
@@ -29,26 +27,8 @@
   
 
     async function fetchTotalProposals() {
-      const agent: any = await ActorFactory.getGovernanceAgent();
-      if (process.env.DFX_NETWORK !== "ic") {
-        await agent.fetchRootKey();
-      }
-
-      const principal: Principal = Principal.fromText(process.env.SNS_GOVERNANCE_CANISTER_ID ?? "");
-      const { listProposals: governanceListProposals } = SnsGovernanceCanister.create({
-        agent,
-        canisterId: principal,
-      });
-
-      const params: SnsListProposalsParams = {
-        includeStatus: [0, 1, 2, 3, 4, 5],
-        limit: 1,
-        beforeProposal: undefined,
-        excludeType: undefined,
-        certified: false,
-      };
-
-      var proposals = await governanceListProposals(params);
+      
+      var proposals = await governanceStore.listProposals();
 
       if (proposals.proposals.length > 0) {
         const latestProposalId = Number(proposals.proposals[0].id[0]?.id || 0);

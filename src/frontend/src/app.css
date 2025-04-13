@@ -1,8 +1,10 @@
+/* ----- Tailwind Imports ----- */
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* ----- Global styles ----- */
+/* ----- Global Styless ----- */
 
 :root {
   --dialog-width: 90% !important;
@@ -13,192 +15,8 @@
   --dialog-border-radius: 1px !important;
 }
 
-.brand-header {
-  @apply text-xl font-semibold;
-}
-
-.default-sub-header {
-  @apply text-lg font-bold;
-}
-
-.times-button {
-  @apply text-2xl leading-none text-gray-400 hover:text-white;
-}
-
-.selection-panel {
-  @apply flex items-center justify-center flex-1 w-full rounded-md shadow-sm sm:text-sm hover:text-BrandGray focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500;
-}
-
-.selected-panel {
-  @apply px-3 py-2 bg-BrandSuccess hover:bg-BrandSuccess/80;
-}
-
-.select-panel {
-  @apply p-3 text-white bg-BrandPurple hover:bg-BrandPurple;
-}
-
-.fg-button {
-  background-color: #393a3e;
-  color: white;
-}
-
-.button-hover {
-  @apply text-black bg-white hover:bg-BrandSuccess hover:text-BrandGray;
-}
-
-.bg-panel {
-  @apply w-full bg-panel-color;
-}
-
-.bg-panel-color {
-  @apply rounded bg-BrandDarkGray border-BrandPurple/60;
-}
-
-.active-tab {
-  @apply border-b border-b-BrandPurple;
-}
-
-.brand-button {
-  @apply px-2 py-1 text-white rounded bg-BrandPurple hover:bg-BrandPurpleDark disabled:opacity-50 disabled:bg-gray-300;
-}
-
-.brand-cancel-button {
-  @apply px-4 py-2 text-white rounded bg-BrandError;
-}
-
-.brand-button-disabled {
-  @apply px-4 py-2 text-white rounded bg-BrandDisabled;
-}
-
-.brand-select {
-  @apply p-2 text-sm text-white border rounded-lg bg-BrandDarkGray border-BrandDarkGray focus:ring focus:ring-BrandLightGray;
-}
-
-.brand-input {
-  @apply w-full p-2 text-sm text-white border rounded-lg bg-BrandDarkGray border-BrandDarkGray focus:ring focus:ring-BrandLightGray;
-}
-
-.brand-dropdown {
-  @apply w-full px-2 py-1 text-black rounded;
-}
-
-.content-panel {
-  @apply flex items-center justify-start flex-grow p-2 mb-4 space-x-2 text-white rounded-lg bg-panel sm:space-x-3 md:space-x-4 xs:p-3 sm:p-4;
-}
-
-.content-panel-header {
-  @apply text-gray-300 text-xxs xs:text-sm sm:text-base lg:text-sm;
-}
-
-.content-panel-stat {
-  @apply mt-2 mb-2 text-xs font-bold xs:text-sm sm:text-2xl md:text-3xl lg:text-2xl;
-}
-
-.stake-input {
-  @apply w-20 p-1 text-sm text-black border rounded;
-}
-
-.dropdown-link {
-  @apply block w-full px-4 py-2 text-left text-gray-400 rounded-lg hover:text-white bg-BrandGray hover:bg-BrandPurple/50;
-}
-
-.bg-info {
-  @apply bg-BrandInfo;
-}
-
-.bg-success {
-  @apply bg-BrandSuccess;
-}
-
-.bg-error {
-  @apply bg-BrandError;
-}
-
-.page-panel {
-  @apply stacked-column w-full min-h-screen pb-24 rounded-xl bg-BrandGray/90 backdrop-blur md:pb-28 lg:pb-0;
-}
-
-.page-panel-header {
-  @apply px-6 py-4 text-lg font-bold;
-}
-
-.page-panel-bar-format {
-  @apply stacked-column px-4 space-y-4 lg:space-y-2;
-}
-
-.page-panel-bar-button {
-  @apply flex items-center justify-between w-full px-4 py-2 text-left bg-transparent border-0 cursor-pointer md:py-3;
-}
-
-.page-panel-bar-button-title {
-  @apply text-sm font-medium md:text-base;
-}
-
-.page-panel-bar-spinner {
-  @apply px-4 py-2 space-y-2 text-sm bg-BrandDarkGray;
-}
-
-.page-panel-table-container {
-  @apply overflow-hidden text-sm border rounded-b bg-BrandDarkGray border-BrandPurple;
-}
-
-.page-panel-table-header {
-  @apply flex flex-row w-full font-bold text-black bg-white;
-}
-
-.page-title-header {
-  @apply flex items-center justify-between w-full my-4;
-}
-.fixture-event-panel {
-  @apply stacked-column items-center p-6 space-y-4 rounded-t-lg bg-BrandLightGray;
-}
-
-.fixture-event-panel-header {
-  @apply flex items-center justify-between w-full;
-}
-
-.fixture-event-panel-header-clubs {
-  @apply flex items-center justify-center flex-1 space-x-4;
-}
-
-.fixture-event-panel-header-clubs-name {
-  @apply text-xl font-medium;
-}
-
-.fixture-event-panel-header-clubs-badge {
-  @apply p-2 rounded-full bg-BrandGray;
-}
-
-.fixture-event-tab-panel {
-  @apply flex p-4 space-x-2 overflow-x-auto border border-BrandDarkGray;
-}
-
-.fixture-event-tab-panel-button {
-  @apply px-4 py-1 rounded-xl whitespace-nowrap;
-}
-
-.fixture-event-tab-panel-button-active {
-  @apply text-white bg-BrandPurple;
-}
-
-.fixture-event-tab-panel-button-inactive {
-  @apply text-white border bg-BrandGray border-BrandDarkGray hover:bg-BrandGray/80;
-}
-
-.fixture-event-table-header-4 {
-  @apply grid grid-cols-4 font-bold text-center text-black bg-white;
-}
-
-.fixture-event-table-header-3 {
-  @apply grid grid-cols-3 font-bold text-center text-black bg-white;
-}
-
-.header-badge {
-  @apply h-6 m-2 sm:h-7 md:h-8 xl:h-10 sm:my-4;
-}
-
-.modal-input-box {
-  @apply w-full px-4 py-2 mt-2 transition-colors duration-200 border rounded-md border-white/50 bg-BrandDarkGray focus:ring-0 focus:border-BrandPurple/60;
+.transform-style-preserve-3d {
+  transform-style: preserve-3d;
 }
 
 .vertical-divider {
@@ -206,16 +24,4 @@
   min-height: 50px;
   background-color: white;
   @apply self-stretch flex-shrink-0 w-px mx-2;
-}
-
-.perspective {
-  perspective: 2000px;
-}
-
-.transform-style-preserve-3d {
-  transform-style: preserve-3d;
-}
-
-.modal-background {
-  @apply fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-black/50 backdrop-blur-sm perspective;
 }

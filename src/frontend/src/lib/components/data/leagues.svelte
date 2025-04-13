@@ -75,7 +75,7 @@
 {#if isLoading}
     <LocalSpinner />
 {:else}
-    <div class="page-title-header">
+    <div class="flex items-center justify-between w-full my-4">
       <button class="brand-button" on:click={createNewLeague}>+ New League</button>
     </div>
     

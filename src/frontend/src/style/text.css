@@ -1,0 +1,35 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.logo-text {
+  @apply text-xl;
+}
+
+.page-title {
+  @apply text-2xl;
+}
+
+.page-sub-title {
+  @apply text-lg;
+}
+
+.page-paragraph {
+  @apply text-base;
+}
+
+.small-text {
+  @apply text-xs;
+}
+
+.dropdown-link {
+  @apply block w-full px-4 py-2 text-left text-gray-400 rounded-lg hover:text-white bg-BrandGray hover:bg-BrandPurple/50;
+}
+
+.content-panel-header {
+  @apply text-gray-300 text-xxs xs:text-sm sm:text-base lg:text-sm;
+}
+
+.content-panel-stat {
+  @apply mt-2 mb-2 text-xs font-bold xs:text-sm sm:text-2xl md:text-3xl lg:text-2xl;
+}

@@ -17,7 +17,11 @@
   import Toasts from "$lib/components/toasts/toasts.svelte";
   
   import "../app.css";
-  import "../style/fonts.css";
+  import "../style/text.css";
+  import "../style/input.css";
+  import "../style/container.css";
+  import "../style/icons.css";
+  import "../style/button.css";
   
   interface Props { children: Snippet }
   let { children }: Props = $props();

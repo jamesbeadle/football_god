@@ -1,18 +1,15 @@
 <script lang="ts">
-    import { onMount } from "svelte";
-    import { Principal } from "@dfinity/principal";
-    import type { ListProposalsResponse, ProposalId } from "@dfinity/sns/dist/candid/sns_governance";
-    import { SnsGovernanceCanister, type SnsListProposalsParams } from "@dfinity/sns";
-    import { ActorFactory } from "$lib/utils/ActorFactory";
-    import LocalSpinner from "../shared/local-spinner.svelte";
-  
-    let isLoading = $state(true);
-    let currentPage = $state(1);
-    let totalProposalsCount = $state(0);
-    const itemsPerPage = 3;
-    const totalPages = $derived(Math.ceil(totalProposalsCount / itemsPerPage) || 1);
-    let selectedProposalStatus = [0, 1, 2, 3, 4, 5];
-    let proposals: ListProposalsResponse = $state({ proposals: [], include_ballots_by_caller: [] });
+  import { onMount } from "svelte";
+  import { governanceStore } from "$lib/stores/governance-store";
+  import type { ListProposalsResponse } from "@dfinity/sns/dist/candid/sns_governance";
+  import LocalSpinner from "../shared/local-spinner.svelte";
+
+  let isLoading = $state(true);
+  let currentPage = $state(1);
+  let totalProposalsCount = $state(0);
+  const itemsPerPage = 3;
+  const totalPages = $derived(Math.ceil(totalProposalsCount / itemsPerPage) || 1);
+  let proposals: ListProposalsResponse = $state({ proposals: [], include_ballots_by_caller: [] });
   
   onMount(async () => {
     try {
@@ -24,43 +21,10 @@
     }
   });
 
-
   async function fetchProposals() {
-    const agent: any = await ActorFactory.getGovernanceAgent();
-      if (process.env.DFX_NETWORK !== "ic") {
-        await agent.fetchRootKey();
-      }
-
-      const principal: Principal = Principal.fromText(process.env.SNS_GOVERNANCE_CANISTER_ID ?? "");
-      const { listProposals: governanceListProposals } = SnsGovernanceCanister.create({
-        agent,
-        canisterId: principal,
-      });
-
-      const params: SnsListProposalsParams = {
-        includeStatus: selectedProposalStatus,
-        limit: itemsPerPage,
-        beforeProposal: undefined,
-        excludeType: undefined,
-        certified: false,
-      };
-
-      if (currentPage > 1) {
-        let offset = (currentPage - 1) * itemsPerPage;
-        let lastProposalId: ProposalId | undefined;
-
-        while (offset > 0) {
-          const tempParams = { ...params, limit: Math.min(offset, 100), beforeProposal: lastProposalId };
-          const tempProposals = await governanceListProposals(tempParams);
-          if (tempProposals.proposals.length === 0) break;
-          lastProposalId = tempProposals.proposals[tempProposals.proposals.length - 1].id[0];
-          offset -= tempProposals.proposals.length;
-        }
-        params.beforeProposal = lastProposalId;
-      }
-
-      proposals = await governanceListProposals(params);
-
+   
+      proposals = await governanceStore.listProposals();
+      
       if (currentPage === 1 && proposals.proposals.length > 0) {
         const latestProposalId = Number(proposals.proposals[0].id[0]?.id || 0);
         totalProposalsCount = latestProposalId;

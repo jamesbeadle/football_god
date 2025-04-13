@@ -1,0 +1,24 @@
+.fg-button {
+  background-color: #393a3e;
+  color: white;
+}
+
+.times-button {
+  @apply text-2xl leading-none text-gray-400 hover:text-white;
+}
+
+.button-hover {
+  @apply text-black bg-white hover:bg-BrandSuccess hover:text-BrandGray;
+}
+
+.brand-button {
+  @apply px-2 py-1 text-white rounded bg-BrandPurple hover:bg-BrandPurpleDark disabled:opacity-50 disabled:bg-gray-300;
+}
+
+.brand-cancel-button {
+  @apply px-4 py-2 text-white rounded bg-BrandError;
+}
+
+.brand-button-disabled {
+  @apply px-4 py-2 text-white rounded bg-BrandDisabled;
+}

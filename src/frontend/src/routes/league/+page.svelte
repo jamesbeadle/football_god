@@ -1,19 +1,17 @@
 <script lang="ts">
     import { onMount } from "svelte";
     import { page } from "$app/stores";
-
     import { countryStore } from "$lib/stores/country-store"; 
     import { leagueStore } from "$lib/stores/league-store";
+    import type { Country, CountryId, League, LeagueStatus } from "../../../../declarations/backend/backend.did";
     
-    import LeagueClubs from "$lib/components/league/league-clubs.svelte";
-    import LeagueFixtures from "$lib/components/league/league-fixtures.svelte";
-    import FullScreenSpinner from "$lib/components/shared/full-screen-spinner.svelte";
-    import LeagueLoanedPlayers from "$lib/components/league/league-loaned-players.svelte";
-    import PostponedLeagueFixtures from "$lib/components/league/postponed-league-fixtures.svelte";
     import TabContainer from "$lib/components/shared/tab-container.svelte";
     import LeagueGridDisplay from "$lib/components/league/league-grid-display.svelte";
-    import type { Country, CountryId, League, LeagueStatus } from "../../../../declarations/backend/backend.did";
-
+    import LeagueClubs from "$lib/components/league/league-clubs.svelte";
+    import LeagueFixtures from "$lib/components/league/league-fixtures.svelte";
+    import LeagueLoanedPlayers from "$lib/components/league/league-loaned-players.svelte";
+    import PostponedLeagueFixtures from "$lib/components/league/postponed-league-fixtures.svelte";
+    import FullScreenSpinner from "$lib/components/shared/full-screen-spinner.svelte";
     
     const tabs = [
         { id: 'clubs', label: 'Clubs' },

@@ -47,7 +47,7 @@
       <LocalSpinner />
     {:else}
       <ClubHeader {club} />
-      <div class="!border !rounded-lg bg-panel !border-BrandPurple/50">
+      <div class="!border !rounded-lg page-panel !border-BrandPurple/50">
         <div class="flex py-4 border-b md:px-4 border-gray-700">
           <TabContainer filterType={activeTab} {setActiveTab} {tabs} />
         </div>

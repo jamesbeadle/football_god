@@ -10,7 +10,7 @@
     }
 </script>
 
-<div class="flex p-2 px-4 border-b border-gray-700 bg-light-gray xs:py-3 md:py-4">
+<div class="flex p-2 px-4 border-b border-gray-700 bg-BrandLightGray xs:py-3 md:py-4">
     <div class="flex items-center w-2/12 space-x-4 sm:hidden">
         No.
         <button class="cursor-pointer" on:click={() => handleSort('shirtNumber')}>

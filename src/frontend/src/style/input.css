@@ -1,0 +1,23 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.brand-input {
+  @apply w-full p-2 text-sm text-white border rounded-lg bg-BrandDarkGray border-BrandDarkGray focus:ring focus:ring-BrandLightGray;
+}
+
+.brand-dropdown {
+  @apply w-full px-2 py-1 text-black rounded;
+}
+
+.brand-select {
+  @apply p-2 text-sm text-white border rounded-lg bg-BrandDarkGray border-BrandDarkGray focus:ring focus:ring-BrandLightGray;
+}
+
+.stake-input {
+  @apply w-20 p-1 text-sm text-black border rounded;
+}
+
+.modal-input-box {
+  @apply w-full px-4 py-2 mt-2 transition-colors duration-200 border rounded-md border-white/50 bg-BrandDarkGray focus:ring-0 focus:border-BrandPurple/60;
+}

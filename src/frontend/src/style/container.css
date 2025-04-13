@@ -1,0 +1,35 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.stacked-column {
+  @apply flex flex-col;
+}
+
+.page-panel {
+  @apply stacked-column w-full min-h-screen pb-24 rounded-xl bg-BrandGray/90 backdrop-blur md:pb-28 lg:pb-0 rounded bg-BrandDarkGray border-BrandPurple/60;
+}
+
+.tab-container {
+  @apply flex rounded-t-lg bg-BrandLightGray border-b border-gray-700 px-4 pt-2;
+}
+
+.page-panel-bar-format {
+  @apply stacked-column px-4 space-y-4 lg:space-y-2;
+}
+
+.content-panel {
+  @apply flex items-center justify-start flex-grow p-2 mb-4 space-x-2 text-white rounded-lg page-panel sm:space-x-3 md:space-x-4 xs:p-3 sm:p-4;
+}
+
+.modal-background {
+  @apply fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-black/50 backdrop-blur-sm perspective;
+}
+
+.perspective {
+  perspective: 2000px;
+}
+
+.active-tab {
+  @apply border-b border-b-BrandPurple;
+}

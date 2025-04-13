@@ -299,7 +299,7 @@
   <LocalSpinner />
 {:else}
 
-  <div class="page-title-header">
+  <div class="flex items-center justify-between w-full my-4">
     <button class="brand-button" on:click={createNewPlayer}>+ New Player</button>
   </div>
 

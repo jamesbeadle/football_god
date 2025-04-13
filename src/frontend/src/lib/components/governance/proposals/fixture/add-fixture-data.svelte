@@ -306,7 +306,7 @@
         {:else}
           <div class="stacked-col w-full min-h-screen rounded-xl backdrop-blur ">
             <div class="stacked-col p-3 my-2 space-y-4 md:my-0 md:mb-4 md:p-0 md:flex-row md:space-y-0 md:space-x-4">
-              <div class="flex flex-row items-center justify-center w-full py-4 space-x-4 border md:w-1/3 bg-panel-color">
+              <div class="flex flex-row items-center justify-center w-full py-4 space-x-4 border md:w-1/3 page-panel">
                 <div class="stacked-col justify-center space-y-2">
                   <BadgeIcon
                     className="h-8 lg:h-12"
@@ -333,7 +333,7 @@
                   <p class="text-sm text-center">{awayTeam?.abbreviatedName}</p>
                 </div>
               </div>
-              <div class="flex flex-row w-full p-4 space-x-4 text-xs text-gray-400 border md:w-2/3 md:text-sm bg-panel-color">
+              <div class="flex flex-row w-full p-4 space-x-4 text-xs text-gray-400 border md:w-2/3 md:text-sm page-panel">
                 <div class="flex-col w-1/2 space-y-4">
                   <p>{homeTeam?.name}</p>
                   <div class="stacked-col space-y-2">
@@ -351,11 +351,11 @@
               </div>
             </div>
 
-            <div class="border rounded-md bg-panel">
+            <div class="border rounded-md page-panel">
               <div class="stacked-col">
                 <div class="flex w-full">
                   <ul
-                    class="flex w-full px-4 pt-2 border-b border-gray-700 bg-light-gray"
+                    class="flex w-full px-4 pt-2 border-b border-gray-700 bg-BrandLightGray"
                   >
                     <li class={`mr-4 ${activeTab === "home" ? "active-tab" : ""}`}>
                       <button
@@ -386,7 +386,7 @@
                 </div>
                 <div class="stacked-col w-full">
                   <div
-                    class="flex flex-row items-center justify-between py-4 border border-gray-700 bg-light-gray"
+                    class="flex flex-row items-center justify-between py-4 border border-gray-700 bg-BrandLightGray"
                   >
                     <div class="w-1/6 px-4">#</div>
                     <div class="w-3/6 px-4">Player</div>

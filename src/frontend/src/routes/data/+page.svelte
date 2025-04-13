@@ -12,10 +12,8 @@
   </script>
     
   <div class="m-4">
-    <div class="bg-panel rounded-md">
-      <ul
-        class="flex rounded-t-lg bg-light-gray border-b border-gray-700 px-4 pt-2"
-      >
+    <div class="page-panel">
+      <ul class="tab-container">
         <li class={`mr-4 ${activeTab === "players" ? "active-tab" : ""}`}>
           <button
             class={`p-2 ${

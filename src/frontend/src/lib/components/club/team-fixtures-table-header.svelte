@@ -1,4 +1,4 @@
-<div class="flex items-center px-4 py-4 text-white border-b border-gray-700 bg-light-gray">
+<div class="flex items-center px-4 py-4 text-white border-b border-gray-700 bg-BrandLightGray">
     <div class="flex-grow hidden w-1/6 md:flex">Gameweek</div>
     <div class="flex-grow w-1/6 md:hidden">GW</div>
     <div class="flex-grow w-1/2 pl-2">Game</div>

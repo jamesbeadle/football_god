@@ -313,7 +313,7 @@
 <Modal title="Player Events" {visible} onClose={exitModal}>
   <div class="p-4 mx-4">
     <div class="flex items-center justify-between my-2">
-      <h3 class="brand-header">Add Events</h3>
+      <h3 class="page-title">Add Events</h3>
       <button class="times-button" on:click={exitModal}>&times;</button>
     </div>
 
