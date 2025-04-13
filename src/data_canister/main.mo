@@ -1204,7 +1204,7 @@ actor Self {
     assert clubExists(dto.leagueId, dto.clubId);
     assert countryExists(dto.nationality);
 
-    //TODO: Check if player already added
+    //DevOps 478: Check if player already added
 
     if (Text.size(dto.firstName) > 50) {
       return #Err("Invalid Data");
@@ -1468,7 +1468,7 @@ actor Self {
                             highestScoringPlayerId = 0;
                             homeClubId = fixtureEntry.homeClubId;
                             homeGoals = 0;
-                            id = 0; // TODO: Need to write the league id logic for incrementing this
+                            id = 0; // DevOps 398: Need to write the league id logic for incrementing this
                             kickOff = fixtureEntry.kickOff;
                             seasonId = seasonEntry.id;
                             status = #Unplayed;
@@ -3427,7 +3427,7 @@ actor Self {
   
 
   /* Validation Functions related to data being entered under DAO Control */
-  // TODO: Ensure all validations are in 
+  // DevOps 478: Ensure all validations are in 
 
   private func seasonActive(leagueId : FootballIds.LeagueId) : Bool {
     let leagueStatusResult = Array.find<FootballTypes.LeagueStatus>(
@@ -4101,7 +4101,7 @@ actor Self {
                 func(fixture : FootballTypes.Fixture) {
                   fixture.kickOff - DateTimeUtilities.getHour() >= Time.now();
                 },
-              ); // TODO
+              ); // DevOps 479
               for (fixture in Iter.fromList(activeFutureFixtures)) {
                 let triggerDuration = #nanoseconds(Int.abs((fixture.kickOff - DateTimeUtilities.getHour() - Time.now())));
                 await setTimer(triggerDuration, "rollOverPickTeam");
@@ -4890,7 +4890,7 @@ actor Self {
           },
         );
 
-        // TODO: Needs to be more idempotent
+        // DevOps 479: Needs to be more idempotent
         //let _ = await notificationManager.distributeNotification(#ExpireLoan, #ExpireLoan { leagueId = dto.leagueId; playerId = dto.playerId });
       };
     };
@@ -4969,19 +4969,19 @@ actor Self {
             );
 
             let goalkeepers = Array.filter<PlayerQueries.Player>(players.players, func(playerEntry: PlayerQueries.Player) {
-              return playerEntry.position == #Goalkeeper; // TODO add appearance count
+              return playerEntry.position == #Goalkeeper; // DevOps 476 add appearance count
             });
 
             let defenders = Array.filter<PlayerQueries.Player>(players.players, func(playerEntry: PlayerQueries.Player) {
-              return playerEntry.position == #Defender; // TODO add appearance count
+              return playerEntry.position == #Defender; // DevOps 476 add appearance count
             });
 
             let midfielders = Array.filter<PlayerQueries.Player>(players.players, func(playerEntry: PlayerQueries.Player) {
-              return playerEntry.position == #Midfielder; // TODO add appearance count
+              return playerEntry.position == #Midfielder; // DevOps 476 add appearance count
             });
 
             let forwards = Array.filter<PlayerQueries.Player>(players.players, func(playerEntry: PlayerQueries.Player) {
-              return playerEntry.position == #Forward; // TODO add appearance count
+              return playerEntry.position == #Forward; // DevOps 476 add appearance count
             });
 
             let goalkeeperValue = Array.foldLeft<PlayerQueries.Player, Nat16>(
@@ -5033,7 +5033,7 @@ actor Self {
                 secondaryColour = club.secondaryColourHex;
                 thirdColour = club.thirdColourHex;
                 shirtType = club.shirtType;
-                gender = #Male; //todo
+                gender = #Male; //DevOps 476
                 mvp = {firstName = sortedPlayers[0].firstName; id = sortedPlayers[0].id; lastName = sortedPlayers[0].lastName; value = sortedPlayers[0].valueQuarterMillions};
                 totalGoalkeepers = Nat8.fromNat(Array.size(goalkeepers));
                 totalDefenders = Nat8.fromNat(Array.size(defenders));
@@ -5153,9 +5153,9 @@ actor Self {
     var totalLeagues = Array.size(leagues);
     var totalClubs = 0;
     var totalPlayers = 0;
-    var totalGovernanceRewards = 0; // TODO
-    var totalProposals = 0; // TODO
-    var totalNeurons = 0; // TODO
+    var totalGovernanceRewards = 0; // DevOps 476
+    var totalProposals = 0; // DevOps 476
+    var totalNeurons = 0; // DevOps 476
 
     for(league in Iter.fromArray(leagueClubs)){
       for(club in Iter.fromArray(league.1)){

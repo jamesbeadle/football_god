@@ -58,7 +58,7 @@ const logout = async ({
 
   if (clearStorages) {
     await Promise.all([
-      // TODO: clear storages
+      // DevOps 443: clear storages
       console.error("Store clear not implemented"),
     ]);
   }

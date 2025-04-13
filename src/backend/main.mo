@@ -30,7 +30,7 @@ actor Self {
     version = ""; 
   };  
 
-  // TODO: John - Because Football God is a neuron based governance platform, we actually don't need profiles at all
+  // DevOps 464: John - Because Football God is a neuron based governance platform, we actually don't need profiles at all
     //Before removing this please get the cycles back if a canister ids
 
   private stable var stable_profile_canister_ids: [(Ids.PrincipalId, Ids.CanisterId)] = [];
@@ -49,7 +49,7 @@ actor Self {
 
   public shared ({ caller }) func getDataHashes(dto: AppQueries.GetDataHashes) : async Result.Result<AppQueries.DataHashes, Enums.Error> {
     assert not Principal.isAnonymous(caller);
-    // TODO: Check caller has associated neuron
+    // DevOps 480: Check caller has associated neuron
 
     let data_canister = actor (CanisterIds.ICFC_DATA_CANISTER_ID) : actor {
       getDataHashes : (dto: AppQueries.GetDataHashes) -> async Result.Result<AppQueries.DataHashes, Enums.Error>;
@@ -59,7 +59,7 @@ actor Self {
 
   public shared ({ caller }) func getClubs(dto: ClubQueries.GetClubs) : async Result.Result<ClubQueries.Clubs, Enums.Error> {
     assert not Principal.isAnonymous(caller);
-    // TODO: Check caller has associated neuron
+    // DevOps 480: Check caller has associated neuron
 
     let data_canister = actor (CanisterIds.ICFC_DATA_CANISTER_ID) : actor {
       getClubs : (dto: ClubQueries.GetClubs) -> async Result.Result<ClubQueries.Clubs, Enums.Error>;
@@ -76,7 +76,7 @@ actor Self {
 
   public shared ({ caller }) func getSeasons(dto: SeasonQueries.GetSeasons) : async Result.Result<SeasonQueries.Seasons, Enums.Error> {
     assert not Principal.isAnonymous(caller);
-    // TODO: Check caller has associated neuron
+    // DevOps 480: Check caller has associated neuron
 
     let data_canister = actor (CanisterIds.ICFC_DATA_CANISTER_ID) : actor {
       getSeasons : (dto: SeasonQueries.GetSeasons) -> async Result.Result<SeasonQueries.Seasons, Enums.Error>;
@@ -86,7 +86,7 @@ actor Self {
 
   public shared ({ caller }) func getLoanedPlayers(dto: PlayerQueries.GetLoanedPlayers) : async Result.Result<PlayerQueries.LoanedPlayers, Enums.Error> {
     assert not Principal.isAnonymous(caller);
-    // TODO: Check caller has associated neuron
+    // DevOps 480: Check caller has associated neuron
 
     let data_canister = actor (CanisterIds.ICFC_DATA_CANISTER_ID) : actor {
       getLoanedPlayers : (dto: PlayerQueries.GetLoanedPlayers) -> async Result.Result<PlayerQueries.LoanedPlayers, Enums.Error>;
@@ -96,7 +96,7 @@ actor Self {
 
   public shared ({ caller }) func getPlayers(dto: PlayerQueries.GetPlayers) : async Result.Result<PlayerQueries.Players, Enums.Error> {
     assert not Principal.isAnonymous(caller);
-    // TODO: Check caller has associated neuron
+    // DevOps 480: Check caller has associated neuron
 
     let data_canister = actor (CanisterIds.ICFC_DATA_CANISTER_ID) : actor {
       getPlayers : (dto: PlayerQueries.GetPlayers) -> async Result.Result<PlayerQueries.Players, Enums.Error>;
@@ -106,7 +106,7 @@ actor Self {
 
   public shared ({ caller }) func getLeagues(dto: LeagueQueries.GetLeagues) : async Result.Result<LeagueQueries.Leagues, Enums.Error> {
     assert not Principal.isAnonymous(caller);
-    // TODO: Check caller has associated neuron
+    // DevOps 480: Check caller has associated neuron
 
     let data_canister = actor (CanisterIds.ICFC_DATA_CANISTER_ID) : actor {
       getLeagues : (dto: LeagueQueries.GetLeagues) -> async Result.Result<LeagueQueries.Leagues, Enums.Error>;
@@ -117,7 +117,7 @@ actor Self {
 
   public shared ({ caller }) func getLeagueStatus(dto: LeagueQueries.GetLeagueStatus) : async Result.Result<LeagueQueries.LeagueStatus, Enums.Error> {
     assert not Principal.isAnonymous(caller);
-    // TODO: Check caller has associated neuron
+    // DevOps 480: Check caller has associated neuron
 
     let data_canister = actor (CanisterIds.ICFC_DATA_CANISTER_ID) : actor {
       getLeagueStatus : (dto: LeagueQueries.GetLeagueStatus) -> async Result.Result<LeagueQueries.LeagueStatus, Enums.Error>;
@@ -127,7 +127,7 @@ actor Self {
 
   public shared ({ caller }) func getFixtures(dto: FixtureQueries.GetFixtures) : async Result.Result<FixtureQueries.Fixtures, Enums.Error> {
     assert not Principal.isAnonymous(caller);
-    // TODO: Check caller has associated neuron
+    // DevOps 480: Check caller has associated neuron
 
     let data_canister = actor (CanisterIds.ICFC_DATA_CANISTER_ID) : actor {
       getFixtures : (dto: FixtureQueries.GetFixtures) -> async Result.Result<FixtureQueries.Fixtures, Enums.Error>;
@@ -137,7 +137,7 @@ actor Self {
 
   public shared ({ caller }) func getPostponedFixtures(dto: FixtureQueries.GetPostponedFixtures) : async Result.Result<FixtureQueries.PostponedFixtures, Enums.Error> {
     assert not Principal.isAnonymous(caller);
-    // TODO: Check caller has associated neuron
+    // DevOps 480: Check caller has associated neuron
 
     let data_canister = actor (CanisterIds.ICFC_DATA_CANISTER_ID) : actor {
       getPostponedFixtures : (dto: FixtureQueries.GetPostponedFixtures) -> async Result.Result<FixtureQueries.PostponedFixtures, Enums.Error>;
@@ -147,7 +147,7 @@ actor Self {
 
   public shared ({ caller }) func getClubValueLeaderboard(dto: ClubQueries.GetClubValueLeaderboard) : async Result.Result<ClubQueries.ClubValueLeaderboard, Enums.Error> {
     assert not Principal.isAnonymous(caller);
-    // TODO: Check caller has associated neuron
+    // DevOps 480: Check caller has associated neuron
 
     let data_canister = actor (CanisterIds.ICFC_DATA_CANISTER_ID) : actor {
       getClubValueLeaderboard : (dto: ClubQueries.GetClubValueLeaderboard) -> async Result.Result<ClubQueries.ClubValueLeaderboard, Enums.Error>;
@@ -157,7 +157,7 @@ actor Self {
 
   public shared ({ caller }) func getPlayerValueLeaderboard(dto: PlayerQueries.GetPlayerValueLeaderboard) : async Result.Result<PlayerQueries.PlayerValueLeaderboard, Enums.Error> {
     assert not Principal.isAnonymous(caller);
-    // TODO: Check caller has associated neuron
+    // DevOps 480: Check caller has associated neuron
 
     let data_canister = actor (CanisterIds.ICFC_DATA_CANISTER_ID) : actor {
       getPlayerValueLeaderboard : (dto: PlayerQueries.GetPlayerValueLeaderboard) -> async Result.Result<PlayerQueries.PlayerValueLeaderboard, Enums.Error>;
@@ -167,7 +167,7 @@ actor Self {
 
   public shared ({ caller }) func getDataTotals(dto: AppQueries.GetDataTotals) : async Result.Result<AppQueries.DataTotals, Enums.Error> {
     assert not Principal.isAnonymous(caller);
-    // TODO: Check caller has associated neuron
+    // DevOps 480: Check caller has associated neuron
 
     let data_canister = actor (CanisterIds.ICFC_DATA_CANISTER_ID) : actor {
       getDataTotals : (dto: AppQueries.GetDataTotals) -> async Result.Result<AppQueries.DataTotals, Enums.Error>;
