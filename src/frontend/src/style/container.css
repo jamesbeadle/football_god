@@ -6,6 +6,10 @@
   @apply flex flex-col;
 }
 
+.stacked-row {
+  @apply flex flex-row;
+}
+
 .page-panel {
   @apply stacked-column w-full min-h-screen pb-24 rounded-xl bg-BrandGray/90 backdrop-blur md:pb-28 lg:pb-0 rounded bg-BrandDarkGray border-BrandPurple/60;
 }

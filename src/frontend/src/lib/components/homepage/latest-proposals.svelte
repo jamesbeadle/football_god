@@ -40,7 +40,7 @@
     }
   }
 </script>
-<div class="md:col-span-1 bg-BrandLightGray rounded shadow-md p-6">
+<div class="w-full bg-BrandLightGray rounded shadow-md p-6">
     <h2 class="text-xl font-semibold mb-4">Recent Proposals</h2>
     {#if isLoading}
       <LocalSpinner />

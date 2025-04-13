@@ -25,7 +25,13 @@
 {:else}
   <div class="stacked-column">
     <Stats />
-    <Heatmaps />
-    <LatestProposals />
+    <div class="stacked-row">
+      <div class="w-2/3">
+        <Heatmaps />
+      </div>
+      <div class="w-1/3">
+        <LatestProposals />
+      </div>
+    </div>
   </div>
 {/if}
