@@ -23,15 +23,15 @@
 {#if isLoading}
   <FullScreenSpinner />
 {:else}
-  <div class="stacked-column">
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+  <div class="col-span-1 lg:col-span-3">
     <Stats />
-    <div class="stacked-row">
-      <div class="w-2/3">
-        <Heatmaps />
-      </div>
-      <div class="w-1/3">
-        <LatestProposals />
-      </div>
-    </div>
   </div>
+  <div class="col-span-1 lg:col-span-2">
+    <Heatmaps />
+  </div>
+  <div class="col-span-1 lg:col-span-1">
+    <LatestProposals />
+  </div>
+</div>
 {/if}

@@ -303,32 +303,30 @@
     <button class="brand-button" on:click={createNewPlayer}>+ New Player</button>
   </div>
 
-    {#if loadingPlayers || loadingClubs}
-      <LocalSpinner />
-    {:else}
-    <div class="mb-4">
-        <PlayersHeaderDisplay
-          leagues={leagueOptions}
-          clubs={clubOptions}
-          positions={positionOptions}
-          nationalities={nationalityOptions}
-          bind:selectedLeagueId
-          bind:selectedClubId
-          bind:selectedPositionId
-          bind:selectedNationalityId
-          bind:minValue
-          bind:maxValue
-          bind:searchSurname
-          onLeagueChange={handleLeagueChange}
-          onClubChange={handleClubChange}
-          onPositionChange={handlePositionChange}
-          onNationalityChange={handleNationalityChange}
-          onValueChange={filterPlayers}
-          onSearch={filterPlayers}
-          onKeyPress={handleKeyPress}
-        />     
-    </div>
-
+  {#if loadingPlayers || loadingClubs}
+    <LocalSpinner />
+  {:else}
+    <PlayersHeaderDisplay
+      leagues={leagueOptions}
+      clubs={clubOptions}
+      positions={positionOptions}
+      nationalities={nationalityOptions}
+      bind:selectedLeagueId
+      bind:selectedClubId
+      bind:selectedPositionId
+      bind:selectedNationalityId
+      bind:minValue
+      bind:maxValue
+      bind:searchSurname
+      onLeagueChange={handleLeagueChange}
+      onClubChange={handleClubChange}
+      onPositionChange={handlePositionChange}
+      onNationalityChange={handleNationalityChange}
+      onValueChange={filterPlayers}
+      onSearch={filterPlayers}
+      onKeyPress={handleKeyPress}
+    />    
+      
     <div class="px-3 mt-4 mb-4 space-y-4 md:px-0">
         {#each filteredPlayers.sort((a, b) => b.valueQuarterMillions - a.valueQuarterMillions) as player}
         {@const playerClub = clubs.find(x => x.id == player.clubId)}

@@ -23,9 +23,10 @@
     export let onKeyPress: (event: KeyboardEvent) => void;
 </script>
   
-<div class="space-y-2">
-    <div class="stacked-col mb-2 md:flex-row md:space-x-2">
-        <div class="w-full mb-2 md:w-1/2 md:mb-0">
+<div class="space-y-4">
+    <!-- League and Club Pair -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="w-full">
             <DropdownSelect
                 value={selectedLeagueId}
                 options={leagues}
@@ -35,8 +36,7 @@
                 compact={true}
             />
         </div>
-    
-        <div class="w-full md:w-1/2">
+        <div class="w-full">
             <DropdownSelect
                 value={selectedClubId}
                 options={clubs}
@@ -48,8 +48,9 @@
         </div>
     </div>
   
-    <div class="stacked-col mb-2 md:flex-row md:space-x-2">
-        <div class="w-full mb-2 md:w-1/2 md:mb-0">
+    <!-- Position and Nationality Pair -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="w-full">
             <DropdownSelect
                 value={selectedPositionId}
                 options={positions}
@@ -59,8 +60,7 @@
                 compact={true}
             />
         </div>
-    
-        <div class="w-full md:w-1/2">
+        <div class="w-full">
             <DropdownSelect
                 value={selectedNationalityId}
                 options={nationalities}
@@ -72,8 +72,9 @@
         </div>
     </div>
 
-    <div class="stacked-col mb-2 md:flex-row md:space-x-2">
-        <div class="w-full px-3 mb-2 md:px-0 md:w-1/2 md:mb-0">
+    <!-- Min Value and Max Value Pair -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="w-full px-3 md:px-0">
             <label for="minValue" class="block mb-1 text-xs text-white">Min Value (M):</label>
             <div class="relative">
                 <input
@@ -87,8 +88,7 @@
                 />
             </div>
         </div>
-    
-        <div class="w-full px-3 md:px-0 md:w-1/2">
+        <div class="w-full px-3 md:px-0">
             <label for="maxValue" class="block mb-1 text-xs text-white">Max Value (M):</label>
             <div class="relative">
                 <input
@@ -104,26 +104,29 @@
         </div>
     </div>
 
-    <div>
-        <label for="searchSurname" class="block px-3 mb-1 text-xs text-white md:px-0">Search by Surname:</label>
-        <div class="flex px-3 space-x-2 md:px-0">
-            <div class="relative flex">
-                <input
-                    type="text"
-                    id="searchSurname"
-                    bind:value={searchSurname}
-                    class="w-full p-3 text-white transition-colors rounded-lg bg-BrandGray hover:bg-BrandGray/50 focus:outline-none focus:ring-0 focus:border-BrandPurple/60"
-                    placeholder="Enter surname"
-                    on:input={onSearch}
-                    on:keypress={onKeyPress}
-                />
-            </div>
-            <button
-                class="px-4 py-2 text-sm text-white transition-colors rounded-lg bg-BrandPurple hover:bg-BrandPurple/80 focus:outline-none focus:ring-2 focus:ring-BrandPurple"
-                on:click={onSearch}
+    <!-- Search Surname (Full Width) -->
+    <div class="grid grid-cols-1 gap-4">
+        <div class="w-full">
+            <label for="searchSurname" class="block px-3 mb-1 text-xs text-white md:px-0">Search by Surname:</label>
+            <div class="flex px-3 space-x-2 md:px-0">
+                <div class="relative flex-1">
+                    <input
+                        type="text"
+                        id="searchSurname"
+                        bind:value={searchSurname}
+                        class="w-full p-3 text-white transition-colors rounded-lg bg-BrandGray hover:bg-BrandGray/50 focus:outline-none focus:ring-0 focus:border-BrandPurple/60"
+                        placeholder="Enter surname"
+                        on:input={onSearch}
+                        on:keypress={onKeyPress}
+                    />
+                </div>
+                <button
+                    class="px-4 py-2 text-sm text-white transition-colors rounded-lg bg-BrandPurple hover:bg-BrandPurple/80 focus:outline-none focus:ring-2 focus:ring-BrandPurple"
+                    on:click={onSearch}
                 >
-                Search
-            </button>
+                    Search
+                </button>
+            </div>
         </div>
     </div>
-</div> 
+</div>

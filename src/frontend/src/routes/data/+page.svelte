@@ -17,27 +17,25 @@
     }
     
   </script>
-    
-  <div class="m-4">
-    <div class="page-panel">
-
-      <TabPanel {activeTab} {setActiveTab} {tabs} />
-
-      <div class="flex w-full flex-col p-4">
-
-        {#if activeTab == 'players'}
-          <Players />
-        {/if}
   
-        {#if activeTab == 'clubs'}
-          <Clubs />
-        {/if}
-  
-        {#if activeTab == 'leagues'}
-          <Leagues />
-        {/if}
+  <div class="page-panel">
 
-      </div>
+    <TabPanel {activeTab} {setActiveTab} {tabs} />
+
+    <div class="flex w-full flex-col p-4">
+
+      {#if activeTab == 'players'}
+        <Players />
+      {/if}
+
+      {#if activeTab == 'clubs'}
+        <Clubs />
+      {/if}
+
+      {#if activeTab == 'leagues'}
+        <Leagues />
+      {/if}
 
     </div>
+
   </div>

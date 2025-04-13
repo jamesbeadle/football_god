@@ -132,6 +132,7 @@
           </button>
       </div>
       <p>{heatmaps[currentHeatmapIndex].id} Heatmap Coming Soon.</p>
+      <div class="flex w-full h-32"></div>
       <!-- DevOps 473 & 474
       <div class="grid grid-cols-5 gap-1">
           {#each heatmaps[currentHeatmapIndex].data as row}
