@@ -1,1 +1,0 @@
-<p>Player Values Heat Map</p>

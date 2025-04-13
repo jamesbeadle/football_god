@@ -1,20 +1,22 @@
 <script lang="ts">
 
   import { onMount, type Snippet } from "svelte";
+  import { get } from "svelte/store";
   import { fade } from "svelte/transition";
+
   import { browser } from "$app/environment";
   import { initAuthWorker } from "$lib/services/worker.auth.services";
   import { displayAndCleanLogoutMsg } from "$lib/services/auth.services";
   import { authStore, type AuthStoreData } from "$lib/stores/auth-store";
-  import { get } from "svelte/store";
-  
-  import "../app.css";
-  import Toasts from "$lib/components/toasts/toasts.svelte";
-  import FullScreenSpinner from "$lib/components/shared/full-screen-spinner.svelte";
   import { authSignedInStore } from "$lib/derived/auth.derived";
+  
+  import FullScreenSpinner from "$lib/components/shared/full-screen-spinner.svelte";
   import LoggedInHeader from "$lib/components/shared/logged-in-header.svelte";
   import Sidebar from "$lib/components/shared/sidebar.svelte";
   import LandingPage from "$lib/components/landing/landing-page.svelte";
+  import Toasts from "$lib/components/toasts/toasts.svelte";
+  
+  import "../app.css";
   
   interface Props { children: Snippet }
   let { children }: Props = $props();
@@ -22,16 +24,6 @@
   let worker: { syncAuthIdle: (auth: AuthStoreData) => void } | undefined;
   let isLoading = $state(true);
   let isMenuOpen = $state(false);
-
-  function toggleMenu() {
-      isMenuOpen = !isMenuOpen;
-  }
-
-  const init = async () => {
-    if (!browser) return;
-    await authStore.sync();
-    displayAndCleanLogoutMsg();
-  };
 
   onMount(async () => {
     if (browser) {
@@ -42,12 +34,23 @@
     if (identity) {
       try {
       } catch (err) {
-        console.error('initUserProfile error:', err);
+        console.error('Error mounting Football God:', err);
       }
     }
     worker = await initAuthWorker();
     isLoading = false;
   });
+
+  const init = async () => {
+    if (!browser) return;
+    await authStore.sync();
+    displayAndCleanLogoutMsg();
+  };
+
+  function toggleMenu() {
+      isMenuOpen = !isMenuOpen;
+  }
+
 </script>
 
 <svelte:window on:storage={authStore.sync} />

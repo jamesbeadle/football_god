@@ -9,9 +9,9 @@
     import { playerStore } from "$lib/stores/player-store";
     import { writable } from "svelte/store";
     import PositionFilter from "../../components/shared/position-filter.svelte";
-    import TeamPlayersTableHeader from "../../components/shared/players-table-header.svelte";
     import { page } from "$app/stores";
     import type { Club, Player } from "../../../../../declarations/backend/backend.did";
+    import PlayersTableHeader from "../shared/players-table-header.svelte";
   
     export let club: Club;
 
@@ -65,7 +65,7 @@
   
 <div class="flex flex-col">
     <PositionFilter {selectedPosition} />
-    <TeamPlayersTableHeader {sortField} {sortDirection} onSort={handleSort} />
+    <PlayersTableHeader {sortField} {sortDirection} onSort={handleSort} />
     
     {#each sortedPlayers as player}
         <div class="flex items-center p-2 px-4 text-white border-b border-gray-700 xs:py-3 md:py-4">
