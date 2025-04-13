@@ -98,7 +98,7 @@
                 thirdColour={club.thirdColourHex}
                 className="w-8"
               />
-              <div class="stacked-col flex-grow">
+              <div class="stacked-col">
                 <p class="text-lg md:text-sm">{club.friendlyName}</p>
                 <p class="text-xs">ID: {club.id}</p>
               </div>

@@ -107,7 +107,7 @@
     <div>
         <label for="searchSurname" class="block px-3 mb-1 text-xs text-white md:px-0">Search by Surname:</label>
         <div class="flex px-3 space-x-2 md:px-0">
-            <div class="relative flex-grow">
+            <div class="relative flex">
                 <input
                     type="text"
                     id="searchSurname"

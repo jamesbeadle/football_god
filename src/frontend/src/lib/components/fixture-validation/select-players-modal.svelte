@@ -70,7 +70,7 @@
               {#if Object.keys(player.position)[0] == "Forward"}FW{/if}
             </span>
           </div>
-          <div class="flex flex-grow font-medium">
+          <div class="flex flex font-medium">
             <span>
               {`${
                 player.firstName.length > 0

@@ -5,13 +5,13 @@
     import { leagueStore } from "$lib/stores/league-store";
     import type { Country, CountryId, League, LeagueStatus } from "../../../../declarations/backend/backend.did";
     
-    import TabContainer from "$lib/components/shared/tab-container.svelte";
     import LeagueGridDisplay from "$lib/components/league/league-grid-display.svelte";
     import LeagueClubs from "$lib/components/league/league-clubs.svelte";
     import LeagueFixtures from "$lib/components/league/league-fixtures.svelte";
     import LeagueLoanedPlayers from "$lib/components/league/league-loaned-players.svelte";
     import PostponedLeagueFixtures from "$lib/components/league/postponed-league-fixtures.svelte";
     import FullScreenSpinner from "$lib/components/shared/full-screen-spinner.svelte";
+    import TabPanel from "$lib/components/shared/tab-panel.svelte";
     
     const tabs = [
         { id: 'clubs', label: 'Clubs' },
@@ -26,7 +26,7 @@
     let league: League | null = null;
     let leagueStatus: LeagueStatus | null = null;
     
-    let filterType: string = "clubs";
+    let activeTab: string = "clubs";
     
     $: id = Number($page.url.searchParams.get("id"));
   
@@ -61,7 +61,7 @@
     };
 
     async function setActiveTab(tab: string): Promise<void> {
-      filterType = tab;
+      activeTab = tab;
     }
 </script>
 
@@ -72,19 +72,19 @@
       <LeagueGridDisplay {league} {leagueStatus} {countries} />
 
       <div class="flex mb-6 md:px-1">
-        <TabContainer {filterType} {setActiveTab} {tabs} compact={true} />
+        <TabPanel {activeTab} {setActiveTab} {tabs} />
       </div>
 
-      {#if filterType === "clubs"}
+      {#if activeTab === "clubs"}
         <LeagueClubs leagueId={league.id} />
       {/if}
-      {#if filterType === "fixtures"}
+      {#if activeTab === "fixtures"}
         <LeagueFixtures leagueId={league.id} />
       {/if}
-      {#if filterType === "postponed-fixtures"}
+      {#if activeTab === "postponed-fixtures"}
         <PostponedLeagueFixtures leagueId={league.id} />
       {/if}
-      {#if filterType === "loaned-players"}
+      {#if activeTab === "loaned-players"}
         <LeagueLoanedPlayers leagueId={league.id} />
       {/if}
     {:else}

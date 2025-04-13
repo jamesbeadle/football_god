@@ -69,9 +69,9 @@
           class={`flex items-center border-b border-gray-700 px-4 py-4
           ${ convertFixtureStatus(fixture.status) === 0 ? "text-gray-400" : "text-white" }`}
         >
-          <div class="flex-grow hidden w-1/6 md:flex">{fixture.gameweek}</div>
-          <div class="flex-grow w-1/6 md:hidden">{fixture.gameweek}</div>
-          <div class="flex-grow w-1/2 pl-2">
+          <div class="flex hidden w-1/6 md:flex">{fixture.gameweek}</div>
+          <div class="flex w-1/6 md:hidden">{fixture.gameweek}</div>
+          <div class="flex w-1/2 pl-2">
             <div class="flex items-center space-x-2">
               <a class="flex items-center" href={`/club?id=${fixture.homeClubId}&leagueId=${leagueId}`}>
                 <BadgeIcon primaryColour={homeClub?.primaryColourHex} secondaryColour={homeClub?.secondaryColourHex} thirdColour={homeClub?.thirdColourHex} className="h-6 mr-2" />
@@ -84,13 +84,13 @@
               </a>
             </div>
           </div>
-          <div class="flex-grow w-1/4 pl-2">
+          <div class="flex w-1/4 pl-2">
             {formatUnixDateToSmallReadableDate(fixture.kickOff)}
           </div>
-          <div class="flex-grow hidden w-1/6 text-center md:flex">
+          <div class="flex hidden w-1/6 text-center md:flex">
             {formatUnixTimeToTime(fixture.kickOff)}
           </div>
-          <div class="flex-grow w-1/6 text-center md:w-1/4">
+          <div class="flex w-1/6 text-center md:w-1/4">
             {#if convertFixtureStatus(fixture.status) === 0}
               -
             {:else}

@@ -23,7 +23,7 @@
 }
 
 .content-panel {
-  @apply flex items-center justify-start flex-grow p-2 mb-4 space-x-2 text-white rounded-lg page-panel sm:space-x-3 md:space-x-4 xs:p-3 sm:p-4;
+  @apply flex items-center justify-start p-2 mb-4 space-x-2 text-white rounded-lg page-panel sm:space-x-3 md:space-x-4 xs:p-3 sm:p-4;
 }
 
 .modal-background {

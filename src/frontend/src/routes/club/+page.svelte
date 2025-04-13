@@ -8,14 +8,15 @@
     import LocalSpinner from "$lib/components/shared/local-spinner.svelte";
     import TeamPlayers from "$lib/components/club/team-players.svelte";
     import TeamFixtures from "$lib/components/club/team-fixtures.svelte";
-    import TabContainer from "$lib/components/shared/tab-container.svelte";
     import ClubHeader from "$lib/components/club/club-header.svelte";
     import type { LeagueId, ClubId, Club } from "../../../../declarations/backend/backend.did";
+    import TabPanel from "$lib/components/shared/tab-panel.svelte";
   
     let isLoading = true;
     let club: Club | null = null;
     
     let activeTab: string = "players";
+    
     const tabs = [
       { id: "players", label: "Players" },
       { id: "fixtures", label: "Fixtures" },
@@ -49,7 +50,7 @@
       <ClubHeader {club} />
       <div class="!border !rounded-lg page-panel !border-BrandPurple/50">
         <div class="flex py-4 border-b md:px-4 border-gray-700">
-          <TabContainer filterType={activeTab} {setActiveTab} {tabs} />
+          <TabPanel {activeTab} {setActiveTab} {tabs} />
         </div>
         {#if activeTab === "players"}
           <TeamPlayers {club} />

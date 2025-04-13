@@ -69,7 +69,7 @@
     
     {#each sortedPlayers as player}
         <div class="flex items-center p-2 px-4 text-white border-b border-gray-700 xs:py-3 md:py-4">
-          <div class="flex items-center justify-start flex-grow">
+          <div class="flex items-center justify-start flex">
             <div class="flex items-center w-2/12">
               {player.shirtNumber === 0 ? "-" : player.shirtNumber}
             </div>

@@ -7,7 +7,7 @@
     export let loading: boolean;
 </script>
 
-<div class="flex-grow">
+<div class="flex">
     <p class="text-center content-panel-header">{header}</p>
     <p class="text-center content-panel-stat">
 

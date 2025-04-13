@@ -9,7 +9,7 @@
     let leagueId = Number($page.url.searchParams.get('leagueId')) || 1; 
 </script>
 
-<div class="stacked-column items-center flex-grow">
+<div class="stacked-column items-center">
     <p class="content-panel-header">{header}</p>
     
     <div class="flex justify-center w-full space-x-8">

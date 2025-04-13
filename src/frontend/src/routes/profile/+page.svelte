@@ -3,12 +3,17 @@
   import { onMount } from "svelte";
   import type { OptionIdentity } from "$lib/types/identity";
   import { authStore, type AuthSignInParams } from "$lib/stores/auth-store";
+  import TabPanel from "$lib/components/shared/tab-panel.svelte";
   import ProfileDetail from "$lib/components/profile/profile-detail.svelte";
   import FullScreenSpinner from "$lib/components/shared/full-screen-spinner.svelte";
   
   let isLoading = true;
   let activeTab: string = "details";
   let identity: OptionIdentity;
+
+  const tabs = [
+    { id: "details", label: "Details" }
+  ];
   
   onMount(async () => {
     await authStore.sync();
@@ -34,29 +39,19 @@
   
 </script>
 
+<div class="page-panel">
+  <TabPanel {activeTab} {setActiveTab} {tabs} />
+
   {#if isLoading}
     <FullScreenSpinner />
   {:else}
     {#if identity}
-        <div class="m-4">
-          <div class="page-panel">
-            <ul class="tab-container">
-              <li class={`mr-4 ${activeTab === "details" ? "active-tab" : ""}`}>
-                <button
-                  class={`p-2 ${
-                    activeTab === "details" ? "text-white" : "BrandGray"
-                  }`}
-                  on:click={() => setActiveTab("details")}>Profile Detail</button
-                >
-              </li>
-            </ul>
-
-            {#if activeTab === "details"}
-              <ProfileDetail />
-            {/if}
-          </div>
-        </div>
+      {#if activeTab === "details"}
+        <ProfileDetail />
+      {/if}
     {:else}
        <button class="brand-button" on:click={handleLogin}>Connect</button>
     {/if}
   {/if}
+
+</div>

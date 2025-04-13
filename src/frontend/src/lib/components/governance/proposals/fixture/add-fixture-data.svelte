@@ -415,51 +415,51 @@
 
                 <div class="stacked-col w-full m-4 space-y-4 text-xs md:flex-row md:text-sm md:space-y-0">
                   <div class="w-full px-4 border-gray-600 md:w-1/3 md:border-r">
-                    <div class="flex-grow">
+                    <div class="flex">
                       Appearances: {$playerEventData.filter(
                         (x) => convertEvent(x.eventType) == 0
                       ).length}
                     </div>
-                    <div class="flex-grow">
+                    <div class="flex">
                       Goals: {$playerEventData.filter(
                         (x) => convertEvent(x.eventType) == 1
                       ).length}
                     </div>
-                    <div class="flex-grow">
+                    <div class="flex">
                       Own Goals: {$playerEventData.filter(
                         (x) => convertEvent(x.eventType) == 10
                       ).length}
                     </div>
                   </div>
                   <div class="w-full px-4 pt-4 border-t border-gray-600 md:w-1/3 md:border-r md:border-t-0 md:pt-0">
-                    <div class="flex-grow">
+                    <div class="flex">
                       Assists: {$playerEventData.filter(
                         (x) => convertEvent(x.eventType) == 2
                       ).length}
                     </div>
-                    <div class="flex-grow">
+                    <div class="flex">
                       Keeper Saves: {$playerEventData.filter(
                         (x) => convertEvent(x.eventType) == 4
                       ).length}
                     </div>
-                    <div class="flex-grow">
+                    <div class="flex">
                       Yellow Cards: {$playerEventData.filter(
                         (x) => convertEvent(x.eventType) == 8
                       ).length}
                     </div>
                   </div>
                   <div class="w-full px-4 pt-4 border-t md:w-1/3 md:border-t-0 md:pt-0">
-                    <div class="flex-grow">
+                    <div class="flex">
                       Red Cards: {$playerEventData.filter(
                         (x) => convertEvent(x.eventType) == 9
                       ).length}
                     </div>
-                    <div class="flex-grow">
+                    <div class="flex">
                       Penalties Saved: {$playerEventData.filter(
                         (x) => convertEvent(x.eventType) == 6
                       ).length}
                     </div>
-                    <div class="flex-grow">
+                    <div class="flex">
                       Penalties Missed: {$playerEventData.filter(
                         (x) => convertEvent(x.eventType) == 7
                       ).length}

@@ -2,8 +2,15 @@
     import Leagues from "$lib/components/data/leagues.svelte";
     import Players from "$lib/components/data/players.svelte";
     import Clubs from "$lib/components/data/clubs.svelte";
+    import TabPanel from "$lib/components/shared/tab-panel.svelte";
     
     let activeTab: string = "players";
+
+    const tabs = [
+      { id: "players", label: "Players" },
+      { id: "clubs", label: "Clubs" },
+      { id: "leagues", label: "Leagues" }
+    ];
     
     function setActiveTab(tab: string): void {
       activeTab = tab;
@@ -13,32 +20,8 @@
     
   <div class="m-4">
     <div class="page-panel">
-      <ul class="tab-container">
-        <li class={`mr-4 ${activeTab === "players" ? "active-tab" : ""}`}>
-          <button
-            class={`p-2 ${
-              activeTab === "players" ? "text-white" : "BrandGray"
-            }`}
-            on:click={() => setActiveTab("players")}>Players</button
-          >
-        </li>
-        <li class={`mr-4 ${activeTab === "clubs" ? "active-tab" : ""}`}>
-          <button
-            class={`p-2 ${
-              activeTab === "clubs" ? "text-white" : "BrandGray"
-            }`}
-            on:click={() => setActiveTab("clubs")}>Clubs</button
-          >
-        </li>
-        <li class={`mr-4 ${activeTab === "leagues" ? "active-tab" : ""}`}>
-          <button
-            class={`p-2 ${
-              activeTab === "leagues" ? "text-white" : "BrandGray"
-            }`}
-            on:click={() => setActiveTab("leagues")}>Leagues</button
-          >
-        </li>
-      </ul>
+
+      <TabPanel {activeTab} {setActiveTab} {tabs} />
 
       <div class="flex w-full flex-col p-4">
 

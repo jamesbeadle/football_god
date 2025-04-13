@@ -4,7 +4,7 @@
     import type { ListProposalsResponse, ProposalData, ProposalId } from "@dfinity/sns/dist/candid/sns_governance";
     import { formatUnixDateToSmallReadable } from "$lib/utils/helpers";
     
-    import TabContainer from "$lib/components/shared/tab-container.svelte";
+    import TabPanel from "$lib/components/shared/tab-panel.svelte";
     import ProposalDetail from "$lib/components/governance/voting/proposal-detail.svelte";
     import LikeButton from "$lib/icons/LikeButton.svelte";
     import DislikeButton from "$lib/icons/DislikeButton.svelte";
@@ -13,7 +13,7 @@
     import { governanceStore } from "$lib/stores/governance-store";
     
     let isLoading = true;
-    let filterType: string = "all";
+    let activeTab: string = "all";
     let selectedProposalStatus = [0,1,2,3,4,5];
     let proposals: ListProposalsResponse = { proposals: [], include_ballots_by_caller: [] };
     let filteredProposals: ProposalData[] = [];
@@ -53,7 +53,7 @@
     function filterProposals() {
       if (!proposals || !proposals.proposals) return;
   
-      if (filterType === "all") {
+      if (activeTab === "all") {
         filteredProposals = proposals.proposals;
       } else {
         filteredProposals = proposals.proposals.filter(proposal => {
@@ -64,15 +64,15 @@
             functionId = action.ExecuteGenericNervousSystemFunction.function_id;
           }
   
-          if (filterType === "player") {
+          if (activeTab === "player") {
             return functionId !== undefined && PLAYER_FUNCTION_IDS.includes(functionId);
-          } else if (filterType === "fixture") {
+          } else if (activeTab === "fixture") {
             return functionId !== undefined && FIXTURE_FUNCTION_IDS.includes(functionId);
-          } else if (filterType === "club") {
+          } else if (activeTab === "club") {
             return functionId !== undefined && CLUB_FUNCTION_IDS.includes(functionId);
-          } else if (filterType === "league") {
+          } else if (activeTab === "league") {
             return functionId !== undefined && LEAGUE_FUNCTION_IDS.includes(functionId);
-          } else if (filterType === "system") {
+          } else if (activeTab === "system") {
             return functionId === undefined || (!PLAYER_FUNCTION_IDS.includes(functionId) && !CLUB_FUNCTION_IDS.includes(functionId) && !FIXTURE_FUNCTION_IDS.includes(functionId)&& !LEAGUE_FUNCTION_IDS.includes(functionId));
           }
           return true;
@@ -104,7 +104,7 @@
     }
     async function setActiveTab(tab: string): Promise<void> {
       isLoading = true;
-      filterType = tab;
+      activeTab = tab;
       currentPage = 1;
       try {
           await listProposals();
@@ -156,13 +156,13 @@
             <div class="flex flex-row items-center w-full">
                 <span class="mr-2 text-gray-400 whitespace-nowrap">Proposal Filters: </span>
                 <div class="w-full md:px-3">
-                  <TabContainer {filterType} {setActiveTab} {tabs} />
+                  <TabPanel {activeTab} {setActiveTab} {tabs} />
                 </div>
             </div>
         </div>
         {#if isLoading}
           <LocalSpinner />
-          <p class="pb-4 mb-4 text-center">Loading {filterType} Proposals...</p>
+          <p class="pb-4 mb-4 text-center">Loading {activeTab} Proposals...</p>
         {:else}
           <div class="overflow-x-auto">
               <table class="w-full">
