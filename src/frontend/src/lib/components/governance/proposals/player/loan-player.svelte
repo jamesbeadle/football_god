@@ -10,7 +10,7 @@
   import FormComponent from "$lib/components/shared/form-component.svelte";
   import DropdownSelect from "$lib/components/shared/dropdown-select.svelte";
   import type { Club, League, Player } from "../../../../../../../declarations/backend/backend.did";
-    import type { LoanPlayer } from "../../../../../../../declarations/data_canister/data_canister.did";
+  import type { LoanPlayer } from "../../../../../../../declarations/data_canister/data_canister.did";
   
   export let visible: boolean;
   export let closeModal: () => void;

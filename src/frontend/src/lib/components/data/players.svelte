@@ -348,6 +348,11 @@
         />
         {/each}
     </div>
+    
+    {/if}
+{/if}
+
+
 
     {#if selectedPlayerId > 0 && showLoanPlayerModal}
         {@const selectedPlayer = filteredPlayers.find(x => x.id == selectedPlayerId) }
@@ -389,6 +394,3 @@
         {@const playerClub = clubs.find(x => x.id == selectedPlayer!.clubId) }
         <RevaluePlayerDown visible={showRevaluePlayerDownModal} {closeModal} club={playerClub!} player={selectedPlayer!} />
     {/if}
-    
-    {/if}
-{/if}
