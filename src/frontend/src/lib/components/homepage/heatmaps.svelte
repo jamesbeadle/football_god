@@ -3,6 +3,7 @@
     import type { ClubValueLeaderboard, PlayerValueLeaderboard } from "../../../../../declarations/backend/backend.did";
     import { playerStore } from "$lib/stores/player-store";
     import { clubStore } from "$lib/stores/club-store";
+    import LocalSpinner from "../shared/local-spinner.svelte";
     
     interface HeatmapData {
       id: string;
@@ -114,27 +115,35 @@
     currentHeatmapIndex = (currentHeatmapIndex + 1) % heatmaps.length;
   }
 </script>
-<div class="md:col-span-2 bg-BrandLightGray rounded shadow-md p-6">
-    <div class="flex justify-between items-center mb-4">
-        <h2 class="text-xl font-semibold">{heatmaps[currentHeatmapIndex].id}</h2>
-        <button
-            onclick={cycleHeatmap}
-            class="bg-BrandPurpleDark text-white px-4 py-2 rounded hover:bg-BrandPurple transition-colors"
-        >
-            Next
-        </button>
-    </div>
-    <div class="grid grid-cols-5 gap-1">
-        {#each heatmaps[currentHeatmapIndex].data as row}
-            {#each row as cell}
-                <div
-                    class="w-full h-16 rounded flex items-center justify-center text-xs"
-                    style="background-color: {cell.color || '#7F56FA'}; transform: scale({Math.max(0.5, cell.value)});"
-                    title="{cell.label}: {cell.value.toFixed(2)}"
-                >
-                    {cell.label}
-                </div>
-            {/each}
-        {/each}
-    </div>
-</div>
+
+{#if isLoading}
+  <LocalSpinner />
+
+{:else}
+
+  <div class="md:col-span-2 bg-BrandLightGray rounded shadow-md p-6">
+      <div class="flex justify-between items-center mb-4">
+          <h2 class="text-xl font-semibold">{heatmaps[currentHeatmapIndex].id}</h2>
+          <button
+              onclick={cycleHeatmap}
+              class="bg-BrandPurpleDark text-white px-4 py-2 rounded hover:bg-BrandPurple transition-colors"
+          >
+              Next
+          </button>
+      </div>
+      <div class="grid grid-cols-5 gap-1">
+          {#each heatmaps[currentHeatmapIndex].data as row}
+              {#each row as cell}
+                  <div
+                      class="w-full h-16 rounded flex items-center justify-center text-xs"
+                      style="background-color: {cell.color || '#7F56FA'}; transform: scale({Math.max(0.5, cell.value)});"
+                      title="{cell.label}: {cell.value.toFixed(2)}"
+                  >
+                      {cell.label}
+                  </div>
+              {/each}
+          {/each}
+      </div>
+  </div>
+
+{/if}

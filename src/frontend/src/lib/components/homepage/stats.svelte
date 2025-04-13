@@ -4,6 +4,7 @@
     import type { DataTotals } from "../../../../../declarations/backend/backend.did";
     import { appStore } from "$lib/stores/app-store";
     import IcfcCoinIcon from "$lib/icons/ICFCCoinIcon.svelte";
+    import LocalSpinner from "../shared/local-spinner.svelte";
     
     interface Stat {
         label: string;
@@ -56,7 +57,10 @@
     ]);
 
 </script>
-<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+{#if isLoading}
+      <LocalSpinner />
+{:else}
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
     {#each stats as stat}
       <div
         class="bg-BrandLightGray rounded shadow-md p-4 hover:shadow-lg transition-shadow flex items-center flex-col"
@@ -73,3 +77,4 @@
       </div>
     {/each}
   </div>
+{/if}
