@@ -19,7 +19,7 @@
     href="/" 
     class="flex items-center space-x-2 transition-transform hover:scale-105"
   >
-    <LogoIcon className="w-6 h-6" />
+    <LogoIcon className="w-6 h-6" fill='white'/>
     <span class="logo-text hidden sm:block">Football God</span>
   </a>
 

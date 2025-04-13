@@ -48,6 +48,7 @@ export default {
         BrandInfo: "#3CA1FF",
         BrandLightGray: "#919191",
         BrandFaintGray: "#8C8C8C",
+        BrandWhiteGray: "#F9F9F9",
       },
     },
   },
