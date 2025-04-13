@@ -121,7 +121,7 @@
 
 {:else}
 
-  <div class="w-full bg-BrandLightGray rounded shadow-md p-6">
+  <div class="w-full bg-BrandGray rounded shadow-md p-6">
       <div class="flex justify-between items-center mb-4">
           <h2 class="text-xl font-semibold">{heatmaps[currentHeatmapIndex].id}</h2>
           <button

@@ -20,5 +20,5 @@
 }
 
 .brand-button-disabled {
-  @apply px-4 py-2 text-white rounded bg-BrandDisabled;
+  @apply px-4 py-2 text-white rounded bg-BrandLightGray;
 }

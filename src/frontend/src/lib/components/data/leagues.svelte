@@ -90,7 +90,7 @@
             />
             <div>
             <p class="font-bold text-md text-BrandActive">{league.name}</p>
-            <p class="text-sm text-BrandDisabled">
+            <p class="text-sm text-BrandLightGray">
                 {Object.keys(league.relatedGender)[0]} • {league.teamCount} Teams • Formed:{" "}
                 { convertDateToReadable(Number(league.formed))}
             </p>

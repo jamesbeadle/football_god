@@ -60,10 +60,10 @@
 {#if isLoading}
       <LocalSpinner />
 {:else}
-  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
     {#each stats as stat}
       <div
-        class="bg-BrandLightGray rounded shadow-md p-4 hover:shadow-lg transition-shadow flex items-center flex-col"
+        class="bg-BrandGray rounded shadow-md p-4 hover:shadow-lg transition-shadow flex items-center flex-col"
       >
         {#if stat.label == "Total ICFC Rewards"}
           <div class="flex flex-row items-center w-full">
@@ -73,7 +73,7 @@
         {:else}
           <h3 class="w-full text-2xl font-semibold">{stat.value}</h3>
         {/if}
-        <p class="w-full text-sm font-bold text-BrandDisabled">{stat.label}</p>
+        <p class="w-full text-sm font-bold text-BrandLightGray">{stat.label}</p>
       </div>
     {/each}
   </div>

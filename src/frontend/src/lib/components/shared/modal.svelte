@@ -56,7 +56,7 @@
     class="relative w-[95%] sm:w-[90%] md:w-[85%] lg:w-[80%] max-w-[1400px] mx-auto p-4 sm:p-6"
   >
     <div 
-      class="bg-BrandDarkGray border border-BrandLightGray rounded-lg relative h-[80vh] drop-shadow-[0_4px_16px_rgba(0,0,0,0.6)] transform-style-preserve-3d stacked-col"
+      class="bg-BrandDarkGray border border-BrandGray rounded-lg relative h-[80vh] drop-shadow-[0_4px_16px_rgba(0,0,0,0.6)] transform-style-preserve-3d stacked-col"
     >
       <div class="flex-none px-6 py-6 border-b sm:px-8 sm:py-6 border-white/10">
         <div class="flex items-center justify-between">

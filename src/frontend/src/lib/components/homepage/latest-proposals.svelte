@@ -7,7 +7,7 @@
   let isLoading = $state(true);
   let currentPage = $state(1);
   let totalProposalsCount = $state(0);
-  const itemsPerPage = 3;
+  const itemsPerPage = 4;
   const totalPages = $derived(Math.ceil(totalProposalsCount / itemsPerPage) || 1);
   let proposals: ListProposalsResponse = $state({ proposals: [], include_ballots_by_caller: [] });
   
@@ -40,7 +40,7 @@
     }
   }
 </script>
-<div class="w-full bg-BrandLightGray rounded shadow-md p-6">
+<div class="w-full bg-BrandGray rounded shadow-md p-6">
     <h2 class="text-xl font-semibold mb-4">Recent Proposals</h2>
     {#if isLoading}
       <LocalSpinner />

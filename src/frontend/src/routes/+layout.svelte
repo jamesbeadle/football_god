@@ -53,7 +53,11 @@
   };
 
   function toggleMenu() {
+    console.log('toggling menu')
+    console.log(isMenuOpen)
       isMenuOpen = !isMenuOpen;
+      console.log(isMenuOpen)
+      console.log('done')
   }
 
 </script>
