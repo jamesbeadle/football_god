@@ -66,7 +66,7 @@
 </script>
 
   {#if isLoading}
-    <FullScreenSpinner />
+    <FullScreenSpinner message='Loading League' />
   {:else}
     {#if league}
       <LeagueGridDisplay {league} {leagueStatus} {countries} />

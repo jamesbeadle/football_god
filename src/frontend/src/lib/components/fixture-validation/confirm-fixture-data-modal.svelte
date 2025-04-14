@@ -1,16 +1,20 @@
 <script lang="ts">
   import Modal from "../shared/modal.svelte";
 
-  export let visible = false;
-  export let onConfirm: () => void;
-  export let closeModal: () => void;
+  interface Props {
+    visible: boolean;
+    onConfirm: () => void;
+    closeModal: () => void;
+  }
+  let { visible, onConfirm, closeModal }: Props = $props();
+
 </script>
 
 <Modal title="Confirm Fixture Data Submission" {visible} onClose={closeModal}>
   <div class="p-4 mx-4">
     <div class="flex items-center justify-between my-2">
       <h4>Confirm Fixture Data</h4>
-      <button class="text-black" on:click={closeModal}>✕</button>
+      <button class="text-black" onclick={closeModal}>✕</button>
     </div>
     <div class="my-5 space-y-2">
       <h1 class="text-lg text-white">Please confirm your fixture data.</h1>
@@ -25,9 +29,9 @@
       <button
         class="brand-cancel-button"
         type="button"
-        on:click={closeModal}>Cancel</button
+        onclick={closeModal}>Cancel</button
       >
-      <button class="brand-button" on:click={onConfirm}
+      <button class="brand-button" onclick={onConfirm}
         >Confirm</button
       >
     </div>

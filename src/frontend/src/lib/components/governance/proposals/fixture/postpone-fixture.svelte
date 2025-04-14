@@ -3,28 +3,31 @@
   import { leagueStore } from "$lib/stores/league-store";
   import { clubStore } from "$lib/stores/club-store";
   import { governanceStore } from "$lib/stores/governance-store";
+  import { toasts } from "$lib/stores/toasts-store";
   import { isError } from "$lib/utils/helpers";
+  import type { Club, Fixture } from "../../../../../../../declarations/backend/backend.did";
+  import type { PostponeFixture } from "../../../../../../../declarations/data_canister/data_canister.did";
   import Modal from "$lib/components/shared/modal.svelte";
   import GovernanceModal from "../../voting/governance-modal.svelte";
-  import { toasts } from "$lib/stores/toasts-store";
-    import type { Club, Fixture } from "../../../../../../../declarations/backend/backend.did";
-    import type { PostponeFixture } from "../../../../../../../declarations/data_canister/data_canister.did";
-    
-  export let visible: boolean;
-  export let closeModal: () => void;
-  export let selectedFixture: Fixture;
-  export let selectedLeagueId: number;
+
+  interface Props {
+    visible: boolean;
+    closeModal: () => void;
+    selectedLeagueId: number;
+    selectedFixture: Fixture;
+  }
+
+  let { visible, closeModal, selectedLeagueId, selectedFixture }: Props = $props();
 
   let gameweeks = Array.from({ length: Number(process.env.TOTAL_GAMEWEEKS) }, (_, i) => i + 1);
   let clubs: Club[] = [];
-  let homeClub: Club;
-  let awayClub: Club;
-  
-  $: isSubmitDisabled = false;
+  let homeClub: Club | undefined = $state(undefined);
+  let awayClub: Club | undefined = $state(undefined);
 
-  let isLoading = true;
-  let submitting = false;
-  let submitted = false;
+  let isLoading = $state(false);
+  let submitting = $state(false);
+  let submitted = $state(false);
+  let isSubmitDisabled = $state(true);
 
   onMount(async () => {
     try {
@@ -103,6 +106,6 @@
 
 <Modal title={"Postpone Fixture"} {visible} onClose={closeModal}>
   <GovernanceModal {cancelModal} {confirmProposal} {isLoading} {isSubmitDisabled}>
-    <p>Postpone {homeClub.friendlyName} v {awayClub.friendlyName} - Gameweek {selectedFixture.gameweek}</p>
+    <p>Postpone {homeClub!.friendlyName} v {awayClub!.friendlyName} - Gameweek {selectedFixture.gameweek}</p>
   </GovernanceModal>
 </Modal>

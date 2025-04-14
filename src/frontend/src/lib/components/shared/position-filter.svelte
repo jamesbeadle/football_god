@@ -1,9 +1,12 @@
 <script lang="ts">
     import { getPositionIndexToText, Position } from "$lib/utils/helpers";
     import type { Writable } from "svelte/store";
-    import DropdownSelect from "./dropdown-select.svelte";
-
-    export let selectedPosition: Writable<number>;
+    import FormComponent from "./form-component.svelte";
+    
+    interface Props {
+        selectedPosition: Writable<number>;
+    }
+    let { selectedPosition }: Props = $props();
 
     let positionValues: number[] = Object.values(Position).filter(
         (value) => typeof value === "number"
@@ -20,10 +23,12 @@
 
 <div class="flex px-4 py-2 border border-gray-700">
     <div class="flex items-center w-full">
-        <DropdownSelect
-            value={$selectedPosition}
-            options={options}
-            onChange={(value) => selectedPosition.set(Number(value))}
-        />
+        <FormComponent label="Select Gameweek">
+          <select class="brand-dropdown" bind:value={selectedPosition}>
+            {#each options as position}
+              <option value={position.id}>{position.label}</option>
+            {/each}
+          </select>
+        </FormComponent>
     </div>
 </div>

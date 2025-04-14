@@ -15,27 +15,33 @@
     import LocalSpinner from "../shared/local-spinner.svelte";
     import { page } from '$app/stores';
     import type { Club, Fixture, LeagueStatus, Player } from "../../../../../declarations/backend/backend.did";
-    
-    export let club: Club;
+  
+    interface Props {
+      club: Club;
+    }
+    let { club }: Props = $props();
     
     let leagueId = Number($page.url.searchParams.get('leagueId')) || 1; 
   
-    let isLoading = true;
+    let isLoading = $state(true);
     let nextFixture: Fixture | null;
-    let nextFixtureHomeTeam: Club | undefined;
-    let nextFixtureAwayTeam: Club | undefined;
+    let nextFixtureHomeTeam: Club | undefined = $state(undefined);
+    let nextFixtureAwayTeam: Club | undefined = $state(undefined);
     let fixturesWithTeams: FixtureWithClubs[] = [];
     let selectedGameweek = writable(1);
     let tableData: any[] = [];
-    let highestScoringPlayer: Player | null = null;
-    let seasonName = "";
+    let highestScoringPlayer: Player | null = $state(null);
+    let seasonName = $state("");
     let leagueStatus: LeagueStatus | null = null;
     let players: Player[] = [];
     let clubs: Club[] = [];
     
-    $: if (fixturesWithTeams.length > 0 && clubs.length > 0) {
-      tableData = updateTableData(fixturesWithTeams, clubs, $selectedGameweek);
-    }
+    $effect(() => {
+      if (fixturesWithTeams.length > 0 && clubs.length > 0) {
+        tableData = updateTableData(fixturesWithTeams, clubs, $selectedGameweek);
+      }
+    });
+
   
     onMount(async () => {
       let leagueStatusResult = await leagueStore.getLeagueStatus(leagueId);

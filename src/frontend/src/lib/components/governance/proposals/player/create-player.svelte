@@ -4,45 +4,49 @@
   import { countryStore } from "$lib/stores/country-store";
   import { leagueStore } from "$lib/stores/league-store";
   import { clubStore } from "$lib/stores/club-store";
-  import { convertDateInputToUnixNano } from "$lib/utils/helpers";
+  import { isError, convertDateInputToUnixNano } from "$lib/utils/helpers";
   import { toasts } from "$lib/stores/toasts-store";
-  import { isError } from "$lib/utils/helpers";
+  import type { Club, Country, League, PlayerPosition } from "../../../../../../../declarations/backend/backend.did";
+  import type { CreatePlayer } from "../../../../../../../declarations/data_canister/data_canister.did";
   import Modal from "$lib/components/shared/modal.svelte";
   import GovernanceModal from "../../voting/governance-modal.svelte";
   import FormComponent from "$lib/components/shared/form-component.svelte";
-  import DropdownSelect from "$lib/components/shared/dropdown-select.svelte";
-    import type { Club, Country, League, PlayerPosition } from "../../../../../../../declarations/backend/backend.did";
-    import type { CreatePlayer } from "../../../../../../../declarations/data_canister/data_canister.did";
   
-  export let visible: boolean;
-  export let closeModal: () => void;
-  export let selectedLeagueId: number = 0;
-  export let selectedClubId: number = 0;
+  interface Props {
+    visible: boolean;
+    closeModal: () => void;
+    selectedLeagueId: number;
+    selectedClubId: number;
+  }
+
+  let { visible, closeModal, selectedLeagueId, selectedClubId }: Props = $props();
   
-  let leagues: League[] = [];
-  let clubs: Club[] = [];
-  let countries: Country[] = [];
-  let positions = [
+  let leagues: League[] = $state([]);
+  let clubs: Club[] = $state([]);
+  let countries: Country[] = $state([]);
+  let positions = $state([
     { id: 1, name: "Goalkeeper" },
     { id: 2, name: "Defender" },
     { id: 3, name: "Midfielder" },
     { id: 4, name: "Forward" }
-  ];
+  ]);
 
-  let selectedPosition = 0;
-  let firstName = "";
-  let lastName = "";
-  let dateOfBirth = "";
-  let shirtNumber = 0;
-  let value = 0;
-  let nationalityId = 0;
+  let selectedPosition = $state(0);
+  let firstName = $state("");
+  let lastName = $state("");
+  let dateOfBirth = $state("");
+  let shirtNumber = $state(0);
+  let value = $state(0);
+  let nationalityId = $state(0);
   
-  let isLoading = false;
-  let leaguesLoaded = false;
-  let submitting = false;
-  let submitted = false;
+  let isLoading = $state(false);
+  let submitting = $state(false);
+  let submitted = $state(false);
+  let isSubmitDisabled = $state(true);
+  let leaguesLoaded = $state(false);
 
-  $: isSubmitDisabled =
+  $effect(() => {
+    isSubmitDisabled =
     selectedLeagueId <= 0 ||
     selectedClubId <= 0 ||
     nationalityId <= 0 ||
@@ -55,6 +59,7 @@
     value <= 0 ||
     value > 200 ||
     nationalityId == 0;
+  });
 
   onMount(async () => {
     try {
@@ -77,9 +82,11 @@
     }
   });
 
-  $: if (leaguesLoaded && selectedLeagueId > 0) {
-    getClubs();
-  }
+  $effect(() => {
+    if (leaguesLoaded && selectedLeagueId > 0) {
+      getClubs();
+    }
+  }) 
 
   async function getClubs() {
     let clubsResult = await clubStore.getClubs(selectedLeagueId);
@@ -173,37 +180,29 @@
 <Modal title={"Create Player"} {visible} onClose={closeModal}>
   <GovernanceModal {cancelModal} {confirmProposal} {isLoading} {isSubmitDisabled}>
     <FormComponent label="Select the player's league:">
-      <DropdownSelect
-        options={leagues.map(league => ({ id: league.id, label: league.name }))}
-        value={selectedLeagueId}
-        onChange={(value: string | number) => {
-          selectedLeagueId = Number(value);
-        }}
-        scrollOnOpen={true}
-      />
+      <select class="brand-dropdown" bind:value={selectedLeagueId}>
+        {#each leagues.map(league => ({ id: league.id, label: league.name })) as league}
+          <option value={league.id}>{league.label}</option>
+        {/each}
+      </select>
     </FormComponent>
     
     {#if selectedLeagueId > 0}
       <FormComponent label="Select the player's club:">
-        <DropdownSelect
-          options={clubs.map(club => ({ id: club.id, label: club.friendlyName }))}
-          value={selectedClubId}
-          onChange={(value: string | number) => {
-            selectedClubId = Number(value);
-          }}
-          scrollOnOpen={true}
-        />
+        <select class="brand-dropdown" bind:value={selectedClubId}>
+          {#each clubs.map(club => ({ id: club.id, label: club.friendlyName })) as club}
+            <option value={club.id}>{club.label}</option>
+          {/each}
+        </select>
       </FormComponent>
     {/if}
     {#if selectedClubId > 0}
       <FormComponent label="Select Position:">
-        <DropdownSelect
-          options={positions.map((position: any) => ({ id: position.id, label: position.name }))}
-          value={selectedPosition}
-          onChange={(value: string | number) => {
-            selectedPosition = Number(value);
-          }}
-        />
+        <select class="brand-dropdown" bind:value={selectedPosition}>
+          {#each positions.map((position: any) => ({ id: position.id, label: position.name })) as position}
+            <option value={position.id}>{position.label}</option>
+          {/each}
+        </select>
       </FormComponent>
       
       <FormComponent label="First Name:">
@@ -244,13 +243,11 @@
       </FormComponent>
       
       <FormComponent label="Nationality:">
-        <DropdownSelect
-          options={countries.map(country => ({ id: country.id, label: country.name }))}
-          value={nationalityId}
-          onChange={(value: string | number) => {
-            nationalityId = Number(value);
-          }}
-        />
+        <select class="brand-dropdown" bind:value={nationalityId}>
+          {#each countries.map(country => ({ id: country.id, label: country.name })) as country}
+            <option value={country.id}>{country.label}</option>
+          {/each}
+        </select>
       </FormComponent>
     {/if}
   </GovernanceModal>

@@ -76,7 +76,7 @@
     <LocalSpinner />
 {:else}
     <div class="flex items-center justify-between w-full my-4">
-      <button class="brand-button" on:click={createNewLeague}>+ New League</button>
+      <button class="brand-button" onclick={createNewLeague}>+ New League</button>
     </div>
     
     <div class="px-2 pb-4 space-y-4 mb:px-0">
@@ -100,7 +100,7 @@
         <div class="relative">
             <button
             class="px-3 py-1"
-            on:click={(event) => toggleDropdown(league.id, event)}
+            onclick={(event) => toggleDropdown(league.id, event)}
             >
             <PipsIcon className="w-6" />
             </button>
@@ -110,13 +110,13 @@
             >
                 <button
                 class="block w-full px-4 py-2 text-left text-BrandActive hover:bg-BrandLightGray"
-                on:click={() => viewLeague(league.id)}
+                onclick={() => viewLeague(league.id)}
                 >
                 View Details
                 </button>
                 <button
                 class="block w-full px-4 py-2 text-left text-BrandActive hover:bg-BrandLightGray"
-                on:click={() => updateLeague(league.id)}
+                onclick={() => updateLeague(league.id)}
                 >
                 Update League
                 </button>

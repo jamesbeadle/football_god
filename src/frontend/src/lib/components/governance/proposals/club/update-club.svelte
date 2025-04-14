@@ -2,36 +2,43 @@
   import { onMount } from "svelte";
   import { governanceStore } from "$lib/stores/governance-store";
   import { isError } from "$lib/utils/helpers";
+  import type { Club, ShirtType } from "../../../../../../../declarations/backend/backend.did";
+  import type { UpdateClub } from "../../../../../../../declarations/data_canister/data_canister.did";
   import Modal from "$lib/components/shared/modal.svelte";
   import GovernanceModal from "../../voting/governance-modal.svelte";
   import FormComponent from "$lib/components/shared/form-component.svelte";
-    import type { Club, LeagueId, ShirtType } from "../../../../../../../declarations/backend/backend.did";
-    import type { UpdateClub } from "../../../../../../../declarations/data_canister/data_canister.did";
+  
+  interface Props {
+    visible: boolean;
+    closeModal: () => void;
+    selectedLeagueId: number;
+    selectedClub: Club
+  }
 
-  export let visible: boolean;
-  export let closeModal: () => void;
-  export let selectedClub: Club;
-  export let selectedLeagueId: LeagueId;
+  let { visible, closeModal, selectedLeagueId, selectedClub }: Props = $props();
 
-  let name = "";
-  let friendlyName = "";
-  let abbreviatedName = "";
-  let primaryColourHex = "";
-  let secondaryColourHex = "";
-  let thirdColourHex = "";
-  let shirtType: ShirtType = { Filled: null };
+  let name = $state("");
+  let friendlyName = $state("");
+  let abbreviatedName = $state("");
+  let primaryColourHex = $state("");
+  let secondaryColourHex = $state("");
+  let thirdColourHex = $state("");
+  let shirtType: ShirtType = $state({ Filled: null });
 
-  let isLoading = true;
-  let submitting = false;
-  let submitted = false;
+  let isLoading = $state(false);
+  let submitting = $state(false);
+  let submitted = $state(false);
+  let isSubmitDisabled = $state(true);
 
-  $: isSubmitDisabled =
+  $effect(() => {
+    isSubmitDisabled =
     selectedClub == null ||
     name.length <= 0 ||
     name.length > 100 ||
     friendlyName.length <= 0 ||
     friendlyName.length > 50 ||
     abbreviatedName.length != 3;
+  });
 
   let shirtTypes: ShirtType[] = [{ Filled: null }, { Striped: null }];
 
@@ -156,7 +163,7 @@
       <input
         type="color"
         bind:value={primaryColourHex}
-        on:input={handlePrimaryColorChange}
+        oninput={handlePrimaryColorChange}
         class="brand-input"
       />
     </FormComponent>
@@ -165,7 +172,7 @@
       <input
         type="color"
         bind:value={secondaryColourHex}
-        on:input={handleSecondaryColorChange}
+        oninput={handleSecondaryColorChange}
         class="brand-input"
       />
     </FormComponent>
@@ -173,7 +180,7 @@
       <input
         type="color"
         bind:value={thirdColourHex}
-        on:input={handleThirdColorChange}
+        oninput={handleThirdColorChange}
         class="brand-input"
       />
     </FormComponent>

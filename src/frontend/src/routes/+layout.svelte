@@ -66,7 +66,7 @@
 
 {#if browser && isLoading}
   <div in:fade>
-    <FullScreenSpinner />
+    <FullScreenSpinner  message='Loading Football God' />
   </div>
 {:else}
   {#if $authSignedInStore}

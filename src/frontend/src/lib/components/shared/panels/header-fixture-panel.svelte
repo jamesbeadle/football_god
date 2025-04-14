@@ -1,10 +1,15 @@
 <script lang="ts">
-    import BadgeIcon from "$lib/icons/BadgeIcon.svelte";
-    import type { Club} from "../../../../../../declarations/backend/backend.did";
     import { page } from '$app/stores';
-    export let header: string;
-    export let nextFixtureHomeTeam: Club | undefined;
-    export let nextFixtureAwayTeam: Club | undefined;
+    import type { Club} from "../../../../../../declarations/backend/backend.did";
+    import BadgeIcon from "$lib/icons/BadgeIcon.svelte";
+
+    interface Props {
+        header: string;
+        nextFixtureHomeTeam: Club | undefined;
+        nextFixtureAwayTeam: Club | undefined;
+    }
+    let { header, nextFixtureHomeTeam, nextFixtureAwayTeam }: Props = $props();
+
 
     let leagueId = Number($page.url.searchParams.get('leagueId')) || 1; 
 </script>
@@ -17,7 +22,7 @@
           class="stacked-column items-center justify-center"
           href={`/club?id=${nextFixtureHomeTeam ? nextFixtureHomeTeam.id : -1}&leagueId=${leagueId}`}
         >
-          <BadgeIcon className="header-badge" primaryColour={nextFixtureHomeTeam?.primaryColourHex} secondaryColour={nextFixtureHomeTeam?.secondaryColourHex} thirdColour={nextFixtureHomeTeam?.thirdColourHex} />
+          <BadgeIcon className="header-badge" primaryColour={nextFixtureHomeTeam?.primaryColourHex ?? ""} secondaryColour={nextFixtureHomeTeam?.secondaryColourHex ?? ""} thirdColour={nextFixtureHomeTeam?.thirdColourHex ?? ""} />
           <span class="text-center content-panel-header">
             {nextFixtureHomeTeam ? nextFixtureHomeTeam.abbreviatedName : ""}
           </span>
@@ -31,7 +36,7 @@
           class="stacked-column items-center justify-center"
           href={`/club?id=${nextFixtureAwayTeam ? nextFixtureAwayTeam.id : -1}&leagueId=${leagueId}`}
         >
-          <BadgeIcon className="header-badge" primaryColour={nextFixtureAwayTeam?.primaryColourHex} secondaryColour={nextFixtureAwayTeam?.secondaryColourHex} thirdColour={nextFixtureAwayTeam?.thirdColourHex} />
+          <BadgeIcon className="header-badge" primaryColour={nextFixtureAwayTeam?.primaryColourHex ?? ""} secondaryColour={nextFixtureAwayTeam?.secondaryColourHex ?? ""} thirdColour={nextFixtureAwayTeam?.thirdColourHex ?? ""} />
           <span class="text-center content-panel-header">
             {nextFixtureAwayTeam ? nextFixtureAwayTeam.abbreviatedName : ""}
           </span>

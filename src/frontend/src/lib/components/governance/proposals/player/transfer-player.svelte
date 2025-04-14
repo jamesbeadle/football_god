@@ -4,31 +4,34 @@
   import { clubStore } from "$lib/stores/club-store";
   import { governanceStore } from "$lib/stores/governance-store";
   import { isError } from "$lib/utils/helpers";
+  import type { Club, League, Player } from "../../../../../../../declarations/backend/backend.did";
+  import type { TransferPlayer } from "../../../../../../../declarations/data_canister/data_canister.did";
   import Modal from "$lib/components/shared/modal.svelte";
   import GovernanceModal from "../../voting/governance-modal.svelte";
   import FormComponent from "$lib/components/shared/form-component.svelte";
-  import DropdownSelect from "$lib/components/shared/dropdown-select.svelte";
   import { toasts } from "$lib/stores/toasts-store";
-    import type { Club, League, Player } from "../../../../../../../declarations/backend/backend.did";
-    import type { TransferPlayer } from "../../../../../../../declarations/data_canister/data_canister.did";
   
-  export let visible: boolean;
-  export let closeModal: () => void;
-  export let selectedPlayer: Player;
-  
-  let transferLeagueId: number = 0;
-  let transferClubId: number = 0;
-  let newValueMillions: number = 0;
-  let shirtNumber: number = 0;
+  interface Props {
+    visible: boolean;
+    closeModal: () => void;
+    selectedPlayer: Player;
+  }
 
-  let transferLeagues: League[] = [];
-  let transferClubs: Club[] = [];
+  let { visible, closeModal, selectedPlayer }: Props = $props();
   
-  let isLoading = false;
-  let submitting = false;
-  let submitted = false;
+  let transferLeagueId: number = $state(0);
+  let transferClubId: number = $state(0);
+  let newValueMillions: number = $state(0);
+  let shirtNumber: number = $state(0);
 
-  $: isSubmitDisabled = transferLeagueId == 0 || transferClubId == 0 || newValueMillions == 0;
+  let transferLeagues: League[] = $state([]);
+  let transferClubs: Club[] = $state([]);
+  
+  let isLoading = $state(false);
+  let submitting = $state(false);
+  let submitted = $state(false);
+  let isSubmitDisabled = $state(true);
+  $effect(() => { transferLeagueId == 0 || transferClubId == 0 || newValueMillions == 0});
 
   onMount(async () => {
     try {
@@ -43,10 +46,11 @@
       isLoading = false;
     }
   });
-
-  $: if(transferLeagueId > 0){
-    getTransferClubs();
-  };
+  $effect(() => {
+    if(transferLeagueId > 0){
+      getTransferClubs();
+    };
+  })
 
   async function getTransferClubs() {
     let clubsResult = await clubStore.getClubs(transferLeagueId);
@@ -115,26 +119,20 @@
 <Modal title={"Transfer " + selectedPlayer.firstName + " " + selectedPlayer.lastName} {visible} onClose={closeModal}>
   <GovernanceModal {cancelModal} {confirmProposal} {isLoading} {isSubmitDisabled}>
     <FormComponent label="Transfer to league:">
-      <DropdownSelect
-        options={transferLeagues.map((league: League) => ({ id: league.id, label: league.name }))}
-        value={transferLeagueId}
-        onChange={(value: string | number) => {
-          transferLeagueId = Number(value);
-        }}
-        scrollOnOpen={true}
-      />
+      <select class="brand-dropdown" bind:value={transferLeagueId}>
+        {#each transferLeagues.map((league: League) => ({ id: league.id, label: league.name })) as league}
+          <option value={league.id}>{league.label}</option>
+        {/each}
+      </select>
     </FormComponent>
         
     {#if transferLeagueId > 0}
       <FormComponent label="Transfer to club:">
-        <DropdownSelect
-          options={transferClubs.map((club: Club) => ({ id: club.id, label: club.friendlyName }))}
-          value={transferClubId}
-          onChange={(value: string | number) => {
-            transferClubId = Number(value);
-          }}
-          scrollOnOpen={true}
-        />
+        <select class="brand-dropdown" bind:value={transferClubId}>
+          {#each transferClubs.map((club: Club) => ({ id: club.id, label: club.friendlyName })) as club}
+            <option value={club.id}>{club.label}</option>
+          {/each}
+        </select>
       </FormComponent>
 
       {#if transferClubId > 0}

@@ -2,14 +2,18 @@
     import type { Writable } from "svelte/store";
     import { convertEvent } from "$lib/utils/helpers";
     import type { Fixture, Player, PlayerEventData } from "../../../../../declarations/backend/backend.did";
+
+
+    interface Props {
+        selectedPlayers: Writable<Player[]>;
+        fixture: Fixture;
+        playerEventData: Writable<PlayerEventData[]>;
+        view: string;
+        handleEditPlayerEvents: (player: Player) => void;
+    }
+
+    let { selectedPlayers, fixture, playerEventData, view, handleEditPlayerEvents }: Props = $props();
    
-    export let selectedPlayers: Writable<Player[]>;
-    export let fixture: Fixture;
-    export let playerEventData: Writable<PlayerEventData[]>;
-    export let view = "home";
-
-    export let handleEditPlayerEvents: (player: Player) => void;
-
     function getEventName(eventType: any): string {
         if ("Goal" in eventType) return "Goal";
         if ("GoalAssisted" in eventType) return "Assist";
@@ -74,7 +78,7 @@
             </div>
             <div class="w-1/6 px-4">
                 <button
-                on:click={() => handleEditPlayerEvents(player)}
+                onclick={() => handleEditPlayerEvents(player)}
                 class="px-3 py-1 ml-1 rounded brand-button sm:px-2"
                 >
                 Update Events
@@ -88,7 +92,7 @@
                         {$playerEventData.filter(e => e.playerId === player.id && "KeeperSave" in e.eventType).length} Keeper Saves
                         <button 
                                 class="items-center p-1 text-gray-400 hover:text-white" 
-                                on:click|stopPropagation={() => {
+                                onclick={() => {
                                     playerEventData.update(events => 
                                         events.filter(e => e.playerId !== player.id)
                                     );
@@ -110,7 +114,7 @@
                             {/if}
                             <button 
                                 class="items-center p-1 text-gray-400 hover:text-white" 
-                                on:click|stopPropagation={() => {
+                                onclick={() => {
                                     playerEventData.update(events => 
                                         events.filter(e => e !== event)
                                     );

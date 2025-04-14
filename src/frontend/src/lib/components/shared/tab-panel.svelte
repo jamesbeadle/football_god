@@ -1,8 +1,12 @@
 <script lang="ts">
 
-    export let activeTab: string;
-    export let setActiveTab: (tabName: string) => void;
-    export let tabs: {id: string, label: string}[];
+  interface Props {
+    activeTab: string;
+    setActiveTab: (tabName: string) => void;
+    tabs: {id: string, label: string}[];
+  }
+  let { activeTab, setActiveTab, tabs }: Props = $props();
+
 </script>
 
 <ul class="tab-container">
@@ -12,7 +16,7 @@
         class={`px-4 py-2 rounded-xl text-white ${
           activeTab === tab.id ? "bg-BrandPurple" : "border-1 border-solid border-BrandDarkGray"
         }`}
-        on:click={() => setActiveTab(tab.id)}>{tab.label}</button
+        onclick={() => setActiveTab(tab.id)}>{tab.label}</button
       >
     </li>
   {/each}

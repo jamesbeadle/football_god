@@ -1,6 +1,9 @@
 <script lang="ts">
   import LoadingDots from "./loading-dots.svelte";
-  export let message: string | undefined = undefined;
+  interface Props {
+    message: string;
+  }
+  let { message }: Props = $props();
 </script>
 
 <div class="spinner-container">

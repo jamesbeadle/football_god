@@ -1,26 +1,26 @@
 <script lang="ts">
   import { onDestroy, onMount } from "svelte";
-  
   import { clubStore } from "$lib/stores/club-store";
   import { leagueStore } from "$lib/stores/league-store";
   import { playerStore } from "$lib/stores/player-store";
-
+  import type { Club, League, Player } from "../../../../../declarations/backend/backend.did";
   import LocalSpinner from "../shared/local-spinner.svelte";
   import RecallPlayer from "../governance/proposals/player/recall-player.svelte";
   import LoanedPlayerDisplay from "./loaned-player-display.svelte";
-    import type { Club, League, Player } from "../../../../../declarations/backend/backend.did";
   
-  export let leagueId: number;
+  interface Props {
+    leagueId: number
+  }
 
-  let isLoading = true;
+  let { leagueId }: Props = $props();
 
-  let league: League | undefined;
-  let clubs: Club[] = [];
-  let loanedPlayers: Player[] = [];
-  let selectedPlayerId: number = 0;
-
-  let showRecallLoanModal = false;
-  let dropdownVisible: number | null = null;
+  let isLoading = $state(true);
+  let league: League | undefined = $state(undefined);
+  let clubs: Club[] = $state([]);
+  let loanedPlayers: Player[] = $state([]);
+  let selectedPlayerId: number = $state(0);
+  let showRecallLoanModal = $state(false);
+  let dropdownVisible: number | null = $state(null);
   
   onMount(async () => {
     try {
@@ -60,12 +60,12 @@
   }
 
   function handleClickOutside(event: MouseEvent) {
-      const dropdownElements = document.querySelectorAll('.dropdown-menu');
-      const targetElement = event.target as HTMLElement;
+    const dropdownElements = document.querySelectorAll('.dropdown-menu');
+    const targetElement = event.target as HTMLElement;
 
-      if (![...dropdownElements].some(dropdown => dropdown.contains(targetElement))) {
-          dropdownVisible = null;
-      }
+    if (![...dropdownElements].some(dropdown => dropdown.contains(targetElement))) {
+        dropdownVisible = null;
+    }
   }
 
   function loadRecallLoan(playerId: number) {

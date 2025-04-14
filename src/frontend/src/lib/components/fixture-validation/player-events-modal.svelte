@@ -7,17 +7,24 @@
   import FixtureEventSection from "./fixture-event-section.svelte";
   import type { Player, PlayerEventData } from "../../../../../declarations/backend/backend.did";
 
-  export let visible = false;
-  export let player: Player;
-  export let fixtureId: number;
-  export let playerEventData: Writable<PlayerEventData[]>;
-  export let closeModal: () => void;
+  interface Props {
+    player: Player;
+    visible: boolean;
+    closeModal: () => void;
+    fixtureId: number;
+    playerEventData: Writable<PlayerEventData[]>;
+  }
+  let { visible, closeModal, player, fixtureId, playerEventData }: Props = $props();
 
   let appearanceStart = 0;
   let appearanceEnd = 90;
-  $: if (selectedCard === 2 && cardMinute > 0) {
-    appearanceEnd = cardMinute;
-  }
+
+  $effect(() =>{
+    if (selectedCard === 2 && cardMinute > 0) {
+      appearanceEnd = cardMinute;
+    }
+  });
+
   let keeperSaves = 0;
   let selectedCard = 0;
   let goalMinutes: number[] = [];
@@ -35,14 +42,19 @@
   let penaltySaveSliderValue = 0;
   let penaltyMissSliderValue = 0;
 
-  let isSubmitDisabled: boolean = true;
-  $: isSubmitDisabled =
+  let isSubmitDisabled = $state(true);
+
+  $effect(() => {
+    isSubmitDisabled =
     appearanceStart < 0 ||
     appearanceStart > 90 ||
     appearanceEnd < 0 ||
     appearanceEnd > 90 ||
     (selectedCard > 0 && (cardMinute < 0 || cardMinute > 90)) ||
     (selectedCard === 2 && appearanceEnd > cardMinute);
+  });
+
+  
 
 
   onMount(() => {
@@ -314,7 +326,7 @@
   <div class="p-4 mx-4">
     <div class="flex items-center justify-between my-2">
       <h3 class="page-title">Add Events</h3>
-      <button class="times-button" on:click={exitModal}>&times;</button>
+      <button class="times-button" onclick={exitModal}>&times;</button>
     </div>
 
     <div class="mt-6">
@@ -444,7 +456,7 @@
 
         <div class="flex items-center justify-end space-x-4">
           <button
-            on:click={addPlayerEvents}
+            onclick={addPlayerEvents}
             class="brand-button px-4 py-2 min-w-[150px]"
           >
             Done

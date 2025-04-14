@@ -1,15 +1,20 @@
 <script lang="ts">
     import IcpLogo from "$lib/icons/IcpLogo.svelte";
     import LogoIcon from "$lib/icons/LogoIcon.svelte";
-    
-    export let handleLoginClick: () => void;
+
+    interface Props {
+        handleLoginClick: () => void
+    }
+
+    let { handleLoginClick }: Props = $props();
+
 </script>
 
 <div class="relative stacked-col items-center justify-center w-full md:min-h-screen">
     <div class="items-center w-full max-w-sm mx-4">
         <div class="stacked-col items-center justify-center mb-5">
-            <LogoIcon className="mx-auto mb-4 w-24 h-24" />
-            <h2 class="text-2xl text-center">FootballGod</h2>
+            <LogoIcon fill='white' className="mx-auto mb-4 w-24 h-24" />
+            <h2 class="text-2xl text-center">Football God</h2>
         </div>
         <p class="mb-8 text-center text-BrandGrayShade6">
             Football data, owned by the fans.
@@ -22,7 +27,7 @@
         <div class="mx-2 space-y-4">
             <button 
                 class="flex items-center justify-center w-full py-2 rounded lg:mx-0 bg-BrandGrayShade1 hover:bg-BrandGrayShade3"
-                on:click={handleLoginClick}
+                onclick={handleLoginClick}
             >
                 <span class="flex items-center justify-center mr-2"><IcpLogo/></span> 
                 <span>Internet Identity</span>

@@ -4,22 +4,25 @@
 
   import { clubStore } from "$lib/stores/club-store";
   import { leagueStore } from "$lib/stores/league-store";
-  
+  import type { Club, League } from "../../../../../declarations/backend/backend.did";
   import BadgeIcon from "$lib/icons/BadgeIcon.svelte";
   import CreateClub from "../governance/proposals/club/create-club.svelte";
   import LocalSpinner from "../shared/local-spinner.svelte";
   import PipsIcon from "$lib/icons/pips-icon.svelte";
-    import type { Club, League } from "../../../../../declarations/backend/backend.did";
   
-  export let leagueId: number;
+    interface Props {
+      leagueId: number
+    }
 
-  let isLoading = true;
+    let { leagueId }: Props = $props();
 
-  let league: League | undefined;
-  let clubs: Club[] = [];
-  let dropdownVisible: number | null = null;
+  let isLoading = $state(true);
+
+  let league: League | undefined = $state(undefined);
+  let clubs: Club[] = $state([]);
+  let dropdownVisible: number | null = $state(null);
   
-  let showAddClub = false;
+  let showAddClub = $state(false);
   
   onMount(async () => {
     try {
@@ -82,7 +85,7 @@
             <p class="px-4 md:px-2">{league.name} Clubs</p>
           <button 
             class="mr-4 md:mr-0 brand-button"
-            on:click={() => { showAddClub = true; }}>
+            onclick={() => { showAddClub = true; }}>
             + New Club
           </button>
         </div>
@@ -104,12 +107,12 @@
               </div>
               
               <div class="relative">
-                <button on:click={(event) => toggleDropdown(club.id, event)}>
-                  <PipsIcon className="w-6" />
+                <button onclick={(event) => toggleDropdown(club.id, event)}>
+                  <PipsIcon fill='white' className="w-6" />
                 </button>
                 {#if dropdownVisible === club.id}
                   <div class="absolute right-0 z-10 w-48 mt-2 rounded-md shadow-lg bg-BrandGray">
-                    <button class="dropdown-link" on:click={() => viewClub(club.id)}>View Details</button>
+                    <button class="dropdown-link" onclick={() => viewClub(club.id)}>View Details</button>
                   </div>
                 {/if}
               </div>

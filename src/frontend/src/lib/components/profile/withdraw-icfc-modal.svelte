@@ -2,15 +2,17 @@
   import { userStore } from "$lib/stores/user-store";
     import Modal from "../shared/modal.svelte";
 
-  export let visible: boolean;
-  export let closeModal: () => void;
-  export let cancelModal: () => void;
-  export let withdrawalAddress: string = "";
-  export let withdrawalInputAmount: string = "";
-  export let icfcBalance: bigint;
-  export let icfcBalanceFormatted: string;
+    interface Props {
+      visible: boolean;
+      closeModal: () => void;
+      cancelModal: () => void;
+      icfcBalance: bigint;
+      icfcBalanceFormatted: string;
+    }
+    let { visible, cancelModal, closeModal, icfcBalance, icfcBalanceFormatted }: Props = $props();
 
-  let errorMessage: string = "";
+    let withdrawalAddress: string = $state("");
+    let withdrawalInputAmount: string = $state("");
 
   function isPrincipalValid(principalId: string): boolean {
     if (!principalId) {
@@ -47,11 +49,17 @@
     withdrawalInputAmount = maxAmount.toFixed(4);
   }
 
-  $: isSubmitDisabled = !isPrincipalValid(withdrawalAddress) || !isWithdrawAmountValid(withdrawalInputAmount, icfcBalance);
+  let isSubmitDisabled = $state(true);
+  $effect(() => {
+    isSubmitDisabled = !isPrincipalValid(withdrawalAddress) || !isWithdrawAmountValid(withdrawalInputAmount, icfcBalance);
+  });
 
-  $: errorMessage = (!isAmountValid(withdrawalInputAmount) || !isWithdrawAmountValid(withdrawalInputAmount, icfcBalance)) && withdrawalInputAmount
+  let errorMessage = $state("");
+  $effect(() => {
+    errorMessage = (!isAmountValid(withdrawalInputAmount) || !isWithdrawAmountValid(withdrawalInputAmount, icfcBalance)) && withdrawalInputAmount
     ? "Withdrawal amount greater than account balance."
     : "";
+  });
 
   async function withdrawICFC() {
     try {
@@ -70,9 +78,9 @@
   <div class="mx-4 p-4">
     <div class="flex justify-between items-center my-2">
       <h3 class="page-title">Withdraw ICFC</h3>
-      <button class="times-button" on:click={cancelModal}>&times;</button>
+      <button class="times-button" onclick={cancelModal}>&times;</button>
     </div>
-    <form on:submit|preventDefault={withdrawICFC}>
+    <form onsubmit={withdrawICFC}>
       <p>ICFC Balance: {icfcBalanceFormatted}</p>
       <div class="mt-4">
         <input
@@ -92,7 +100,7 @@
         <button
           type="button"
           class="text-sm md:text-sm p-1 md:p-2 px-2 md:px-4 rounded brand-button"
-          on:click={setMaxWithdrawAmount}
+          onclick={setMaxWithdrawAmount}
         >
           Max
         </button>
@@ -104,7 +112,7 @@
         <button
           class="px-4 py-2 brand-cancel-button"
           type="button"
-          on:click={cancelModal}
+          onclick={cancelModal}
         >
           Cancel
         </button>

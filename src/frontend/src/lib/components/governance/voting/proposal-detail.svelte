@@ -13,11 +13,15 @@
   import LocalSpinner from "$lib/components/shared/local-spinner.svelte";
   import ArrowUp from "$lib/icons/ArrowUp.svelte";
   import ArrowDown from "$lib/icons/ArrowDown.svelte";
-  
-  export let visible: boolean;
-  export let closeModal: () => void;
-  export let proposal: ProposalData;
-  export let onVoteComplete: () => void = () => {};
+
+  interface Props {
+    visible: boolean;
+    closeModal: () => void;
+    proposal: ProposalData;
+    onVoteComplete: () => void;
+  }
+
+  let { visible, closeModal, onVoteComplete, proposal }: Props = $props();
 
   const yesVotes = Number(proposal.latest_tally[0]?.yes ?? 0n);
   const noVotes = Number(proposal.latest_tally[0]?.no ?? 0n);
@@ -25,13 +29,16 @@
   const minimumYesExercised = Number(proposal.minimum_yes_proportion_of_exercised[0]?.basis_points ?? 5000n);
   const minimumYesTotal = Number(proposal.minimum_yes_proportion_of_total[0]?.basis_points ?? 300n);
 
-  let isLoading = false;
-  let showConfirm = false;
-  let vote = "";
+  let isLoading = $state(false);
+  let showConfirm = $state(false);
+  let vote = $state("");
   let identity: OptionIdentity
-  let showDetails = true;
+  let showDetails = $state(true);
   
-  $: isExecuted = Number(proposal.executed_timestamp_seconds) > 0 || Number(proposal.failed_timestamp_seconds) > 0;
+  let isExecuted = $state(true);
+  $effect(() => { 
+    Number(proposal.executed_timestamp_seconds) > 0 || Number(proposal.failed_timestamp_seconds) > 0
+  });
 
   function voteYes() {
     if (isExecuted) return;
@@ -136,7 +143,7 @@
         <div class="flex-1">
           <h1 class="pr-4 break-words page-title">{proposal.proposal[0]?.title}</h1>
         </div>
-        <button class="times-button" on:click={cancelModal}>&times;</button>
+        <button class="times-button" onclick={cancelModal}>&times;</button>
       </div>
       <div class={`inline-block px-3 py-1 mb-4 rounded-full text-sm font-medium
         ${proposal.executed_timestamp_seconds > 0n 
@@ -156,13 +163,13 @@
         <div>
           <button 
             class="flex items-center justify-between w-full gap-2 text-xl transition-colors {!showDetails ? 'text-gray-400 hover:text-white' : 'text-white hover:text-gray-400'} "
-            on:click|stopPropagation={() => showDetails = !showDetails}
+            onclick={() => showDetails = !showDetails}
           >
             <span>Details</span>
             {#if showDetails}
-              <ArrowUp className="w-6 h-6 {showDetails ? 'fill-white hover:fill-gray-400' : 'fill-gray-400 hover:fill-white'}" />
+              <ArrowUp fill="white" className="w-6 h-6 {showDetails ? 'fill-white hover:fill-gray-400' : 'fill-gray-400 hover:fill-white'}" />
             {:else}
-              <ArrowDown className="w-6 h-6 {showDetails ? 'fill-white hover:fill-gray-400' : 'fill-gray-400 hover:fill-white'}" />
+              <ArrowDown fill="white" className="w-6 h-6 {showDetails ? 'fill-white hover:fill-gray-400' : 'fill-gray-400 hover:fill-white'}" />
             {/if}
           </button>
           {#if showDetails}
@@ -196,13 +203,13 @@
               <div class="flex justify-center gap-4">
                 <button
                   class="px-4 py-2 rounded bg-BrandError hover:bg-BrandError/80"
-                  on:click|stopPropagation={resetForm}
+                  onclick={resetForm}
                 >
                   Cancel
                 </button>
                 <button
                   class="px-4 py-2 rounded bg-BrandPurple hover:bg-BrandPurpleDark"
-                  on:click={confirmVote}
+                  onclick={confirmVote}
                 >
                   Confirm
                 </button>

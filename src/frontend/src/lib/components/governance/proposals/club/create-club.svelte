@@ -2,34 +2,41 @@
   import { onMount } from "svelte";
   import { governanceStore } from "$lib/stores/governance-store";
   import { isError } from "$lib/utils/helpers";
-  import Modal from "$lib/components/shared/modal.svelte";
-  import FormComponent from "$lib/components/shared/form-component.svelte";
   import type { ShirtType } from "../../../../../../../declarations/backend/backend.did";
   import type { CreateClub } from "../../../../../../../declarations/data_canister/data_canister.did";
+  import Modal from "$lib/components/shared/modal.svelte";
   import GovernanceModal from "../../voting/governance-modal.svelte";
+  import FormComponent from "$lib/components/shared/form-component.svelte";
   
-  export let visible: boolean;
-  export let closeModal: () => void;
-  export let selectedLeagueId: number;
+  interface Props {
+    visible: boolean;
+    closeModal: () => void;
+    selectedLeagueId: number;
+  }
 
-  let isLoading = true;
-  let submitting = false;
-  let submitted = false;
-  
-  let name = "";
-  let friendlyName = "";
-  let abbreviatedName = "";
-  let primaryColourHex = "";
-  let secondaryColourHex = "";
-  let thirdColourHex = "";
-  let shirtType: ShirtType = { Filled: null };
+  let { visible, closeModal, selectedLeagueId }: Props = $props();
 
-  $: isSubmitDisabled =
+  let isLoading = $state(false);
+  let submitting = $state(false);
+  let submitted = $state(false);
+  let isSubmitDisabled = $state(true);
+
+  let name = $state("");
+  let friendlyName = $state("");
+  let abbreviatedName = $state("");
+  let primaryColourHex = $state("");
+  let secondaryColourHex = $state("");
+  let thirdColourHex = $state("");
+  let shirtType: ShirtType = $state({ Filled: null });
+
+  $effect(() => {
+    isSubmitDisabled =
     name.length <= 0 ||
     name.length > 100 ||
     friendlyName.length <= 0 ||
     friendlyName.length > 50 ||
     abbreviatedName.length != 3;
+  });
 
   let shirtTypes: ShirtType[] = [{ Filled: null }, { Striped: null }];
 
@@ -129,15 +136,15 @@
     </FormComponent>
 
     <FormComponent label="Primary Club Colour:">
-      <input class="brand-input" type="color" on:input={handlePrimaryColorChange} bind:value={primaryColourHex} />
+      <input class="brand-input" type="color" oninput={handlePrimaryColorChange} bind:value={primaryColourHex} />
     </FormComponent>
 
     <FormComponent label="Secondary Club Colour:">
-      <input class="brand-input" type="color" on:input={handleSecondaryColorChange} bind:value={secondaryColourHex} />
+      <input class="brand-input" type="color" oninput={handleSecondaryColorChange} bind:value={secondaryColourHex} />
     </FormComponent>
 
     <FormComponent label="Third Club Colour:">
-      <input class="brand-input" type="color" on:input={handleThirdColorChange} bind:value={thirdColourHex} />
+      <input class="brand-input" type="color" oninput={handleThirdColorChange} bind:value={thirdColourHex} />
     </FormComponent>
 
     <FormComponent label="Shirt Type:">

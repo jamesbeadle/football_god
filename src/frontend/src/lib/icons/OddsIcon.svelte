@@ -1,7 +1,10 @@
-<script>
-    export let className = "";
-    export let fill = "#66E094";
-</script>
+<script lang="ts">
+    interface Props {
+          className: string;
+      fill: string;
+      }
+      let { className, fill }: Props = $props();
+  </script>
 
 <svg 
     viewBox="0 0 24 24" 

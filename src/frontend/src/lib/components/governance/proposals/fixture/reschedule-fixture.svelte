@@ -1,41 +1,39 @@
 <script lang="ts">
   import { onMount } from "svelte";
-  import Modal from "$lib/components/shared/modal.svelte";
   import { convertDateInputToUnixNano, isError } from "$lib/utils/helpers";
   import { governanceStore } from "$lib/stores/governance-store";
   import { clubStore } from "$lib/stores/club-store";
   import { leagueStore } from "$lib/stores/league-store";
+  import type { Club, Fixture, GameweekNumber } from "../../../../../../../declarations/backend/backend.did";
+  import type { RescheduleFixture } from "../../../../../../../declarations/data_canister/data_canister.did";
+  import Modal from "$lib/components/shared/modal.svelte";
   import GovernanceModal from "../../voting/governance-modal.svelte";
   import FormComponent from "$lib/components/shared/form-component.svelte";
-  import DropdownSelect from "$lib/components/shared/dropdown-select.svelte";
-    import type { Club, Fixture, GameweekNumber } from "../../../../../../../declarations/backend/backend.did";
-    import type { RescheduleFixture } from "../../../../../../../declarations/data_canister/data_canister.did";
 
-  export let visible: boolean;
-  export let closeModal: () => void;
+  interface Props {
+    visible: boolean;
+    closeModal: () => void;
+    selectedLeagueId: number;
+    selectedFixture: Fixture;
+    selectedSeasonId: number;
+  }
 
-  export let selectedLeagueId: number;
-  export let selectedSeasonId: number;
-  export let selectedFixture: Fixture;
+  let { visible, closeModal, selectedLeagueId, selectedSeasonId, selectedFixture }: Props = $props();
 
   let gameweeks: GameweekNumber[] = [];
   let totalGameweeks: number = 0;
-  let newGameweek: number = 0;
-  let gameweekOptions: { id: number; label: string }[] = [];
-  let clubs: Club[] = [];
-  let homeTeam: Club;
-  let awayTeam: Club;
+  let newGameweek: number = $state(0);
+  let gameweekOptions: { id: number; label: string }[] = $state([]);
+  let clubs: Club[] = $state([]);
+  let homeTeam: Club | undefined = $state(undefined);
+  let awayTeam: Club | undefined = $state(undefined);
   
-  let date = "";
-  let time = "";
-  let dateTime = "";
+  let date = $state("");
+  let time = $state("");
+  let dateTime = $state("");
 
-  $: dateTime = date + "T" + time;
-
-  $: isSubmitDisabled =
-    newGameweek <= 0 ||
-    date == "" ||
-    time == "";
+  $effect(() => { dateTime = date + "T" + time; });
+  $effect(() => { isSubmitDisabled = newGameweek <= 0 || date == "" || time == ""; });
 
   onMount(async () => {
     try {
@@ -71,9 +69,10 @@
     }
   });
 
-  let isLoading = true;
-  let submitting = false;
-  let submitted = false;
+  let isLoading = $state(false);
+  let submitting = $state(false);
+  let submitted = $state(false);
+  let isSubmitDisabled = $state(true);
 
   function handleGameweekChange(value: string | number) {
     newGameweek = Number(value);
@@ -139,7 +138,7 @@
 <Modal title={"Reschedule Fixture"} {visible} onClose={closeModal}>
   <GovernanceModal {cancelModal} {confirmProposal} {isLoading} {isSubmitDisabled}>
     
-    <p class="">Reschedule {homeTeam.friendlyName} v {awayTeam.friendlyName}</p>
+    <p class="">Reschedule {homeTeam!.friendlyName} v {awayTeam!.friendlyName}</p>
     
     <FormComponent label="New Fixture Date:">
       <input class="brand-input" type="date" bind:value={date} />
@@ -150,13 +149,12 @@
     </FormComponent>
     
     <FormComponent label="Select New Gameweek:">
-      <DropdownSelect 
-        value={newGameweek}
-        options={gameweekOptions}
-        onChange={handleGameweekChange}
-        placeholder="Select Gameweek"
-        compact={true}
-      />
+      <select bind:value={newGameweek} class="w-full brand-input">
+        <option value={null}>Select Gameweek</option>
+        {#each gameweekOptions.sort((a, b) => Number(a.id) - Number(b.id)) as gameweek }
+          <option value={gameweek.id}>{gameweek.label}</option>
+        {/each}
+      </select>
     </FormComponent>
   </GovernanceModal>
 </Modal>

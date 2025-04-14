@@ -1,23 +1,27 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import { governanceStore } from "$lib/stores/governance-store";
+  import { toasts } from "$lib/stores/toasts-store";
   import { isError } from "$lib/utils/helpers";
+  import type { Club, Player } from "../../../../../../../declarations/backend/backend.did";
+  import type { RevaluePlayerUp } from "../../../../../../../declarations/data_canister/data_canister.did";
   import Modal from "$lib/components/shared/modal.svelte";
   import GovernanceModal from "../../voting/governance-modal.svelte";
-  import { toasts } from "$lib/stores/toasts-store";
-    import type { Club, Player } from "../../../../../../../declarations/backend/backend.did";
-    import type { RevaluePlayerUp } from "../../../../../../../declarations/data_canister/data_canister.did";
 
-  export let visible: boolean;
-  export let closeModal: () => void;
-  export let player: Player;
-  export let club: Club;
+  interface Props {
+    visible: boolean;
+    closeModal: () => void;
+    selectedPlayer: Player;
+    player: Player;
+    club: Club;
+  }
 
-  let isLoading = false;
-  let submitting = false;
-  let submitted = false;
+  let { visible, closeModal, player, club }: Props = $props();
 
-  $: isSubmitDisabled = false;
+  let isLoading = $state(false);
+  let submitting = $state(false);
+  let submitted = $state(false);
+  let isSubmitDisabled = $state(true);
 
   onMount(async () => {
     try {

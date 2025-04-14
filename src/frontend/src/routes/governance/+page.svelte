@@ -178,7 +178,7 @@
                       {#each paginate(filteredProposals, currentPage) as proposal}
                           <tr 
                               class="h-16 border-b border-gray-700 cursor-pointer hover:bg-BrandGray/50" 
-                              on:click={() => viewProposal(proposal)}
+                              onclick={() => viewProposal(proposal)}
                           >
                               <td class="hidden px-6 py-4 md:table-cell">{proposal.id[0]?.id}</td>
                               <td class="hidden px-6 py-4 md:table-cell">{getProposalType(proposal)}</td>
@@ -198,7 +198,7 @@
                                           </span>
                                           <Checkmark 
                                               className="w-4 h-4" 
-                                              color={proposal.executed_timestamp_seconds > 0n ? '#2CE3A6' : '#CF5D43'} 
+                                              fill={proposal.executed_timestamp_seconds > 0n ? '#2CE3A6' : '#CF5D43'} 
                                           />
                                           <span class="text-gray-400">
                                               {#if proposal.executed_timestamp_seconds > 0n}
@@ -215,7 +215,7 @@
                                               <div class="rounded-full">
                                                   <LikeButton 
                                                       className="w-4 h-4" 
-                                                      color={getMyVote(proposal) === 1 ? '#2CE3A6' : '#5A5A5A'}
+                                                      fill={getMyVote(proposal) === 1 ? '#2CE3A6' : '#5A5A5A'}
                                                   />
                                               </div>
                                               <div class="flex">
@@ -235,7 +235,7 @@
                                               <div class="p-1rounded-full">
                                                   <DislikeButton 
                                                       className="w-4 h-4"
-                                                      color={getMyVote(proposal) === 0 ? '#CF5D43' : '#5A5A5A'}
+                                                      fill={getMyVote(proposal) === 0 ? '#CF5D43' : '#5A5A5A'}
                                                   />
                                               </div>
                                               <div class="stacked-column">
@@ -259,14 +259,14 @@
                   <button 
                       class="hidden px-3 py-1 rounded xxs:block bg-BrandGray disabled:opacity-50"
                       disabled={currentPage === 1}
-                      on:click={() => currentPage--}
+                      onclick={() => currentPage--}
                   >
                       Previous
                   </button>
                   {#each Array(Math.min(5, totalPages)) as _, i}
                       <button 
                           class="px-3 py-1 rounded {currentPage === i + 1 ? 'bg-BrandPurple' : 'bg-BrandGray'}"
-                          on:click={() => currentPage = i + 1}
+                          onclick={() => currentPage = i + 1}
                       >
                           {i + 1}
                       </button>
@@ -274,7 +274,7 @@
                   <button 
                       class="hidden px-3 py-1 rounded xxs:block bg-BrandGray disabled:opacity-50"
                       disabled={currentPage === totalPages}
-                      on:click={() => currentPage++}
+                      onclick={() => currentPage++}
                   >
                       Next
                   </button>

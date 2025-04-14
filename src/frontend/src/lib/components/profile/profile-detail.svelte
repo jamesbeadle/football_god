@@ -2,7 +2,6 @@
   import { onMount } from "svelte";
   import { writable } from "svelte/store";
   import { userStore } from "$lib/stores/user-store";
-  
   import WithdrawIcfcModal from "./withdraw-icfc-modal.svelte";
   import IcfcCoinIcon from "$lib/icons/ICFCCoinIcon.svelte";
   import CopyPrincipal from "./copy-principal.svelte";
@@ -59,7 +58,7 @@
 </script>
 
 <div class="panel-content">
-  <CopyPrincipal />
+  <CopyPrincipal backgroundColour="BrandGray" borderColor="BrandPurple" />
   {#if isLoading}
     <div class="dot-animation min-w-[20px]">{$dots}</div>
   {:else}

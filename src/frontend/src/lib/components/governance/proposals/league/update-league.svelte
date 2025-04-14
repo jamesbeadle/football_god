@@ -3,33 +3,36 @@
   import { onMount } from "svelte";
   import { governanceStore } from "$lib/stores/governance-store";
   import {getImageURL } from "$lib/utils/helpers";
-  
+  import type { Country, Gender, League } from "../../../../../../../declarations/backend/backend.did";
+  import type { UpdateLeague } from "../../../../../../../declarations/data_canister/data_canister.did";
   import Modal from "$lib/components/shared/modal.svelte";
   import GovernanceModal from "../../voting/governance-modal.svelte";
   import FormComponent from "$lib/components/shared/form-component.svelte";
-  import DropdownSelect from "$lib/components/shared/dropdown-select.svelte";
-    import type { Country, Gender, League } from "../../../../../../../declarations/backend/backend.did";
-    import type { UpdateLeague } from "../../../../../../../declarations/data_canister/data_canister.did";
 
+    interface Props {
+      visible: boolean;
+      closeModal: () => void;
+      selectedLeague: League;
+    }
 
-  export let visible: boolean;
-  export let closeModal: () => void;
-  export let selectedLeague: League;
-
-  let leagueName = "";
-  let abbreviatedName = "";
-  let governingBody = "";
-  let selectedGender = 1;
-  let dateFormed = "";
-  let countryId = 0;
-  let logo: Uint8Array | number[];
+    let { visible, closeModal, selectedLeague }: Props = $props();
+    
+  let leagueName = $state("");
+  let abbreviatedName = $state("");
+  let governingBody = $state("");
+  let selectedGender = $state(1);
+  let dateFormed = $state("");
+  let countryId = $state(0);
+  let logo: Uint8Array | number[] = $state([]);
   let fileInput: HTMLInputElement;
-  let teamCount = 0;
-  let countries: Country[] = [];
+  let teamCount = $state(0);
+  let countries: Country[] = $state([]);
 
-  let isLoading = true;
+  let isLoading = $state(true);
+  let isSubmitDisabled = $state(true);
 
-  $: isSubmitDisabled =
+  $effect(() => {
+    isSubmitDisabled =
     leagueName.length <= 0 ||
     leagueName.length > 100 ||
     abbreviatedName.length <= 0 ||
@@ -39,6 +42,7 @@
     dateFormed.length <= 0 ||
     dateFormed.length > 50 ||
     countryId <= 0;
+  });
 
   onMount(async () => {
     try {
@@ -71,10 +75,10 @@
     { id: 2, label: "Female" }
   ];
   
-  let countryOptions = countries.map(country => ({
+  let countryOptions = $derived(countries.map(country => ({
     id: country.id,
     label: country.name
-  }));
+  })));
 
   function handleGenderChange(value: string | number) {
     selectedGender = Number(value);
@@ -182,13 +186,15 @@
         bind:value={governingBody}
       />
     </FormComponent>
-        
-    <DropdownSelect
-      value={selectedGender}
-      options={genderOptions}
-      onChange={handleGenderChange}
-    />
-
+    <FormComponent label="League Gender:">
+      <select bind:value={selectedGender} class="w-full brand-input">
+        <option value={null}>Select Gender</option>
+        {#each genderOptions.sort((a, b) => Number(a.id) - Number(b.id)) as gender }
+          <option value={gender.id}>{gender.label}</option>
+        {/each}
+      </select>
+    </FormComponent>
+    
     <FormComponent label="Team Count:">
       <input
         type="number"
@@ -206,11 +212,12 @@
     </FormComponent>
 
     <FormComponent label="Country:">
-      <DropdownSelect
-        value={countryId}
-        options={[{ id: 0, label: "Select League Country" }, ...countryOptions]}
-        onChange={handleCountryChange}
-      />
+      <select bind:value={countryId} class="w-full brand-input">
+        <option value={null}>Select Gameweek</option>
+        {#each countryOptions.sort((a, b) => Number(a.id) - Number(b.id)) as country }
+          <option value={country.id}>{country.label}</option>
+        {/each}
+      </select>
     </FormComponent>
 
     <FormComponent label="Logo:">
@@ -223,7 +230,7 @@
           />
         </div>
       {/if}
-      <button class="btn-file-upload brand-button" on:click={clickFileInput}>
+      <button class="btn-file-upload brand-button" onclick={clickFileInput}>
         Change Logo
       </button>
       <input
@@ -231,7 +238,7 @@
         id="logo-image"
         accept="image/*"
         bind:this={fileInput}
-        on:change={handleFileChange}
+        onchange={handleFileChange}
         style="opacity: 0; position: absolute; left: 0; top: 0;"
       />
     </FormComponent> 

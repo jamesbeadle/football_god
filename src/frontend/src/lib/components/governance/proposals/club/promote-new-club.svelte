@@ -3,23 +3,27 @@
   import Modal from "$lib/components/shared/modal.svelte";
   import { governanceStore } from "$lib/stores/governance-store";
   import { isError } from "$lib/utils/helpers";
-    import type { Club, League, LeagueId } from "../../../../../../../declarations/backend/backend.did";
-    import type { PromoteClub } from "../../../../../../../declarations/data_canister/data_canister.did";
-    import GovernanceModal from "../../voting/governance-modal.svelte";
+  import type { Club, League, LeagueId } from "../../../../../../../declarations/backend/backend.did";
+  import type { PromoteClub } from "../../../../../../../declarations/data_canister/data_canister.did";
+  import GovernanceModal from "../../voting/governance-modal.svelte";
 
-  export let visible: boolean;
-  export let closeModal: () => void;
-  export let selectedClub: Club;
-  export let selectedLeagueId: LeagueId;
+  interface Props {
+    visible: boolean;
+    closeModal: () => void;
+    selectedLeagueId: number;
+    selectedClub: Club
+  }
+
+  let { visible, closeModal, selectedLeagueId, selectedClub }: Props = $props();
     
-  let isLoading = false;
-  let submitting = false;
-  let submitted = false;
+  let isLoading = $state(false);
+  let submitting = $state(false);
+  let submitted = $state(false);
+  let isSubmitDisabled = $state(true);
+
   let promotionLeagues: League[] = []
 
-  let newLeagueId: LeagueId = 0;
-
-  $: isSubmitDisabled = false;
+  let newLeagueId: LeagueId = $state(0);
 
   async function confirmProposal() {
     

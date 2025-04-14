@@ -1,11 +1,15 @@
 <script lang="ts">
   import { getImageURL } from "$lib/utils/helpers";
-    import type { Country, League, LeagueStatus } from "../../../../../declarations/backend/backend.did";
+  import type { Country, League, LeagueStatus } from "../../../../../declarations/backend/backend.did";
 
-  export let league: League;
-  export let leagueStatus: LeagueStatus | null;
-  export let countries: Country[];
+  interface Props {
+    league: League;
+    leagueStatus: LeagueStatus | null;
+    countries: Country[];
+  }
 
+  let { league, leagueStatus, countries }: Props = $props();
+  
   function getSeason(seasonID: number) {
     if(seasonID == 1) return "2024/2025";
     if(seasonID == 0) return "2023/2024";

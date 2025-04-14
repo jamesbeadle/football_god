@@ -1,17 +1,21 @@
 <script lang="ts">
   import { formatUnixDateToReadableNumber, formatUnixDateToSmallReadableDate } from "$lib/utils/helpers";
+  import type { Club, Player } from "../../../../../declarations/backend/backend.did";
   import PlayerDisplay from "../player/player-display.svelte";
   import BadgeIcon from "$lib/icons/BadgeIcon.svelte";
-    import type { Club, Player } from "../../../../../declarations/backend/backend.did";
 
-  export let player: Player;
-  export let currentClub: Club;
-  export let parentClub: Club;
-  export let onDropdownClick: (playerId: number, event: MouseEvent) => void;
-  export let dropdownVisible: number | null;
-  export let onRecallLoan: ((playerId: number) => void) | undefined = undefined;
+  interface Props {
+    player: Player;
+    currentClub: Club;
+    parentClub: Club;
+    onDropdownClick: (playerId: number, event: MouseEvent) => void;
+    dropdownVisible: number | null;
+    onRecallLoan: ((playerId: number) => void) | undefined;
+  }
+  let { player, currentClub, parentClub, onDropdownClick, dropdownVisible, onRecallLoan }: Props = $props();
+  
 </script>
-
+<!-- // TODO
 <PlayerDisplay
   {player}
   club={currentClub}
@@ -37,3 +41,4 @@
     </div>
   </div>
 </PlayerDisplay> 
+-->

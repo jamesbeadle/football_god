@@ -1,17 +1,21 @@
 <script lang="ts">
-  import { convertPlayerPosition } from "$lib/utils/helpers";
-  import BadgeIcon from "$lib/icons/BadgeIcon.svelte";
   import { type Writable } from "svelte/store";
-  import Modal from "../shared/modal.svelte";
+  import { convertPlayerPosition } from "$lib/utils/helpers";
   import type { Club, Player, PlayerEventData } from "../../../../../declarations/backend/backend.did";
+  import Modal from "../shared/modal.svelte";
+  import BadgeIcon from "$lib/icons/BadgeIcon.svelte";
   
-  export let selectedTeam: Club;
-  export let teamPlayers: Player[];
-  export let selectedPlayers: Writable<Player[]>;
-  export let playerEventData: Writable<PlayerEventData[]>;
-  export let visible = false;
-  export let closeModal: () => void;
+  interface Props {
+    selectedTeam: Club;
+    teamPlayers: Player[];
+    selectedPlayers: Writable<Player[]>;
+    playerEventData: Writable<PlayerEventData[]>;
+    visible: boolean;
+    closeModal: () => void;
+  }
 
+  let { selectedTeam, teamPlayers, selectedPlayers, playerEventData, visible, closeModal }: Props = $props();
+  
   function handlePlayerSelection(event: Event, player: Player) {
     const input = event.target as HTMLInputElement;
 
@@ -43,7 +47,7 @@
         />
         <h3 class="text-xl font-medium">Select {selectedTeam?.friendlyName} Players</h3>
       </div>
-      <button class="times-button" on:click={closeModal}>&times;</button>
+      <button class="times-button" onclick={closeModal}>&times;</button>
     </div>
     <div class="mb-4 border-b border-gray-700"></div>
     <div class="grid grid-cols-1 my-2 gap-y-2 sm:grid-cols-2 gap-x-2">
@@ -56,7 +60,7 @@
                 type="checkbox"
                 class="w-5 h-5 mr-2 rounded-sm border-white/50 bg-BrandDarkGray text-BrandPurple/60 focus:ring-BrandPurple/60 focus:ring-offset-0"
                 checked={selected}
-                on:change={(e) => {
+                onchange={(e) => {
                   handlePlayerSelection(e, player);
                 }}
               />
@@ -87,11 +91,11 @@
       <button
         class="brand-cancel-button"
         type="button"
-        on:click={closeModal}
+        onclick={closeModal}
       >
         Cancel
       </button>
-      <button class={`default-button brand-button`} on:click={closeModal}
+      <button class={`default-button brand-button`} onclick={closeModal}
         >Select</button
       >
     </div>

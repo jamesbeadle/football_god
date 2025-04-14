@@ -43,14 +43,14 @@
   <TabPanel {activeTab} {setActiveTab} {tabs} />
 
   {#if isLoading}
-    <FullScreenSpinner />
+    <FullScreenSpinner message='Loading Profile' />
   {:else}
     {#if identity}
       {#if activeTab === "details"}
         <ProfileDetail />
       {/if}
     {:else}
-       <button class="brand-button" on:click={handleLogin}>Connect</button>
+       <button class="brand-button" onclick={handleLogin}>Connect</button>
     {/if}
   {/if}
 

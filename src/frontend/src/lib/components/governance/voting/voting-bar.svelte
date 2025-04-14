@@ -2,20 +2,30 @@
   import LikeButton from "$lib/icons/LikeButton.svelte";
   import DislikeButton from "$lib/icons/DislikeButton.svelte";
   import type { ProposalData } from "@dfinity/sns/dist/candid/sns_governance";
-  
-  export let yesVotes: number = 0;
-  export let noVotes: number = 0;
-  export let totalVotes: number = 100;
-  export let proposal: ProposalData;
-  export let onVoteYes: () => void;
-  export let onVoteNo: () => void;
-  export let isExecuted: boolean;
 
-  $: yesPercentage = (yesVotes / totalVotes) * 100;
-  $: noPercentage = (noVotes / totalVotes) * 100;
-  $: expirationDate = (() => {
+  interface Props {
+    yesVotes: number;
+    noVotes: number
+    totalVotes: number;
+    proposal: ProposalData;
+    onVoteYes: () => void;
+    onVoteNo: () => void;
+    isExecuted: boolean;
+  }
+
+  let { yesVotes, noVotes, totalVotes, proposal, onVoteYes, onVoteNo, isExecuted }: Props = $props();
+
+  let yesPercentage = $state(0);
+  let noPercentage = $state(0);
+  let expirationDate = $state("");
+  let minimumYesExercised = $state(0);
+  let minimumYesTotal = $state(0);
+
+  $effect(() => { yesPercentage = (yesVotes / totalVotes) * 100; })
+  $effect(() => { noPercentage = (noVotes / totalVotes) * 100; })
+  $effect(() => { 
     if (isExecuted) {
-      return proposal.executed_timestamp_seconds > 0n ? "Proposal Adopted" : "Proposal Rejected";
+      expirationDate = proposal.executed_timestamp_seconds > 0n ? "Proposal Adopted" : "Proposal Rejected";
     }
     const creationTime = Number(proposal.proposal_creation_timestamp_seconds ?? 0n);
     const votingPeriod = Number(proposal.initial_voting_period_seconds ?? 0n);
@@ -26,11 +36,11 @@
     const days = Math.floor(remainingSeconds / (24 * 60 * 60));
     const hours = Math.floor((remainingSeconds % (24 * 60 * 60)) / (60 * 60));
     
-    return `${days} days, ${hours} hours remaining`;
-  })();
-  
-  $: minimumYesExercised = Number(proposal.minimum_yes_proportion_of_exercised[0]?.basis_points ?? 5000n);
-  $: minimumYesTotal = Number(proposal.minimum_yes_proportion_of_total[0]?.basis_points ?? 300n);
+    expirationDate = `${days} days, ${hours} hours remaining`;
+  })
+  $effect(() => { minimumYesExercised = Number(proposal.minimum_yes_proportion_of_exercised[0]?.basis_points ?? 5000n) })
+  $effect(() => { minimumYesTotal = Number(proposal.minimum_yes_proportion_of_total[0]?.basis_points ?? 300n); })
+   
 </script>
   
 <div class="space-y-4">
@@ -39,10 +49,10 @@
       <div class="text-BrandGreen">Adopt</div>
       <button 
         class="p-2 rounded-full transition-colors {isExecuted ? 'opacity-50 cursor-not-allowed' : 'hover:bg-BrandGreen/10'}"
-        on:click={onVoteYes}
+        onclick={onVoteYes}
         disabled={isExecuted}
       >
-        <LikeButton className="w-6 h-6" color="#2CE3A6" />
+        <LikeButton className="w-6 h-6" fill="#2CE3A6" />
       </button>
       <div class="text-BrandGreen">{yesPercentage.toFixed(3)}%</div>
     </div>
@@ -72,10 +82,10 @@
       <div class="text-BrandRed">Reject</div>
       <button 
         class="p-2 rounded-full transition-colors {isExecuted ? 'opacity-50 cursor-not-allowed' : 'hover:bg-BrandRed/10'}"
-        on:click={onVoteNo}
+        onclick={onVoteNo}
         disabled={isExecuted}
       >
-        <DislikeButton className="w-6 h-6" color="#CF5D43" />
+        <DislikeButton className="w-6 h-6" fill="#CF5D43" />
       </button>
       <div class="text-BrandRed">{noPercentage.toFixed(3)}%</div>
     </div>

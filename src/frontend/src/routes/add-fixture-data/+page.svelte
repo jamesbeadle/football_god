@@ -24,10 +24,10 @@
     
     let clubs: Club[] = [];
     let players: Player[] = [];
-    let fixture: Fixture | undefined;
+    let fixture: Fixture | undefined = $state(undefined);
     let selectedTeam: Club | null = null;
-    let homeTeam: Club | null;
-    let awayTeam: Club | null;
+    let homeTeam: Club | null = $state(null);
+    let awayTeam: Club | null = $state(null);
   
     let activeTab: string = "home";
     let showPlayerSelectionModal = false;
@@ -47,43 +47,41 @@
     let awayAssistsText = 0;
     let gameweek = 0;
   
-    let isLoading = true;
-    let submitting = false;
-    let submitted = false;
+    let isLoading = $state(false);
+    let submitting = $state(false);
+    let submitted = $state(false);
+    let isSubmitDisabled = $state(true);
+    let fixtureId = $state(0);
+    let leagueId = $state(0);
+    let seasonId = $state(0);
+
+    $effect(() => { fixtureId = Number($page.url.searchParams.get("id")) });
+    $effect(() => { leagueId = Number($page.url.searchParams.get("league-id")) });
+    $effect(() => { seasonId = Number($page.url.searchParams.get("season-id")) });
   
-    $: fixtureId = Number($page.url.searchParams.get("id"));
-    $: leagueId = Number($page.url.searchParams.get("league-id"));
-    $: seasonId = Number($page.url.searchParams.get("season-id"));
-  
-    $: isSubmitDisabled =
-      $playerEventData.length == 0 ||
-      $playerEventData.filter((x) => convertEvent(x.eventType) == 0).length !=
-        $selectedPlayers.length;
-  
-    $: homeGoalsText = $playerEventData
-      .filter(event => 
-        "Goal" in event.eventType && 
-        event.clubId === fixture?.homeClubId
-      ).length;
-  
-    $: awayGoalsText = $playerEventData
-      .filter(event => 
-        "Goal" in event.eventType && 
-        event.clubId === fixture?.awayClubId
-      ).length;
-  
-    $: homeAssistsText = $playerEventData
-      .filter(event => 
-        "GoalAssisted" in event.eventType && 
-        event.clubId === fixture?.homeClubId
-      ).length;
-  
-    $: awayAssistsText = $playerEventData
-      .filter(event => 
-        "GoalAssisted" in event.eventType && 
-        event.clubId === fixture?.awayClubId
-      ).length;
-  
+    $effect(() => { 
+      isSubmitDisabled =
+        $playerEventData.length == 0 ||
+        $playerEventData.filter((x) => convertEvent(x.eventType) == 0).length !=
+          $selectedPlayers.length;
+    });
+
+    $effect(() => { homeGoalsText = $playerEventData.filter(event => 
+      "Goal" in event.eventType && event.clubId === fixture?.homeClubId ).length;
+    });
+
+    $effect(() => { awayGoalsText = $playerEventData.filter(event => 
+      "Goal" in event.eventType && event.clubId === fixture?.awayClubId).length;
+    });
+
+    $effect(() => { homeAssistsText = $playerEventData.filter(event => 
+      "GoalAssisted" in event.eventType && event.clubId === fixture?.homeClubId).length;
+    });
+
+    $effect(() => { awayAssistsText = $playerEventData.filter(event => 
+      "GoalAssisted" in event.eventType && event.clubId === fixture?.awayClubId).length;
+    });
+    
     onMount(async () => {
       try {
         let clubsResult = await clubStore.getClubs(leagueId);
@@ -295,13 +293,12 @@
       <div class="flex flex-col md:flex-row">
         <div class="flex-1 md:block">  
           {#if isLoading}
-            <FullScreenSpinner />
+            <FullScreenSpinner message='Loading Add Fixture Data' />
           {:else if submitting}
             <div class="flex flex-col items-center justify-center min-h-screen space-y-4">
               <div class="pb-12">
-                <FullScreenSpinner />
+                <FullScreenSpinner  message='Submitting Propopsal' />
               </div>
-              <p class="pt-12 text-xl text-center">Submitting proposal...</p>
             </div>
           {:else}
             <div class="flex flex-col w-full min-h-screen rounded-xl backdrop-blur ">
@@ -310,9 +307,9 @@
                   <div class="flex flex-col justify-center space-y-2">
                     <BadgeIcon
                       className="h-8 lg:h-12"
-                      primaryColour={homeTeam?.primaryColourHex}
-                      secondaryColour={homeTeam?.secondaryColourHex}
-                      thirdColour={homeTeam?.thirdColourHex}
+                      primaryColour={homeTeam?.primaryColourHex ?? ""}
+                      secondaryColour={homeTeam?.secondaryColourHex ?? ""}
+                      thirdColour={homeTeam?.thirdColourHex ?? ""}
                     />
                     <p class="text-sm text-center">{homeTeam?.abbreviatedName}</p>
                   </div>
@@ -326,9 +323,9 @@
                   <div class="flex flex-col justify-center space-y-2">
                     <BadgeIcon
                       className="h-8 lg:h-12"
-                      primaryColour={awayTeam?.primaryColourHex}
-                      secondaryColour={awayTeam?.secondaryColourHex}
-                      thirdColour={awayTeam?.thirdColourHex}
+                      primaryColour={awayTeam?.primaryColourHex ?? ""}
+                      secondaryColour={awayTeam?.secondaryColourHex ?? ""}
+                      thirdColour={awayTeam?.thirdColourHex ?? ""}
                     />
                     <p class="text-sm text-center">{awayTeam?.abbreviatedName}</p>
                   </div>
@@ -362,7 +359,7 @@
                           class={`p-2 ${
                             activeTab === "home" ? "text-white" : "text-gray-400"
                           }`}
-                          on:click={() => setActiveTab("home")}
+                          onclick={() => setActiveTab("home")}
                           >{homeTeam?.friendlyName}</button
                         >
                       </li>
@@ -371,7 +368,7 @@
                           class={`p-2 ${
                             activeTab === "away" ? "text-white" : "text-gray-400"
                           }`}
-                          on:click={() => setActiveTab("away")}
+                          onclick={() => setActiveTab("away")}
                           >{awayTeam?.friendlyName}</button
                         >
                       </li>
@@ -381,7 +378,7 @@
                     <p>Selected Players</p>
                     <button
                       class="justify-end px-4 py-2 brand-button"
-                      on:click={showSelectPlayersModal}>Select Players</button
+                      onclick={showSelectPlayersModal}>Select Players</button
                     >
                   </div>
                   <div class="flex flex-col w-full">
@@ -399,16 +396,16 @@
                   <div class="flex flex-row items-center justify-end p-4 space-x-2">
                     <button
                       class="px-4 py-2 brand-button"
-                      on:click={saveDraft}>Save Draft</button
+                      onclick={saveDraft}>Save Draft</button
                     >
                     <button
                       class="px-4 py-2 brand-button"
-                      on:click={showConfirmClearDraftModal}>Clear Draft</button
+                      onclick={showConfirmClearDraftModal}>Clear Draft</button
                     >
                     <button
                       class={`${isSubmitDisabled ? "brand-button-disabled" : "brand-button"} 
                       px-4 py-2`}
-                      on:click={displayConfirmDataModal}
+                      onclick={displayConfirmDataModal}
                       disabled={isSubmitDisabled}>Submit Proposal</button
                     >
                   </div>
@@ -491,7 +488,6 @@
       player={selectedPlayer}
       {fixtureId}
       {playerEventData}
-      on:closed={handleModalClosed}
       closeModal={closeEventPlayerEventsModal}
     />
   {/if}

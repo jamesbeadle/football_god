@@ -5,29 +5,32 @@
   import { clubStore } from "$lib/stores/club-store";
   import { fixtureStore } from "$lib/stores/fixture-store";
   import { leagueStore } from "$lib/stores/league-store";
+  import type { Club, Fixture, League } from "../../../../../declarations/backend/backend.did";
   
   import MoveFixture from "../governance/proposals/fixture/move-fixture.svelte";
   import LocalSpinner from "../shared/local-spinner.svelte";
   import PostponeFixture from "../governance/proposals/fixture/postpone-fixture.svelte";
-  import DropdownSelect from "$lib/components/shared/dropdown-select.svelte";
   import FixtureDisplay from "./fixture-display.svelte";
-    import type { Club, Fixture, League } from "../../../../../declarations/backend/backend.did";
+  import FormComponent from "../shared/form-component.svelte";
   
-  export let leagueId: number;
+  interface Props {
+    leagueId: number
+  }
 
-  let isLoading = true;
-  let league: League | undefined;
-  let clubs: Club[] = [];
-  let fixtures: Fixture[] = [];
-  let fitleredFixtures: Fixture[] = [];
-  let selectedGameweek: number = 1;
-  let selectedFixtureId: number = 0;
-  let dropdownVisible: number | null = null;
-  let gameweeks: number[] = [];
-  let gameweekOptions: { id: number; label: string }[] = [];
+  let { leagueId }: Props = $props();
 
-  let showMoveFixtureModal = false;
-  let showPostponeFixtureModal = false;
+  let isLoading = $state(true);
+  let league: League | undefined = $state(undefined); 
+  let clubs: Club[] = $state([]);
+  let fixtures: Fixture[] = $state([]);
+  let fitleredFixtures: Fixture[] = $state([]);
+  let selectedGameweek: number = $state(1);
+  let selectedFixtureId: number = $state(0);
+  let dropdownVisible: number | null = $state(null);
+  let gameweeks: number[] = $state([]);
+  let gameweekOptions: { id: number; label: string }[] = $state([]);
+  let showMoveFixtureModal = $state(false);
+  let showPostponeFixtureModal = $state(false);
   
   onMount(async () => {
     try {
@@ -155,13 +158,13 @@
         </div>
 
         <div class="flex mb-4">
-          <DropdownSelect 
-            value={selectedGameweek}
-            options={gameweekOptions}
-            onChange={handleGameweekChange}
-            placeholder="Select Gameweek"
-            compact={true}
-          />
+          <FormComponent label="Select Gameweek">
+            <select class="brand-dropdown" bind:value={selectedGameweek}>
+              {#each gameweekOptions as gameweek}
+                <option value={gameweek.id}>{gameweek.label}</option>
+              {/each}
+            </select>
+          </FormComponent>
         </div>
 
         <div class="px-3 mb-4 md:px-0 md:space-y-4">

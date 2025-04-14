@@ -2,7 +2,12 @@
     import type { Club } from "../../../../../declarations/backend/backend.did";
     import BadgeIcon from "$lib/icons/BadgeIcon.svelte";
     import ShirtIcon from "$lib/icons/ShirtIcon.svelte";
-    export let club: Club;
+    
+    interface Props {
+      club: Club;
+    }
+    let { club }: Props = $props();
+    
 </script>
 
 <div class="stacked-column items-center">

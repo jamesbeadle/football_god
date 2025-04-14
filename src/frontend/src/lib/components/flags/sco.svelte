@@ -1,13 +1,17 @@
-<script>
+<script lang="ts" >
 
-  export let className;
-  </script>
-<style>
-  svg {
-    display: block;
-    width: 100%;
-    height: auto;
+  interface Props {
+    className?: string;
   }
+
+  let { className = "" }: Props = $props();
+</script>
+<style>
+    svg {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
 </style>
 <div class={className}>
     

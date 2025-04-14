@@ -1,11 +1,14 @@
-<script>
-    export let className = "";
-    export let color = "currentColor";
-  </script>
+<script lang="ts">
+  interface Props {
+    className: string;
+    fill: string;
+  }
+  let { className, fill }: Props = $props();
+</script>
 
 <svg
   class={className}
-  fill={color}
+  fill={fill}
   viewBox="0 0 25 24"
 >
   <path

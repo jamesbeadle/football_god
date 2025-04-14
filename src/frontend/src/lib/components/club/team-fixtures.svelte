@@ -1,5 +1,7 @@
 <script lang="ts">
     import { onMount } from "svelte";
+    import { writable } from "svelte/store";
+    import { leagueStore } from "$lib/stores/league-store";
     import { clubStore } from "$lib/stores/club-store";
     import { fixtureStore } from "$lib/stores/fixture-store";
     import {
@@ -9,31 +11,34 @@
       getFixturesWithTeams,
     } from "../../utils/helpers";
     import type { FixtureWithClubs } from "$lib/types/fixture-with-clubs";
+    import type { Club } from "../../../../../declarations/backend/backend.did";
     import LocalSpinner from "../shared/local-spinner.svelte";
     import FixtureTypeFilter from "../../components/shared/filters/fixture-type-filter.svelte";
-    import { writable } from "svelte/store";
     import TeamFixturesTableHeader from "../club/team-fixtures-table-header.svelte";
     import BadgeIcon from "$lib/icons/BadgeIcon.svelte";
-    import { leagueStore } from "$lib/stores/league-store";
-    import type { Club } from "../../../../../declarations/backend/backend.did";
   
-    export let club: Club;
-    export let leagueId: number;
+    interface Props {
+      club: Club;
+      leagueId: number;
+    }
+    let { club, leagueId }: Props = $props();
   
-    let fixturesWithTeams: FixtureWithClubs[] = [];
+    let fixturesWithTeams: FixtureWithClubs[] = $state([]);
     let selectedFixtureType = writable(-1);
   
-    let isLoading = true;
-  
-    $: filteredFixtures = fixturesWithTeams
-      .filter(
-        ({ fixture }) => {
-          if($selectedFixtureType == -1 ) { return true; }
-          if($selectedFixtureType == 0 && fixture.homeClubId === club.id) { return true; }
-          if($selectedFixtureType == 1 && fixture.awayClubId === club.id) { return true; }
-        } 
-      ).sort((a, b) => a.fixture.gameweek - b.fixture.gameweek)
-  
+    let isLoading = $state(true);
+    
+    $effect(() => {
+      fixturesWithTeams = fixturesWithTeams
+        .filter(({ fixture }) => {
+          if ($selectedFixtureType === -1) return true;
+          if ($selectedFixtureType === 0 && fixture.homeClubId === club.id) return true;
+          if ($selectedFixtureType === 1 && fixture.awayClubId === club.id) return true;
+          return false;
+        })
+        .sort((a, b) => a.fixture.gameweek - b.fixture.gameweek);
+    });
+    
     onMount(async () => {
         //await storeManager.syncStores();
         let leagueStatusResult = await leagueStore.getLeagueStatus(leagueId);
@@ -64,7 +69,7 @@
       <FixtureTypeFilter {selectedFixtureType} />
       <TeamFixturesTableHeader />
   
-      {#each filteredFixtures as { fixture, homeClub, awayClub }}
+      {#each fixturesWithTeams as { fixture, homeClub, awayClub }}
         <div
           class={`flex items-center border-b border-gray-700 px-4 py-4
           ${ convertFixtureStatus(fixture.status) === 0 ? "text-gray-400" : "text-white" }`}
@@ -74,12 +79,12 @@
           <div class="flex w-1/2 pl-2">
             <div class="flex items-center space-x-2">
               <a class="flex items-center" href={`/club?id=${fixture.homeClubId}&leagueId=${leagueId}`}>
-                <BadgeIcon primaryColour={homeClub?.primaryColourHex} secondaryColour={homeClub?.secondaryColourHex} thirdColour={homeClub?.thirdColourHex} className="h-6 mr-2" />
+                <BadgeIcon primaryColour={homeClub?.primaryColourHex ?? "white"} secondaryColour={homeClub?.secondaryColourHex ?? "white"} thirdColour={homeClub?.thirdColourHex ?? "white"} className="h-6 mr-2" />
                 <span>{homeClub ? homeClub.friendlyName : ""}</span>
               </a>
               <span>vs</span>
               <a class="flex items-center" href={`/club?id=${fixture.awayClubId}&leagueId=${leagueId}`}>
-                <BadgeIcon primaryColour={awayClub?.primaryColourHex} secondaryColour={awayClub?.secondaryColourHex} thirdColour={awayClub?.thirdColourHex} className="h-6 mr-2" />
+                <BadgeIcon primaryColour={awayClub?.primaryColourHex ?? "white"} secondaryColour={awayClub?.secondaryColourHex ?? "white"} thirdColour={awayClub?.thirdColourHex ?? "white"} className="h-6 mr-2" />
                 <span>{awayClub ? awayClub.friendlyName : ""}</span>
               </a>
             </div>

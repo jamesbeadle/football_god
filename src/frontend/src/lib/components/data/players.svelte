@@ -300,7 +300,7 @@
 {:else}
 
   <div class="flex items-center justify-between w-full my-4">
-    <button class="brand-button" on:click={createNewPlayer}>+ New Player</button>
+    <button class="brand-button" onclick={createNewPlayer}>+ New Player</button>
   </div>
 
   {#if loadingPlayers || loadingClubs}

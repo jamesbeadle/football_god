@@ -1,8 +1,12 @@
 <script lang="ts">
-  export let selectedCard: number;
-  export let cardMinute: number;
-  export let firstYellowMinute: number;
-  export let redCardType: "straight" | "twoYellows" | null = null;
+
+  interface Props {
+    selectedCard: number;
+    cardMinute: number;
+    firstYellowMinute: number;
+    redCardType: "straight" | "twoYellows" | null
+  }
+    let { selectedCard, cardMinute, firstYellowMinute, redCardType }: Props = $props();
 
   function handleCardSelection(value: number) {
     selectedCard = value;
@@ -22,15 +26,15 @@
   <p class="text-lg font-medium">Select Cards:</p>
   <div class="stacked-column space-y-2">
     <label class="flex items-center space-x-2">
-      <input type="radio" bind:group={selectedCard} class="w-5 h-5 border-white/50 bg-BrandDarkGray text-BrandPurple/60 focus:ring-BrandPurple/60 focus:ring-offset-0 form-radio" value={0} on:change={() => handleCardSelection(0)} />
+      <input type="radio" bind:group={selectedCard} class="w-5 h-5 border-white/50 bg-BrandDarkGray text-BrandPurple/60 focus:ring-BrandPurple/60 focus:ring-offset-0 form-radio" value={0} onchange={() => handleCardSelection(0)} />
       <span>No Card</span>
     </label>
     <label class="flex items-center space-x-2">
-      <input type="radio" bind:group={selectedCard} class="w-5 h-5 border-white/50 bg-BrandDarkGray text-BrandPurple/60 focus:ring-BrandPurple/60 focus:ring-offset-0 form-radio" value={1} on:change={() => handleCardSelection(1)} />
+      <input type="radio" bind:group={selectedCard} class="w-5 h-5 border-white/50 bg-BrandDarkGray text-BrandPurple/60 focus:ring-BrandPurple/60 focus:ring-offset-0 form-radio" value={1} onchange={() => handleCardSelection(1)} />
       <span>Yellow Card</span>
     </label>
     <label class="flex items-center space-x-2">
-      <input type="radio" bind:group={selectedCard} class="w-5 h-5 border-white/50 bg-BrandDarkGray text-BrandPurple/60 focus:ring-BrandPurple/60 focus:ring-offset-0 form-radio" value={4} on:change={() => handleCardSelection(4)} />
+      <input type="radio" bind:group={selectedCard} class="w-5 h-5 border-white/50 bg-BrandDarkGray text-BrandPurple/60 focus:ring-BrandPurple/60 focus:ring-offset-0 form-radio" value={4} onchange={() => handleCardSelection(4)} />
       <span>Red Card</span>
     </label>
   </div>
@@ -60,7 +64,7 @@
             class="w-5 h-5 border-white/50 bg-BrandDarkGray text-BrandPurple/60 focus:ring-BrandPurple/60 focus:ring-offset-0 form-radio"
             bind:group={redCardType} 
             value="straight" 
-            on:change={() => handleRedCardTypeChange("straight")}
+            onchange={() => handleRedCardTypeChange("straight")}
           />
           <span>Straight Red</span>
         </label>
@@ -70,7 +74,7 @@
             class="w-5 h-5 border-white/50 bg-BrandDarkGray text-BrandPurple/60 focus:ring-BrandPurple/60 focus:ring-offset-0 form-radio"
             bind:group={redCardType} 
             value="twoYellows"
-            on:change={() => handleRedCardTypeChange("twoYellows")}
+            onchange={() => handleRedCardTypeChange("twoYellows")}
           />
           <span>Two Yellow Cards</span>
         </label>

@@ -3,38 +3,46 @@
   import { leagueStore } from "$lib/stores/league-store";
   import { governanceStore } from "$lib/stores/governance-store";
   import { convertDateTimeInputToUnixNano, isError } from "$lib/utils/helpers";
+  import type { Club } from "../../../../../../../declarations/backend/backend.did";
+  import type { MoveFixture } from "../../../../../../../declarations/data_canister/data_canister.did";
   import Modal from "$lib/components/shared/modal.svelte";
   import GovernanceModal from "../../voting/governance-modal.svelte";
   import FormComponent from "$lib/components/shared/form-component.svelte";
-    import type { Club } from "../../../../../../../declarations/backend/backend.did";
-    import type { MoveFixture } from "../../../../../../../declarations/data_canister/data_canister.did";
+  
+  interface Props {
+    visible: boolean;
+    closeModal: () => void;
+    selectedLeagueId: number;
+    selectedGameweek: number;
+    selectedFixtureId: number;
+    homeClub: Club;
+    awayClub: Club;
+  }
 
-  export let visible: boolean;
-  export let closeModal: () => void;
-  export let selectedLeagueId: number;
-  export let selectedGameweek: number;
-  export let selectedFixtureId: number;
-  export let homeClub: Club;
-  export let awayClub: Club;
+  let { visible, closeModal, selectedLeagueId, selectedGameweek, selectedFixtureId, homeClub, awayClub }: Props = $props();
 
-  let isLoading = true;
-  let submitting = false;
-  let submitted = false;
+  let isLoading = $state(false);
+  let submitting = $state(false);
+  let submitted = $state(false);
+  let isSubmitDisabled = $state(true);
 
-  let gameweeks: number[] = [];
-  let date = "";
-  let time = "";
-  let dateTime = "";
+  let gameweeks: number[] = $state([]);
+  let date = $state("");
+  let time = $state("");
+  let dateTime = $state("");
 
-  $: dateTime = date + "T" + time;
+  $effect(() => {
+    dateTime = date + "T" + time;
+  });
 
-  $: isSubmitDisabled =
+  $effect(() => {
+    isSubmitDisabled =
     !selectedFixtureId ||
     selectedFixtureId <= 0 ||
     selectedGameweek <= 0 ||
     date == "" ||
     time == "";
-
+  });
 
   onMount(async () => {
     try {

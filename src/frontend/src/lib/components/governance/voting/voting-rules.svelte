@@ -1,23 +1,27 @@
 <script lang="ts">
   import ArrowUp from "$lib/icons/ArrowUp.svelte";
   import ArrowDown from "$lib/icons/ArrowDown.svelte";
+
+  interface Props {
+    minimumYesExercised: number;
+    minimumYesTotal: number;
+  }
+
+  let { minimumYesExercised, minimumYesTotal }: Props = $props();
   
-  export let minimumYesExercised: number;
-  export let minimumYesTotal: number;
-  
-  let showRules = false;
+  let showRules = $state(false);
 </script>
 
 <div class="mt-2 text-gray-400">
   <button 
     class="flex items-center justify-between w-full gap-2 text-xl transition-colors hover:text-white"
-    on:click|stopPropagation={() => showRules = !showRules}
+    onclick={() => showRules = !showRules}
   >
     <span class="{!showRules ? 'text-gray-400 hover:text-white' : 'text-white hover:text-gray-400'}">Voting Rules</span>
     {#if showRules}
-      <ArrowUp className="w-6 h-6 {showRules ? 'fill-white hover:fill-gray-400' : 'fill-gray-400 hover:fill-white'}" />
+      <ArrowUp fill="BrandGray" className="w-6 h-6 {showRules ? 'fill-white hover:fill-gray-400' : 'fill-gray-400 hover:fill-white'}" />
     {:else}
-      <ArrowDown className="w-6 h-6 {showRules ? 'fill-white hover:fill-gray-400' : 'fill-gray-400 hover:fill-white'}" />
+      <ArrowDown fill="BrandGray" className="w-6 h-6 {showRules ? 'fill-white hover:fill-gray-400' : 'fill-gray-400 hover:fill-white'}" />
     {/if}
   </button>
   

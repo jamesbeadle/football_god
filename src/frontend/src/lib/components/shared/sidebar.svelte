@@ -52,7 +52,7 @@
   }
 </script>
 
-<svelte:body on:click={handleOutsideClick} />
+<svelte:body onclick={handleOutsideClick} />
 
 {#if isMenuOpen}
   <div
@@ -117,7 +117,7 @@
 
 <style>
   .active {
-    @apply bg-gray-200;
+    @apply bg-BrandLightGray;
   }
 
   .translate-x-0 {
@@ -128,7 +128,4 @@
     transform: translateX(calc(100% + 0.5rem)) !important;
   }
 
-  .brand-button {
-    @apply bg-[#7F56F1] text-white hover:bg-[#6B48D7] transition-colors;
-  }
 </style>

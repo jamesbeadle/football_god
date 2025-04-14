@@ -1,30 +1,32 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import { countryStore } from "$lib/stores/country-store";
+  import { toasts } from "$lib/stores/toasts-store";
+  import type { Country } from "../../../../../../../declarations/backend/backend.did";
+  import type { CreateLeague, Gender } from "../../../../../../../declarations/data_canister/data_canister.did";
   import Modal from "$lib/components/shared/modal.svelte";
   import { governanceStore } from "$lib/stores/governance-store";
   import GovernanceModal from "../../voting/governance-modal.svelte";
   import FormComponent from "$lib/components/shared/form-component.svelte";
-  import DropdownSelect from "$lib/components/shared/dropdown-select.svelte";
-  import { toasts } from "$lib/stores/toasts-store";
-    import type { Country } from "../../../../../../../declarations/backend/backend.did";
-    import type { CreateLeague, Gender } from "../../../../../../../declarations/data_canister/data_canister.did";
 
-  export let visible: boolean;
-  export let closeModal: () => void;
+  interface Props {
+    visible: boolean;
+    closeModal: () => void;
+  }
+
+  let { visible, closeModal }: Props = $props();
   
-  let leagueName = "";
-  let abbreviatedName = "";
-  let governingBody = "";
-  let selectedGender = 0;
-  let dateFormed = "";
-  let countryId = 0;
-  let logo: Uint8Array | number[] = [];
+  let leagueName = $state("");
+  let abbreviatedName = $state("");
+  let governingBody = $state("");
+  let selectedGender = $state(0);
+  let dateFormed = $state("");
+  let countryId = $state(0);
+  let logo: Uint8Array | number[] = $state([]);
   let fileInput: HTMLInputElement;
-  let teamCount: 0;
-  let countries: Country[] = [];
-
-  let isLoading = true;
+  let teamCount = $state(0);
+  let countries: Country[] = $state([]);
+  let isLoading = $state(true);
 
   const genderOptions = [
     { id: 0, label: "Select a Gender" },
@@ -32,10 +34,10 @@
     { id: 2, label: "Female" }
   ];
   
-  let countryOptions = countries.map(country => ({
+  let countryOptions = $derived(countries.map(country => ({
     id: country.id,
     label: country.name
-  }));
+  })));
 
   function handleGenderChange(value: string | number) {
     selectedGender = Number(value);
@@ -45,7 +47,10 @@
     countryId = Number(value);
   }
 
-  $: isSubmitDisabled =
+  let isSubmitDisabled = $state(true);
+
+  $effect(() => {
+    isSubmitDisabled =
     leagueName.length <= 0 ||
     leagueName.length > 100 ||
     abbreviatedName.length <= 0 ||
@@ -57,16 +62,13 @@
     selectedGender < 1 ||
     selectedGender > 2 ||
     countryId <= 0;
+  });
 
   onMount(async () => {
     try { 
       let countriesResult = await countryStore.getCountries();
       if(!countriesResult) throw new Error("Failed to fetch countries");
       countries = countriesResult.countries;
-      countryOptions = countries.map(country => ({
-        id: country.id,
-        label: country.name
-      }));
     } catch (error) {
       console.error("Error syncing proposal data.", error);
     } finally {
@@ -178,12 +180,14 @@
         bind:value={governingBody}
       />
     </FormComponent>
-
-    <DropdownSelect
-      value={selectedGender}
-      options={genderOptions}
-      onChange={handleGenderChange}
-    />
+    
+    <FormComponent label="Gender">
+      <select class="brand-dropdown" bind:value={selectedGender}>
+        {#each genderOptions as gender}
+          <option value={gender.id}>{gender.label}</option>
+        {/each}
+      </select>
+    </FormComponent>
 
     <FormComponent label="Team Count:">
       <input
@@ -201,16 +205,16 @@
       />
     </FormComponent>
 
-    <FormComponent label="Country:">
-      <DropdownSelect
-        value={countryId}
-        options={[{ id: 0, label: "Select League Country" }, ...countryOptions]}
-        onChange={handleCountryChange}
-      />
+    <FormComponent label="Country">
+      <select class="brand-dropdown" bind:value={countryId}>
+        {#each countryOptions as country}
+          <option value={country.id}>{country.label}</option>
+        {/each}
+      </select>
     </FormComponent>
 
     <FormComponent label="Logo:">
-      <button class="btn-file-upload brand-button" on:click={clickFileInput}>
+      <button class="btn-file-upload brand-button" onclick={clickFileInput}>
         Upload Logo
       </button>
       <input
@@ -218,7 +222,7 @@
         id="logo-image"
         accept="image/*"
         bind:this={fileInput}
-        on:change={handleFileChange}
+        onchange={handleFileChange}
         style="opacity: 0; position: absolute; left: 0; top: 0;"
       />
     </FormComponent> 

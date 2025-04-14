@@ -2,30 +2,33 @@
   import { onMount } from "svelte";
   import { countryStore } from "$lib/stores/country-store";
   import { convertDateInputToUnixNano, formatUnixToDateInputValue } from "$lib/utils/helpers";
-  import Modal from "$lib/components/shared/modal.svelte";
-  import GovernanceModal from "../../voting/governance-modal.svelte";
-  import FormComponent from "$lib/components/shared/form-component.svelte";
   import { governanceStore } from "$lib/stores/governance-store";
-  import DropdownSelect from "$lib/components/shared/dropdown-select.svelte";
   import { toasts } from "$lib/stores/toasts-store";
   import { isError } from "$lib/utils/helpers";
   import type { Country, Player, PlayerPosition } from "../../../../../../../declarations/backend/backend.did";
   import type { UpdatePlayer } from "../../../../../../../declarations/data_canister/data_canister.did";
+  import Modal from "$lib/components/shared/modal.svelte";
+  import GovernanceModal from "../../voting/governance-modal.svelte";
+  import FormComponent from "$lib/components/shared/form-component.svelte";
 
-  export let visible: boolean;
-  export let closeModal: () => void;
-  export let selectedPlayer: Player;
-  
-  let countries: Country[] = [];
+  interface Props {
+    visible: boolean;
+    closeModal: () => void;
+    selectedPlayer: Player;
+  }
 
-  let selectedPosition = 0;
-  let firstName = "";
-  let lastName = "";
-  let dateOfBirth = "";
-  let shirtNumber = 0;
-  let nationalityId = 0;
+  let { visible, closeModal, selectedPlayer }: Props = $props();
   
-  let isLoading = false;
+  let countries: Country[] = $state([]);
+
+  let selectedPosition = $state(0);
+  let firstName = $state("");
+  let lastName = $state("");
+  let dateOfBirth = $state("");
+  let shirtNumber = $state(0);
+  let nationalityId = $state(0);
+  
+  let isLoading = $state(false);
   let positions = [
     { id: 1, name: "Goalkeeper" },
     { id: 2, name: "Defender" },
@@ -33,7 +36,9 @@
     { id: 4, name: "Forward" }
   ];
 
-  $: isSubmitDisabled =
+  let isSubmitDisabled = $state(true);
+  $effect(() => { 
+    isSubmitDisabled =
     nationalityId <= 0 ||
     lastName.length <= 0 ||
     lastName.length > 50 ||
@@ -42,6 +47,7 @@
     shirtNumber > 99 ||
     selectedPosition <= 0
     nationalityId == 0;
+  });
 
 
   onMount(async () => {
@@ -155,13 +161,11 @@
   <GovernanceModal {cancelModal} {confirmProposal} {isLoading} {isSubmitDisabled}>
 
     <FormComponent label="Select Position:">
-      <DropdownSelect
-        options={positions.map((position: any) => ({ id: position.id, label: position.name }))}
-        value={selectedPosition}
-        onChange={(value: string | number) => {
-          selectedPosition = Number(value);
-        }}
-      />
+      <select class="brand-dropdown" bind:value={selectedPosition}>
+        {#each positions.map((position: any) => ({ id: position.id, label: position.name })) as position}
+          <option value={position.id}>{position.label}</option>
+        {/each}
+      </select>
     </FormComponent>
 
     <FormComponent label="First Name:">
@@ -203,13 +207,11 @@
     </FormComponent>
 
     <FormComponent label="Nationality:">
-      <DropdownSelect
-        options={countries.map((country: Country) => ({ id: country.id, label: country.name }))}
-        value={nationalityId}
-        onChange={(value: string | number) => {
-          nationalityId = Number(value);
-        }}
-      />
+      <select class="brand-dropdown" bind:value={nationalityId}>
+        {#each countries.map((country: Country) => ({ id: country.id, label: country.name })) as country}
+          <option value={country.id}>{country.label}</option>
+        {/each}
+      </select>
     </FormComponent>
   </GovernanceModal>
 </Modal>

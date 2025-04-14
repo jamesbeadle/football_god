@@ -1,7 +1,7 @@
-<script>
-  export let size = '24'; 
-  export let role = 'img';
-  export let ariaLabel = 'flag of Wales'; 
+<script lang="ts">
+  let size = '24'; 
+  let role = 'img';
+  let ariaLabel = 'flag of Wales'; 
 </script>
 
 <svg

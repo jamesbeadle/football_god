@@ -1,10 +1,13 @@
 <script lang="ts">
   import { getFlagComponent } from "$lib/utils/helpers";
-  export let className;
-  
+
+  interface Props {
+    className?: string;
+  }
+
+  let { className = "" }: Props = $props();
+
+  const Flag = getFlagComponent(169);
 </script>
 
-<svelte:component
-  this={getFlagComponent(169)}
-  class={className}
-/>
+<Flag className={className} />

@@ -1,27 +1,28 @@
 <script lang="ts">
   import { onDestroy, onMount } from "svelte";
-
   import { clubStore } from "$lib/stores/club-store";
   import { fixtureStore } from "$lib/stores/fixture-store";
   import { leagueStore } from "$lib/stores/league-store";
-  
+  import type { Club, Fixture, League } from "../../../../../declarations/backend/backend.did";
   import RescheduleFixture from "../governance/proposals/fixture/reschedule-fixture.svelte";
-  import FixtureDisplay from "./fixture-display.svelte";
   import LocalSpinner from "../shared/local-spinner.svelte";
-    import type { Club, Fixture, League } from "../../../../../declarations/backend/backend.did";
   
-  export let leagueId: number;
-  
-  let isLoading = true;
-  
-  let league: League | undefined;
-  let clubs: Club[] = [];
-  let fixtures: Fixture[] = [];
-  let selectedFixture: Fixture | undefined;
-  let selectedSeasonId: number = 0;
+  interface Props {
+    leagueId: number
+  }
 
-  let showRescheduleFixture = false;
-  let dropdownVisible: number | null = null;
+  let { leagueId }: Props = $props();
+  
+  let isLoading = $state(true);
+  
+  let league: League | undefined = $state(undefined);
+  let clubs: Club[] = $state([]);
+  let fixtures: Fixture[] = $state([]);
+  let selectedFixture: Fixture | undefined = $state(undefined);
+  let selectedSeasonId: number = $state(0);
+
+  let showRescheduleFixture = $state(false);
+  let dropdownVisible: number | null = $state(null);
   
   onMount(async () => {
     try {
@@ -103,6 +104,7 @@
                 {@const homeClub = clubs.find(x => x.id == fixture.homeClubId)}
                 {@const awayClub = clubs.find(x => x.id == fixture.awayClubId)}
                 
+                <!-- // TODO
                 <FixtureDisplay
                   {fixture}
                   homeClub={homeClub!}
@@ -111,6 +113,7 @@
                   onDropdownClick={toggleDropdown}
                   onRescheduleFixture={loadRescheduleFixture}
                 />          
+                -->
               {/each}
           {/if}
         </div>

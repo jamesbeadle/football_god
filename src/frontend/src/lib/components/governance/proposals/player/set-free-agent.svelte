@@ -1,20 +1,25 @@
 <script lang="ts">
   import { onMount } from "svelte";
+  import type { Player } from "../../../../../../../declarations/backend/backend.did";
+  import type { SetFreeAgent } from "../../../../../../../declarations/data_canister/data_canister.did";
   import Modal from "$lib/components/shared/modal.svelte";
   import GovernanceModal from "../../voting/governance-modal.svelte";
   import FormComponent from "$lib/components/shared/form-component.svelte";
   import { governanceStore } from "$lib/stores/governance-store";
-  import type { Player } from "../../../../../../../declarations/backend/backend.did";
-    import type { SetFreeAgent } from "../../../../../../../declarations/data_canister/data_canister.did";
   
-  export let visible: boolean;
-  export let closeModal: () => void
-  export let selectedPlayer: Player;
-  
-  let isLoading = false;
-  let newValueMillions: number = 0;
+  interface Props {
+    visible: boolean;
+    closeModal: () => void;
+    selectedPlayer: Player;
+  }
 
-  $: isSubmitDisabled = selectedPlayer == null || newValueMillions == 0
+  let { visible, closeModal, selectedPlayer }: Props = $props();
+  
+  let isLoading = $state(false);
+  let newValueMillions: number = $state(0);
+
+  let isSubmitDisabled = $state(true);
+  $effect(() => { selectedPlayer == null || newValueMillions == 0});
 
 
   onMount(async () => {
