@@ -11,8 +11,6 @@
   
   let { players, clubs }: Props = $props();
   $effect(() => {
-    console.log('players table updated')
-    console.log(players.length)
     sortedPlayers =  [...players].sort((a, b) => b.valueQuarterMillions - a.valueQuarterMillions)
   });
 

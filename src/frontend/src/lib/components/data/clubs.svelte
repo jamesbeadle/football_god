@@ -1,1 +1,0 @@
-<p>Clubs coming soon.</p>

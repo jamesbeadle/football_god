@@ -1,18 +1,17 @@
 <script lang="ts">
-  import type { Club, Country, League, Player } from "../../../../../../declarations/backend/backend.did";
-  import FormComponent from "$lib/components/shared/form-component.svelte";
   import { onMount } from "svelte";
   import { countryStore } from "$lib/stores/country-store";
   import { leagueStore } from "$lib/stores/league-store";
   import { clubStore } from "$lib/stores/club-store";
+  import type { Club, Country, League, Player } from "../../../../../../declarations/backend/backend.did";
+  import FormComponent from "$lib/components/shared/form-component.svelte";
   import LocalSpinner from "$lib/components/shared/local-spinner.svelte";
 
   interface Props {
+    allLeaguePlayers: Record<number, Player[]>;
     selectedLeagueId: number;
     selectedClubId: number;
-    filteredPlayers: Player[];
     clubs: Club[];
-    allLeaguePlayers: Record<number, Player[]>;
     fetchPlayersForLeague: (leagueId: number) => Promise<void>;
     onFilter: (filteredPlayers: Player[]) => void;
   }
@@ -95,12 +94,6 @@
       if (!leaguesResult) throw new Error("Failed to fetch leagues");
       if (!clubsResult) throw new Error("Failed to fetch clubs");
 
-
-
-      console.log("Countries:", countriesResult);
-    console.log("Leagues:", leaguesResult);
-    console.log("Clubs:", clubsResult);
-
       countries = countriesResult.countries;
       leagues = leaguesResult.leagues;
       clubs = clubsResult.clubs;
@@ -115,7 +108,6 @@
   });
 
   $effect(() => {
-    console.log('updating filtered')
     const leaguePlayers = allLeaguePlayers[selectedLeagueId] || [];
     const minValueNum = Number(minValue) || 0;
     const maxValueNum = Number(maxValue) || 150;
@@ -142,17 +134,13 @@
         (searchTerm === "" || player.lastName.toLowerCase().includes(searchTerm))
     );
 
-    console.log(filtered)
     onFilter(filtered);
   });
 
   $effect(() => {
-    console.log(selectedLeagueId)
     if (selectedLeagueId && selectedLeagueId > 0) {
       isLoading = true;
       fetchPlayersForLeague(selectedLeagueId).then(() => {
-        console.log("Fetched players:", allLeaguePlayers[selectedLeagueId]);
-
         filterClubs();
         isLoading = false;
       });
@@ -167,7 +155,7 @@
 
   function handleLeagueChange(value: string | number) {
     selectedLeagueId = Number(value);
-    selectedClubId = 0; // Reset club selection when league changes
+    selectedClubId = 0;
   }
 
   function handleClubChange(value: string | number) {
@@ -182,13 +170,10 @@
     selectedNationalityId = Number(value);
   }
 
-  // Handle search button click
   function onSearch() {
-    // Filtering is handled reactively by $effect, so we just ensure the search term is updated
     searchSurname = searchSurname.trim();
   }
 
-  // Handle Enter key press
   function onKeyPress(event: KeyboardEvent) {
     if (event.key === "Enter") {
       onSearch();

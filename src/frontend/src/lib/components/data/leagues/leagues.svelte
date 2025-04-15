@@ -2,7 +2,7 @@
     import { onDestroy, onMount } from "svelte";
     import { goto } from "$app/navigation";
     import { leagueStore } from "$lib/stores/league-store";
-    import type { League, Leagues } from "../../../../../declarations/backend/backend.did";
+    import type { League, Leagues } from "../../../../../../declarations/backend/backend.did";
     import { convertDateToReadable, getImageURL } from "$lib/utils/helpers";
     import LocalSpinner from "$lib/components/shared/local-spinner.svelte";
     import AddLeagueModal from "$lib/components/governance/proposals/league/create-league.svelte";
@@ -16,6 +16,13 @@
     let dropdownVisible: number | null = $state(null);
     let selectedLeague: League | undefined = $state(undefined);
   
+    let sortedLeagues: League[] = $state([]);
+
+    $effect(() => {
+      if(!leagues) {return}
+      sortedLeagues = [...leagues.leagues].sort((a, b) => Number(a.id) - Number(b.id)) 
+    });
+
     onMount(async () => {
       document.addEventListener("click", handleClickOutside);
       try {
@@ -80,7 +87,7 @@
     </div>
     
     <div class="px-2 pb-4 space-y-4 mb:px-0">
-    {#each leagues!.leagues.sort((a, b) => Number(a.id) - Number(b.id)) as league}
+    {#each sortedLeagues as league}
         <div class="flex flex-row items-center justify-between w-full p-4 transition rounded-lg shadow bg-BrandGray hover:bg-BrandLightGray">
         <div class="flex items-center space-x-4">
             <img
