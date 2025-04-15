@@ -29,10 +29,71 @@
     interface Props {
         player: Player;
         club: Club;
-        onDropdownClick: (playerId: number, event: MouseEvent) => void;
-        dropdownVisible: number | null;
     }
-    let { player, club, onDropdownClick, dropdownVisible }: Props = $props();
+    let { player, club }: Props = $props();
+
+
+
+    onMount(async () => {
+      try {
+
+        console.log('mounting players')
+  
+        console.log('get countries')
+        let countriesResult = await countryStore.getCountries();
+        if(!countriesResult) throw new Error("Failed to fetch countries");
+        countries = countriesResult.countries;
+  
+        console.log('get leagues')
+        let leaguesResult = await leagueStore.getLeagues();
+        if(!leaguesResult) throw new Error("Error loading leagues")
+        leagues  = leaguesResult.leagues;
+        let clubsResult = await clubStore.getClubs(selectedLeagueId);
+        if(!clubsResult) throw new Error("Error loading clubs")
+        clubs = clubsResult.clubs;
+        await fetchPlayersForLeague(selectedLeagueId);
+        if (typeof window !== 'undefined') {
+          document.addEventListener('click', handleClickOutside);
+        }
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      } finally {
+        isLoading = false;
+
+        console.log('mounting complete')
+      }
+    });
+  
+    onMount(() => {
+      if (typeof window !== 'undefined') {
+        document.addEventListener('click', handleClickOutside);
+      }
+    });
+  
+    onDestroy(() => {
+      if (typeof window !== 'undefined') {
+        document.removeEventListener('click', handleClickOutside);
+      }
+    });
+
+function handleLeagueChange(value: string | number) {
+  selectedLeagueId = Number(value);
+}
+
+function handleClubChange(value: string | number) {
+  selectedClubId = Number(value);
+}
+
+function handlePositionChange(value: string | number) {
+  selectedPositionId = Number(value);
+}
+
+function handleNationalityChange(value: string | number) {
+  selectedNationalityId = Number(value);
+}
+
+
+
 
     let age = $state(0);
 
@@ -51,7 +112,8 @@
     let showUpdatePlayerModal = $state(false);
     let showSetPlayerInjuryModal = $state(false);
     let showSetFreeAgentModal = $state(false);
-    
+    let dropdownVisible: number | null = $state(null);
+
 
     /* ----- Toggle Modal Functions ----- */
   
@@ -108,6 +170,21 @@
         showSetPlayerInjuryModal = false;
         showSetFreeAgentModal = false;
     }
+
+    function onDropdownClick(playerId: number, event: MouseEvent) {
+        event.stopPropagation();
+        dropdownVisible = dropdownVisible === playerId ? null : playerId;
+    }
+
+    function handleClickOutside(event: MouseEvent) {
+        const dropdownElements = document.querySelectorAll('.dropdown-menu');
+        const targetElement = event.target as HTMLElement;
+  
+        if (![...dropdownElements].some(dropdown => dropdown.contains(targetElement))) {
+            dropdownVisible = null;
+        }
+    }
+
 
 </script>
 

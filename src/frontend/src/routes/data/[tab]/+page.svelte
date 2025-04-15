@@ -1,6 +1,6 @@
 <script lang="ts">
     import Leagues from "$lib/components/data/leagues.svelte";
-    import Players from "$lib/components/data/players.svelte";
+    import Players from "$lib/components/data/players/players.svelte";
     import Clubs from "$lib/components/data/clubs.svelte";
     import TabPanel from "$lib/components/shared/tab-panel.svelte";
     import { page } from "$app/stores";

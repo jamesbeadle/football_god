@@ -23,7 +23,6 @@
 </script>
   
 <div class="space-y-4">
-    <!-- League and Club Pair -->
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div class="w-full">
             <FormComponent label="Select League">
@@ -35,7 +34,7 @@
             </FormComponent>
         </div>
         <div class="w-full">
-            <FormComponent label="Select League">
+            <FormComponent label="Select Club">
                 <select class="brand-dropdown" bind:value={selectedClubId}>
                     {#each clubs as club}
                     <option value={club.id}>{club.label}</option>
@@ -66,7 +65,6 @@
         </div>
     </div>
 
-    <!-- Min Value and Max Value Pair -->
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div class="w-full px-3 md:px-0">
             <label for="minValue" class="block mb-1 text-xs text-white">Min Value (M):</label>
