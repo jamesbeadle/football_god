@@ -6,12 +6,15 @@
     players: Player[];
     clubs: Club[];
   }
+
+  let sortedPlayers: Player[] = $state([]);
   
   let { players, clubs }: Props = $props();
-  let sortedPlayers = $derived(
-    [...players].sort((a, b) => b.valueQuarterMillions - a.valueQuarterMillions)
-  );
-
+  $effect(() => {
+    console.log('players table updated')
+    console.log(players.length)
+    sortedPlayers =  [...players].sort((a, b) => b.valueQuarterMillions - a.valueQuarterMillions)
+  });
 
 </script>
 

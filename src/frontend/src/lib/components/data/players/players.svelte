@@ -34,20 +34,26 @@
 
     let allLeaguePlayers: Record<number, Player[]> = $state({});
     let filteredPlayers: Player[] = $state([]);
-    $effect(() => {
-      filteredPlayers = allLeaguePlayers[selectedLeagueId] || [];
-    });
 
     $effect(() => {
+      console.log('selected league updated')
+      console.log(selectedLeagueId)
       if(selectedLeagueId > 0){
         setClubs();
       }
     });
+      
+    function handleFilterChange(newFilteredPlayers: Player[]) {
+      console.log('filter changed player count:')
+      console.log(newFilteredPlayers.length)
+      filteredPlayers = [...newFilteredPlayers];
+    }
 
     async function setClubs(){
       let clubsResult = await clubStore.getClubs(selectedLeagueId);
       if(!clubsResult) throw new Error("Failed to fetch clubs");
       clubs = clubsResult.clubs;
+      console.log('clubs set')
     }
     
 
@@ -67,6 +73,7 @@
     /* ----- Data Getters ----- */
 
     async function fetchPlayersForLeague(leagueId: number) {
+      console.log('fetching league players')
       if (!allLeaguePlayers[leagueId]) {
         try {
           let playersResult = await playerStore.getPlayers(leagueId);
@@ -75,6 +82,8 @@
             ...allLeaguePlayers,
             [leagueId]: [...playersResult.players],
           };
+          console.log("allLeaguePlayers")
+          console.log(allLeaguePlayers)
         } catch (error) {
           console.error("Error fetching players:", error);
         }
@@ -103,7 +112,8 @@
   </div>
   
   {#if clubs.length > 0}
-    <PlayersFilters {fetchPlayersForLeague} {clubs} {allLeaguePlayers} {filteredPlayers} {selectedLeagueId} {selectedClubId} />
+    <PlayersFilters {fetchPlayersForLeague} {clubs} {allLeaguePlayers} {filteredPlayers} {selectedLeagueId} {selectedClubId}
+      onFilter={handleFilterChange} />
     <PlayersTable players={filteredPlayers} {clubs} />
   {/if}
 

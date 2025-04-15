@@ -24,9 +24,6 @@
     import PipsIcon from "$lib/icons/pips-icon.svelte";
     import { onDestroy, onMount } from "svelte";
 
-
-    /* ----- Component Properties ----- */
-
     interface Props {
         player: Player;
         club: Club;
@@ -49,6 +46,7 @@
 
     $effect(() => { age = calculateAgeFromNanoseconds(Number(player.dateOfBirth)) })
     
+
     /* ----- Modal Load Flags ----- */
 
     let showTransferPlayerModal = $state(false);
