@@ -7,9 +7,9 @@
   import ProfileDetail from "$lib/components/profile/profile-detail.svelte";
   import FullScreenSpinner from "$lib/components/shared/full-screen-spinner.svelte";
   
-  let isLoading = true;
-  let activeTab: string = "details";
-  let identity: OptionIdentity;
+  let isLoading = $state(true);
+  let activeTab: string = $state("details");
+  let identity: OptionIdentity | undefined = $state(undefined);
 
   const tabs = [
     { id: "details", label: "Details" }

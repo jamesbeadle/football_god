@@ -2,8 +2,6 @@
     import FormComponent from "$lib/components/shared/form-component.svelte";
 
     interface Props {
-        visible: boolean;
-        closeModal: () => void;
         leagues: { id: number; label: string }[];
         clubs: { id: number; label: string }[];
         positions: { id: number; label: string }[];
@@ -15,18 +13,13 @@
         minValue: number;
         maxValue: number;
         searchSurname: string;
-        onLeagueChange: (value: string | number) => void;
-        onClubChange: (value: string | number) => void;
-        onPositionChange: (value: string | number) => void;
-        onNationalityChange: (value: string | number) => void;
         onValueChange: () => void;
         onSearch: () => void;
         onKeyPress: (event: KeyboardEvent) => void
     }
 
-    let { visible, closeModal, leagues, clubs, positions, nationalities, selectedLeagueId, 
-            selectedClubId, selectedPositionId, selectedNationalityId, minValue, maxValue, searchSurname, 
-            onLeagueChange, onClubChange, onPositionChange, onNationalityChange, onValueChange, onSearch, onKeyPress }: Props = $props();
+    let { leagues, clubs, positions, nationalities, selectedLeagueId, 
+            selectedClubId, selectedPositionId, selectedNationalityId, minValue, maxValue, searchSurname, onValueChange, onSearch, onKeyPress }: Props = $props();
 </script>
   
 <div class="space-y-4">

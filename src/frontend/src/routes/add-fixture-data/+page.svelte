@@ -25,27 +25,27 @@
     let clubs: Club[] = [];
     let players: Player[] = [];
     let fixture: Fixture | undefined = $state(undefined);
-    let selectedTeam: Club | null = null;
+    let selectedTeam: Club | null = $state(null);
     let homeTeam: Club | null = $state(null);
     let awayTeam: Club | null = $state(null);
   
-    let activeTab: string = "home";
-    let showPlayerSelectionModal = false;
-    let showPlayerEventModal = false;
-    let showClearDraftModal = false;
-    let showConfirmDataModal = false;
+    let activeTab: string = $state("home");
+    let showPlayerSelectionModal = $state(false);
+    let showPlayerEventModal = $state(false);
+    let showClearDraftModal = $state(false);
+    let showConfirmDataModal = $state(false);
   
-    let selectedPlayer: Player | null = null;
+    let selectedPlayer: Player | null = $state(null);
   
     let teamPlayers = writable<Player[]>([]);
-    let selectedPlayers = writable<Player[]>([]);
-    let playerEventData = writable<PlayerEventData[]>([]);
+    let selectedPlayers = $state(writable<Player[]>([]));
+    let playerEventData = $state(writable<PlayerEventData[]>([]));
   
-    let homeGoalsText = 0;
-    let awayGoalsText = 0;
-    let homeAssistsText = 0;
-    let awayAssistsText = 0;
-    let gameweek = 0;
+    let homeGoalsText = $state(0);
+    let awayGoalsText = $state(0);
+    let homeAssistsText = $state(0);
+    let awayAssistsText = $state(0);
+    let gameweek = $state(0);
   
     let isLoading = $state(false);
     let submitting = $state(false);

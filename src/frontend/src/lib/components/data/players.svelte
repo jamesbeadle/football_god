@@ -5,7 +5,7 @@
     import { leagueStore } from "$lib/stores/league-store";
     import { clubStore } from "$lib/stores/club-store";
     import { playerStore } from "$lib/stores/player-store";
-    
+    import type { Club, Country, League, Player } from "../../../../../declarations/backend/backend.did";
     import CreatePlayer from "$lib/components/governance/proposals/player/create-player.svelte";
     import UpdatePlayer from "$lib/components/governance/proposals/player/update-player.svelte";
     import TransferPlayer from "$lib/components/governance/proposals/player/transfer-player.svelte";
@@ -17,27 +17,26 @@
     import RevaluePlayerUp from "$lib/components/governance/proposals/player/revalue-player-up.svelte";
     import PlayersHeaderDisplay from "$lib/components/governance/proposals/player/players-header-display.svelte";
     import PlayerDisplay from "$lib/components/player/player-display.svelte";
-    import type { Club, Country, League, Player } from "../../../../../declarations/backend/backend.did";
       
   
-    let isLoading = true;
-    let loadingPlayers = false;
-    let loadingClubs = false;
+    let isLoading = $state(true);
+    let loadingPlayers = $state(false);
+    let loadingClubs = $state(false);
   
-    let selectedLeagueId: number = 1;
-    let selectedClubId: number = 0;
-    let selectedPlayerId = 0;
-    let selectedPositionId: number = 0;
-    let selectedNationalityId = 0;
+    let selectedLeagueId: number = $state(1);
+    let selectedClubId: number = $state(0);
+    let selectedPlayerId = $state(0);
+    let selectedPositionId: number = $state(0);
+    let selectedNationalityId = $state(0);
     let minValue: number = 0;
     let maxValue: number = 150;
     let searchSurname = "";
     
     let leagues: League[] = [];
-    let clubs: Club[] = [];
+    let clubs: Club[] = $state([]);
     let countries: Country[] = [];
     
-    let filteredPlayers: Player[] = [];
+    let filteredPlayers: Player[] = $state([]);
     let allLeaguePlayers: Record<number, Player[]> = {};
     
     let positions = [
@@ -47,39 +46,39 @@
         { id: 4, positionName: "Forward"}
     ];
   
-    let dropdownVisible: number | null = null;
+    let dropdownVisible: number | null = $state(null);
     
-    let showTransferPlayerModal = false;
-    let showLoanPlayerModal = false;
-    let showRecallPlayerModal = false;
-    let showRevaluePlayerUpModal = false;
-    let showRevaluePlayerDownModal = false;
-    let showRetirePlayerModal = false;
-    let showUnretirePlayerModal = false;
-    let showCreatePlayerModal = false;
-    let showUpdatePlayerModal = false;
-    let showSetPlayerInjuryModal = false;
-    let showSetFreeAgentModal = false;
+    let showTransferPlayerModal = $state(false);
+    let showLoanPlayerModal = $state(false);
+    let showRecallPlayerModal = $state(false);
+    let showRevaluePlayerUpModal = $state(false);
+    let showRevaluePlayerDownModal = $state(false);
+    let showRetirePlayerModal = $state(false);
+    let showUnretirePlayerModal = $state(false);
+    let showCreatePlayerModal = $state(false);
+    let showUpdatePlayerModal = $state(false);
+    let showSetPlayerInjuryModal = $state(false);
+    let showSetFreeAgentModal = $state(false);
   
-    $: leagueOptions = leagues.map(league => ({
+    let leagueOptions = $derived(leagues.map(league => ({
       id: league.id,
       label: league.name
-    }));
+    })));
   
-    $: clubOptions = clubs.map(club => ({
+    let clubOptions = $derived(clubs.map(club => ({
       id: club.id,
       label: club.friendlyName
-    }));
+    })));
   
-    $: positionOptions = positions.map(pos => ({
+    let positionOptions = $derived(positions.map(pos => ({
       id: pos.id,
       label: pos.positionName
-    }));
+    })));
   
-    $: nationalityOptions = countries.map(country => ({
+    let nationalityOptions = $derived(countries.map(country => ({
       id: country.id,
       label: country.name
-    }));
+    })));
   
     onMount(async () => {
       try {
@@ -255,17 +254,21 @@
     function createNewPlayer() {
       showCreatePlayerModal = true;
     }
-  
-    $: if (selectedLeagueId && selectedLeagueId > 0) {
-      loadingPlayers = true;
-      loadingClubs = true;
-      fetchPlayersForLeague(selectedLeagueId);
-      filterClubs();
-    }
-  
-    $: if (selectedClubId || selectedPositionId || minValue || maxValue) {
+    
+    $effect(() => {
+      if (selectedLeagueId && selectedLeagueId > 0) {
+        loadingPlayers = true;
+        loadingClubs = true;
+        fetchPlayersForLeague(selectedLeagueId);
+        filterClubs();
+      }
+    });
+    
+    $effect(() => {
+      if (selectedClubId || selectedPositionId || minValue || maxValue) {
         filterPlayers();
-    }
+      }
+    });
     
     function handleKeyPress(event: KeyboardEvent) {
       if (event.key === "Enter") {
@@ -311,17 +314,13 @@
       clubs={clubOptions}
       positions={positionOptions}
       nationalities={nationalityOptions}
-      bind:selectedLeagueId
-      bind:selectedClubId
-      bind:selectedPositionId
-      bind:selectedNationalityId
-      bind:minValue
-      bind:maxValue
-      bind:searchSurname
-      onLeagueChange={handleLeagueChange}
-      onClubChange={handleClubChange}
-      onPositionChange={handlePositionChange}
-      onNationalityChange={handleNationalityChange}
+      selectedLeagueId={selectedLeagueId}
+      selectedClubId={selectedClubId}
+      selectedPositionId={selectedPositionId}
+      selectedNationalityId={selectedNationalityId}
+      minValue={minValue}
+      maxValue={maxValue}
+      searchSurname={searchSurname}
       onValueChange={filterPlayers}
       onSearch={filterPlayers}
       onKeyPress={handleKeyPress}
@@ -360,7 +359,7 @@
     {/if}
     
     {#if showCreatePlayerModal}
-        <CreatePlayer visible={showCreatePlayerModal} {closeModal} />
+        <CreatePlayer visible={showCreatePlayerModal} {closeModal} {selectedClubId} {selectedLeagueId} />
     {/if}
     
     {#if selectedPlayerId > 0 && showUpdatePlayerModal}
@@ -386,7 +385,7 @@
     {#if selectedPlayerId > 0 && showRevaluePlayerUpModal}
         {@const selectedPlayer = filteredPlayers.find(x => x.id == selectedPlayerId) }
         {@const playerClub = clubs.find(x => x.id == selectedPlayer!.clubId) }
-        <RevaluePlayerUp visible={showRevaluePlayerUpModal} {closeModal} club={playerClub!} player={selectedPlayer!} />
+        <RevaluePlayerUp visible={showRevaluePlayerUpModal} {closeModal} club={playerClub!} selectedPlayer={selectedPlayer!} />
     {/if}
     
     {#if selectedPlayerId > 0 && showRevaluePlayerDownModal}

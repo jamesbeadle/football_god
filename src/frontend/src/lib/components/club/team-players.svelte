@@ -3,7 +3,6 @@
     import {
       calculateAgeFromNanoseconds,
       convertPositionToIndex,
-      getFlagComponent,
       getPositionAbbreviation
     } from "../../utils/helpers";
     import { playerStore } from "$lib/stores/player-store";

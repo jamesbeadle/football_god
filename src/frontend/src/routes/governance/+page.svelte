@@ -12,19 +12,18 @@
     import LocalSpinner from "$lib/components/shared/local-spinner.svelte";
     import { governanceStore } from "$lib/stores/governance-store";
     
-    let isLoading = true;
-    let activeTab: string = "all";
+    let isLoading = $state(true);
+    let activeTab: string = $state("all");
     let selectedProposalStatus = [0,1,2,3,4,5];
     let proposals: ListProposalsResponse = { proposals: [], include_ballots_by_caller: [] };
-    let filteredProposals: ProposalData[] = [];
+    let filteredProposals: ProposalData[] = $state([]);
   
-    let currentPage: number = 1;
-    let totalProposals: number = 100;
+    let currentPage: number = $state(1);
     let itemsPerPage: number = 10;
-    let totalPages: number = 1;
+    let totalPages: number = $state(1);
   
-    let showProposal = false;
-    let selectedProposal: ProposalData;
+    let showProposal = $state(false);
+    let selectedProposal: ProposalData | undefined = $state(undefined);
   
     const PLAYER_FUNCTION_IDS: bigint[] = [52000n, 53000n, 58000n, 60000n];
     const FIXTURE_FUNCTION_IDS: bigint[] = [54000n, 57000n];
@@ -112,9 +111,7 @@
           isLoading = false;
       }
     }
-  
-    $: filterProposals();
-  
+
     function getProposalType(proposal: ProposalData): string {
         const action = proposal.proposal[0]?.action?.[0];
         if (isExecuteGenericNervousSystemFunction(action)) {
@@ -284,6 +281,6 @@
     </div>
   </div>
   
-  {#if showProposal}
+  {#if showProposal && selectedProposal}
     <ProposalDetail visible={showProposal} {closeModal} proposal={selectedProposal} onVoteComplete={listProposals} />
   {/if}

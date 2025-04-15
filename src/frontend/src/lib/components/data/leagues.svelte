@@ -2,19 +2,19 @@
     import { onDestroy, onMount } from "svelte";
     import { goto } from "$app/navigation";
     import { leagueStore } from "$lib/stores/league-store";
+    import type { League, Leagues } from "../../../../../declarations/backend/backend.did";
     import { convertDateToReadable, getImageURL } from "$lib/utils/helpers";
     import LocalSpinner from "$lib/components/shared/local-spinner.svelte";
     import AddLeagueModal from "$lib/components/governance/proposals/league/create-league.svelte";
     import UpdateLeagueModal from "$lib/components/governance/proposals/league/update-league.svelte";
     import PipsIcon from "$lib/icons/pips-icon.svelte";
-    import type { League, Leagues } from "../../../../../declarations/backend/backend.did";
       
-    let isLoading = true;
-    let showAddLeague = false;
-    let showUpdateLeague = false;
-    let leagues: Leagues | null = null;
-    let dropdownVisible: number | null = null;
-    let selectedLeague: League;
+    let isLoading = $state(true);
+    let showAddLeague = $state(false);
+    let showUpdateLeague = $state(false);
+    let leagues: Leagues | null = $state(null);
+    let dropdownVisible: number | null = $state(null);
+    let selectedLeague: League | undefined = $state(undefined);
   
     onMount(async () => {
       document.addEventListener("click", handleClickOutside);
@@ -102,7 +102,7 @@
             class="px-3 py-1"
             onclick={(event) => toggleDropdown(league.id, event)}
             >
-            <PipsIcon className="w-6" />
+            <PipsIcon fill="white" className="w-6" />
             </button>
             {#if dropdownVisible === league.id}
             <div
@@ -133,7 +133,7 @@
     <AddLeagueModal visible={showAddLeague} {closeModal} />
   {/if}
   
-  {#if showUpdateLeague}
+  {#if showUpdateLeague && selectedLeague}
     <UpdateLeagueModal visible={showUpdateLeague} {closeModal} {selectedLeague} />
   {/if}
   

@@ -12,18 +12,19 @@
     import type { LeagueId, ClubId, Club } from "../../../../declarations/backend/backend.did";
     import TabPanel from "$lib/components/shared/tab-panel.svelte";
   
-    let isLoading = true;
-    let club: Club | null = null;
+    let isLoading = $state(true);
+    let club: Club | null = $state(null);
     
-    let activeTab: string = "players";
+    let activeTab: string = $state("players");
     
     const tabs = [
       { id: "players", label: "Players" },
       { id: "fixtures", label: "Fixtures" },
     ];
   
-    $: clubId = Number($page.url.searchParams.get("id")) as ClubId;
-    $: leagueId = Number($page.url.searchParams.get("leagueId")) as LeagueId;
+    
+    let clubId = $derived(Number($page.url.searchParams.get("id")) as ClubId);
+    let leagueId = $derived(Number($page.url.searchParams.get("leagueId")) as LeagueId);
   
     onMount(async () => {
       let clubsResult = await clubStore.getClubs(leagueId);

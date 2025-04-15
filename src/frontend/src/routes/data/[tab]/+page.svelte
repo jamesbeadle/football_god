@@ -5,7 +5,10 @@
     import TabPanel from "$lib/components/shared/tab-panel.svelte";
     import { page } from "$app/stores";
     
-    $: activeTab = $page.params.tab || 'players';
+    let activeTab = $state('Players');
+    $effect(() => {
+      activeTab = $page.params.tab || 'players';
+    });
 
     const tabs = [
       { id: "players", label: "Players" },

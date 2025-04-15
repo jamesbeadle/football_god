@@ -12,11 +12,10 @@
     visible: boolean;
     closeModal: () => void;
     selectedPlayer: Player;
-    player: Player;
     club: Club;
   }
 
-  let { visible, closeModal, player, club }: Props = $props();
+  let { visible, closeModal, selectedPlayer, club }: Props = $props();
 
   let isLoading = $state(false);
   let submitting = $state(false);
@@ -42,8 +41,8 @@
     try {
       isLoading = true;
       var dto: RevaluePlayerUp = {
-        leagueId: player.leagueId,
-        playerId: player.id,
+        leagueId: selectedPlayer.leagueId,
+        playerId: selectedPlayer.id,
       };
       submitting = true;
 
@@ -86,6 +85,6 @@
 
 <Modal title={"Revalue Player"} {visible} onClose={closeModal}>
   <GovernanceModal {cancelModal} {confirmProposal} {isLoading} {isSubmitDisabled}>
-    <p>Raise proposal to increase the value of {player.firstName} {player.lastName} ({club.friendlyName}) by £0.25?</p>
+    <p>Raise proposal to increase the value of {selectedPlayer.firstName} {selectedPlayer.lastName} ({club.friendlyName}) by £0.25?</p>
   </GovernanceModal>
 </Modal>

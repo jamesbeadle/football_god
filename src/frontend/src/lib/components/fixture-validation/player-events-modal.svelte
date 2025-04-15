@@ -16,8 +16,8 @@
   }
   let { visible, closeModal, player, fixtureId, playerEventData }: Props = $props();
 
-  let appearanceStart = 0;
-  let appearanceEnd = 90;
+  let appearanceStart = $state(0);
+  let appearanceEnd = $state(90);
 
   $effect(() =>{
     if (selectedCard === 2 && cardMinute > 0) {
@@ -25,16 +25,16 @@
     }
   });
 
-  let keeperSaves = 0;
-  let selectedCard = 0;
-  let goalMinutes: number[] = [];
-  let assistMinutes: number[] = [];
-  let ownGoalMinutes: number[] = [];
-  let penaltySaveMinutes: number[] = [];
-  let penaltyMissedMinutes: number[] = [];
-  let cardMinute: number = 0;
-  let firstYellowMinute: number = 0;
-  let redCardType: "straight" | "twoYellows" | null = null;
+  let keeperSaves = $state(0);
+  let selectedCard = $state(0);
+  let goalMinutes: number[] = $state([]);
+  let assistMinutes: number[] = $state([]);
+  let ownGoalMinutes: number[] = $state([]);
+  let penaltySaveMinutes: number[] = $state([]);
+  let penaltyMissedMinutes: number[] = $state([]);
+  let cardMinute: number = $state(0);
+  let firstYellowMinute: number = $state(0);
+  let redCardType: "straight" | "twoYellows" | null = $state(null);
   
   let goalSliderValue = 0;
   let assistSliderValue = 0;
@@ -91,8 +91,9 @@
       .filter(event => "KeeperSave" in event.eventType && event.playerId == player.id)
       .length;
   });
-  
-  $: if ($playerEventData.length > 0) {
+
+  $effect(() => {
+    if ($playerEventData.length > 0) {
         
         let appearanceEvent = $playerEventData.filter(event => "Appearance" in event.eventType && event.playerId == player.id)[0];
         
@@ -122,7 +123,7 @@
           .map(event => event.eventStartMinute);
 
        }
-
+  });
 
   function addPlayerEvents() {
     let newEvents: PlayerEventData[] = [];
@@ -332,10 +333,10 @@
     <div class="mt-6">
       <div class="flex-col w-full mb-2 space-y-4">
         <div class="flex flex-row items-center space-x-4">
-          <svelte:component
-            this={getFlagComponent(player.nationality)}
-            className="w-4 h-4 mr-2 hidden xs:flex"
-          />
+          {#if player.nationality > 0}
+              {@const flag = getFlagComponent(player.nationality)}
+              <flag class="w-6 h-6"></flag>
+          {/if}
           <p class="text-lg">
             {player.firstName !== "" ? player.firstName.charAt(0) + "." : ""}
             {player.lastName}
@@ -394,18 +395,18 @@
         {/if}
 
         <CardsTab
-          bind:selectedCard
-          bind:cardMinute
-          bind:firstYellowMinute
-          bind:redCardType
+          selectedCard={selectedCard}
+          cardMinute={cardMinute}
+          firstYellowMinute={firstYellowMinute}
+          redCardType={redCardType}
         />
 
         <div class="border-b border-gray-200"></div>
 
         <FixtureEventSection
           title="Goals"
-          bind:eventMinutes={goalMinutes}
-          bind:sliderValue={goalSliderValue}
+          eventMinutes={goalMinutes}
+          sliderValue={goalSliderValue}
           onAdd={addGoalEvent}
           onRemove={removeGoal}
         />
@@ -415,7 +416,7 @@
         <FixtureEventSection
           title="Assists"
           eventMinutes={assistMinutes}
-          bind:sliderValue={assistSliderValue}
+          sliderValue={assistSliderValue}
           onAdd={addAssistEvent}
           onRemove={removeAssist}
         />
@@ -425,7 +426,7 @@
         <FixtureEventSection
           title="Own Goals"
           eventMinutes={ownGoalMinutes}
-          bind:sliderValue={ownGoalSliderValue}
+          sliderValue={ownGoalSliderValue}
           onAdd={addOwnGoalEvent}
           onRemove={removeOwnGoal}
         />
@@ -437,7 +438,7 @@
           <FixtureEventSection
             title="Penalty Saved"
             eventMinutes={penaltySaveMinutes}
-            bind:sliderValue={penaltySaveSliderValue}
+            sliderValue={penaltySaveSliderValue}
             onAdd={addPenaltySaveEvent}
             onRemove={removePenaltySave}
           />
@@ -447,7 +448,7 @@
         <FixtureEventSection
           title="Penalty Missed"
           eventMinutes={penaltyMissedMinutes}
-          bind:sliderValue={penaltyMissSliderValue}
+          sliderValue={penaltyMissSliderValue}
           onAdd={addPenaltyMissEvent}
           onRemove={removePenaltyMiss}
         />

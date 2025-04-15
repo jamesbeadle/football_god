@@ -20,15 +20,19 @@
         { id: 'loaned-players', label: 'Loaned Players' },
     ]
     
-    let isLoading = true;
-    let countryIds: CountryId[] = [];
-    let countries: Country[] = [];
-    let league: League | null = null;
-    let leagueStatus: LeagueStatus | null = null;
+    let isLoading = $state(true);
+    let countryIds: CountryId[] = $state([]);
+    let countries: Country[] = $state([]);
+    let league: League | null = $state(null);
+    let leagueStatus: LeagueStatus | null = $state(null);
     
-    let activeTab: string = "clubs";
+    let activeTab: string = $state("clubs");
+
+    let id = $state(0);
+    $effect(() => {
+      id = Number($page.url.searchParams.get("id"));
+    });
     
-    $: id = Number($page.url.searchParams.get("id"));
   
     onMount(async () => {
       try {
