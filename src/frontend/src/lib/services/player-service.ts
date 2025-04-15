@@ -34,7 +34,6 @@ export class PlayerService {
     );
     let dto: GetLoanedPlayers = { leagueId };
     const result = await identityActor.getLoanedPlayers(dto);
-    console.log(result);
     if (isError(result)) throw new Error("Failed to fetch loaned players");
     return result.ok;
   }
@@ -48,7 +47,6 @@ export class PlayerService {
     );
     let dto: GetPlayerValueLeaderboard = {};
     const result = await identityActor.getPlayerValueLeaderboard(dto);
-    console.log(result);
     if (isError(result)) throw new Error("Failed to fetch loaned players");
     return result.ok;
   }

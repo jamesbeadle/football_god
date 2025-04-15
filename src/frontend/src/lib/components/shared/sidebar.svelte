@@ -22,7 +22,7 @@
   const menuItems = [
     { icon: HomeIcon, label: "Home", path: "/" },
     { icon: FanIcon, label: "Fan Zone", path: "/fan-zone" },
-    { icon: DataIcon, label: "Data", path: "/data" },
+    { icon: DataIcon, label: "Data", path: "/data/players" },
     { icon: GovernanceIcon, label: "Governance", path: "/governance" },
     { icon: ProfileIcon, label: "Profile", path: "/profile" },
   ];
