@@ -1,31 +1,113 @@
 <script lang="ts">
-    import { calculateAgeFromNanoseconds, getFlagComponent } from "$lib/utils/helpers";
+
+
+    /* ----- Backend Imports ----- */
+
     import type { Club, Player } from "../../../../../declarations/backend/backend.did";
+
+
+    /* ----- Helpers ----- */
+
+    import { calculateAgeFromNanoseconds, getFlagComponent } from "$lib/utils/helpers";
+
+
+    /* ----- Component Imports ----- */
+
+    import UpdatePlayer from "$lib/components/governance/proposals/player/update-player.svelte";
+    import TransferPlayer from "$lib/components/governance/proposals/player/transfer-player.svelte";
+    import LoanPlayer from "$lib/components/governance/proposals/player/loan-player.svelte";
+    import SetFreeAgent from "$lib/components/governance/proposals/player/set-free-agent.svelte";
+    import RecallPlayer from "$lib/components/governance/proposals/player/recall-player.svelte";
+    import RevaluePlayerDown from "$lib/components/governance/proposals/player/revalue-player-down.svelte";
+    import RevaluePlayerUp from "$lib/components/governance/proposals/player/revalue-player-up.svelte";
     import BadgeIcon from "$lib/icons/BadgeIcon.svelte";
     import PipsIcon from "$lib/icons/pips-icon.svelte";
+
+
+    /* ----- Component Properties ----- */
 
     interface Props {
         player: Player;
         club: Club;
         onDropdownClick: (playerId: number, event: MouseEvent) => void;
         dropdownVisible: number | null;
-        onUpdatePlayer: ((playerId: number) => void) | undefined;
-        onSetPlayerInjury: ((playerId: number) => void) | undefined;
-        onTransferPlayer: ((playerId: number) => void) | undefined;
-        onLoanPlayer: ((playerId: number) => void) | undefined;
-        onRecallPlayer: ((playerId: number) => void) | undefined;
-        onRevaluePlayerUp: ((playerId: number) => void) | undefined;
-        onRevaluePlayerDown: ((playerId: number) => void) | undefined;
-        onRetirePlayer: ((playerId: number) => void) | undefined;
-        onUnretirePlayer: ((playerId: number) => void) | undefined;
-        onSetFreeAgent: ((playerId: number) => void) | undefined;
     }
-    let { player, club, onDropdownClick, dropdownVisible, onUpdatePlayer, onSetPlayerInjury, onTransferPlayer, onLoanPlayer, onRecallPlayer, onRevaluePlayerUp, onRevaluePlayerDown, onRetirePlayer, onUnretirePlayer, onSetFreeAgent }: Props = $props();
+    let { player, club, onDropdownClick, dropdownVisible }: Props = $props();
 
     let age = $state(0);
 
     $effect(() => { age = calculateAgeFromNanoseconds(Number(player.dateOfBirth)) })
     
+    /* ----- Modal Load Flags ----- */
+
+    let showTransferPlayerModal = $state(false);
+    let showLoanPlayerModal = $state(false);
+    let showRecallPlayerModal = $state(false);
+    let showRevaluePlayerUpModal = $state(false);
+    let showRevaluePlayerDownModal = $state(false);
+    let showRetirePlayerModal = $state(false);
+    let showUnretirePlayerModal = $state(false);
+    let showCreatePlayerModal = $state(false);
+    let showUpdatePlayerModal = $state(false);
+    let showSetPlayerInjuryModal = $state(false);
+    let showSetFreeAgentModal = $state(false);
+    
+
+    /* ----- Toggle Modal Functions ----- */
+  
+    function loadUpdatePlayer(){
+        showUpdatePlayerModal = true;
+    }
+  
+    function loadSetPlayerInjury(){
+        showSetPlayerInjuryModal = true;
+    }
+  
+    function loadTransferPlayer(){
+        showTransferPlayerModal = true;
+    }
+  
+    function loadLoanPlayer(){
+        showLoanPlayerModal = true;
+    }
+  
+    function loadRecallPlayer(){
+        showRecallPlayerModal = true;
+    }
+  
+    function loadRevaluePlayerUp(){
+        showRevaluePlayerUpModal = true;
+    }
+  
+    function loadRevaluePlayerDown(){
+        showRevaluePlayerDownModal = true;
+    }
+  
+    function loadRetirePlayer(){
+        showRetirePlayerModal = true;
+    }
+  
+    function loadUnretirePlayer(){
+        showUnretirePlayerModal = true;
+    }
+  
+    function loadSetFreeAgent() {
+        showSetFreeAgentModal = true;
+    }
+  
+    function closeModal(){
+        showTransferPlayerModal = false;
+        showLoanPlayerModal = false;
+        showRecallPlayerModal = false;
+        showCreatePlayerModal = false;
+        showUpdatePlayerModal = false;
+        showRevaluePlayerUpModal = false;
+        showRevaluePlayerDownModal = false;
+        showRetirePlayerModal = false;
+        showUnretirePlayerModal = false;
+        showSetPlayerInjuryModal = false;
+        showSetFreeAgentModal = false;
+    }
 
 </script>
 
@@ -83,58 +165,66 @@
             </button>
             {#if dropdownVisible === player.id}
                 <div class="absolute right-0 z-10 w-48 mt-2 rounded-lg shadow-lg bg-BrandGray">
-                    {#if onUpdatePlayer}
-                        <button class="dropdown-link" onclick={() => onUpdatePlayer(player.id)}>
-                            Update Player
-                        </button>
-                    {/if}
-                    {#if onSetPlayerInjury}
-                        <button class="dropdown-link" onclick={() => onSetPlayerInjury(player.id)}>
-                            Set Player Injury
-                        </button>
-                    {/if}
-                    {#if onTransferPlayer}
-                        <button class="dropdown-link" onclick={() => onTransferPlayer(player.id)}>
-                            Transfer Player
-                        </button>
-                    {/if}
-                    {#if onLoanPlayer}
-                        <button class="dropdown-link" onclick={() => onLoanPlayer(player.id)}>
-                            Loan Player
-                        </button>
-                    {/if}
-                    {#if onRecallPlayer}
-                        <button class="dropdown-link" onclick={() => onRecallPlayer(player.id)}>
-                            Recall Player
-                        </button>
-                    {/if}
-                    {#if onRevaluePlayerUp}
-                        <button class="dropdown-link" onclick={() => onRevaluePlayerUp(player.id)}>
-                            Revalue Player Up
-                        </button>
-                    {/if}
-                    {#if onRevaluePlayerDown}
-                        <button class="dropdown-link" onclick={() => onRevaluePlayerDown(player.id)}>
-                            Revalue Player Down
-                        </button>
-                    {/if}
-                    {#if onRetirePlayer}
-                        <button class="dropdown-link" onclick={() => onRetirePlayer(player.id)}>
-                            Retire Player
-                        </button>
-                    {/if}
-                    {#if onUnretirePlayer}  
-                        <button class="dropdown-link" onclick={() => onUnretirePlayer(player.id)}>
-                            Unretire Player
-                        </button>
-                    {/if}
-                    {#if onSetFreeAgent}
-                        <button class="dropdown-link" onclick={() => onSetFreeAgent(player.id)}>
-                            Set Free Agent  
-                        </button>
-                    {/if}
+                    <button class="dropdown-link" onclick={() => loadUpdatePlayer()}>
+                        Update Player
+                    </button>
+                    <button class="dropdown-link" onclick={() => loadSetPlayerInjury()}>
+                        Set Player Injury
+                    </button>
+                    <button class="dropdown-link" onclick={() => loadTransferPlayer()}>
+                        Transfer Player
+                    </button>
+                    <button class="dropdown-link" onclick={() => loadLoanPlayer()}>
+                        Loan Player
+                    </button>
+                    <button class="dropdown-link" onclick={() => loadRecallPlayer()}>
+                        Recall Player
+                    </button>
+                    <button class="dropdown-link" onclick={() => loadRevaluePlayerUp()}>
+                        Revalue Player Up
+                    </button>
+                    <button class="dropdown-link" onclick={() => loadRevaluePlayerDown()}>
+                        Revalue Player Down
+                    </button>
+                    <button class="dropdown-link" onclick={() => loadRetirePlayer()}>
+                        Retire Player
+                    </button>
+                    <button class="dropdown-link" onclick={() => loadUnretirePlayer()}>
+                        Unretire Player
+                    </button>
+                    <button class="dropdown-link" onclick={() => loadSetFreeAgent()}>
+                        Set Free Agent  
+                    </button>
                 </div>
             {/if}
         </div>
     </div>
 </div> 
+
+{#if player && showLoanPlayerModal}
+    <LoanPlayer visible={showLoanPlayerModal} {closeModal} selectedPlayer={player} />
+{/if}
+
+{#if player && showUpdatePlayerModal}
+    <UpdatePlayer visible={showUpdatePlayerModal} {closeModal} selectedPlayer={player} />
+{/if}
+
+{#if player && showTransferPlayerModal}
+    <TransferPlayer visible={showTransferPlayerModal} {closeModal} selectedPlayer={player} />
+{/if}
+
+{#if player && showRecallPlayerModal}
+    <RecallPlayer visible={showRecallPlayerModal} {closeModal} selectedPlayer={player} />
+{/if}
+
+{#if player && showSetFreeAgentModal}
+    <SetFreeAgent visible={showSetFreeAgentModal} {closeModal} selectedPlayer={player} />
+{/if}
+
+{#if player && showRevaluePlayerUpModal}
+    <RevaluePlayerUp visible={showRevaluePlayerUpModal} {closeModal} club={club} selectedPlayer={player} />
+{/if}
+
+{#if player && showRevaluePlayerDownModal}
+    <RevaluePlayerDown visible={showRevaluePlayerDownModal} {closeModal} club={club} player={player} />
+{/if}
