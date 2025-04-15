@@ -13,6 +13,7 @@
     import LocalSpinner from "$lib/components/shared/local-spinner.svelte";
     import PlayersTable from "./players-table.svelte";
     import PlayersFilters from "./players-filters.svelte";
+    import { clubStore } from "$lib/stores/club-store";
       
 
     /* ----- Loading Variables ----- */
@@ -30,8 +31,24 @@
     /* ----- Data State Variables ----- */
 
     let clubs: Club[] = $state([]);
+
     let allLeaguePlayers: Record<number, Player[]> = $state({});
     let filteredPlayers: Player[] = $state([]);
+    $effect(() => {
+      filteredPlayers = allLeaguePlayers[selectedLeagueId] || [];
+    });
+
+    $effect(() => {
+      if(selectedLeagueId > 0){
+        setClubs();
+      }
+    });
+
+    async function setClubs(){
+      let clubsResult = await clubStore.getClubs(selectedLeagueId);
+      if(!clubsResult) throw new Error("Failed to fetch clubs");
+      clubs = clubsResult.clubs;
+    }
     
 
     /* ----- Lifecycle ----- */
@@ -43,7 +60,6 @@
         console.error("Error fetching data:", error);
       } finally {
         isLoading = false;
-        console.log('mounting complete')
       }
     });
 
@@ -51,17 +67,18 @@
     /* ----- Data Getters ----- */
 
     async function fetchPlayersForLeague(leagueId: number) {
-      console.log('fetchPlayersForLeague')
       if (!allLeaguePlayers[leagueId]) {
         try {
           let playersResult = await playerStore.getPlayers(leagueId);
           if (!playersResult) throw new Error("Failed to fetch players");
-          allLeaguePlayers = { ...allLeaguePlayers, [leagueId]: [...playersResult.players] }; // Immutable update
+          allLeaguePlayers = {
+            ...allLeaguePlayers,
+            [leagueId]: [...playersResult.players],
+          };
         } catch (error) {
           console.error("Error fetching players:", error);
         }
       }
-      console.log('fetchPlayersForLeague complete')
     }
 
 
@@ -85,9 +102,11 @@
     <button class="brand-button" onclick={createNewPlayer}>+ New Player</button>
   </div>
   
-  <PlayersFilters {fetchPlayersForLeague} {clubs} {allLeaguePlayers} {filteredPlayers} />
-  <PlayersTable players={filteredPlayers} {clubs} />
-      
+  {#if clubs.length > 0}
+    <PlayersFilters {fetchPlayersForLeague} {clubs} {allLeaguePlayers} {filteredPlayers} {selectedLeagueId} {selectedClubId} />
+    <PlayersTable players={filteredPlayers} {clubs} />
+  {/if}
+
 {/if}
 
 {#if showCreatePlayerModal}

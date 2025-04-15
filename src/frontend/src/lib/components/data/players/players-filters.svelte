@@ -7,13 +7,22 @@
     import { clubStore } from "$lib/stores/club-store";
     
     interface Props {
-      allLeaguePlayers: Record<number, Player[]>;
+      selectedLeagueId: number;
+      selectedClubId: number;
       filteredPlayers: Player[];
-      fetchPlayersForLeague(leagueId: number) : void;
       clubs: Club[];
+      allLeaguePlayers: Record<number, Player[]>;
+      fetchPlayersForLeague: (leagueId: number) => Promise<void>;
     }
-    
-    let { clubs, allLeaguePlayers, filteredPlayers, fetchPlayersForLeague }: Props = $props();
+
+    let { 
+      selectedLeagueId,
+      selectedClubId,
+      filteredPlayers,
+      clubs,
+      allLeaguePlayers,
+      fetchPlayersForLeague 
+    }: Props = $props();
 
     let isLoading = $state(true);
 
@@ -23,8 +32,6 @@
 
     /* ----- Data Filters ----- */
 
-    let selectedLeagueId: number = $state(1);
-    let selectedClubId: number = $state(0);
     let selectedPositionId: number = $state(0);
     let selectedNationalityId = $state(0);    
     let minValue: number = $state(0);
@@ -65,27 +72,27 @@
     }));
 
     onMount(async () => {
-      try {
+    try {
+        const [countriesResult, leaguesResult, clubsResult] = await Promise.all([
+          countryStore.getCountries(),
+          leagueStore.getLeagues(),
+          clubStore.getClubs(selectedLeagueId),
+        ]);
 
-        let countriesResult = await countryStore.getCountries();
-        if(!countriesResult) throw new Error("Failed to fetch countries");
+        if (!countriesResult) throw new Error('Failed to fetch countries');
+        if (!leaguesResult) throw new Error('Failed to fetch leagues');
+        if (!clubsResult) throw new Error('Failed to fetch clubs');
+
         countries = countriesResult.countries;
-  
-        let leaguesResult = await leagueStore.getLeagues();
-        if(!leaguesResult) throw new Error("Error loading leagues")
-        leagues  = leaguesResult.leagues;
-  
-        let clubsResult = await clubStore.getClubs(selectedLeagueId);
-        if(!clubsResult) throw new Error("Error loading clubs")
+        leagues = leaguesResult.leagues;
         clubs = clubsResult.clubs;
-  
+
         await fetchPlayersForLeague(selectedLeagueId);
+        filteredPlayers = allLeaguePlayers[selectedLeagueId] || [];
       } catch (error) {
-        console.error("Error fetching data:", error);
+        console.error('Error fetching data:', error);
       } finally {
         isLoading = false;
-
-        console.log('mounting complete')
       }
     });
 
@@ -115,19 +122,32 @@
 
     $effect(() => {
       if (selectedLeagueId && selectedLeagueId > 0) {
-        console.log('mounting effect 1')
         isLoading = true;
         fetchPlayersForLeague(selectedLeagueId);
         filterClubs();
       }
     });
 
-    async function filterClubs() {  
-      console.log('filterClubs')
+    async function filterClubs() {
       let clubsResult = await clubStore.getClubs(selectedLeagueId);
         if(!clubsResult) throw new Error("Error loading clubs")
         clubs = [...clubsResult.clubs];
-        console.log('filterClubs complete')
+    }
+
+    function handleLeagueChange(value: string | number) {
+        selectedLeagueId = Number(value);
+    }
+
+    function handleClubChange(value: string | number) {
+        selectedClubId = Number(value);
+    }
+
+    function handlePositionChange(value: string | number) {
+        selectedPositionId = Number(value);
+    }
+
+    function handleNationalityChange(value: string | number) {
+        selectedNationalityId = Number(value);
     }
 
     function onValueChange() {
