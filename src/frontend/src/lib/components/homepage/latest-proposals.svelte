@@ -55,7 +55,7 @@
   }
 </script>
 
-<div class="w-full bg-BrandGray rounded shadow-md p-6">
+<div class="w-full bg-BrandGray rounded shadow-md p-6 min-h-64">
   <h2 class="text-xl font-semibold mb-4">Recent Proposals</h2>
   {#if isLoading}
     <LocalSpinner />

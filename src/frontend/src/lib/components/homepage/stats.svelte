@@ -67,7 +67,7 @@
 {#if isLoading}
       <LocalSpinner />
 {:else}
-  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 min-h-64">
     {#each stats as stat}
       {#if stat.link.length > 0}
       <button onclick={() => navigate(stat.link)} class="bg-BrandGray text-left rounded shadow-md p-4 hover:shadow-lg transition-shadow flex items-center flex-col">

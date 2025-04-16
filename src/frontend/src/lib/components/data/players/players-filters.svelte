@@ -147,7 +147,14 @@
   }
 </script>
 
-{#if isLoading}
+{#if isLoading ||
+  (
+    leagueOptions.length == 0 || 
+    clubOptions.length == 0 || 
+    positionOptions.length == 0 ||
+    nationalityOptions.length == 0
+  )
+}
   <LocalSpinner />
 {:else}
   <div class="space-y-4">
@@ -174,7 +181,7 @@
         </select>
       </FormComponent>
     </div>
-
+  
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
       <FormComponent label="Select Position">
         <select
