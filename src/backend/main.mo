@@ -193,19 +193,6 @@ actor Self {
 
     var projectCanisters : [CanisterQueries.Canister] = [];
 
-    // profile canisters
-    let profileCanisterIds = ["ihjto-4qaaa-aaaal-qsbxq-cai"];
-    for (canisterId in Iter.fromArray(profileCanisterIds)) {
-      let dto : CanisterQueries.Canister = {
-        app = #FootballGod;
-        canisterId = canisterId;
-        canisterType = #Dynamic;
-        canisterName = "Profile Canister";
-      };
-      projectCanisters := Array.append<CanisterQueries.Canister>(projectCanisters, [dto]);
-
-    };
-
     // backend canister
     var backend_dto : CanisterQueries.Canister = {
       canisterId = CanisterIds.FOOTBALL_GOD_BACKEND_CANISTER_ID;
