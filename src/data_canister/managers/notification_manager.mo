@@ -40,17 +40,6 @@ module {
                 };
             };
             case (#BeginSeason){
-                for(app in Iter.fromArray(defaultNotificationGroup)){
-                    let application_canister = actor (app.1) : actor {
-                        beginSeasonNotification : (dto: LeagueNotificationCommands.BeginSeasonNotification) -> async Result.Result<(), Enums.Error>;
-                    };
-                    switch(dto){
-                        case (#BeginSeason foundDTO){
-                            let _ = await application_canister.beginSeasonNotification(foundDTO);
-                        };
-                        case (_){}
-                    };
-                };
             };
             case (#BeginGameweek){
                 for(app in Iter.fromArray(defaultNotificationGroup)){

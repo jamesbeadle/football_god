@@ -2,11 +2,24 @@ import type { Principal } from "@dfinity/principal";
 import type { ActorMethod } from "@dfinity/agent";
 import type { IDL } from "@dfinity/candid";
 
+export interface AddController {
+  app: WaterwayLabsApp;
+  controller: PrincipalId;
+  canisterId: CanisterId;
+}
 export interface AppStatus {
   version: string;
   onHold: boolean;
 }
 export type CalendarMonth = number;
+export interface Canister {
+  app: WaterwayLabsApp;
+  canisterName: string;
+  canisterType: CanisterType;
+  canisterId: CanisterId;
+}
+export type CanisterId = string;
+export type CanisterType = { SNS: null } | { Dynamic: null } | { Static: null };
 export interface Club {
   id: ClubId;
   secondaryColourHex: string;
@@ -259,20 +272,31 @@ export interface PostponedFixtures {
   fixtures: Array<Fixture>;
   leagueId: LeagueId;
 }
-export type Result = { ok: Seasons } | { err: Error };
-export type Result_1 = { ok: PostponedFixtures } | { err: Error };
-export type Result_10 = { ok: Countries } | { err: Error };
-export type Result_11 = { ok: Clubs } | { err: Error };
-export type Result_12 = { ok: ClubValueLeaderboard } | { err: Error };
-export type Result_13 = { ok: AppStatus } | { err: Error };
-export type Result_2 = { ok: Players } | { err: Error };
-export type Result_3 = { ok: PlayerValueLeaderboard } | { err: Error };
-export type Result_4 = { ok: LoanedPlayers } | { err: Error };
-export type Result_5 = { ok: Leagues } | { err: Error };
-export type Result_6 = { ok: LeagueStatus } | { err: Error };
-export type Result_7 = { ok: Fixtures } | { err: Error };
-export type Result_8 = { ok: DataTotals } | { err: Error };
-export type Result_9 = { ok: DataHashes } | { err: Error };
+export type PrincipalId = string;
+export interface ProjectCanisters {
+  entries: Array<Canister>;
+}
+export interface RemoveController {
+  app: WaterwayLabsApp;
+  controller: PrincipalId;
+  canisterId: CanisterId;
+}
+export type Result = { ok: null } | { err: Error };
+export type Result_1 = { ok: Seasons } | { err: Error };
+export type Result_10 = { ok: DataTotals } | { err: Error };
+export type Result_11 = { ok: DataHashes } | { err: Error };
+export type Result_12 = { ok: Countries } | { err: Error };
+export type Result_13 = { ok: Clubs } | { err: Error };
+export type Result_14 = { ok: ClubValueLeaderboard } | { err: Error };
+export type Result_15 = { ok: AppStatus } | { err: Error };
+export type Result_2 = { ok: ProjectCanisters } | { err: Error };
+export type Result_3 = { ok: PostponedFixtures } | { err: Error };
+export type Result_4 = { ok: Players } | { err: Error };
+export type Result_5 = { ok: PlayerValueLeaderboard } | { err: Error };
+export type Result_6 = { ok: LoanedPlayers } | { err: Error };
+export type Result_7 = { ok: Leagues } | { err: Error };
+export type Result_8 = { ok: LeagueStatus } | { err: Error };
+export type Result_9 = { ok: Fixtures } | { err: Error };
 export interface Season {
   id: number;
   name: string;
@@ -283,21 +307,46 @@ export interface Seasons {
   seasons: Array<Season>;
 }
 export type ShirtType = { Filled: null } | { Striped: null };
+export interface TopupCanister {
+  app: WaterwayLabsApp;
+  cycles: bigint;
+  canisterId: CanisterId;
+}
+export type WaterwayLabsApp =
+  | { OpenFPL: null }
+  | { OpenWSL: null }
+  | { ICPCasino: null }
+  | { FootballGod: null }
+  | { ICF1: null }
+  | { ICFC: null }
+  | { ICGC: null }
+  | { ICPFA: null }
+  | { TransferKings: null }
+  | { JeffBets: null }
+  | { OpenBook: null }
+  | { OpenCare: null }
+  | { OpenChef: null }
+  | { OpenBeats: null }
+  | { WaterwayLabs: null };
 export interface _SERVICE {
-  getAppStatus: ActorMethod<[], Result_13>;
-  getClubValueLeaderboard: ActorMethod<[GetClubValueLeaderboard], Result_12>;
-  getClubs: ActorMethod<[GetClubs], Result_11>;
-  getCountries: ActorMethod<[GetCountries], Result_10>;
-  getDataHashes: ActorMethod<[GetDataHashes], Result_9>;
-  getDataTotals: ActorMethod<[GetDataTotals], Result_8>;
-  getFixtures: ActorMethod<[GetFixtures], Result_7>;
-  getLeagueStatus: ActorMethod<[GetLeagueStatus], Result_6>;
-  getLeagues: ActorMethod<[GetLeagues], Result_5>;
-  getLoanedPlayers: ActorMethod<[GetLoanedPlayers], Result_4>;
-  getPlayerValueLeaderboard: ActorMethod<[GetPlayerValueLeaderboard], Result_3>;
-  getPlayers: ActorMethod<[GetPlayers], Result_2>;
-  getPostponedFixtures: ActorMethod<[GetPostponedFixtures], Result_1>;
-  getSeasons: ActorMethod<[GetSeasons], Result>;
+  addController: ActorMethod<[AddController], Result>;
+  getAppStatus: ActorMethod<[], Result_15>;
+  getClubValueLeaderboard: ActorMethod<[GetClubValueLeaderboard], Result_14>;
+  getClubs: ActorMethod<[GetClubs], Result_13>;
+  getCountries: ActorMethod<[GetCountries], Result_12>;
+  getDataHashes: ActorMethod<[GetDataHashes], Result_11>;
+  getDataTotals: ActorMethod<[GetDataTotals], Result_10>;
+  getFixtures: ActorMethod<[GetFixtures], Result_9>;
+  getLeagueStatus: ActorMethod<[GetLeagueStatus], Result_8>;
+  getLeagues: ActorMethod<[GetLeagues], Result_7>;
+  getLoanedPlayers: ActorMethod<[GetLoanedPlayers], Result_6>;
+  getPlayerValueLeaderboard: ActorMethod<[GetPlayerValueLeaderboard], Result_5>;
+  getPlayers: ActorMethod<[GetPlayers], Result_4>;
+  getPostponedFixtures: ActorMethod<[GetPostponedFixtures], Result_3>;
+  getProjectCanisters: ActorMethod<[], Result_2>;
+  getSeasons: ActorMethod<[GetSeasons], Result_1>;
+  removeController: ActorMethod<[RemoveController], Result>;
+  transferCycles: ActorMethod<[TopupCanister], Result>;
 }
 export declare const idlFactory: IDL.InterfaceFactory;
 export declare const init: (args: { IDL: typeof IDL }) => IDL.Type[];
