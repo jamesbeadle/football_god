@@ -16,6 +16,14 @@ export interface BettableLeagues {
   leagues: Array<League>;
 }
 export type CalendarMonth = number;
+export interface Canister {
+  app: WaterwayLabsApp;
+  canisterName: string;
+  canisterType: CanisterType;
+  canisterId: CanisterId;
+}
+export type CanisterId = string;
+export type CanisterType = { SNS: null } | { Dynamic: null } | { Static: null };
 export interface Club {
   id: ClubId;
   secondaryColourHex: string;
@@ -471,25 +479,27 @@ export interface RescheduleFixture {
   seasonId: SeasonId;
   leagueId: LeagueId;
 }
-export type Result = { ok: Seasons } | { err: Error };
-export type Result_1 = { ok: RetiredPlayers } | { err: Error };
-export type Result_10 = { ok: LeagueTable } | { err: Error };
-export type Result_11 = { ok: LeagueStatus } | { err: Error };
-export type Result_12 = { ok: Fixtures } | { err: Error };
-export type Result_13 = { ok: DataTotals } | { err: Error };
-export type Result_14 = { ok: DataHashes } | { err: Error };
-export type Result_15 = { ok: Clubs } | { err: Error };
-export type Result_16 = { ok: ClubValueLeaderboard } | { err: Error };
-export type Result_17 = { ok: BettableLeagues } | { err: Error };
-export type Result_18 = { ok: BettableFixtures } | { err: Error };
-export type Result_2 = { ok: PostponedFixtures } | { err: Error };
-export type Result_3 = { ok: PlayersMap } | { err: Error };
-export type Result_4 = { ok: Players } | { err: Error };
-export type Result_5 = { ok: PlayerValueLeaderboard } | { err: Error };
-export type Result_6 = { ok: PlayerDetailsForGameweek } | { err: Error };
-export type Result_7 = { ok: PlayerDetails } | { err: Error };
-export type Result_8 = { ok: LoanedPlayers } | { err: Error };
-export type Result_9 = { ok: Leagues } | { err: Error };
+export type Result = { ok: null } | { err: Error };
+export type Result_1 = { ok: Seasons } | { err: Error };
+export type Result_10 = { ok: Leagues } | { err: Error };
+export type Result_11 = { ok: LeagueTable } | { err: Error };
+export type Result_12 = { ok: LeagueStatus } | { err: Error };
+export type Result_13 = { ok: Fixtures } | { err: Error };
+export type Result_14 = { ok: DataTotals } | { err: Error };
+export type Result_15 = { ok: DataHashes } | { err: Error };
+export type Result_16 = { ok: Clubs } | { err: Error };
+export type Result_17 = { ok: ClubValueLeaderboard } | { err: Error };
+export type Result_18 = { ok: Canister } | { err: Error };
+export type Result_19 = { ok: BettableLeagues } | { err: Error };
+export type Result_2 = { ok: RetiredPlayers } | { err: Error };
+export type Result_20 = { ok: BettableFixtures } | { err: Error };
+export type Result_3 = { ok: PostponedFixtures } | { err: Error };
+export type Result_4 = { ok: PlayersMap } | { err: Error };
+export type Result_5 = { ok: Players } | { err: Error };
+export type Result_6 = { ok: PlayerValueLeaderboard } | { err: Error };
+export type Result_7 = { ok: PlayerDetailsForGameweek } | { err: Error };
+export type Result_8 = { ok: PlayerDetails } | { err: Error };
+export type Result_9 = { ok: LoanedPlayers } | { err: Error };
 export interface RetirePlayer {
   playerId: ClubId;
   retirementDate: bigint;
@@ -540,6 +550,11 @@ export interface SubmitFixtureData {
   gameweek: GameweekNumber;
   playerEventData: Array<PlayerEventData>;
   leagueId: LeagueId;
+}
+export interface TopupCanister {
+  app: WaterwayLabsApp;
+  cycles: bigint;
+  canisterId: CanisterId;
 }
 export interface TransferPlayer {
   clubId: ClubId;
@@ -592,34 +607,51 @@ export interface ValueHistory {
   changedOn: bigint;
   newValue: number;
 }
+export type WaterwayLabsApp =
+  | { OpenFPL: null }
+  | { OpenWSL: null }
+  | { ICPCasino: null }
+  | { FootballGod: null }
+  | { ICF1: null }
+  | { ICFC: null }
+  | { ICGC: null }
+  | { ICPFA: null }
+  | { TransferKings: null }
+  | { JeffBets: null }
+  | { OpenBook: null }
+  | { OpenCare: null }
+  | { OpenChef: null }
+  | { OpenBeats: null }
+  | { WaterwayLabs: null };
 export interface _SERVICE {
   addInitialFixtures: ActorMethod<[AddInitialFixtures], undefined>;
   calculateDataTotals: ActorMethod<[], undefined>;
   createClub: ActorMethod<[CreateClub], undefined>;
   createLeague: ActorMethod<[CreateLeague], undefined>;
   createPlayer: ActorMethod<[CreatePlayer], undefined>;
-  getBettableFixtures: ActorMethod<[GetBettableFixtures], Result_18>;
-  getBettableLeagues: ActorMethod<[GetBettableLeagues], Result_17>;
-  getClubValueLeaderboard: ActorMethod<[GetClubValueLeaderboard], Result_16>;
-  getClubs: ActorMethod<[GetClubs], Result_15>;
-  getDataHashes: ActorMethod<[GetDataHashes], Result_14>;
-  getDataTotals: ActorMethod<[GetDataTotals], Result_13>;
-  getFixtures: ActorMethod<[GetFixtures], Result_12>;
-  getLeagueStatus: ActorMethod<[GetLeagueStatus], Result_11>;
-  getLeagueTable: ActorMethod<[GetLeagueTable], Result_10>;
-  getLeagues: ActorMethod<[GetLeagues], Result_9>;
-  getLoanedPlayers: ActorMethod<[GetLoanedPlayers], Result_8>;
-  getPlayerDetails: ActorMethod<[GetPlayerDetails], Result_7>;
+  getBettableFixtures: ActorMethod<[GetBettableFixtures], Result_20>;
+  getBettableLeagues: ActorMethod<[GetBettableLeagues], Result_19>;
+  getCanisterInfo: ActorMethod<[], Result_18>;
+  getClubValueLeaderboard: ActorMethod<[GetClubValueLeaderboard], Result_17>;
+  getClubs: ActorMethod<[GetClubs], Result_16>;
+  getDataHashes: ActorMethod<[GetDataHashes], Result_15>;
+  getDataTotals: ActorMethod<[GetDataTotals], Result_14>;
+  getFixtures: ActorMethod<[GetFixtures], Result_13>;
+  getLeagueStatus: ActorMethod<[GetLeagueStatus], Result_12>;
+  getLeagueTable: ActorMethod<[GetLeagueTable], Result_11>;
+  getLeagues: ActorMethod<[GetLeagues], Result_10>;
+  getLoanedPlayers: ActorMethod<[GetLoanedPlayers], Result_9>;
+  getPlayerDetails: ActorMethod<[GetPlayerDetails], Result_8>;
   getPlayerDetailsForGameweek: ActorMethod<
     [GetPlayerDetailsForGameweek],
-    Result_6
+    Result_7
   >;
-  getPlayerValueLeaderboard: ActorMethod<[GetPlayerValueLeaderboard], Result_5>;
-  getPlayers: ActorMethod<[GetPlayers], Result_4>;
-  getPlayersMap: ActorMethod<[GetPlayersMap], Result_3>;
-  getPostponedFixtures: ActorMethod<[GetPostponedFixtures], Result_2>;
-  getRetiredPlayers: ActorMethod<[GetRetiredPlayers], Result_1>;
-  getSeasons: ActorMethod<[GetSeasons], Result>;
+  getPlayerValueLeaderboard: ActorMethod<[GetPlayerValueLeaderboard], Result_6>;
+  getPlayers: ActorMethod<[GetPlayers], Result_5>;
+  getPlayersMap: ActorMethod<[GetPlayersMap], Result_4>;
+  getPostponedFixtures: ActorMethod<[GetPostponedFixtures], Result_3>;
+  getRetiredPlayers: ActorMethod<[GetRetiredPlayers], Result_2>;
+  getSeasons: ActorMethod<[GetSeasons], Result_1>;
   getSnapshotIds: ActorMethod<[], Array<Snapshot>>;
   loanPlayer: ActorMethod<[LoanPlayer], undefined>;
   moveFixture: ActorMethod<[MoveFixture], undefined>;
@@ -632,6 +664,7 @@ export interface _SERVICE {
   setFreeAgent: ActorMethod<[SetFreeAgent], undefined>;
   setPlayerInjury: ActorMethod<[SetPlayerInjury], undefined>;
   submitFixtureData: ActorMethod<[SubmitFixtureData], undefined>;
+  transferCycles: ActorMethod<[TopupCanister], Result>;
   transferPlayer: ActorMethod<[TransferPlayer], undefined>;
   unretirePlayer: ActorMethod<[UnretirePlayer], undefined>;
   updateClub: ActorMethod<[UpdateClub], undefined>;

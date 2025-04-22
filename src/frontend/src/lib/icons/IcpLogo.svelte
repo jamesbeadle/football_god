@@ -1,4 +1,13 @@
-<svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<script lang="ts">
+    interface Props {
+          className: string;
+      fill: string;
+      }
+      let { className, fill }: Props = $props();
+</script>
+    
+
+<svg class={className} viewBox="0 0 18 18" fill={fill} xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
     <rect width="18" height="18" fill="url(#pattern0_57_636)"/>
     <defs>
     <pattern id="pattern0_57_636" patternContentUnits="objectBoundingBox" width="1" height="1">
