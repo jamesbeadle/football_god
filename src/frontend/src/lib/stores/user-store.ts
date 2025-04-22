@@ -4,6 +4,8 @@ import { Principal } from "@dfinity/principal";
 import { Text } from "@dfinity/candid/lib/cjs/idl";
 import { createAgent } from "@dfinity/utils";
 import type { OptionIdentity } from "../types/identity";
+import { SnsGovernanceCanister } from "@dfinity/sns";
+import type { Neuron } from "@dfinity/sns/dist/candid/sns_governance";
 
 function createUserStore() {
   async function withdrawICFC(
@@ -101,9 +103,34 @@ function createUserStore() {
 
     return 0n;
   }
+
+  async function getNeurons(): Promise<Neuron[]> {
+    let identity: OptionIdentity;
+    authStore.subscribe((auth) => (identity = auth.identity));
+    if (!identity) return [];
+    const agent = await createAgent({
+      identity,
+      host: import.meta.env.VITE_AUTH_PROVIDER_URL,
+      fetchRootKey: process.env.DFX_NETWORK === "local",
+    });
+
+    const { listNeurons } = SnsGovernanceCanister.create({
+      canisterId: Principal.fromText(
+        process.env.SNS_GOVERNANCE_CANISTER_ID ?? "",
+      ),
+      agent,
+    });
+
+    return await listNeurons({
+      principal: identity.getPrincipal(),
+      limit: 10,
+      beforeNeuronId: { id: [] },
+    });
+  }
   return {
     withdrawICFC,
     getICFCBalance,
+    getNeurons,
   };
 }
 

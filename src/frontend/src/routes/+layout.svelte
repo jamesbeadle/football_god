@@ -22,6 +22,10 @@
   import "../style/container.css";
   import "../style/icons.css";
   import "../style/button.css";
+    import type { Neuron } from "@dfinity/sns/dist/candid/sns_governance";
+    import { userStore } from "$lib/stores/user-store";
+    import LocalSpinner from "$lib/components/shared/local-spinner.svelte";
+    import NoNeuronHeader from "$lib/components/shared/no-neuron-header.svelte";
   
   interface Props { children: Snippet }
   let { children }: Props = $props();
@@ -29,6 +33,7 @@
   let worker: { syncAuthIdle: (auth: AuthStoreData) => void } | undefined;
   let isLoading = $state(true);
   let isMenuOpen = $state(false);
+  let neurons: Neuron[] = $state([]);
 
   onMount(async () => {
     if (browser) {
@@ -43,6 +48,7 @@
       }
     }
     worker = await initAuthWorker();
+    await getUserNeurons();
     isLoading = false;
   });
 
@@ -52,6 +58,18 @@
     displayAndCleanLogoutMsg();
   };
 
+  $effect(() => {
+    if($authSignedInStore){
+      getUserNeurons();
+    }
+  })
+
+  async function getUserNeurons(){
+    isLoading = true;
+    neurons = await userStore.getNeurons();
+    isLoading = false;
+  }
+  
   function toggleMenu() {
     isMenuOpen = !isMenuOpen;
   }
@@ -65,13 +83,19 @@
     <FullScreenSpinner  message='Loading Football God' />
   </div>
 {:else}
-  {#if $authSignedInStore}
+  {#if $authSignedInStore && neurons.length > 0}
     <LoggedInHeader {toggleMenu} />
     <div class="mx-4 mt-6">
         {@render children()}
     </div>
-    <Sidebar {isMenuOpen} {toggleMenu} />
+    <Sidebar {isMenuOpen} {toggleMenu} showOptions={true} />
     <Toasts />
+  {:else if isLoading}
+    <LocalSpinner />
+  {:else if $authSignedInStore && neurons.length == 0}
+    <NoNeuronHeader {toggleMenu} />
+    <p>To use Football God, please stake ICFC at <a href="https://nns.ic0.app/">nns.ic0.app</a></p>
+    <Sidebar {isMenuOpen} {toggleMenu} showOptions={false} />
   {:else}
     <LandingPage />
   {/if}

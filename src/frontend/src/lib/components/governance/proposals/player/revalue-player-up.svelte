@@ -20,17 +20,7 @@
   let isLoading = $state(false);
   let submitting = $state(false);
   let submitted = $state(false);
-  let isSubmitDisabled = $state(true);
-
-  onMount(async () => {
-    try {
-      isLoading = false;
-    } catch (error) {
-      console.error("Error mounting revalue up modal.", error);
-    } finally {
-      isLoading = false;
-    }
-  });
+  let isSubmitDisabled = $state(false);
 
   async function confirmProposal() {
     

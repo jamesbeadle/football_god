@@ -16,8 +16,9 @@
   interface Props {
     isMenuOpen: boolean;
     toggleMenu: () => void;
+    showOptions: boolean;
   }
-  let { isMenuOpen, toggleMenu }: Props = $props();
+  let { isMenuOpen, toggleMenu, showOptions }: Props = $props();
 
   const menuItems = [
     { icon: HomeIcon, label: "Home", path: "/" },
@@ -80,27 +81,29 @@
 
   <nav class="flex-1 px-6 pt-6 text-gray-800 text-lg">
     <ul class="space-y-2">
-      {#each menuItems as item}
-        <li>
-          <button
-            onclick={() => handleMenuItemClick(item)}
-            class="flex items-center w-full p-3 space-x-4 rounded-lg hover:bg-gray-100 transition-colors"
-            class:active={$page.url.pathname === item.path}
-          >
-            <item.icon
-              className="w-6 h-6"
-              fill={$page.url.pathname === item.path ? '#1F2937' : '#6B7280'}
-            />
-            <span
-              class={$page.url.pathname === item.path
-                ? 'text-gray-800 font-medium'
-                : 'text-gray-500'}
+      {#if showOptions}
+        {#each menuItems as item}
+          <li>
+            <button
+              onclick={() => handleMenuItemClick(item)}
+              class="flex items-center w-full p-3 space-x-4 rounded-lg hover:bg-gray-100 transition-colors"
+              class:active={$page.url.pathname === item.path}
             >
-              {item.label}
-            </span>
-          </button>
-        </li>
-      {/each}
+              <item.icon
+                className="w-6 h-6"
+                fill={$page.url.pathname === item.path ? '#1F2937' : '#6B7280'}
+              />
+              <span
+                class={$page.url.pathname === item.path
+                  ? 'text-gray-800 font-medium'
+                  : 'text-gray-500'}
+              >
+                {item.label}
+              </span>
+            </button>
+          </li>
+        {/each}
+      {/if}
     </ul>
   </nav>
 
