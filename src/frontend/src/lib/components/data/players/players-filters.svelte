@@ -36,10 +36,13 @@
   let debouncedSearch = $state("");
 
   $effect(() => {
-    const timer = setTimeout(() => {
-      debouncedSearch = searchSurname.trim();
-    }, 300);
-    return () => clearTimeout(timer);
+    if(searchSurname || searchSurname == ""){
+      const timer = setTimeout(() => {
+        debouncedSearch = searchSurname.trim();
+        console.log(debouncedSearch)
+      }, 300);
+      return () => clearTimeout(timer);
+    }
   });
 
   let leagueOptions = $derived(
@@ -87,6 +90,8 @@
   });
 
   function applyFilters() {
+    console.log("applying")
+    console.log(debouncedSearch)
     const leaguePlayers = allLeaguePlayers[selectedLeagueId] || [];
     const minValueNum = Number(minValue) || 0;
     const maxValueNum = Number(maxValue) || 150;

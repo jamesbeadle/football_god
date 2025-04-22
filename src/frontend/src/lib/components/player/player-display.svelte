@@ -137,7 +137,6 @@
 
 </script>
 
-
 <div class="relative stacked-col w-full px-4 py-4 mb-4 border rounded-lg shadow-lg border-BrandPurple/50 md:mb-0 bg-BrandGray">
     <div class="flex flex-row items-start justify-between">
         <div class="stacked-col flex-1 min-w-0 space-y-4">
