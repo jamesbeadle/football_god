@@ -23,6 +23,7 @@
     import BadgeIcon from "$lib/icons/BadgeIcon.svelte";
     import PipsIcon from "$lib/icons/pips-icon.svelte";
     import { onDestroy, onMount } from "svelte";
+    import Card from "../shared/card.svelte";
 
     interface Props {
         player: Player;
@@ -135,6 +136,7 @@
 
 
 </script>
+
 
 <div class="relative stacked-col w-full px-4 py-4 mb-4 border rounded-lg shadow-lg border-BrandPurple/50 md:mb-0 bg-BrandGray">
     <div class="flex flex-row items-start justify-between">

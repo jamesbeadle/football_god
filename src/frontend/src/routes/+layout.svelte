@@ -26,6 +26,7 @@
     import { userStore } from "$lib/stores/user-store";
     import LocalSpinner from "$lib/components/shared/local-spinner.svelte";
     import NoNeuronHeader from "$lib/components/shared/no-neuron-header.svelte";
+    import HowToStakeIcfc from "$lib/components/shared/how-to-stake-icfc.svelte";
   
   interface Props { children: Snippet }
   let { children }: Props = $props();
@@ -94,7 +95,9 @@
     <LocalSpinner />
   {:else if $authSignedInStore && neurons.length == 0}
     <NoNeuronHeader {toggleMenu} />
-    <p>To use Football God, please stake ICFC at <a href="https://nns.ic0.app/">nns.ic0.app</a></p>
+    <div class="mx-4 mt-6">
+      <HowToStakeIcfc {getUserNeurons} />
+    </div>
     <Sidebar {isMenuOpen} {toggleMenu} showOptions={false} />
   {:else}
     <LandingPage />
