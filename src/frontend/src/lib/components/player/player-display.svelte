@@ -23,7 +23,6 @@
     import BadgeIcon from "$lib/icons/BadgeIcon.svelte";
     import PipsIcon from "$lib/icons/pips-icon.svelte";
     import { onDestroy, onMount } from "svelte";
-    import Card from "../shared/card.svelte";
 
     interface Props {
         player: Player;
