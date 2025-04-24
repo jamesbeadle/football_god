@@ -42,11 +42,11 @@ module ClubQueries {
         thirdColour: Text;
         shirtType: FootballEnums.ShirtType;
         gender: Enums.Gender;
-        totalPlayers: Nat8;
-        totalGoalkeepers: Nat8;
-        totalDefenders: Nat8;
-        totalMidfielders: Nat8;
-        totalForwards: Nat8;
+        totalPlayers: Nat16;
+        totalGoalkeepers: Nat16;
+        totalDefenders: Nat16;
+        totalMidfielders: Nat16;
+        totalForwards: Nat16;
         totalGKValue: Nat;
         totalDFValue: Nat;
         totalMFValue: Nat;
