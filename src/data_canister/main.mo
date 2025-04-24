@@ -5033,43 +5033,43 @@ actor Self {
               },
             );
 
-            let goalkeeperValue = Array.foldLeft<PlayerQueries.Player, Nat16>(
+            let goalkeeperValue = Array.foldLeft<PlayerQueries.Player, Nat>(
               goalkeepers,
               0,
-              func(acc : Nat16, item : PlayerQueries.Player) : Nat16 {
-                acc + item.valueQuarterMillions;
+              func(acc : Nat, item : PlayerQueries.Player) : Nat {
+                acc + Nat16.toNat(item.valueQuarterMillions);
               },
             );
 
-            let defenderValue = Array.foldLeft<PlayerQueries.Player, Nat16>(
+            let defenderValue = Array.foldLeft<PlayerQueries.Player, Nat>(
               defenders,
               0,
-              func(acc : Nat16, item : PlayerQueries.Player) : Nat16 {
-                acc + item.valueQuarterMillions;
+              func(acc : Nat, item : PlayerQueries.Player) : Nat {
+                acc + Nat16.toNat(item.valueQuarterMillions);
               },
             );
 
-            let midfielderValue = Array.foldLeft<PlayerQueries.Player, Nat16>(
+            let midfielderValue = Array.foldLeft<PlayerQueries.Player, Nat>(
               midfielders,
               0,
-              func(acc : Nat16, item : PlayerQueries.Player) : Nat16 {
-                acc + item.valueQuarterMillions;
+              func(acc : Nat, item : PlayerQueries.Player) : Nat {
+                acc + Nat16.toNat(item.valueQuarterMillions);
               },
             );
 
-            let forwardValue = Array.foldLeft<PlayerQueries.Player, Nat16>(
+            let forwardValue = Array.foldLeft<PlayerQueries.Player, Nat>(
               forwards,
               0,
-              func(acc : Nat16, item : PlayerQueries.Player) : Nat16 {
-                acc + item.valueQuarterMillions;
+              func(acc : Nat, item : PlayerQueries.Player) : Nat {
+                acc + Nat16.toNat(item.valueQuarterMillions);
               },
             );
 
-            let totalValue = Array.foldLeft<PlayerQueries.Player, Nat16>(
+            let totalValue = Array.foldLeft<PlayerQueries.Player, Nat>(
               sortedPlayers,
               0,
-              func(acc : Nat16, item : PlayerQueries.Player) : Nat16 {
-                acc + item.valueQuarterMillions;
+              func(acc : Nat, item : PlayerQueries.Player) : Nat {
+                acc + Nat16.toNat(item.valueQuarterMillions);
               },
             );
 
