@@ -4997,7 +4997,7 @@ actor Self {
               func(a : PlayerQueries.Player, b : PlayerQueries.Player) {
                 if (a.valueQuarterMillions > b.valueQuarterMillions) {
                   return #greater;
-                } else if (a.valueQuarterMillions > b.valueQuarterMillions) {
+                } else if (a.valueQuarterMillions < b.valueQuarterMillions) {
                   return #less;
                 } else {
                   return #equal;
@@ -5006,28 +5006,28 @@ actor Self {
             );
 
             let goalkeepers = Array.filter<PlayerQueries.Player>(
-              players.players,
+              clubPlayers,
               func(playerEntry : PlayerQueries.Player) {
                 return playerEntry.position == #Goalkeeper; // DevOps 476 add appearance count
               },
             );
 
             let defenders = Array.filter<PlayerQueries.Player>(
-              players.players,
+              clubPlayers,
               func(playerEntry : PlayerQueries.Player) {
                 return playerEntry.position == #Defender; // DevOps 476 add appearance count
               },
             );
 
             let midfielders = Array.filter<PlayerQueries.Player>(
-              players.players,
+              clubPlayers,
               func(playerEntry : PlayerQueries.Player) {
                 return playerEntry.position == #Midfielder; // DevOps 476 add appearance count
               },
             );
 
             let forwards = Array.filter<PlayerQueries.Player>(
-              players.players,
+              clubPlayers,
               func(playerEntry : PlayerQueries.Player) {
                 return playerEntry.position == #Forward; // DevOps 476 add appearance count
               },
@@ -5089,11 +5089,11 @@ actor Self {
                   lastName = sortedPlayers[0].lastName;
                   value = sortedPlayers[0].valueQuarterMillions;
                 };
-                totalGoalkeepers = Nat8.fromNat(Array.size(goalkeepers));
-                totalDefenders = Nat8.fromNat(Array.size(defenders));
-                totalMidfielders = Nat8.fromNat(Array.size(midfielders));
-                totalForwards = Nat8.fromNat(Array.size(forwards));
-                totalPlayers = Nat8.fromNat(Array.size(sortedPlayers));
+                totalGoalkeepers = Nat16.fromNat(Array.size(goalkeepers));
+                totalDefenders = Nat16.fromNat(Array.size(defenders));
+                totalMidfielders = Nat16.fromNat(Array.size(midfielders));
+                totalForwards = Nat16.fromNat(Array.size(forwards));
+                totalPlayers = Nat16.fromNat(Array.size(sortedPlayers));
                 totalGKValue = goalkeeperValue;
                 totalDFValue = defenderValue;
                 totalMFValue = midfielderValue;
