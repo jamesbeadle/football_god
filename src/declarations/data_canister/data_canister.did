@@ -698,20 +698,20 @@ type ClubSummary =
    position: nat;
    positionText: text;
    primaryColour: text;
-   priorValue: nat16;
+   priorValue: nat;
    secondaryColour: text;
    shirtType: ShirtType;
    thirdColour: text;
-   totalDFValue: nat16;
+   totalDFValue: nat;
    totalDefenders: nat8;
-   totalFWValue: nat16;
+   totalFWValue: nat;
    totalForwards: nat8;
-   totalGKValue: nat16;
+   totalGKValue: nat;
    totalGoalkeepers: nat8;
-   totalMFValue: nat16;
+   totalMFValue: nat;
    totalMidfielders: nat8;
    totalPlayers: nat8;
-   totalValue: nat16;
+   totalValue: nat;
  };
 type ClubId = nat16;
 type Club = 

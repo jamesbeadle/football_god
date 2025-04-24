@@ -35,8 +35,8 @@ module ClubQueries {
         clubName: Text;
         position: Nat;
         positionText: Text;
-        totalValue: Nat16;
-        priorValue: Nat16;
+        totalValue: Nat;
+        priorValue: Nat;
         primaryColour: Text;
         secondaryColour: Text;
         thirdColour: Text;
@@ -47,10 +47,10 @@ module ClubQueries {
         totalDefenders: Nat8;
         totalMidfielders: Nat8;
         totalForwards: Nat8;
-        totalGKValue: Nat16;
-        totalDFValue: Nat16;
-        totalMFValue: Nat16;
-        totalFWValue: Nat16;
+        totalGKValue: Nat;
+        totalDFValue: Nat;
+        totalMFValue: Nat;
+        totalFWValue: Nat;
         mvp: MostValuablePlayer;
     };
 

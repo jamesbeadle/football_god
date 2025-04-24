@@ -5113,7 +5113,7 @@ actor Self {
 
     updatedClubSummaryBuffer.sort(
       func(a, b) {
-        switch (Nat16.compare(b.totalValue, a.totalValue)) {
+        switch (Nat.compare(b.totalValue, a.totalValue)) {
           case (#less) { #less };
           case (#equal) { #equal };
           case (#greater) { #greater };
