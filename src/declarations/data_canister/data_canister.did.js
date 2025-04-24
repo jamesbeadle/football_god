@@ -185,13 +185,13 @@ export const idlFactory = ({ IDL }) => {
     clubName: IDL.Text,
     totalMFValue: IDL.Nat,
     totalGKValue: IDL.Nat,
-    totalPlayers: IDL.Nat8,
+    totalPlayers: IDL.Nat16,
     totalValue: IDL.Nat,
-    totalDefenders: IDL.Nat8,
-    totalForwards: IDL.Nat8,
+    totalDefenders: IDL.Nat16,
+    totalForwards: IDL.Nat16,
     positionText: IDL.Text,
     primaryColour: IDL.Text,
-    totalGoalkeepers: IDL.Nat8,
+    totalGoalkeepers: IDL.Nat16,
     gender: Gender,
     shirtType: ShirtType,
     totalDFValue: IDL.Nat,
@@ -201,7 +201,7 @@ export const idlFactory = ({ IDL }) => {
     position: IDL.Nat,
     priorValue: IDL.Nat,
     leagueId: LeagueId,
-    totalMidfielders: IDL.Nat8,
+    totalMidfielders: IDL.Nat16,
   });
   const ClubValueLeaderboard = IDL.Record({ clubs: IDL.Vec(ClubSummary) });
   const Result_17 = IDL.Variant({ ok: ClubValueLeaderboard, err: Error });
