@@ -60,6 +60,8 @@ import Management "mo:waterway-mops/Management";
 import CanisterQueries "mo:waterway-mops/canister-management/CanisterQueries";
 import CanisterCommands "mo:waterway-mops/canister-management/CanisterCommands";
 import CanisterManager "mo:waterway-mops/canister-management/CanisterManager";
+import LogsManager "mo:waterway-mops/logs-management/LogsManager";
+import LogsCommands "mo:waterway-mops/logs-management/LogsCommands";
 
 actor Self {
 
@@ -105,6 +107,7 @@ actor Self {
 
   private let notificationManager = NotificationManager.NotificationManager();
   private let canisterManager = CanisterManager.CanisterManager();
+  private let logsManager = LogsManager.LogsManager();
 
   /* ----- General App Queries ----- */
 
@@ -4085,6 +4088,15 @@ actor Self {
         case (null) {};
       };
     };
+
+    let log : LogsCommands.AddApplicationLog = {
+      app = #FootballGod;
+      logType = #Success;
+      title = "Fixture Timer Created";
+      detail = "";
+      error = null;
+    };
+    let _ = await logsManager.addApplicationLog(log);
   };
 
   private func createTransferWindowStartTimers() : async () {
@@ -4116,6 +4128,15 @@ actor Self {
         case (null) {};
       };
     };
+
+    let log : LogsCommands.AddApplicationLog = {
+      app = #FootballGod;
+      logType = #Success;
+      title = "Transfer Window Start Timer Created";
+      detail = "";
+      error = null;
+    };
+    let _ = await logsManager.addApplicationLog(log);
   };
 
   private func createTransferWindowEndTimers() : async () {
@@ -4147,6 +4168,14 @@ actor Self {
         case (null) {};
       };
     };
+    let log : LogsCommands.AddApplicationLog = {
+      app = #FootballGod;
+      logType = #Success;
+      title = "Transfer Window End Timer Created";
+      detail = "";
+      error = null;
+    };
+    let _ = await logsManager.addApplicationLog(log);
   };
 
   private func createActivateFixtureTimers() : async () {
@@ -4192,6 +4221,15 @@ actor Self {
         case (null) {};
       };
     };
+
+    let log : LogsCommands.AddApplicationLog = {
+      app = #FootballGod;
+      logType = #Success;
+      title = "Fixture Activation Timer Created";
+      detail = "";
+      error = null;
+    };
+    let _ = await logsManager.addApplicationLog(log);
   };
 
   private func createCompleteFixtureTimers() : async () {
@@ -4237,6 +4275,15 @@ actor Self {
         case (null) {};
       };
     };
+
+    let log : LogsCommands.AddApplicationLog = {
+      app = #FootballGod;
+      logType = #Success;
+      title = "Fixture Completion Timer Created";
+      detail = "";
+      error = null;
+    };
+    let _ = await logsManager.addApplicationLog(log);
   };
 
   private func createLoanExpiredTimers() : async () {
@@ -4256,6 +4303,15 @@ actor Self {
         let _ = setTimer(triggerDuration, "loanExpired");
       };
     };
+
+    let log : LogsCommands.AddApplicationLog = {
+      app = #FootballGod;
+      logType = #Success;
+      title = "Loan Expired Timer Created";
+      detail = "";
+      error = null;
+    };
+    let _ = await logsManager.addApplicationLog(log);
   };
 
   private func createInjuryExpiredTimers() : async () {
@@ -4275,6 +4331,15 @@ actor Self {
         let _ = setTimer(triggerDuration, "injuryExpired");
       };
     };
+
+    let log : LogsCommands.AddApplicationLog = {
+      app = #FootballGod;
+      logType = #Success;
+      title = "Injury Expired Timer Created";
+      detail = "";
+      error = null;
+    };
+    let _ = await logsManager.addApplicationLog(log);
   };
 
   /* ----- Timer Set Functions ----- */
@@ -5091,6 +5156,14 @@ actor Self {
     };
 
     clubSummaries := Buffer.toArray(updatedClubSummaryBuffer);
+    let log : LogsCommands.AddApplicationLog = {
+      app = #FootballGod;
+      logType = #Success;
+      title = "Calculated Club Summaries";
+      detail = "";
+      error = null;
+    };
+    let _ = await logsManager.addApplicationLog(log);
   };
 
   private func calculatePlayerSummaries() : async () {
@@ -5139,6 +5212,15 @@ actor Self {
     };
 
     playerSummaries := Buffer.toArray(updatedPlayerSummaryBuffer);
+
+    let log : LogsCommands.AddApplicationLog = {
+      app = #FootballGod;
+      logType = #Success;
+      title = "Calculated Player Summaries";
+      detail = "";
+      error = null;
+    };
+    let _ = await logsManager.addApplicationLog(log);
   };
 
   public func calculateDataTotals() : async () {
@@ -5169,6 +5251,15 @@ actor Self {
       totalPlayers;
       totalProposals;
     };
+
+    let log : LogsCommands.AddApplicationLog = {
+      app = #FootballGod;
+      logType = #Success;
+      title = "Calculated Data Totals";
+      detail = "";
+      error = null;
+    };
+    let _ = await logsManager.addApplicationLog(log);
   };
 
   /* ----- Random timer function ----- */
@@ -5261,5 +5352,18 @@ actor Self {
     };
 
   };
+
+  // public shared ({caller}) func fetchAllicationLogs(dto : CanisterCommands.FetchCanisterLogs) : async Result.Result<CanisterQueries.CanisterLog, Enums.Error> {
+  //   assert Principal.toText(caller) == CanisterIds.WATERWAY_LABS_BACKEND_CANISTER_ID;
+  //   let result = await canisterManager.fetchCanisterLogs(dto);
+  //   switch (result) {
+  //     case (#ok(logs)) {
+  //       return #ok(logs);
+  //     };
+  //     case (#err(err)) {
+  //       return #err(err);
+  //     };
+  //   };
+  // };
 
 };
