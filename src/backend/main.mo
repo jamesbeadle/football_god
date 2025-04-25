@@ -182,10 +182,6 @@ actor Self {
 
   //get data totals
 
-  //get total neurons
-
-  //get total icfc governance rewards
-
   /* ----- WWL Canister Management Functions -----  */
   public shared ({ caller }) func getProjectCanisters() : async Result.Result<CanisterQueries.ProjectCanisters, Enums.Error> {
     assert not Principal.isAnonymous(caller);

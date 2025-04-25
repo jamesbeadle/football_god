@@ -23,7 +23,7 @@
 {#if isLoading}
   <FullScreenSpinner message='Loading Football God' />
 {:else}
-<div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+<div class="grid grid-cols-1 gap-4">
   <div class="col-span-1 lg:col-span-3">
     <Stats />
   </div>

@@ -58,16 +58,14 @@
       { label: "Total Leagues", link: '/data/leagues', value: Number(dataTotals == undefined ? (0).toLocaleString() : (dataTotals as DataTotals).totalLeagues).toLocaleString() },
       { label: "Total Clubs", link: '/data/clubs', value:  Number(dataTotals == undefined ? (0).toLocaleString() : (dataTotals as DataTotals).totalClubs).toLocaleString() },
       { label: "Total Players", link: '/data/players', value:  Number(dataTotals == undefined ? (0).toLocaleString() : (dataTotals as DataTotals).totalPlayers).toLocaleString() },
-      { label: "Total Neurons", link: '', value: "1,234" },
-      { label: "Total Proposals", link: '', value: totalProposalsCount },
-      { label: "Total ICFC Rewards", link: '', value: "600,678" },
+      { label: "Total Proposals", link: '', value: totalProposalsCount }
     ]);
 
 </script>
 {#if isLoading}
       <LocalSpinner />
 {:else}
-  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 min-h-64">
+  <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 min-h-64">
     {#each stats as stat}
       {#if stat.link.length > 0}
       <button onclick={() => navigate(stat.link)} class="bg-BrandGray text-left rounded shadow-md p-4 hover:shadow-lg transition-shadow flex items-center flex-col">

@@ -61,7 +61,7 @@
       }
   
       const clubs = clubValueLeaderboard.clubs.slice(0, 25); 
-      const maxValue = Math.max(...clubs.map((club) => club.totalValue));
+      const maxValue = Math.max(Number(...clubs.map((club) => club.totalValue)));
       const grid = Array(5)
         .fill(0)
         .map(() => Array(5).fill({ value: 0, label: "" }));
@@ -71,7 +71,7 @@
         for (let j = 0; j < 5 && index < clubs.length; j++) {
           const club = clubs[index];
           grid[i][j] = {
-            value: club.totalValue / maxValue, 
+            value: Number(club.totalValue) / maxValue, 
             color: club.primaryColour,
             label: club.clubName,
           };
