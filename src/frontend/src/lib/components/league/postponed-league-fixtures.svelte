@@ -38,7 +38,7 @@
 
       let fixturesResult = await fixtureStore.getPostponedFixtures(leagueId);
       if(!fixturesResult) throw new Error("Failed to fetch fixtures");
-      fixtures = fixturesResult.fixtures;
+      fixtures = fixturesResult.fixtures.sort((a, b) => Number(a.kickOff) - Number(b.kickOff));
 
       let leagueStatusResult = await leagueStore.getLeagueStatus(leagueId);
       if(!leagueStatusResult) throw new Error("Failed to fetch league status");
@@ -100,7 +100,7 @@
         </div>
         <div class="px-3 mb-4 md:px-0 md:space-y-4">
           {#if fixtures}
-              {#each fixtures.sort((a, b) => Number(a.kickOff) - Number(b.kickOff)) as fixture}
+              {#each fixtures as fixture}
                 {@const homeClub = clubs.find(x => x.id == fixture.homeClubId)}
                 {@const awayClub = clubs.find(x => x.id == fixture.awayClubId)}
                 

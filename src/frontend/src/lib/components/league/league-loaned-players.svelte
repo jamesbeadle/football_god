@@ -28,12 +28,13 @@
       if(!leaguesResult) throw new Error("Error fetching leagues.");
       let leagues = leaguesResult.leagues;
       league = leagues.find(x => x.id == leagueId);
+
       let clubsResult = await clubStore.getClubs(leagueId);
       if(!clubsResult) throw new Error("Failed to fetch clubs");
       clubs = clubsResult.clubs;
       let loanedPlayersResult = await playerStore.getLoanedPlayers(leagueId);
       if(!loanedPlayersResult) throw new Error("Failed to fetch loaned players");
-      loanedPlayers = loanedPlayersResult.players;
+      loanedPlayers = loanedPlayersResult.players.sort((a, b) => Number(a.clubId) - Number(b.clubId));
 
     } catch (error) {
       console.error("Error fetching league fixtures:", error);
@@ -93,7 +94,7 @@
         
         <div class="px-3 mb-4 space-y-4 md:px-0">
           {#if loanedPlayers}
-            {#each loanedPlayers.sort((a, b) => Number(a.clubId) - Number(b.clubId)) as player}
+            {#each loanedPlayers as player}
               {@const currentClub = clubs.find(x => x.id == player.clubId)}
               {@const parentClub = clubs.find(x => x.id == player.parentClubId)}
               <LoanedPlayerDisplay

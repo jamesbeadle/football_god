@@ -1208,7 +1208,7 @@ actor Self {
       return #Err("Invalid Data");
     };
 
-    if (DateTimeUtilities.calculateAgeFromUnix(dto.dateOfBirth) < 16) {
+    if (DateTimeUtilities.calculateAgeFromUnix(dto.dateOfBirth) < 15) {
       return #Err("Invalid Data");
     };
 
@@ -3379,48 +3379,6 @@ actor Self {
     return Option.isSome(foundCaller);
   };
 
-  private func getPrivatePlayers(dto : PlayerQueries.GetPlayers) : Result.Result<PlayerQueries.Players, Enums.Error> {
-    let filteredLeaguePlayers = Array.find<(FootballIds.LeagueId, [FootballTypes.Player])>(
-      leaguePlayers,
-      func(currentLeaguePlayers : (FootballIds.LeagueId, [FootballTypes.Player])) : Bool {
-        currentLeaguePlayers.0 == dto.leagueId;
-      },
-    );
-
-    switch (filteredLeaguePlayers) {
-      case (?foundLeaguePlayers) {
-        return #ok({
-          players = Array.map<FootballTypes.Player, PlayerQueries.Player>(
-            foundLeaguePlayers.1,
-            func(player : FootballTypes.Player) {
-
-              return {
-                clubId = player.clubId;
-                dateOfBirth = player.dateOfBirth;
-                firstName = player.firstName;
-                id = player.id;
-                lastName = player.lastName;
-                nationality = player.nationality;
-                position = player.position;
-                shirtNumber = player.shirtNumber;
-                status = player.status;
-                valueQuarterMillions = player.valueQuarterMillions;
-                leagueId = player.leagueId;
-                parentLeagueId = player.parentLeagueId;
-                parentClubId = player.parentClubId;
-                currentLoanEndDate = player.currentLoanEndDate;
-              };
-
-            },
-          );
-        });
-      };
-      case (null) {
-        return #err(#NotFound);
-      };
-    };
-  };
-
   /* ----- Private Commands ------ */
 
   private func updateDataHash(leagueId : FootballIds.LeagueId, category : Text) : async () {
@@ -5022,7 +4980,7 @@ actor Self {
   private func calculateClubSummaries() : async () {
     let updatedClubSummaryBuffer = Buffer.fromArray<SummaryTypes.ClubSummary>([]);
     for (league in Iter.fromArray(leagueClubs)) {
-      let leaguePlayers = getPrivatePlayers({ leagueId = league.0 });
+      let leaguePlayers = await getPlayers({ leagueId = league.0 });
       switch (leaguePlayers) {
         case (#ok players) {
           for (club in Iter.fromArray(league.1)) {

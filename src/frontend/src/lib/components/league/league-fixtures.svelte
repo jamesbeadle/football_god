@@ -49,7 +49,7 @@
   
       let fixturesResult = await fixtureStore.getFixtures(leagueId, leagueStatus?.activeSeasonId ?? 1);
       if(!fixturesResult) throw new Error("Failed to fetch fixtures");
-      fixtures = fixturesResult.fixtures;
+      fixtures = fixturesResult.fixtures.sort((a, b) => Number(a.kickOff) - Number(b.kickOff));
 
 
       const highestGameweek = fixtures.reduce((max, fixture) => Math.max(max, fixture.gameweek), 0);
@@ -170,7 +170,7 @@
         <div class="px-3 mb-4 md:px-0 md:space-y-4">
           {#if selectedGameweek > 0}
             {#if fixtures}
-              {#each fitleredFixtures.sort((a, b) => Number(a.kickOff) - Number(b.kickOff)) as fixture}
+              {#each fitleredFixtures as fixture}
                 {@const homeClub = clubs.find(x => x.id == fixture.homeClubId)}
                 {@const awayClub = clubs.find(x => x.id == fixture.awayClubId)}
                 <FixtureDisplay

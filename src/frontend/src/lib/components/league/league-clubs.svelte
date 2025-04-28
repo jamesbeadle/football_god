@@ -10,11 +10,11 @@
   import LocalSpinner from "../shared/local-spinner.svelte";
   import PipsIcon from "$lib/icons/pips-icon.svelte";
   
-    interface Props {
-      leagueId: number
-    }
+  interface Props {
+    leagueId: number
+  }
 
-    let { leagueId }: Props = $props();
+  let { leagueId }: Props = $props();
 
   let isLoading = $state(true);
 
@@ -29,10 +29,12 @@
       let leaguesResult = await leagueStore.getLeagues();
       if(!leaguesResult) throw new Error("Error fetching leagues.");
       let leagues = leaguesResult.leagues;
+      
       league = leagues.find(x => x.id == leagueId);
       let clubsResult = await clubStore.getClubs(leagueId);
       if(!clubsResult) throw new Error("Failed to fetch clubs");
-      clubs = clubsResult.clubs;
+      clubs = clubsResult.clubs.sort( (a, b) => a.friendlyName.localeCompare(b.friendlyName));
+
     } catch (error) {
       console.error("Error fetching league clubs:", error);
     } finally {
@@ -92,7 +94,7 @@
       {/if}
 
       <div class="stacked-col w-full px-4 mt-2 mb-4 space-y-4 md:mb-0 md:px-0">
-        {#each clubs.sort( (a, b) => a.friendlyName.localeCompare(b.friendlyName)) as club}
+        {#each clubs as club}
           <div class="flex items-center justify-between px-3 py-4 border rounded-lg shadow bg-BrandGray border-BrandPurple/50">
             <div class="flex items-center w-full space-x-4">
               <BadgeIcon
