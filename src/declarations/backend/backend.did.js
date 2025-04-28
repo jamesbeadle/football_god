@@ -8,6 +8,7 @@ export const idlFactory = ({ IDL }) => {
     ICFC: IDL.Null,
     ICGC: IDL.Null,
     ICPFA: IDL.Null,
+    GolfPad: IDL.Null,
     TransferKings: IDL.Null,
     JeffBets: IDL.Null,
     OpenBook: IDL.Null,

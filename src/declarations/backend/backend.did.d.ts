@@ -321,6 +321,7 @@ export type WaterwayLabsApp =
   | { ICFC: null }
   | { ICGC: null }
   | { ICPFA: null }
+  | { GolfPad: null }
   | { TransferKings: null }
   | { JeffBets: null }
   | { OpenBook: null }
