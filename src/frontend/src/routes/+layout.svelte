@@ -3,18 +3,22 @@
   import { onMount, type Snippet } from "svelte";
   import { get } from "svelte/store";
   import { fade } from "svelte/transition";
-
   import { browser } from "$app/environment";
   import { initAuthWorker } from "$lib/services/worker.auth.services";
   import { displayAndCleanLogoutMsg } from "$lib/services/auth.services";
   import { authStore, type AuthStoreData } from "$lib/stores/auth-store";
+  import { userStore } from "$lib/stores/user-store";
   import { authSignedInStore } from "$lib/derived/auth.derived";
-  
+  import type { Neuron } from "@dfinity/sns/dist/candid/sns_governance";
+
+  import LocalSpinner from "$lib/components/shared/local-spinner.svelte";
   import FullScreenSpinner from "$lib/components/shared/full-screen-spinner.svelte";
   import LoggedInHeader from "$lib/components/shared/logged-in-header.svelte";
   import Sidebar from "$lib/components/shared/sidebar.svelte";
   import LandingPage from "$lib/components/landing/landing-page.svelte";
   import Toasts from "$lib/components/toasts/toasts.svelte";
+  import NoNeuronHeader from "$lib/components/shared/no-neuron-header.svelte";
+  import HowToStakeIcfc from "$lib/components/shared/how-to-stake-icfc.svelte";
   
   import "../app.css";
   import "../style/text.css";
@@ -22,11 +26,6 @@
   import "../style/container.css";
   import "../style/icons.css";
   import "../style/button.css";
-    import type { Neuron } from "@dfinity/sns/dist/candid/sns_governance";
-    import { userStore } from "$lib/stores/user-store";
-    import LocalSpinner from "$lib/components/shared/local-spinner.svelte";
-    import NoNeuronHeader from "$lib/components/shared/no-neuron-header.svelte";
-    import HowToStakeIcfc from "$lib/components/shared/how-to-stake-icfc.svelte";
   
   interface Props { children: Snippet }
   let { children }: Props = $props();
