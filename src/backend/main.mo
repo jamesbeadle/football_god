@@ -2,7 +2,6 @@
 import Result "mo:base/Result";
 import Text "mo:base/Text";
 import Principal "mo:base/Principal";
-import Iter "mo:base/Iter";
 import Array "mo:base/Array";
 import CanisterManager "mo:waterway-mops/canister-management/CanisterManager";
 
