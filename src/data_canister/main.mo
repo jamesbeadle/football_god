@@ -19,6 +19,7 @@ import Text "mo:base/Text";
 import Time "mo:base/Time";
 import Timer "mo:base/Timer";
 import TrieMap "mo:base/TrieMap";
+import { message } "mo:base/Error";
 
 /* ----- WWL Mops Packages ----- */
 
@@ -4395,306 +4396,361 @@ actor Self {
   /* ----- Functions Set Trigger Timers -----*/
 
   private func checkRollOverPickTeam() : async () {
-    label leagueLoop for (league in Iter.fromArray(leagueSeasons)) {
-      let leagueStatusResult = Array.find<FootballTypes.LeagueStatus>(
-        leagueStatuses,
-        func(statusEntry : FootballTypes.LeagueStatus) : Bool {
-          statusEntry.leagueId == league.0;
-        },
-      );
-      switch (leagueStatusResult) {
-        case (?leagueStatus) {
+    try {
+      label leagueLoop for (league in Iter.fromArray(leagueSeasons)) {
+        let leagueStatusResult = Array.find<FootballTypes.LeagueStatus>(
+          leagueStatuses,
+          func(statusEntry : FootballTypes.LeagueStatus) : Bool {
+            statusEntry.leagueId == league.0;
+          },
+        );
+        switch (leagueStatusResult) {
+          case (?leagueStatus) {
 
-          let seasonEntry = Array.find<FootballTypes.Season>(
-            league.1,
-            func(seasonEntry : FootballTypes.Season) : Bool {
-              seasonEntry.id == leagueStatus.activeSeasonId;
-            },
-          );
+            let seasonEntry = Array.find<FootballTypes.Season>(
+              league.1,
+              func(seasonEntry : FootballTypes.Season) : Bool {
+                seasonEntry.id == leagueStatus.activeSeasonId;
+              },
+            );
 
-          switch (seasonEntry) {
-            case (?season) {
-              let sortedFixtures = Array.sort<FootballTypes.Fixture>(
-                List.toArray<FootballTypes.Fixture>(season.fixtures),
-                func(a : FootballTypes.Fixture, b : FootballTypes.Fixture) {
-                  if (a.kickOff < b.kickOff) {
-                    return #less;
-                  } else if (a.kickOff > b.kickOff) {
-                    return #greater;
-                  } else {
-                    return #equal;
-                  };
-                },
-              );
+            switch (seasonEntry) {
+              case (?season) {
+                let sortedFixtures = Array.sort<FootballTypes.Fixture>(
+                  List.toArray<FootballTypes.Fixture>(season.fixtures),
+                  func(a : FootballTypes.Fixture, b : FootballTypes.Fixture) {
+                    if (a.kickOff < b.kickOff) {
+                      return #less;
+                    } else if (a.kickOff > b.kickOff) {
+                      return #greater;
+                    } else {
+                      return #equal;
+                    };
+                  },
+                );
 
-              if (Array.size(sortedFixtures) <= 1) {
-                continue leagueLoop;
-              };
-
-              var nextFixtureIndex = 0;
-              label fixtureLoop for (fixture in Iter.fromArray(sortedFixtures)) {
-                if (fixture.kickOff > Time.now()) {
-                  break fixtureLoop;
+                if (Array.size(sortedFixtures) <= 1) {
+                  continue leagueLoop;
                 };
-                nextFixtureIndex += 1;
+
+                var nextFixtureIndex = 0;
+                label fixtureLoop for (fixture in Iter.fromArray(sortedFixtures)) {
+                  if (fixture.kickOff > Time.now()) {
+                    break fixtureLoop;
+                  };
+                  nextFixtureIndex += 1;
+                };
+
+                let nextFixture = sortedFixtures[nextFixtureIndex];
+
+                var activeGameweek : FootballDefinitions.GameweekNumber = 0;
+                var completedGameweek : FootballDefinitions.GameweekNumber = nextFixture.gameweek - 1;
+                var unplayedGameweek : FootballDefinitions.GameweekNumber = nextFixture.gameweek;
+
+                let nextFixtureGameweekFixtures = Array.filter<FootballTypes.Fixture>(
+                  sortedFixtures,
+                  func(fixtureEntry : FootballTypes.Fixture) {
+                    fixtureEntry.gameweek == nextFixture.gameweek;
+                  },
+                );
+
+                let nextFixtureGameweekFixturesBeforeNow = Array.filter<FootballTypes.Fixture>(
+                  nextFixtureGameweekFixtures,
+                  func(fixtureEntry : FootballTypes.Fixture) {
+                    fixtureEntry.kickOff < Time.now();
+                  },
+                );
+
+                if (Array.size(nextFixtureGameweekFixturesBeforeNow) > 0) {
+                  activeGameweek := nextFixture.gameweek;
+                  unplayedGameweek := activeGameweek + 1;
+                  setLeagueGameweek(leagueStatus.leagueId, unplayedGameweek, activeGameweek, completedGameweek, nextFixtureGameweekFixtures[0].kickOff);
+                  let _ = await notificationManager.distributeNotification(#BeginGameweek, #BeginGameweek { leagueId = league.0; seasonId = season.id; gameweek = activeGameweek });
+                };
               };
-
-              let nextFixture = sortedFixtures[nextFixtureIndex];
-
-              var activeGameweek : FootballDefinitions.GameweekNumber = 0;
-              var completedGameweek : FootballDefinitions.GameweekNumber = nextFixture.gameweek - 1;
-              var unplayedGameweek : FootballDefinitions.GameweekNumber = nextFixture.gameweek;
-
-              let nextFixtureGameweekFixtures = Array.filter<FootballTypes.Fixture>(
-                sortedFixtures,
-                func(fixtureEntry : FootballTypes.Fixture) {
-                  fixtureEntry.gameweek == nextFixture.gameweek;
-                },
-              );
-
-              let nextFixtureGameweekFixturesBeforeNow = Array.filter<FootballTypes.Fixture>(
-                nextFixtureGameweekFixtures,
-                func(fixtureEntry : FootballTypes.Fixture) {
-                  fixtureEntry.kickOff < Time.now();
-                },
-              );
-
-              if (Array.size(nextFixtureGameweekFixturesBeforeNow) > 0) {
-                activeGameweek := nextFixture.gameweek;
-                unplayedGameweek := activeGameweek + 1;
-                setLeagueGameweek(leagueStatus.leagueId, unplayedGameweek, activeGameweek, completedGameweek, nextFixtureGameweekFixtures[0].kickOff);
-                let _ = await notificationManager.distributeNotification(#BeginGameweek, #BeginGameweek { leagueId = league.0; seasonId = season.id; gameweek = activeGameweek });
-              };
+              case (null) {};
             };
-            case (null) {};
           };
+          case (null) {};
         };
-        case (null) {};
       };
+    } catch (err) {
+      let log : LogsCommands.AddApplicationLog = {
+        app = #FootballGod;
+        logType = #Error;
+        title = "Error in checkRollOverPickTeam";
+        detail = message(err);
+        error = ?#IncorrectSetup;
+      };
+      let _ = await logsManager.addApplicationLog(log);
     };
   };
 
   private func transferWindowStart() : async () {
-    for (league in Iter.fromArray(leagueStatuses)) {
-      let transferWindowStartDate : Int = 0;
-      let transferWindowEndDate : Int = 0;
+    try {
+      for (league in Iter.fromArray(leagueStatuses)) {
+        let transferWindowStartDate : Int = 0;
+        let transferWindowEndDate : Int = 0;
 
-      let now = Time.now();
+        let now = Time.now();
 
-      if (not league.transferWindowActive and now >= transferWindowStartDate and now <= transferWindowEndDate) {
-        leagueStatuses := Array.map<FootballTypes.LeagueStatus, FootballTypes.LeagueStatus>(
-          leagueStatuses,
-          func(statusEntry : FootballTypes.LeagueStatus) {
-            if (statusEntry.leagueId == league.leagueId) {
-              return {
-                activeMonth = statusEntry.activeMonth;
-                activeSeasonId = statusEntry.activeSeasonId;
-                activeGameweek = statusEntry.activeGameweek;
-                completedGameweek = statusEntry.completedGameweek;
-                unplayedGameweek = statusEntry.unplayedGameweek;
-                leagueId = statusEntry.leagueId;
-                seasonActive = statusEntry.seasonActive;
-                totalGameweeks = statusEntry.totalGameweeks;
-                transferWindowActive = true;
-                transferWindowEndDay = statusEntry.transferWindowEndDay;
-                transferWindowEndMonth = statusEntry.transferWindowEndMonth;
-                transferWindowStartDay = statusEntry.transferWindowStartDay;
-                transferWindowStartMonth = statusEntry.transferWindowStartMonth;
+        if (not league.transferWindowActive and now >= transferWindowStartDate and now <= transferWindowEndDate) {
+          leagueStatuses := Array.map<FootballTypes.LeagueStatus, FootballTypes.LeagueStatus>(
+            leagueStatuses,
+            func(statusEntry : FootballTypes.LeagueStatus) {
+              if (statusEntry.leagueId == league.leagueId) {
+                return {
+                  activeMonth = statusEntry.activeMonth;
+                  activeSeasonId = statusEntry.activeSeasonId;
+                  activeGameweek = statusEntry.activeGameweek;
+                  completedGameweek = statusEntry.completedGameweek;
+                  unplayedGameweek = statusEntry.unplayedGameweek;
+                  leagueId = statusEntry.leagueId;
+                  seasonActive = statusEntry.seasonActive;
+                  totalGameweeks = statusEntry.totalGameweeks;
+                  transferWindowActive = true;
+                  transferWindowEndDay = statusEntry.transferWindowEndDay;
+                  transferWindowEndMonth = statusEntry.transferWindowEndMonth;
+                  transferWindowStartDay = statusEntry.transferWindowStartDay;
+                  transferWindowStartMonth = statusEntry.transferWindowStartMonth;
+                };
+              } else {
+                return statusEntry;
               };
-            } else {
-              return statusEntry;
-            };
-          },
-        );
+            },
+          );
+        };
       };
+    } catch (err) {
+      let log : LogsCommands.AddApplicationLog = {
+        app = #FootballGod;
+        logType = #Error;
+        title = "Error in transferWindowStart";
+        detail = message(err);
+        error = ?#IncorrectSetup;
+      };
+      let _ = await logsManager.addApplicationLog(log);
     };
   };
 
   private func transferWindowEnd() : async () {
-    for (league in Iter.fromArray(leagueStatuses)) {
-      let transferWindowEndDate : Int = 0;
+    try {
+      for (league in Iter.fromArray(leagueStatuses)) {
+        let transferWindowEndDate : Int = 0;
 
-      let now = Time.now();
+        let now = Time.now();
 
-      if (league.transferWindowActive and now > transferWindowEndDate) {
-        leagueStatuses := Array.map<FootballTypes.LeagueStatus, FootballTypes.LeagueStatus>(
-          leagueStatuses,
-          func(statusEntry : FootballTypes.LeagueStatus) {
-            if (not statusEntry.transferWindowActive and statusEntry.leagueId == league.leagueId) {
-              return {
-                activeMonth = statusEntry.activeMonth;
-                activeSeasonId = statusEntry.activeSeasonId;
-                activeGameweek = statusEntry.activeGameweek;
-                completedGameweek = statusEntry.completedGameweek;
-                unplayedGameweek = statusEntry.unplayedGameweek;
-                leagueId = statusEntry.leagueId;
-                seasonActive = statusEntry.seasonActive;
-                totalGameweeks = statusEntry.totalGameweeks;
-                transferWindowActive = false;
-                transferWindowEndDay = statusEntry.transferWindowEndDay;
-                transferWindowEndMonth = statusEntry.transferWindowEndMonth;
-                transferWindowStartDay = statusEntry.transferWindowStartDay;
-                transferWindowStartMonth = statusEntry.transferWindowStartMonth;
+        if (league.transferWindowActive and now > transferWindowEndDate) {
+          leagueStatuses := Array.map<FootballTypes.LeagueStatus, FootballTypes.LeagueStatus>(
+            leagueStatuses,
+            func(statusEntry : FootballTypes.LeagueStatus) {
+              if (not statusEntry.transferWindowActive and statusEntry.leagueId == league.leagueId) {
+                return {
+                  activeMonth = statusEntry.activeMonth;
+                  activeSeasonId = statusEntry.activeSeasonId;
+                  activeGameweek = statusEntry.activeGameweek;
+                  completedGameweek = statusEntry.completedGameweek;
+                  unplayedGameweek = statusEntry.unplayedGameweek;
+                  leagueId = statusEntry.leagueId;
+                  seasonActive = statusEntry.seasonActive;
+                  totalGameweeks = statusEntry.totalGameweeks;
+                  transferWindowActive = false;
+                  transferWindowEndDay = statusEntry.transferWindowEndDay;
+                  transferWindowEndMonth = statusEntry.transferWindowEndMonth;
+                  transferWindowStartDay = statusEntry.transferWindowStartDay;
+                  transferWindowStartMonth = statusEntry.transferWindowStartMonth;
+                };
+              } else {
+                return statusEntry;
               };
-            } else {
-              return statusEntry;
-            };
-          },
-        );
+            },
+          );
+        };
       };
+    } catch (err) {
+      let log : LogsCommands.AddApplicationLog = {
+        app = #FootballGod;
+        logType = #Error;
+        title = "Error in transferWindowEnd";
+        detail = message(err);
+        error = ?#IncorrectSetup;
+      };
+      let _ = await logsManager.addApplicationLog(log);
     };
   };
 
   private func setFixtureToActive() : async () {
-    leagueSeasons := Array.map<(FootballIds.LeagueId, [FootballTypes.Season]), (FootballIds.LeagueId, [FootballTypes.Season])>(
-      leagueSeasons,
-      func(leagueSeasonsEntry : (FootballIds.LeagueId, [FootballTypes.Season])) {
+    try {
+      leagueSeasons := Array.map<(FootballIds.LeagueId, [FootballTypes.Season]), (FootballIds.LeagueId, [FootballTypes.Season])>(
+        leagueSeasons,
+        func(leagueSeasonsEntry : (FootballIds.LeagueId, [FootballTypes.Season])) {
 
-        let leagueStatusResult = Array.find<FootballTypes.LeagueStatus>(
-          leagueStatuses,
-          func(statusEntry : FootballTypes.LeagueStatus) : Bool {
-            statusEntry.leagueId == leagueSeasonsEntry.0;
-          },
-        );
+          let leagueStatusResult = Array.find<FootballTypes.LeagueStatus>(
+            leagueStatuses,
+            func(statusEntry : FootballTypes.LeagueStatus) : Bool {
+              statusEntry.leagueId == leagueSeasonsEntry.0;
+            },
+          );
 
-        switch (leagueStatusResult) {
-          case (?leagueStatus) {
+          switch (leagueStatusResult) {
+            case (?leagueStatus) {
 
-            return (
-              leagueSeasonsEntry.0,
-              Array.map<FootballTypes.Season, FootballTypes.Season>(
-                leagueSeasonsEntry.1,
-                func(season : FootballTypes.Season) {
-                  if (season.id == leagueStatus.activeSeasonId) {
-                    return {
-                      fixtures = List.map<FootballTypes.Fixture, FootballTypes.Fixture>(
-                        season.fixtures,
-                        func(fixture : FootballTypes.Fixture) {
+              return (
+                leagueSeasonsEntry.0,
+                Array.map<FootballTypes.Season, FootballTypes.Season>(
+                  leagueSeasonsEntry.1,
+                  func(season : FootballTypes.Season) {
+                    if (season.id == leagueStatus.activeSeasonId) {
+                      return {
+                        fixtures = List.map<FootballTypes.Fixture, FootballTypes.Fixture>(
+                          season.fixtures,
+                          func(fixture : FootballTypes.Fixture) {
 
-                          let now = Time.now();
-                          let fixtureEndTime = fixture.kickOff + (DateTimeUtilities.getHour() * 2);
+                            let now = Time.now();
+                            let fixtureEndTime = fixture.kickOff + (DateTimeUtilities.getHour() * 2);
 
-                          if (fixture.gameweek == leagueStatus.activeGameweek and fixture.status == #Unplayed and now <= fixtureEndTime) {
-                            checkRequiredStatus(leagueStatus.leagueId);
-                            return {
-                              awayClubId = fixture.awayClubId;
-                              awayGoals = fixture.awayGoals;
-                              events = fixture.events;
-                              gameweek = fixture.gameweek;
-                              highestScoringPlayerId = fixture.highestScoringPlayerId;
-                              homeClubId = fixture.homeClubId;
-                              homeGoals = fixture.homeGoals;
-                              id = fixture.id;
-                              kickOff = fixture.kickOff;
-                              seasonId = fixture.seasonId;
-                              status = #Active;
+                            if (fixture.gameweek == leagueStatus.activeGameweek and fixture.status == #Unplayed and now <= fixtureEndTime) {
+                              checkRequiredStatus(leagueStatus.leagueId);
+                              return {
+                                awayClubId = fixture.awayClubId;
+                                awayGoals = fixture.awayGoals;
+                                events = fixture.events;
+                                gameweek = fixture.gameweek;
+                                highestScoringPlayerId = fixture.highestScoringPlayerId;
+                                homeClubId = fixture.homeClubId;
+                                homeGoals = fixture.homeGoals;
+                                id = fixture.id;
+                                kickOff = fixture.kickOff;
+                                seasonId = fixture.seasonId;
+                                status = #Active;
+                              };
+                            } else {
+                              return fixture;
                             };
-                          } else {
-                            return fixture;
-                          };
 
-                        },
-                      );
-                      id = season.id;
-                      name = season.name;
-                      postponedFixtures = season.postponedFixtures;
-                      year = season.year;
+                          },
+                        );
+                        id = season.id;
+                        name = season.name;
+                        postponedFixtures = season.postponedFixtures;
+                        year = season.year;
+                      };
+                    } else {
+                      return season;
                     };
-                  } else {
-                    return season;
-                  };
-                },
-              ),
-            );
+                  },
+                ),
+              );
 
+            };
+            case (null) {
+              return leagueSeasonsEntry;
+            };
           };
-          case (null) {
-            return leagueSeasonsEntry;
-          };
-        };
-      },
-    );
+        },
+      );
+    } catch (err) {
+      let log : LogsCommands.AddApplicationLog = {
+        app = #FootballGod;
+        logType = #Error;
+        title = "Error in setFixtureToActive";
+        detail = message(err);
+        error = ?#IncorrectSetup;
+      };
+      let _ = await logsManager.addApplicationLog(log);
+    };
   };
 
   private func setFixtureToComplete() : async () {
-    var completedFixtureLeagueId : Nat16 = 0;
-    var completedFixtureSeasonId : Nat16 = 0;
-    var completedFixtureId : FootballIds.FixtureId = 0;
+    try {
+      var completedFixtureLeagueId : Nat16 = 0;
+      var completedFixtureSeasonId : Nat16 = 0;
+      var completedFixtureId : FootballIds.FixtureId = 0;
 
-    leagueSeasons := Array.map<(FootballIds.LeagueId, [FootballTypes.Season]), (FootballIds.LeagueId, [FootballTypes.Season])>(
-      leagueSeasons,
-      func(leagueSeasonsEntry : (FootballIds.LeagueId, [FootballTypes.Season])) {
+      leagueSeasons := Array.map<(FootballIds.LeagueId, [FootballTypes.Season]), (FootballIds.LeagueId, [FootballTypes.Season])>(
+        leagueSeasons,
+        func(leagueSeasonsEntry : (FootballIds.LeagueId, [FootballTypes.Season])) {
 
-        let leagueStatusResult = Array.find<FootballTypes.LeagueStatus>(
-          leagueStatuses,
-          func(statusEntry : FootballTypes.LeagueStatus) : Bool {
-            statusEntry.leagueId == leagueSeasonsEntry.0;
-          },
-        );
+          let leagueStatusResult = Array.find<FootballTypes.LeagueStatus>(
+            leagueStatuses,
+            func(statusEntry : FootballTypes.LeagueStatus) : Bool {
+              statusEntry.leagueId == leagueSeasonsEntry.0;
+            },
+          );
 
-        switch (leagueStatusResult) {
-          case (?leagueStatus) {
+          switch (leagueStatusResult) {
+            case (?leagueStatus) {
 
-            return (
-              leagueSeasonsEntry.0,
-              Array.map<FootballTypes.Season, FootballTypes.Season>(
-                leagueSeasonsEntry.1,
-                func(season : FootballTypes.Season) {
-                  if (season.id == leagueStatus.activeSeasonId) {
-                    return {
-                      fixtures = List.map<FootballTypes.Fixture, FootballTypes.Fixture>(
-                        season.fixtures,
-                        func(fixture : FootballTypes.Fixture) {
+              return (
+                leagueSeasonsEntry.0,
+                Array.map<FootballTypes.Season, FootballTypes.Season>(
+                  leagueSeasonsEntry.1,
+                  func(season : FootballTypes.Season) {
+                    if (season.id == leagueStatus.activeSeasonId) {
+                      return {
+                        fixtures = List.map<FootballTypes.Fixture, FootballTypes.Fixture>(
+                          season.fixtures,
+                          func(fixture : FootballTypes.Fixture) {
 
-                          let now = Time.now();
-                          let fixtureEndTime = fixture.kickOff + (DateTimeUtilities.getHour() * 2);
+                            let now = Time.now();
+                            let fixtureEndTime = fixture.kickOff + (DateTimeUtilities.getHour() * 2);
 
-                          if (fixture.gameweek == leagueStatus.activeGameweek and fixture.status == #Active and now > fixtureEndTime) {
-                            checkRequiredStatus(leagueStatus.leagueId);
-                            completedFixtureLeagueId := leagueStatus.leagueId;
-                            completedFixtureSeasonId := fixture.seasonId;
-                            completedFixtureId := fixture.id;
-                            return {
-                              awayClubId = fixture.awayClubId;
-                              awayGoals = fixture.awayGoals;
-                              events = fixture.events;
-                              gameweek = fixture.gameweek;
-                              highestScoringPlayerId = fixture.highestScoringPlayerId;
-                              homeClubId = fixture.homeClubId;
-                              homeGoals = fixture.homeGoals;
-                              id = fixture.id;
-                              kickOff = fixture.kickOff;
-                              seasonId = fixture.seasonId;
-                              status = #Complete;
+                            if (fixture.gameweek == leagueStatus.activeGameweek and fixture.status == #Active and now > fixtureEndTime) {
+                              checkRequiredStatus(leagueStatus.leagueId);
+                              completedFixtureLeagueId := leagueStatus.leagueId;
+                              completedFixtureSeasonId := fixture.seasonId;
+                              completedFixtureId := fixture.id;
+                              return {
+                                awayClubId = fixture.awayClubId;
+                                awayGoals = fixture.awayGoals;
+                                events = fixture.events;
+                                gameweek = fixture.gameweek;
+                                highestScoringPlayerId = fixture.highestScoringPlayerId;
+                                homeClubId = fixture.homeClubId;
+                                homeGoals = fixture.homeGoals;
+                                id = fixture.id;
+                                kickOff = fixture.kickOff;
+                                seasonId = fixture.seasonId;
+                                status = #Complete;
+                              };
+                            } else {
+                              return fixture;
                             };
-                          } else {
-                            return fixture;
-                          };
 
-                        },
-                      );
-                      id = season.id;
-                      name = season.name;
-                      postponedFixtures = season.postponedFixtures;
-                      year = season.year;
+                          },
+                        );
+                        id = season.id;
+                        name = season.name;
+                        postponedFixtures = season.postponedFixtures;
+                        year = season.year;
+                      };
+                    } else {
+                      return season;
                     };
-                  } else {
-                    return season;
-                  };
-                },
-              ),
-            );
+                  },
+                ),
+              );
 
+            };
+            case (null) {
+              return leagueSeasonsEntry;
+            };
           };
-          case (null) {
-            return leagueSeasonsEntry;
-          };
-        };
-      },
-    );
+        },
+      );
 
-    if (completedFixtureLeagueId > 0 and completedFixtureSeasonId > 0 and completedFixtureId > 0) {
-      let _ = await notificationManager.distributeNotification(#CompleteFixture, #CompleteFixture { leagueId = completedFixtureLeagueId; seasonId = completedFixtureSeasonId; fixtureId = completedFixtureId });
+      if (completedFixtureLeagueId > 0 and completedFixtureSeasonId > 0 and completedFixtureId > 0) {
+        let _ = await notificationManager.distributeNotification(#CompleteFixture, #CompleteFixture { leagueId = completedFixtureLeagueId; seasonId = completedFixtureSeasonId; fixtureId = completedFixtureId });
+      };
+    } catch (err) {
+      let log : LogsCommands.AddApplicationLog = {
+        app = #FootballGod;
+        logType = #Error;
+        title = "Error in setFixtureToComplete";
+        detail = message(err);
+        error = ?#IncorrectSetup;
+      };
+      let _ = await logsManager.addApplicationLog(log);
     };
   };
 
@@ -4835,144 +4891,166 @@ actor Self {
 
   private func loanExpiredCallback() : async () {
 
-    for (leaguePlayersEntry in Iter.fromArray(leaguePlayers)) {
-      let playersToRecall = Array.filter<FootballTypes.Player>(
-        leaguePlayersEntry.1,
-        func(currentPlayer : FootballTypes.Player) : Bool {
-          return currentPlayer.status == #OnLoan and currentPlayer.currentLoanEndDate <= Time.now() and currentPlayer.currentLoanEndDate != 0;
-        },
-      );
-
-      for (player in Iter.fromArray(playersToRecall)) {
-        leaguePlayers := Array.map<(FootballIds.LeagueId, [FootballTypes.Player]), (FootballIds.LeagueId, [FootballTypes.Player])>(
-          leaguePlayers,
-          func(entry : (FootballIds.LeagueId, [FootballTypes.Player])) {
-            if (entry.0 == leaguePlayersEntry.0 and leaguePlayersEntry.0 == player.parentLeagueId) {
-              return (
-                entry.0,
-                Array.map<FootballTypes.Player, FootballTypes.Player>(
-                  entry.1,
-                  func(playerEntry : FootballTypes.Player) {
-                    if (playerEntry.id == player.id) {
-                      return {
-                        clubId = playerEntry.parentClubId;
-                        currentLoanEndDate = 0;
-                        dateOfBirth = playerEntry.dateOfBirth;
-                        firstName = playerEntry.firstName;
-                        gender = playerEntry.gender;
-                        id = playerEntry.id;
-                        injuryHistory = playerEntry.injuryHistory;
-                        lastName = playerEntry.lastName;
-                        latestInjuryEndDate = playerEntry.latestInjuryEndDate;
-                        leagueId = playerEntry.leagueId;
-                        nationality = playerEntry.nationality;
-                        parentClubId = 0;
-                        parentLeagueId = 0;
-                        position = playerEntry.position;
-                        retirementDate = playerEntry.retirementDate;
-                        seasons = playerEntry.seasons;
-                        shirtNumber = playerEntry.shirtNumber;
-                        status = playerEntry.status;
-                        transferHistory = playerEntry.transferHistory;
-                        valueHistory = playerEntry.valueHistory;
-                        valueQuarterMillions = playerEntry.valueQuarterMillions;
-                      };
-                    } else {
-                      return playerEntry;
-                    };
-                  },
-                ),
-              );
-            } else if (entry.0 == leaguePlayersEntry.0) {
-              return (
-                entry.0,
-                Array.filter<FootballTypes.Player>(
-                  entry.1,
-                  func(playerEntry : FootballTypes.Player) {
-                    playerEntry.id != player.id;
-                  },
-                ),
-              );
-            } else if (entry.0 == player.parentLeagueId) {
-              let playerBuffer = Buffer.fromArray<FootballTypes.Player>(entry.1);
-              playerBuffer.add({
-                clubId = player.parentClubId;
-                currentLoanEndDate = 0;
-                dateOfBirth = player.dateOfBirth;
-                firstName = player.firstName;
-                gender = player.gender;
-                id = player.id;
-                injuryHistory = player.injuryHistory;
-                lastName = player.lastName;
-                latestInjuryEndDate = player.latestInjuryEndDate;
-                leagueId = player.parentLeagueId;
-                nationality = player.nationality;
-                parentClubId = 0;
-                parentLeagueId = 0;
-                position = player.position;
-                retirementDate = player.retirementDate;
-                seasons = player.seasons;
-                shirtNumber = player.shirtNumber;
-                status = #Active;
-                transferHistory = player.transferHistory;
-                valueHistory = player.valueHistory;
-                valueQuarterMillions = player.valueQuarterMillions;
-              });
-              return (entry.0, Buffer.toArray(playerBuffer));
-            } else {
-              return entry;
-            };
+    try {
+      for (leaguePlayersEntry in Iter.fromArray(leaguePlayers)) {
+        let playersToRecall = Array.filter<FootballTypes.Player>(
+          leaguePlayersEntry.1,
+          func(currentPlayer : FootballTypes.Player) : Bool {
+            return currentPlayer.status == #OnLoan and currentPlayer.currentLoanEndDate <= Time.now() and currentPlayer.currentLoanEndDate != 0;
           },
         );
 
-        // DevOps 479: Needs to be more idempotent
-        //let _ = await notificationManager.distributeNotification(#ExpireLoan, #ExpireLoan { leagueId = dto.leagueId; playerId = dto.playerId });
+        for (player in Iter.fromArray(playersToRecall)) {
+          leaguePlayers := Array.map<(FootballIds.LeagueId, [FootballTypes.Player]), (FootballIds.LeagueId, [FootballTypes.Player])>(
+            leaguePlayers,
+            func(entry : (FootballIds.LeagueId, [FootballTypes.Player])) {
+              if (entry.0 == leaguePlayersEntry.0 and leaguePlayersEntry.0 == player.parentLeagueId) {
+                return (
+                  entry.0,
+                  Array.map<FootballTypes.Player, FootballTypes.Player>(
+                    entry.1,
+                    func(playerEntry : FootballTypes.Player) {
+                      if (playerEntry.id == player.id) {
+                        return {
+                          clubId = playerEntry.parentClubId;
+                          currentLoanEndDate = 0;
+                          dateOfBirth = playerEntry.dateOfBirth;
+                          firstName = playerEntry.firstName;
+                          gender = playerEntry.gender;
+                          id = playerEntry.id;
+                          injuryHistory = playerEntry.injuryHistory;
+                          lastName = playerEntry.lastName;
+                          latestInjuryEndDate = playerEntry.latestInjuryEndDate;
+                          leagueId = playerEntry.leagueId;
+                          nationality = playerEntry.nationality;
+                          parentClubId = 0;
+                          parentLeagueId = 0;
+                          position = playerEntry.position;
+                          retirementDate = playerEntry.retirementDate;
+                          seasons = playerEntry.seasons;
+                          shirtNumber = playerEntry.shirtNumber;
+                          status = playerEntry.status;
+                          transferHistory = playerEntry.transferHistory;
+                          valueHistory = playerEntry.valueHistory;
+                          valueQuarterMillions = playerEntry.valueQuarterMillions;
+                        };
+                      } else {
+                        return playerEntry;
+                      };
+                    },
+                  ),
+                );
+              } else if (entry.0 == leaguePlayersEntry.0) {
+                return (
+                  entry.0,
+                  Array.filter<FootballTypes.Player>(
+                    entry.1,
+                    func(playerEntry : FootballTypes.Player) {
+                      playerEntry.id != player.id;
+                    },
+                  ),
+                );
+              } else if (entry.0 == player.parentLeagueId) {
+                let playerBuffer = Buffer.fromArray<FootballTypes.Player>(entry.1);
+                playerBuffer.add({
+                  clubId = player.parentClubId;
+                  currentLoanEndDate = 0;
+                  dateOfBirth = player.dateOfBirth;
+                  firstName = player.firstName;
+                  gender = player.gender;
+                  id = player.id;
+                  injuryHistory = player.injuryHistory;
+                  lastName = player.lastName;
+                  latestInjuryEndDate = player.latestInjuryEndDate;
+                  leagueId = player.parentLeagueId;
+                  nationality = player.nationality;
+                  parentClubId = 0;
+                  parentLeagueId = 0;
+                  position = player.position;
+                  retirementDate = player.retirementDate;
+                  seasons = player.seasons;
+                  shirtNumber = player.shirtNumber;
+                  status = #Active;
+                  transferHistory = player.transferHistory;
+                  valueHistory = player.valueHistory;
+                  valueQuarterMillions = player.valueQuarterMillions;
+                });
+                return (entry.0, Buffer.toArray(playerBuffer));
+              } else {
+                return entry;
+              };
+            },
+          );
+
+          // DevOps 479: Needs to be more idempotent
+          //let _ = await notificationManager.distributeNotification(#ExpireLoan, #ExpireLoan { leagueId = dto.leagueId; playerId = dto.playerId });
+        };
       };
+    } catch (err) {
+      let log : LogsCommands.AddApplicationLog = {
+        app = #FootballGod;
+        logType = #Error;
+        title = "Error in loanExpiredCallback";
+        detail = message(err);
+        error = ?#IncorrectSetup;
+      };
+      let _ = await logsManager.addApplicationLog(log);
     };
   };
 
   private func injuryExpiredCallback() : async () {
-    leaguePlayers := Array.map<(FootballIds.LeagueId, [FootballTypes.Player]), (FootballIds.LeagueId, [FootballTypes.Player])>(
-      leaguePlayers,
-      func(leaguePlayersEntry : (FootballIds.LeagueId, [FootballTypes.Player])) {
-        return (
-          leaguePlayersEntry.0,
-          Array.map<FootballTypes.Player, FootballTypes.Player>(
-            leaguePlayersEntry.1,
-            func(playersEntry : FootballTypes.Player) {
-              if (playersEntry.latestInjuryEndDate <= Time.now()) {
-                return {
-                  clubId = playersEntry.clubId;
-                  currentLoanEndDate = playersEntry.currentLoanEndDate;
-                  dateOfBirth = playersEntry.dateOfBirth;
-                  firstName = playersEntry.firstName;
-                  gender = playersEntry.gender;
-                  id = playersEntry.id;
-                  injuryHistory = playersEntry.injuryHistory;
-                  lastName = playersEntry.lastName;
-                  latestInjuryEndDate = 0;
-                  leagueId = playersEntry.leagueId;
-                  nationality = playersEntry.nationality;
-                  parentClubId = playersEntry.parentClubId;
-                  parentLeagueId = playersEntry.parentLeagueId;
-                  position = playersEntry.position;
-                  retirementDate = playersEntry.retirementDate;
-                  seasons = playersEntry.seasons;
-                  shirtNumber = playersEntry.shirtNumber;
-                  status = playersEntry.status;
-                  transferHistory = playersEntry.transferHistory;
-                  valueHistory = playersEntry.valueHistory;
-                  valueQuarterMillions = playersEntry.valueQuarterMillions;
+    try {
+      leaguePlayers := Array.map<(FootballIds.LeagueId, [FootballTypes.Player]), (FootballIds.LeagueId, [FootballTypes.Player])>(
+        leaguePlayers,
+        func(leaguePlayersEntry : (FootballIds.LeagueId, [FootballTypes.Player])) {
+          return (
+            leaguePlayersEntry.0,
+            Array.map<FootballTypes.Player, FootballTypes.Player>(
+              leaguePlayersEntry.1,
+              func(playersEntry : FootballTypes.Player) {
+                if (playersEntry.latestInjuryEndDate <= Time.now()) {
+                  return {
+                    clubId = playersEntry.clubId;
+                    currentLoanEndDate = playersEntry.currentLoanEndDate;
+                    dateOfBirth = playersEntry.dateOfBirth;
+                    firstName = playersEntry.firstName;
+                    gender = playersEntry.gender;
+                    id = playersEntry.id;
+                    injuryHistory = playersEntry.injuryHistory;
+                    lastName = playersEntry.lastName;
+                    latestInjuryEndDate = 0;
+                    leagueId = playersEntry.leagueId;
+                    nationality = playersEntry.nationality;
+                    parentClubId = playersEntry.parentClubId;
+                    parentLeagueId = playersEntry.parentLeagueId;
+                    position = playersEntry.position;
+                    retirementDate = playersEntry.retirementDate;
+                    seasons = playersEntry.seasons;
+                    shirtNumber = playersEntry.shirtNumber;
+                    status = playersEntry.status;
+                    transferHistory = playersEntry.transferHistory;
+                    valueHistory = playersEntry.valueHistory;
+                    valueQuarterMillions = playersEntry.valueQuarterMillions;
+                  };
+                } else {
+                  return playersEntry;
                 };
-              } else {
-                return playersEntry;
-              };
-            },
-          ),
-        );
-        return leaguePlayersEntry;
-      },
-    );
+              },
+            ),
+          );
+          return leaguePlayersEntry;
+        },
+      );
+    } catch (err) {
+      let log : LogsCommands.AddApplicationLog = {
+        app = #FootballGod;
+        logType = #Error;
+        title = "Error in injuryExpiredCallback";
+        detail = message(err);
+        error = ?#IncorrectSetup;
+      };
+      let _ = await logsManager.addApplicationLog(log);
+    };
   };
 
   /* ----- Summary Calculation Functions ----- */
