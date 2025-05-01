@@ -2982,7 +2982,7 @@ actor Self {
         let newPlayerId = nextPlayerId;
         nextPlayerId += 1;
         let _ = await updateDataHash(dto.leagueId, "players");
-        let _ = await notificationManager.distributeNotification(#CreatePlayer, #CreatePlayer { leagueId = dto.leagueId; playerId = nextPlayerId });
+        let _ = await notificationManager.distributeNotification(#CreatePlayer, #CreatePlayer { leagueId = dto.leagueId; playerId = newPlayerId });
 
       };
       case (null) {};
