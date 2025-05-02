@@ -4028,27 +4028,6 @@ actor Self {
   };
 
   private func postUpgradeCallback() : async () {
-
-    leagues := Array.filter<FootballTypes.League>(leagues, func(entry: FootballTypes.League){
-      entry.id != 2
-    });
-
-    leagueStatuses := Array.filter<FootballTypes.LeagueStatus>(leagueStatuses, func(entry: FootballTypes.LeagueStatus){
-      entry.leagueId != 2
-    });
-
-    leagueSeasons := Array.filter<(FootballIds.LeagueId, [FootballTypes.Season])>(leagueSeasons, func(entry: (FootballIds.LeagueId, [FootballTypes.Season])){
-      entry.0 != 2
-    });
-
-    leagueClubs := Array.filter<(FootballIds.LeagueId, [FootballTypes.Club])>(leagueClubs, func(entry: (FootballIds.LeagueId, [FootballTypes.Club])){
-      entry.0 != 2
-    });
-
-    leaguePlayers  := Array.filter<(FootballIds.LeagueId, [FootballTypes.Player])>(leaguePlayers, func(entry: (FootballIds.LeagueId, [FootballTypes.Player])){
-      entry.0 != 2
-    });
-
     await createFixtureTimers();
     await createTransferWindowStartTimers();
     await createTransferWindowEndTimers();
