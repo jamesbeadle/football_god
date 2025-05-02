@@ -26,7 +26,7 @@
                 onclick={async () => await signIn({})} disabled={$isBusy}
             >
                 <span class="flex flex-row items-center justify-center space-x-2">
-                    <img src='ICPLogo.png' alt='icp' class="w-6" />
+                    <IcpLogo className='w-6' />
                     <span>Internet Identity</span>
                 </span> 
             </button>
