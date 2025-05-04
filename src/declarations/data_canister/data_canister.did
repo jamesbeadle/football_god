@@ -178,10 +178,15 @@ type Result_3 =
    err: Error;
    ok: PostponedFixtures;
  };
-type Result_20 = 
+type Result_21 = 
  variant {
    err: Error;
    ok: BettableFixtures;
+ };
+type Result_20 = 
+ variant {
+   err: Error;
+   ok: BettableLeagues;
  };
 type Result_2 = 
  variant {
@@ -191,32 +196,32 @@ type Result_2 =
 type Result_19 = 
  variant {
    err: Error;
-   ok: BettableLeagues;
+   ok: Canister;
  };
 type Result_18 = 
  variant {
    err: Error;
-   ok: Canister;
+   ok: ClubValueLeaderboard;
  };
 type Result_17 = 
  variant {
    err: Error;
-   ok: ClubValueLeaderboard;
+   ok: Clubs;
  };
 type Result_16 = 
  variant {
    err: Error;
-   ok: Clubs;
+   ok: DataHashes;
  };
 type Result_15 = 
  variant {
    err: Error;
-   ok: DataHashes;
+   ok: DataTotals;
  };
 type Result_14 = 
  variant {
    err: Error;
-   ok: DataTotals;
+   ok: FixtureWithEvents;
  };
 type Result_13 = 
  variant {
@@ -361,6 +366,15 @@ type PlayerEventType =
    PenaltySaved;
    RedCard;
    YellowCard;
+ };
+type PlayerEventData__2 = 
+ record {
+   clubId: ClubId;
+   eventEndMinute: nat8;
+   eventStartMinute: nat8;
+   eventType: PlayerEventType;
+   fixtureId: FixtureId;
+   playerId: nat16;
  };
 type PlayerEventData__1 = 
  record {
@@ -539,6 +553,12 @@ type GetFixtures =
    leagueId: LeagueId;
    seasonId: SeasonId;
  };
+type GetFixtureEvents = 
+ record {
+   fixtureId: FixtureId;
+   leagueId: LeagueId;
+   seasonId: SeasonId;
+ };
 type GetDataTotals = record {};
 type GetDataHashes = record {leagueId: LeagueId;};
 type GetClubs = record {leagueId: LeagueId;};
@@ -556,6 +576,20 @@ type Fixtures =
    fixtures: vec Fixture;
    leagueId: LeagueId;
    seasonId: SeasonId;
+ };
+type FixtureWithEvents = 
+ record {
+   awayClubId: ClubId;
+   awayGoals: nat8;
+   events: vec PlayerEventData__2;
+   gameweek: GameweekNumber;
+   highestScoringPlayerId: PlayerId;
+   homeClubId: ClubId;
+   homeGoals: nat8;
+   id: FixtureId;
+   kickOff: int;
+   seasonId: SeasonId;
+   status: FixtureStatusType;
  };
 type FixtureStatusType = 
  variant {
@@ -750,13 +784,14 @@ service : {
   createClub: (CreateClub) -> ();
   createLeague: (CreateLeague) -> ();
   createPlayer: (CreatePlayer) -> ();
-  getBettableFixtures: (GetBettableFixtures) -> (Result_20);
-  getBettableLeagues: (GetBettableLeagues) -> (Result_19) query;
-  getCanisterInfo: () -> (Result_18);
-  getClubValueLeaderboard: (GetClubValueLeaderboard) -> (Result_17);
-  getClubs: (GetClubs) -> (Result_16);
-  getDataHashes: (GetDataHashes) -> (Result_15) query;
-  getDataTotals: (GetDataTotals) -> (Result_14);
+  getBettableFixtures: (GetBettableFixtures) -> (Result_21);
+  getBettableLeagues: (GetBettableLeagues) -> (Result_20) query;
+  getCanisterInfo: () -> (Result_19);
+  getClubValueLeaderboard: (GetClubValueLeaderboard) -> (Result_18);
+  getClubs: (GetClubs) -> (Result_17);
+  getDataHashes: (GetDataHashes) -> (Result_16) query;
+  getDataTotals: (GetDataTotals) -> (Result_15);
+  getFixtureEvents: (GetFixtureEvents) -> (Result_14);
   getFixtures: (GetFixtures) -> (Result_13);
   getLeagueStatus: (GetLeagueStatus) -> (Result_12) query;
   getLeagueTable: (GetLeagueTable) -> (Result_11) query;
