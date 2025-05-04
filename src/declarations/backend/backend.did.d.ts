@@ -115,7 +115,6 @@ export interface Fixture {
   highestScoringPlayerId: PlayerId;
   seasonId: SeasonId;
   awayClubId: ClubId;
-  events: Array<PlayerEventData>;
   homeClubId: ClubId;
   kickOff: bigint;
   homeGoals: number;
@@ -220,27 +219,6 @@ export interface Player {
   leagueId: LeagueId;
   firstName: string;
 }
-export interface PlayerEventData {
-  fixtureId: FixtureId;
-  clubId: ClubId;
-  playerId: number;
-  eventStartMinute: number;
-  eventEndMinute: number;
-  eventType: PlayerEventType;
-}
-export type PlayerEventType =
-  | { PenaltyMissed: null }
-  | { Goal: null }
-  | { GoalConceded: null }
-  | { Appearance: null }
-  | { PenaltySaved: null }
-  | { RedCard: null }
-  | { KeeperSave: null }
-  | { CleanSheet: null }
-  | { YellowCard: null }
-  | { GoalAssisted: null }
-  | { OwnGoal: null }
-  | { HighestScoringPlayer: null };
 export type PlayerId = number;
 export type PlayerPosition =
   | { Goalkeeper: null }

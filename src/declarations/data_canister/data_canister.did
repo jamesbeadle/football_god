@@ -314,7 +314,7 @@ type PlayerScore =
    assists: int16;
    clubId: ClubId;
    dateOfBirth: int;
-   events: vec PlayerEventData__2;
+   events: vec PlayerEventData__1;
    goalsConceded: int16;
    goalsScored: int16;
    id: nat16;
@@ -333,7 +333,7 @@ type PlayerPosition =
 type PlayerPoints = 
  record {
    clubId: ClubId;
-   events: vec PlayerEventData__2;
+   events: vec PlayerEventData__1;
    gameweek: GameweekNumber;
    id: nat16;
    points: int16;
@@ -342,7 +342,7 @@ type PlayerPoints =
 type PlayerId = nat16;
 type PlayerGameweek = 
  record {
-   events: vec PlayerEventData__2;
+   events: vec PlayerEventData__1;
    fixtureId: FixtureId;
    number: nat8;
    points: int16;
@@ -361,15 +361,6 @@ type PlayerEventType =
    PenaltySaved;
    RedCard;
    YellowCard;
- };
-type PlayerEventData__2 = 
- record {
-   clubId: ClubId;
-   eventEndMinute: nat8;
-   eventStartMinute: nat8;
-   eventType: PlayerEventType;
-   fixtureId: FixtureId;
-   playerId: nat16;
  };
 type PlayerEventData__1 = 
  record {
@@ -578,7 +569,6 @@ type Fixture =
  record {
    awayClubId: ClubId;
    awayGoals: nat8;
-   events: vec PlayerEventData__1;
    gameweek: GameweekNumber;
    highestScoringPlayerId: PlayerId;
    homeClubId: ClubId;
