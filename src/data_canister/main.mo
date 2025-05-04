@@ -656,6 +656,53 @@ actor Self {
 
   };
 
+  public shared ({ caller }) func getFixtureEvents(dto : FixtureQueries.GetFixtureEvents) : async Result.Result<FixtureQueries.FixtureWithEvents, Enums.Error> {
+    assert callerAllowed(caller);
+
+    let ?filteredLeagueSeasons = Array.find<(FootballIds.LeagueId, [FootballTypes.Season])>(
+      leagueSeasons,
+      func(leagueSeason : (FootballIds.LeagueId, [FootballTypes.Season])) : Bool {
+        leagueSeason.0 == dto.leagueId;
+      },
+    ) else {
+      return #err(#NotFound);
+    };
+
+    let ?foundSeason = Array.find<FootballTypes.Season>(
+      filteredLeagueSeasons.1,
+      func(leagueSeason : FootballTypes.Season) : Bool {
+        leagueSeason.id == dto.seasonId;
+      },
+    ) else {
+      return #err(#NotFound);
+    };
+
+    let ?foundFixture = Array.find<FootballTypes.Fixture>(
+      List.toArray(foundSeason.fixtures),
+      func(fixture : FootballTypes.Fixture) : Bool {
+        fixture.id == dto.fixtureId;
+      },
+    ) else {
+      return #err(#NotFound);
+    };
+
+    return #ok({
+      id = foundFixture.id;
+      seasonId = foundFixture.seasonId;
+      gameweek = foundFixture.gameweek;
+      kickOff = foundFixture.kickOff;
+      homeClubId = foundFixture.homeClubId;
+      awayClubId = foundFixture.awayClubId;
+      homeGoals = foundFixture.homeGoals;
+      awayGoals = foundFixture.awayGoals;
+      status = foundFixture.status;
+      highestScoringPlayerId = foundFixture.highestScoringPlayerId;
+      events = List.toArray<FootballTypes.PlayerEventData>(foundFixture.events);
+    });
+
+    return #err(#NotFound);
+  };
+
   public shared ({ caller }) func getBettableFixtures(dto : FixtureQueries.GetBettableFixtures) : async Result.Result<FixtureQueries.BettableFixtures, Enums.Error> {
     assert callerAllowed(caller);
 
@@ -721,7 +768,6 @@ actor Self {
                             return {
                               awayClubId = fixtureEntry.awayClubId;
                               awayGoals = fixtureEntry.awayGoals;
-                              events = List.toArray(fixtureEntry.events);
                               gameweek = fixtureEntry.gameweek;
                               highestScoringPlayerId = fixtureEntry.highestScoringPlayerId;
                               homeClubId = fixtureEntry.homeClubId;
@@ -794,7 +840,6 @@ actor Self {
                         return {
                           awayClubId = fixture.awayClubId;
                           awayGoals = fixture.awayGoals;
-                          events = List.toArray(fixture.events);
                           gameweek = fixture.gameweek;
                           highestScoringPlayerId = fixture.highestScoringPlayerId;
                           homeClubId = fixture.homeClubId;
