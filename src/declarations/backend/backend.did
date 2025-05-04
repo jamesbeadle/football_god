@@ -157,30 +157,6 @@ type PlayerPosition =
    Midfielder;
  };
 type PlayerId = nat16;
-type PlayerEventType = 
- variant {
-   Appearance;
-   CleanSheet;
-   Goal;
-   GoalAssisted;
-   GoalConceded;
-   HighestScoringPlayer;
-   KeeperSave;
-   OwnGoal;
-   PenaltyMissed;
-   PenaltySaved;
-   RedCard;
-   YellowCard;
- };
-type PlayerEventData = 
- record {
-   clubId: ClubId;
-   eventEndMinute: nat8;
-   eventStartMinute: nat8;
-   eventType: PlayerEventType;
-   fixtureId: FixtureId;
-   playerId: nat16;
- };
 type Player = 
  record {
    clubId: ClubId;
@@ -277,7 +253,6 @@ type Fixture =
  record {
    awayClubId: ClubId;
    awayGoals: nat8;
-   events: vec PlayerEventData;
    gameweek: GameweekNumber;
    highestScoringPlayerId: PlayerId;
    homeClubId: ClubId;

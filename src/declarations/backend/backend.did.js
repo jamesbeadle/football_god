@@ -137,28 +137,6 @@ export const idlFactory = ({ IDL }) => {
     Active: IDL.Null,
     Complete: IDL.Null,
   });
-  const PlayerEventType = IDL.Variant({
-    PenaltyMissed: IDL.Null,
-    Goal: IDL.Null,
-    GoalConceded: IDL.Null,
-    Appearance: IDL.Null,
-    PenaltySaved: IDL.Null,
-    RedCard: IDL.Null,
-    KeeperSave: IDL.Null,
-    CleanSheet: IDL.Null,
-    YellowCard: IDL.Null,
-    GoalAssisted: IDL.Null,
-    OwnGoal: IDL.Null,
-    HighestScoringPlayer: IDL.Null,
-  });
-  const PlayerEventData = IDL.Record({
-    fixtureId: FixtureId,
-    clubId: ClubId,
-    playerId: IDL.Nat16,
-    eventStartMinute: IDL.Nat8,
-    eventEndMinute: IDL.Nat8,
-    eventType: PlayerEventType,
-  });
   const GameweekNumber = IDL.Nat8;
   const Fixture = IDL.Record({
     id: FixtureId,
@@ -166,7 +144,6 @@ export const idlFactory = ({ IDL }) => {
     highestScoringPlayerId: PlayerId,
     seasonId: SeasonId,
     awayClubId: ClubId,
-    events: IDL.Vec(PlayerEventData),
     homeClubId: ClubId,
     kickOff: IDL.Int,
     homeGoals: IDL.Nat8,

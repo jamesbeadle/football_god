@@ -63,35 +63,12 @@ export const idlFactory = ({ IDL }) => {
     Complete: IDL.Null,
   });
   const PlayerId = IDL.Nat16;
-  const PlayerEventType = IDL.Variant({
-    PenaltyMissed: IDL.Null,
-    Goal: IDL.Null,
-    GoalConceded: IDL.Null,
-    Appearance: IDL.Null,
-    PenaltySaved: IDL.Null,
-    RedCard: IDL.Null,
-    KeeperSave: IDL.Null,
-    CleanSheet: IDL.Null,
-    YellowCard: IDL.Null,
-    GoalAssisted: IDL.Null,
-    OwnGoal: IDL.Null,
-    HighestScoringPlayer: IDL.Null,
-  });
-  const PlayerEventData__1 = IDL.Record({
-    fixtureId: FixtureId,
-    clubId: ClubId,
-    playerId: IDL.Nat16,
-    eventStartMinute: IDL.Nat8,
-    eventEndMinute: IDL.Nat8,
-    eventType: PlayerEventType,
-  });
   const Fixture = IDL.Record({
     id: FixtureId,
     status: FixtureStatusType,
     highestScoringPlayerId: PlayerId,
     seasonId: SeasonId,
     awayClubId: ClubId,
-    events: IDL.Vec(PlayerEventData__1),
     homeClubId: ClubId,
     kickOff: IDL.Int,
     homeGoals: IDL.Nat8,
@@ -334,7 +311,21 @@ export const idlFactory = ({ IDL }) => {
     injuryStartDate: IDL.Int,
     expectedEndDate: IDL.Int,
   });
-  const PlayerEventData__2 = IDL.Record({
+  const PlayerEventType = IDL.Variant({
+    PenaltyMissed: IDL.Null,
+    Goal: IDL.Null,
+    GoalConceded: IDL.Null,
+    Appearance: IDL.Null,
+    PenaltySaved: IDL.Null,
+    RedCard: IDL.Null,
+    KeeperSave: IDL.Null,
+    CleanSheet: IDL.Null,
+    YellowCard: IDL.Null,
+    GoalAssisted: IDL.Null,
+    OwnGoal: IDL.Null,
+    HighestScoringPlayer: IDL.Null,
+  });
+  const PlayerEventData__1 = IDL.Record({
     fixtureId: FixtureId,
     clubId: ClubId,
     playerId: IDL.Nat16,
@@ -344,7 +335,7 @@ export const idlFactory = ({ IDL }) => {
   });
   const PlayerGameweek = IDL.Record({
     fixtureId: FixtureId,
-    events: IDL.Vec(PlayerEventData__2),
+    events: IDL.Vec(PlayerEventData__1),
     number: IDL.Nat8,
     points: IDL.Int16,
   });
@@ -382,7 +373,7 @@ export const idlFactory = ({ IDL }) => {
   const PlayerPoints = IDL.Record({
     id: IDL.Nat16,
     clubId: ClubId,
-    events: IDL.Vec(PlayerEventData__2),
+    events: IDL.Vec(PlayerEventData__1),
     position: PlayerPosition,
     gameweek: GameweekNumber,
     points: IDL.Int16,
@@ -428,7 +419,7 @@ export const idlFactory = ({ IDL }) => {
     goalsScored: IDL.Int16,
     saves: IDL.Int16,
     goalsConceded: IDL.Int16,
-    events: IDL.Vec(PlayerEventData__2),
+    events: IDL.Vec(PlayerEventData__1),
     position: PlayerPosition,
     points: IDL.Int16,
   });
