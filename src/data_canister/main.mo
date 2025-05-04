@@ -630,7 +630,6 @@ actor Self {
                     return {
                       awayClubId = fixture.awayClubId;
                       awayGoals = fixture.awayGoals;
-                      events = List.toArray(fixture.events);
                       gameweek = fixture.gameweek;
                       highestScoringPlayerId = fixture.highestScoringPlayerId;
                       homeClubId = fixture.homeClubId;

@@ -1,5 +1,5 @@
 <script lang="ts">
-  import Modal from "../shared/modal.svelte";
+  import Modal from "../shared/global/modal.svelte";
 
   interface Props {
     visible: boolean;
@@ -10,7 +10,7 @@
 
 </script>
 
-<Modal title="Confirm Fixture Data Submission" {visible} onClose={closeModal}>
+<Modal title="Confirm Fixture Data Submission" onClose={closeModal}>
   <div class="p-4 mx-4">
     <div class="flex items-center justify-between my-2">
       <h4>Confirm Fixture Data</h4>

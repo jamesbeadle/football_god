@@ -9,7 +9,7 @@
 
   import VotingBar from './voting-bar.svelte';
   import VotingRules from "./voting-rules.svelte";
-  import Modal from "../../shared/modal.svelte";
+  import Modal from "../../shared/global/modal.svelte";
   import LocalSpinner from "$lib/components/shared/local-spinner.svelte";
   import ArrowUp from "$lib/icons/ArrowUp.svelte";
   import ArrowDown from "$lib/icons/ArrowDown.svelte";
@@ -133,7 +133,7 @@
   }
 </script>
 
-<Modal title={`Proposal ${proposal.id[0]?.id} Detail`} {visible} onClose={closeModal}>
+<Modal title={`Proposal ${proposal.id[0]?.id} Detail`} onClose={closeModal}>
   {#if isLoading}
     <LocalSpinner />
     <p class="pb-4 mb-4 text-center">Submitting vote...</p>

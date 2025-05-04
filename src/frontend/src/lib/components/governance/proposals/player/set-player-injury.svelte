@@ -4,7 +4,7 @@
   import { convertDateInputToUnixNano, isError } from "$lib/utils/helpers";
   import type { Player } from "../../../../../../../declarations/backend/backend.did";
   import type { SetPlayerInjury } from "../../../../../../../declarations/data_canister/data_canister.did";
-  import Modal from "$lib/components/shared/modal.svelte";
+  import Modal from "$lib/components/shared/global/modal.svelte";
   import GovernanceModal from "../../voting/governance-modal.svelte";
   import FormComponent from "$lib/components/shared/form-component.svelte";
 
@@ -80,7 +80,7 @@
   }
 </script>
 
-<Modal title={"Set Player Injury"} {visible} onClose={closeModal}>
+<Modal title={"Set Player Injury"} onClose={closeModal}>
   <GovernanceModal {cancelModal} {confirmProposal} {isLoading} {isSubmitDisabled}>
     <FormComponent label="Enter the injury description:">
       <input

@@ -8,7 +8,7 @@
   import { toasts } from "$lib/stores/toasts-store";
   import type { Club, Country, League, PlayerPosition } from "../../../../../../../declarations/backend/backend.did";
   import type { CreatePlayer } from "../../../../../../../declarations/data_canister/data_canister.did";
-  import Modal from "$lib/components/shared/modal.svelte";
+  import Modal from "$lib/components/shared/global/modal.svelte";
   import GovernanceModal from "../../voting/governance-modal.svelte";
   import FormComponent from "$lib/components/shared/form-component.svelte";
   
@@ -177,7 +177,7 @@
   }
 </script>
 
-<Modal title={"Create Player"} {visible} onClose={closeModal}>
+<Modal title={"Create Player"} onClose={closeModal}>
   <GovernanceModal {cancelModal} {confirmProposal} {isLoading} {isSubmitDisabled}>
     <FormComponent label="Select the player's league:">
       <select class="brand-dropdown" bind:value={selectedLeagueId}>

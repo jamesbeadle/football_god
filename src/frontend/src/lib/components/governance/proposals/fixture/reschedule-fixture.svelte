@@ -6,7 +6,7 @@
   import { leagueStore } from "$lib/stores/league-store";
   import type { Club, Fixture, GameweekNumber } from "../../../../../../../declarations/backend/backend.did";
   import type { RescheduleFixture } from "../../../../../../../declarations/data_canister/data_canister.did";
-  import Modal from "$lib/components/shared/modal.svelte";
+  import Modal from "$lib/components/shared/global/modal.svelte";
   import GovernanceModal from "../../voting/governance-modal.svelte";
   import FormComponent from "$lib/components/shared/form-component.svelte";
 
@@ -135,7 +135,7 @@
   }
 </script>
 
-<Modal title={"Reschedule Fixture"} {visible} onClose={closeModal}>
+<Modal title={"Reschedule Fixture"} onClose={closeModal}>
   <GovernanceModal {cancelModal} {confirmProposal} {isLoading} {isSubmitDisabled}>
     
     <p class="">Reschedule {homeTeam!.friendlyName} v {awayTeam!.friendlyName}</p>

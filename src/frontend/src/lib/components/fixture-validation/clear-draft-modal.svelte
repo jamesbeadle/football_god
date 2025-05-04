@@ -1,6 +1,6 @@
 <script lang="ts">
 
-  import Modal from "../shared/modal.svelte"; 
+  import Modal from "../shared/global/modal.svelte"; 
 
   interface Props {
     visible: boolean;
@@ -11,7 +11,7 @@
 
 </script>
 
-<Modal title="Clear Draft" {visible} onClose={closeModal}>
+<Modal title="Clear Draft" onClose={closeModal}>
   <div class="mx-4 p-4">
     <div class="flex justify-between items-center my-2">
       <h3 class="page-title">Clear Draft</h3>

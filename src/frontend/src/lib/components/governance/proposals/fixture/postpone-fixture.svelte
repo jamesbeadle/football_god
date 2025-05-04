@@ -7,7 +7,7 @@
   import { isError } from "$lib/utils/helpers";
   import type { Club, Fixture } from "../../../../../../../declarations/backend/backend.did";
   import type { PostponeFixture } from "../../../../../../../declarations/data_canister/data_canister.did";
-  import Modal from "$lib/components/shared/modal.svelte";
+  import Modal from "$lib/components/shared/global/modal.svelte";
   import GovernanceModal from "../../voting/governance-modal.svelte";
 
   interface Props {
@@ -104,7 +104,7 @@
   }
 </script>
 
-<Modal title={"Postpone Fixture"} {visible} onClose={closeModal}>
+<Modal title={"Postpone Fixture"} onClose={closeModal}>
   <GovernanceModal {cancelModal} {confirmProposal} {isLoading} {isSubmitDisabled}>
     <p>Postpone {homeClub!.friendlyName} v {awayClub!.friendlyName} - Gameweek {selectedFixture.gameweek}</p>
   </GovernanceModal>

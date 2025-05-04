@@ -2,7 +2,7 @@
   import type { Writable } from "svelte/store";
   import { getFlagComponent } from "$lib/utils/helpers";
   import { onMount } from "svelte";
-  import Modal from "../shared/modal.svelte";
+  import Modal from "../shared/global/modal.svelte";
   import CardsTab from "./cards-tab.svelte";
   import FixtureEventSection from "./fixture-event-section.svelte";
   import type { Player, PlayerEventData } from "../../../../../declarations/backend/backend.did";
@@ -323,7 +323,7 @@
 
 </script>
 
-<Modal title="Player Events" {visible} onClose={exitModal}>
+<Modal title="Player Events" onClose={exitModal}>
   <div class="p-4 mx-4">
     <div class="flex items-center justify-between my-2">
       <h3 class="page-title">Add Events</h3>

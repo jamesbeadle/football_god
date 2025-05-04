@@ -7,7 +7,7 @@
   import { toasts } from "$lib/stores/toasts-store";
   import type { Club, League, Player } from "../../../../../../../declarations/backend/backend.did";
   import type { LoanPlayer } from "../../../../../../../declarations/data_canister/data_canister.did";
-  import Modal from "$lib/components/shared/modal.svelte";
+  import Modal from "$lib/components/shared/global/modal.svelte";
   import GovernanceModal from "../../voting/governance-modal.svelte";
   import FormComponent from "$lib/components/shared/form-component.svelte";
   
@@ -120,7 +120,7 @@
   }
 </script>
 
-<Modal title={"Loan Player " + selectedPlayer.firstName + " " + selectedPlayer.lastName} {visible} onClose={closeModal}>
+<Modal title={"Loan Player " + selectedPlayer.firstName + " " + selectedPlayer.lastName} onClose={closeModal}>
   <GovernanceModal {cancelModal} {confirmProposal} {isLoading} {isSubmitDisabled}>
     <FormComponent label="Select loan league:">
       <select class="brand-dropdown" bind:value={loanLeagueId}>

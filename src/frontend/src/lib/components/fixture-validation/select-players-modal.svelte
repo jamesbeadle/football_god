@@ -2,7 +2,7 @@
   import { type Writable } from "svelte/store";
   import { convertPlayerPosition } from "$lib/utils/helpers";
   import type { Club, Player, PlayerEventData } from "../../../../../declarations/backend/backend.did";
-  import Modal from "../shared/modal.svelte";
+  import Modal from "../shared/global/modal.svelte";
   import BadgeIcon from "$lib/icons/BadgeIcon.svelte";
   
   interface Props {
@@ -35,7 +35,7 @@
   }
 </script>
 
-<Modal title="Select Players" {visible} onClose={closeModal}>
+<Modal title="Select Players" onClose={closeModal}>
   <div class="p-4 mx-4">
     <div class="flex items-center justify-between mb-4">
       <div class="flex items-center space-x-3">

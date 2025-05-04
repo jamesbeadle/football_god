@@ -1,6 +1,6 @@
 <script lang="ts">
   import FormComponent from "$lib/components/shared/form-component.svelte";
-  import Modal from "$lib/components/shared/modal.svelte";
+  import Modal from "$lib/components/shared/global/modal.svelte";
   import { governanceStore } from "$lib/stores/governance-store";
   import { isError } from "$lib/utils/helpers";
   import type { Club, League, LeagueId } from "../../../../../../../declarations/backend/backend.did";
@@ -69,7 +69,7 @@
   }
 </script>
 
-<Modal title={"Promote New Club"} {visible} onClose={closeModal}>
+<Modal title={"Promote New Club"} onClose={closeModal}>
   <GovernanceModal {cancelModal} {confirmProposal} {isLoading} {isSubmitDisabled}>
     <FormComponent label="New league:">
       <select

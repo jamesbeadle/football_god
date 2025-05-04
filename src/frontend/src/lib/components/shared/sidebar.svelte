@@ -11,7 +11,7 @@
   import LogoIcon from "$lib/icons/LogoIcon.svelte";
   import ProfileIcon from "$lib/icons/ProfileIcon.svelte";
   import FanIcon from "$lib/icons/side-nav/fan-icon.svelte";
-  import CrossIcon from "$lib/icons/CrossIcon.svelte";
+  import CloseIcon from "$lib/icons/CloseIcon.svelte";
 
   interface Props {
     isMenuOpen: boolean;
@@ -75,7 +75,7 @@
       class="p-2 text-gray-500 hover:text-gray-700 hover:scale-110 transition-all duration-200"
       aria-label="Close sidebar"
     >
-      <CrossIcon className="w-4 h-4" fill="#7F56F1" />
+      <CloseIcon className="w-4 h-4" fill="#7F56F1" />
     </button>
   </div>
 

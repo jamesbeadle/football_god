@@ -1,6 +1,6 @@
 <script lang="ts">
   import { userStore } from "$lib/stores/user-store";
-    import Modal from "../shared/modal.svelte";
+    import Modal from "../shared/global/modal.svelte";
 
     interface Props {
       visible: boolean;
@@ -74,7 +74,7 @@
   }
 </script>
 
-<Modal title="Withdraw ICFC" {visible} onClose={closeModal}>
+<Modal title="Withdraw ICFC" onClose={closeModal}>
   <div class="mx-4 p-4">
     <div class="flex justify-between items-center my-2">
       <h3 class="page-title">Withdraw ICFC</h3>

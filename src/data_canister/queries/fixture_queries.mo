@@ -45,7 +45,6 @@ module FixtureQueries {
         awayGoals : Nat8;
         status : FootballEnums.FixtureStatusType;
         highestScoringPlayerId : FootballIds.PlayerId;
-        events : [PlayerEventData];
     };
 
     public type PlayerEventData = {
