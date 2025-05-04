@@ -5,11 +5,11 @@ import FootballDefinitions "mo:waterway-mops/football/FootballDefinitions";
 
 module PlayerQueries {
     public type GetPlayers = {
-        leagueId: FootballIds.LeagueId;
+        leagueId : FootballIds.LeagueId;
     };
 
     public type Players = {
-        players: [Player];
+        players : [Player];
     };
 
     public type Player = {
@@ -23,40 +23,39 @@ module PlayerQueries {
         dateOfBirth : Int;
         nationality : Ids.CountryId;
         status : FootballEnums.PlayerStatus;
-        leagueId: FootballIds.LeagueId;
-        parentLeagueId: FootballIds.LeagueId;
-        parentClubId: FootballIds.ClubId;
-        currentLoanEndDate: Int;
+        leagueId : FootballIds.LeagueId;
+        parentLeagueId : FootballIds.LeagueId;
+        parentClubId : FootballIds.ClubId;
+        currentLoanEndDate : Int;
     };
 
     public type GetLoanedPlayers = {
-        leagueId: FootballIds.LeagueId;
+        leagueId : FootballIds.LeagueId;
     };
 
     public type LoanedPlayers = {
-        players: [Player];
+        players : [Player];
     };
 
     public type GetRetiredPlayers = {
-        leagueId: FootballIds.LeagueId;
+        leagueId : FootballIds.LeagueId;
         clubId : FootballIds.ClubId;
 
     };
 
     public type RetiredPlayers = {
-        players: [Player];
+        players : [Player];
     };
 
     public type GetPlayerDetails = {
-        leagueId: FootballIds.LeagueId;
+        leagueId : FootballIds.LeagueId;
         playerId : FootballIds.PlayerId;
         seasonId : FootballIds.SeasonId;
     };
 
     public type PlayerDetails = {
-        player: DetailedPlayer
+        player : DetailedPlayer;
     };
-
 
     public type DetailedPlayer = {
         id : FootballIds.PlayerId;
@@ -79,17 +78,17 @@ module PlayerQueries {
     };
 
     public type ValueHistory = {
-        oldValue: Nat16;
-        changedOn: Int;
-        newValue: Nat16;
+        oldValue : Nat16;
+        changedOn : Int;
+        newValue : Nat16;
     };
 
     public type InjuryHistory = {
-        description: Text;
-        injuryStartDate: Int;
-        expectedEndDate: Int;
+        description : Text;
+        injuryStartDate : Int;
+        expectedEndDate : Int;
     };
-        
+
     public type PlayerGameweek = {
         number : Nat8;
         events : [PlayerEventData];
@@ -106,15 +105,14 @@ module PlayerQueries {
         clubId : FootballIds.ClubId;
     };
 
-
     public type GetPlayerDetailsForGameweek = {
-        leagueId: FootballIds.LeagueId;
-        seasonId: FootballIds.SeasonId;
-        gameweek: FootballDefinitions.GameweekNumber;
+        leagueId : FootballIds.LeagueId;
+        seasonId : FootballIds.SeasonId;
+        gameweek : FootballDefinitions.GameweekNumber;
     };
 
     public type PlayerDetailsForGameweek = {
-        playerPoints: [PlayerQueries.PlayerPoints];
+        playerPoints : [PlayerPoints];
     };
 
     public type PlayerPoints = {
@@ -127,17 +125,17 @@ module PlayerQueries {
     };
 
     public type GetPlayersMap = {
-        leagueId: FootballIds.LeagueId;
-        seasonId: FootballIds.SeasonId;
-        gameweek: FootballDefinitions.GameweekNumber;
+        leagueId : FootballIds.LeagueId;
+        seasonId : FootballIds.SeasonId;
+        gameweek : FootballDefinitions.GameweekNumber;
     };
 
     public type PlayersMap = {
-        playersMap: [(FootballIds.PlayerId, PlayerQueries.PlayerScore)]
+        playersMap : [(FootballIds.PlayerId, PlayerScore)];
     };
 
     public type PlayerScore = {
-         id : Nat16;
+        id : Nat16;
         points : Int16;
         clubId : FootballIds.ClubId;
         goalsScored : Int16;
@@ -153,17 +151,17 @@ module PlayerQueries {
     public type GetPlayerValueLeaderboard = {};
 
     public type PlayerValueLeaderboard = {
-        players: [PlayerSummary]
+        players : [PlayerSummary];
     };
 
     public type PlayerSummary = {
-        playerId: FootballIds.PlayerId;
-        clubId: FootballIds.ClubId;
-        leagueId: FootballIds.LeagueId;
-        position: Nat;
-        positionText: Text;
-        totalValue: Nat16;
-        priorValue: Nat16;
+        playerId : FootballIds.PlayerId;
+        clubId : FootballIds.ClubId;
+        leagueId : FootballIds.LeagueId;
+        position : Nat;
+        positionText : Text;
+        totalValue : Nat16;
+        priorValue : Nat16;
     };
 
-}
+};
