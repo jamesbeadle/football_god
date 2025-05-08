@@ -4072,6 +4072,7 @@ actor Self {
   };
 
   private func postUpgradeCallback() : async () {
+    await checkRollOverPickTeam();
     await createFixtureTimers();
     await createTransferWindowStartTimers();
     await createTransferWindowEndTimers();
