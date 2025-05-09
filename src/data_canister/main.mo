@@ -4485,6 +4485,9 @@ actor Self {
                   };
                   nextFixtureIndex += 1;
                 };
+                if (nextFixtureIndex == Array.size(sortedFixtures)) {
+                  continue leagueLoop;
+                };
 
                 let nextFixture = sortedFixtures[nextFixtureIndex];
 
@@ -4499,14 +4502,7 @@ actor Self {
                   },
                 );
 
-                let nextFixtureGameweekFixturesBeforeNow = Array.filter<FootballTypes.Fixture>(
-                  nextFixtureGameweekFixtures,
-                  func(fixtureEntry : FootballTypes.Fixture) {
-                    fixtureEntry.kickOff < Time.now();
-                  },
-                );
-
-                if (Array.size(nextFixtureGameweekFixturesBeforeNow) > 0) {
+                if (Time.now() - nextFixture.kickOff <= DateTimeUtilities.getHour()) {
                   activeGameweek := nextFixture.gameweek;
                   unplayedGameweek := activeGameweek + 1;
                   setLeagueGameweek(leagueStatus.leagueId, unplayedGameweek, activeGameweek, completedGameweek, nextFixtureGameweekFixtures[0].kickOff);
