@@ -12,6 +12,7 @@
     import PostponedLeagueFixtures from "$lib/components/league/postponed-league-fixtures.svelte";
     import FullScreenSpinner from "$lib/components/shared/full-screen-spinner.svelte";
     import TabPanel from "$lib/components/shared/tab-panel.svelte";
+    import type { Club } from "../../../../declarations/data_canister/data_canister.did";
     
     const tabs = [
         { id: 'clubs', label: 'Clubs' },
@@ -20,13 +21,14 @@
         { id: 'loaned-players', label: 'Loaned Players' },
     ]
     
-    let isLoading = true;
+    let isLoading = $state(true);
     let countryIds: CountryId[] = [];
-    let countries: Country[] = [];
-    let league: League | null = null;
-    let leagueStatus: LeagueStatus | null = null;
+    let countries: Country[] = $state([]);
+    let league: League | null = $state(null);
+    let leagueStatus: LeagueStatus | null = $state(null);
+    let clubs: Club[] = $state([]);
     
-    let activeTab: string = "clubs";
+    let activeTab: string = $state("clubs");
     
     let id = Number($page.url.searchParams.get("id"));
   
@@ -75,11 +77,11 @@
         <TabPanel {activeTab} {setActiveTab} {tabs} />
       </div>
 
-      {#if activeTab === "clubs"}
-        <LeagueClubs leagueId={league.id} />
+      {#if activeTab === "clubs" && clubs.length > 0}
+        <LeagueClubs {league} {clubs} />
       {/if}
-      {#if activeTab === "fixtures"}
-        <LeagueFixtures leagueId={league.id} />
+      {#if activeTab === "fixtures" && clubs.length > 0 && leagueStatus}
+        <LeagueFixtures {league} {clubs} {leagueStatus} gameweeks={Array.from({ length: leagueStatus.totalGameweeks }, (_, index) => index + 1)} />
       {/if}
       {#if activeTab === "postponed-fixtures"}
         <PostponedLeagueFixtures leagueId={league.id} />

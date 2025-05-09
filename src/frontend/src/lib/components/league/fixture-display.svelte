@@ -2,6 +2,7 @@
   import type { Club, Fixture } from "../../../../../declarations/backend/backend.did";
   import BadgeIcon from "$lib/icons/BadgeIcon.svelte";
   import PipsIcon from "$lib/icons/pips-icon.svelte";
+    import { convertDateToReadable } from "$lib/utils/helpers";
 
   interface Props {
     fixture: Fixture;
@@ -45,6 +46,7 @@
         {#if isFinalised}
           <span class="w-8 mr-4 text-sm text-center text-white">{fixture.awayGoals}</span>
         {/if}
+        <p>{convertDateToReadable(Number(fixture.kickOff))}</p>
       </div>
     </div>
 

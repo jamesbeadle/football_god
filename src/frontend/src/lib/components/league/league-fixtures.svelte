@@ -1,11 +1,8 @@
 <script lang="ts">
   import { onDestroy, onMount } from "svelte";
   import { goto } from "$app/navigation";
-  
-  import { clubStore } from "$lib/stores/club-store";
   import { fixtureStore } from "$lib/stores/fixture-store";
-  import { leagueStore } from "$lib/stores/league-store";
-  import type { Club, Fixture, League } from "../../../../../declarations/backend/backend.did";
+  import type { Club, Fixture, GameweekNumber, League, LeagueStatus } from "../../../../../declarations/backend/backend.did";
   
   import MoveFixture from "../governance/proposals/fixture/move-fixture.svelte";
   import LocalSpinner from "../shared/local-spinner.svelte";
@@ -14,54 +11,29 @@
   import FormComponent from "../shared/form-component.svelte";
   
   interface Props {
-    leagueId: number
+    league: League,
+    leagueStatus: LeagueStatus;
+    gameweeks: GameweekNumber[];
+    clubs: Club[];
   }
 
-  let { leagueId }: Props = $props();
-
+  let { league, leagueStatus, gameweeks, clubs }: Props = $props();
+  
   let isLoading = $state(true);
-  let league: League | undefined = $state(undefined); 
-  let clubs: Club[] = $state([]);
   let fixtures: Fixture[] = $state([]);
-  let fitleredFixtures: Fixture[] = $state([]);
+  let filteredFixtures: Fixture[] = $state([]);
   let selectedGameweek: number = $state(1);
   let selectedFixtureId: number = $state(0);
   let dropdownVisible: number | null = $state(null);
-  let gameweeks: number[] = $state([]);
-  let gameweekOptions: { id: number; label: string }[] = $state([]);
   let showMoveFixtureModal = $state(false);
   let showPostponeFixtureModal = $state(false);
   
   onMount(async () => {
     try {
-      let leaguesResult = await leagueStore.getLeagues();
-      if(!leaguesResult) throw new Error("Error fetching leagues.");
-      let leagues = leaguesResult.leagues;
-      league = leagues.find(x => x.id == leagueId);
-    
-      let clubsResult = await clubStore.getClubs(league?.id!);
-      if(!clubsResult) throw new Error("Error loading clubs")
-      clubs = clubsResult.clubs;
-
-      let leagueStatusResult = await leagueStore.getLeagueStatus(league?.id!);
-        if(!leagueStatusResult) throw new Error("Failed to fetch league status");
-        var leagueStatus = leagueStatusResult;
-  
-      let fixturesResult = await fixtureStore.getFixtures(leagueId, leagueStatus?.activeSeasonId ?? 1);
+      
+      let fixturesResult = await fixtureStore.getFixtures(league.id, leagueStatus.activeSeasonId ?? 1);
       if(!fixturesResult) throw new Error("Failed to fetch fixtures");
       fixtures = fixturesResult.fixtures.sort((a, b) => Number(a.kickOff) - Number(b.kickOff));
-
-
-      const highestGameweek = fixtures.reduce((max, fixture) => Math.max(max, fixture.gameweek), 0);
-      gameweeks = Array.from({ length: Number(highestGameweek) }, (_, i) => i + 1);
-      
-      gameweekOptions = [
-        { id: 0, label: "Select Gameweek" },
-        ...gameweeks.map(week => ({
-          id: week,
-          label: `Gameweek: ${week}`
-        }))
-      ];
       
       if (leagueStatus) {
         if(leagueStatus.activeGameweek > 0){
@@ -119,13 +91,7 @@
   }
 
   async function loadAddFixtureData(fixtureId: number) {
-    let leagueStatusResult = await leagueStore.getLeagueStatus(leagueId);
-        if(!leagueStatusResult) throw new Error("Failed to fetch league status");
-        var leagueStatus = leagueStatusResult;
-    if(!leagueStatus){
-      return;
-    }
-    goto(`/add-fixture-data?id=${fixtureId}&league-id=${leagueId}&season-id=${leagueStatus.activeSeasonId}`);
+    goto(`/add-fixture-data?id=${fixtureId}&league-id=${league.id}&season-id=${leagueStatus.activeSeasonId}`);
   }
 
   function closeModal() {
@@ -135,15 +101,14 @@
   }
 
   function filterFixtures(){
-    isLoading = true;
-    fitleredFixtures = fixtures.filter(x => x.gameweek == selectedGameweek);
-    isLoading = false;
+    filteredFixtures = fixtures.filter(x => x.gameweek == selectedGameweek);
   }
 
-  function handleGameweekChange(value: string | number) {
-    selectedGameweek = Number(value);
-    filterFixtures();
-  }
+  $effect(() => {
+    if(selectedGameweek > 0){
+      filterFixtures();
+    }
+  });
 </script>
 
 {#if isLoading}
@@ -160,7 +125,7 @@
         <div class="flex mb-4">
           <FormComponent label="Select Gameweek">
             <select class="brand-dropdown" bind:value={selectedGameweek}>
-              {#each gameweekOptions as gameweek}
+              {#each gameweeks.map(week => ({ id: week, label: `Gameweek: ${week}`})) as gameweek}
                 <option value={gameweek.id}>{gameweek.label}</option>
               {/each}
             </select>
@@ -168,23 +133,21 @@
         </div>
 
         <div class="px-3 mb-4 md:px-0 md:space-y-4">
-          {#if selectedGameweek > 0}
-            {#if fixtures}
-              {#each fitleredFixtures as fixture}
-                {@const homeClub = clubs.find(x => x.id == fixture.homeClubId)}
-                {@const awayClub = clubs.find(x => x.id == fixture.awayClubId)}
-                <FixtureDisplay
-                  {fixture}
-                  homeClub={homeClub!}
-                  awayClub={awayClub!}
-                  {dropdownVisible}
-                  onDropdownClick={toggleDropdown}
-                  onAddFixtureData={loadAddFixtureData}
-                  onMoveFixture={loadMoveFixture}
-                  onPostponeFixture={loadPostponeFixture}
-                />
-              {/each}
-            {/if}
+          {#if selectedGameweek > 0 && filteredFixtures && filteredFixtures.length > 0}
+            {#each filteredFixtures as fixture}
+              {@const homeClub = clubs.find(x => x.id == fixture.homeClubId)}
+              {@const awayClub = clubs.find(x => x.id == fixture.awayClubId)}
+              <FixtureDisplay
+                {fixture}
+                homeClub={homeClub!}
+                awayClub={awayClub!}
+                {dropdownVisible}
+                onDropdownClick={toggleDropdown}
+                onAddFixtureData={loadAddFixtureData}
+                onMoveFixture={loadMoveFixture}
+                onPostponeFixture={loadPostponeFixture}
+              />
+            {/each}
           {:else}
             <div class="flex justify-center p-4">
               <p class="text-gray-400">Fixtures Have Not Been Added For This League</p>
@@ -199,12 +162,12 @@
     {@const selectedFixture = fixtures.find(x => x.id == selectedFixtureId)}
     {@const homeClub = clubs.find(x => x.id == selectedFixture!.homeClubId)}
     {@const awayClub = clubs.find(x => x.id == selectedFixture!.awayClubId)}
-    <MoveFixture visible={showMoveFixtureModal} {closeModal} {selectedFixtureId} homeClub={homeClub!} awayClub={awayClub!} selectedGameweek={selectedFixture?.gameweek!} selectedLeagueId={leagueId}/>
+    <MoveFixture visible={showMoveFixtureModal} {closeModal} {selectedFixtureId} homeClub={homeClub!} awayClub={awayClub!} selectedGameweek={selectedFixture?.gameweek!} selectedLeagueId={league.id}/>
   {/if}
 
   {#if selectedFixtureId > 0 && showPostponeFixtureModal}
     {@const selectedFixture = fixtures.find(x => x.id == selectedFixtureId)}
-    <PostponeFixture visible={showPostponeFixtureModal} {closeModal} selectedFixture={selectedFixture!} selectedLeagueId={leagueId}/>
+    <PostponeFixture visible={showPostponeFixtureModal} {closeModal} selectedFixture={selectedFixture!} selectedLeagueId={league.id}/>
   {/if}
 
 {/if}
