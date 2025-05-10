@@ -1,9 +1,6 @@
 <script lang="ts">
   import { onMount, onDestroy } from "svelte";
   import { goto } from "$app/navigation";
-
-  import { clubStore } from "$lib/stores/club-store";
-  import { leagueStore } from "$lib/stores/league-store";
   import type { Club, League } from "../../../../../declarations/backend/backend.did";
   import BadgeIcon from "$lib/icons/BadgeIcon.svelte";
   import CreateClub from "../governance/proposals/club/create-club.svelte";
@@ -11,36 +8,16 @@
   import PipsIcon from "$lib/icons/pips-icon.svelte";
   
   interface Props {
-    leagueId: number
+    clubs: Club[];
+    league: League;
   }
 
-  let { leagueId }: Props = $props();
+  let { clubs, league }: Props = $props();
 
   let isLoading = $state(true);
-
-  let league: League | undefined = $state(undefined);
-  let clubs: Club[] = $state([]);
   let dropdownVisible: number | null = $state(null);
   
   let showAddClub = $state(false);
-  
-  onMount(async () => {
-    try {
-      let leaguesResult = await leagueStore.getLeagues();
-      if(!leaguesResult) throw new Error("Error fetching leagues.");
-      let leagues = leaguesResult.leagues;
-      
-      league = leagues.find(x => x.id == leagueId);
-      let clubsResult = await clubStore.getClubs(leagueId);
-      if(!clubsResult) throw new Error("Failed to fetch clubs");
-      clubs = clubsResult.clubs.sort( (a, b) => a.friendlyName.localeCompare(b.friendlyName));
-
-    } catch (error) {
-      console.error("Error fetching league clubs:", error);
-    } finally {
-      isLoading = false;
-    }
-  });
 
   onMount(() => {
       document.addEventListener('click', handleClickOutside);
@@ -73,7 +50,7 @@
   }
 
   function viewClub(clubId: number) {
-    goto(`/club?id=${clubId}&leagueId=${leagueId}`);
+    goto(`/club?id=${clubId}&leagueId=${league.id}`);
   } 
 </script>
 
@@ -127,5 +104,5 @@
 {/if}
 
 {#if showAddClub}
-  <CreateClub visible={showAddClub} {closeModal} selectedLeagueId={leagueId} />
+  <CreateClub visible={showAddClub} {closeModal} selectedLeagueId={league.id} />
 {/if}

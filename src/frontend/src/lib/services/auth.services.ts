@@ -1,13 +1,11 @@
 import { authStore, type AuthSignInParams } from "../stores/auth-store";
 import { replaceHistory } from "../utils/route.utils";
 import { isNullish } from "@dfinity/utils";
-import { busy } from "$lib/stores/busy-store";
 import { toasts, type Toast } from "$lib/stores/toasts-store";
 
 export const signIn = async (
   params: AuthSignInParams,
 ): Promise<{ success: "ok" | "cancelled" | "error"; err?: unknown }> => {
-  busy.show();
   try {
     await authStore.signIn(params);
     return { success: "ok" };
@@ -23,7 +21,6 @@ export const signIn = async (
 
     return { success: "error", err };
   } finally {
-    busy.stop();
   }
 };
 
@@ -54,8 +51,6 @@ const logout = async ({
   msg?: Omit<Toast, "id">;
   clearStorages?: boolean;
 }) => {
-  busy.start();
-
   if (clearStorages) {
     await Promise.all([
       // DevOps 443: clear storages

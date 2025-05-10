@@ -45,8 +45,20 @@
         <p>{getSeason(leagueStatus.activeSeasonId)}</p>
       </div>
       <div>
+        <label for="active-gameweek" class="block text-xs">Completed Gameweek</label>
+        <p>{leagueStatus.completedGameweek}</p>
+      </div>
+      <div>
         <label for="active-gameweek" class="block text-xs">Active Gameweek</label>
+        <p>{leagueStatus.activeGameweek}</p>
+      </div>
+      <div>
+        <label for="active-gameweek" class="block text-xs">Unplayed Gameweek</label>
         <p>{leagueStatus.unplayedGameweek}</p>
+      </div>
+      <div>
+        <label for="active-gameweek" class="block text-xs">Active Month</label>
+        <p>{leagueStatus.activeMonth}</p>
       </div>
       <div>
         <label for="transfer-window-active" class="block text-xs">Transfer Window Active</label>

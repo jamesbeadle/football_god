@@ -2,7 +2,6 @@
     import IcpLogo from "$lib/icons/IcpLogo.svelte";
     import LogoIcon from "$lib/icons/LogoIcon.svelte";
     import { signIn } from "$lib/services/auth.services";
-    import { isBusy } from '$lib/stores/busy-store';
 </script>
 
 <div class="relative flex flex-col items-center justify-center w-full md:min-h-screen">
@@ -23,7 +22,7 @@
 
             <button 
                 class="brand-button w-full"
-                onclick={async () => await signIn({})} disabled={$isBusy}
+                onclick={async () => await signIn({})}
             >
                 <span class="flex flex-row items-center justify-center space-x-2">
                     <IcpLogo className='w-6' />
