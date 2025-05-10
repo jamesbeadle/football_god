@@ -4502,7 +4502,7 @@ actor Self {
                   },
                 );
 
-                if (Time.now() - nextFixture.kickOff <= DateTimeUtilities.getHour()) {
+                if (nextFixture.kickOff - Time.now() <= DateTimeUtilities.getHour()) {
                   activeGameweek := nextFixture.gameweek;
                   unplayedGameweek := activeGameweek + 1;
                   setLeagueGameweek(leagueStatus.leagueId, unplayedGameweek, activeGameweek, completedGameweek, nextFixtureGameweekFixtures[0].kickOff);
